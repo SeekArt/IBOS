@@ -1,0 +1,48 @@
+
+/* Toggle */
+.toggle {
+  -webkit-transition: background linear .1s;
+  -moz-transition: background linear .1s;
+  -o-transition: background linear .1s;
+  transition: background linear .1s;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  margin-bottom: 0;
+  height: 30px;
+  width: 66px;
+  color: #fff;
+  display: inline-block;
+  overflow: hidden;
+  zoom: 1;
+  background-image: url("../image/component.png");
+  background-position: 0 -202px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.toggle:before,
+.toggle:after {
+  display: table;
+  content: "";
+}
+.toggle:after {
+  clear: both;
+}
+.toggle input {
+  position: absolute;
+  outline: none !important;
+  display: block\9;
+  opacity: 0.01;
+  filter: alpha(opacity=1);
+  zoom: 1;
+}
+.toggle-off {
+  background-position: -66px -202px;
+}
+.toggle-disabled {
+  cursor: default;
+  background-position: -132px -202px;
+}
+.toggle-disabled.toggle-off {
+  background-position: -198px -202px;
+}

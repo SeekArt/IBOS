@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr {color: #E26F50;}
+			.span6 { width: 50%; float: left; }
+			.radio { margin-bottom: 10px; padding-top: 1px; } /* 此处1px padding用于营造边界，使.progress的marginTop生效 */
+			.radio span{ font-size: 12px; } 
+			.progress { margin: 5px 0 0; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_progressbar_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<div>
+						<input type="text" id="control_progressbar_title">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_progressbar_width"><var id="lang_control_style"></var></label>
+					<div>
+						<div class="input-group">
+							<input type="text" id="control_progressbar_width">
+							<span class="input-group-addon"><var id="lang_control_width"></var></span>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_progressbar_step"><var id="lang_control_step"></var> </label>
+					<div>
+						<div id="step_slider"></div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_progressbar_style"></label>
+					<label class="radio">
+						<input type="radio" name="style" value="success">
+						<div class="progress progress-striped active">
+							<div class="progress-bar progress-bar-success" style="width: 25%"></div>
+						</div>
+						<span><var id="lang_success_tip"></var></span>
+					</label>
+					<label class="radio">
+						<input type="radio" name="style" value="warning">
+						<div class="progress progress-striped active">
+							<div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+						</div>
+						<span><var id="lang_warning_tip"></var></span>
+					</label>
+					<label class="radio">
+						<input type="radio" name="style" value="primary" checked>
+						<div class="progress progress-striped active">
+							<div class="progress-bar" style="width: 75%"></div>
+						</div>
+						<span><var id="lang_primary_tip"></var></span>
+					</label>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				// 初始化滑动条
+				var $slider = $("#step_slider");
+				$slider.ibosSlider({
+					range: 'min',
+					scale: true,
+					tip: true,
+					value: 5
+				});
+
+				var tpl = '<ic data-id=<%=id%> data-type="progressbar"  data-title="<%=title%>" data-width="<%=width%>" data-step="<%=step%>" data-progress-style="<%=style%>" contenteditable="false">' +
+						'<span class="progress progress-striped active" style="display: inline-block; width: <%=width%>px" title="<%=title%>"><span class="progress-bar progress-bar-<%=style%>" style="display: inline-block; width: <%=step%>%"></span></span><input type="hidden" /></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+				// 获取进度条类型
+				var _getStyle = function() {
+						return $("[name='style']").map(function() {
+							if (this.checked) {
+								return this.value;
+							}
+						}).get(0);
+					},
+					// 还原进度条类型
+					_setStyle = function(style) {
+						$("[name='style']").each(function(index, elem) {
+							elem.value === style && $(elem).label("check");
+						});
+					};
+
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_progressbar_title').value = oldData.title;
+					$G('control_progressbar_width').value = oldData.width;
+					_setStyle(oldData.progressStyle);
+					// 设置滑动条的值
+					$slider.slider("value", oldData.step);
+				}
+
+				dialog.onok = function() {
+					var data,
+							title = $G('control_progressbar_title').value;
+
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+
+					data = {
+						title: title,
+						step: $slider.slider("value"),
+						width: $G('control_progressbar_width').value || 200,
+						style: _getStyle()
+					}
+					// 标签名不能为空且不能重复，提示或自动改名
+					// @Todo: 这里要做验证, ajax 获取唯一ID;
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+				};
+			})();
+		</script>
+	</body>
+</html>

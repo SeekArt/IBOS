@@ -1,0 +1,27 @@
+/**
+ * 全屏 gallery
+ */
+.ad-full-modal{ position: fixed; top: 0; left: 0; z-index: 10000; width: 100%; height: 100%; background: #000; overflow: hidden; opacity: .9; filter: Alpha(opacity=90);}
+.ad-full{ position: absolute; top: 0; left: 0; z-index: 10001; width: 100%; height: 100%;  }
+.ad-full-hd{ position: relative; margin-bottom: 40px; height: 60px; line-height: 60px; text-align: center; }
+.ad-full-hd strong{ font-size: 20px; color: #FFF; }
+.ad-full-hd i{ margin-left: 10px; font-family: Georgia; font-size: 20px;  }
+.ad-full-close{ position: absolute; top: 15px; right: 20px; width: 35px; height: 35px; background: url(ad_full.png) -200px 0 no-repeat; }
+.ad-full-close:hover{ background-position: -240px 0; }
+
+.ad-full .ad-gallery { position: relative; width: auto; margin-left: 20px; margin-right: 144px; }
+.ad-full .ad-gallery .ad-image-wrapper { height: 1000px; }
+.ad-full .ad-gallery .ad-thumbs { height: 940px; margin: 30px 0; }
+.ad-full .ad-gallery .ad-thumbs .ad-thumb-list{ height: 9999px; width: auto; }
+.ad-full .ad-gallery .ad-thumbs li{ float: none; padding-bottom: 10px; padding-right: 0; }
+.ad-full .ad-gallery .ad-thumbs li a img{ border: 1px solid #9B9B9B; /**/ width: 102px; }
+.ad-full .ad-gallery .ad-thumbs li a.ad-active img{ border: 3px solid #EE8C0C; /**/ width: 98px; }
+.ad-full .ad-gallery .ad-nav{ position: absolute; top: 0; right: -124px; width: 104px; height: 100%; overflow: hidden; }
+.ad-full .ad-gallery .ad-back{ top: 0; left: 0; width: 104px; height: 20px; background: url(ad_full.png) -80px 0 no-repeat; }
+.ad-full .ad-gallery .ad-forward{ top: auto; right: auto; bottom: 0; left: 0; width: 104px; height: 20px; background: url(ad_full.png) -80px -20px no-repeat; }
+.ad-full .ad-controls{ display: none; }
+
+.ad-full .ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image,
+.ad-full .ad-gallery .ad-image-wrapper .ad-next .ad-next-image{ width: 20px; height: 40px; background: url(ad_full.png) no-repeat; }
+.ad-full .ad-gallery .ad-image-wrapper .ad-next .ad-next-image{ background-position: -40px 0; }
+.ad-full .ad-gallery .ad-image-wrapper .ad-loader{ border: 0 none; }

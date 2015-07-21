@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>相册</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">相册</h1>
+			<ul class="mn">
+				<li>
+					<a href="album_setup.html">全局设置</a>
+				</li>
+				<li>
+					<span>图片管理</span>
+				</li>
+				<li>
+					<a href="album_manage.html">相册管理</a>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<form action="" class="form-horizontal">
+			<!-- 图片管理 start -->
+			<div class="ctb">
+				<h2 class="st">图片管理</h2>
+				<div class="page-list">
+					<div class="page-list-header">
+						<div class="row">	
+							<div class="span8">
+								<button type="button" class="btn">删除选中图片</button>
+							</div>
+							<div class="span4">
+								<div class="search search-enter">
+									<input type="search" placeholder="Search">
+									<a href="">search</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page-list-mainer">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th width="30">
+										<label class="checkbox" for="checkbox_0"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" data-name="w" id="checkbox_0">
+										</label>
+									</th>
+									<th>ID</th>
+									<th>图片预览</th>
+									<th>图片名称</th>
+									<th>所属相册</th>
+									<th>所属用户</th>
+									<th>上传时间</th>
+									<th>文件大小</th>
+									<th width="100">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<label class="checkbox" for="checkbox_1"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" id="checkbox_1" name="w">
+										</label>
+									</td>
+									<td>1</td>
+									<td>
+										<img src="" width="100" alt="">
+									</td>
+									<td>m_20130422.jpg</td>
+									<td>pic</td>
+									<td>LPlight</td>
+									<td>2013-04-22</td>
+									<td>1000KB</td>
+									<td>
+										<a href="" class="cbtn o-trash"></a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class="checkbox" for="checkbox_2"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" id="checkbox_2" name="w">
+										</label>
+									</td>
+									<td>2</td>
+									<td>
+										<img src="" width="100" alt="">
+									</td>
+									<td>m_20130422.jpg</td>
+									<td>pic</td>
+									<td>LPlight</td>
+									<td>2013-04-22</td>
+									<td>1000KB</td>
+									<td>
+										<a href="" class="cbtn o-trash"></a>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class="checkbox" for="checkbox_3"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" id="checkbox_3" name="w">
+										</label>
+									</td>
+									<td>3</td>
+									<td>
+										<img src="" width="100" alt="">
+									</td>
+									<td>m_20130422.jpg</td>
+									<td>pic</td>
+									<td>LPlight</td>
+									<td>2013-04-22</td>
+									<td>1000KB</td>
+									<td>
+										<a href="" class="cbtn o-trash"></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="page-list-footer">
+						<div>
+							<ul class="pagination">
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li><a href="#">6</a></li>
+								<li><a href="#">7</a></li>
+								<li><a href="#">8</a></li>
+								<li><a href="#">9</a></li>
+								<li><a href="#">10</a></li>
+							</ul>
+							<div class="pagination-controll">
+								<div class="input-group">
+									<input type="text" class="input-small">
+									<a class="input-group-addon input-small">
+										<i class="glyphicon-share-alt"></i>
+									</a>
+								</div>
+								<span>/21页</span>
+							</div>
+							<ul class="pager">
+								<li>
+									<a href=""><i class="glyphicon-chevron-left"></i></a>
+								</li>
+								<li>
+									<a href=""><i class="glyphicon-chevron-right"></i></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../../../../static/js/base.js"></script>
+	<script src="../../../../../static/js/extra.js"></script>
+</body>
+</html>

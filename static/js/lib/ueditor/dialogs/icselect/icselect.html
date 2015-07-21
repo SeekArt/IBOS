@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.span6 { width: 50%; float: left; }
+			.xcr { color: #E26F50; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_select_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_select_title">
+				</div>
+				<div class="control-group">
+					<label for="control_select_size"><var id="lang_control_style"></var></label>
+					<div class="row">
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_select_width">
+								<span class="input-group-addon"><var id="lang_control_width"></var></span>
+							</div>
+						</div>
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_select_size">
+								<span class="input-group-addon"><var id="lang_control_row"></var></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<div><label for="control_select_field"><var id="lang_add_options"></var></label></div>
+					<textarea rows="5" id="control_select_field"></textarea>
+				</div>
+				<div class="control-group">
+					<label for="control_select_check"><var id="lang_control_value"></var></label>
+					<!-- <input type="text" id="control_select_check"> -->
+					<select id="control_select_check"></select>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var refreshCheck = function(field, check) {
+					$.trim("field") !== "" && ($G('control_select_check').innerHTML = "<option></option>" + fcUtil.createOptionTpl(field, check));
+				}
+				var tpl = '<ic data-id="<%=id%>" data-type="select" data-title="<%=title%>" data-select-check="<%=check%>" data-width="<%=width%>" data-size="<%=size%>" data-select-field="<%=field%>" contenteditable="false" >';
+				tpl += '<select name="data_<%=id%>" title="<%=title%>" style="width:<%=width%>px;" size="<%=size%>" >';
+				tpl += '<%=option%></select></ic>';
+				var fc = new Fc(editor, tpl), editing = UE.plugins['formcontrols'].editing, oldData;
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					var field = oldData.selectField || "", check = oldData.selectCheck != null ? oldData.selectCheck + "" : "";
+					$G('control_select_title').value = oldData.title;
+					$G('control_select_width').value = oldData.width;
+					$G('control_select_size').value = oldData.size;
+					$G('control_select_field').value = fcUtil.splitVal(field);
+					// 还原默认值的可选项
+					refreshCheck(field, check);
+				}
+				dialog.onok = function() {
+					var title = $G('control_select_title').value,
+						field = $G('control_select_field').value,
+						data;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					if ($.trim(field) === "") {
+						alert(editor.getLang("fc.noOptionTip"));
+						return false;
+					}
+					// 将选项值格式化
+					data = {
+						title: title,
+						field: fcUtil.joinVal(field),
+						check: $G('control_select_check').value || "",
+						size: Number($G('control_select_size').value) || 1,
+						width: Number($G('control_select_width').value) || 200,
+					}
+					data.option = fcUtil.createOptionTpl(data.field, data.check)
+
+					// 编辑
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+				// 更新默认值的可选项
+				var timer;
+				$G('control_select_field').onkeyup = function() {
+					var val = this.value;
+					clearTimeout(timer);
+					timer = setTimeout(function(){
+						refreshCheck(fcUtil.joinVal(val));
+					}, 200)
+				}
+			})();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * 移动端模块------ 文章类组件文件
+ *
+ * @link http://www.ibos.com.cn/
+ * @copyright Copyright &copy; 2008-2013 IBOS Inc
+ * @author Aeolus <Aeolus@ibos.com.cn>
+ */
+/**
+ * 移动端模块------ 文章评论类组件
+ * @package application.modules.mobile.components
+ * @version $Id: IMCArticle.php 581 2013-06-13 09:50:04Z Aeolus $
+ * @author Aeolus <Aeolus@ibos.com.cn>
+ * @deprecated
+ */
+
+namespace application\modules\mobile\components;
+
+use application\core\components\Category;
+use application\core\utils\IBOS;
+use application\core\utils\String;
+use application\modules\article\core\Article as ICArticle;
+use application\modules\article\model\Article as ArticleModel;
+use application\modules\article\model\ArticleCategory;
+use application\modules\article\model\ArticleReader;
+use application\modules\article\model\ArticlePicture;
+use application\modules\article\utils\Article as ArticleUtil;
+use application\modules\user\model\User;
+
+class Article {
+
+    /**
+     * 分类id
+     * @var integer
+     * @access protected
+     */
+    protected $catid = 0;
+
+    /**
+     * 条件
+     * @var string
+     * @access protected
+     */
+    protected $condition = '';
+
+    /**
+     * 是否有安装新闻模块
+     * @return boolean
+     */
+    protected function getArticleInstalled() {
+        //Yii::import( 'application.modules.article.components.*' );
+        //$installed = new ICArticle();
+        //$installed->setInit( 'vote' );
+        //return $installed->getInit();
+    }
+	
+    public function getList($type = 1, $catid = 0, $search = "") {
+		//DEBUG 测试 只是显示新闻数据
+		$uid = IBOS::app()->user->uid;
+		$childCatIds = '';
+		if (!empty($catid)) {
+			$this->catid = $catid;
+			$childCatIds = ArticleCategory::model()->fetchCatidByPid($this->catid, true);
+		}
+		if (!empty($search)) {
+			$this->condition = "subject like '%$search%'";
+		}
+		$this->condition = ArticleUtil::joinListCondition($type, $uid, $childCatIds, $this->condition);
+		$datas = ArticleModel::model()->fetchAllAndPage($this->condition);
+		$articleList = ICArticle::getListData($datas['datas'], $uid);
+		$params = array(
+			'pages' => $datas['pages'],
+			'datas' => $articleList
+		);
+
+		foreach ($articleList as $key => $value) {
+			$value['content'] = String::cutStr(strip_tags($value['content']), 30);
+			$articleList[$key] = array_filter($value); //清空空字段			
+			$articleList[$key]['readstatus'] = ($articleList[$key]['readStatus']==1);
+		}
+		$return['datas'] = $articleList;
+		$return['pages'] = array(
+			'pageCount' => $datas['pages']->getPageCount(),
+			'page' => $datas['pages']->getCurrentPage(),
+			'pageSize' => $datas['pages']->getPageSize()
+		);
+		return $return;
+	}
+
+	public function getCategory() {
+        $category = new Category( 'application\modules\article\model\ArticleCategory' );
+        $data = $category->getData();
+        $format = "<li> <a href='#news' onclick='news.loadList(\$catid)'>\$spacer<i class='ao-file'></i>\$name</a> </li>";
+        $return = String::getTree( $data, $format, 0, '&nbsp;&nbsp;&nbsp;&nbsp;', array( '', '', '' ) );
+        return $return;
+    }
+
+    public function getNews( $id ) {
+        $article = ArticleModel::model()->fetchByPk( $id );
+        $attribute = ICArticle::getShowData( $article );
+		if(isset($attribute['author'])){
+			$attribute['author'] = User::model()->fetchRealnameByUid($attribute['author']);
+		}
+		if ( $attribute['type'] == 1 ) {
+            $attribute['pictureData'] = ArticlePicture::model()->fetchPictureByArticleId( $id );
+        }
+        return $attribute;
+    }
+
+}

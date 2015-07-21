@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr {color: #E26F50;}
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_text_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<div>
+						<input type="text" id="control_text_title">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_text_width"><var id="lang_control_style"></var></label>
+					<div class="input-group">
+						<input type="text" id="control_text_width">
+						<span class="input-group-addon"><var id="lang_control_width"></var></span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_text_value"><var id="lang_control_value"></var></label>
+					<input type="text" id="control_text_value">
+				</div>
+				<div>
+					<label><var id="lang_control_visibility"></var>:</label>
+					<div>
+						<label class="checkbox">
+							<input type="checkbox" id="control_text_hide"><label for="control_text_hide"><var id="lang_control_hide"></var></label>
+						</label>
+					</div>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="text" data-title="<%=title%>" data-value="<%=value%>" data-width="<%=width%>" data-hide="<%=hide%>" contenteditable="false">' +
+						'<input type="text" title="<%=title%>" name="data_<%=id%>" value="<%=value%>" style="width: <%=width%>px" /></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_text_title').value = oldData.title;
+					$G('control_text_width').value = oldData.width || "200";
+					$G('control_text_value').value = oldData.value || "";
+					$G('control_text_hide').checked = oldData.hide == "1" ? true : false;
+				}
+
+				dialog.onok = function() {
+					var data, title = $G('control_text_title').value;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					data = {
+						title: title,
+						width: Number($G('control_text_width').value) || "200",
+						value: $G('control_text_value').value,
+						hide: $G('control_text_hide').checked ? 1 : 0
+					};
+					// 标签名不能为空且不能重复，提示或自动改名
+					// @Todo: 这里要做验证, ajax 获取唯一ID;
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+			})();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr { color: #E26F50; }
+			#ins_close { position: fixed; top: 10px; right: 20px; }
+			#control_src_ins p{ font-size: 12px; margin: 10px 0; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_auto_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_auto_title">
+				</div>
+				<div class="control-group">
+					<label for="control_auto_field"><var id="lang_auto_field"></var>:</label>
+					<select id="control_auto_field">
+						<optgroup id="auto_field_input">
+							<option value="sys_date"></option>
+							<option value="sys_date_cn"></option>
+							<option value="sys_date_cn_short3"></option>
+							<option value="sys_date_cn_short4"></option>
+							<option value="sys_date_cn_short1"></option>
+							<option value="sys_date_cn_short2"></option>
+							<option value="sys_time"></option>
+							<option value="sys_datetime"></option>
+							<option value="sys_week"></option>
+							<option value="sys_userid"></option>
+							<option value="sys_realname"></option>
+							<option value="sys_deptname"></option>
+							<option value="sys_deptname_short"></option>
+							<option value="sys_userpos"></option>
+							<option value="sys_userposother"></option>
+							<option value="sys_realname_date"></option>
+							<option value="sys_realname_datetime"></option>
+							<option value="sys_formname"></option>
+							<option value="sys_runname"></option>
+							<option value="sys_rundate"></option>
+							<option value="sys_rundatetime"></option>
+							<option value="sys_runid"></option>
+							<option value="sys_autonum"></option>
+							<option value="sys_ip"></option>
+							<option value="sys_manager1"></option>
+							<option value="sys_manager2"></option>
+							<option value="sys_manager3"></option>
+							<option value="sys_sql"></option>
+						</optgroup>
+						<optgroup id="auto_field_select">
+							<option value="sys_list_dept"></option>
+							<option value="sys_list_user"></option>
+							<option value="sys_list_pos"></option>
+							<option value="sys_list_prcsuser1"></option>
+							<option value="sys_list_prcsuser2"></option>
+							<option value="sys_list_manager1"></option>
+							<option value="sys_list_manager2"></option>
+							<option value="sys_list_manager3"></option>
+							<option value="sys_list_sql"></option>
+						</optgroup>
+					</select>
+				</div>
+				<div>
+					<div id="normal_field">
+						<div class="control-group">
+							<label for="control_auto_width"><var id="lang_control_style"></var></label>
+							<div class="input-group">
+								<input type="text" id="control_auto_width">
+								<span class="input-group-addon"><var id="lang_control_width"></var></span>
+							</div>
+						</div>
+						<div class="control-group">
+							<div>
+								<label for="control_auto_hide" class="checkbox">
+									<input type="checkbox" id="control_auto_hide">
+									<var id="lang_control_hide"></var>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div id="src_field" style="display: none;">
+						<div class="control-group">
+							<span class="pull-right">
+								<a href="javascript:;" id="ins_open">说明</a>
+								<a href="javascript:;" id="src_test">测试</a>
+							</span>
+							<label for="control_auto_src">SQL查询语句 ('号用`号替换)</label>
+							<div class="input-group">
+								<textarea rows="5" id="control_auto_src"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div id="control_src_ins" style="display: none;">
+				<button type="button" title="回到控件属性页" class="btn btn-small" id="ins_close"> <i class="glyphicon-home"></i></button>
+				<div>
+					<div class="alert alert-error">
+						<a class="close" data-dismiss="alert">×</a> <strong>注意！</strong>
+						SQL语句中的单引号请用符号`替换（该符号在键盘TAB上方）。
+					</div>
+					<blockquote>
+						<p>
+							宏控件可以代替手工输入，实现根据用户指定要求进行自动取值，使得工作流的表单填写更加智能与方便，宏控件类型选择当前日期，点击【确定】，在表单上
+							就生成了该控件，填写表单时就会自动填入当前日期了。另外宏控件也支持隐藏属性，对不需要在表单显示字段可以将其隐藏。宏控件支持来自SQL查询，语句，下面重点介绍一下。
+						</p>
+					</blockquote>
+					<p>
+						来自SQL语句的宏控件，因其定义格式比较复杂，需要具备SQL语言的专业知识，并了解OA系统数据库结构，建议在技术支持人员指导下完成。
+					</p>			
+					<p>可以参照以下格式书写SQL语句：</p>
+					<strong>下拉菜单型语句如：</strong>		
+					<p><code>SELECT name FROM book_category ORDER BY sort</code></p>
+					<p>该语句表示列出全部书籍的分类名，并按序号排序显示</p>
+					<strong>单行输入框语句如：</strong>
+					<p><code>SELECT realname FROM ibos_user WHERE username = `gzzr`</code></p>
+					<p>该语句表示查询用户名为gzzr的用户的真实姓名</p>
+					<strong>目前，SQL语句中已支持以下宏变量，更加方便用户使用：</strong>
+					<p>
+						<code>[sys_user_id]</code>
+						表示当前用户的用户ID
+					</p>
+					<p>
+						<code>[sys_dept_id]</code>
+						表示当前用户的部门ID
+					</p>		
+					<p>
+						<code>[sys_pos_id]</code>
+						表示当前用户角色ID
+					</p>
+					<p>
+						<code>[sys_run_id]</code>
+						表示当前的工作流水号，可用于表单数据表的查询 * <code>注：测试条件下不可用</code>
+					</p>
+					例如：
+					<p><code>SELECT realname FROM ibos_user WHERE uid=`[sys_user_id]`</code></p>
+					<p>此句表示查询当前用户的真实姓名</p>
+
+					<p><code>SELECT realname FROM ibos_user WHERE FIND_IN_SET(deptid,`[sys_dept_id]`)</code></p>
+					<p>此句表示查询当前部门所有用户的姓名</p>
+					<p><code>SELECT realname FROM ibos_user WHERE deptid = `[sys_dept_id]` ORDER BY uid</code></p>
+
+					<p>此句表示查询当前部门所有用户的姓名，并按角色序号排序</p>
+					<p>可以利用SQL语句查询系统代码设置中所设置的代码，实现下拉菜单根据代码定义动态变化：</p>
+					例如：
+					<p><code>SELECT name FROM ibos_syscode WHERE number = `AREA` ORDER BY sort</code></p>
+					<p>此句表示列出系统代码“地区”的全部值，“地区”的代码编号是“AREA”。</p>
+				</div>
+			</div>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var srcMode = ["sys_sql", "sys_list_sql"],
+						// 获取可选字段数据，因为选择sql相关field时，传递及还原数据的操作会有所区别
+						// 所以getFieldData, setFieldData 用于处理差异
+					getFieldData = function(field) {
+						data = {};
+						if (UE.utils.indexOf(srcMode, field) !== -1) {
+							data.src = $G('control_auto_src').value;
+						} else {
+							data.width = Number($G('control_auto_width').value) || 200;
+							data.hide = $G('control_auto_hide').checked ? 1 : 0;
+						}
+						return data;
+					},
+					setFieldData = function(field, data) {
+						if (UE.utils.indexOf(srcMode, field) !== -1) {
+							$G('control_auto_src').value = data.src;
+						} else {
+							$G('control_auto_width').value = data.width;
+							$G('control_auto_hide').checked = data.hide == "1" ? true : false;
+						}
+					},
+					showModeByField = function(field) {
+					var isSrcMode = UE.utils.indexOf(srcMode, field) !== -1;
+					$G('src_field').style.display = isSrcMode ? "block" : "none";
+					$G('normal_field').style.display = isSrcMode ? "none" : "block";
+				};
+
+				var tpl = '<ic data-id="<%=id%>" data-type="auto" data-title="<%=title%>" data-src="<%=src%>" data-field="<%=field%>" data-width="<%=width%>" data-hide="<%=hide%>" contenteditable="false" >' +
+						'<span class="fake-auto" style="width: <%=width%>px" title="<%=title%>">(宏)<%=name%></span></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_auto_title').value = oldData.title;
+					$G('control_auto_field').value = oldData.field;
+					setFieldData(oldData.field, oldData);
+				}
+
+				dialog.onok = function() {
+					var title = $G('control_auto_title').value, data, mode, field, name;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+
+					field = $G('control_auto_field').value;
+					name = $G('control_auto_field').options[$G('control_auto_field').selectedIndex].innerHTML; // innerText||textContent
+					data = UE.utils.extend({
+						title: title,
+						field: field,
+						width: "",
+						hide: "",
+						src: "",
+						name: name
+					}, getFieldData(field));
+
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+
+				UE.dom.domUtils.on($G('control_auto_field'), "change", function() {
+					showModeByField(this.value);
+					if (this.value.substr(0, 8) === 'sys_list') {
+						$('#control_auto_hide').attr('disabled', true);
+					} else {
+						$('#control_auto_hide').removeAttr('disabled');
+					}
+				});
+				showModeByField($G('control_auto_field').value);
+				// 说明开关
+				var srcIns = {
+					$elem: $("#control_src_ins"),
+					show: function() {
+						this.$elem.slideDown(200).siblings().slideUp(200);
+					},
+					hide: function() {
+						this.$elem.slideUp(200).siblings().slideDown(200);
+					}
+				};
+
+				$("#ins_open").click(function() {
+					srcIns.show();
+				});
+				$("#ins_close").click(function() {
+					srcIns.hide();
+				});
+
+				// 测试
+				$("#src_test").on("click", function() {
+					var sql = $("#control_auto_src").val();
+					$.get(Ibos.app.url('workflow/api/testsql', {sql: sql}), function(data) {
+						alert(data);
+					});
+				});
+			})();
+		</script>
+	</body>
+</html>

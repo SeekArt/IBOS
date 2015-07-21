@@ -1,0 +1,89 @@
+.wrap{
+	position: relative;
+}
+.mc{
+	min-height: 600px;
+}
+.mpc{
+	padding: 20px;
+	min-height: 560px;
+	border-radius: 4px;
+	background-color: #fff;
+	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 1px 3px rgba(0,0,0,.1);
+	box-shadow: 0 1px 3px rgba(0,0,0,.1);
+}
+.page-edit{
+	margin: -20px;
+}
+.nav > li > p > a{
+	position: relative;
+	display: block;
+	padding: 10px 30px;
+	color: #82939e;
+	font-family: Arial, "Microsoft Yahei";
+	outline: 0 none;
+} 
+.fixed-footer{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 60px;
+	border-top: 1px #EBEFF6 solid;
+	color: #FFF;
+	z-index: 1000;
+}
+.footer-bg{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: #FFF;
+	filter: alpha(opacity=60);
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+}
+.footer-content {
+	width: 1000px;
+	margin: auto;
+	position: relative;
+	z-index: 100;
+	top: 10px;
+}
+.nav-stacked > li > p > a {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.nav-stacked > li + li > p > a {
+  margin-top: 2px;
+  margin-left: 0;
+}
+.nav-strip > li > p > a {
+  border-left: 5px solid transparent;
+}
+.nav-strip > .active > p > a,
+.nav-strip > .active > p > a:hover,
+.nav-strip > .active > p > a:focus {
+  border-left-color: #9cadc3;
+  color: #3497db;
+  background-color: #fff;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.nav-strip > .active > p > a .badge {
+  background-color: #3497db;
+}
+.aside .nav-strip > .active > p > a, 
+.aside .nav-strip > .active > p > a:hover, 
+.aside .nav-strip > .active > p > a:focus{
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+}
+.sb-title{
+	margin-bottom: 15px;
+	font-size: 32px;
+	text-align: center;
+	color: #58585C;
+}
+

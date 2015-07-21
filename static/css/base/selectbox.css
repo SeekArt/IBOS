@@ -1,0 +1,151 @@
+.select-box {
+  -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  background-color: #fff;
+  position: absolute;
+  width: 375px;
+}
+.select-box-header {
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  background-color: #3497db;
+  overflow: hidden;
+}
+.select-box-nav {
+  margin: 0 0 0 -1px;
+  height: 60px;
+}
+.select-box-nav li {
+  float: left;
+  list-style: none;
+  border-left: 1px solid #5fade3;
+}
+.select-box-nav li a {
+  display: block;
+  padding: 4px 40px;
+  line-height: 20px;
+  color: #fff;
+  font-size: 12px;
+}
+.select-box-nav li a > i {
+  margin: 0 auto;
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+.select-box-nav li a:hover,
+.select-box-nav .active a,
+.select-box-nav .active a:hover {
+  text-decoration: none;
+  background-color: #258bd1;
+}
+.select-box-mainer {
+  zoom: 1;
+}
+.select-box-mainer:before,
+.select-box-mainer:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+.select-box-mainer:after {
+  clear: both;
+}
+.select-box-mainer-aside,
+.select-box-mainer-inner {
+  padding: 10px 0;
+  height: 300px;
+  overflow: auto;
+  /* for Ie
+		scrollBar-face-color: green; 
+		scrollBar-hightLight-color: red; 
+		scrollBar-3dLight-color: orange; 
+		scrollBar-darkshadow-color:blue; 
+		scrollBar-shadow-color:yellow; 
+		scrollBar-arrow-color:purple; 
+		scrollBar-track-color:black; 
+		scrollBar-base-color:pink;
+		*/
+  /* for webkit
+		-webkit-scrollbar: red; //滚动条整体部分
+		-webkit-scrollbar-button: green; //滚动条两端的按钮
+		-webkit-scrollbar-track //外层轨道
+		-webkit-scrollbar-track-piece// 内层轨道，滚动条中间部分（除去）
+		-webkit-scrollbar-thumb //（拖动条？滑块？滚动条里面可以拖动的那个，肿么翻译好呢？）
+		-webkit-scrollbar-corner //边角
+		-webkit-resizer //定义右下角拖动块的样式
+		*/
+}
+.select-box-mainer-aside {
+  background-color: #f9fbff;
+}
+.select-box-mainer-inner {
+  width: 175px;
+  float: right;
+}
+.select-box-area {
+  padding: 5px;
+  font-size: 12px;
+}
+.select-box-area-header {
+  padding: 5px 0;
+  border-bottom: 1px solid #e4edf2;
+}
+.select-box-area-mainer {
+  padding: 10px 0;
+}
+.select-box-list {
+  margin: 0;
+}
+.select-box-list li {
+  list-style: none;
+  padding: 3px 0;
+  cursor: pointer;
+}
+.select-box-list li:hover {
+  color: #3497db;
+}
+.select-box-list li .checkbox {
+  margin-bottom: 0;
+  padding-left: 0;
+}
+.select-box-list li .checkbox .icon,
+.select-box-list li .checkbox .icon-to-fade {
+  left: auto;
+  right: 4px;
+}
+.select-box-list li img {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+.select-box-list .offline img {
+  /*filter: Gray*/
+}
+.select-box-contact,
+.select-box-department,
+.select-box-position {
+  background-image: url('../image/select_box.png');
+  background-repeat: no-repeat;
+}
+.select-box-department {
+  background-position: 0 -32px;
+}
+.select-box-position {
+  background-position: 0 -64px;
+}
+.select2-container-multi .select2-choices .select2-operate {
+  float: right;
+  position: relative;
+  z-index: 10;
+  padding: 5px;
+}
+.select2-container-multi .select2-choices .select2-operate a {
+  margin-left: 5px;
+}
+.select2-container-multi .select2-choices .select2-operate .operate-btn {
+  padding-left: 8px;
+  padding-right: 8px;
+}

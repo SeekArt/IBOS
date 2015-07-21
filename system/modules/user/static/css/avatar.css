@@ -1,0 +1,47 @@
+/**
+ * avatar.css
+ * 头像上传页面
+ * @module User
+ * @type Layout
+ * @version $Id: avatar.css 3546 2014-06-04 03:05:32Z gzzcs $
+ * @modified 2013-09-04
+ * @author banyan
+ */
+/* Prefix pc */
+.cf:before,.cf:after { display: table; content: ""; line-height: 0; }
+.cf:after { clear: both; }
+.cf { *zoom: 1; }
+.fill-nn img { max-width: none; }
+.upload-area {
+	position: relative;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	width: 408px;
+	height: 408px;
+	background-color: #F5F5F5;
+    border: 2px dashed #E1E1E1;
+}
+.upload-area .file-tips {
+	position: absolute;
+	top: 0;
+	left: 0;
+    padding: 0 15px;
+    z-index: 4;
+}
+.userup-icon { display: inline-block; margin-right: 3px; width: 16px; height: 16px; vertical-align: -2px; background: url("../image/userup_icon.png") no-repeat; }
+.uploadify-button { line-height: 120px!important; text-align: center; }
+.preview-area { float: right; }
+.tcrop { clear: right; font-size: 14px; font-weight: bold; }
+.update-pic .crop { overflow: hidden; margin-bottom: 43px; margin-top: 10px; }
+.crop img{ margin-bottom: 10px; }
+.crop180 { height: 180px; width: 180px; border-radius: 50%; }
+.crop60 { height: 60px; width: 60px; border-radius: 50%; }
+.crop30 { height: 30px; width: 30px; border-radius: 50%; }
+.update-pic .save-pic { clear: left; margin-right: 20px; }
+.update-pic .uppic-btn { float: right; }
+.preview { position: absolute; top: 0; left: 0; z-index: 11; width: 450px; height: 253px; overflow: hidden; background:#fff; display: none; }
+.size-tip{ width: 71px; margin-top: -32px; }
+.upload-area .swfupload{ position: relative; z-index: 5; }
+.upload-area .img-upload-mask{ z-index: 10; }
+.upload-text-tip{ margin-top: 40px; }

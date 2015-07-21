@@ -1,0 +1,29 @@
+.vote .img-upload{
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.votepic-upload,
+.votepic-upload-error{ 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 78px; 
+    height: 58px; 
+    border: 1px dashed #DADCE6;
+    font-size: 12px;
+    text-align: center;
+}
+.votepic-upload p{  color: #B2C0D1; }
+.votepic-upload .o-plus{ margin-top: 5px; }
+.vote .img-upload:hover .votepic-upload{ border-color: #3497DB; }
+.vote .img-upload:hover .votepic-upload p{ color: #3497DB; }
+.vote .img-upload:hover .o-plus{ background-position: 0 -40px; }
+
+.vote .img-upload-start .votepic-upload,
+.vote .img-upload-error .votepic-upload,
+.vote .img-upload-success .votepic-upload{ visibility: hidden; }
+
+.votepic-upload-error{ border-color: #E26F50; visibility: hidden; line-height: 58px; color: #E26F50;}
+.vote .img-upload-error .votepic-upload-error{ visibility: visible; }

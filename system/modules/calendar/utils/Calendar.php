@@ -1,0 +1,158 @@
+<?php
+
+/**
+ * 日程安排模块------ 工具类
+ *
+ * @link http://www.ibos.com.cn/
+ * @copyright Copyright &copy; 2008-2013 IBOS Inc
+ * @author gzhzh <gzhzh@ibos.com.cn>
+ */
+/**
+ * 日程安排模块------  工具类
+ * @package application.modules.calendar.utils
+ * @version $Id: CalendarUtil.php 1433 2013-10-28 20:39:57Z gzwwb $
+ * @author gzhzh <gzhzh@ibos.com.cn>
+ */
+
+namespace application\modules\calendar\utils;
+
+use application\core\utils\IBOS;
+use application\modules\calendar\model\CalendarSetup;
+
+Class Calendar {
+
+    /**
+     * 转化时间为输出格式
+     * @param <dateline> $phpDate 时间戳
+     * @return <string> 返回时间
+     */
+    public static function php2JsTime( $phpDate ) {
+        return "/Date(" . $phpDate . "000" . ")/";
+    }
+
+    /**
+     * 转化时间格式为时间戳
+     * @param <string> $jsdate 时间
+     * @return <int> 返回时间戳
+     */
+    public static function js2PhpTime( $jsdate ) {
+        $ret = strtotime( $jsdate );
+        return $ret;
+    }
+
+    /**
+     * 取得日期和星期几的数组
+     * @param string $dateStr 
+     * @return array
+     */
+    public static function getDateAndWeekDay( $dateStr ) {
+        list($year, $month, $day) = explode( '-', $dateStr );
+        $weekArray = array(
+            IBOS::lang( 'Day', 'date' ),
+            IBOS::lang( 'One', 'date' ),
+            IBOS::lang( 'Two', 'date' ),
+            IBOS::lang( 'Three', 'date' ),
+            IBOS::lang( 'Four', 'date' ),
+            IBOS::lang( 'Five', 'date' ),
+            IBOS::lang( 'Six', 'date' )
+        );
+        $weekday = $weekArray[date( "w", strtotime( $dateStr ) )];
+        return array( 'year' => $year,
+            'month' => $month,
+            'day' => $day,
+            'weekday' => IBOS::lang( 'Weekday', 'date' ) . $weekday
+        );
+    }
+
+    /**
+     * 将星期几的数字转换成中文数字
+     * @param string $digitalStr 数字（1-7）逗号隔开的字符串
+     * @return string 返回中文的星期几
+     */
+    public static function digitalToDay( $digitalStr ) {
+        $digitalArr = explode( ',', $digitalStr );
+        $dayArr = array(
+            1 => IBOS::lang( 'One', 'date' ),
+            2 => IBOS::lang( 'Two', 'date' ),
+            3 => IBOS::lang( 'Three', 'date' ),
+            4 => IBOS::lang( 'Four', 'date' ),
+            5 => IBOS::lang( 'Five', 'date' ),
+            6 => IBOS::lang( 'Six', 'date' ),
+            7 => IBOS::lang( 'day' )
+        );
+        $recurringtime = '';
+        foreach ( $digitalArr as $digital ) {
+            $recurringtime .= $dayArr[$digital] . ',';
+        }
+        return rtrim( $recurringtime, ',' );
+    }
+
+    /**
+     * 连接条件语句
+     * @param string $condition1 条件1
+     * @param string $condition2 条件2
+     * @return string
+     */
+    public static function joinCondition( $condition1, $condition2 ) {
+        if ( empty( $condition1 ) ) {
+            return $condition2;
+        } else {
+            return $condition1 . ' AND ' . $condition2;
+        }
+    }
+
+    /**
+     * 获取后台设置是否允许给下属添加日程
+     * @return boolean
+     */
+    public static function getIsAllowAdd() {
+        return IBOS::app()->setting->get( 'setting/calendaraddschedule' );
+    }
+
+    /**
+     * 获取后台设置是否允许修改下属日程
+     * @return boolean
+     */
+    public static function getIsAllowEdit() {
+        return IBOS::app()->setting->get( 'setting/calendareditschedule' );
+    }
+
+    /**
+     * 获取后台设置是否允许修改下属任务
+     * @return boolean
+     */
+    public static function getIsAllowEidtTask() {
+        return IBOS::app()->setting->get( 'setting/calendaredittask' );
+    }
+
+    /**
+     * 获取用户设置的日程开始时间
+     * @param integer $uid 用户id
+     * @return string
+     */
+    public static function getSetupStartTime( $uid ) {
+        $workTime = CalendarSetup::model()->getWorkTimeByUid( $uid );
+        return $workTime['startTime'];
+    }
+
+    /**
+     * 获取用户设置的日程结束时间
+     * @param integer $uid 用户id
+     * @return string
+     */
+    public static function getSetupEndTime( $uid ) {
+        $workTime = CalendarSetup::model()->getWorkTimeByUid( $uid );
+        return $workTime['endTime'];
+    }
+
+    /**
+     * 获取用户设置的隐藏日期数组
+     * @param integer $uid 用户id
+     * @return string
+     */
+    public static function getSetupHiddenDays( $uid ) {
+        $hiddenDays = CalendarSetup::model()->getHiddenDaysByUid( $uid );
+        return implode( ',', $hiddenDays );
+    }
+
+}

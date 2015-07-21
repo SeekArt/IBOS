@@ -1,0 +1,108 @@
+.checkbox,
+.radio {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 24px;
+}
+.control-group > .radio-inline,
+.control-group > .checkbox-inline {
+  margin-bottom: 0;
+}
+.controls > .radio-inline:first-child,
+.controls > .checkbox-inline:first-child,
+.radio-inline + .radio-inline,
+.checkbox-inline + .checkbox-inline {
+  margin-top: 0;
+}
+.checkbox .icon,
+.checkbox .icon-to-fade,
+.radio .icon,
+.radio .icon-to-fade {
+  -webkit-transition: opacity 0.1s linear;
+  -moz-transition: opacity 0.1s linear;
+  -o-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: url("../image/component.png") -50px -130px no-repeat;
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 0;
+  opacity: 1;
+  /*top: -1px;*/
+}
+.checkbox .icon,
+.radio .icon {
+  display: none\9;
+  opacity: 0;
+  z-index: 2;
+}
+.radio .icon,
+.radio .icon-to-fade {
+  background-position: -50px -90px;
+}
+.checkbox:hover,
+.radio:hover,
+.checkbox.has-focus,
+.radio.has-focus {
+  color: #3497db;
+}
+.checkbox:hover .icon-to-fade,
+.checkbox.has-focus .icon-to-fade {
+  background-position: -130px -130px;
+}
+.radio:hover .icon-to-fade,
+.radio.has-focus .icon-to-fade {
+  background-position: -130px -90px;
+}
+.checkbox input,
+.radio input {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  outline: none !important;
+  zoom: 1;
+}
+.checkbox.checked .icon {
+  background-position: -90px -130px;
+}
+.radio.checked .icon {
+  background-position: -90px -90px;
+}
+.checkbox.disabled,
+.radio.disabled {
+  color: #d7dddd;
+  cursor: default;
+}
+.checkbox.checked .icon-to-fade,
+.radio.checked .icon-to-fade,
+.checkbox.disabled .icon,
+.radio.disabled .icon,
+.checkbox.disabled.checked .icon-to-fade,
+.radio.disabled.checked .icon-to-fade {
+  display: none\9;
+  opacity: 0;
+}
+.checkbox.checked .icon,
+.radio.checked .icon,
+.checkbox.disabled .icon-to-fade,
+.radio.disabled .icon-to-fade,
+.checkbox.disabled.checked .icon,
+.radio.disabled.checked .icon {
+  display: block\9;
+  opacity: 1;
+}
+.checkbox.disabled .icon-to-fade {
+  background-position: -10px -130px;
+}
+.radio.disabled .icon-to-fade {
+  background-position: -10px -90px;
+}
+.checkbox.disabled.checked .icon {
+  background-position: -170px -130px;
+}
+.radio.disabled.checked .icon {
+  background-position: -170px -90px;
+}

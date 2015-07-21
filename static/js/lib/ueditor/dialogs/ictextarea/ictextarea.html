@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.span6 { width: 50%; float: left; }
+			.xcr { color: #E26F50; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_textarea_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_textarea_title">
+				</div>
+				<div class="control-group">
+					<label for="control_textarea_width"><var id="lang_control_style"></var></label>
+					<div class="row">
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_textarea_width">
+								<span class="input-group-addon"><var id="lang_control_width"></var></span>
+							</div>
+						</div>
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_textarea_rows">
+								<span class="input-group-addon"><var id="lang_control_row"></var></span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_textarea_value"><var id="lang_control_value"></var></label>
+					<textarea id="control_textarea_value" rows="5"></textarea>
+				</div>
+				<div class="control-group">
+					<label for="control_textarea_editor" class="checkbox">
+						<input type="checkbox" id="control_textarea_editor">
+						<var id="lang_enable_editor"></var>
+					</label>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="textarea" data-title="<%=title%>" data-value="<%=value%>" data-width="<%=width%>" data-rows="<%=rows%>" data-rich="<%=rich%>" contenteditable="false" >' +
+						'<textarea name="data_<%=id%>" title="<%=title%>" rows="<%=rows%>" style="width:<%=width%>px" disabled="true"><%=value%></textarea></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_textarea_title').value = oldData.title,
+					$G('control_textarea_value').value = oldData.value || "",
+					$G('control_textarea_width').value = oldData.width,
+					$G('control_textarea_rows').value = oldData.rows,
+					$G('control_textarea_editor').checked = oldData.rich == "1" ? true : false;
+				}
+				dialog.onok = function() {
+					var data,title = $G('control_textarea_title').value;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					data = {
+						title: title,
+						value: $G('control_textarea_value').value,
+						width: Number($G('control_textarea_width').value) || 200,
+						rows: Number($G('control_textarea_rows').value) || 5,
+						rich: $G('control_textarea_editor').checked ? 1 : 0
+					};
+					// 编辑
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+			})();
+		</script>
+	</body>
+</html>

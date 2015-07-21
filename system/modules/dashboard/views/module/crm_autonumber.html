@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CRM系统</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">CRM系统</h1>
+			<ul class="mn">
+				<li>
+					<a href="crm_check_repeat.html">检查重复</a>
+				</li>
+				<li>
+					<span>自动编号</span>
+				</li>
+				<li>
+					<a href="crm_recycle.html">回收站</a>
+				</li>
+				<li>
+					<a href="crm_product.html">产品</a>
+				</li>
+				<li>
+					<a href="crm_express_template.html">快递模板</a>
+				</li>
+				<li>
+					<a href="crm_sms_template.html">短信模板</a>
+				</li>
+				<li>
+					<a href="crm_email_template.html">邮件模板</a>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<!-- 自动编号 start -->
+			<div class="ctb">
+				<h2 class="st">自动编号</h2>
+				<div>
+					<table class="table table-bordered table-striped table-operate">
+						<thead>
+							<tr>
+								<th>规则名称</th>
+								<th>格式</th>
+								<th>下一个编号</th>
+								<th width="100">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									客户编码规则
+								</td>
+								<td>ACC - {YYYY} - {MM} - {DD} - {0000}</td>
+								<td>438</td>
+								<td>
+									<div class="controls">
+										<input type="checkbox" name="" id="" data-toggle="switch" class="visi-hidden">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									联系人编码规则
+								</td>
+								<td>ACC - {YYYY} - {MM} - {DD} - {0000}</td>
+								<td>999</td>
+								<td>
+									<div class="controls">
+										<input type="checkbox" name="" id="" data-toggle="switch" class="visi-hidden">
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<button type="submit" class="btn btn-primary btn-large btn-submit">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../../../../static/js/base.js"></script>
+	<script src="../../../../../static/js/extra.js"></script>
+</body>
+</html>

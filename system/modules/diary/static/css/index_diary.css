@@ -1,0 +1,104 @@
+/**
+ * Style for index diary widget
+ */
+
+/* Diary */
+.o-da-personal,
+.o-da-appraise{
+	background: url(../image/diary.png) no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.o-da-personal{}
+.active .o-da-personal{ background-position: -20px 0; }
+.o-da-appraise{ background-position: -40px 0; } /* 评阅 */
+.active .o-da-appraise{ background-position: -60px 0; }
+
+.in-diary-left{
+	float: left;;
+	width: 320px;
+}
+.in-dcal{ padding: 5px 20px; }
+.in-dcal-table th,
+.in-dcal-table td{
+	padding: 6px;
+}
+.in-dcal-table th span,
+.in-dcal-table td a{
+	display: block;
+	width: 28px;
+	height: 28px;
+	line-height: 28px;
+	text-align: center;
+	font-size: 12px;
+}
+.in-dcal-table th { border-bottom: 1px solid #EBEFF6; }
+.in-dcal-table th span{ font-weight: 400; }
+.in-dcal-table td a{
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	font-weight: 700;
+}
+.in-dcal-table td a:hover{ background-color: #EBEFF6; }
+.in-dcal-table td .prev,
+.in-dcal-table td .next{
+	color: #B2C0D1;
+}
+.in-dcal-table td .has{ color: #3497DB; }
+.in-dcal-table td .today,
+.in-dcal-table td .today:hover{ 
+	color: #EE8C0C;
+	background-color: #FDF0DE; 
+}
+.in-dcal-table td .comment{  background: url(../image/diary.png) no-repeat -80px -20px; }
+.in-diary-right{
+	position: relative;
+	margin-left: 280px;
+	height: 300px;
+	overflow: hidden;
+	background: #F9FBFF;
+	border-left: 1px solid #EBEFF6;
+}
+.in-diary-stamp{
+	position: absolute;
+	top: 120px;
+	left: 15px;
+}
+.in-diary-tray{	margin: 20px 18px 0; }
+.in-diary-tray .date{
+	font-size: 48px;
+	line-height: 56px;
+}
+.in-diary .mbox-base{ width: 320px; }
+.o-diary-clock{ 
+	display: inline-block; 
+	vertical-align: middle; 
+	width: 20px; 
+	height: 20px; 
+	background: url(../image/da_pre.png) no-repeat;
+}
+
+
+.in-diary-appraise-empty{
+    width: 320px;
+    height: 298px;
+    background: url(../image/empty_diary_personal.png) no-repeat center 40px;
+}
+.da-bell{
+	position: absolute;
+	top: 137px;
+	left: 127px;
+}
+.da-bell i{
+	display: block;
+	width: 60px;
+	height: 60px;
+	margin: 1px;
+}
+.o-da-bell{	background: url(../image/da_remind.png) no-repeat; }
+.o-da-bell:hover{ background: url(../image/da_remind.gif) no-repeat; }
+.o-da-reminded{ background: url(../image/da_bg_reminded.png) no-repeat  center 40px; }

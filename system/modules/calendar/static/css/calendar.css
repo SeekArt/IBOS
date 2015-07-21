@@ -1,0 +1,400 @@
+/**
+ * calendar.css
+ * 日程安排样式
+ * @module Calendar
+ * @type Layout
+ * @version $Id$
+ * @modified 2013-07-18
+ * @author Inaki
+ */
+ .o-cal-personal,
+ .o-cal-underling,
+ .o-cal-calendar,
+ .o-cal-todo,
+ .o-cal-affairs,
+ .o-cal-edit,
+
+ .o-todo-drag,
+ .o-todo-complete,
+ .o-todo-uncomplete,
+ .o-todo-mark,
+ .o-todo-unmark,
+ .o-cld-list{
+ 	background-image: url(../image/calendar.png);
+ 	background-repeat: no-repeat;
+ }
+ .o-cal-allsub {
+	background-image: url(../image/cal_allsub.png);
+}
+
+ .o-cal-allsub,
+ .o-cal-personal,
+ .o-cal-underling,
+ .o-cal-calendar,
+ .o-cal-todo,
+ .o-cal-affairs,
+ .o-cal-edit{
+ 	display: inline-block;
+ 	width: 20px;
+ 	height: 20px;
+ 	vertical-align: middle;
+ }
+
+ .o-cld-list{
+ 	display: inline-block;
+ 	width: 16px;
+ 	height: 16px;
+ 	vertical-align: middle;
+ }
+.o-cld-list{ background-position: 0 -60px; }
+
+ .active .o-cal-personal{ background-position: -20px 0; }
+ .o-cal-underling{ background-position: -40px 0; }
+ .active .o-cal-underling{ background-position: -60px 0; }
+
+ .o-cal-calendar{ background-position: -80px 0; }
+ .aside-list .active .o-cal-calendar,
+ .aside-list li:hover .o-cal-calendar{ background-position: -100px 0; }
+
+ .o-cal-todo{ background-position: -140px 0; }
+ .aside-list .active .o-cal-todo,
+ .aside-list li:hover .o-cal-todo{ background-position: -160px 0; }
+
+ .o-cal-affairs{ background-position: -200px 0; }
+ .aside-list .active .o-cal-affairs,
+ .aside-list li:hover .o-cal-affairs{ background-position: -220px 0; }
+
+
+/* 日程管理器 */
+.cal-view-type .btn{
+	width: 40px;
+	height: 40px;
+	padding: 0
+}
+.cal-list-header{
+	line-height: 40px;
+	text-align: center;
+}
+.cal-list-header .o-prev{ margin-right: 10px;}
+.cal-list-header .o-next{ margin-left: 10px; }
+
+.cal-list-table td{
+	padding-top: 0;
+	padding-bottom: 0;
+	height: 50px;
+	vertical-align: middle;
+}
+.cal-list-table tbody + tbody{
+	border-top-width: 1px;
+	border-color: #E4EDF2;
+}
+.cal-list-table td:first-child{ padding-left: 0; }
+.cal-list-table .cal-shadeguide{
+	padding: 0;
+	width: 5px;
+}
+.cal-list-table .mini-date{ display: none; }
+.cal-list-table .cal-list-first .mini-date{ display: block; }
+
+.cal-list-table .o-trash,
+.cal-list-table .o-edit,
+.cal-list-table .o-ok{
+	display: none;
+}
+.cal-list-table tr:hover .o-trash,
+.cal-list-table tr:hover .o-edit,
+.cal-list-table tr:hover .o-ok{
+	display: inline-block;
+}
+
+.cal-list-complete .cal-item-title{
+	text-decoration: line-through;
+	color: #B2C0D1;
+}
+
+
+/* Todo List */
+.todo-list{ position: relative; }
+.todo-header{
+	padding: 10px 20px;
+	border-bottom: 1px solid #E4EDF2;
+}
+.todo-item{
+	padding: 10px;
+	border-bottom: 1px solid #E4EDF2;
+	background-color: #FFF;
+}
+.todo-item:after{
+	content: " ";
+	display: block;
+	clear: both;
+	overflow: hidden;
+	height: 0;
+}
+.todo-item-left,
+.todo-item-right{
+	height: 40px;
+	line-height: 40px;
+}
+
+.todo-item-left{ float: left; width: 90px; }
+.todo-item-center{
+	float: left;
+	width: 450px;
+}
+
+.todo-item-content{
+	padding: 10px 0;
+	color: #58585C;
+	word-break: break-all;
+	outline: 0 none;
+}
+.todo-complete .todo-item-content{
+	text-decoration: line-through;
+	color: #82939E;
+}
+.todo-complete .todo-item-content:focus{
+	text-decoration: none;
+}
+
+.todo-item-right{
+	float: right;
+	width: 200px;
+	text-align: right;
+}
+
+/*.todo-edit{
+	border-left: 5px solid #99CBED;
+}
+.todo-edit .todo-item{
+	padding-left: 5px;
+}*/
+.todo-sub-item .todo-item-left{ visibility: hidden; }
+.todo-sub-item .todo-item-content{
+	margin-left: 40px;
+	width: 560px;
+}
+.todo-sub-item .todo-item-right{ width: 40px; }
+
+.todo-helper{
+	-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+	-moz-box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+	box-shadow: 0 0 2px rgba(0, 0, 0, .2);
+}
+.todo-helper .todo-sub-item,
+.todo-helper .todo-add{
+	display: none;
+}
+
+.o-todo-drag,
+.o-todo-complete,
+.o-todo-uncomplete,
+.o-todo-mark,
+.o-todo-unmark{
+	display: inline-block;
+	width: 20px;
+	vertical-align: middle;
+}
+
+.o-todo-drag{ 
+	visibility: hidden; 
+	background-position: 0 -20px;
+	height: 40px;
+	cursor: move;
+}
+.todo-item:hover .o-todo-drag,
+.todo-item.introing .o-todo-drag,
+.todo-focus .o-todo-drag{ visibility: visible; }
+.todo-disabled .todo-item:hover .o-todo-drag,
+.todo-disabled .todo-focus .o-todo-drag{ visibility: hidden; }
+
+.o-todo-uncomplete,
+.o-todo-complete,
+.o-todo-unmark,
+.o-todo-mark{
+	margin-left: 5px;
+	height: 20px;
+}
+
+.o-todo-uncomplete{ background-position: -20px -20px; visibility: hidden;}
+.todo-item:hover .o-todo-uncomplete{ visibility: visible;}
+.todo-disabled .todo-item:hover .o-todo-uncomplete{ visibility: hidden;}
+
+.o-todo-complete{ background-position: -20px -40px;}
+.o-todo-unmark{ background-position: -40px -20px;}
+.o-todo-mark{ background-position: -40px -40px;}
+
+.todo-sub-item .o-todo-complete,
+.todo-sub-item .o-todo-uncomplete{
+	margin-top: 10px;
+	margin-left: 0;
+}
+
+.todo-operate{
+	display: none;
+}
+.todo-item:hover .todo-operate,
+.todo-item.introing .todo-operate,
+.todo-focus .todo-operate{
+	display: block;
+}
+.todo-disabled .todo-item:hover .todo-operate,
+.todo-disabled .todo-focus .todo-operate{
+	display: none;
+}
+
+.todo-item .todo-date{
+	border-color: transparent;
+	background-color: transparent;
+	width: 100px;
+	color: #82939E;
+}
+.todo-item:hover .todo-date,
+.todo-item.introing .todo-date,
+.todo-focus .todo-date{
+	display: none;
+}
+.todo-disabled .todo-item:hover .todo-date,
+.todo-disabled .todo-focus .todo-date{
+	display: inline-block;
+}
+
+/* 周期性事务 */
+.cal-theme-square{
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	vertical-align: middle;
+}
+
+.cal-underling-list li .o-cal-todo,
+.cal-underling-list li .o-cal-calendar{
+	display: none;
+	margin-top: 5px;
+}
+
+.cal-underling-list .sub:hover .o-cal-todo,
+.cal-underling-list .sub.introing .o-cal-todo,
+.cal-underling-list .sub.introing .o-cal-calendar,
+.cal-underling-list .sub:hover .o-cal-calendar{
+	display: inline-block;
+}
+.cal-underling-list li .o-cal-calendar:hover { background-position: -120px 0 }
+.cal-underling-list li .o-cal-todo:hover { background-position: -180px 0 }
+
+
+.cal-dl{ width: 370px; font-family: Arial, Tahoma, Microsoft Yahei; }
+.cal-dl-colorpicker{
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	display: inline-block;
+	margin-right: 5px;
+	width: 20px;
+	height: 20px;
+	background-color: #3497DB;
+	vertical-align: middle; 
+}
+.cal-dl-content-body{ padding: 10px; border-left: 5px solid #3497DB; cursor: pointer; }
+.cal-dl-content-body:hover{ background-color: #FEFAF5; }
+.cal-dl-finish,
+.fc-event-finish .fc-event-title{
+	text-decoration: line-through;
+}
+.cal-info-menu{
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+	box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	padding: 10px 15px;
+	width: 248px;
+	background: #FFF;
+	border: 1px solid #DADCE6;
+}
+.cal-info-menu p{ margin: 5px 0; font-size: 12px; }
+
+/* 日程列表 */
+.calendar-list li{ 
+	border-bottom: 1px #e4edf2 solid;
+	list-style: none; 
+}
+.cal-show-more{
+	color: #3497db;
+}
+.color-info{
+	width: 5px;
+	height: 100%;
+}
+.table{
+	margin-bottom: 0;
+}
+.cal-table td:first-child{
+	padding: 0!important;
+}
+.cal-table td:last-child{
+	padding-right: 10px;
+}
+.cal-table .o-trash,
+.cal-table .o-ok{
+	display: none;
+}
+.cal-table tr:hover .o-trash,
+.cal-table tr:hover .o-ok{
+	display: inline-block;
+}
+.cal-day-time{
+	margin-top: 10px;
+	font-family: "Arial";
+	font-size: 30px;
+	font-weight: 700;
+	color: #8c9ca5;
+}
+.cld-list-btn{
+	padding: 9px 10px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left: 0;
+}
+.fc-button.fc-button-month{
+	border-top-right-radius: 0!important;
+	border-bottom-right-radius: 0!important;
+}
+.cal-table td{
+	padding: 0 10px !important;
+	vertical-align: middle !important;
+	height: 60px;
+}
+.same-day{
+	margin-top: -1px;
+}
+.calendar-list-wrap{
+	border-top: 2px solid #3497DB;
+}
+.cal-table .o-finish{
+	display: none;
+	width: 30px;
+	height: 30px;
+	background-image: url(../image/calendar.png);
+	background-repeat: no-repeat;
+	background-position: -61px -23px;
+	vertical-align: middle;
+}
+.cal-table tr:hover .o-finish{
+	display: inline-block;
+}
+.cal-finish{
+	text-decoration: line-through;
+	color: #82939e;
+}
+.diff-day .cal-date{
+	display: block;
+}
+.same-day .cal-date{
+	display: none;
+}
+.time-switch{
+	padding: 10px 20px;
+	border-top: 1px #e4edf2 solid;
+}

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CRM系统</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<link rel="stylesheet" href="../../../../../../static/js/zTree/css/zTreeStyle/zTreeStyle.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">CRM系统</h1>
+			<ul class="mn">
+				<li>
+					<a href="crm_check_repeat.html">检查重复</a>
+				</li>
+				<li>
+					<a href="crm_autonumber.html">自动编号</a>
+				</li>
+				<li>
+					<a href="crm_recycle.html">回收站</a>
+				</li>
+				<li>
+					<span>产品</span>
+				</li>
+				<li>
+					<a href="crm_express_template.html">快递模板</a>
+				</li>
+				<li>
+					<a href="crm_sms_template.html">短信模板</a>
+				</li>
+				<li>
+					<a href="crm_email_template.html">邮件模板</a>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<!-- 自动编号 start -->
+			<div class="ctb">
+				<h2 class="st">自动编号</h2>
+				<div>
+					<div class="page-list">
+						<div class="page-list-sidebar">
+							<div class="search search-enter">
+								<input type="search" placeholder="Search">
+								<a href="">search</a>
+							</div>
+							<div>
+								<ul id="product_tree" class="ztree">树目录</ul>
+							</div>
+						</div>
+						<div class="page-list-container">
+							<div class="page-list-header">
+								<div class="row">
+									<div class="span8">
+										<button type="button" class="btn btn-primary">添加</button>
+										<button type="button" class="btn">彻底删除</button>
+										<button type="button" class="btn">还原</button>
+									</div>
+								</div>
+							</div>
+							<div class="page-list-mainer">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th width="30">
+												<label class="checkbox" for="checkbox_0"><span class="icon"></span><span class="icon-to-fade"></span>
+													<input type="checkbox" value="" data-name="w" id="checkbox_0">
+												</label>
+											</th>
+											<th>名称</th>
+											<th>删除者</th>
+											<th>删除时间</th>
+											<th>所属用户</th>
+											<th>所属部门</th>
+											<th>实体ID</th>
+											<th>主删除实体</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+												<label class="checkbox" for="checkbox_1"><span class="icon"></span><span class="icon-to-fade"></span>
+													<input type="checkbox" value="" id="checkbox_1" name="w">
+												</label>
+											</td>
+											<td>最终决策</td>
+											<td>LPlight</td>
+											<td>2012-12-21 19:21</td>
+											<td>林炳光</td>
+											<td>博思协创项目组</td>
+											<td>018-050df</td>
+											<td>018-050df</td>
+										</tr>
+										<tr>
+											<td>
+												<label class="checkbox" for="checkbox_1"><span class="icon"></span><span class="icon-to-fade"></span>
+													<input type="checkbox" value="" id="checkbox_1" name="w">
+												</label>
+											</td>
+											<td>方案沟通</td>
+											<td>LPlight</td>
+											<td>2012-12-21 19:21</td>
+											<td>林炳光</td>
+											<td>博思协创项目组</td>
+											<td>018-23d8f</td>
+											<td>018-23d8f</td>
+										</tr>
+										<tr>
+											<td>
+												<label class="checkbox" for="checkbox_1"><span class="icon"></span><span class="icon-to-fade"></span>
+													<input type="checkbox" value="" id="checkbox_1" name="w">
+												</label>
+											</td>
+											<td>最终决策</td>
+											<td>LPlight</td>
+											<td>2012-12-21 19:21</td>
+											<td>林炳光</td>
+											<td>博思协创项目组</td>
+											<td>018-36ek8</td>
+											<td>018-36ek8</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="page-list-footer">
+								<div>
+									<ul class="pagination">
+										<li class="active"><a href="#">1</a></li>
+										<li><a href="#">2</a></li>
+										<li><a href="#">3</a></li>
+										<li><a href="#">4</a></li>
+										<li><a href="#">5</a></li>
+										<li><a href="#">6</a></li>
+										<li><a href="#">7</a></li>
+										<li><a href="#">8</a></li>
+										<li><a href="#">9</a></li>
+										<li><a href="#">10</a></li>
+									</ul>
+									<div class="pagination-controll">
+										<div class="input-group">
+											<input type="text" class="input-small">
+											<a class="input-group-addon input-small">
+												<i class="glyphicon-share-alt"></i>
+											</a>
+										</div>
+										<span>/21页</span>
+									</div>
+									<ul class="pager">
+										<li>
+											<a href=""><i class="glyphicon-chevron-left"></i></a>
+										</li>
+										<li>
+											<a href=""><i class="glyphicon-chevron-right"></i></a>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../../../../static/js/base.js"></script>
+	<script src="../../../../../../static/js/zTree/jquery.ztree.core-3.5.min.js"></script>
+	<script src="../../../../../static/js/extra.js"></script>
+	<script>
+	(function(window, $){
+		var node = [
+			{id: 1, pId: 0, name: "武器", open: true},
+			{id: 11, pId: 1, name: "单手剑", open: true},
+			{id: 111, pId: 11, name: "亡灵杀手"},
+			{id: 112, pId: 11, name: "沉默的十字军"},
+			{id: 113, pId: 11, name: "雪亮的奎尔塞拉"},
+			{id: 114, pId: 11, name: "艾萨拉之爪"},
+			{id: 12, pId: 1, name: "双手剑", open: true},
+			{id: 121, pId: 12, name: "奥伯莱恩，裂魂之剑"},
+			{id: 122, pId: 12, name: "遗忘预言巨剑"},
+			{id: 123, pId: 12, name: "堕落的灰烬使者"}
+		];
+		var settings = {
+			data: {
+				simpleData: {
+					enable:true,
+					idKey: "id",
+					pIdKey: "pId",
+					rootPId: ""
+				}
+			}
+		}
+		var productTree = $("#product_tree");
+		 $.fn.zTree.init(productTree, settings, node);
+
+	})(window, window.jQuery);
+	</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+.search,
+.search > a {
+  background-image: url('../image/component.png');
+  background-repeat: no-repeat;
+}
+.search {
+  position: relative;
+  background-color: #fff;
+  border-radius: 20px;
+}
+.search > input[type="search"],
+.search > input[type="text"] {
+  padding-left: 40px;
+  padding-right: 40px;
+  border-radius: 20px;
+  background: transparent;
+}
+.search > a {
+  border-radius: 15px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 30px;
+  height: 30px;
+  text-indent: -9999px;
+  background-position: -125px -45px;
+  display: none;
+}
+.search-config a {
+  background-position: -5px -45px;
+  display: block;
+}
+.search-config a:hover,
+.search-config-hover a {
+  background-position: -45px -45px;
+}
+.search.has-focus a,
+.search.has-focus a:hover,
+.search.has-focus a:focus {
+  background-position: -125px -45px;
+  display: block;
+}

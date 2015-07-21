@@ -1,0 +1,67 @@
+/**
+ * Style for index article widget
+ */
+.o-art-normal,
+.o-art-normal-gray,
+.o-art-pic,
+.o-art-pic-gray,
+.o-art-vote,
+.o-art-vote-gray{
+	width: 40px;
+	height: 40px;
+	display: inline-block;
+	background: url(../image/article.png) no-repeat;
+}
+
+.o-art-normal{ background-position: -80px -40px; }
+.o-art-normal-gray{ background-position: -120px -40px; }
+.o-art-pic{ background-position: -160px -40px; }
+.o-art-pic-gray{ background-position: -200px -40px; }
+.o-art-vote{ background-position: -240px -40px; }
+.o-art-vote-gray{ background-position: -280px -40px; }
+
+
+.table-underline tr td{
+	border-bottom: 1px solid #EBEFF6;
+	padding-bottom: 9px;
+}
+.in-article .table .active td{
+	background-color: #F9FBFF;
+}
+.in-article .table .vat{ vertical-align: top; }
+
+.in-article .title{
+	display: block;
+	width: 320px; 
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.in-article .content{ 
+	display: none;
+	height: 50px;
+	line-height: 24px;
+	font-size: 12px;
+	text-indent: 2em;
+	overflow: hidden;
+}
+.in-article .active .title{
+	margin: 10px 0;
+	font-weight: 700;
+	color: #3497DB;
+	font-size: 16px;
+}
+.in-article .active:hover .title{
+	text-decoration: underline;
+}
+.in-article .active .content{ display: block; }
+.in-article .active:hover .content a{
+	color: #3497DB
+}
+
+
+.in-art-empty{
+	width: 488px;
+	height: 300px;
+	background: url(../image/empty_news.png) no-repeat center center; 
+}

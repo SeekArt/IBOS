@@ -1,0 +1,277 @@
+/**
+ * login.css
+ * 个人中心样式
+ * @module User
+ * @type Layout
+ * @version $Id$
+ * @modified 2013-08-23
+ * @author Inaki
+ */
+html{ overflow: hidden;}
+body{ background: #B2C0D1; padding-top: 60px;}
+#bgwrap{
+	position: absolute;
+	top: 0;
+	overflow: hidden;
+}
+#bg{ display: none; }
+
+.logo{ width: 400px; }
+.logo h1{ 
+	/*margin: 0;*/
+	font-size: 24px;
+	color: #FFF;
+	display: inline;
+	vertical-align: bottom;
+	padding-left: 10px;
+	font-weight: 700;
+}
+
+.footer{
+	position: absolute;
+	bottom: 0;
+	z-index: 10;
+	margin: 0;
+	width: 100%;
+	background-color: rgba(0, 0, 0, .3);
+	border: 0 none;
+	background-color: #000\9;
+	filter: Alpha(opacity=50);
+}
+.copyright,
+.quick-link a{ color: #FFF; }
+
+.login-panel{
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	position: relative;
+	z-index: 10;
+	margin-top: 70px;
+	margin-right: 20px;
+	padding-top: 20px;
+	width: 300px;
+	min-height: 320px;
+	border: 1px solid #EEE;
+	background-color: #FFF;
+}
+.login-item { position: relative; margin-bottom: 30px; }
+.login-panel-footer{ min-height: 40px; _height: 40px; }
+
+input.input-large.lg-acc-input{ 
+	position: absolute;
+	width: 210px;
+	min-height: 0;
+	height: 50px;
+	background: #FFF;
+	z-index: 5;
+}
+
+.lg-sign,
+.o-lg-user,
+.o-lg-lock,
+.o-lg-help,
+.o-lg-info,
+.o-lg-select,
+.on-scan-opt{
+	background-image: url(../image/login.png);
+	background-repeat: no-repeat;
+}
+.o-lg-user,
+.o-lg-lock,
+.o-lg-help,
+.o-lg-info,
+.o-lg-select{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+}
+
+.has-focus .o-lg-user{ background-position: -20px 0; }
+.o-lg-lock{ background-position: -40px 0; }
+.has-focus .o-lg-lock{ background-position: -60px 0; }
+
+.o-lg-help{ 
+	position: absolute;
+	top: 17px;
+	right: 10px;
+	background-position: -80px 0; 
+}
+.o-lg-info{ background-position: -100px 0; }
+
+.o-lg-select{ background-position: -120px 0; }
+.operate-btn:hover .o-lg-select,
+.operate-btn:focus .o-lg-select{ background-position: -140px 0; }
+
+.on-scan-opt{
+	display: inline-block;
+	vertical-align: top;
+	width: 20px;
+	height: 20px;
+	background-position: -160px 0;
+}
+
+.o-dowmload-ip,
+.o-dowmload-ad,
+.o-dowmload-wp{
+	background-image: url(../image/index_download.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+.o-dowmload-ip,
+.o-dowmload-ad,
+.o-dowmload-wp{
+	width: 30px;
+	height: 30px;
+}
+.o-dowmload-ip{
+	background-position: 0 0;
+}
+.o-dowmload-ip:hover{
+	background-position: 0 -30px;
+}
+.o-dowmload-ad{
+	background-position: -30px 0;
+}
+.o-dowmload-ad:hover{
+	background-position: -30px -30px;
+}
+.o-dowmload-wp{
+	background-position: -60px 0;
+}
+.o-dowmload-wp:hover{
+	background-position: -60px -30px;
+}
+
+.download-type-list li:hover .download-doim-hover{
+	display: block;
+}
+
+.o-type-wx,
+.o-type-ibosco{
+	background-image: url(../image/login_type_icon.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+	width: 60px;
+	height: 60px;
+}
+.o-type-wx{
+	background-position: 0 0;
+}
+.o-type-ibosco{
+	background-position: -60px 0;
+}
+
+
+.lg-sign{
+	width: 200px;
+	height: 60px;
+	background-position: 0 -25px;
+}
+
+.lg-anc-title{ margin: 0; font-size: 14px; font-weight: 700; }
+.lg-anc-content{ height: 40px; overflow: hidden; }
+
+.input-group-error .input-acc-bg { border-color: #E26F50; }
+.input-group-correct .input-acc-bg { border-color: #7CB81C; }
+
+.download-tip-text{
+	margin-top: 5px;
+	display: inline-block;
+}
+.download-doim-hover{
+	position: absolute;
+	top: -161px;
+	left: -62px;
+	padding: 0px;
+	display: none;
+	width: 150px;
+	border: 1px #dfdfdf solid;
+	border-radius: 4px;
+	background-color: #fff;
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.175);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.175);
+}
+.download-doim-hover img{
+	width: 150px;
+	height: 150px;
+}
+.o-box-tip-pic{
+	position: absolute;
+	bottom: -8px;
+	left: 68px;
+	background: url(../image/box_tip_pic.png);
+	width: 16px;
+	height: 9px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.wx-login-content{
+	height: 325px;
+}
+.wx-login-content .tcode-image{
+	width: 200px;
+	height: 200px;
+}
+.wx-code-wrap{
+	padding-top: 20px;
+}
+.login-type-nav{
+	border-bottom: 1px solid #DADFE6;
+}
+.login-type-nav .nav-skid{
+	margin-left: 16px;
+	border-bottom: 0;
+}
+.login-type-nav .nav-skid a{
+	padding: 0 9px 10px 9px;
+	font-size: 16px;
+}
+.login-type-nav .nav-skid>.active>a, 
+.login-type-nav .nav-skid>li:hover>a{
+	padding-bottom: 10px;
+}
+.attend-wx-wrap{
+	background-color: #fcf8e3;
+}
+.scan-link,
+.scan-link:hover{
+	text-decoration: underline;
+}
+.scan-tip{
+	color: #c09853;
+}
+.wx-login-title{
+	padding: 20px;
+	text-align: center;
+	border-bottom: 1px #ebeff6 solid;
+}
+.other-type-list{
+	margin: 0;
+}
+.other-type-list li a{
+	display: block;
+	padding: 20px;
+	width: 260px;
+	border-bottom: 1px #ebeff6 solid;
+}
+.other-type-list li a:hover{
+	background-color: #fefaf5;
+}
+.other-type-list li:last-child a{
+	border-bottom: 0;
+}
+.other-type-list li .type-desc{
+	display: inline-block;
+	margin-left: 15px;
+	padding-top: 10px;
+}
+.other-login-content{
+	min-height: 240px;
+}
+
+#login_qrcode{ margin: 0 auto; padding: 20px; width: 160px; height: 160px; }

@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root>
+	<item id="qq.com">
+		<item id="POP3NAME"><![CDATA[pop.qq.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.qq.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.qq.com]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[143]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[0]]></item>
+		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+	</item>
+	<item id="foxmail.com">
+		<item id="POP3NAME"><![CDATA[pop.qq.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.qq.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.qq.com]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[143]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[0]]></item>
+		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+	</item>
+	<item id="vip.qq.com">
+		<item id="POP3NAME"><![CDATA[pop.qq.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.qq.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.qq.com]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[143]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[0]]></item>
+		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+	</item>
+	<item id="163.com">
+		<item id="POP3NAME"><![CDATA[pop.163.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.163.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.163.com]]></item>
+		<item id="IMAPPORT"><![CDATA[143]]></item>
+		<item id="IMAPSSL"><![CDATA[0]]></item>
+		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="126.com">
+		<item id="POP3NAME"><![CDATA[pop3.126.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.126.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.126.com]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+	</item>
+	<item id="vip.163.com">
+		<item id="POP3NAME"><![CDATA[pop.vip.163.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.vip.163.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.vip.163.com]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="yeah.net">
+		<item id="POP3NAME"><![CDATA[pop.yeah.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.yeah.net]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.yeah.net]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="139.com">
+		<item id="POP3NAME"><![CDATA[pop.139.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.139.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.139.com]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="189.cn">
+		<item id="POP3NAME"><![CDATA[pop.189.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.189.cn]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.189.cn]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="gmail.com">
+		<item id="POP3NAME"><![CDATA[pop.gmail.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.gmail.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.gmail.com]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[993]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[1]]></item>
+		<item id="IMAPMoveToSentBox"><![CDATA[0]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+	</item>
+	<item id="sohu.com">
+		<item id="POP3NAME"><![CDATA[pop3.sohu.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.sohu.com]]></item>
+	</item>
+	<item id="sogou.com">
+		<item id="POP3NAME"><![CDATA[pop.sogou.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.sogou.com]]></item>
+	</item>
+	<item id="hotmail.com">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="outlook.com">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+	</item>
+	<item id="live.cn">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[0]]></item>
+	</item>
+	<item id="sina.com">
+		<item id="POP3NAME"><![CDATA[pop.sina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.sina.com]]></item>
+	</item>
+	<item id="vip.sina.com">
+		<item id="POP3NAME"><![CDATA[pop3.vip.sina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.vip.sina.com]]></item>
+	</item>
+	<item id="yahoo.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.cn]]></item>
+	</item>
+	<item id="wo.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.wo.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.wo.com.cn]]></item>
+	</item>
+	<item id="icloud.com">
+		<item id="SMTPNAME"><![CDATA[smtp.mail.me.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.mail.me.com]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[1]]></item>
+		<item id="IMAPPORT"><![CDATA[993]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="SMTPPORT"><![CDATA[587]]></item>
+	</item>
+	<item id="foxmail.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.foxmail.com.cn]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.foxmail.com.cn]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="263.sina.com">
+		<item id="POP3NAME"><![CDATA[pop3.263.sina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.263.sina.com]]></item>
+	</item>
+	<item id="my3ia.sina.com">
+		<item id="POP3NAME"><![CDATA[pop3.my3ia.sina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.my3ia.sina.com]]></item>
+	</item>
+	<item id="sina100.com">
+		<item id="POP3NAME"><![CDATA[pop3.sina100.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.sina100.com]]></item>
+	</item>
+	<item id="163.net">
+		<item id="POP3NAME"><![CDATA[pop.163.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.163.net]]></item>
+	</item>
+	<item id="fm365.com">
+		<item id="POP3NAME"><![CDATA[mail.fm365.com]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.fm365.com]]></item>
+	</item>
+	<item id="263.net">
+		<item id="POP3NAME"><![CDATA[263.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.263.net]]></item>
+	</item>
+	<item id="x263.net">
+		<item id="POP3NAME"><![CDATA[pop.x263.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.x263.net]]></item>
+	</item>
+	<item id="263.net.cn">
+		<item id="POP3NAME"><![CDATA[263.net.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[263.net.cn]]></item>
+	</item>
+	<item id="elong.com">
+		<item id="POP3NAME"><![CDATA[pop3.elong.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.elong.com]]></item>
+	</item>
+	<item id="chinaren.com">
+		<item id="POP3NAME"><![CDATA[pop.chinaren.com]]></item>
+	</item>
+	<item id="china.com">
+		<item id="POP3NAME"><![CDATA[pop.china.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.china.com]]></item>
+	</item>
+	<item id="cww.com">
+		<item id="POP3NAME"><![CDATA[pop.china.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.china.com]]></item>
+	</item>
+	<item id="eazier.com">
+		<item id="POP3NAME"><![CDATA[pop.easier.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.eazier.com]]></item>
+	</item>
+	<item id="vip.sohu.com">
+		<item id="POP3NAME"><![CDATA[pop3.vip.sohu.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.vip.sohu.com]]></item>
+	</item>
+	<item id="sohu.net">
+		<item id="POP3NAME"><![CDATA[pop3.sohu.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.sohu.net]]></item>
+	</item>
+	<item id="fd21.com">
+		<item id="POP3NAME"><![CDATA[pop.fd21.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.fd21.com]]></item>
+	</item>
+	<item id="online.sh.cn">
+		<item id="POP3NAME"><![CDATA[pop.citiz.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.citiz.net]]></item>
+	</item>
+	<item id="netease.com">
+		<item id="POP3NAME"><![CDATA[pop.netease.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.netease.com]]></item>
+	</item>
+	<item id="myrice.com">
+		<item id="POP3NAME"><![CDATA[pop.myrice.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.myrice.com]]></item>
+	</item>
+	<item id="wx88.net">
+		<item id="POP3NAME"><![CDATA[mail.wx88.net]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.wx88.net]]></item>
+	</item>
+	<item id="email.com.cn">
+		<item id="POP3NAME"><![CDATA[www.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[www.email.com.cn]]></item>
+	</item>
+	<item id="cn99.com">
+		<item id="POP3NAME"><![CDATA[pop.cn99.com]]></item>
+	</item>
+	<item id="tonghua.com.cn">
+		<item id="POP3NAME"><![CDATA[pop3.tonghua.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.tonghua.com.cn]]></item>
+	</item>
+	<item id="china1mail.com">
+		<item id="POP3NAME"><![CDATA[mail.china1mail.com]]></item>
+	</item>
+	<item id="371.net">
+		<item id="POP3NAME"><![CDATA[371.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.371.net]]></item>
+	</item>
+	<item id="kali.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.kali.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.kali.com.cn]]></item>
+	</item>
+	<item id="focus.com.cn">
+		<item id="POP3NAME"><![CDATA[pop3.focus.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.focus.com.cn]]></item>
+	</item>
+	<item id="8848.net">
+		<item id="POP3NAME"><![CDATA[pop.8848.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.8848.net]]></item>
+	</item>
+	<item id="ucs.com.tw">
+		<item id="POP3NAME"><![CDATA[210.66.17.1]]></item>
+	</item>
+	<item id="mailbox.com.cn">
+		<item id="POP3NAME"><![CDATA[email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[email.com.cn]]></item>
+	</item>
+	<item id="990.net">
+		<item id="POP3NAME"><![CDATA[pop.990.net]]></item>
+		<item id="SMTPNAME"><![CDATA[990.net]]></item>
+	</item>
+	<item id="88998.com">
+		<item id="POP3NAME"><![CDATA[202.100.222.86]]></item>
+		<item id="SMTPNAME"><![CDATA[202.100.222.86]]></item>
+	</item>
+	<item id="ctn.com.cn">
+		<item id="POP3NAME"><![CDATA[mail.ctn.com.cn]]></item>
+	</item>
+	<item id="2911.net">
+		<item id="POP3NAME"><![CDATA[pop.2911.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.2911.net]]></item>
+	</item>
+	<item id="soim.net">
+		<item id="POP3NAME"><![CDATA[freemail.soim.com]]></item>
+		<item id="SMTPNAME"><![CDATA[freemail.soim.com]]></item>
+	</item>
+	<item id="sh.soim.com">
+		<item id="POP3NAME"><![CDATA[sh.soim.com]]></item>
+	</item>
+	<item id="777.net.cn">
+		<item id="POP3NAME"><![CDATA[mail.777.net.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.777.net.cn]]></item>
+	</item>
+	<item id="telekbird.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.telekbird.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.telekbird.com.cn]]></item>
+	</item>
+	<item id="btamail.net.cn">
+		<item id="POP3NAME"><![CDATA[btamail.net.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[btamail.net.cn]]></item>
+	</item>
+	<item id="chinanew.com">
+		<item id="POP3NAME"><![CDATA[chinanew.com]]></item>
+	</item>
+	<item id="gzyp21.net">
+		<item id="POP3NAME"><![CDATA[gzyp21.net]]></item>
+		<item id="SMTPNAME"><![CDATA[gzyp21.net]]></item>
+	</item>
+	<item id="freemail.online.tj.cn">
+		<item id="POP3NAME"><![CDATA[freemail.online.tj.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[freemail.online.tj.cn]]></item>
+	</item>
+	<item id="363.net">
+		<item id="POP3NAME"><![CDATA[363.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.363.net]]></item>
+	</item>
+	<item id="w4f.com">
+		<item id="POP3NAME"><![CDATA[pop.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.email.com.cn]]></item>
+	</item>
+	<item id="dl163.com">
+		<item id="POP3NAME"><![CDATA[www.dl163.com]]></item>
+		<item id="SMTPNAME"><![CDATA[www.dl163.com]]></item>
+	</item>
+	<item id="chinaxian.com">
+		<item id="POP3NAME"><![CDATA[www.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[www.email.com.cn]]></item>
+	</item>
+	<item id="2888.com">
+		<item id="POP3NAME"><![CDATA[2888.com]]></item>
+		<item id="SMTPNAME"><![CDATA[2888.com]]></item>
+	</item>
+	<item id="yes100.com">
+		<item id="POP3NAME"><![CDATA[pop.yes100.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.yes100.com]]></item>
+	</item>
+	<item id="chinese.com">
+		<item id="POP3NAME"><![CDATA[pop.chinese.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.chinese.com]]></item>
+	</item>
+	<item id="yifan.net">
+		<item id="POP3NAME"><![CDATA[yifan.net]]></item>
+		<item id="SMTPNAME"><![CDATA[yifan.net]]></item>
+	</item>
+	<item id="china183.com">
+		<item id="POP3NAME"><![CDATA[mail.china183.com]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.china183.com]]></item>
+	</item>
+	<item id="20520.com">
+		<item id="POP3NAME"><![CDATA[pop.20520.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.20520.com]]></item>
+	</item>
+	<item id="elawchina.com">
+		<item id="POP3NAME"><![CDATA[pop3.elawchina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.elawchina.com]]></item>
+	</item>
+	<item id="fugao.net">
+		<item id="POP3NAME"><![CDATA[pop.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.email.com.cn]]></item>
+	</item>
+	<item id="mybada.net">
+		<item id="POP3NAME"><![CDATA[pop.mybada.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mybada.net]]></item>
+	</item>
+	<item id="gz168.net">
+		<item id="POP3NAME"><![CDATA[email.gz168.net]]></item>
+		<item id="SMTPNAME"><![CDATA[email.gz168.net]]></item>
+	</item>
+	<item id="kzinfo.net">
+		<item id="POP3NAME"><![CDATA[mail.kzinfo.net]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.kzinfo.net]]></item>
+	</item>
+	<item id="7119.net">
+		<item id="POP3NAME"><![CDATA[7119.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.7119.net]]></item>
+	</item>
+	<item id="ccidnet.com">
+		<item id="POP3NAME"><![CDATA[pop.ccident.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.ccident.com]]></item>
+	</item>
+	<item id="cfe21.com">
+		<item id="POP3NAME"><![CDATA[www.cfe21.com]]></item>
+		<item id="SMTPNAME"><![CDATA[www.cfe21.com]]></item>
+	</item>
+	<item id="etang.com">
+		<item id="POP3NAME"><![CDATA[pop.etang.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.etang.com]]></item>
+	</item>
+	<item id="hnet.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.email.com.cn]]></item>
+	</item>
+	<item id="nethao.com">
+		<item id="POP3NAME"><![CDATA[freemail.nethao.com]]></item>
+		<item id="SMTPNAME"><![CDATA[freemail.nethao.com]]></item>
+	</item>
+	<item id="soyou.net">
+		<item id="POP3NAME"><![CDATA[pop.soyou.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.soyou.net]]></item>
+	</item>
+	<item id="newstar.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.emai.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.email.com.cn]]></item>
+	</item>
+	<item id="cityhot.com">
+		<item id="POP3NAME"><![CDATA[citymail.cityhot.com]]></item>
+		<item id="SMTPNAME"><![CDATA[citymail.cityhot.com]]></item>
+	</item>
+	<item id="dfworld.net">
+		<item id="POP3NAME"><![CDATA[mail.dfworld.net]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.dfworld.net]]></item>
+	</item>
+	<item id="gzboy.com">
+		<item id="POP3NAME"><![CDATA[www.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[www.email.com.cn]]></item>
+	</item>
+	<item id="fengyun.net">
+		<item id="POP3NAME"><![CDATA[freemail.fengyun.net]]></item>
+		<item id="SMTPNAME"><![CDATA[freemail.fengyun.net]]></item>
+	</item>
+	<item id="tt.zj.cn">
+		<item id="POP3NAME"><![CDATA[pop.email.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.email.com.cn]]></item>
+	</item>
+	<item id="100m.hl.cninfo.net">
+		<item id="POP3NAME"><![CDATA[100m.hl.cninfo.net]]></item>
+		<item id="SMTPNAME"><![CDATA[100m.hl.cninfo.net]]></item>
+	</item>
+	<item id="dg.163mail.net">
+		<item id="POP3NAME"><![CDATA[dg.163mail.net]]></item>
+		<item id="SMTPNAME"><![CDATA[dg.163mail.net]]></item>
+	</item>
+	<item id="public.guangzhou.gd.cn">
+		<item id="POP3NAME"><![CDATA[smtp.public.guangzhou.gd.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[public.guangzhou.gd.cn]]></item>
+	</item>
+	<item id="bodachina.com">
+		<item id="POP3NAME"><![CDATA[bodachina.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.bodachina.com]]></item>
+	</item>
+	<item id="freemail.nx.cninfo.net">
+		<item id="POP3NAME"><![CDATA[freemail.nx.cninfo.net]]></item>
+		<item id="SMTPNAME"><![CDATA[freemail.nx.cninfo.net]]></item>
+	</item>
+	<item id="softhome.net">
+		<item id="POP3NAME"><![CDATA[pop.SoftHome.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.SoftHome.net]]></item>
+	</item>
+	<item id="yesky.com">
+		<item id="POP3NAME"><![CDATA[pop.yesky.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.yesky.com]]></item>
+	</item>
+	<item id="alibaba.com">
+		<item id="POP3NAME"><![CDATA[pop.alibaba.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.alibaba.com]]></item>
+	</item>
+	<item id="mweb.com.cn">
+		<item id="POP3NAME"><![CDATA[pop3.mweb.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mweb.com.cn]]></item>
+	</item>
+	<item id="51.com">
+		<item id="POP3NAME"><![CDATA[210.77.145.189]]></item>
+	</item>
+	<item id="km169.net">
+		<item id="POP3NAME"><![CDATA[email.km169.net]]></item>
+		<item id="SMTPNAME"><![CDATA[email.km169.net]]></item>
+	</item>
+	<item id="wocall.com">
+		<item id="POP3NAME"><![CDATA[wocall.com]]></item>
+		<item id="SMTPNAME"><![CDATA[wocall.com]]></item>
+	</item>
+	<item id="guohao.com">
+		<item id="POP3NAME"><![CDATA[guohao.com]]></item>
+		<item id="SMTPNAME"><![CDATA[guohao.com]]></item>
+	</item>
+	<item id="bjmail.net">
+		<item id="POP3NAME"><![CDATA[bjmail.net]]></item>
+		<item id="SMTPNAME"><![CDATA[bjmail.net]]></item>
+	</item>
+	<item id="gzpublic.guangzhou.gd.cn">
+		<item id="POP3NAME"><![CDATA[gzpublic.guangzhou.gd.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[gzpublic.guangzhou.gd.cn]]></item>
+	</item>
+	<item id="cnuninet.com">
+		<item id="POP3NAME"><![CDATA[pop.bj.cnuninet.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.bj.cnuninet.com]]></item>
+	</item>
+	<item id="cmmail.com">
+		<item id="POP3NAME"><![CDATA[pop3.cmmail.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.cmmail.com]]></item>
+	</item>
+	<item id="peoplemail.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.peoplemail.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.peoplemail.com.cn]]></item>
+	</item>
+	<item id="sh163.net">
+		<item id="POP3NAME"><![CDATA[mail.sh163.net]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.sh163.net]]></item>
+	</item>
+	<item id="avl.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.avl.com.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.avl.com.cn]]></item>
+	</item>
+	<item id="thmz.com">
+		<item id="POP3NAME"><![CDATA[pop.thmz.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.thmz.com]]></item>
+	</item>
+	<item id="vip.km169.net">
+		<item id="POP3NAME"><![CDATA[vip.km169.net]]></item>
+		<item id="SMTPNAME"><![CDATA[vip.km169.net]]></item>
+	</item>
+	<item id="yahoo.com">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com]]></item>
+	</item>
+	<item id="yahoo.com.tw">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.tw]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.tw]]></item>
+	</item>
+	<item id="yahoo.com.hk">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.hk]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.hk]]></item>
+	</item>
+	<item id="yahoo.com.mx">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.mx]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.mx]]></item>
+	</item>
+	<item id="yahoo.com.br">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.br]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.br]]></item>
+	</item>
+	<item id="yahoo.com.ar">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.ar]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.ar]]></item>
+	</item>
+	<item id="yahoo.com.au">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.com.au]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.com.au]]></item>
+	</item>
+	<item id="yahoo.co.kr">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.co.kr]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.co.kr]]></item>
+	</item>
+	<item id="yahoo.co.uk">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.co.uk]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.co.uk]]></item>
+	</item>
+	<item id="yahoo.co.jp">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.co.jp]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.co.jp]]></item>
+	</item>
+	<item id="yahoo.ca">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.ca]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.ca]]></item>
+	</item>
+	<item id="yahoo.dk">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.dk]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.dk]]></item>
+	</item>
+	<item id="yahoo.de">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.de]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.de]]></item>
+	</item>
+	<item id="yahoo.fr">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.fr]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.fr]]></item>
+	</item>
+	<item id="yahoo.es">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.es]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.es]]></item>
+	</item>
+	<item id="yahoo.it">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.it]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.it]]></item>
+	</item>
+	<item id="yahoo.se">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.se]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.se]]></item>
+	</item>
+	<item id="yahoo.no">
+		<item id="POP3NAME"><![CDATA[pop.mail.yahoo.no]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.yahoo.no]]></item>
+	</item>
+	<item id="qqmail.com">
+		<item id="POP3NAME"><![CDATA[pop.qqmail.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.qqmail.com]]></item>
+	</item>
+	<item id="56.com">
+		<item id="POP3NAME"><![CDATA[pop3.56.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.56.com]]></item>
+	</item>
+	<item id="188.com">
+		<item id="POP3NAME"><![CDATA[pop.188.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.188.com]]></item>
+	</item>
+	<item id="mailandnews.com">
+		<item id="POP3NAME"><![CDATA[mailandnews.com]]></item>
+		<item id="SMTPNAME"><![CDATA[mailandnews.com]]></item>
+	</item>
+	<item id="campusall.com">
+		<item id="POP3NAME"><![CDATA[pop3.campusall.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.campusall.com]]></item>
+	</item>
+	<item id="39.net">
+		<item id="POP3NAME"><![CDATA[pop3.39.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.39.net]]></item>
+	</item>
+	<item id="yimeier.net">
+		<item id="POP3NAME"><![CDATA[pop.www.yimeier.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.www.yimeier.net]]></item>
+	</item>
+	<item id="citiz.net">
+		<item id="POP3NAME"><![CDATA[pop.citiz.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.citiz.net]]></item>
+	</item>
+	<item id="vip.citiz.net">
+		<item id="POP3NAME"><![CDATA[vip.citiz.net]]></item>
+		<item id="SMTPNAME"><![CDATA[vip.citiz.net]]></item>
+	</item>
+	<item id="stedu.cn">
+		<item id="POP3NAME"><![CDATA[pop.stedu.net]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.stedu.net]]></item>
+	</item>
+	<item id="zj.com">
+		<item id="POP3NAME"><![CDATA[pop.zj.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.zj.com]]></item>
+	</item>
+	<item id="pku.edu.cn">
+		<item id="POP3NAME"><![CDATA[water.pku.edu.cn]]></item>
+		<item id="SMTPNAME"><![CDATA[water.pku.edu.cn]]></item>
+	</item>
+	<item id="51uc.com">
+		<item id="POP3NAME"><![CDATA[pop3.51uc.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.51uc.com]]></item>
+	</item>
+	<item id="hzdtv.com">
+		<item id="POP3NAME"><![CDATA[mail.hzdtv.com]]></item>
+		<item id="SMTPNAME"><![CDATA[mail.hzdtv.com]]></item>
+	</item>
+	<item id="msn.com">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="live.com">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="w.cn">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="9.cn">
+		<item id="POP3NAME"><![CDATA[pop3.live.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.live.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+	</item>
+	<item id="me.com">
+		<item id="IMAPNAME"><![CDATA[imap.mail.me.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.mail.me.com]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[1]]></item>
+		<item id="IMAPPORT"><![CDATA[993]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="SMTPPORT"><![CDATA[587]]></item>
+	</item>
+	<item id="tom.com">
+		<item id="POP3NAME"><![CDATA[pop.tom.com]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.tom.com]]></item>
+	</item>
+</root>

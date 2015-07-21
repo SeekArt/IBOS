@@ -1,0 +1,53 @@
+/* 升级提醒 */
+.o-cm-upgrade-tip,
+.o-upgrade-close{
+	background-image: url(upgrade.png);
+	background-repeat: no-repeat;
+	vertical-align: middle;
+	display: inline-block;
+}
+.o-cm-upgrade-tip{
+	width: 102px;
+	height: 120px;
+	background-position: 0 0px;
+}
+.o-upgrade-close{
+	width: 12px;
+	height: 12px;
+	background-position: -102px 0;
+}
+.upgrade-tip-block{
+	position: fixed;
+	z-index: 1999;
+	bottom: -250px;
+	right: 40px;
+	background-color: #fffdfa;
+	opacity: 0;
+	text-align: center;
+	border: 1px #fdf0de solid;
+	webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+}
+.upgrade-version-text{
+	margin-left: 58px;
+	font-family: "Arial";
+}
+.user-version-tip .upgrade-version-text{
+	margin-left: 0;
+}
+.now-upgrade-btn{
+	padding: 9px 71px;
+}
+.upgrade-close-btn{
+	position: absolute;
+	top: 12px;
+	right: 12px;
+}
+.learn-more-tip{
+	font-size: 12px;
+	text-decoration: underline;
+}
+.learn-more-tip a{
+	color: #3497db;
+}

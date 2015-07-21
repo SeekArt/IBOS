@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<link rel="stylesheet" href="../../third-party/codemirror/codemirror.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.code-wrap{ border: 1px solid #EEE; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<label for="css_code"><var id="lang_code_edit"></var></label>
+			<div class="code-wrap" id="css_code"></div>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../../third-party/codemirror/codemirror.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var cm = CodeMirror($G('css_code'), {
+					value: $G('css_code').value,
+					mode: "css",
+					lineNumbers: true,
+					lineWrapping: true
+				}
+				);
+
+				var loadCode = function() {
+					var url = Ibos.app.url('workflow/api/getText', {formid: editor.formid, field: 'css'});
+					cm.setValue(localStorage.getItem("csscode") || "");
+					cm.focus();
+					ajax.request(url, {
+						timeout: 60000,
+						onsuccess: function(xhr) {
+							try {
+								if (xhr.responseText != '') {
+									cm.setValue(xhr.responseText);
+									cm.focus();
+								}
+							} catch (e) {
+								alert('Init error,please contact OA administrator');
+								return false;
+							}
+						},
+						error: function() {
+							alert('Request TimeOut');
+						}
+					});
+				};
+
+				var submitCode = function() {
+					var val = cm.getValue(), url = Ibos.app.url('workflow/api/setText', {formid: editor.formid, field: 'css', content: val});
+					ajax.request(url, {timeout: 60000, onsuccess: function(xhr) {
+							try {
+								if (xhr.responseText > 0) {
+									alert('保存成功');
+									dialog.close();
+									return true;
+								}
+							} catch (e) {
+								alert('save error,please contact OA administrator');
+								return false;
+							}
+						},
+						error: function() {
+							alert('Request TimeOut');
+						}
+					});
+					// @Debug:
+					localStorage.setItem("csscode", cm.getValue());
+				};
+				dialog.onok = function() {
+					submitCode();
+					return false;
+				};
+				loadCode();
+			})();
+
+		</script>
+	</body>
+</html>

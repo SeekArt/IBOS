@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CRM系统</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">CRM系统</h1>
+			<ul class="mn">
+				<li>
+					<a href="crm_check_repeat.html">检查重复</a>
+				</li>
+				<li>
+					<a href="crm_autonumber.html">自动编号</a>
+				</li>
+				<li>
+					<a href="crm_recycle.html">回收站</a>
+				</li>
+				<li>
+					<a href="crm_product.html">产品</a>
+				</li>
+				<li>
+					<span>快递模板</span>
+				</li>
+				<li>
+					<a href="crm_sms_template.html">短信模板</a>
+				</li>
+				<li>
+					<a href="crm_email_template.html">邮件模板</a>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<form action="" class="form-horizontal">
+			<!-- 快递模板设计 start -->
+			<div class="ctb">
+				<h2 class="st">快递模板设计</h2>
+				<div class="ctbw b">
+					<div class="media">
+						<a class="pull-left upload-ctrl upload-ctrl-img" href="#">
+							添加图片
+						</a>
+						<div class="media-body">
+							<div class="media">
+								<div class="control-group">
+									<label for="">快递模板名称</label>
+									<input type="text">
+								</div>
+								<div class="control-group">
+									<label for="">新增打印项</label>
+									<select name="" id="print_item">
+										<option value="0">请选择默认项</option>
+										<option value="1">收件人-姓名</option>
+										<option value="2">收件人-省</option>
+										<option value="3">发件人-姓名</option>
+									</select>
+								</div>
+								<button type="button" class="btn" id="add_print_item">添加打印项</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="ext-wrap b" id="express_template">
+					<img src="../../../static/image/temp/help_sf.jpg" alt="顺丰快递单">
+					<div class="drag-box" style="left: 98px; top: 25px; width: 167px; height: 117px; "><div class="drag-content">收件人-省</div><div class="drag-resize"></div></div>
+				</div>
+				<button class="btn btn-primary btn-large btn-submit" type="submit">提交</button>
+			</div>
+			</form>
+		</div>
+	</div>
+
+	</style>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../static/js/dashboard.js"></script>
+	<script>
+
+	(function(){
+		//快递单模板修改
+		var container = $("#express_template");
+		$("#add_print_item").on("click", function(){
+			var item = $("#print_item"),
+				value = item.val(),
+				text;
+			if(value != 0){
+				text = item.find(":selected").text();
+				new Dragbox({
+					content: text,
+					container: container
+				})
+			}
+		})
+
+		container.find(".drag-box").each(function(){
+			new Dragbox({
+				element: $(this),
+				container: container
+			})
+		})
+		
+	})()
+	</script>
+</body>
+</html>

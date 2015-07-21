@@ -1,0 +1,21 @@
+<!-- @Template: 私信弹窗 -->
+<div style="width: 500px;">
+	<form>
+		<table class="table table-condensed">
+			<tr>
+				<td class="xar" width="50"><%= Ibos.l("RECEIVER") %></td>
+				<td>
+					<input type="text" name="touid" data-toggle="userSelect" value="<%= uid %>">
+					<div></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="xar vat"><%= Ibos.l("CONTENT") %></td>
+				<td>
+					<textarea name="content" rows="5" ></textarea>
+				</td>
+			</tr>
+		</table>
+		<input type="hidden" name="formhash" value="<%= Ibos.app.g('formHash') %>" />
+	</form>
+</div>

@@ -1,0 +1,132 @@
+.at-select-area{
+	margin-top: 0;
+	border: none;
+}
+.at-moduel-select{
+	margin-left: 10px !important;
+	display: inline-block;
+}
+.limit-edit-dialog .control-group .control-label{
+	width: 34px;
+}
+.limit-edit-dialog .control-group .controls{
+	margin-left: 52px;
+	width: 450px;
+}
+.dsh-limit-header{
+	overflow: hidden;
+	background-color: #fff;
+	padding: 0 20px;
+}
+.dsh-limit-header .btn{
+	margin-top: 5px;
+	width: 100px;
+}
+.dsh-limit-header h4{
+	font-size: 18px;
+	font-weight: 700;
+}
+.dsh-limit-entry{
+	margin-bottom: 20px;
+}
+.dsh-limit-list{
+	margin: -20px 0 20px -20px;
+}
+.dsh-limit-list:last-child{
+	margin-bottom: 0;
+}
+.dsh-limit-list li{
+	float: left;
+	margin-left: 20px;
+	margin-top: 20px;
+	list-style: none;
+}
+.dsh-limit-list li label{
+	-webkit-box-shadow: 0 0 2px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 0 2px rgba(0, 0, 0, .1);
+	box-shadow: 0 0 2px rgba(0, 0, 0, .1);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	display: block;
+	padding: 15px 10px;
+	width: 196px;
+	border: 1px solid #E6E6E7;
+	background: #FFF;
+	color: #82939E;
+	background: url(../image/icon_check.png) no-repeat -100px 0;
+}
+.dsh-limit-list li .active{
+	background-position: 185px -23px;
+}
+.dsh-limit-list .dsh-limit-privilege-wrap label{
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.dsh-limit-list .dsh-limit-privilege{
+	float: right;
+	background-color: #FFF;
+}
+.dsh-limit-list .dsh-limit-privilege a{
+	margin-left: 10px;
+}
+
+.dsh-limit-setup .dsh-limit-list li label{
+	cursor: pointer;
+}
+.dsh-limit-setup .dsh-limit-list li label input{
+	position: absolute;
+	/*visibility: hidden;*/
+	opacity: 0;
+	outline: 0 none;
+	filter: Alpha(opacity=0);
+}
+.dsh-limit-setup .dsh-limit-list li label:hover{
+	text-decoration: none;
+	border-color: #3497DB;
+	background-position: 185px -23px;
+}
+.dsh-limit-setup .dsh-limit-list li .active,
+.dsh-limit-setup .dsh-limit-list li .active:hover{
+	color: #3497DB;
+	background-position: 185px 17px;
+}
+
+/* Privilege Level */
+.privilege-level{
+	display: inline-block;
+	text-align: center;
+}
+.privilege-level:hover{
+	text-decoration: none;
+}
+.privilege-level i{
+	display: inline-block;
+	width: 25px;
+	height: 25px;
+	background-color: #FFF;
+	vertical-align: middle;
+	background: url(../image/pri_level.png) no-repeat;
+}
+.privilege-level p{
+	font-size: 12px;
+	color: #82939E;
+}
+.privilege-level:hover p{
+	color: #3497DB;
+}
+.privilege-level .level1{ background-position: -30px 0;}
+.privilege-level .level2{ background-position: -60px 0;}
+.privilege-level .level4{ background-position: -90px 0;}
+.privilege-level .level8{ background-position: -120px 0;}
+
+.privilege-level.disabled{
+	cursor: default;
+}
+.privilege-level.disabled:hover p{
+	color: #82939E;
+}
+.privilege-level.disabled .level1{ background-color: #CCC; }
+.privilege-level.disabled .level2{ background-color: #999; }
+.privilege-level.disabled .level4{ background-color: #666; }
+.privilege-level.disabled .level8{ background-color: #333; }

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr { color: #E26F50; }
+		</style>
+	</head>
+
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<!-- 控件名称 -->
+				<div class="control-group">
+					<label for="control_radio_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_radio_title">
+				</div>
+				<!-- 选项 -->
+				<div class="control-group">
+					<div><label for="control_radio_field"><var id="lang_add_options"></var> <span class="xcr">*</span></label></div>
+					<textarea rows="5" id="control_radio_field"></textarea>
+				</div>
+				<!-- 默认值 -->
+				<div class="control-group">
+					<label for="control_radio_check"><var id="lang_control_value"></var>:</label>
+					<select id="control_radio_check"></select>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var refreshCheck = function(field, check) {
+					$.trim("field") !== "" && ($G('control_radio_check').innerHTML = fcUtil.createOptionTpl(field, check));
+				}
+				var tpl = '<ic data-id="<%=id%>" data-type="radio" data-title="<%=title%>" data-radio-check="<%=check%>" data-radio-field="<%=field%>" contenteditable="false" ><%=option%></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					var radioField = "" + oldData.radioField, radioCheck = "" + oldData.radioCheck
+					$G('control_radio_title').value = oldData.title;
+					$G('control_radio_field').value = fcUtil.splitVal(radioField);
+					// 还原默认值的可选项
+					refreshCheck(radioField, radioCheck);
+				}
+
+				dialog.onok = function() {
+					var title = $G('control_radio_title').value,
+						field = $G('control_radio_field').value,
+						data;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					if ($.trim(field) === "") {
+						alert(editor.getLang("fc.noOptionTip"));
+						return false;
+					}
+					data = {
+						title: title,
+						field: fcUtil.joinVal(field),
+						check: $G('control_radio_check').value || ""
+					};
+					data.option = fcUtil.createRadioTpl(data.field, data.check, {title: data.title});
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+				// 选项栏失去焦点时，更新默认值的可选项
+				var timer;
+				$G('control_radio_field').onkeyup = function() {
+					var val = this.value;
+					clearTimeout(timer);
+					timer = setTimeout(function(){
+						refreshCheck(fcUtil.joinVal(val));
+					}, 200)
+				};
+			})();
+		</script>
+	</body>
+</html>

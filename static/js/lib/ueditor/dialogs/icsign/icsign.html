@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr {color: #E26F50;}
+			#sign_color_btn{ display: block; width: 38px; height: 38px; border-radius: 4px; border: 1px solid #DADFE6; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="sign_title"><var id="lang_title"></var> <span class="xcr">*</span></label>
+					<div>
+						<input type="text" id="sign_title">
+					</div>
+				</div>
+				<div class="control-group">
+					<label><var id="lang_type"></var></label>
+					<div>
+						<label class="checkbox checkbox-inline"><input type="checkbox" id="sign_type_stamp" checked name="type"><var id="lang_stamp"></var></label>
+						<label class="checkbox checkbox-inline"><input type="checkbox" id="sign_type_write" checked name="type"><var id="lang_write"></var></label>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="sign_color"><var id="lang_color"></var></label>
+					<a href="javascript:;" id="sign_color_btn"></a>
+					<input type="hidden" id="sign_color">
+				</div>
+				<div>
+					<label><var id="lang_lock_tag"></var></label>
+					<div>
+						<textarea name="" id="sign_field" rows="5"></textarea>
+					</div>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="sign" data-title="<%=title%>" data-sign-color="<%=signColor%>" data-sign-type="<%=signType%>" data-sign-field="<%=signField%>" contenteditable="false">' +
+						'<% if(stamp) { %><button type="button" class="btn" style="margin-right: 5px">签章</button><% }%>' + 
+						'<% if(write) { %><button type="button" class="btn">手写</button><% }%>' +
+						'</ic>',
+					fc = new Fc(editor, tpl),
+					editing = UE.plugins['formcontrols'].editing,
+					oldData;
+
+				// 取色器
+				
+				var signColorPicker = (function(){
+					var $btn = $("#sign_color_btn"),
+						$input = $btn.next(),
+						set = function(hex){
+							$input.val(hex);
+							$btn.css("background-color", hex);
+						},
+						get = function(){
+							return $input.val();
+						}
+
+					$btn.colorPicker({ onPick: set });
+
+					return { set: set, get: get};
+				})();
+				
+
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('sign_title').value = oldData.title;
+					signColorPicker.set(oldData.signColor);
+					// 
+					$G('sign_type_stamp').checked = oldData.signType.charAt(0) == "1";	
+					$G('sign_type_write').checked = oldData.signType.charAt(2) == "1";
+
+					$G('sign_field').value = fcUtil.splitVal(oldData.signField);
+				}
+
+				dialog.onok = function() {
+					var data, title = $G('sign_title').value;
+					var stamp, write;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+
+					stamp = $G('sign_type_stamp').checked;
+					write = $G('sign_type_write').checked;
+
+					if(!stamp && !write){
+						alert(editor.getLang("icsign.select_sign_type"));
+						return false;
+					}
+
+					data = {
+						title: title,
+						stamp: stamp,
+						write: write,
+						signType: +stamp + "," + +write,
+						signColor: signColorPicker.get(),
+						signField: fcUtil.joinVal($G('sign_field').value)
+					};
+					// 标签名不能为空且不能重复，提示或自动改名
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+			})();
+		</script>
+	</body>
+</html>

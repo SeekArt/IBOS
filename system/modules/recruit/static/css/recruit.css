@@ -1,0 +1,238 @@
+/**
+ * recruit.css
+ * 招聘管理
+ * @module Recruit
+ * @type Layout
+ * @version $Id: recruit.css 4117 2014-09-17 07:19:58Z gzljj $
+ * @modified 2013-05-16
+ * @author Inaki
+ */
+/*
+rct - recruit
+rsm - resume
+avt - avatar
+psn - personal
+
+*/
+
+/* 侧栏图标 */
+.o-rct-talents,
+.o-rct-contact,
+.o-rct-interview,
+.o-rct-backdrop,
+/* 人才管理主面板Tab图标 */
+.o-rsm-arrange,
+.o-rsm-audition,
+.o-rsm-hire,
+.o-rsm-eliminate,
+.o-rsm-flag,
+.o-rsm-all{
+	background-image: url(../image/recruit.png);
+	background-repeat: no-repeat;
+}
+.o-rsm-mark,
+.o-rsm-unmark{
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url(../image/rsm_mark.png);
+	background-repeat: no-repeat;
+}
+.o-rsm-mark{ background-position: 0 0; }
+.o-rsm-unmark:hover{ background-position: -16px 0; }
+.o-rsm-unmark{ background-position: -32px 0; }
+
+
+/* 侧栏图标 */
+.o-rct-talents{ background-position: 0 -40px; }
+.active .o-rct-talents{ background-position: -30px -40px; }
+.o-rct-contact{ background-position: -120px -40px; }
+.active .o-rct-contact{ background-position: -150px -40px; }
+.o-rct-interview{ background-position: -60px -40px; }
+.active .o-rct-interview{ background-position: -90px -40px; }
+.o-rct-backdrop{ background-position: -180px -40px; }
+.active .o-rct-backdrop{ background-position: -210px -40px; }
+
+/* 人才管理主面板Tab图标 */
+.o-rsm-arrange{}
+.o-rsm-audition{ background-position: -40px 0; }
+.o-rsm-hire{ background-position: -80px 0; }
+.o-rsm-eliminate{ background-position: -120px 0; }
+.o-rsm-flag{ background-position: -160px 0; }
+.o-rsm-all{ background-position: -200px 0; }
+
+/* 简历详细页图标 */
+.o-rsm-phone,
+.o-rsm-email,
+.o-rsm-status-eliminate,
+.o-rsm-status-pass,
+.o-rsm-status-interview,
+.o-rsm-status-arranged{
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url(../image/rsm_status.png);
+	background-repeat: no-repeat;
+}
+.o-rsm-phone,
+.o-rsm-email{
+	margin-top: 5px;
+	margin-right: 40px;
+	width: 40px;
+	height: 40px;
+}
+.o-rsm-phone{ background-position: -10px -10px; }
+.o-rsm-phone:hover{ background-position: -10px -50px; }
+.o-rsm-email{ background-position: -40px -10px; }
+.o-rsm-email:hover{ background-position: -40px -50px; }
+
+.o-rsm-status-eliminate,
+.o-rsm-status-pass,
+.o-rsm-status-interview,
+.o-rsm-status-arranged{
+	position: absolute; 
+	z-index: 10;
+	width: 100px;
+	height: 100px;
+}
+.o-rsm-status-eliminate{ background-position: -89px -6px; }
+.o-rsm-status-pass{ background-position: -189px -6px; }
+.o-rsm-status-interview{ background-position: -294px -6px; }
+.o-rsm-status-arranged{ background-position: -394px -6px; }
+
+/* 备选条，可能移至全局样式 */
+.alternate-bar .btn{
+	padding: 0;
+	font-size: 20px;
+	width: 28px;
+	height: 28px;
+	line-height: 28px;
+}
+.alternate-bar a{ padding: 0 10px; }
+
+/* 简历头像 */
+.rsm-avt{
+	position: relative;
+	padding: 4px;
+	width: 108px;
+	height: 156px;
+	border: 1px solid #EBEFF6;
+	overflow: hidden;
+}
+.rsm-avt-upload{
+	-webkit-transition: bottom .1s linear;
+	-moz-transition: bottom .1s linear;
+	-ms-transition: bottom .1s linear;
+	-o-transition: bottom .1s linear;
+	transition: bottom .1s linear;
+	position: absolute;
+	/*bottom: 0;*/
+	bottom: -40px;
+	left: 0;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	background-color: #000;
+	/*color: #FFF;*/
+	text-align: center;
+	font-size: 12px;
+	color: #B2C0D1;
+	opacity: .7;
+	filter: Alpha(opacity=70);
+}
+.rsm-avt:hover .rsm-avt-upload{
+	bottom: 0;
+}
+
+.rsm-avt-upload-btn{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+
+/* 头像 */
+.rsm-avt-male, .rsm-avt-female{
+	width: 108px;
+	height: 156px;
+}
+.rsm-avt-male{
+	background: url(../image/rsm_male.png) no-repeat -6px -6px;
+}
+.rsm-avt-female{
+	background: url(../image/rsm_female.png) no-repeat -6px -6px;
+}
+
+/* 查看简历 */
+.rsm-psn-info{ margin-left: 140px; }
+.rsm-psn-info h2{ margin-top: 0; color: #58585C; }
+
+.rsm-psn-table{
+	width: 100%;
+}
+.rsm-psn-table th,
+.rsm-psn-table td{
+	padding: 0;
+	height: 40px;
+	vertical-align: middle;
+}
+.rsm-psn-table th{
+	font-weight: 400;
+	color: #B2C0D1;
+	width: 80px;
+}
+.rsm-psn-table td{ width: 220px; }
+.rsm-row-hide{ display: none; }
+.rsm-psn-table.active .rsm-row-hide{ display: table-row; }
+
+.rsm-psn-header{
+	overflow: hidden;
+	line-height: 40px;
+}
+
+/* 两栏列表，用于dl标签 */
+.tcol-list {
+	margin-top: 0;
+	margin-bottom: 0;
+	overflow: hidden;
+}
+.tcol-list dt,
+.tcol-list dd{
+	margin-bottom: 10px;
+	min-height: 20px;
+}
+.tcol-list dt{ 
+	float: left; 
+	width: 80px; 
+	font-weight: 400;
+	color: #B2C0D1;
+}
+.tcol-list dd{ overflow: hidden; }
+
+/* 统计图标 */
+.os-statistics {
+	background-image:url(../image/statistics.png);
+	background-repeat:no-repeat;
+	display: inline-block;	
+	width:20px;
+	height:20px;
+	vertical-align: middle;
+	background-position: -48px 0;
+}
+.active .os-statistics{
+	background-position: -71px 0;
+}
+
+.mc-header .mnv li a{
+	position: relative;
+}
+.mc-header .mnv li a .bubble{
+	top: 4px;
+	right: 12px;
+}
+
+
+@media print{
+	.personal-skill{ display: block; }
+	#resume_detail .bdpt{ border: 0 none; }
+} 

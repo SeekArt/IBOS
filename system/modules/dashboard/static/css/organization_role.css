@@ -1,0 +1,125 @@
+.o-add-role{
+	background-image: url(../image/stamp_add.png);
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	width: 96px;
+	height: 96px;
+	display: inline-block;
+}
+.com-list-wrap{
+	margin-left: -20px;
+}
+.db-com-list>li{
+	background-color: #fff;
+	float: left;
+	padding: 20px;
+	margin: 0 0 20px 20px;
+	width: 230px;
+	border: 1px #edeff0 solid;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	list-style: none;
+}
+.com-list-content{
+	padding: 10px 0 20px 0;
+	border-top: 1px #dadfe6 solid;
+	border-bottom: 1px #dadfe6 solid; 
+}
+.user-avatar-wrap{
+	display: inline-block;
+	border: 1px #dbe0e6 solid;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	padding: 1px;
+	background-color: #fff;
+}
+.user-avatar-wrap img{
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+}
+.sub-com-list li{
+	padding-left: 4px; 
+	padding-right: 4px;
+}
+.sub-com-list li:first-child{
+	padding-left: 0;
+}
+.sub-com-list li:last-child{
+	padding-right: 0;
+}
+.db-com-list>li.add-item-li{
+	width: 226px;
+	border: 3px #dadfe6 dotted;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+}
+.db-com-list>li.add-item-li:hover{
+	border: 3px #3497db dotted;
+}
+.add-item-li:hover .o-add-role{
+	background-position: -96px 0;
+}
+.add-item-li:hover .add-opt-tip{
+	color: #3497db;
+}
+.add-item-wrap{
+	padding: 29px 0;
+}
+
+.limit-info-wrap{
+	width: 775px;
+	border: 1px #e8ebec solid;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	background-color: #fff;
+	-webkit-box-shadow: 0 0 4px #edeeef;
+	box-shadow: 0 0 4px #edeeef;
+}
+.limit-info-wrap .page-list-header{
+	padding: 10px 20px;
+	min-height: 40px;
+	border-bottom: 2px solid #3497db;
+	background-color: #fff;
+}
+.role-name{
+	width: 662px;
+}
+
+.limit-setup-tip img{
+	height: 270px;
+}
+.user-list-wrap{
+	height: 52px;
+}
+.user-name-wrap{
+	max-width: 36px;
+	white-space: nowrap; 
+ 	text-overflow: ellipsis; 
+ 	overflow: hidden;
+}
+.role-member-form .page-list-footer{
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ececec;
+}
+.opt-toolbar{
+	display: none;
+}
+
+.privilege-level p{
+	position: relative;
+	top: 2px;
+	margin-left: 3px; 
+}
+
+.position-mumber-wrap{
+	min-height: 438px;
+}
+
+

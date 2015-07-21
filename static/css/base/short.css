@@ -1,0 +1,176 @@
+/* 
+	short.css
+	短类
+*/
+
+/*------------------------------------------------------------------------------- Short */
+.dib{ display: inline-block; }
+.db{ display: block; }
+.dn{ display: none }
+/* 定位 */
+.posr{ position: relative; }
+.posa{ position: absolute; }
+.posa-tl{ position: absolute; top: 0; left: 0; }
+.posa-tr{ position: absolute; top: 0; right: 0; }
+
+.mb{ margin-bottom: 20px; }
+.mbs{ margin-bottom: 10px; }
+.mbm{ margin-bottom: 5px;}
+.mbz{ margin-bottom: 0!important; }
+
+.mtz{ margin-top: 0; }
+.mtm{ margin-top: 5px; }
+.mts{ margin-top: 10px; }
+
+.ml{ margin-left: 20px; }
+.mls{ margin-left: 10px; }
+.mlm{ margin-left: 5px; }
+
+.pt{ padding-top: 20px; }
+.pth{ padding-top: 15px; }
+.pts{ padding-top: 10px; }
+.ptm{ padding-top: 5px; }
+
+.pb{ padding-bottom: 20px; }
+.pbh{ padding-bottom: 15px; }
+.pbs{ padding-bottom: 10px; }
+.pbm{ padding-bottom: 5px; }
+
+.pl{ padding-left: 20px; }
+.plh{ padding-left: 15px; }
+.pls{ padding-left: 10px; }
+.plm{ padding-left: 5px; }
+
+.pr{ padding-right: 20px; }
+.prh{ padding-right: 15px; }
+.prs{ padding-right: 10px; }
+.prm{ padding-right: 5px; }
+
+
+.ovh{ overflow: hidden; }
+
+/* Inline separation 行内分隔 */
+.ilsep { padding: 0 5px; }
+
+
+.bdbs{ border-bottom: 1px solid #EBEFF6; }
+.bds{ border: 1px solid #EBEFF6; }
+.bdpt{ border-top: 2px solid #3497DB; }
+.bdpb{ border-bottom: 2px solid #3497DB; }
+
+/* 文本 */
+.fsf { font-size: 40px; }
+.fsg { font-size: 30px; }
+.fsh { font-size: 24px; }
+.fsl { font-size: 20px; }
+.fsm { font-size: 16px; }
+.fss { font-size: 12px; }
+
+.tcm { color: #B2C0D1; } /* text comment */
+.tcmh { margin-top: 5px; margin-bottom: 0;}
+.t{ font-size: 14px; font-weight: 700; }
+
+.ffmy{ font-family: "Microsoft Yahei"; }
+
+.xal { text-align: left}
+.xac { text-align: center}
+.xar { text-align: right}
+
+.xwb { font-weight: 700; }
+
+.vat,
+.table .vat { vertical-align: top; }
+.vam { vertical-align: middle; }
+
+.summary{
+	font-size: 12px;
+	line-height: 24px;
+}
+
+
+/* shadow inset 用作内饰线 */
+.sdi{
+	-webkit-box-shadow: inset 0 1px 0 #FFF;
+	-moz-box-shadow: inset 0 1px 0 #FFF;
+	box-shadow: inset 0 1px 0 #FFF;
+}
+.sdil{
+	-webkit-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+	-moz-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+	box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+}
+
+/* 颜色 */
+.xcn { color: #82939E; }
+.xcbu { color: #3497DB;} /*Blue*/
+.xco { color: #EE8C0C}   /*Orange*/
+.xcr,
+input.xcr{ color: #E26F50; }  /*Red*/
+.xcgn,
+input.xcgn{ color: #7CB81C; } /*Green*/
+.xcm,                    /* Deep gray */
+.xcm p{ color: #58585C; }
+
+/* 背景 */
+.bglb{ background-color: #F9FBFF; } /* Lightblue */
+/*.bglgs{ background-color: #FDFDFD; } Lightgray*/
+.bglg{ background-color: #F8F9FA; } /* Lightgray */
+.bgly{ background-color: #FFFDFA; } /* Lightyellow */
+.readonly { background-color: #eee !important;}
+
+
+/* 填充 */
+.fill,
+.fill-nn { padding: 20px; }
+.fill-hh { padding: 15px; }
+.fill-ss { padding: 10px; }
+.fill-mm { padding: 5px; }
+
+.fill-hn{ padding: 15px 20px;}
+.fill-sn{ padding: 10px 20px }
+.fill-mn{ padding: 5px 20px }
+.fill-zn{ padding: 0 20px }
+
+/* 链接 */
+.anchor{ color: #3497DB; }
+.anchor:hover{ text-decoration: underline; }
+
+/* 行高 */
+.lhl{ line-height: 24px; }
+.lht{ line-height: 30px; }
+.lhf{ line-height: 40px; }
+
+.curp { cursor: pointer;}
+
+
+.bdrt,
+.rdt{ 
+	-webkit-border-top-left-radius:  4px;
+	-webkit-border-top-right-radius:  4px;
+	-moz-border-top-left-radius:  4px;
+	-moz-border-top-right-radius: 4px;
+	border-top-left-radius:  4px;
+	border-top-right-radius: 4px; 
+}
+.bdrb,
+.rdb{
+	-webkit-border-bottom-left-radius:  4px;
+	-webkit-border-bottom-right-radius:  4px;
+	-moz-border-bottom-left-radius:  4px;
+	-moz-border-bottom-right-radius: 4px;
+	border-bottom-left-radius:  4px;
+	border-bottom-right-radius: 4px; 
+}
+
+.ellipsis{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.o16,
+.o20,
+.o30{ display: inline-block; vertical-align: middle; }
+.o16{ width: 16px; height: 16px; }
+.o20{ width: 20px; height: 20px; }
+.o30{ width: 30px; height: 30px; }

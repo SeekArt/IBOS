@@ -1,0 +1,98 @@
+/* 
+	component.css
+	一些组件样式或基本组件的样式 
+*/
+
+/* 此样式用来解决开关在初始化前会出现短时间checkbox状态的问题 */
+/* 用visibility在Ie8下会导致点击无效 */
+input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
+
+.btn-static { width: 100px; }
+
+/* popover */
+.popover-w{
+	-webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+	background-color: #FFF;
+	color: #82939E;
+	max-width: none;
+	border-color: #DADFE6;
+}
+.popover-w .popover-title{
+	background-color: #FFF;
+	border-color: #FFF;
+}
+.popover-w.bottom .arrow:after { border-bottom-color: #FFF; }
+.popover-w.right .arrow:after{ border-right-color: #FFF; }
+.popover-w.top .arrow:after{ border-top-color: #FFF; }
+.popover-w.left .arrow:after{ border-left-color: #FFF; }
+
+/* Loading */
+.loading,
+.loading-small,
+.loading-mini{ display: inline-block; vertical-align: middle; }
+.loading { width: 60px; height: 60px; background: url(../image/loading.gif) no-repeat;  }
+.loading-small { width: 24px; height: 24px; background: url(../image/loading_small.gif) no-repeat;  }
+.loading-mini { width: 16px; height: 16px; vertical-align: -2px; background: url(../image/loading_mini.gif) no-repeat;  }
+
+
+/* Datepicker*/
+.datepicker { position: relative;}
+.datepicker .datepicker-input{ padding-right: 40px; background-color: #FFF; }
+.datepicker .datepicker-btn {
+	border-radius: 4px; 
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 30px; 
+	height: 30px;
+	background: #EBEDF0 url("../image/component.png") no-repeat 5px -245px;
+}
+.datepicker .datepicker-btn:hover,
+.datepicker .datepicker-btn.active{
+	background-color: #3497DB;
+	background-position: -35px -245px;
+}
+.datepicker-small .datepicker-btn,
+.datepicker-small .datepicker-btn:hover,
+.datepicker-small .datepicker-btn.active{ width: 20px; height: 20px; background: #FFF url("../image/component.png") no-repeat 0 -250px; }
+
+/* mini编辑功能 */
+.editor-btnbar{}
+.editor-btn{ border-radius: 4px; margin-left: 5px; display: inline-block; width: 38px; height: 38px; border: 1px solid #DADFE6; vertical-align: middle; font-size: 20px; text-align: center; line-height: 38px; color: #82939E; }
+.editor-btn:hover { text-decoration: none; }
+.editor-btn.active{ background-color: #F3FBFF; color: #3497DB; border-color: #3497DB; }
+.editor-btn-bold{ font-weight: 700; }
+.editor-btn-italic{ font-style: italic;}
+.editor-btn-underline,
+.editor-btn-underline:hover{ text-decoration: underline;}
+
+/* ajax 页码 */
+.ajax-pagination{ height: 40px; }
+.ajax-pagination .pagination > a,
+.ajax-pagination .pagination > span{
+	-webkit-transition: background linear 0.1s;
+	-moz-transition: background linear 0.1s;
+	-o-transition: background linear 0.1s;
+	transition: background linear 0.1s;
+	border-radius: 4px;
+	float: left;
+	margin-right: 5px;
+	padding: 5px 11px;
+	line-height: 20px;
+	text-decoration: none;
+	color: #829393;
+	font-weight: 700;
+	font-family: Arial, 'Microsoft Yahei';
+	background-color: #FFF;
+}
+.ajax-pagination .pagination > a:hover,
+.ajax-pagination .pagination > span.current{
+	background-color: #3497db;
+	color: #FFF;
+}
+.ajax-pagination .pagination .pagination-controll{ padding: 0 5px; }
+.ajax-pagination .pagination .pager{ padding: 0 10px; }
+.ajax-pagination .pagination .pager .btn.current{ cursor: default; opacity: 0.65; filter: alpha(opacity=65); }
+.ajax-pagination .pagination .pager .btn.current:hover,
+.ajax-pagination .pagination .pager .btn.current:active{ background-color: #f8f8f8; border-color: #dadce6; -webkit-box-shadow: none; box-shadow: none; }

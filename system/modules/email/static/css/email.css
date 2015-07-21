@@ -1,0 +1,146 @@
+/**
+ * email.css
+ * 邮件中心样式
+ * @module Global
+ * @submodule Email
+ * @type Layout
+ * @version $Id$
+ * @modified 2013-05-16
+ * @author Inaki
+ */
+
+
+.mail-btn-wrap{
+	padding: 10px;
+}
+.o-mal-inbox,
+.o-mal-todo,
+.o-mal-draft,
+.o-mal-sended,
+.o-mal-trash,
+.o-mal-outward,
+.o-mal-setup,
+.o-mal-new,
+.o-mal-attach{
+	background-image: url(../image/email.png);
+	background-repeat: no-repeat;
+}
+
+.o-mal-inbox,
+.o-mal-todo,
+.o-mal-draft,
+.o-mal-sended,
+.o-mal-outward,
+.o-mal-trash,
+.o-mal-setup,
+.o-mal-new,
+.o-mal-attach,
+.o-caret{
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+}
+.o-mal-attach{
+	width: 10px;
+}
+
+.o-mal-inbox{ background-position: -20px 0;}
+.active .o-mal-inbox{ background-position: -40px 0;}
+.o-mal-todo{ background-position: -60px 0;}
+.active .o-mal-todo{ background-position: -80px 0;}
+.o-mal-draft{ background-position: -100px 0;}
+.active .o-mal-draft{ background-position: -120px 0;}
+.o-mal-sended{ background-position: -140px 0;}
+.active .o-mal-sended{ background-position: -160px 0;}
+.o-mal-outward{ background-position: -180px 0;}
+.active .o-mal-outward{ background-position: -200px 0;}
+.o-mal-trash{ background-position: -220px 0;}
+.active .o-mal-trash{ background-position: -240px 0;}
+
+.o-mal-setup{ background-position: -260px 0; }
+.o-mal-new{ background-position: 0 -20px; }
+.o-mal-attach{ background-position: -24px -20px; }
+
+.mal-form{
+	padding: 15px 20px 0 20px;
+}
+.mal-view{
+	padding-top: 6px;
+	border-top: 1px solid #EBEFF6;
+	background: url(../image/bg_mal_view.png) repeat-x;
+}
+.mal-title{
+	margin-top: 0;
+	margin-bottom: 5px;
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 30px;
+}
+.mal-quick-reply{
+	vertical-align: top;
+	-webkit-transition: height linear .1s;
+	-moz-transition: height linear .1s;
+	-ms-transition: height linear .1s;
+	-o-transition: height linear .1s;
+	transition: height linear .1s;
+	-webkit-backface-visibility: hidden;
+	height: 40px;
+}
+.mal-showmore{
+	line-height: 30px;
+	font-size: 12px;
+	color: #82939E;
+}
+.mal-showmore:hover{
+	text-decoration: none;
+}
+.mal-showmore .caret{
+	border-width: 5px;
+	vertical-align: middle;
+}
+.mal-showmore.active .caret{
+	border-bottom-style: solid;
+	border-top-style: none;
+}
+
+.mal-default-webmail { display: none; }
+.mal-default-webmail.active,
+.table tr:hover .mal-default-webmail{ display: inline; }
+
+.mal-folder-table th, 
+.mal-folder-table td{ padding-top: 5px; padding-bottom: 5px; height: 30px; } 
+
+
+/* What is this? */
+#receipt_div{
+    width: 738px;
+    height:100px;
+    background: #FCF8E3;
+    margin-left: 20px;
+    border:1px solid #EEE1B9;
+}
+#receipt_div p{
+    padding-top: 10px;
+    text-align:center;
+    font-size:100%;
+    color:#743E04;
+}
+#receipt_div div{
+    height:50px;
+    position: relative;
+}
+#receipt_div div button.receipt-send{
+    position: absolute;
+    top: 10px;
+    left: 285px;
+}
+#receipt_div div button.receipt-cancel{
+    position: absolute;
+    top: 10px;
+    left: 375px;
+}
+
+@media print{
+	.mal-view{ padding-top: 0; border-top: 0 none; }
+}

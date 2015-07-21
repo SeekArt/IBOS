@@ -1,0 +1,209 @@
+@charset "utf-8";
+/* CSS Document */
+ul{
+	margin:0;
+}
+ul li{
+	list-style:none;
+}
+.dib{
+	display:inline-block;
+}
+.mbl{
+	margin-bottom:30px;
+}
+.mb{
+	margin-bottom:20px;
+}
+.mtg{
+	margin-top:60px;
+}
+.mtl{
+	margin-top:30px;
+}
+.mll{
+	margin-left: 30px;
+}
+.ml{
+	margin-left: 20px;
+}
+.fsl{
+	font-size:20px;
+}
+.fsg{
+	font-size:30px;
+}
+.fsm{
+	font-size:16px;
+}
+.xcm{
+	color:#58585c;
+}
+.xcg{
+	color:#b2c0d1;
+}
+.xcgn{
+	color: #7CB81C;
+}
+.xcbu{
+	color:#3497db;
+}
+.xal{
+	text-align: left
+}
+.xac{ 
+	text-align: center;
+}
+.main-content{
+	position:absolute;
+	left:50%;
+	width:390px;
+	margin-left:-195px;
+	text-align:center;
+}
+.o-prompt-image,
+.o-continue-image,
+.o-chicking-image,
+.o-newest-image,
+.o-success-image,
+.o-finish-upgrade,
+.o-tip,
+.o-finish-step,
+.o-new-add,
+.o-file-difference,
+.o-file-normal{
+	background-image:url(../image/online_upgrades.png);
+	background-repeat:no-repeat;
+	display:inline-block;
+	vertical-align:middle;
+}
+.o-prompt-image{
+	height:162px;
+	width:174px;
+	background-position:-274px -334px;
+}
+.o-continue-image{
+	height:150px;
+	width:142px;
+	background-position:-136px -354px;
+}
+.o-chicking-image{
+	height:154px;
+	width:140px;
+	background-position:2px -344px;
+	
+}
+.o-newest-image{
+	width:214px;
+	height:246px;
+	background-position:0 -90px;
+}
+.o-success-image{
+	width:214px;
+	height:246px;
+	background-position:-210px -90px;
+}
+.o-finish-upgrade{
+	width:30px;
+	height:30px;
+	background-position:0 0;
+}
+.o-tip{
+	width:30px;
+	height:30px;
+	background-position:-30px 0;
+}
+.o-finish-step{
+	width:20px;
+	height:20px;
+	background-position:0 -30px;
+}
+.o-new-add{
+	width:18px;
+	height:18px;
+	background-position:0 -52px;
+}
+.o-file-difference{
+	width:18px;
+	height:18px;
+	background-position:-20px -52px;
+}
+.o-file-normal{
+	width:18px;
+	height:18px;
+	background-position:-40px -52px;
+}
+.prompt-content{
+	padding:20px;
+	margin:30px 0;
+	border:1px #dadfe6 solid;
+	background-color:#f9fbfc;
+	text-align:left;
+}
+.upgrade-content{
+	height:150px;
+	overflow:auto;
+}
+.version-title{
+	font-size:16px;
+	color:#58585c;
+}
+.update-content-ul li{
+	margin-bottom:10px;
+}
+.cmul li{
+	font-size:12px;
+	margin-bottom:10px;
+}
+.btn-upgrade{
+	margin-left:120px;
+}
+.success-tip-info{
+	margin-left:20px;
+	display:inline-block;
+	vertical-align:middle;
+	text-align:left;
+}
+.click-link{
+	color:#3497db;
+}
+.brc {
+	overflow: hidden;
+	border: 1px solid #DADCE6;
+}
+.brc a{
+	float: left;
+	margin-left: -20px;
+	padding: 0 40px;
+	max-width: 120px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 12px;
+	color: #82939E;
+	background:url(../image/upgrade_step_bg.png) no-repeat;
+	cursor:default;
+}
+.brc a.active{
+	color:#ee8c0c;
+	background-position: 0 -40px;
+}
+.brc a.finish-step{
+	background-position: 0 -80px;
+}
+.circle {
+    background: none repeat scroll 0 0 #b2c0d1;
+    border-radius: 9.4px 9.4px 9.4px 9.4px;
+    color: #FFFFFF;
+    padding:1px 5px;
+}
+.brc a.active .circle {
+    background: none repeat scroll 0 0 #ee8c0c;
+}
+.trick-tip-content ul li,
+.cmul li{
+	list-style:inside;
+}
+.warm-tip,
+.difference-tip{
+	color:#e26f50;
+}

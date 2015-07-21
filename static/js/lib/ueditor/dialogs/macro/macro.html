@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="../../../../../css/base.css">
+	<link rel="stylesheet" href="../../third-party/codemirror/codemirror.css">
+	<style type="text/css" >
+		fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+		.code-wrap{ border: 1px solid #EEE; }
+		.macro-table { width: 100%; }
+		.macro-table th,
+		.macro-table td { padding: 5px 10px; }
+	</style>
+</head>
+<body>
+	<fieldset>
+		<table class="macro-table" id="macro_table">
+			<thead>
+				<tr>
+					<th>宏标记</th>
+					<th width="60">编号</th>
+					<th width="120">格式</th>
+					<th width="120">类型</th>
+					<th width="60">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr id="macro_form_row">
+					<td id="说明：代表表单名称">#[表单]</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_form">添加</a></td>
+				</tr>
+				<tr id="macro_run_row">
+					<td title="说明：代表文号或说明">#[文号]</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_run_name">添加</a></td>
+				</tr>
+				<tr id="macro_counter_row">
+					<td title="说明：代表文号计数器">#[文号计数器]</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_counter">添加</a></td>
+				</tr>
+				<tr id="macro_time_row">
+					<td title="说明：代表流程开始时间">#[时间]</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_time">添加</a></td>
+				</tr>
+				<tr id="macro_run_id_row">
+					<td title="说明：代表工作流水号">#[流水号]</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_run_id">添加</a></td>
+				</tr>
+				<tr id="macro_sign_row">
+					<td title="说明：将列出该工作所有的会签意见，或指定步骤编号的会签意见">#[会签意见]</td>
+					<td>
+						<input type="text" name="number" class="input-small">
+					</td>
+					<td>
+						<input type="text" name="format" data-toggle="popover" class="input-small" title="格式表达式说明: &#13; {C}：表示意见内容 &#13; {Y}：表示年 &#13; {M}：表示月 &#13; {D}：表示日 &#13; {H}：表示时 &#13; {I}：表示分 &#13; {S}：表示秒 &#13; {U}：表示用户姓名 &#13; {P}：表示角色 &#13; {S}：表示步骤名称 &#13; {SD}：表示短部门 &#13; {LD}：表示长部门 &#13; {SH}：表示手写签章 &#13; 例如：&#13;{C} {U} {Y}{M}{D} 则显示样式为：xxxx 张三 20090202"
+						>
+					</td>
+					<td>
+						<select name="type"  class="input-small">
+							<option value="">按步骤实际编号</option>
+							<option value="*">按步骤设计编号</option>
+						</select>
+					</td>
+					<td>
+						<a href="javascript:;" data-value="macro_sign">添加</a>
+					</td>
+				</tr>
+				<tr id="macro_attach_row">
+					<td title="说明：列出所有附件，或者第N个附加，N=1,2,3...">#[附件]</td>
+					<td><input type="text" name="number" class="input-small"></td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_attach">添加</a></td>
+				</tr>
+				<tr id="macro_timeout_row">
+					<td title="说明：列出实际步骤超时时间">#[超时]</td>
+					<td>
+						<input type="text" name="number" class="input-small">
+					</td>
+					<td></td>
+					<td></td>
+					<td><a href="javascript:;" data-value="macro_timeout">添加</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	
+	<script src="../internal.js"></script>
+	<script>
+		(function(){
+			var marcoTable = document.getElementById("macro_table");
+			var marco = {
+				getRow: function(value){
+					return document.getElementById(value + "_row");
+				},
+				getRowInputs: function(row){
+					return UE.dom.domUtils.getElementsByTagName(row, "input select textarea", function(node){
+						return node.hasAttribute("name");
+					})
+				},
+				// 获取行内各表单控件值
+				getRowData: function(value){
+					var row = this.getRow(value),
+						inputs = this.getRowInputs(row),
+						data = {};
+
+					UE.utils.each(inputs, function(input){
+						data[input.name] = input.value;
+					})
+
+					return data;
+				},
+				// 重置行内的各表单控件值
+				resetRow: function(value){
+					var row = this.getRow(value),
+						inputs = this.getRowInputs(row),
+						data = {};
+
+					UE.utils.each(inputs, function(input){
+						input.value = "";
+					})
+				},
+				getResult: function(value){
+					// 特殊字段集
+					var special = {
+						'macro_sign': function(value){
+							var data = this.getRowData(value);
+							if(data.number && isNaN(Number(data.number))) {
+								alert("步骤编号必须是一个有效的数字");
+								return false;
+							}
+							return data;
+						},
+						'macro_attach': function(value){
+							var data = this.getRowData(value);
+							if(data.number && isNaN(Number(data.number))) {
+								alert("步骤编号必须是一个有效的数字");
+								return false;
+							}
+							return data;
+						},
+						'macro_timeout': function(value){
+							var data = this.getRowData(value);
+							if(!data.number) {
+								alert("步骤编号不能为空");
+								return false;
+							}
+							if(isNaN(Number(data.number))){
+								alert("步骤编号必须是一个有效的数字");
+								return false
+							}
+							return data;
+						}
+					}
+					var data = {
+						value: value,
+						number: "",
+						format: "",
+						type: ""
+					};
+
+					// 特殊字段需要验证
+					if(special[value]){
+						var res = special[value].call(this, value);
+						if(!res) {
+							return false;
+						}
+						UE.utils.extend(data, res);
+					}
+
+					return "#[" + data.value + data.number + data.type + "]" + (data.format ? "[" + data.format + "]" : "");
+				},
+				add: function(value){
+					var res = this.getResult(value);
+					if(res) {
+						editor.execCommand("insertHtml", res);
+						// this.resetRow(value);
+					}
+				}
+			}
+
+			UE.dom.domUtils.on(marcoTable, "click", function(evt){
+				var target = evt.target,
+					value = target.getAttribute("data-value");
+				if(value) {
+					marco.add(value);
+				}
+			});
+
+		})();
+
+	</script>
+</body>
+</html>

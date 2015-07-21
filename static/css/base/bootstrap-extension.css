@@ -1,0 +1,411 @@
+/* Button ----------------------------------------------------*/
+.btn-x-large{ padding-left:  }
+/* Circle button */
+.circle-btn,
+.circle-btn-large,
+.circle-btn-small {
+  display: inline-block;
+  vertical-align: middle;
+}
+.circle-btn {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+.circle-btn:focus {
+  outline: 0 none;
+}
+.circle-btn-large {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+}
+.circle-btn-large:focus {
+  outline: 0 none;
+}
+.circle-btn-small:focus {
+  outline: 0 none;
+}
+.btn-icon {
+  padding-left: 9px;
+  padding-right: 9px;
+}
+.btn-fix {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+.btn-small.btn-fix {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+.btn-narrow {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.btn-widen {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+.btn .checkbox {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: top;
+}
+.btn-x-large{ padding: 14px 40px; font-size: 16px; border-radius: 6px; }
+.btn-great,
+.btn-submit { padding-left: 60px; padding-right: 60px; }
+
+/* 圆形按钮，配合具体图标使用 */
+.cbtn {
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+}
+.cbtn:focus { outline: 0 none; }
+
+/* Grid ------------------------------------------------------ */
+.row-narrow {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+.row-narrow [class^="span"] {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
+/* Pagination ------------------------------------------------ */
+.pagination-wrap {
+  margin: 20px 0;
+  height: 40px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
+}
+.pagination {
+  float: left;
+  margin: 0;
+}
+.pagination input {
+  min-height: 30px;
+}
+.pagination-controll {
+  float: left;
+  padding: 5px;
+}
+.pagination-controll > .input-group {
+  float: left;
+  width: 80px;
+}
+.pagination-controll > .input-group > input {
+  float: left;
+  width: 40px;
+  color: #82939e;
+  font-weight: 700;
+}
+.pagination-controll > .input-group .btn {
+  width: 40px;
+}
+.pagination-controll > .input-group .btn .glyphicon:before,
+.pagination-controll > .input-group .btn [class^="glyphicon-"]:before {
+  line-height: 1.2;
+}
+.pagination-controll > span {
+  line-height: 30px;
+  font-family: Arial, "Microsoft Yahei";
+  padding: 0 5px;
+}
+
+
+/* Form ------------------------------------------------------*/
+.input-operates {
+  position: relative;
+}
+.input-operate {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 5px;
+}
+.operate-btn {
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px;
+  color: #82939e;
+  background-color: #ebedf0;
+  white-space: nowrap;
+  -webkit-transition: background linear 0.1s;
+  -moz-transition: background linear 0.1s;
+  -o-transition: background linear 0.1s;
+  transition: background linear 0.1s;
+}
+.operate-btn-large {
+  padding: 10px;
+}
+.operate-btn:hover,
+.operate-btn:focus,
+.operate-btn.hover,
+.operate-btn.active {
+  background-color: #3497db;
+  /* brand-primary */
+  color: #fff;
+  text-decoration: none;
+}
+.operate-btn-danger:hover,
+.operate-btn-danger:focus,
+.operate-btn-danger.hover {
+  background-color: #e26f50;
+  /* brand-danger */
+}
+.input-operates input[type="text"] {
+  padding-right: 40px;
+}
+.input-operates .caret {
+  margin-top: 8px;
+  margin-left: 0;
+}
+.input-operate .operate-btn:hover .caret,
+.input-operate .operate-btn:focus .caret {
+  border-top-color: #FFF;
+}
+.has-error input,
+.has-success input {
+  background-image: url('../image/ico_input_status.png');
+  background-repeat: no-repeat;
+}
+.has-error input {
+  background-position: right 0;
+}
+.has-success input {
+  background-position: right -40px;
+}
+/* Input addon */
+.addon-icon {
+  width: 40px;
+}
+.addon-icon.input-large {
+  width: 50px;
+  min-width: 50px;
+}
+.addon-icon.input-small {
+  min-width: 30px;
+  width: 30px;
+}
+.input-group-addon {
+  -webkit-transition: background linear .2s, border linear .2s;
+  -moz-transition: background linear .2s, border linear .2s;
+  -o-transition: background linear .2s, border linear .2s;
+  transition: background linear .2s, border linear .2s;
+  min-width: 40px;
+}
+.checkbox,
+.radio {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 24px;
+}
+.control-group > .radio-inline,
+.control-group > .checkbox-inline {
+  margin-bottom: 0;
+}
+.controls > .radio-inline:first-child,
+.controls > .checkbox-inline:first-child,
+.radio-inline + .radio-inline,
+.checkbox-inline + .checkbox-inline {
+  margin-top: 0;
+}
+.checkbox .icon,
+.checkbox .icon-to-fade,
+.radio .icon,
+.radio .icon-to-fade {
+  -webkit-transition: opacity 0.1s linear;
+  -moz-transition: opacity 0.1s linear;
+  -o-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background: url("../image/component.png") -50px -130px no-repeat;
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 0;
+  opacity: 1;
+  /*top: -1px;*/
+}
+.checkbox .icon,
+.radio .icon {
+  display: none\9;
+  opacity: 0;
+  z-index: 2;
+}
+.radio .icon,
+.radio .icon-to-fade {
+  background-position: -50px -90px;
+}
+.checkbox:hover,
+.radio:hover,
+.checkbox.has-focus,
+.radio.has-focus {
+  color: #3497db;
+}
+.checkbox:hover .icon-to-fade,
+.checkbox.has-focus .icon-to-fade {
+  background-position: -130px -130px;
+}
+.radio:hover .icon-to-fade,
+.radio.has-focus .icon-to-fade {
+  background-position: -130px -90px;
+}
+.checkbox input,
+.radio input {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  outline: none !important;
+  zoom: 1;
+}
+.checkbox.checked .icon {
+  background-position: -90px -130px;
+}
+.radio.checked .icon {
+  background-position: -90px -90px;
+}
+.checkbox.disabled,
+.radio.disabled {
+  color: #d7dddd;
+  cursor: default;
+}
+.checkbox.checked .icon-to-fade,
+.radio.checked .icon-to-fade,
+.checkbox.disabled .icon,
+.radio.disabled .icon,
+.checkbox.disabled.checked .icon-to-fade,
+.radio.disabled.checked .icon-to-fade {
+  display: none\9;
+  opacity: 0;
+}
+.checkbox.checked .icon,
+.radio.checked .icon,
+.checkbox.disabled .icon-to-fade,
+.radio.disabled .icon-to-fade,
+.checkbox.disabled.checked .icon,
+.radio.disabled.checked .icon {
+  display: block\9;
+  opacity: 1;
+}
+.checkbox.disabled .icon-to-fade {
+  background-position: -10px -130px;
+}
+.radio.disabled .icon-to-fade {
+  background-position: -10px -90px;
+}
+.checkbox.disabled.checked .icon {
+  background-position: -170px -130px;
+}
+.radio.disabled.checked .icon {
+  background-position: -170px -90px;
+}
+
+
+/* Avatar ------------------------------------------------------- */
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+}
+.avatar-large {
+  width: 180px;
+  height: 180px;
+  border-radius: 6px;
+}
+.avatar-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+}
+
+
+/* Table -------------------------------------------------------- */
+.table-crowd th,
+.table-crowd td {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.table-head-condensed thead th {
+  height: 20px;
+}
+.table-head-condensed thead:first-child tr:first-child th,
+.table-head-condensed thead:first-child tr:first-child td {
+  border-bottom: 2px solid #3497db;
+}
+.table-row-condensed thead:first-child tr:first-child th,
+.table-row-condensed thead:first-child tr:first-child td {
+  border-bottom: 0 none;
+}
+.table-row-condensed th,
+.table-row-condensed td {
+  height: 20px;
+}
+.table-row-narrow th,
+.table-row-narrow td {
+  height: 30px;
+}
+.table-head-inverse thead th {
+  background-color: #2f88c5;
+  color: #FFF;
+}
+
+
+
+/*--------------------------------------------------------*/
+.circle {
+  border-radius: 50%;
+}
+/* 自定义滚动条样式 IE8+ */
+.scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scroll::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #B2C0D1;
+}
+/* Handle */
+.scroll::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  border: 2px solid #B2C0D1;
+  background-color: #f5f5f5;
+}
+.scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #fff;
+}
+.scroll::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
+/* icon */
+.o-ex-calendar {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url("../image/component.png") no-repeat 0 -250px;
+}
+.operate-btn:hover .o-ex-calendar,
+.active .o-ex-calendar {
+  background-position: -40px -250px;
+}

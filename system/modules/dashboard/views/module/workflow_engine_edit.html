@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>工作流</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">工作流业务引擎</h1>
+			<ul class="mn">
+				<li>
+					<a href="workflow_setup.html">设置</a>
+				</li>
+				<li>
+					<span>引擎</span>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<form action="" class="form-horizontal">
+			<!-- 基本属性 start -->
+			<div class="ctb">
+				<h2 class="st">基本属性</h2>
+				<div class="ctbw">
+					<div class="control-group">
+						<label for="" class="control-label">模块</label>
+						<div class="controls">
+							<input type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">名称</label>
+						<div class="controls">
+							<input type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">描述</label>
+						<div class="controls">
+							<input type="text">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">状态</label>
+						<div class="controls">
+							<label class="radio">
+								<input type="radio" name="1" id="" checked>
+								必选
+							</label>
+							<label class="radio">
+								<input type="radio" name="1" id="">
+								可选
+							</label>
+							<label class="radio">
+								<input type="radio" name="1" id="">
+								停用
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 数据映射 start -->
+			<div class="ctb data-map">
+				<h2 class="st">数据映射</h2>
+				<div>
+					<div class="control-group ctbw">
+						<label for="" class="control-label">流程</label>
+						<div class="controls">
+							<select name="" id="">
+								<option value="">报销申请流程</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">数据映射</label>
+						<div class="controls">
+							<select name="" id="map_field" size="6" class="data-map-select">
+								<option value="主键">主键</option>
+								<option value="物品ID">物品ID</option>
+								<option value="物品名称">物品名称</option>
+								<option value="领用数量">领用数量</option>
+								<option value="备注">备注</option>
+								<option value="领用人">领用人</option>
+								<option value="领用人ID">领用人ID</option>
+								<option value="部门审批人ID">部门审批人ID</option>
+							</select>
+							<select name="" id="map_prop" size="6" class="data-map-select">
+								<option value="申请日期">申请日期</option>
+								<option value="开户行">开户行</option>
+								<option value="银行账号">银行账号</option>
+								<option value="报销明细">报销明细</option>
+								<option value="申请人说明">申请人说明</option>
+								<option value="行政经理审批">行政经理审批</option>
+								<option value="行政经理意见">行政经理意见</option>
+								<option value="行政经理签字">行政经理签字</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label"></label>
+						<div class="controls">
+							<button type="button" class="btn" id="map_btn">添加业务模块-流程映射</button>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">数据映射关系</label>
+						<div class="controls ctbw">
+							<ul id="map_list" class="data-map-list">
+								<li data-value="物品ID=>来文单位">
+									物品ID=>来文单位
+									<a href="javascript:;" class="cbtn o-trash" title="删除"></a>
+								</li>
+								<li data-value="部门审批人=>送签领导">
+									部门审批人=>送签领导
+									<a href="javascript:;" class="cbtn o-trash" title="删除"></a>
+								</li>
+								<li data-value="备注=>文件标题">
+									备注=>文件标题
+									<a href="javascript:;" class="cbtn o-trash" title="删除"></a>
+								</li>
+								<li data-value="主键=>收文时间">
+									主键=>收文时间
+									<a href="javascript:;" class="cbtn o-trash" title="删除"></a>
+								</li>
+							</ul>
+							<input type="hidden" name="" id="map_value" value="物品ID=>来文单位,部门审批人=>送签领导,备注=>文件标题,主键=>收文时间">
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 流程插件 start -->
+			<div class="ctb">
+				<h2 class="st">流程插件</h2>
+				<div>
+					<div class="control-group">
+						<label for="" class="control-label">条件生成器</label>
+						<div class="controls">
+							<div class="row">
+								<div class="span3">
+									<select name="" id="cond_proposer">
+										<option value="申请人">申请人</option>
+										<option value="接收人">接收人</option>
+									</select>
+								</div>
+								<div class="span3">
+									<select name="" id="cond_type">
+										<option value="=">等于</option>
+										<option value="!=">不等于</option>
+									</select>
+								</div>
+								<div class="span3">
+									<!-- TODO: Selector -->
+									<input type="text" id="cond_staff" value="Selector">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label"></label>
+						<div class="controls">
+							<button type="button" class="btn" id="cond_btn">添加到条件列表</button>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">条件列表</label>
+						<div class="controls ctbw">
+							<ul id="cond_list" class="data-map-list">
+								<li data-value="申请人=杨芳贤">
+									申请人=杨芳贤
+									<a href="javascript:;" class="cbtn o-trash" title="删除"></a>
+								</li>
+							</ul>
+							<input type="hidden" value="申请人=杨芳贤" id="cond_value">
+						</div>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../../../../static/js/base.js"></script>
+	<script src="../../../../../static/js/extra.js"></script>
+	<script src="../../static/js/dashboard.js"></script>
+	<script>
+	(function(){
+		var createItem = function(content){
+			var item = $("<li>"),
+				trashBtn;
+			trashBtn = $("<a>", {
+				"href": "javascript:;",
+				"class": "cbtn o-trash",
+				"title": "删除"
+			})
+			item.text(content).append(trashBtn).data("value", content);
+			return item;
+		}
+		var addItem = function(value, list, input){
+			var source = input.val();
+			var item;
+			if(!Ibos.checkExists(value, source)){
+				item = createItem(value);
+				list.append(item);
+				input.val(Ibos.pushValue(value, source));
+			}else{
+				alert("该项已存在列表中");
+			}
+		}
+		var removeItem = function(item, input){
+			var value = item.data("value"),
+				source = input.val();
+			input.val(Ibos.popValue(value, source));
+			item.remove();
+		}
+
+		var mapBtn = $("#map_btn"),
+			mapProp = $("#map_prop"),
+			mapList = $("#map_list"),
+			mapField = $("#map_field"),
+			mapValue = $("#map_value");
+
+
+		var addMapItem = function(){
+			var field = mapField.val(),
+				prop = mapProp.val(),
+				item, value, source = mapValue.val();
+			if(field && prop){
+				value = field + "=>" +prop;
+				addItem(value, mapList, mapValue)
+			}
+		};
+
+
+		mapField.on("dblclick", "option", addMapItem);
+		mapProp.on("dblclick", "option", addMapItem);
+		mapBtn.on("click", addMapItem);
+		mapList.on("click", "a", function(evt){
+			var item = $(evt.target.parentNode);
+			removeItem(item, mapValue);
+		})
+
+		var condProposer = $("#cond_proposer"),
+			condType = $("#cond_type"),
+			condStaff = $("#cond_staff"),
+			condBtn = $("#cond_btn"),
+			condList = $("#cond_list"),
+			condValue = $("#cond_value");
+
+		var addCondItem = function(){
+			var proposer = condProposer.val(),
+				type = condType.val(),
+				staff = condStaff.val(),
+				value, source = condValue.val();
+			if(staff){
+				value = proposer + type + staff;
+				addItem(value, condList, condValue);
+			}
+		};
+
+		condBtn.on("click", addCondItem);
+		condList.on("click", "a", function(evt){
+			var item = $(evt.target.parentNode);
+			removeItem(item, condValue);
+		})
+	})();
+	</script>
+</body>
+</html>

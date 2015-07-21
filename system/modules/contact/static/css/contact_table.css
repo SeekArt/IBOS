@@ -1,0 +1,32 @@
+.main-content{
+	margin:0 auto;
+	width: 850px;
+}
+.contect-list-info{
+	margin-bottom: 10px;
+	width: 850px;
+	text-align: center;
+}
+.table-title{
+	font-size: 30px;
+}
+.info-table{
+	width: 100%;
+	border-spacing: 0;
+	border: 1px #000 solid;
+	border-left: 0;
+	border-bottom: 0;
+	text-align: center;
+	vertical-align: middle;
+	font-family: Arial, Verdana, 'Microsoft Yahei', '微软雅黑', 'Simsun', '宋体'
+}
+.info-table td,
+.info-table th{
+	padding: 5px 0;
+	border-left: 1px #000 solid;
+	border-bottom: 1px #000 solid;
+}
+.info-table>thead>tr>th{
+	font-weight: 400;
+	text-align: center;
+}

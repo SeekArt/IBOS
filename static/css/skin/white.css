@@ -1,0 +1,42 @@
+.ibbody {
+	background: #F6F7F9 url(../../image/bg_white.jpg) fixed repeat-x center 0;
+	padding-top: 60px;
+}
+.header{
+	background-color: #fff;
+	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+}
+.nv a{
+	color: #8a9aa4;
+}
+.nv li{ position: relative;}
+.nv a:hover,
+.nv .active a,
+.nv .open a{ 
+	background-color: #3C3F43; 
+	color: #fff;
+}
+.subnv a{
+	background-color: #3C3F43; 
+}
+
+.o-message{
+	background-image: url(../../image/news_tip.png);
+	background-position: 0 0; 
+}
+.o-message:hover{
+	background-image: url(../../image/btn_icon.png);
+	background-position: 0 -120px; 
+}
+
+.usi a{
+	color: #8a9aa4;
+}
+.usi .caret{
+	border-top-color: #8a9aa4;
+}
+.usi .active .caret{
+	border-bottom-color: #8a9aa4;
+}

@@ -1,0 +1,39 @@
+.in-mal-inbox-empty,
+.in-mal-unread-empty,
+.in-mal-todo-empty{
+	width: 488px;
+	height: 300px;
+}
+.in-mal-inbox-empty{ background: url(../image/empty_inbox.png) no-repeat center center; }
+.in-mal-unread-empty{ background: url(../image/empty_new.png) no-repeat center center; }
+.in-mal-todo-empty{ background: url(../image/empty_mark.png) no-repeat center center; }
+
+
+.in-email .mbox-base{ background: #FFF url(../image/bg_letter.png) repeat-x -20px bottom; }
+
+.o-mal-inbox,
+.o-mal-unread,
+.o-mal-todo,
+.o-mal-attach,
+.o-mal-new{
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+	background: url(../image/email.png) no-repeat;
+}
+.o-mal-new,
+.o-mal-attach{ margin-right: 0; width: 15px; }
+
+.o-mal-inbox{ background-position: -20px 0;}
+.active .o-mal-inbox,
+.mbox .nav-skid li a:hover .o-mal-inbox{ background-position: -40px 0;}
+.o-mal-unread{ background-position: -120px -20px; }
+.active .o-mal-unread,
+.mbox .nav-skid li a:hover .o-mal-unread{ background-position: -140px -20px;}
+.o-mal-todo{ background-position: -60px 0;}
+.active .o-mal-todo,
+.mbox .nav-skid li a:hover .o-mal-todo{ background-position: -80px 0;}
+.o-mal-new{ background-position: 0 -20px; }
+.o-mal-attach{ background-position: -24px -20px; }

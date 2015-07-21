@@ -1,0 +1,176 @@
+/*!
+ * iefixed for Bootstrap v3.0.0
+ * @module Global
+ * @version $Id$
+ */
+[class^="span"] {
+	float: left;
+}
+.span12 {
+	width: 100%;
+}
+.span11 {
+	width: 91.66666666666666%;
+}
+.span10 {
+	width: 83.33333333333334%;
+}
+.span9 {
+	width: 75%;
+}
+.span8 {
+	width: 66.66666666666666%;
+}
+.span7 {
+	width: 58.333333333333336%;
+}
+.span6 {
+	width: 50%;
+}
+.span5 {
+	width: 41.66666666666667%;
+}
+.span4 {
+	width: 33.33333333333333%;
+}
+.span3 {
+	width: 25%;
+}
+.span2 {
+	width: 16.666666666666664%;
+}
+.span1 {
+	width: 8.333333333333332%;
+}
+.offset12 {
+	margin-left: 100%;
+}
+.offset11 {
+	margin-left: 91.66666666666666%;
+}
+.offset10 {
+	margin-left: 83.33333333333334%;
+}
+.offset9 {
+	margin-left: 75%;
+}
+.offset8 {
+	margin-left: 66.66666666666666%;
+}
+.offset7 {
+	margin-left: 58.333333333333336%;
+}
+.offset6 {
+	margin-left: 50%;
+}
+.offset5 {
+	margin-left: 41.66666666666667%;
+}
+.offset4 {
+	margin-left: 33.33333333333333%;
+}
+.offset3 {
+	margin-left: 25%;
+}
+.offset2 {
+	margin-left: 16.666666666666664%;
+}
+.offset1 {
+	margin-left: 8.333333333333332%;
+}
+select,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"] {
+	min-height: auto;
+	height: 40px;
+}
+input[type="text"].input-large,
+input[type="password"].input-large{
+	min-height: auto;
+	height: 48px;
+}
+select.input-small,
+input[type="text"].input-small,
+input[type="password"].input-small{
+	min-height: auto;	
+	height: 30px;
+}
+
+.select2-container-multi .select2-choices .select2-search-field input{
+	min-height: auto;
+}
+
+.row {
+	*zoom: 1;
+}
+
+.form-horizontal .control-group {
+	position: relative;
+	margin-bottom: 20px;
+}
+.form-horizontal .control-group:before,
+.form-horizontal .control-group:after {
+	content: " ";
+	/* 1 */
+
+	display: table;
+	/* 2 */
+
+}
+.form-horizontal .control-group:after {
+	clear: both;
+}
+.form-horizontal .control-group input,
+.form-horizontal .control-group select,
+.form-horizontal .control-group textarea {
+	margin-bottom: 0;
+}
+.form-horizontal .control-group > .control-label {
+	float: left;
+	width: 160px;
+	padding-top: 6px;
+	text-align: right;
+}
+.form-horizontal .control-group > .control-label-input{ padding-top: 0 }
+
+.form-horizontal .control-group > .controls {
+	margin-left: 180px;
+}
+.form-compact .control-group > .control-label {
+	width: 80px;
+}
+.form-compact .control-group > .controls {
+	margin-left: 100px;
+}
+.form-narrow .control-group > .control-label {
+	width: 120px;
+}
+.form-narrow .control-group > .controls {
+	margin-left: 140px;
+}
+.form-widen .control-group > .control-label {
+	width: 200px;
+}
+.form-widen .control-group > .controls {
+	margin-left: 220px;
+}
+.form-horizontal .control-group > .control-label-btn {
+	padding-top: 0;
+}
+
+
+
+/* UserSelect */
+.select-box { border: 1px solid #DDD; }

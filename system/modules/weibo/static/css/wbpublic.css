@@ -1,0 +1,258 @@
+
+
+
+.wbb-mt10{margin-top:10px;}
+.wbb-mt20{margin-top:20px;}
+
+.wbb-pt10{padding-top:10px;}
+.wbb-pr10{padding-right:10px;}
+
+/*通用盒子  人事关系等*/
+.wbc-box{ padding:20px;}
+.wbc-box2{ background:#fdfdfd; padding:15px 20px;}
+
+
+.wbc-right,
+#wb_sidebar{ width: 320px; }
+/*#wb_sidebar.affix { top: 60px;}*/
+#wb_sidebar.affix-bottom { position: absolute; }
+.wbc-left { width:660px;}
+
+
+/*人头double*/
+.wbi-hdpic{background:url(../image/wb-icon-per.png) no-repeat -88px 0px;width:19px;height:16px; margin-bottom:-2px;}
+
+/*图片*/
+.wbi-img{background:url(../image/wb-icon-per.png) no-repeat -107px 0px;width:20px;height:18px; margin-bottom:-3px;}
+
+
+/*查看他人*/
+.wbi-seot{background:url(../image/wb-icon-per.png) no-repeat -261px 0px;width:40px;height:40px;}
+.wbi-seot:hover{background-position: -301px 0px;}
+
+
+
+/*更换背景图btn*/
+.wb-banBtn{ display:block; width:60px; height:60px; background:url(../image/user.png) 0px -90px  no-repeat; position:absolute; right:0px; top:0px; }
+.wb-banBtn:hover{ background-position:-60px -90px;}
+
+
+/*微博发布窗按钮菜单*/
+.o-wb-face,
+.o-wb-pic,
+.o-wb-topic,
+.o-wb-medal,
+
+.wbi-arr-b,
+.wbi-arr-t,
+
+.o-wbtype-normal,
+.o-wbtype-praise,
+.o-wbtype-leaf,
+.o-wbtype-more,
+.o-wbtype-diary,
+.o-wbtype-article,
+.o-wbtype-officialdoc,
+.o-wbtype-flow,
+.o-wbtype-album,
+
+.o-wbi-frow,
+.o-wbi-mess,
+.o-wbi-good,
+.o-wbi-mic,
+.o-wbi-wmic,
+.o-wbi-more,
+.o-wbi-lock,
+.o-wbi-close,
+.o-wbi-cmic,
+
+.o-wbr-leaf,
+.o-wbr-user,
+.o-wbr-topic,
+.o-wbr-relation,
+.o-wbr-album,
+
+.o-wbf-trash,
+
+.wbi-plus{
+	display: inline-block; 
+	background-image: url(../image/wb_cm.png);
+	background-repeat: no-repeat;
+	vertical-align: middle;
+}
+.o-wb-face,
+.o-wb-pic,
+.o-wb-topic,
+.o-wb-medal{ width: 30px; height: 30px; }
+
+.o-wb-face{ background-position: 0 -40px; }
+.o-wb-face:hover,
+.o-wb-face.active{ background-position: -30px -40px; }
+.o-wb-pic{ background-position: -60px -40px; }
+.o-wb-pic:hover,
+.o-wb-pic.active{ background-position: -90px -40px; }
+.o-wb-topic{ background-position: -120px -40px; }
+.o-wb-topic:hover,
+.o-wb-topic.active{ background-position: -150px -40px; }
+.o-wb-medal{ background-position: -180px -40px; }
+.o-wb-medal:hover,
+.o-wb-medal.active{ background-position: -210px -40px; }
+
+/*通用箭头*/
+.wbi-arr-b,
+.wbi-arr-t{
+	height:7px;width:12px; margin-left:5px; 
+}
+
+.wbi-arr-b{ background-position: -260px -40px;}
+a:hover .wbi-arr-b{ background-position: -260px -50px;}
+
+.open .wbi-arr-b,
+.wbi-arr-t{background-position: -260px -60px; }
+.open a:hover .wbi-arr-b,
+a:hover .wbi-arr-t{background-position: -260px -70px;}
+
+.o-wbtype-normal,
+.o-wbtype-praise,
+.o-wbtype-leaf,
+.o-wbtype-more,
+.o-wbtype-diary,
+.o-wbtype-report,
+.o-wbtype-article,
+.o-wbtype-offcialdoc,
+.o-wbtype-workflow,
+.o-wbtype-album{ 
+	 width:40px;
+	 height:42px;
+}
+
+.o-wbtype-normal{ background-position: 0 -80px; }
+.o-wbtype-praise{ background-position: -40px -80px; }
+.o-wbtype-leaf{ background-position: -80px -80px; }
+.o-wbtype-more{ background-position: -120px -80px; }
+.o-wbtype-report,
+.o-wbtype-diary{ background-position: -160px -80px; }
+.o-wbtype-article{ background-position: -200px -80px; }
+.o-wbtype-officialdoc{ background-position: -240px -80px; }
+.o-wbtype-workflow{ background-position: -280px -80px; }
+.o-wbtype-album{ background-position: -320px -80px; }
+
+.o-wbi-frow,
+.o-wbi-mess,
+.o-wbi-good,
+.o-wbi-mic,
+.o-wbi-wmic,
+.o-wbi-more,
+.o-wbi-lock,
+
+.o-wbr-user,
+.o-wbr-topic,
+.o-wbr-leaf,
+.o-wbr-relation,
+.o-wbr-album{ width: 20px; height: 20px; }
+
+.o-wbi-frow{ background-position: -280px -40px; } /* 转发 */
+.o-wbi-mess{ background-position: -300px -40px; } /* 评论 */
+.o-wbi-good{ background-position: -280px -60px; } /* 赞 */
+.o-wbi-good.active{background-position: -300px -60px;}
+
+.o-wbi-mic{ background-position: -320px -40px; }
+.o-wbi-wmic{ background-position: -360px -60px; }
+.o-wbi-more{ background-position: -340px -40px; }
+.o-wbi-lock{ background-position: -320px -62px; }
+.o-wbi-lock:hover{ background-position: -340px -62px; }
+
+.o-wbr-leaf{ background-position: -40px -140px; }
+.o-wbr-topic{ background-position: -60px -140px; }
+.o-wbr-user{ background-position: -80px -140px; }
+.o-wbr-relation{ background-position: -100px -140px; }
+.o-wbr-album{ background-position: -120px -140px; }
+
+/*.wbi-plus{ }*/
+.o-wbi-cmic{ width:24px; height:24px; background-position: 0 -140px; }
+
+.o-wbi-close{ width: 12px; height: 12px; position: absolute; top: 0; right: 0; background-position: -360px -140px; cursor: pointer;}
+
+.o-wbf-trash{ width: 40px; height: 40px; background-position: 0 -170px; }
+.o-wbf-trash:hover{ background-position: -40px -170px; }
+
+
+.wb-lv { display: inline-block; vertical-align: middle; width: 34px; height: 12px; background: url(../image/wb_lv.png) no-repeat; }
+.wb-lv.lv2{ background-position: 0 -14px; }
+.wb-lv.lv3{ background-position: 0 -28px; }
+.wb-lv.lv4{ background-position: 0 -42px; }
+.wb-lv.lv5{ background-position: 0 -56px; }
+.wb-lv.lv6{ background-position: 0 -70px; }
+.wb-lv.lv7{ background-position: 0 -84px; }
+.wb-lv.lv8{ background-position: 0 -98px; }
+.wb-lv.lv9{ background-position: 0 -112px; }
+.wb-lv.lv10{ background-position: 0 -126px; }
+.wb-lv.lv11{ background-position: -40px 0; }
+.wb-lv.lv12{ background-position: -40px -14px; }
+.wb-lv.lv13{ background-position: -40px -28px; }
+.wb-lv.lv14{ background-position: -40px -42px; }
+.wb-lv.lv15{ background-position: -40px -56px; }
+.wb-lv.lv16{ background-position: -40px -70px; }
+.wb-lv.lv17{ background-position: -40px -84px; }
+.wb-lv.lv18{ background-position: -40px -98px; }
+.wb-lv.lv19{ background-position: -40px -112px; }
+.wb-lv.lv20{ background-position: -40px -126px; }
+/*————未使用雪碧图————*/
+/*微博分类*/
+
+.wbi-rank-one,
+.wbi-rank-two,
+.wbi-rank-thr,
+.wbi-rank-other{
+	border-radius: 4px; display:inline-block; position: relative; width:24px; height:24px; line-height:24px; text-align:center; color:#FFF; font-weight:700;
+}
+
+
+.wbi-rank-one{ background-color: #E26F50; }
+.wbi-rank-two{ background-color: #EE8C0C; }
+.wbi-rank-thr{ background-color: #EEBB0C; }
+.wbi-rank-other{ background-color: #B2C0D1; }
+.wbi-rank-one:after,
+.wbi-rank-two:after,
+.wbi-rank-thr:after{ 
+	border-radius: 4px 4px 0 0; content: " "; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background-color: #FFF; opacity: .1; filter: Alpha(opacity=10); 
+}
+
+
+
+.top-flag {
+	position: absolute;
+	bottom: 0;
+	left: -4px;
+	width: 32px;
+	height: 30px;
+	background: url(../image/user.png) no-repeat 0 -40px;
+	color: #FFF;
+	text-align: center;
+	font-weight: 700;
+	line-height: 28px;
+}
+
+.wbi-tpc-mes,
+.wbi-tpc-wmes{ display:inline-block; width:16px; height:14px; background-repeat: no-repeat; background-position: center center; margin-bottom:-1px;}
+.wbi-tpc-mes{ background-image: url(../images/tpc-wbicon.png); }
+.wbi-tpc-wmes{ background-image:url(../images/wb-wmes.png);}
+
+
+.wbi-pic-del{ display:inline-block; width:16px; height:16px; background:url(../images/wbi_del.png) center no-repeat;}
+
+
+
+.wbc-tit{ font-size:20px; font-weight:400; padding-left:5px;}
+
+/*人头 灰色*/
+.wbi-hdpic-gary{ display:inline-block; background:url(../image/global.png) -2px -144px no-repeat; width:15px; height:14px; margin-bottom:-1px;}
+
+.wbi-opa-la{display:inline-block; width:30px; height:30px; background:url(../images/wbi-opa-la.png) center no-repeat;}
+
+.wbi-wfork{ display:inline-block; width:10px; height:10px; background:url(../images/wFork.png) center no-repeat; }
+.wbi-hook{ display:inline-block; width:12px; height:9px; background:url(../images/bhook.png) center no-repeat; }
+
+/*del wb */
+.wbi-del{background:url(../images/wbi-del.png) no-repeat center; width:35px;height:35px;}
+.wbi-del:hover{ background:url(../images/wbi-del-on.png) center no-repeat;}

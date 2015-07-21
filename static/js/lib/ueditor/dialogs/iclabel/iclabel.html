@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.span6 { float: left; width: 50%; }
+			/* mini编辑功能 */
+			.editor-btnbar{}
+			.editor-btn{ border-radius: 4px; margin-left: 5px; display: inline-block; width: 38px; height: 38px; border: 1px solid #DADFE6; vertical-align: middle; font-size: 20px; text-align: center; line-height: 38px; color: #82939E; }
+			.editor-btn:hover { text-decoration: none; }
+			.editor-btn.active{ background-color: #F3FBFF; color: #3497DB; border-color: #3497DB; }
+			.editor-btn-bold{ font-weight: 700; }
+			.editor-btn-italic{ font-style: italic;}
+			.editor-btn-underline,
+			.editor-btn-underline:hover{ text-decoration: underline;}
+			.xcr {color: #E26F50;}
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_label_text"><var id="lang_control_text"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_label_text">
+				</div>
+				<div class="control-group">
+					<label for="control_label_width"><var id="lang_control_style"></var></label>
+					<div class="input-group">
+						<input type="text" id="control_label_width">
+						<span class="input-group-addon"><var id="lang_control_width"></var></span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_label_fontsize"><var id="lang_control_fontsize"></var></label>
+					<div class="row">
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_label_fontsize">
+								<span class="input-group-addon">PX</span>
+							</div>
+						</div>
+						<div class="span6">
+							<select id="control_label_align">
+								<option value="left"></option>
+								<option value="center"></option>
+								<option value="right"></option>
+							</select>
+						</div>
+					</div>
+					<div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label><var id="lang_control_fontstyle"></var>:</label>
+					<div id="mini_et">
+					</div>
+				</div>
+			</form>
+		</fieldset>
+
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/minieditor.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="label" data-width="<%=width%>" data-text="<%=text%>" data-font-size="<%=fontSize%>" data-align="<%=align%>" data-bold="<%=bold%>" data-italic="<%=italic%>" data-underline="<%=underline%>" data-color="<%=color%>" contenteditable="false" >' +
+						'<span style="display: inline-block; width: <%=width%>px; text-align: <%=align%>; font-size: <%=fontSize%>px; color: <%=color%>; font-weight: <%=(bold ? "700" : "400")%>; font-style: <%= (italic ? "italic" : "normal") %>; text-decoration: <%= (underline ? "underline" : "normal") %> "><%=text%></span></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						miniEt = miniEditor($("#mini_et")),
+						oldData;
+
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_label_text').value = oldData.text;
+					$G('control_label_fontsize').value = oldData.fontSize;
+					$G('control_label_align').value = oldData.align;
+					$G('control_label_width').value = oldData.width;
+					miniEt.setValue({
+						bold: oldData.bold == "1" ? true : false,
+						italic: oldData.italic == "1" ? true : false,
+						underline: oldData.underline == "1" ? true : false,
+						color: oldData.color
+					});
+				}
+				dialog.onok = function() {
+					var data, text = $G('control_label_text').value;
+					if ($.trim(text) === "") {
+						alert(editor.getLang("fc.noTextTip"));
+						return false;
+					}
+					data = {
+						text: text,
+						width: +($G('control_label_width').value) || 200,
+						fontSize: +$G('control_label_fontsize').value || 14,
+						align: $G('control_label_align').value,
+						bold: +miniEt.getValue('bold'),
+						italic: +miniEt.getValue('italic'),
+						underline: +miniEt.getValue('underline'),
+						color: miniEt.getValue("color") || ""
+					};
+
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false
+				};
+			})();
+		</script>
+	</body>
+</html>

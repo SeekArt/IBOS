@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>管理话题</title>
+		<!-- load css -->
+		<link rel="stylesheet" href="../../../../../static/css/base.css">
+		<!-- IE8 fixed -->
+		<!--[if lt IE 9]>
+		<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+		<![endif]-->
+		<link rel="stylesheet" href="../../../dashboard/static/css/common.css">
+		<link rel="stylesheet" href="../../../../../static/js/lib/Select2/select2.css">
+		<link rel="stylesheet" href="../../../../../static/js/lib/zTree/css/ibos/ibos.css">
+	</head>
+	<body>
+		<div class="ct">
+			<div class="clearfix">
+				<h1 class="mt">企业微博</h1>
+				<ul class="mn">
+					<li>
+						<a href="wb_setup.html">微博设置</a>
+					</li>
+					<li>
+						<a href="wb_manage.html">管理微博</a>
+					</li>
+					<li>
+						<a href="wb_comment_manage.html">管理评论</a>
+					</li>
+					<li>
+						<span>管理话题</span>
+					</li>
+				</ul>
+			</div>
+			<div>
+				<!-- 管理话题 -->
+				<div class="ctb">
+					<h2 class="st">管理话题</h2>
+					<div>
+						<div class="page-list">
+							<div class="page-list-header">
+								<div class="btn-toolbar pull-left">
+									<button class="btn" type="button" data-action="removeTps">删除话题</button>
+								</div>
+								<form action="">
+								<div class="search span3 pull-right">
+									<input type="text" placeholder="输入标题查询" name="keyword" id="mn_search" nofocus>
+									<a href="javascript:;">search</a>
+								</div>
+								</form>
+							</div>
+							<div class="page-list-mainer">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th width="20"><label class="checkbox"><input type="checkbox" name="" id="" data-name="topic"></label></th>
+											<th>主题列表</th>
+											<th width="100">主持人</th>
+											<th width="120">最后更新</th>
+											<th width="70">微博条数</th>
+											<th width="70"></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr data-row="8">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="8"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="wb_topic_detail_manage.html" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 8}'></a>
+											</td>
+										</tr>
+										<tr data-row="7">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="7"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 7}'></a>
+											</td>
+										</tr>
+										<tr data-row="6">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="6"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 6}'></a>
+											</td>
+										</tr>
+										<tr data-row="5">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="5"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 5}'></a>
+											</td>
+										</tr>
+										<tr data-row="4">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="4"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 4}'></a>
+											</td>
+										</tr>
+										<tr data-row="3">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="3"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 3}'></a>
+											</td>
+										</tr>
+										<tr data-row="2">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="2"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 2}'></a>
+											</td>
+										</tr>
+										<tr data-row="1">
+											<td><label class="checkbox"><input type="checkbox" name="topic" value="1"></label></td>
+											<td><a href="#" class="anchor">#iconfans精品教程推荐#</a>《6个步骤解决叠色问题》</td>
+											<td class="fss">Corner</td>
+											<td class="fss">02 - 04 19:33</td>
+											<td>123</td>
+											<td>
+												<a href="#" target="_self" class="cbtn o-more"></a>
+												<a href="javascript:;" class="cbtn o-trash" data-action="removeTp" data-param='{"id": 1}'></a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="page-list-footer">页码</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../../../../static/js/src/core.js"></script>
+		<script src="../../../../../static/js/lang/zh-cn.js"></script>
+		<script src="../../../../../static/js/src/base.js"></script>
+		<script src="../../../../../static/js/src/common.js"></script>
+		<script src="../../../../../static/js/src/application.js"></script>
+		<script src="../../static/js/wbdashboard.js"></script>
+		<script>
+			$("#mn_search").search(/*onsearch, onconf*/)
+		</script>
+	</body>
+</html>

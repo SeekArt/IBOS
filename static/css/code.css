@@ -1,0 +1,175 @@
+/* banner区域 */
+.banner .banner-cal{
+	margin: 0;
+}
+.banner {
+	width: 980px;
+	height:700px;
+	position:relative;
+}
+.banner .bd {
+	position:relative;
+	z-index:0;
+	width: 980px;
+	height:700px;
+}
+.banner .bd ul {
+	width: 980px;
+}
+.banner .bd ul li {
+	width: 980px;
+	height:700px;
+	overflow:hidden;
+	text-align:center;
+}
+.banner .hd {
+	position:absolute;
+	z-index:2;
+	bottom:158px;
+	width:100%;
+	height:13px;
+	text-align:center;
+	bottom: 20px;
+}
+.banner .hd .posr {
+	height:13px;
+	display:inline-block;
+	zoom:1;
+	*display:inline;
+}
+.banner .hd ul {
+	height:13px;
+	text-align:center;
+}
+.banner .hd li {
+	width:18px;
+	height:13px;
+	display:inline-block;
+	zoom:1;
+	*display:inline;
+	line-height:0px;
+	font-size:0px;
+	background:url(../image/page/dots.png) center no-repeat;
+	cursor:pointer;
+}
+.liOn {
+	width:12px;
+	height:13px;
+	background:url(../image/page/dotsOn.png) center no-repeat;
+	position:absolute;
+	left:18px;
+	top:2px;
+}
+.banner .prev, 
+.banner .next {
+	display:block;
+	width:40px;
+	height:60px;
+	position:absolute;
+	z-index:999;
+	top:238px;
+	cursor:pointer;
+	-webkit-transition:0.3s ease all;
+	-moz-transition:0.3s ease all;
+}
+.banner .prev {
+	background: url(../image/page/allbgs.png) no-repeat -313px 80px;
+	left: -31px;
+	padding: 80px 20px;
+}
+.banner .next {
+	background: url(../image/page/allbgs.png) no-repeat -384px 80px;
+	right: -31px;
+	padding: 80px 20px;
+}
+.banner .prev:hover, 
+.banner .next:hover {
+	opacity:0.5;
+	filter:alpha(opacity=50);
+}
+
+.bnrbox{
+	width:980px;
+	margin:0 auto;
+	height:700px;
+	position:relative;
+}
+.bnr_more{
+	display:block;
+	width:140px;
+	height:52px;
+	padding-right:20px;
+	background:url(../image/page/bnr_Btn.png) center top no-repeat;
+	position:absolute;
+	z-index:999;
+	color:#FFF;
+	line-height:50px;
+	font-size:16px;
+}
+.bnr_more:hover{
+	background:url(../image/page/bnr_Btn.png) center bottom no-repeat;
+	color:#FFF;
+}
+.bm_pos1{
+	left:20px;
+	top:386px;
+}
+.bm_pos2{
+	left:600px;
+	top:380px;
+}
+.bm_pos3{
+	left:20px;
+	top:410px;
+}
+.bm_pos4{
+	left:600px;
+	top:380px;
+}
+.bm_pos5{
+	left:20px;
+	top:380px;
+}
+.index_dlbtn {
+	width:470px;
+	margin:0 auto;
+	margin-top:380px;
+}
+.index_dlbtn a {
+	display:inline-block;
+	zoom:1;
+	*display:inline;
+	width:210px;
+	height:62px;
+	text-indent:-9999em;
+}
+.zxty {
+	background:url(../image/page/allbgs.png) no-repeat -569px 0px;
+}
+.zxty:hover {
+	background:url(../image/page/allbgs.png) no-repeat -569px -70px;
+}
+.mfxz {
+	margin-left:40px;
+	background:url(../image/page/allbgs.png) no-repeat -569px -140px;
+}
+.mfxz:hover {
+	background:url(../image/page/allbgs.png) no-repeat -569px -210px;
+}
+
+.code-wrap{
+	margin: -20px 0 0 -20px;
+}
+
+.tdcode-wrap{
+	width: 980px;
+	height: 590px;
+	background: url(../image/page/weixin.png) no-repeat 0 0;
+}
+.tdcode-pic-wrap{
+	position: absolute;
+	width: 270px;
+	height: 270px;
+	top: 202px;
+	left: 182px;
+}

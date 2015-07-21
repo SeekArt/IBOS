@@ -1,0 +1,535 @@
+/**
+ * diary.css
+ * 工作日志
+ * @module Global
+ * @submodule Diary
+ * @type Layout
+ * @version $Id$
+ * @author Inaki
+ */
+
+
+.o-da-personal,
+.o-da-appraise,
+.o-da-shared,
+.o-da-concerned,
+
+.da-calendar-prev,
+.da-calendar-next,
+
+.da-calendar-table td.comment,
+
+.o-da-asterisk,
+.o-da-unasterisk,
+
+.da-mark-up,
+.da-mark-down,
+
+.o-da-clock,
+
+.o-udstar,
+.o-gudstar,
+
+.bo-locked,
+.bo-from-calendar,
+.bo-stamp {
+	background-image: url(../image/diary.png);
+	background-repeat: no-repeat;
+}
+.o-da-allsub {
+	background-image: url(../image/da_allsub.png);
+}
+
+.o-da-personal,
+.o-da-appraise,
+.o-da-shared,
+.o-da-concerned,
+.o-da-allsub,
+.da-calendar-prev,
+.da-calendar-next,
+
+.o-udstar,
+.o-gudstar,
+
+.o-da-clock{
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+}
+
+.o-da-asterisk,
+.o-da-unasterisk {
+	position: absolute;
+	top: 40px;
+	left: 40px;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+}
+
+.o-da-asterisk{ background-position: -30px -40px; }
+.o-da-unasterisk{ background-position: 0 -40px; display: none;}
+.introjs-tooltip .o-da-unasterisk{ position: static; display: inline-block; vertical-align: middle;}
+
+.da-list-item .avatar-box:hover .o-da-unasterisk,
+.usi-terse .avatar-box:hover .o-da-unasterisk{
+	display: block;
+}
+
+.o-da-personal{}
+.active .o-da-personal{ background-position: -20px 0; }
+.o-da-appraise{ background-position: -40px 0; } /* 评阅 */
+.active .o-da-appraise{ background-position: -60px 0; }
+.o-da-shared{ background-position: -80px 0; }
+.active .o-da-shared{ background-position: -100px 0; }
+.o-da-concerned{ background-position: -120px 0; }
+.active .o-da-concerned{ background-position: -140px 0; }
+
+.bo-from-calendar{ background-position: 0 -70px; margin-right: 5px;}
+.bo-from-calendar:hover{ background-position: -30px -70px; }
+
+.bo-locked{ background-position: -60px -70px; }
+
+.bo-stamp{ background-position: -90px -70px; }
+.bo-stamp:hover{ background-position: -120px -70px; }
+
+.o-da-clock{ background-position: -120px -40px; }
+
+.o-udstar{ display: none; margin-top: 5px; background-position: -140px -40px; }
+.o-udstar:hover{ background-position: -160px -40px; }
+.o-gudstar{ margin-top: 5px; background-position: -180px -40px; }
+
+
+
+.da-list{}
+.da-list-item{
+	position: relative;
+	padding: 20px;
+	min-height: 80px;
+	border-bottom: 1px solid #EBEFF6;
+	background-color: #FFF;
+}
+
+.da-list-item .avatar-box,
+.da-list-item .datebox{
+	float: left;
+	position: relative;
+}
+
+.da-list-item .avatar-circle:hover{
+	text-decoration: none;
+	color: #3497DB;
+}
+
+
+.da-list-item.open{
+	-webkit-box-shadow: inset 0 2px 0 rgba(0, 0, 0, .05);
+	-moz-box-shadow: inset 0 2px 0 rgba(0, 0, 0, .05);
+	box-shadow: inset 0 2px 0 rgba(0, 0, 0, .05);
+	margin-top: -1px;
+	border-top: 1px solid #D8DBE2;
+	background-color: #FFFCF8;
+}
+
+.das-content{ margin-left: 100px; }
+.das-content > p{ min-height: 20px; }
+
+.da-detail-table{ width: 100%;}
+.da-detail-table th,
+.da-detail-table td{ border: 1px solid #EBEFF6; background-color: #FFF; }
+.da-detail-table th{ text-align: center; color: #ccc; }
+.da-detail-table td{ color: #58585C; }
+.da-detail-table .sep{ border-right-color: #F9E2DC; }
+.da-detail-table .mini-date{ color: #82939E; }
+.da-detail-header{ background: url(../image/diary.png) no-repeat 360px -160px; }
+.da-detail-header:hover{ background-color: #f9fbff; }
+.da-detail-time{ margin-right: 10px; color: #82939E; font-size: 12px; line-height: 60px; }
+
+.da-detail-usi { padding: 10px; }
+.da-detail-usi .avatar-circle, 
+.da-detail-usi .avatar-circle img{ width: 34px; height: 34px; }
+.da-detail-usi span{ font-size: 20px; color: #82939E; }
+
+.da-detail-num{
+	padding-right: 10px;
+	font-size: 16px;
+	font-weight: 700;
+	color: #82939E;
+	/* 没有宽度时，序号不对齐 */
+	display: inline-block;
+	width: 20px;
+}
+
+.da-detail-row .da-input{
+	border-color: transparent;
+	background-color: transparent;
+}
+
+
+.da-detail-row:hover td{ background-color: #FFFCF8; }
+
+.da-detail-row:hover .da-input{ background-color: #FFF; border-color: #DADFE6;}
+.da-detail-row .da-input:focus,
+.da-detail-row .has-focus .da-input { background-color: #FFF; border-color: #3497DB;opacity: 1;}
+
+
+.da-list{ margin-top: 1px; }
+.da-list-item .da-detail{
+	-webkit-box-shadow: 0 1px 6px rgba(238, 140, 12, .1);
+	-moz-box-shadow: 0 1px 6px rgba(238, 140, 12, .1);
+	box-shadow: 0 1px 6px rgba(238, 140, 12, .1);
+	background-color: #FFF;
+}
+.da-list-item .da-detail-table{ margin-top: -19px; }
+
+.da-list-item-desc a{ color: #82939E; }
+.da-list-item-desc a:hover{
+	color: #3497DB;
+	text-decoration: none;
+}
+.da-list-item-desc em{ font-style: normal; }
+.da-list-item-desc .checkbox{ margin-bottom: 2px; }
+
+.da-detail-ft{
+	position: relative;
+	margin-bottom: 10px;
+	height: 5px;
+	background: url(../image/da_detail_ft.png) 0 top no-repeat;
+}
+.da-list-item .da-detail-ft{ margin-bottom: 70px; }
+.da-mark-up,
+.da-mark-down{
+	position: absolute;
+	width: 64px;
+	height: 51px;
+}
+.da-mark-up{
+	top: 2px;
+	right: 10px;
+	background-position: -120px -100px;
+}
+.da-mark-up:hover{ background-position: -180px -100px; }
+.da-mark-down-wrap{
+	position: absolute;
+	top: -1px;
+	right: 24px;
+	width: 64px;
+	height: 51px;
+	overflow: hidden;
+}
+.da-mark-down{
+	-webkit-transition: top linear .1s;
+	-moz-transition: top linear .1s;
+	transition: top linear .1s;
+	top: -51px;
+	left: 0;
+	background-position: 0 -100px;
+}
+.da-mark-down:hover { background-position: -60px -100px; }
+.da-list-item:hover .da-mark-down{ top: 0; }
+.da-list-item.open .da-mark-down-wrap{ display: none; }
+
+
+.da-remind{ padding: 10px; }
+.da-remind h3{
+	font-size: 18px;
+	font-weight: 700;
+	margin: 0 0 10px;
+}
+.da-remind-list{
+	overflow: hidden;
+	zoom: 1;
+}
+.da-remind-list li{
+	float: left;
+	margin: 0 10px;
+}
+.da-bell i{
+	display: block;
+	width: 60px;
+	height: 60px;
+	margin: 1px;
+}
+.o-da-bell{	
+	background: url(../image/da_remind.png) no-repeat;
+}
+.o-da-bell:hover{
+	background-image: url(../image/da_remind.gif);
+}
+.o-da-reminded{
+	background: url(../image/da_reminded.png) no-repeat;
+}
+.da-bell .avatar-box .avatar-desc{ color: #91CE31; }
+.bamboo-pgb-complete,
+.bamboo-pgb-untreated{ font-size: 12px; }
+.bamboo-pgb-complete{  color: #91CE31; }
+.bamboo-pgb-untreated{ color: #B2C0D1 }
+.bamboo-pgb-percent{ float: right; margin-left: 10px; width: 40px; color: #82939E; font-size: 12px; }
+
+.po-da-diary,
+.po-da-comment,
+.po-da-clock{
+	background-image: url(../image/da_icon.png);
+	background-repeat: no-repeat;
+}
+
+.po-da-comment{ background-position: 0 -40px; }
+.po-da-clock{ background-position: 0 -80px; }
+
+/* 日志进度条 */
+.studyplay_starBg, .studyplay_starovering, .studyplay_starON{   
+    top:0; 
+    left:0;  
+    height:22px; 
+}
+.studyplay_starBg{
+    padding:0; 
+    background:url(../image/da_process.png) 0 -22px; 
+    cursor:pointer;
+}
+.studyplay_starovering{
+    position:absolute; 
+    background:url(../image/da_process.png); 
+}
+.studyplay_starON{ position:absolute;  }
+
+/**/
+.da-calendar-table{
+	width: 100%;
+}
+.da-calendar-table th,
+.da-calendar-table td{
+	text-align: center;
+	font-size: 12px;
+	width: 28px;
+	height: 28px;
+}
+.da-calendar-table th{
+	font-weight: 400;
+}
+.da-calendar-table td{
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	font-weight: 700;
+	cursor: pointer;
+}
+.da-calendar-table td:hover{ background-color: #EBEFF6 }
+.da-calendar-table td.log{
+	color: #3497DB;
+}
+.da-calendar-table td.comment{
+	background-position: -79px -19px;
+}
+.da-calendar-table td.old,
+.da-calendar-table td.new{
+	color: #B2C0D1;
+}
+.da-calendar-table td.current{
+	background-color: #FDF0DE;
+	color: #EE8C0C;
+}
+.da-calendar-month{
+	padding: 8px 10px;
+	text-align: center;
+}
+.da-calendar-month a{
+	font-size: 12px;
+	color: #82939E;
+}
+.da-calendar-week{
+	padding: 0 10px;
+}
+.da-calendar-date{
+	padding: 10px;
+}
+.da-calendar-month,
+.da-calendar-week{
+	border-bottom: 1px solid #EBEFF6;
+}
+.da-calendar-week,
+.da-calendar-date{
+	border-top: 1px solid #FFF;
+}
+
+.da-calendar-prev{
+	float: left;
+	background-position: 0 -20px;
+}
+.da-calendar-prev:hover{ background-position: -40px -20px; }
+.da-calendar-next{
+	float: right;
+	background-position: -20px -20px;
+}
+.da-calendar-next:hover{ background-position: -60px -20px; }
+.da-calendar-footer{
+	padding: 0 10px 20px;
+	border-bottom: 1px solid #EBEFF6;
+	font-size: 12px;
+}
+.da-calendar-footer span{ margin-right: 6px; }
+.da-square-log,
+.da-square-comment,
+.da-square-current{
+	display: inline-block;
+	margin-right: 5px;
+	width: 12px;
+	height: 12px;
+}
+.da-square-log{ background-color: #3497DB; }
+.da-square-comment{ background-color: #E26F50; }
+.da-square-current{ background-color: #EE8C0C; }
+
+.da-plan-item{
+	position: relative;	
+	height: 40px;
+	line-height: 40px;
+}
+.da-plan-item.da-remind-editing .da-plan-opbar .o-ok,
+.da-plan-item.da-remind-editing .da-plan-opbar .co-close{ display: inline-block; }
+
+.da-plan-item.da-remind-editing .da-input{ background-color: transparent; border-color: transparent; }
+
+.da-plan-opbar .o-ok,
+.da-plan-opbar .co-close,
+.da-plan-item.da-remind-editing .da-plan-opbar .co-clock,
+.da-plan-item.da-remind-editing .da-plan-opbar .o-trash,
+.da-plan-item.da-reminded .da-plan-opbar .co-clock{ display: none; }
+
+.da-remind-bar{
+	display: inline-block;
+	padding: 4px 8px;
+	border: 1px solid #EBEFF6;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	background-color: #FFF;
+	color: #82939E;
+	vertical-align: top;
+	font-weight: 700;
+	font-size: 12px;
+	line-height: 20px;
+}
+
+.da-share-user-list{}
+.da-share-user-list li{
+	padding: 5px 0;
+	font-size: 12px;
+}
+.da-share-user-list img{
+	width: 20px;
+	height: 20px;
+}
+.da-share-user-list a{
+	color: #82939E;
+}
+.da-share-user-list a:hover{
+	text-decoration: none;
+	color: #3497DB;
+}
+.da-share-user-list span{
+	float: right;
+}
+
+/* Vernier */
+.da-plan-vernier {
+	position: absolute;
+	top: 1px;
+	left: 35px;
+	width: 580px;
+	height: 20px;
+	z-index: 10;
+}
+.da-plan-vernier.affix{
+	position: fixed;
+	top: 60px;
+}
+
+.vernier-cell,
+.vernier-subcell { float: left; margin-left: -1px; border-left: 1px solid #DAE0E6; font-size: 12px; }
+.vernier-cell{ height: 20px; border-color: #B2C0D1; }
+.vernier-subcell{ height: 10px; }
+
+/* Belt */
+
+.da-belt,
+.da-belt-view{
+	width: 580px;
+	position: absolute;
+	top: 0;
+	left: 35px;
+}
+.da-belt{ height: 80px; }
+.da-belt-view{ height: 61px; }
+
+.belt-slider,
+.belt-adjustor-left,
+.belt-adjustor-right{
+	position: absolute;
+	top: 0;
+	z-index: 10;
+	height: 100%;
+}
+.belt-slider{
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	left: 0;
+	overflow: hidden;
+	/*background: url(../image/belt_bg.png) repeat-x;*/
+	border: 1px solid #0B73BB;
+	background-color: #3497DB;
+	opacity: .8;
+	filter: Alpha(opacity=80);
+}
+.belt-adjustor-left,
+.belt-adjustor-right{
+	width: 10px;
+	text-align: center;
+	line-height: 80px;
+	color: #FFF;
+}
+.belt-adjustor-left{ left: 0; }
+.belt-adjustor-right{ right: 0; }
+
+.da-review-reader{
+	margin-bottom:20px;
+	color:#82939e;
+}
+/* 列表页评阅人员 */
+.da-reviews-avatar{ width: 600px; margin-top: -10px; margin-left: -10px; }
+.da-reviews-avatar a{ display: inline-block; margin-top: 10px; margin-left: 10px;}
+.da-reviews-count{ float: right; margin-top: 15px; color: #82939E; }
+.da-reviews-count strong{ font-size: 24px; font-weight: 400;}
+
+/* 图章 */
+.da-stamp{ position: absolute; top: 25px; right: 180px; z-index: 1000 }
+
+.mng-scd-list .mng-item:hover .o-udstar{ display: inline-block; }
+
+/* 统计图标 */
+.os-personal-statistic{
+	background-image:url(../image/statistics.png);
+	background-repeat:no-repeat;
+	display: inline-block;	
+	width:20px;
+	height:20px;
+	vertical-align: middle;
+	background-position: 0 0;
+}
+.active .os-personal-statistic{
+	background-position: -24px 0;
+}
+.os-statistics{
+	background-image:url(../image/statistics.png);
+	background-repeat:no-repeat;
+	display: inline-block;	
+	width:20px;
+	height:20px;
+	vertical-align: middle;
+	background-position: -48px 0;
+}
+.active .os-statistics{
+	background-position: -71px 0;
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>WEB IM设置</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">WEB IM设置</h1>
+		</div>
+		<div>
+			<form action="" class="form-horizontal">
+			<!-- 启用设置 start -->
+			<div class="ctb">
+				<h2 class="st">启用设置</h2>
+				<div class="ctbw">
+					<div class="control-group">
+						<label for="" class="control-label">是否启用</label>
+						<div class="controls">
+							<input type="checkbox" name="" id="im_enable" data-toggle="switch" class="visi-hidden" checked>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- WEB IM设置 start -->
+			<div class="ctb"  id="im_setup" style="display: block;">
+				<h2 class="st">WEB IM设置</h2>
+				<div class="ctbw">
+					<div class="control-group">
+						<label for="" class="control-label">关联RTX</label>
+						<div class="controls">
+							<input type="checkbox" name="" id="" data-toggle="switch" class="visi-hidden">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">更新在线状态间隔时间</label>
+						<div class="controls">
+							<div id="refresh_interval"></div>
+							<input type="hidden" name="" value="20">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">连接间隔时间</label>
+						<div class="controls">
+							<div id="link_interval"></div>
+							<input type="hidden" name="" value="50">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">长连接时间</label>
+						<div class="controls">
+							<div id="long_connection"></div>
+							<input type="hidden" name="" value="100">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="control-group">
+					<div class="controls">
+						<button type="submit" class="btn btn-primary btn-large btn-submit">提交</button>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+	<script src="../../../../../static/js/src/core.js?<?php echo VERHASH; ?>"></script>
+	<script src="../../../../../static/js/src/base.js?<?php echo VERHASH; ?>"></script>
+	<script>
+	(function(window, $){
+		
+		$("#refresh_interval, #link_interval, #long_connection").each(function(){
+			$(this).ibosSlider({
+				min: 10,
+				max: 60,
+				range: "min",
+				scale: 5,
+				tip: true,
+				tipFormat: function(v){
+					return v + "秒"
+				},
+				target: "next"
+			})
+		})
+		
+		$("#im_enable").on("change", function(e){
+			$("#im_setup").toggle();
+		})
+	})(window, window.jQuery)
+	</script>
+</body>
+</html>

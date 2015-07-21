@@ -1,0 +1,275 @@
+/* 作为按钮的图标 */
+.o-plus,
+.o-edit,
+.o-trash,
+.o-cancel,
+.o-conf,
+.o-view,
+.o-download,
+.o-chain,
+.o-message,
+.o-print,
+.o-print-bk,
+.o-forward-mail,
+.o-more,
+.o-remind,
+.o-ok,
+.o-close-bk,
+.o-error,
+.o-warning,
+.o-prev,
+.o-next,
+.o-chat,
+.o-pm,
+.co-tpm,
+.o-email,
+.co-temail,
+.o-date,
+.o-search,
+.o-list,
+.o-import,
+.o-export,
+.o-validate,
+.o-form-design,
+.o-flow-design,
+.co-clock,
+.co-close
+{
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	background-image: url(../image/btn_icon.png);
+	background-repeat: no-repeat;
+	vertical-align: middle;
+}
+.o-message {
+	background-position: 0 -80px;
+	direction: ltr;
+	text-indent: -9999px;
+}
+.o-message:hover{
+	background-position: 0 -120px;
+}
+a:hover .o-plus,
+.o-plus:hover,
+.o-plus:focus{ background-position: 0 -40px;}
+
+.o-edit{ background-position: -40px 0;}
+a:hover .o-edit,
+.o-edit.active,
+.o-edit:hover,
+.o-edit:focus{ background-position: -40px -40px;}
+
+.o-trash{ background-position: -80px -0;}
+a:hover .o-trash,
+.o-trash:hover,
+.o-trash:focus{ background-position: -80px -40px;}
+
+.o-cancel{ background-position: -120px 0;}
+a:hover .o-cancel,
+.o-cancel:hover,
+.o-cancel:focus{ background-position: -120px -40px;}
+
+.o-conf{ background-position: -160px 0;}
+a:hover .o-conf,
+.o-conf:hover,
+.o-conf:focus{ background-position: -160px -40px;}
+
+.o-view{ background-position: -200px 0;}
+a:hover .o-view,
+.o-view:hover,
+.o-view:focus{ background-position: -200px -40px;}
+
+.o-download{ background-position: -280px 0; }
+.o-download:hover,
+.o-download:focus{ background-position: -280px -40px; }
+
+.o-chain{ background-position: -320px 0; }
+.o-chain:hover,
+.o-chain:focus{ background-position: -320px -40px; }
+
+.o-print{ background-position: -40px -80px;}
+.o-print-bk { background-position: -280px -80px; }
+a:hover .o-print,
+.o-print:hover,
+.o-print-bk:hover,
+.o-print:focus{ background-position: -40px -120px;}
+
+.o-forward-mail{ background-position: -80px -80px;}
+a:hover .o-forward-mail,
+.o-forward-mail:hover,
+.o-forward-mail:focus{ background-position: -80px -120px;}
+
+.o-more{ background-position: -120px -80px; }
+a:hover .o-more,
+.o-more:hover,
+.o-more:focus{ background-position: -120px -120px;}
+
+.o-remind{ background-position: -160px -80px; }
+.o-remind:hover,
+.o-remind:focus,
+.o-remind.active{ background-position: -160px -120px; }
+
+.o-ok{ background-position: -200px -80px; }
+.o-ok:hover,
+.o-ok:focus,
+.o-ok.active{ background-position: -200px -120px; }
+
+/*.o-error.active{ background-position: -240px -120px; }*/
+/*.o-warning.active{ background-position: -280px -120px; }*/
+
+.o-prev{ background-position: 0 -160px; }
+.o-prev:hover,
+.o-prev:focus,
+.o-prev.active{ background-position: 0 -200px; }
+
+.o-next{ background-position: -40px -160px; }
+.o-next:hover,
+.o-next:focus,
+.o-next.active{ background-position: -40px -200px; }
+
+.o-chat{ background-position: -80px -160px; }
+.o-chat:hover,
+.o-chat:focus,
+.o-chat.active{ background-position: -80px -200px; }
+
+.o-org{ background-position: 0 -160px; }
+.mng-item-active .o-org{ background-position: -30px -160px; }
+
+.o-email{ background-position: -160px -160px; }
+.o-email:hover{ background-position: -160px -200px; }
+
+.o-date{ background-position: -200px -160px; }
+.o-date:hover{ background-position: -200px -200px; }
+
+.o-search{ background-position: 0 -240px; }
+a:hover .o-search,
+.o-search:hover{ background-position: 0 -280px; }
+
+.o-list{ background-position: -40px -240px; }
+a:hover .o-list,
+.o-list:hover{ background-position: -40px -280px; }
+
+.o-import{ background-position: -80px -240px; }
+a:hover .o-import,
+.o-import:hover{ background-position: -80px -280px; }
+
+.o-export{ background-position: -120px -240px; }
+a:hover .o-export,
+.o-export:hover{ background-position: -120px -280px; }
+
+.o-validate{ background-position: -160px -240px; }
+a:hover .o-validate,
+.o-validate:hover{ background-position: -160px -280px; }
+
+.o-flow-design{ background-position: -200px -240px; }
+a:hover .o-flow-design,
+.o-flow-design:hover{ background-position: -200px -280px; }
+
+.o-form-design{ background-position: -240px -240px; }
+a:hover .o-form-design,
+.o-form-design:hover{ background-position: -240px -280px; }
+
+.o-close-bk{ background-position: -240px -80px; }
+.o-close-bk:hover{ background-position: -240px -120px; }
+
+
+.co-clock{ background-position: -240px -160px; }
+.co-clock:hover{ background-position: -240px -200px; }
+.co-close{ background-position: -240px 0; }
+.co-close:hover{ background-position: -240px -40px; }
+
+.co-tpm{ background-position: -360px -80px; }
+.co-tpm:hover{ background-position: -120px -160px; }
+.co-tpm i{ position: absolute; bottom: 0; right: 0 }
+.co-temail{ background-position: -320px -80px; }
+.co-temail:hover{ background-position: -160px -200px; }
+
+
+
+/* 线条图标 outline */
+/* 20*20 */
+.o-ol-phone,
+.o-ol-mail,
+.o-ol-location,
+.o-ol-download,
+.o-olw-download,
+.o-ol-chevron-left,
+.o-ol-chevron-right,
+.o-ol-chevron-up,
+.o-ol-chevron-down,
+.o-ol-trumpet,
+.o-ol-close,
+.o-ol-plus,
+.o-ol-calendar,
+.o-ol-export
+{ display: inline-block; width: 20px; height: 20px; background: url(../image/outline_icon.png) no-repeat; vertical-align: middle; }
+
+.o-ol-mail{ background-position: -20px 0; }
+.o-ol-location{ background-position: -40px 0; }
+.o-ol-download{ background-position: -60px 0; }
+.o-olw-download{ background-position: -60px -20px; }
+.o-ol-chevron-left{ background-position: -80px 0; }
+.o-ol-chevron-right{ background-position: -100px 0; }
+.o-ol-chevron-up{ background-position: -140px 0; }
+.o-ol-chevron-down{ background-position: -160px 0; }
+.o-ol-trumpet{ background-position: -180px 0; }
+.o-ol-close{ background-position: -200px 0; }
+.o-ol-plus{ background-position: -220px 0; }
+.o-ol-calendar{ background-position: -240px 0; }
+.o-ol-export{ background-position: -260px 0; }
+
+/* 16*16 */
+.o-olw16-move,
+.o-olw16-slide,
+.o-ol16-edit,
+.o-ol16-trashcan,
+.o-ol16-plus,
+.o-olb16-plus,
+.o-ol16-search,
+.o-olb16-search,
+.o-ol-crcode,
+.o-olw-crcode{ display: inline-block; width: 16px; height: 16px; background: url(../image/outline_icon_16.png) no-repeat; vertical-align: middle; }
+
+.o-olw16-move{ background-position: 0 -16px; }
+.o-olw16-slide{ background-position: -16px -16px; } /* 幻灯预览 */
+
+.o-ol16-edit{ background-position: -32px 0; }
+.o-olb16-edit,
+.o-ol16-edit.a:focus,
+.o-ol16-edit.a:hover{ background-position: -32px -32px; }
+
+.o-ol16-trashcan{ background-position: -48px 0; }
+.o-olb16-trashcan,
+.o-ol16-trashcan.a:focus,
+.o-ol16-trashcan.a:hover{ background-position: -48px -32px; }
+
+.o-ol16-plus{ background-position: -64px 0; }
+.o-olb16-plus,
+.o-ol16-plus.a:focus,
+.o-ol16-plus.a:hover{ background-position: -64px -32px; }
+
+.o-ol16-search{ background-position: -80px 0; }
+.o-olb16-search,
+.o-ol16-search.a:focus,
+.o-ol16-search.a:hover{ background-position: -80px -32px; }
+
+.o-ol-crcode{ background-position: -96px 0; }
+.o-olw-crcode{ background-position: -96px -16px; }
+
+/* 填充图标 solid */
+/* 20 * 20 */
+
+/* 16 * 16 */
+.o-sl16-user,
+.o-sl16-msg,
+.o-sl16-clock,
+.o-slr16-clock{ display: inline-block; width: 16px; height: 16px; background: url(../image/solid_icon_16.png) no-repeat; vertical-align: middle; }
+
+.o-slb16-user{ background-position: 0 -16px; }
+
+.o-sl16-msg{ background-position: -16px 0; }
+.o-slb16-msg{ background-position: -16px -16px; }
+
+.o-sl16-clock{ background-position: -32px 0; }
+.o-slr16-clock{ background-position: -32px -32px; }

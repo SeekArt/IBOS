@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CRM系统</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">CRM系统</h1>
+			<ul class="mn">
+				<li>
+					<a href="crm_check_repeat.html">检查重复</a>
+				</li>
+				<li>
+					<a href="crm_autonumber.html">自动编号</a>
+				</li>
+				<li>
+					<a href="crm_recycle.html">回收站</a>
+				</li>
+				<li>
+					<a href="crm_product.html">产品</a>
+				</li>
+				<li>
+					<a href="crm_express_template.html">快递模板</a>
+				</li>
+				<li>
+					<a href="crm_sms_template.html">短信模板</a>
+				</li>
+				<li>
+					<span>邮件模板</span>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<!-- 邮件模板 start -->
+			<div class="ctb">
+				<h2 class="st">邮件模板</h2>
+				<div class="btn-group b" data-toggle="buttons-radio">
+					<a href="#" class="btn">公共</a>
+					<a href="#" class="btn">个人</a>
+				</div>
+				<div class="page-list">
+					<div class="page-list-header">
+						<div class="row">	
+							<div class="span8">
+								<button type="button" class="btn btn-primary">添加</button>
+								<button type="button" class="btn">删除</button>
+							</div>
+							<div class="span4">
+								<div class="search search-enter">
+									<input type="search" placeholder="Search">
+									<a href="">search</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page-list-mainer">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th width="30">
+										<label class="checkbox" for="checkbox_0"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" data-name="w" id="checkbox_0">
+										</label>
+									</th>
+									<th>标题</th>
+									<th>邮件主题</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<label class="checkbox" for="checkbox_1"><span class="icon"></span><span class="icon-to-fade"></span>
+											<input type="checkbox" value="" id="checkbox_1" name="w">
+										</label>
+									</td>
+									<td>初次邮件接触</td>
+									<td>优网公司简介及相关资料</td>
+									<td width="100">
+										<a href="" class="cbtn o-edit"></a>
+										<a href="" class="cbtn o-trash"></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="page-list-footer">
+						<div>
+							<ul class="pagination">
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li><a href="#">6</a></li>
+								<li><a href="#">7</a></li>
+								<li><a href="#">8</a></li>
+								<li><a href="#">9</a></li>
+								<li><a href="#">10</a></li>
+							</ul>
+							<div class="pagination-controll">
+								<div class="input-group">
+									<input type="text" class="input-small">
+									<a class="input-group-addon input-small">
+										<i class="glyphicon-share-alt"></i>
+									</a>
+								</div>
+								<span>/21页</span>
+							</div>
+							<ul class="pager">
+								<li>
+									<a href=""><i class="glyphicon-chevron-left"></i></a>
+								</li>
+								<li>
+									<a href=""><i class="glyphicon-chevron-right"></i></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="../../../../../static/js/jquery.js"></script>
+	<script src="../../../../../static/js/base.js"></script>
+	<script src="../../../../../static/js/extra.js"></script>
+</body>
+</html>

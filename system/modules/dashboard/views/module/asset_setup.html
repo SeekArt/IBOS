@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>固定资产</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">固定资产</h1>
+		</div>
+		<div>
+			<form action="" class="form-horizontal">
+			<!-- 折旧设置 start -->
+			<div class="ctb">
+				<h2 class="st">折旧设置</h2>
+				<div class="ctbw">
+					<div class="control-group">
+						<label for="" class="control-label">计算折旧方式</label>
+						<div class="controls">
+							<select name="" id="">
+								<option value="">月</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">残值处理方式</label>
+						<div class="controls">
+							<select name="" id="">
+								<option value="">残值</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 编号设置 start -->
+			<div class="ctb">
+				<h2 class="st">编号设置</h2>
+				<div class="ctbw">
+					<div class="control-group">
+						<label for="" class="control-label">公司代码</label>
+						<div class="controls">
+							<input type="text" value="uweb">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">编号规则</label>
+						<div class="controls">
+							<input type="text" value="{%COMPANY}-{%CATANAME}-{%M%D}-{SORT%4}">
+						</div>
+					</div>
+					<div class="control-group">
+						<label for="" class="control-label">生成示例</label>
+						<div class="controls">
+							<input type="text" value="Uweb-QTZC-0204-0001">
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" class="btn btn-primary btn-large btn-submit">提交</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

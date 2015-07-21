@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr { color: #E26F50; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div  class="control-group">
+					<label for="control_checkbox_title"><var id="lang_control_title"> </var><span class="xcr">*</span></label>
+					<input type="text" id="control_checkbox_title">
+				</div>
+				<div class="control-group">
+					<label for="control_checkbox_checked" class="checkbox">
+						<input type="checkbox" id="control_checkbox_checked">
+						<var id="lang_control_checked"></var>
+					</label>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="checkbox" data-title="<%=title%>" data-checkbox-checked="<%=checked%>" contenteditable="false" ><input type="checkbox" name="data_<%=id%>" title="<%=title%>" <% if(checked == "1") { %>checked="true" <% } %>/></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					var checkboxCheck = "" + oldData.checkboxChecked;
+					$G('control_checkbox_title').value = oldData.title;
+					$G('control_checkbox_checked').checked = oldData.checkboxChecked == "1" ? true : false;
+				}
+				dialog.onok = function() {
+					var title = $G('control_checkbox_title').value, data;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					var data = {
+						title: title,
+						checked: $G('control_checkbox_checked').checked ? "1" : "0"
+					};
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false;
+				};
+			})();
+		</script>
+	</body>
+</html>

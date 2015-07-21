@@ -1,0 +1,124 @@
+@charset "utf-8";
+/*
+ * artDialog skin
+ * http://code.google.com/p/artdialog/
+ * (c) 2009-2011 TangBin, http://www.planeArt.cn
+ *
+ * This is licensed under the GNU LGPL, version 2.1 or later.
+ * For details, see: http://creativecommons.org/licenses/LGPL/2.1/
+ */
+ 
+/* common start */
+body { _margin:0; _height:100%; /*IE6 BUG*/ }
+.aui_outer { text-align:left; outline:none 0; }
+/* IE9 hack */
+/*.aui_outer { box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); }*/
+table.aui_border, table.aui_dialog {-webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; border:0; margin:0; border-collapse:collapse; width:auto; }
+.aui_dialog{  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);   }
+.aui_nw, .aui_n, .aui_ne, .aui_w, .aui_c, .aui_e, .aui_sw, .aui_s, .aui_se, .aui_header, .aui_tdIcon, .aui_main, .aui_footer { padding:0; }
+.aui_header{ font: 12px/1.11 'Microsoft Yahei', Tahoma, Arial, Helvetica, STHeiti; _font-family:Tahoma,Arial,Helvetica,STHeiti; -o-font-family: Tahoma, Arial; }
+.aui_title { overflow:hidden; text-overflow: ellipsis; }
+.aui_state_noTitle .aui_title { display:none; }
+.aui_inner{ border: 1px solid #DDD; border: 0 solid rgba(0, 0, 0, 0); border: 1px solid #DDD\9; }
+
+.aui_main { text-align:center; min-width:9em; min-width:0\9/*IE8 BUG*/; }
+.aui_content { text-align:left; border:none 0; vertical-align: middle; max-height: 560px; overflow-y: auto; overflow-x: hidden; /*height: 101%;*/ padding: 0; }
+.aui_content::-webkit-scrollbar { width: 10px; height: 10px;}
+.aui_content::-webkit-scrollbar-track { border-radius: 5px; background-color: #b2c0d1; }
+.aui_content::-webkit-scrollbar-thumb { border-radius: 5px; border: 2px solid #b2c0d1; background-color: #f5f5f5;}
+.aui_content::-webkit-scrollbar-thumb:hover { background-color: #fff;}
+.aui_content::-webkit-scrollbar-button { width: 10px; height: 10px; background-color: transparent;}
+.aui_content.aui_state_full { display:inline-block; width:100%; margin:0; padding:0!important; height:100%; }
+.aui_loading { margin: auto; width:96px; height:32px; text-align:left; text-indent:-999em; overflow:hidden; background:url(icons/loading.gif) no-repeat center center; }
+.aui_icon { vertical-align: middle; }
+.aui_icon div { width:48px; height:48px; margin:10px 0 10px 10px; background-position: center center; background-repeat:no-repeat; }
+.aui_buttons { padding:8px; text-align:right; white-space:nowrap; }
+.aui_buttons button { margin-left: 5px; }
+
+button.aui_state_highlight { color: #FFF; border: solid 1px #1c6a9e; background: #2288cc; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#33bbee', endColorstr='#2288cc'); background: linear-gradient(top, #33bbee, #2288cc); background: -moz-linear-gradient(top, #33bbee, #2288cc); background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#33bbee), to(#2288cc)); text-shadow: -1px -1px 1px #1c6a9e; }
+button.aui_state_highlight:hover { color:#FFF; border-color:#0F3A56; }
+button.aui_state_highlight:active { border-color:#1c6a9e; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#33bbee', endColorstr='#2288cc'); background: linear-gradient(top, #33bbee, #2288cc); background: -moz-linear-gradient(top, #33bbee, #2288cc); background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#33bbee), to(#2288cc)); }
+/* common end */
+
+.aui_inner { background:#FFF; }
+.aui_outer, .aui_inner { -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; } 
+.aui_nw, .aui_ne, .aui_sw, .aui_se { width:10px; height:10px; }
+.aui_nw, .aui_n, .aui_ne, .aui_w, .aui_e, .aui_sw, .aui_s, .aui_se {}
+.aui_state_lock .aui_nw, .aui_state_lock .aui_n, .aui_state_lock .aui_ne, .aui_state_lock .aui_w, .aui_state_lock .aui_e, .aui_state_lock .aui_sw, .aui_state_lock .aui_s, .aui_state_lock .aui_se { }
+/*.aui_state_focus .aui_outer { box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)\9; }*/
+/*.aui_state_focus .aui_dialog {  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);   }*/
+
+
+/*.aui_outer:active,*/
+/*.aui_dialog:active */
+.aui_state_drag .aui_dialog{ -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); }
+.aui_titleBar { position:relative; height:100%; }
+.aui_title { height:58px; line-height:57px; padding:0 30px 0 10px; background-color:#3497db; font-size: 20px; color:#fff; font-family: Tahoma, Arial/9!important;}
+.aui_title, .aui_titleBar{ border-top-left-radius: 4px; border-top-right-radius: 4px; }
+.aui_state_focus .aui_title { color:#fff; }
+
+
+.aui_close {display:block; position:absolute; text-decoration:none; outline:none; -webkit-border-radius: 24px; -moz-border-radius: 24px; border-radius: 24px; padding:0; top:16px; right:10px; width:24px; height:24px; background-color: #55A3DF; line-height:24px; font-size:22px; color:#FFF; text-align:center; font-family: Helvetica, STHeiti;  }
+.aui_close:hover,
+.aui_close:focus { background-color:#EBEDF0; color:#82939E; text-decoration: none;}
+.aui_close:active { box-shadow: none; }
+/*.aui_content, .aui_state_focus .aui_content { color:#82939E; font-family: Arial "Microsoft Yahei";}*/
+.aui_buttons { -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1); -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1); box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1); border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; background-color:#F8F8F8;} 
+
+/*.aui_state_noTitle .aui_dialog { box-shadow: none; }*/
+.aui_state_noTitle .aui_close { 
+	-webkit-box-shadow: 0 5px 5px rgba(56, 60, 65, .2);
+	-moz-box-shadow: 0 5px 5px rgba(56, 60, 65, .2);
+	box-shadow: 0 5px 5px rgba(56, 60, 65, .2);
+	z-index: 10;
+	top: -14px;
+	right: -14px;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	border: 2px solid #FFF;
+	background: #4B4F54;
+	color: #FFF;
+	z-index: 2;
+}
+.aui_state_noTitle .aui_close:hover { background-color: #55A3DF; color: #FFF; }
+
+.aui_content_wrap{ height: 100% }
+
+/* status */
+.aui_dialog_alert .aui_main,
+.aui_dialog_confirm .aui_main,
+.aui_dialog_prompt .aui_main{ text-align: left; }
+
+.aui_dialog_alert .aui_buttons,
+.aui_dialog_confirm .aui_buttons,
+.aui_dialog_prompt .aui_buttons{ -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none; background: none;}
+
+
+.aui_dialog_alert,
+.aui_dialog_confirm,
+.aui_dialog_prompt{
+	background-position: left bottom;
+	background-repeat: no-repeat;
+}
+.aui_dialog_alert{ background-image: url(icons/aui_dialog_alert.png); }
+.aui_dialog_confirm{ background-image: url(icons/aui_dialog_confirm.png); }
+.aui_dialog_prompt{ background-image: url(icons/aui_dialog_prompt.png); }
+
+
+.aui_dialog_alert .aui_header,
+.aui_dialog_confirm .aui_header,
+.aui_dialog_prompt .aui_header{
+	display: none;
+}
+.aui_dialog_alert .aui_icon,
+.aui_dialog_confirm .aui_icon,
+.aui_dialog_prompt .aui_icon{
+	visibility: hidden;
+}
+.aui_dialog_alert .btn,
+.aui_dialog_confirm .btn,
+.aui_dialog_prompt .btn{
+	padding-top: 4px;
+	padding-bottom: 4px;
+}

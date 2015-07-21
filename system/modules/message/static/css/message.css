@@ -1,0 +1,141 @@
+/**
+ * message.css
+ * 消息中心样式
+ * @module Global
+ * @submodule Message
+ * @type Layout
+ * @version $Id$
+ * @author Inaki
+ */
+
+/* MSG */
+.msg-list { background-color: #FDFDFD; }
+.msg-list .main-list-item { border-bottom: 0 none; }
+.msg-word-count {
+	color: #B2C0D1;
+	font-family: Constantia, Georgia;
+	font-size: 16px;
+	padding: 0 5px;
+}
+.msg-word-count.xcr { color: #E26F50; }
+
+.msg-pm-list li .o-trash,
+.msg-pm-list li .o-more,
+.msg-box-del{ visibility: hidden; }
+.msg-pm-list li:hover .o-trash,
+.msg-pm-list li:hover .o-more,
+.msg-box:hover .msg-box-del{ visibility: visible; }
+
+
+.msg-pm-input { width: 640px; }
+.msg-pm-input textarea{ border: 0 none; height: 72px; }
+.msg-pm-input-operate { display: none; }
+.msg-pm-input-fullmode textarea{ height: 112px }
+.msg-pm-input-fullmode .msg-pm-input-operate{ display: block; }
+.msg-pm-input-fullmode .msg-box{ border-color: #3497DB; }
+.msg-pm-input-fullmode .msg-box-inverse .msg-box-arrow{ border-left-color: #3497DB; }
+
+.msg-pm-detail-header { -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .1); -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .1); box-shadow: 0 1px 2px rgba(0, 0, 0, .1); }
+.msg-pm-detail-header .charcount{ color: #B2C0D1; padding: 0 5px; }
+.msg-pm-detail-header .charcount strong{ font-size: 20px; font-family: Georgia; }
+.msg-pm-detail-header .charcount.warning strong{ color: #E26F50; }
+
+.msg-pm-detail-list .main-list-item { margin: 20px 0; padding-bottom: 0; padding-top: 0; }
+.msg-pm-detail-list .main-list-item-body { margin-right: 100px; }
+
+.msg-time-line{
+	text-align: center;
+	margin: 20px 120px;
+	border-width: 1px 0 0;
+	border-color: #EEE;
+	border-style: solid;
+}
+.msg-time-line legend{
+	margin-bottom: 0;
+	width: 120px;
+	border: 0 none;
+	font-size: 12px;
+}
+
+.msg-comment-list li .checkbox,
+.msg-toolbar-multiple,
+.msg-multiple .msg-toolbar,
+.msg-remind-timeline .msg-box .checkbox { display: none; }
+.msg-multiple .msg-comment-list li .checkbox,
+.msg-multiple .msg-remind-timeline .msg-box .checkbox { display: inline-block; }
+
+.msg-multiple .msg-toolbar-multiple { display: block; }
+
+.o-msg-at,
+.o-msg-comment,
+.o-msg-praise,
+.o-msg-private,
+.o-msg-remind,
+.o-msg-received,
+.o-msg-sent{
+	background-image: url(../image/message.png);
+	background-repeat: no-repeat;
+}
+.o-msg-at,
+.o-msg-comment,
+.o-msg-praise,
+.o-msg-private,
+.o-msg-remind{
+	display: inline-block;
+	height: 20px;
+	vertical-align: middle;
+	width: 20px;
+}
+
+.o-msg-comment { background-position: -30px 0; }
+.o-msg-praise { background-position: -60px 0; }
+.o-msg-private { background-position: -90px 0; }
+.o-msg-remind { background-position: -120px 0; }
+.active .o-msg-at { background-position: 0 -30px; }
+.active .o-msg-comment { background-position: -30px -30px; }
+.active .o-msg-praise { background-position: -60px -30px; }
+.active .o-msg-private { background-position: -90px -30px; }
+.active .o-msg-remind { background-position: -120px -30px; }
+
+.o-msg-received { background-position: 0 -60px; }
+.o-msg-sent { background-position: -40px -60px; }
+
+
+.msg-remind-detail { padding-top: 50px; }
+.msg-remind-timeline {
+	border-left: 1px solid #EBEFF6;
+	margin-left: 98px;
+	padding: 10px 20px;
+	position: relative;
+}
+.msg-remind-timeline .msg-box { margin: 20px 0; }
+.msg-remind-timeline .msg-box-inverse { left: -80px; position: absolute; top: -40px; }
+.msg-remind-timeline .msg-box-inverse .msg-box-arrow { top: 8px; }
+.msg-remind-timeline .msg-box-inverse .msg-box-body {
+	font-size: 12px;
+	line-height: 16px;
+	padding: 10px;
+	width: 30px;
+}
+
+.o-timeline-point,
+.o-timeline-subpoint { background-image: url(../image/timeline.png); background-repeat: no-repeat; position: absolute; }
+
+.o-timeline-point {
+	border-radius: 8px;
+	height: 16px;
+	left: -8px;
+	top: -8px;
+	width: 16px;
+}
+.o-timeline-subpoint {
+	background-position: -20px 0;
+	border-radius: 6px;
+	height: 12px;
+	left: -27px;
+	top: 24px;
+	width: 12px;
+}
+
+.praise-list li .o-chat{ visibility: hidden; }
+.praise-list li:hover .o-chat{ visibility: visible; }

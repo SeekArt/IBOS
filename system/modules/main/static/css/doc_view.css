@@ -1,0 +1,52 @@
+.fun-sidebar{
+	padding: 20px;
+	background-color: #f5f7f8;
+	border:1px #e3e7ea solid;
+	white-space: nowrap;
+	width: 160px;
+	font-size: 12px;
+}
+.fun-sidebar .btn{
+	font-size: 12px;
+}
+.fun-title {
+	position: relative;
+	margin-bottom: 6px;
+	padding-right:5px; 
+	font-size: 16px;
+	color: #82939e;
+}
+.fun-divider {
+	margin-bottom: 4px;
+	display: inline-block;
+	position: absolute;
+	top: 10px;
+	height: 1px;
+	width: 100%;
+	background-color: #DADFE6;
+	overflow: hidden;
+}
+.fun-btn{
+	padding: 6px 53px;
+}
+.fun-small-btn{
+	padding: 6px 11px;
+}
+.fun-large-btn{
+	padding: 6px 33px;
+}
+.fun-normal-btn{
+	padding: 6px 39px 6px 40px;
+}
+.choose-tip{
+	margin-top: 4px;
+}
+.ocx-error-tip {
+	text-align:center;
+}
+.mll {
+	margin-left:30px;
+}
+.xcg {
+	color: #b2c0d1;
+}

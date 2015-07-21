@@ -1,0 +1,67 @@
+/**
+ * @module 		Dashboard
+ * @submudule 	Login
+ * @type 		layout
+ * @Modified 	2013-04-10
+ * @version		$Id: login.css 1044 2013-08-21 02:50:49Z gzzcs $
+ * @author 		Ink
+*/
+html, body{
+	width: 100%;
+	height: 100%;
+}
+body{
+	/*background-color: #1978BA;*/
+}
+.full{
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+}
+.bg{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+	overflow: hidden;
+}
+.login-wrap{
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	margin-left: -150px;
+	margin-top: -250px;
+	width: 300px;
+	z-index: 5;
+}
+.logo img{
+	width: 300px;
+	height: auto;
+}
+.login{
+	margin-top: 65px;
+}
+.login-group{
+	margin-bottom: 10px;
+}
+.login-group label{
+	margin-bottom: 0;
+	font-family: 'Microsoft Yahei';
+	line-height: 40px;
+	font-weight: 400;
+}
+.login-btn{
+	margin-top: 50px;
+}
+.footer{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 80px;
+	line-height: 80px;
+	text-align: center;
+	color: #fff;
+	z-index: 4;
+}

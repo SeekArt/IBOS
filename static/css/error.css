@@ -1,0 +1,68 @@
+.fsst{
+	font-size: 16px;
+}
+.error-body{
+	background-color: #F6F7F9;
+}
+.main-content{
+	margin: 100px auto;
+	padding: 20px;
+	width: 500px;
+	background-color: #fff;
+	-webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, .1);
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, .1);
+}
+.o-amazed-pic,
+.o-error-tip{
+	background-image:url(../image/error.png);
+	background-repeat:no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+.o-amazed-pic{
+	margin-top: 25px;
+	width: 147px;
+	height: 160px;
+	background-position: 0 0;
+}
+.o-error-tip{
+	width: 335px;
+	height: 190px;
+	background-position: -148px 0;
+}
+.problem-text{
+	width: 100%;
+	height: 100px;
+}
+.report-content{
+	display: none;
+	width: 100%;
+	height: 100px;
+	overflow-y: scroll;
+	color: #E26F50;
+}
+.report-content ul li{
+	margin:5px 0;
+	list-style: none;
+}
+.show-error-more span{
+	cursor: pointer;
+}
+.show-error-more .caret{
+	margin-top: 8px;
+	border-top: 5px solid #82939e;
+	border-right: 5px solid transparent;
+	border-left: 5px solid transparent;
+}
+.show-error-more:hover .caret{
+	border-top: 5px solid #3497db;
+}
+.show-error-more.active:hover .caret{
+	border-bottom: 6px solid #3497db;
+	border-top: 0 none;
+}
+.active .caret{
+	border-bottom: 6px solid #82939E;
+	border-top: 0 none;
+}

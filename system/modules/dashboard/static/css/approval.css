@@ -1,0 +1,182 @@
+.level-1,
+.level-2,
+.level-3,
+.level-4,
+.level-5,
+.o-step-1,
+.o-step-2,
+.o-step-3,
+.o-step-4,
+.o-step-5,
+.o-step-escape{
+	background: url(../image/approve_process.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.level-1,
+.level-2,
+.level-3,
+.level-4,
+.level-5,
+.o-step-escape{
+	margin-top: -3px; 
+	width: 41px;
+	height: 26px; 
+}
+.level-1{
+	background-position: 0 -45px; 
+}
+.level-2{
+	background-position: -43px -45px; 
+}
+.level-3{
+	background-position: -86px -45px; 
+}
+.level-4{
+	background-position: -130px -45px;
+}
+.level-5{
+	background-position: -174px -44px;
+}
+
+.o-step-1,
+.o-step-2,
+.o-step-3,
+.o-step-4,
+.o-step-5,
+.o-step-escape{
+	width: 34px;
+	height: 34px;
+}
+.o-step-1{
+	background-position: 0 0;
+}
+.o-step-2{
+	background-position: -35px 0;
+}
+.o-step-3{
+	background-position: -71px 0;
+}
+.o-step-4{
+	background-position: -107px 0;
+}
+.o-step-5{
+	background-position: -143px 0;
+}
+.o-step-escape{
+	background-position: -179px 0;
+}
+
+.process-add-icon{
+	background: url(../image/stamp_add.png);
+	background-position: 0 0; 
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+.process-add-icon{
+	width: 96px;
+	height: 96px;
+	margin-bottom: 10px;
+}
+.item-add:hover .process-add-icon{
+	background-position: -96px 0;
+}
+.form-horizontal .mbl{ margin-bottom: 40px; }
+.ps-type-title{ background-color: #F5F7F8; }
+.process-setting-form .control-group>.controls{ width: 300px; }
+.approve-level-two,
+.approve-level-three{ display: none; }
+.process-list {margin-left: -20px; }
+.process-list li{
+	float: left;
+	position: relative;
+	list-style: none;
+	width: 360px;
+	height: 380px;
+}
+.process-list li:hover .process-step-list{
+	min-height:216px;
+	height: auto;
+}
+.process-list li:hover{
+	z-index: 2;
+}
+.approval-box{
+	position: absolute;
+	margin-left: 20px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+	background-color: #FFF;
+	width: 300px;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+	box-shadow: 0 0 4px rgba(0, 0, 0, .1);
+}
+.process-step{
+	padding-top: 10px;
+	border-top: 1px #ebeff6 solid;
+}
+.process-step-list{
+	overflow: hidden;
+	margin-bottom: 10px;
+	height: 216px;
+}
+.step-list{
+	background: url(../image/process_line.png) left top repeat-y;
+}
+.step-content,
+.escape-person{
+	padding: 17px; 
+	position: relative;
+	margin-bottom: 10px;
+}
+.step-content:last-child{
+	margin-bottom: 0;
+}
+.step-icon{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.related-person{
+	position: absolute;
+	top: 7px;
+	left: 45px;
+	max-width: 260px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+}
+.ps-funbar{
+	padding-top: 20px;  
+}
+.process-item-add{
+	padding: 101px 0;
+	text-align: center;
+	display: block;
+}
+.process-item-add:hover,
+.process-item-add:focus{
+	color: #3497db;
+	text-decoration: none;
+}
+.pf-select-area .control-group{
+	display: none;
+}
+.pf-select-area .control-group:first-child{
+	display: block;
+}
+.description-content{
+	overflow: hidden;
+	max-width:310px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.apploval-flow-title{
+	line-height: 30px;
+	vertical-align: middle;
+}

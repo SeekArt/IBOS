@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr {color: #E26F50;}
+			.span6 { width: 50%; float: left; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_imgupload_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<div>
+						<input type="text" id="control_imgupload_title">
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_imgupload_width"><var id="lang_control_style"></var></label>
+					<div class="row">
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_imgupload_width">
+								<span class="input-group-addon"><var id="lang_control_width"></var></span>
+							</div>
+						</div>
+						<div class="span6">
+							<div class="input-group">
+								<input type="text" id="control_imgupload_height">
+								<span class="input-group-addon"><var id="lang_control_height"></var></span>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				// span元素内没有文本时，会被ueditor清掉，所以这里给予一个空格
+				var tpl = '<ic data-id="<%=id%>" data-type="imgupload" data-title="<%=title%>" data-width="<%=width%>" data-height="<%=height%>" contenteditable="false">' +
+						'<span class="fake-imgupload" title="<%=title%>" style="width: <%=width%>px; height: <%=height%>px" />&nbsp;</span></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_imgupload_title').value = oldData.title;
+					$G('control_imgupload_width').value = oldData.width;
+					$G('control_imgupload_height').value = oldData.height;
+				}
+
+				dialog.onok = function() {
+					var data, title = $G('control_imgupload_title').value
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+
+					data = {
+						title: title,
+						width: Number($G('control_imgupload_width').value) || 180,
+						height: Number($G('control_imgupload_height').value) || 180,
+						// src: G.STATIC_URL + '/image/form/pic.png'
+					};
+
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+				};
+			})();
+		</script>
+	</body>
+</html>

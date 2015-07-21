@@ -1,0 +1,19 @@
+/**
+ * 通用文件上传窗口样式
+ * @version $Id$
+ */
+.datt{ height: 305px; overflow: auto; }
+.datt li{ position: relative; padding: 0 20px; height: 60px; line-height: 60px; border-bottom: 1px solid #EBEFF6; overflow: hidden; }
+.datt li:hover{ background-color: #FEFAF5; }
+.datt li .o-trash{ position: relative; float: right; margin-top: 15px; }
+.datt-icon,
+.datt-name,
+.datt-status{ position: relative; float: left; }
+.datt-icon{ width: 44px; }
+.datt-name{ margin-left: 10px; width: 328px; font-size: 12px; }
+.datt-name em{ color: #58585C; font-size: 14px; }
+.datt-status{ width: 130px; }
+.datt-progress{ position: absolute; top: 0; left: 0; height: 100%; background-color: #E9F5D6; }
+.datt li.complete .datt-status,
+.datt li.inprogress .datt-status{ color: #7BBF00 }
+.datt li.error .datt-status{ color: #E26F50 }

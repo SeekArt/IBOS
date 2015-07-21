@@ -1,0 +1,3 @@
+<?php
+
+OnlineTime::model()->updateThisMonth();

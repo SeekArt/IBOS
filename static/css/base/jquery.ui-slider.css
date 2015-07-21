@@ -1,0 +1,128 @@
+.ui-slider {
+  border-radius: 3px;
+  height: 6px;
+  background: #b2c0d1;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.ui-slider-handle {
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  background: url("../image/component.png") 0 -280px no-repeat;
+  margin-top: -12px;
+  margin-left: -14px;
+  cursor: pointer;
+  z-index: 2;
+}
+.ui-slider-handle:hover {
+  background-position: -30px -280px;
+}
+.ui-slider-handle-scale {
+  margin-top: -8px;
+  background-position: -60px -280px;
+}
+.ui-slider-handle-scale:hover {
+  background-position: -90px -280px;
+}
+.ui-slider-handle:hover,
+.ui-slider-handle:focus {
+  outline: none;
+}
+.ui-slider-range {
+  position: absolute;
+  height: 100%;
+  background-color: #3497db;
+  z-index: 1;
+}
+.ui-slider-scale-point {
+  border-radius: 4px;
+  position: absolute;
+  top: 12px;
+  margin-left: -2px;
+  width: 4px;
+  height: 4px;
+  background-color: #B2C0D1;
+}
+.ui-slider-scale-step {
+  position: absolute;
+  top: 20px;
+  margin-left: -15px;
+  width: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+.ui-slider-scale-step:after {
+  border-radius: 2px;
+  content: " ";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  margin-left: -2px;
+  width: 4px;
+  height: 4px;
+  background-color: #B2C0D1;
+}
+.ui-slider-hasscale {
+  margin-bottom: 40px;
+}
+.ui-slider .ui-slider-range-min {
+  left: 0;
+  border-bottom-left-radius: 30px;
+  border-top-left-radius: 30px;
+}
+.ui-slider .ui-slider-range-max {
+  right: 0;
+  border-bottom-right-radius: 30px;
+  border-top-right-radius: 30px;
+}
+.ui-slider-vertical {
+  width: 6px;
+  height: 200px;
+}
+.ui-slider-vertical .ui-slider-handle {
+  left: -8px;
+  margin-left: -2px;
+  margin-bottom: -14px;
+}
+.ui-slider-vertical .ui-slider-handle-scale {
+  margin-left: 2px;
+  background-position: -120px -280px;
+}
+.ui-slider-vertical .ui-slider-handle-scale:hover {
+  background-position: -150px -280px;
+}
+.ui-slider-vertical .ui-slider-range {
+  left: 0;
+  width: 100%;
+}
+.ui-slider-vertical .ui-slider-range-min {
+  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+  bottom: 0;
+}
+.ui-slider-vertical .ui-slider-range-max {
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+  top: 0;
+}
+.ui-slider-vertical .ui-slider-scale-start,
+.ui-slider-vertical .ui-slider-scale-end {
+  right: auto;
+  left: 20px;
+}
+.ui-slider-vertical .ui-slider-scale-start {
+  top: auto;
+  bottom: -10px;
+}
+.ui-slider-vertical .ui-slider-scale-end {
+  top: -10px;
+}
+.ui-slider-vertical .ui-slider-scale-point {
+  top: auto;
+  left: 12px;
+  margin-left: 0;
+  margin-top: -2px;
+}

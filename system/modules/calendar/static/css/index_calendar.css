@@ -1,0 +1,7 @@
+.in-cal-empty{
+	position: relative;
+	width: 488px;
+	height: 300px;
+	background: url(../image/empty_new.png) no-repeat center center; 
+}
+.in-cal-add{ position: absolute; top: 192px; left: 185px; width: 100px; height: 30px; }

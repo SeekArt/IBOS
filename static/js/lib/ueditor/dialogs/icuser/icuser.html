@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<link rel="stylesheet" href="../../../../../css/base.css">
+		<style type="text/css" >
+			fieldset{ padding: 20px; font-family: 'Microsoft Yahei';}
+			.control-group{ margin-bottom: 10px; }
+			.xcr { color: #E26F50; }
+		</style>
+	</head>
+	<body>
+		<fieldset>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label for="control_user_title"><var id="lang_control_title"></var> <span class="xcr">*</span></label>
+					<input type="text" id="control_user_title">
+				</div>
+				<div class="control-group">
+					<label for="control_user_width"><var id="lang_control_style"></var></label>
+					<div class="input-group">
+						<input type="text" id="control_user_width">
+						<span class="input-group-addon"><var id="lang_control_width"></var></span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="control_user_type"><var id="lang_user_type"></var>:</label>
+					<select id="control_user_type">
+						<option value="user"></option>
+						<option value="department"></option>
+						<option value="position"></option>
+					</select>
+				</div>
+				<div class="control-group">
+					<label for="control_user_single" class="checkbox">
+						<input type="checkbox" id="control_user_single">
+						<var id="lang_single_select"></var>
+					</label>
+				</div>
+			</form>
+		</fieldset>
+		<script src="../../../../src/core.js"></script>
+		<script src="../../../../src/base.js"></script>
+		<script src="../../../../src/common.js"></script>
+		<script src="../fc.js"></script>
+		<script src="../internal_controls.js"></script>
+		<script>
+			var G = parent.G;
+			(function() {
+				var tpl = '<ic data-id="<%=id%>" data-type="user" data-title="<%=title%>" data-select-type="<%=selectType%>" data-width="<%=width%>" data-single="<%=single%>" contenteditable="false" >' +
+						'<span class="fake-user" style="width: <%=width%>px" title="<%=title%>"><%=selectTypeText%></span></ic>',
+						fc = new Fc(editor, tpl),
+						editing = UE.plugins['formcontrols'].editing,
+						oldData;
+
+				// 编辑时， 需要还原各控件的值
+				if (editing) {
+					oldData = fc.getControlData(editing);
+					$G('control_user_title').value = oldData.title;
+					$G('control_user_type').value = oldData.selectType;
+					$G('control_user_width').value = oldData.width;
+					$G('control_user_single').checked = oldData.single == "1" ? true : false;
+				}
+
+				dialog.onok = function() {
+					var data, title = $G('control_user_title').value;
+					if ($.trim(title) === "") {
+						alert(editor.getLang("fc.noNameTip"));
+						return false;
+					}
+					data = {
+						title: title,
+						selectType: $G('control_user_type').value,
+						selectTypeText: $G('control_user_type').options[$G('control_user_type').selectedIndex].text || "",
+						width: Number($G('control_user_width').value) || 200,
+						single: $G('control_user_single').checked ? 1 : 0,
+					}
+
+					if (editing) {
+						data.id = oldData.id;
+						fc.updateContorl(editing, data);
+						delete UE.plugins['formcontrols'].editing
+						dialog.close();
+					} else {
+						$('body').waitingC();
+						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
+							$('body').stopWaiting();
+							if (res.isSuccess) {
+								data.id = res.id;
+								fc.addControl(data);
+								dialog.close();
+							} else {
+								alert(editor.getLang("fc.addError"));
+							}
+						}, 'json');
+					}
+					return false
+				};
+			})();
+		</script>
+	</body>
+</html>

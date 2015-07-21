@@ -1,0 +1,16 @@
+<!-- @Template: ajax 登录弹窗，目前仅应用于登录超时 -->
+<form id="ajax_login_form" class="form-horizontal form-compact" style="width: 400px;">
+	<div class="alert alert-main"><%= Ibos.l("LOGIN.TIMEOUT") %></div>
+	<div class="control-group">
+		<label class="control-label"><%= Ibos.l("USERNAME") %></label>
+		<div class="controls">
+			<input type="text" name="username" id="ajax_username" value="<%= username %>"/>
+		</div>
+	</div>
+	<div class="control-group" style="margin-bottom: 0">
+		<label class="control-label"><%= Ibos.l("PASSWORD") %></label>
+		<div class="controls">
+			<input type="password" name="password" id="ajax_password" value="<%= password %>"/>
+		</div>
+	</div>
+</form>

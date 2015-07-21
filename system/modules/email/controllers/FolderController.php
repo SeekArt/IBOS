@@ -1,0 +1,114 @@
+<?php
+
+namespace application\modules\email\controllers;
+
+use application\core\utils\Convert;
+use application\core\utils\Env;
+use application\core\utils\IBOS;
+use application\modules\email\model\Email;
+use application\modules\email\model\EmailFolder;
+use application\modules\email\utils\Email as EmailUtil;
+
+class FolderController extends BaseController {
+
+	public $layout = false;
+
+	public function init() {
+		$this->fid = intval( Env::getRequest( 'fid' ) );
+		parent::init();
+	}
+
+	/**
+	 * 文件夹设置
+	 */
+	public function actionIndex() {
+		$uid = $this->uid;
+		$total = 0;
+		$folders = $this->folders;
+		// 用户自定义文件夹
+		foreach ( $folders as &$folder ) {
+			$size = EmailFolder::model()->getFolderSize( $uid, $folder['fid'] );
+			$folder['size'] = Convert::sizeCount( $size );
+			$total += $size;
+		}
+		// 4个系统文件夹
+		$inbox = EmailFolder::model()->getSysFolderSize( $uid, 'inbox' );
+		$web = EmailFolder::model()->getSysFolderSize( $uid, 'web' );
+		$sent = EmailFolder::model()->getSysFolderSize( $uid, 'send' );
+		$deleted = EmailFolder::model()->getSysFolderSize( $uid, 'del' );
+		// 用户当前用量
+		$userSize = EmailUtil::getUserSize( $uid );
+		$data = array(
+			'folders' => $folders,
+			'inbox' => Convert::sizeCount( $inbox ),
+			'web' => Convert::sizeCount( $web ),
+			'sent' => Convert::sizeCount( $sent ),
+			'deleted' => Convert::sizeCount( $deleted ),
+			'userSize' => $userSize,
+			'total' => Convert::sizeCount( array_sum( array( $total, $inbox, $web, $sent, $deleted ) ) )
+		);
+		$this->setPageTitle( IBOS::lang('Folder setting') );
+		$this->setPageState( 'breadCrumbs', array(
+			array( 'name' => IBOS::lang( 'Personal Office') ),
+			array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
+			array( 'name' => IBOS::lang( 'Folder setting') )
+		) );
+		$this->render( 'index', $data );
+	}
+
+	/**
+	 * 增加操作
+	 */
+	public function actionAdd() {
+		$sort = Env::getRequest( 'sort' );
+		$name = Env::getRequest( 'name' );
+		if ( !empty( $name ) ) {
+			$data = array(
+				'sort' => intval( $sort ),
+				'name' => $name,
+				'uid' => $this->uid
+			);
+			$newId = EmailFolder::model()->add( $data, true );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'fid' => $newId ) );
+		} else {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'errorMsg' => IBOS::lang( 'Save failed', 'message' ) ) );
+		}
+	}
+
+	/**
+	 * 编辑操作
+	 */
+	public function actionEdit() {
+		$fid = $this->fid;
+		$sort = Env::getRequest( 'sort' );
+		$name = Env::getRequest( 'name' );
+		if ( !empty( $name ) ) {
+			EmailFolder::model()->modify( $fid, array( 'sort' => intval( $sort ), 'name' => $name ) );
+			$this->ajaxReturn( array( 'isSuccess' => true ) );
+		} else {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'errorMsg' => IBOS::lang( 'Save failed', 'message' ) ) );
+		}
+	}
+
+	/**
+	 * 删除操作
+	 */
+	public function actionDel() {
+		$fid = $this->fid;
+		$cleanAll = Env::getRequest( 'delemail' );
+		$emailIds = Email::model()->fetchAllEmailIdsByFolderId( $fid, $this->uid );
+		if ( $cleanAll ) {
+			$emailIds && Email::model()->completelyDelete( $emailIds, $this->uid );
+		} else {
+			// 如果文件夹中有邮件，移回默认收件箱
+			$emailIds && Email::model()->updateByPk( $emailIds, array( 'fid' => parent::INBOX_ID ) );
+		}
+		$deleted = EmailFolder::model()->deleteByPk( $fid );
+		if ( $deleted ) {
+			$this->ajaxReturn( array( 'isSuccess' => true ) );
+		} else {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'errorMsg' => IBOS::lang( 'Del failed', 'message' ) ) );
+		}
+	}
+
+}

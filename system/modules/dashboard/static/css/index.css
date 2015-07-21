@@ -1,0 +1,271 @@
+/**
+ * @module 		Dashboard
+ * @submudule 	Index
+ * @type 		layout
+ * @Modified 	2013-04-11
+ * @version		$Id: index.css 5064 2015-05-14 07:33:56Z gzljj $
+ * @author 		Ink
+*/
+html, body{
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+body{
+	background-color: #F5F7F8;
+	font-family: Arial, Tahoma, "\5fae\8f6f\96c5\9ed1", "\5B8B\4F53";
+}
+
+/**
+ * short
+ */
+.bb{
+	border-bottom: 1px solid #E8E8E8;
+}
+.msep{ margin-left: 5px; margin-right: 5px; }
+.psep{ padding-left: 5px; padding-right: 5px; }
+
+.logo-bg,
+/*.user-conf,*/
+.db-map-ctrl,
+.main-nav li a,
+.dbsearch input.input-small,
+.o-homepage,
+.o-logout{
+	background-image: url(../image/db.png);
+	background-repeat: no-repeat;
+}
+
+.o-homepage{ background-position: -245px -245px; }
+.o-homepage:hover{ background-position: -285px -245px; }
+.o-logout{ background-position: -325px -245px; }
+.o-logout:hover{ background-position: -365px -245px; }
+
+.dbm-main-list,
+.dbm-sub-list,
+ul{
+	margin: 0;
+}
+
+.db-map li,
+.main-nav li,
+.sub-nav li{
+	list-style: none;
+}
+/** header **/
+.header, 
+.mainer{
+	min-width: 720px;
+}
+.mainer{
+	height: 100%;
+}
+.logo, .hdbar{
+	-webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 2px 0 rgba(0, 0, 0, .1);
+	box-shadow: 0 2px 0 rgba(0, 0, 0, .1);
+	background-color: #3497DB;
+	position: relative;
+	z-index: 2;
+	height: 50px;
+	color: #fff;
+}
+.logo, 
+.aside{
+	position: relative;
+	float: left;
+	width: 230px;
+}
+.logo-bg{ 
+	height: 50px;
+	background-position: 0 -150px;
+	margin: 0;
+	text-indent: -9999px;
+}
+.active .logo-bg { 
+	/*background-position: 0 -190px;*/
+	/*background-color: #fff;*/
+	background-color: #4B4F54;
+	opacity: .95;
+	filter: Alpha(opacity=95);
+}
+.db-map-ctrl{ 
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	background-position: -85px -245px; 
+}
+.active .db-map-ctrl{ background-position: -45px -245px; }
+.db-map{
+	-webkit-box-shadow: 0 2px 4px rgba(56, 60, 65, .05);
+	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+	position: absolute;
+	top: 50px;
+	left: 0;
+	padding: 10px 0;
+	width: 100%;
+	background-color: #4B4F54;
+	opacity: .95;
+	filter: Alpha(opacity=95);
+	z-index: 5;
+}
+.dbm-main-list{
+	overflow: hidden;
+}
+.dbm-main-item{
+	position: relative;
+	margin-bottom: -1px;
+	padding: 10px 0;
+	border-bottom: 1px solid #65696D;
+	border-bottom-color: rgba(255, 255, 255, .1);
+	margin-left: 100px;
+}
+.dbm-main-item-name{
+	position: absolute;
+	text-align: center;
+	width: 80px;
+	left: -100px;
+	top: 10px;
+	font: 400 20px/2 "Microsoft Yahei";
+}
+.dbm-sub-list{
+	overflow: hidden;
+}
+.dbm-sub-list li {
+	float: left;
+	width: 150px;
+}
+.dbm-sub-list a{
+	color: #B2C0D1;
+	font-family: "Microsoft Yahei";
+	font-size: 12px;
+	line-height: 40px;
+}
+.dbm-sub-list a:hover{
+	color: #FFF;
+	text-decoration: none;
+}
+
+
+.hdbar,
+.mc{
+	margin-left: 230px;
+}
+
+.hdbar{ border-left: 1px solid #318FD0; }
+.dbsearch{
+	position: absolute;
+	width: 200px;
+	padding: 10px 20px;
+}
+.dbsearch input.input-small{
+	border-radius: 15px;
+	padding-left: 15px;
+	padding-right: 30px;
+	background-color: #49A2DF;
+	background-position: 160px -285px;
+	border-color: #49A2DF;
+	color: #fff;
+}
+.dbsearch.has-focus input,
+.dbsearch input.input-small:focus{
+	background-color: #fff;
+	background-position: -80px -285px;
+	color: #82939E;
+}
+.user-info{ padding: 10px 20px; }
+.user-info img{ max-width: none; }
+.user-name{ margin: 0 20px 0 8px; }
+
+
+/** mainer **/
+/* aside */
+.aside{
+	height: 100%;
+	background-color: #62646D;
+	overflow: hidden;
+}
+.mc{ height: 100%; }
+.main-nav{
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 80px;
+	background-color: #42454F;
+}
+.sub-nav{
+	margin-left: 80px;
+	height: 100%;
+}
+.mc,
+.sub-nav{
+	-webkit-box-shadow: -2px 0 0 rgba(0, 0, 0, .1);
+	-moz-box-shadow: -2px 0 0 rgba(0, 0, 0, .1);
+	box-shadow: -2px 0 0 rgba(0, 0, 0, .1);
+	position: relative;
+}
+
+.main-nav li a{
+	display: block;
+	width: 80px;
+	height: 80px;
+	line-height: 120px;
+	text-align: center;
+	font-family: 'Microsoft Yahei';
+	color: #C6C7CA;
+	overflow: hidden;
+}
+.main-nav .active{ background-color: #F5F7F8; }
+.main-nav .active a{ color: #42454F; }
+.sub-nav li a{
+	display: block;
+	padding: 10px 15px;
+	color: #fff;
+}
+.main-nav li a:hover,
+.main-nav li a:focus,
+.sub-nav li a:hover,
+.sub-nav li a:focus{
+	text-decoration: none;
+}
+.sub-nav li a:hover,
+.sub-nav .active{ background-color: #4D4F59; }
+.db-index{ background-position: 20px 10px; }
+.db-global{ background-position: -60px 10px; }
+.db-interface{ background-position: -140px 10px; }
+.db-module{ background-position: -220px 10px; }
+.db-manage{ background-position: -300px 10px; }
+.db-services{ background-position: -380px 10px; }
+.db-binding{ background-position:  -455px 12px; }
+.db-user{ background-position: -540px 16px; }
+.active .db-index{ background-position: 20px -70px; }
+.active .db-global{ background-position: -60px -70px; }
+.active .db-interface{ background-position: -140px -70px; }
+.active .db-module{ background-position: -220px -70px; }
+.active .db-manage{ background-position: -300px -70px; }
+.active .db-services{ background-position: -380px -70px; }
+.active .db-binding{ background-position: -455px -70px; }
+.active .db-user{ background-position: -540px -67px; }
+
+.sub-sec-nav li a{
+	padding-left: 30px;
+	color: #BBBCBF;
+	font-size: 12px;
+}
+
+.db-widen .logo,
+.db-widen .aside{
+	width: 20%;
+}
+.db-widen .hdbar,
+.db-widen .mc{
+	margin-left: 20%;
+}
+
+.db-table{
+	width: 100%;
+	height: 100%;
+}
+.db-table td{ padding: 0; }

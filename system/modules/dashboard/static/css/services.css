@@ -1,0 +1,154 @@
+.o-steps-one,
+.o-steps-two,
+.o-apply-tip,
+.o-next-tip,
+.o-key-tip,
+.o-success-tip,
+.o-item-email,
+.o-item-SMS,
+.o-item-call,
+.o-item-meeting,
+.o-item-warning,
+.o-item-mobile,
+.o-toggle-apply{
+	background-image: url(../image/interfase_introduce.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+}
+.o-steps-one{
+	width: 30px;
+	height: 45px;
+	background-position: -540px -210px;
+}
+.o-steps-two{
+	width: 30px;
+	height: 45px;
+	background-position: -570px -210px;
+}
+.o-item-email,
+.o-item-SMS,
+.o-item-call,
+.o-item-meeting,
+.o-item-warning,
+.o-item-mobile{
+	width: 80px;
+	height: 80px;
+}
+.o-item-email{
+	background-position: 0 -210px;
+}
+.o-item-SMS{
+	background-position: -90px -210px;
+}
+.o-item-call{
+	background-position: -180px -210px;
+}
+.o-item-meeting{
+	background-position: -270px -210px;
+}
+.o-item-warning{
+	background-position: -360px -210px;
+}
+.o-item-mobile{
+	background-position: -450px -210px;
+}
+.o-apply-tip,
+.o-key-tip,
+.o-success-tip{
+	width: 195px;
+	height: 195px;
+}
+.o-apply-tip{
+	background-position: 0 0;
+}
+.o-key-tip{
+	background-position: -210px 0;
+}
+.o-success-tip{
+	background-position: -420px 0;
+}
+.o-next-tip{
+	width: 68px;
+	height: 28px;
+	background-position: 0 -300px;
+	position: relative;
+	top: -122px;
+}
+.o-toggle-apply{
+	width: 15px;
+	height: 8px;
+}
+.o-toggle-apply{
+	background-position: -540px -270px;
+}
+.toggle-tip-label:hover .o-toggle-apply{
+	background-position: -556px -270px;
+}
+.o-toggle-apply.down{
+	background-position: -570px -270px;
+}
+.toggle-tip-label:hover .o-toggle-apply.down{
+	background-position: -585px -270px;
+}
+.interface-service-wrap{
+	margin: 10px 0 20px 20px;
+	width: 1000px;
+	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.service-title{
+	background-color: #fff;
+}
+.service-steps-title{
+	padding: 20px;
+	background-color: #f9fbff;
+	border-bottom: 1px #ebeff6 solid; 
+}
+.service-steps-list{
+	background-color: #fff;
+	padding: 34px 80px; 
+}
+.steps-tip-list li{
+	margin-right: 10px;
+}
+.steps-tip-list li:last-child{
+	margin-right: 0;
+}
+.quick-apply-link{
+	color: #3497db;
+	text-decoration: underline;
+}
+.service-item-wrap{
+	background-color: #fff;
+	padding: 40px 20px 10px;
+}
+.service-item-list li{
+	text-align: center;
+	margin-left: 75px;
+	width: 215px;
+	margin-bottom: 30px;
+}
+.toggle-tip-label{
+	margin-top: 15px;
+}
+
+.user-info-wrap{
+	width: 612px;
+	font-size: 20px;
+	font-weight: 700;
+}
+.guide-user-name{
+	width: 300px;
+}
+.guide-user-passwrod{
+	width: 300px;
+	margin-left: 5px!important;
+}
+.open-app-services{
+	display: none;
+}

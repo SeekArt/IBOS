@@ -1,0 +1,38 @@
+/**
+ * 后台快捷导航设置
+ * @version $Id$
+ */
+.quicknav-icon-preview{
+	-webkit-box-shadow: 0 1px 3px rgba(56, 60, 65, .4);
+	-moz-box-shadow: 0 1px 3px rgba(56, 60, 65, .4);
+	box-shadow: 0 1px 3px rgba(56, 60, 65, .4);
+	border-radius: 15px;
+	position: relative;
+	width: 60px;
+	height: 60px;
+	background-color: #FFF;
+	line-height: 60px;
+	text-align: center;
+	font-size: 20px;
+	color: #FFF;
+	cursor: pointer;
+}
+.quicknav-icon-preview:after{
+	border-radius: 15px;
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 60px;
+	height: 60px;
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3), rgba(0, 0, 0, 0));
+	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3), rgba(0, 0, 0, 0));
+	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3), rgba(0, 0, 0, 0));
+	background-image: -o-linear-gradient(top, rgba(255,255,255,.3), rgba(0, 0, 0, 0));
+	background-image: linear-gradient(top, rgba(255,255,255,.3), rgba(0, 0, 0, 0));
+}
+.quicknav-img-preview img{ width: 64px; height: 64px; }
+
+#jquery-colour-picker.quicknav-icon-picker{ width: 324px; padding: 15px 14px 10px 20px; }
+#jquery-colour-picker.quicknav-icon-picker ul li{ margin: 0 6px 5px 0; }
+#jquery-colour-picker.quicknav-icon-picker ul li a{ width: 28px; height: 28px; }

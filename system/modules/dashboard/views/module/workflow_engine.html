@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>工作流</title>
+	<!-- load css -->
+	<link rel="stylesheet" href="../../../../../static/css/base.css">
+	<!-- IE8 fixed -->
+	<!--[if lt IE 9]>
+	<link rel="stylesheet" href="../../../../../static/css/iefix.css">
+	<![endif]-->
+	<link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<body>
+	<div class="ct">
+		<div class="clearfix">
+			<h1 class="mt">工作流业务引擎</h1>
+			<ul class="mn">
+				<li>
+					<a href="workflow_setup.html">设置</a>
+				</li>
+				<li>
+					<span>引擎</span>
+				</li>
+			</ul>
+		</div>
+		<div>
+			<!-- 工作流业务引擎 start -->
+			<div class="ctb">
+				<h2 class="st">工作流业务引擎</h2>
+				<div>
+					<div class="page-list">
+						<div class="page-list-header">
+							<div class="row">	
+								<div class="span8">
+									<button type="button" class="btn btn-primary">添加</button>
+								</div>
+							</div>
+						</div>
+						<div class="page-list-mainer">
+							<table class="table table-striped table-operate">
+								<thead>
+									<tr>
+										<th>模块</th>
+										<th>名称</th>
+										<th>流程名称</th>
+										<th>插件</th>
+										<th>状态</th>
+										<th width="100">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>office_product_draw</td>
+										<td>办公用品领用</td>
+										<td>固定资产报废申请</td>
+										<td>office_product_draw.php</td>
+										<td>停用</td>
+										<td>
+											<a href="workflow_engine_edit.html" title="编辑" class="cbtn o-edit"></a>
+										</td>
+									</tr>
+									<tr>
+										<td>office_product_borrow</td>
+										<td>办公用品领用</td>
+										<td>固定资产报废申请</td>
+										<td>office_product_borrow.php</td>
+										<td>可选</td>
+										<td>
+											<a href="" title="编辑" class="cbtn o-edit"></a>
+										</td>
+									</tr>
+									<tr>
+										<td>office_product_return</td>
+										<td>办公用品领用</td>
+										<td>固定资产报废申请</td>
+										<td>office_product_borrow.php</td>
+										<td>必选</td>
+										<td>
+											<a href="" title="编辑" class="cbtn o-edit"></a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="page-list-footer">
+							<div>
+								<ul class="pagination">
+									<li class="active"><a href="#">1</a></li>
+									<li><a href="#">2</a></li>
+									<li><a href="#">3</a></li>
+									<li><a href="#">4</a></li>
+									<li><a href="#">5</a></li>
+									<li><a href="#">6</a></li>
+									<li><a href="#">7</a></li>
+									<li><a href="#">8</a></li>
+									<li><a href="#">9</a></li>
+									<li><a href="#">10</a></li>
+								</ul>
+								<div class="pagination-controll">
+									<div class="input-group">
+										<input type="text" class="input-small">
+										<a class="input-group-addon input-small">
+											<i class="glyphicon-share-alt"></i>
+										</a>
+									</div>
+									<span>/21页</span>
+								</div>
+								<ul class="pager">
+									<li>
+										<a href=""><i class="glyphicon-chevron-left"></i></a>
+									</li>
+									<li>
+										<a href=""><i class="glyphicon-chevron-right"></i></a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

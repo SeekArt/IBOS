@@ -1,0 +1,49 @@
+@import url("../../css/base.css");
+@import url("../../css/common.css");
+
+.mc{
+	min-height: 600px;
+}
+.nav > li > p > a{
+	position: relative;
+	display: block;
+	padding: 10px 30px;
+	color: #82939e;
+	font-family: Arial, "Microsoft Yahei";
+	outline: 0 none;
+} 
+.nav-stacked > li > p > a {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.nav-stacked > li + li > p > a {
+  margin-top: 2px;
+  margin-left: 0;
+}
+.nav-strip > li > p > a {
+  border-left: 5px solid transparent;
+}
+.nav-strip > .active > p > a,
+.nav-strip > .active > p > a:hover,
+.nav-strip > .active > p > a:focus {
+  border-left-color: #9cadc3;
+  color: #3497db;
+  background-color: #fff;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.nav-strip > .active > p > a .badge {
+  background-color: #3497db;
+}
+.aside .nav-strip > .active > p > a, 
+.aside .nav-strip > .active > p > a:hover, 
+.aside .nav-strip > .active > p > a:focus{
+	-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 1px rgba(0, 0, 0, .1), inset -1px 0 1px rgba(0, 0, 0, .1);
+}
+
+.list-paddingleft-2{
+	padding-left: 0 !important;
+	width: 100%;
+}
