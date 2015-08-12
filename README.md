@@ -27,3 +27,20 @@ IBOS 是一个基于PHP开发，免费开源的，快速、高效的协同办公
 * 表单令牌验证
 * 防SQL注入
 * 图像上传检测
+
+## 跨平台打通
+
+系统在多平台提供了酷办公客户端（windows,andorid,ios,mac os,linux）支持，客户端特性包括：
+* 即时聊天
+* 文件传输
+* 讨论组
+* 消息通知
+* 事件推送
+* 账户同步登录
+* 防SQL注入
+
+## 帮助文档
+使用说明： http://doc.ibos.com.cn
+技术文档： http://doc.ibos.com.cn/article/lists/category/dev
+客户端：   http://www.ibos.cn
+讨论区：   http://bbs.ibos.com.cn/
