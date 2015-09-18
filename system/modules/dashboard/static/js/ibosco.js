@@ -26,8 +26,27 @@ $(function() {
 				var url = Ibos.app.url('dashboard/cobinding/createAndBinding');
 				return $.get(url, $.noop, "json");
 			},
+		},
+		//同步时传送的信息
+		syncData : function(url, deptCount, userCount, i){
+			$.get(url, function(res) {
+				var tpl = res.tpl;
+				if (tpl == "success" || tpl == "half" || tpl == "error" || tpl == "sending") {
+					var template = $.template("result_success_tpl", {data: res});
+					$("#wrap_body").html(template);
+					$("#sync_data_btn").addClass("btn-primary");
+					$("#wrap_footer").slideDown();
+				} else {
+					var percentage = (i / (deptCount + userCount + 4)) * 100;
+							res = $.extend({}, res, {percentage: percentage});
+					var template = $.template("result_syncing_tpl", {data: res});
+					$("#wrap_body").html(template);
+					i++;
+					IbosCo.syncData(res.url, deptCount, userCount, i);
+				}
+			}, "json");
 		}
-	}
+	};
 
 	var $box = $("#rbox_box");
 
@@ -40,7 +59,6 @@ $(function() {
 						Ui.tip(Ibos.l("CO.UNBINDING_SUCCESS"));
 						// 解绑成功后返回到登录页
 						window.location.href = Ibos.app.url('dashboard/cobinding/index');
-						;
 					} else {
 						Ui.tip(res.msg, "danger");
 					}
@@ -140,6 +158,26 @@ $(function() {
 					}
 				});
 			});
-		}
+		},
+		//开始同步
+		"startSyncData" : function(param, elem){
+			var $this = $(this),
+				sendinvite = $("#send_request").prop("checked") ? 1 : 0,
+				datum = $("input[name='datum']:checked").val(),
+				//TODO  传送的地址
+				url = Ibos.app.url('dashboard/cosync/sync', {"op" : "init", "sendinvite" : sendinvite, "datum" : datum});
+				
+			$.get(url, function(res){
+				var deptCount = res.deptCount,
+					userCount = res.userCount,
+					i = 0;
+
+				$("#wrap_footer").slideUp();
+				$this.removeClass("btn-primary");
+				//TODO  传送的地址
+				url = Ibos.app.url("dashboard/cosync/sync", {"op" : "dept"});
+				IbosCo.syncData(url, deptCount, userCount, i);
+			});
+		},
 	});
 });

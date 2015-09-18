@@ -123,6 +123,51 @@ use application\core\utils\String;
 						</ul>
 					</div>
 				<?php endif; ?>
+                <?php
+                /* 外部邮件附件视图 */
+                if (isset($atts)) {
+                    ?>
+                    <div class="ctb bglg bdbs noprint">
+                        <h3 class="ctbt">
+                            <i class="o-paperclip"></i>
+                            <strong><?php echo $lang['Attachment']; ?></strong>（<?php echo count($atts); ?><?php echo $lang['Item']; ?>）
+                        </h3>
+                        <ul class="attl">
+                            <?php foreach ($atts as $k => $att): ?>
+                                <li>
+                                    <i class="atti"><img src="static/image/filetype/unknown_lt.png" alt="<?php echo $att['name']; ?>"></i>
+                                    <div class="attc">
+                                        <div>
+                                            <?php echo $att['name']; ?><span class="tcm">(<?php
+                                            echo round($att['size'] / 1024 / 1024,
+                                                    2) . 'M';
+                                            ?>)</span>
+                                        </div>
+                                        <span class="fss">
+                                            <a target="_blank" href="?r=email/web/download&id=<?php echo $webid
+                                        + 5; ?>&i=<?php
+                                               echo $k + 10;
+                                               ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+                                        </span>
+                                    </div>
+                                </li>
+    <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php
+                }
+                ?>
+
+
+
+
+
+
+
+
+
+
+
 				<div class="ctb bglb sdi noprint">
 					<textarea id="quick_reply" data-focus="flexArea" data-blur="flexArea" class="mal-quick-reply mb" placeholder="<?php echo $lang['Quick reply to'] . $email['fromName']; ?>" data-param="{&quot;targetId&quot;: &quot;quick_reply_operate&quot;}"></textarea>
 					<div id="quick_reply_operate" class="clearfix" style="display:none;">

@@ -5,7 +5,7 @@
 			var render;
 			try {
 			    document.createElement('canvas').getContext('2d');
-			    render = 'canvas'
+			    render = 'canvas';
 			} catch(e) {
 			    render = 'table';
 			}
@@ -18,7 +18,7 @@
 			        height: 160,
 			        render: render
 			    });
-			}
+			};
 		})(),
 
 		cancel: false,

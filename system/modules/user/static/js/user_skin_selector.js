@@ -2,7 +2,14 @@
  * 用户-banner选择功能
  * @version 	$Id$
  */
-$(function() {
+var Skin = {};
+(function(){
+	/**
+	 * 页面列表
+	 * @method PageList
+	 * @param {Object} container 传入jquery节点对象
+	 * @param {Object} options   传入JSON格式数据
+	 */
 	var PageList = function(container, options) {
 		this.$container = $(container);
 		this.opts = $.extend(true, {}, PageList.defaults, options);
@@ -10,12 +17,18 @@ $(function() {
 		this.pageTo(this.opts.startAt);
 	};
 
+	// 默认参数
 	PageList.defaults = {
 		startAt: 1,
 		pageSize: 10
 	};
 
 	$.extend(PageList.prototype, {
+		/**
+		 * 渲染页面列表
+		 * @method render
+		 * @param  {Array} datas 传入Array格式数据
+		 */
 		render: function(datas) {
 			var that = this,
 				tmpl;
@@ -29,7 +42,11 @@ $(function() {
 				this.$container.html(tmpl);
 			}
 		},
-
+		/**
+		 * 页面跳转
+		 * @method pageTo
+		 * @param  {Number} page 传入当前页面
+		 */
 		pageTo: function(page) {
 			if (page < 1) {
 				page = 1;
@@ -55,16 +72,28 @@ $(function() {
 			}
 			// 如果动态请求数据
 		},
-
+		/**
+		 * 上一个页面
+		 * @method prev
+		 */
 		prev: function() {
 			this.pageTo(this.currentPage - 1);
 		},
-
+		/**
+		 * 下一个页面
+		 * @method next
+		 */
 		next: function() {
 			this.pageTo(this.currentPage + 1);
 		}
 	});
-
+	
+	/**
+	 * 皮肤列表
+	 * @method SkinList
+	 * @param {Object} container 传入jquery节点对象
+	 * @param {Object} options   传入JSON格式数据
+	 */
 	var SkinList = function(container, options) {
 		var that = this;
 		this._super.call(this, container, options);
@@ -73,9 +102,15 @@ $(function() {
 		});
 	};
 
+	// 继承页面列表的方法
 	Ibos.core.inherits(SkinList, PageList);
 
 	$.extend(SkinList.prototype, {
+		/**
+		 * 选中一个皮肤模板
+		 * @method selectOne
+		 * @param  {Object} $item 传入jquery节点对象
+		 */
 		selectOne: function($item) {
 			$item.siblings(".active").removeClass("active");
 			$item.addClass("active");
@@ -83,21 +118,38 @@ $(function() {
 				$item: $item
 			});
 		},
-
+		/**
+		 * 获取选择的皮肤模板节点
+		 * @method getSelected
+		 * @return {Object} 返回jquery节点对象
+		 */
 		getSelected: function() {
 			return this.$container.children(".active");
 		},
-
+		/**
+		 * 获取皮肤模板的长度
+		 * @method getDataLength
+		 * @return {Number} 返回数据的长度
+		 */
 		getDataLength: function() {
 			return this.opts.data.length;
 		},
-
+		/**
+		 * 获取皮肤模板的id
+		 * @method getDataById
+		 * @param  {Number} id 传入查询的数据id
+		 * @return {Number}    返回数据的id
+		 */
 		getDataById: function(id) {
 			return $.grep(this.opts.data, function(d) {
 				return d.id == id;
 			})[0];
 		},
-
+		/**
+		 * 删除某条皮肤模板
+		 * @methd removeDataById
+		 * @param  {Number} id 传入皮肤模板的id
+		 */
 		removeDataById: function(id) {
 			var index = -1;
 			$.each(this.opts.data, function(i, d) {
@@ -113,66 +165,153 @@ $(function() {
 			}
 		}
 	});
+	
+	window.Skin.SkinList = SkinList;
+})();
 
-	var skinDialogInited = false;
+// 皮肤窗口是否初始化
+Skin.skinDialogInited = false;
+/**
+ * 打开皮肤管理窗口
+ * @method openSkinDialog
+ * @param  {Object} conf 传入JSON格式参数
+ * @return {Object}      返回当前窗口对象
+ */
+Skin.openSkinDialog = function(conf){
+	var dialog = Ui.dialog(
+		$.extend({
+			id: "d_skin_bg",
+			title: Ibos.l("USER.INDIVIDUALITY_SETTING"),
+			ok: false,
+			padding: 0
+		}, conf)
+	);
 
-	function openSkinDialog(conf) {
-		var dialog = Ui.dialog(
-			$.extend({
-				id: "d_skin_bg",
-				title: Ibos.l("USER.INDIVIDUALITY_SETTING"),
-				ok: false,
-				padding: 0
-			}, conf)
-		);
+	if (!Skin.skinDialogInited) {
+		Ibos.statics.loads([
+			Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload.packaged.js"),
+			Ibos.app.getStaticUrl("/js/lib/SWFUpload/handlers.js")
+		])
+		.done(function() {
+			dialog.content(document.getElementById("skin_bg"));
+			//初始化自定义模版上传功能
+			Ibos.upload.image({
+				upload_url: Ibos.app.url("user/skin/uploadBg", {
+					"uid": Ibos.app.g("uid"),
+					"hash": Ibos.app.g("upload").hash
+				}),
 
-		if (!skinDialogInited) {
+				file_size_limit: "2MB", //设置图片最大上传值
 
-			Ibos.statics.loads([
-				Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload.packaged.js"),
-				Ibos.app.getStaticUrl("/js/lib/SWFUpload/handlers.js")
-			])
-			.done(function() {
-				dialog.content(document.getElementById("skin_bg"));
-				//初始化自定义模版上传功能
-				Ibos.upload.image({
-					upload_url: Ibos.app.url("user/skin/uploadBg", {
-						"uid": Ibos.app.g("uid"),
-						"hash": Ibos.app.g("upload").hash
-					}),
+				button_placeholder_id: "skin_bg_choose",
+				button_width: "550",
+				button_height: "170",
+				button_image_url: "",
 
-					file_size_limit: "2MB", //设置图片最大上传值
+				custom_settings: {
+					progressId: "skin_choose_area",
 
-					button_placeholder_id: "skin_bg_choose",
-					button_width: "550",
-					button_height: "170",
-					button_image_url: "",
-
-					custom_settings: {
-						progressId: "skin_choose_area",
-
-						success: function(file, data) {
-							if (data.isSuccess) {
-								skinUploadSuccess(file, data);
-							} else {
-								Ui.tip(data.msg, 'danger');
-								return false;
-							}
+					success: function(file, data) {
+						if (data.isSuccess) {
+							Skin.skinUploadSuccess(file, data);
+						} else {
+							Ui.tip(data.msg, 'danger');
+							return false;
 						}
 					}
-				});
-				skinDialogInited = true;
+				}
 			});
-		} else {
-			dialog.content(document.getElementById("skin_bg"));
-		}
+			Skin.skinDialogInited = true;
+		});
+	} else {
+		dialog.content(document.getElementById("skin_bg"));
+	}
 
-		return dialog;
-	};
+	return dialog;
+};
+
+/**
+ * 上传自定义皮肤成功
+ * @method  skinUploadSuccess
+ * @param  {Object} file 传入文件对象
+ * @param  {Object} data 传入JSON格式数据
+ */
+Skin.skinUploadSuccess = function(file, data) {
+	U.loadImage(data.file, function(img) {
+		var defaultWidth = img.width,
+			defaultHeight = img.height;
+
+		Ibos.statics.load({
+			type: "css",
+			url: Ibos.app.getAssetUrl("user", "/css/jquery.Jcrop.min.css")
+		});
+
+		Ibos.statics.load(Ibos.app.getAssetUrl("user", "/js/jquery.Jcrop.min.js"))
+			.done(function() {
+				$(".skin-choose-area").removeClass("active");
+				var $preview = $('#preview_hidden');
+				$preview.show();
+				//赋值到对应控件
+				$('#sk_img_src').val(data.file);
+				//上传图片成功后，将重新上传按钮隐藏
+				$("#skin_reupload_img").show();
+
+				$(img).show().appendTo($preview)
+				//裁剪插件
+				.Jcrop({
+					bgColor: '#333', //选区背景色
+					bgFade: true, //选区背景渐显
+					fadeTime: 1000, //背景渐显时间
+					allowSelect: false, //是否可以选区，
+					allowResize: true, //是否可以调整选区大小
+					minSize: [170, 550], //可选最小大小
+					boxWidth: 550, //画布宽度
+					boxHeight: 170, //画布高度
+					setSelect: [0, 0, 550, 170], //初始化时位置
+					aspectRatio: 3.33,
+					onSelect: function(c) { //选择时动态赋值，该值是最终传给程序的参数！
+						$('#sk_x').val(c.x); //需裁剪的左上角X轴坐标
+						$('#sk_y').val(c.y); //需裁剪的左上角Y轴坐标
+						$('#sk_w').val(c.w); //需裁剪的宽度
+						$('#sk_h').val(c.h); //需裁剪的高度
+					}
+				});
 
 
+				var img_height = 0;
+				var img_width = 0;
+				var real_height = img.height;
+				var real_width = img.width;
+
+				if (real_height > real_width && real_height > 170) {
+					var persent = real_height / 170;
+					real_height = 170;
+					real_width = real_width / persent;
+				} else if (real_width > real_height && real_width > 550) {
+					var persent = real_width / 550;
+					real_width = 550;
+					real_height = real_height / persent;
+				}
+				if (real_height < 170) {
+					img_height = (170 - real_height) / 2;
+				}
+				if (real_width < 550) {
+					img_width = (550 - real_width) / 2;
+				}
+
+				$preview.css({
+					width: (550 - img_width),
+					height: (170 - img_height),
+					paddingTop: img_height,
+					paddingLeft: img_width
+				});
+			});
+	});
+};
+
+$(function() {
 	//点击换肤,进行自定义和模板选择
-	$("#skin_choose").click(openSkinDialog);
+	$("#skin_choose").click(Skin.openSkinDialog);
 
 	// 皮肤列表翻页，判断上下页按钮的可用状态
 	// 由于选中项被重置，同时隐藏删除按钮
@@ -184,9 +323,9 @@ $(function() {
 	// 选中皮肤时，显示删除按钮
 	.on("select", function() {
 		$(".sk-delete-btn").show();
-	})
+	});
 
-	var skinList = new SkinList("#choose_list", {
+	var skinList = new Skin.SkinList("#choose_list", {
 		tpl: "skin_template",
 		pageSize: 4,
 		data: Ibos.app.g("allBg")
@@ -280,79 +419,6 @@ $(function() {
 		Ui.getDialog('d_skin_bg').close();
 	});
 
-	// 上传自定义皮肤成功
-	function skinUploadSuccess(file, data) {
-		U.loadImage(data.file, function(img) {
-			var defaultWidth = img.width,
-				defaultHeight = img.height;
-
-			Ibos.statics.load({
-				type: "css",
-				url: Ibos.app.getAssetUrl("user", "/css/jquery.Jcrop.min.css")
-			});
-
-			Ibos.statics.load(Ibos.app.getAssetUrl("user", "/js/jquery.Jcrop.min.js"))
-				.done(function() {
-					$(".skin-choose-area").removeClass("active");
-					var $preview = $('#preview_hidden');
-					$preview.show();
-					//赋值到对应控件
-					$('#sk_img_src').val(data.file);
-					//上传图片成功后，将重新上传按钮隐藏
-					$("#skin_reupload_img").show();
-
-					$(img).show().appendTo($preview)
-					//裁剪插件
-					.Jcrop({
-						bgColor: '#333', //选区背景色
-						bgFade: true, //选区背景渐显
-						fadeTime: 1000, //背景渐显时间
-						allowSelect: false, //是否可以选区，
-						allowResize: true, //是否可以调整选区大小
-						minSize: [170, 550], //可选最小大小
-						boxWidth: 550, //画布宽度
-						boxHeight: 170, //画布高度
-						setSelect: [0, 0, 550, 170], //初始化时位置
-						aspectRatio: 3.33,
-						onSelect: function(c) { //选择时动态赋值，该值是最终传给程序的参数！
-							$('#sk_x').val(c.x); //需裁剪的左上角X轴坐标
-							$('#sk_y').val(c.y); //需裁剪的左上角Y轴坐标
-							$('#sk_w').val(c.w); //需裁剪的宽度
-							$('#sk_h').val(c.h); //需裁剪的高度
-						}
-					});
-
-
-					var img_height = 0;
-					var img_width = 0;
-					var real_height = img.height;
-					var real_width = img.width;
-
-					if (real_height > real_width && real_height > 170) {
-						var persent = real_height / 170;
-						real_height = 170;
-						real_width = real_width / persent;
-					} else if (real_width > real_height && real_width > 550) {
-						var persent = real_width / 550;
-						real_width = 550;
-						real_height = real_height / persent;
-					}
-					if (real_height < 170) {
-						img_height = (170 - real_height) / 2;
-					}
-					if (real_width < 550) {
-						img_width = (550 - real_width) / 2;
-					}
-
-					$preview.css({
-						width: (550 - img_width),
-						height: (170 - img_height),
-						paddingTop: img_height,
-						paddingLeft: img_width
-					});
-				});
-		});
-	}
 
 	//重新上传,清空裁剪参数
 	$('#skin_reupload_img').click(resetSkinUpload);

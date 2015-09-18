@@ -220,4 +220,5 @@ use application\core\utils\Env;
 <script src='<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/SWFUpload/handlers.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
-<script src="<?php echo $assetUrl; ?>/js/contactList.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/contact.js?<?php echo VERHASH; ?>"></script>

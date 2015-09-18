@@ -460,7 +460,7 @@
 </div>
 <script src="<?php echo STATICURL; ?>/js/app/ibos.charCount.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js"></script>
-<script src="<?php echo $assetUrl; ?>/js/wb.js"></script>
+<script src="<?php echo $assetUrl; ?>/js/weibo.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#wb-pub-text").charCount();

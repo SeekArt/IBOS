@@ -29,7 +29,11 @@ if ( isset( $im['qq'] ) ) {
         $adapter = $factory->createAdapter( 'application\modules\message\core\IMQq', $cfg );
         $api = $adapter->getApi();
         $infoJson = $api->getRefreshToken( array( 'app_id' => $cfg['appid'], 'app_secret' => $cfg['appsecret'], 'refresh_token' => $cfg['refresh_token'] ) );
-        $info = CJSON::decode( $infoJson );
+		if ( is_array( $infoJson ) ) {
+			$info = null;
+		} else {
+			$info = CJSON::decode( $infoJson, true );
+		}
         if ( isset( $info['ret'] ) && $info['ret'] == 0 ) {
             $cfg['token'] = $info['data']['company_token'];
             $cfg['refresh_token'] = $info['data']['refresh_token'];

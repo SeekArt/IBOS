@@ -18,7 +18,8 @@ var Progress = function($elem, value, options) {
 	this.options = $.extend({}, Progress.defaults, options);
 	this.style = "";
 	this._init();
-}
+};
+// 默认参数
 Progress.defaults = {
 	roll: true,
 	speed: 20,
@@ -26,6 +27,10 @@ Progress.defaults = {
 };
 Progress.prototype = {
 	constractor: Progress,
+	/**
+	 * 初始化进度条
+	 * @method _init 
+	 */
 	_init: function() {
 		this.$elem.addClass("progress");
 		this.$progress = this.$elem.find(".progress-bar");
@@ -40,8 +45,9 @@ Progress.prototype = {
 	},
 	/**
 	 * 修正值的大小，值必须在0到100之间
-	 * @param  {[type]} value [description]
-	 * @return {[type]}       [description]
+	 * @method _reviseValue 
+	 * @param  {Number} value 传入值
+	 * @return {Number}       返回修正值
 	 */
 	_reviseValue: function(value) {
 		value = parseInt(value, 10);
@@ -49,6 +55,11 @@ Progress.prototype = {
 		value = value < 0 ? 0 : value > 100 ? 100 : value;
 		return value;
 	},
+	/**
+	 * 设置样式
+	 * @method setStyle
+	 * @param  {String} style 传入要设置的样式名
+	 */
 	setStyle: function(style) {
 		var styles = ["danger", "info", "warning", "success"],
 				styleStr = "",
@@ -66,10 +77,19 @@ Progress.prototype = {
 			}
 		}
 	},
+	/**
+	 * 设置活动状态
+	 * @method setActive
+	 * @param  {Boolean} toStriped 传入活动状态
+	 */
 	setActive: function(toStriped) {
 		this.$elem.toggleClass("progress-striped", toStriped);
 		this.$elem.toggleClass("active", toStriped);
 	},
+	/**
+	 * 设置进度值(内部使用)
+	 * @method _setValue
+	 */
 	_setValue: function() {
 		if (!isNaN(this.value)) {
 			// 动态进度条
@@ -103,6 +123,11 @@ Progress.prototype = {
 		}
 
 	},
+	/**
+	 * 设置进度值
+	 * @method setValue
+	 * @param {Number} value 传入进度值
+	 */
 	setValue: function(value) {
 		this.value = this._reviseValue(value);
 		this._setValue();
@@ -111,18 +136,38 @@ Progress.prototype = {
 
 var userCenter = {
 	op: {
-		// 绑定酷办公
+		/**
+		 * 绑定酷办公
+		 * @method bindIbosco
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       传出deffered对象
+		 */
 		"bindIbosco": function(param){
 			var url = Ibos.app.url("user/home/bindco");
 			return $.post(url, param, $.noop, "json");
 		},
-		// 解绑酷办公 
-		"relieveIbosco": function(param){
+		/**
+		 * 解绑酷办公
+		 * @method bindIbosco
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       传出deffered对象
+		 */ 
+		relieveIbosco: function(param){
 			var url = Ibos.app.url("user/home/unbindco");
 			return $.post(url, param, $.noop, "json");
+		},
+		/**
+		 * 验证信息
+		 * @method checkVerify
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       传出deffered对象
+		 */
+		checkVerify : function(param){
+			var url = Ibos.app.url("user/home/checkVerify");
+			return $.get(url, param, $.noop, 'json');
 		}
 	}
-}
+};
 
 $(function() {
 	Ibos.evt.add({
@@ -140,22 +185,21 @@ $(function() {
 						$verify.blink().focus();
 						return false;
 					}
-					$.get(Ibos.app.url("user/home/checkVerify", {
-						uid: Ibos.app.g("currentUid")
-					}), {
+					var param = {
+						uid: Ibos.app.g("currentUid"),
 						data: encodeURI(verify),
 						op: param.type
-					}, function(res) {
+					};
+					userCenter.op.checkVerify(param).done(function(res) {
 						if (res.isSuccess) {
 							Ui.tip('@OPERATION_SUCCESS');
-							_dialog.close();
+							dialog.close();
 							window.location.reload();
 						} else {
 							Ui.tip('@OPERATION_FAILED', 'danger');
 							return false;
 						}
-					}, 'json');
-
+					});
 					return false;
 				}
 			});
@@ -201,12 +245,10 @@ $(function() {
 					var param = {account: account, password: password};
 					userCenter.op.bindIbosco(param).done(function(res){
 						if (res.isSuccess) {
-							Ui.tip(res.msg);
 							_dialog.close();
 							window.location.reload();
-						} else {
-							Ui.tip(res.msg, "danger");
 						}
+						Ui.tip(res.msg, res.isSuccess ?　"" : "danger");
 					});
 					return false;
 				}
@@ -215,8 +257,8 @@ $(function() {
 		// 解绑酷办公账号
 		"relieveIbosco": function(param, elem) {
 			var confirm = Ui.confirm(Ibos.l("USER.SUER_UNBIND_IBOSCO"), function() {
-				var uid = Ibos.app.g("currentUid"),
-					param = {uid: uid};
+				var param = {uid: Ibos.app.g("currentUid")};
+				
 				userCenter.op.relieveIbosco(param).done(function(res){
 					if (res.isSuccess) {
 						Ui.tip(res.msg);

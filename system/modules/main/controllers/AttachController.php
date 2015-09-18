@@ -20,6 +20,13 @@ class AttachController extends Controller {
 	 * @return mixed
 	 */
 	public function actionUpload() {
+        //会议管理》会议申请》文件上传 的bug
+        //检查$_FILES是否为空，检查$_FILES['Filedata']['error']是否非0
+        if (empty($_FILES) || $_FILES['Filedata']['error'] != 0) {
+            //TODO 这里不知道返回什么错误提示
+            $echo = array('icon' => '', 'aid' => -1, 'name' => '上传失败', 'url' => '');
+            $this->ajaxReturn(json_encode($echo), 'eval');
+        }
 		// 安全验证
 		// 附件类型，可指定可不指定，不指定为普通类型
 		$attachType = util\Env::getRequest( 'type' );

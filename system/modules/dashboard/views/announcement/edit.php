@@ -73,46 +73,4 @@
         </form>
     </div>
 </div>
-<script>
-    (function(window, $) {
-        //日期选择器
-        $("#date_start").datepicker({
-            pickTime: true,
-            pickSeconds: false,
-            format: 'yyyy-mm-dd hh:ii',
-            target: $("#date_end")
-        });
-
-        //编辑器
-        var $ancTitle = $('#anc_title')
-        $ancContent = $ancTitle.find("span");
-        if ($ancContent.length) {
-            $ancTitle[0].style.cssText = $ancContent[0].style.cssText;
-            $ancTitle.html($ancContent.text());
-        }
-
-        new P.SimpleEditor($("#anc_title_editor"), {
-            color: $ancTitle.css("color"),
-            bold: $ancTitle.css("font-weight") == "bold" || $ancTitle.css("font-weight") == 700,
-            italic: $ancTitle.css("font-style") == "italic",
-            underline: $ancTitle.css("text-decoration").indexOf("underline") !== -1,
-            onSetColor: function(value) {
-                $ancTitle.css("color", value ? value : "");
-            },
-            onSetBold: function(isBold) {
-                $ancTitle.css("font-weight", isBold ? "700" : "400");
-            },
-            onSetItalic: function(isItalic) {
-                $ancTitle.css("font-style", isItalic ? "italic" : "normal");
-            },
-            onSetUnderline: function(hasUnderline) {
-                $ancTitle.css("text-decoration", hasUnderline ? "underline" : "none");
-            }
-        });
-        // 表单提交时，把subject的html写入input
-        $('#sys_announcement_form').on('submit', function() {
-            $('#subject').val("<span style='" + $('#anc_title')[0].style.cssText + "'>" + $('#anc_title').html() + "</span>");
-        });
-    })(window, window.jQuery);
-
-</script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_announcement.js"></script>

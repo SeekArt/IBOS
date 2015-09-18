@@ -14,9 +14,73 @@ use application\modules\email\utils\EmailMime;
 use application\modules\email\utils\RyosImap;
 use application\modules\email\utils\WebMail;
 use application\modules\user\model\User;
+use application\modules\email\core\WebEmail;
 
 class WebController extends BaseController {
 
+    /**
+     * 外部邮件附件下载
+     * GET参数：id,i,都是数字
+     * id = id -5;
+     * i = i - 9;
+     */
+    public function actionDownload() {
+        $id = isset($_GET['id']) ? intval($_GET['id']) - 5 : 0;
+        if ($id <= 0)
+            $this->error('抱歉，参数错误', $this->createUrl('web/index'));
+        $i = isset($_GET['i']) ? intval($_GET['i']) - 9 : 0;
+        if ($i <= 0)
+            $this->error('抱歉，参数错误了', $this->createUrl('web/index'));
+        $query = IBOS::app()->db->createCommand()
+                ->select('qeb.remoteattachment,qeb.sendtime,qew.*')
+                ->from('{{email_body}} qeb')
+                ->leftJoin('{{email}} qe', 'qe.bodyid = qeb.bodyid')
+                ->leftJoin('{{email_folder}} qef', 'qef.fid = qe.fid')
+                ->leftJoin('{{email_web}} qew', 'qew.webid = qef.webid')
+                ->where('qeb.bodyid = ' . $id)
+                ->queryRow();
+        if ($query && !empty($query)) {
+            //根据邮箱获取邮件
+            $user = User::model()->fetchByUid($query['uid']);
+            $pwd = String::authCode($query['password'], 'DECODE', $user['salt']);
+            list($prefix,, ) = explode('.', $query['server']);
+            $host = $query['server'];
+            $port = $query['port'];
+            $user = $query['address'];
+            $ssl = $query['ssl'] == '1' ? true : false;
+            @set_time_limit(0);
+            $webEmail = new WebEmail($host, $port, $user, $pwd, $ssl, $prefix);
+            if ($webEmail->isConnected()) {
+                //这里效率有点慢，因为需要获取全部的邮件
+                //当邮件比较多时，会很慢
+                //TODO 速度优化
+                $emails = $webEmail->getMessages();
+                foreach ($emails as $email) {
+                    //根据时间戳来判断是那一封邮件的附件
+                    if ($query['sendtime'] == strtotime($email['date'])) {
+                        $remote = unserialize($query['remoteattachment']);
+                        if ($remote[$i - 1]['name'] == $email['attachments'][$i - 1]['name']) {
+                            //下载
+                            $attach = $webEmail->getAttachment($email['uid'],
+                                    $i - 1);
+                            header('Content-Description: File Transfer');
+                            header('Content-Type: application/octet-stream');
+                            header('Content-Disposition: attachment; filename=' . basename($attach['name']));
+                            header('Content-Transfer-Encoding: binary');
+                            header('Expires: 0');
+                            header('Cache-Control: must-revalidate');
+                            header('Pragma: public');
+                            header('Content-Length: ' . $attach['size']);
+                            ob_clean();
+                            flush();
+                            echo $attach['content'];
+                        }
+                    }
+                }
+            }
+        }
+        $this->error('抱歉，读取数据错误', $this->createUrl('web/index'));
+    }
     /**
      * 外部邮箱索引页
      */
@@ -343,15 +407,21 @@ class WebController extends BaseController {
                 $errMsg = IBOS::lang( 'Error server info' );
             }
         } else {
-            // 第一次提交，查看默认配置里有没有适合的服务器配置
-            $passCheck = WebMail::checkAccount( $web['address'], $web['password'] );
-            if ( $passCheck ) {
-                // 如果检查通过，返回该邮件的配置值
-                $web = WebMail::getEmailConfig( $web['address'], $web['password'] );
-            } else {
-                // 没有的话，需要配置更详细的服务器信息，返回错误提示
-                $errMsg = IBOS::lang( 'More server info' );
-            }
+            /**
+             * 测试时直接跳过这一步
+             * 15-8-24 上午10:50 gzdzl
+              // 第一次提交，查看默认配置里有没有适合的服务器配置
+              $passCheck = WebMail::checkAccount($web['address'], $web['password']);
+              if ( $passCheck ) {
+              	// 如果检查通过，返回该邮件的配置值
+              	$web = WebMail::getEmailConfig($web['address'], $web['password']);
+              } else {
+              // 没有的话，需要配置更详细的服务器信息，返回错误提示
+              $errMsg = Ibos::lang('More server info');
+              }
+             */
+            $errMsg = Ibos::lang('More server info');
+            $passCheck = false;
         }
         if ( !$passCheck ) {
             if ( !$inAjax ) {

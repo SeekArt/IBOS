@@ -1,5 +1,6 @@
 <?php
 
+namespace application\modules\email\extensions\mailer;
 /**
  * EMailer class file.
  *
@@ -40,11 +41,10 @@ require_once(dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'phpmailer' . DIRECTORY
  * @since 1.0
  */
 
-namespace application\modules\email\extensions\mailer;
 
 use application\modules\email\extensions\mailer\phpmailer\PHPMailer;
 use CException;
-use Ibos;
+use application\core\utils\IBOS;
 
 class EMailer {
     //***************************************************************************
@@ -107,7 +107,7 @@ class EMailer {
      */
     public function setPathLayouts( $value ) {
         if ( !is_string( $value ) && !preg_match( "/[a-z0-9\.]/i" ) )
-            throw new CException( Ibos::t( 'EMailer', 'pathLayouts must be a Ibos alias path' ) );
+            throw new CException( IBOS::t( 'EMailer', 'pathLayouts must be a Ibos alias path' ) );
         $this->pathLayouts = $value;
     }
 
@@ -127,7 +127,7 @@ class EMailer {
      */
     public function setPathViews( $value ) {
         if ( !is_string( $value ) && !preg_match( "/[a-z0-9\.]/i" ) )
-            throw new CException( Ibos::t( 'EMailer', 'pathViews must be a Ibos alias path' ) );
+            throw new CException( IBOS::t( 'EMailer', 'pathViews must be a Ibos alias path' ) );
         $this->pathViews = $value;
     }
 
@@ -152,10 +152,10 @@ class EMailer {
      * @return mixed
      */
     public function __call( $method, $params ) {
-        if ( is_object( $this->_myMailer ) && get_class( $this->_myMailer ) === 'PHPMailer' )
+        if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer') {
             return call_user_func_array( array( $this->_myMailer, $method ), $params );
-        else
-            throw new CException( Ibos::t( 'EMailer', 'Can not call a method of a non existent object' ) );
+        } else
+            throw new CException( IBOS::t( 'EMailer', 'Can not call a method of a non existent object' ) );
     }
 
     /**
@@ -165,10 +165,10 @@ class EMailer {
      * @param string $value the property value
      */
     public function __set( $name, $value ) {
-        if ( is_object( $this->_myMailer ) && get_class( $this->_myMailer ) === 'PHPMailer' )
+        if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer')
             $this->_myMailer->$name = $value;
         else
-            throw new CException( Ibos::t( 'EMailer', 'Can not set a property of a non existent object' ) );
+            throw new CException( IBOS::t( 'EMailer', 'Can not set a property of a non existent object' ) );
     }
 
     /**
@@ -178,10 +178,10 @@ class EMailer {
      * @return mixed
      */
     public function __get( $name ) {
-        if ( is_object( $this->_myMailer ) && get_class( $this->_myMailer ) === 'PHPMailer' )
+        if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer')
             return $this->_myMailer->$name;
         else
-            throw new CException( Ibos::t( 'EMailer', 'Can not access a property of a non existent object' ) );
+            throw new CException( IBOS::t( 'EMailer', 'Can not access a property of a non existent object' ) );
     }
 
     /**
@@ -213,11 +213,11 @@ class EMailer {
      * @param string $layout
      */
     public function getView( $view, $vars = array(), $layout = null ) {
-        $body = Ibos::app()->controller->renderPartial( $this->pathViews . '.' . $view, array_merge( $vars, array( 'content' => $this->_myMailer ) ), true );
+        $body = IBOS::app()->controller->renderPartial( $this->pathViews . '.' . $view, array_merge( $vars, array( 'content' => $this->_myMailer ) ), true );
         if ( $layout === null ) {
             $this->_myMailer->Body = $body;
         } else {
-            $this->_myMailer->Body = Ibos::app()->controller->renderPartial( $this->pathLayouts . '.' . $layout, array( 'content' => $body ), true );
+            $this->_myMailer->Body = IBOS::app()->controller->renderPartial( $this->pathLayouts . '.' . $layout, array( 'content' => $body ), true );
         }
     }
 

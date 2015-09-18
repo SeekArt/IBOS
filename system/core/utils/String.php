@@ -211,6 +211,18 @@ class String {
 		$pre = chr( 1 );
 		$end = chr( 1 );
 		$string = str_replace( array( '&amp;', '&quot;', '&lt;', '&gt;' ), array( $pre . '&' . $end, $pre . '"' . $end, $pre . '<' . $end, $pre . '>' . $end ), $string );
+		/*
+		 * 15-8-6 下午5:01 gzdzl 这里存在bug
+		 * 如果传过来的string中包含后转义后的hmtl标签（&amp;）
+		 * 经过上一行代码后string的字符串长度会变短
+		 * 而在下面的代码
+		 * while ($n < $strlen) {
+		 *      $t = ord($string[$n]);
+		 * 会造成string越界
+		 * 
+		 * 解决办法是重新计算string的长度
+		 */
+		$strlen = self::iStrLen( $string );
 		$strCut = '';
 		if ( strtolower( CHARSET ) == 'utf-8' ) {
 			$n = $tn = $noc = 0;
@@ -715,27 +727,6 @@ class String {
 			}
 		}
 		return implode( $delimiter, $unique ? array_unique( $filterArr ) : $filterArr  );
-	}
-
-	/**
-	 * 把Unicode的中文字符转换成Utf8格式
-	 * @param string $str
-	 * @return string 返回utf8格式的中文字符串
-	 */
-	public static function unicodeToUtf8( $str ) {
-		if ( !$str ) {
-			return $str;
-		}
-		$decode = json_decode( $str );
-		if ( $decode ) {
-			return $decode;
-		}
-		$str = '["' . $str . '"]';
-		$decode = json_decode( $str );
-		if ( count( $decode ) == 1 ) {
-			return $decode[0];
-		}
-		return $str;
 	}
 
 	/**

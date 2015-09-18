@@ -139,6 +139,6 @@ use application\core\utils\String;
 <script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo STATICURL; ?>/js/app/ibos.charCount.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo $moduleAssetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wb.js"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wbindex.js"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo.js"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo_personal_index.js"></script>
 

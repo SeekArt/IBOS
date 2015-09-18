@@ -164,5 +164,7 @@ return array(
     'Album' => '相册',
     'Pixel' => '像素',
     'Reset success' => '密码修改成功，请用新密码重新登录。',
-    'Login check error' => '因为您的密码输入错误过多。您在{minute}分钟内不能进行登录操作'
+    'Login check error' => '因为您的密码输入错误过多。您在{minute}分钟内不能进行登录操作',
+    'Phone number format error' => '手机号码格式错误',
+    'Email address format error' => '邮箱地址格式错误'
 );

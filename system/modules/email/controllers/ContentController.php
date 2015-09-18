@@ -64,6 +64,7 @@ class ContentController extends BaseController {
             } else {
                 // 表单提交
                 $bodyData = $this->beforeSaveBody();
+                $bodyData['subject'] = htmlspecialchars($bodyData['subject']);
             }
             $bodyId = EmailBody::model()->add( $bodyData, true );
             $this->save( $bodyId, $bodyData );
@@ -268,6 +269,21 @@ class ContentController extends BaseController {
                     $email['fromName'] = $email['fromwebmail'];
                 }
             }
+            //外部邮箱的
+            if (!is_numeric($email['toids'][0])) {//内部邮件toids第一个字符一定是数字
+                $ids = @unserialize($email['toids']);
+                if ($ids) {
+                    //去掉第一个收件人，会和下面的towebmail重复
+                    $email['toids'] = array_pop($ids);
+                    $email['toids'] = implode(',', $ids);
+                }
+            }
+            //外部邮箱的
+            if (isset($email['copytoids'][0]) && !is_numeric($email['copytoids'][0])) {
+                $copys = @unserialize($email['copytoids']);
+                if ($copys)
+                    $email['copytoids'] = implode(',', $copys);
+            }
             $allIds = String::filterStr( $email['toids'] . ',' . $email['copytoids'] );
             $copyToId = explode( ',', $email['copytoids'] );
             $toId = explode( ',', $email['toids'] );
@@ -307,6 +323,11 @@ class ContentController extends BaseController {
             $data['copyToUsers'] = $copyToUsers;
             // 是否密送者，密送者在回复全部的时候会有提示
             $data['isSecretUser'] = String::findIn( $this->uid, $email['secrettoids'] );
+            //外部邮件的
+            if (!empty($email['remoteattachment'])) {
+                $data['atts'] = unserialize($email['remoteattachment']);
+                $data['webid'] = $email['bodyid'];
+            }
             !empty( $email['attachmentid'] ) && $data['attach'] = Attach::getAttach( $email['attachmentid'] );
             // 获取上/下一封邮件
             $data['next'] = Email::model()->fetchNext( $id, $this->uid, $email['fid'], $this->archiveId );

@@ -41,7 +41,7 @@ class Xml {
      * @return string
      */
     public static function arrayToXml( $arr, $htmlOn = true, $level = 1 ) {
-        $string = $level == 1 ? "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n<root>\r\n" : '';
+		$string = $level == 1 ? "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<root>\r\n" : '';
         $space = str_repeat( "\t", $level );
         foreach ( $arr as $key => $value ) {
             if ( !is_array( $value ) ) {
@@ -119,7 +119,7 @@ class XMLParse {
      */
     public function __construct( $isNormal ) {
         $this->_isNormal = $isNormal;
-        $this->_parser = xml_parser_create( 'ISO-8859-1' );
+		$this->_parser = xml_parser_create( 'UTF-8' );
         xml_parser_set_option( $this->_parser, XML_OPTION_CASE_FOLDING, false );
         xml_set_object( $this->_parser, $this );
         xml_set_element_handler( $this->_parser, 'open', 'close' );

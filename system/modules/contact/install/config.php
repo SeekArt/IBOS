@@ -32,7 +32,7 @@ return array(
             'name' => '通讯录',
             'group' => '通讯录',
             'controllerMap' => array(
-                'default' => array( 'index', 'ajaxApi', 'export' ),
+                'default' => array( 'index', 'ajaxapi', 'export' ),
                 'constant' => array( 'index' ),
             )
         )

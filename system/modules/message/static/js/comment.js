@@ -1,56 +1,88 @@
 
 var Comment = (function() {
-
 	function CommentOp(baseUrl, params) {
 		this.baseUrl = baseUrl;
 		this.params = params;
 	}
 
 	$.extend(CommentOp.prototype, {
+		/**
+		 * 获取url地址
+		 * @method getUrl
+		 * @param  {String} op 传入操作事件
+		 * @return {String}    返回url地址
+		 */
 		getUrl: function(op) {
 			return this.baseUrl + "&op=" + op;
 		},
-
+		/**
+		 * 深层次拷贝
+		 * @method extendParams
+		 * @param  {Object} params 传入JSON格式数据
+		 * @return {Object}        返回JSON格式数据
+		 */
 		extendParams: function(params) {
 			return $.extend(true, {}, this.params, params);
 		},
-
 		/**
 		 * 获取某条评论下的回复
 		 * @method getReply 
-		 * @param {Object}  params       ajax 参数
-		 * @param {Object}  settings     配置项
-		 * @return {Object}  jquery ajax 实例
+		 * @param  {Object} params   ajax 参数
+		 * @param  {Object} settings 配置项
+		 * @return {Object} jquery 	 返回deffered对象
 		 */
-
 		getReply: function(params, settings) {
 			var url = settings.url || this.getUrl("getReply");
 			params = this.extendParams(params);
 
 			return $.post(url, params, $.noop, "json");
 		},
-
+		/**
+		 * 添加某条评论下的回复
+		 * @method addReply 
+		 * @param  {Object} params   ajax 参数
+		 * @param  {Object} settings 配置项
+		 * @return {Object} jquery 	 返回deffered对象
+		 */
 		addReply: function(params, settings) {
 			var url = settings.url || this.getUrl("addReply");
 			params = this.extendParams(params);
 
 			return $.post(url, params, $.noop, "json");
 		},
-
+		/**
+		 * 删除某条评论下的回复
+		 * @method delReply 
+		 * @param  {Object} params   ajax 参数
+		 * @param  {Object} settings 配置项
+		 * @return {Object} jquery 	 返回deffered对象
+		 */
 		delReply: function(params, settings) {
 			var url = settings.url || this.getUrl("delReply");
 			params = this.extendParams(params);
 
 			return $.get(url, params, $.noop, "json");
 		},
-
+		/**
+		 * 获取评论
+		 * @method getComment 
+		 * @param  {Object} params   ajax 参数
+		 * @param  {Object} settings 配置项
+		 * @return {Object} jquery 	 返回deffered对象
+		 */
 		getComment: function(params, settings) {
 			var url = settings.url || this.getUrl("getComment");
 			params = this.extendParams(params);
 
 			return $.post(url, params, $.noop, "json");
 		},
-
+		/**
+		 * 添加评论
+		 * @method addComment 
+		 * @param  {Object} params   ajax 参数
+		 * @param  {Object} settings 配置项
+		 * @return {Object} jquery 	 返回deffered对象
+		 */
 		addComment: function(params, settings) {
 			var url = settings.url || this.getUrl("addComment");
 			params = this.extendParams(params);
@@ -89,6 +121,10 @@ var Comment = (function() {
 	}
 
 	$.extend(Comment.prototype, {	
+		/**
+		 * 事件绑定
+		 * @method bindEvents
+		 */
 		bindEvents: function() {
 			var that = this;
 
@@ -101,7 +137,12 @@ var Comment = (function() {
 				that[act] && that[act].call(that, $(this), param, evt);
 			});
 		},
-
+		/**
+		 * 获取父级节点
+		 * @method getParentItem
+		 * @param  {Object} $elem 传入Jquery节点对象
+		 * @return {Object}       传入Jquery节点对象
+		 */
 		getParentItem: function($elem) {
 			return $elem.closest(".cmt-item");
 		},
@@ -306,7 +347,6 @@ var Comment = (function() {
 		 * @method addcomment
 		 * @param  {Jquery} $elem  触发节点
 		 * @param  {Object} params 
-		 * @return
 		 */
 		addcomment: function($elem, params) {
 			var that = this;
@@ -345,6 +385,12 @@ var Comment = (function() {
 			});
 		},
 
+		/**
+		 * 删除一条评论
+		 * @method delcomment
+		 * @param  {Jquery} $elem  触发节点
+		 * @param  {Object} params 
+		 */
 		delcomment: function($elem, params) {
 			var that = this;
 			artDialog.confirm(Ibos.l("CONFIRM_DEL_COMMENT"), function() {
@@ -376,7 +422,7 @@ var Comment = (function() {
 		init: function($ctx, options){
 			return new Comment($ctx, options);
 		}
-	}
+	};
 })();
 
 

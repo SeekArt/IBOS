@@ -2,19 +2,19 @@
 
 return array(
 	0 => array(
-		'index' => array( '管理中心首页' => '?r=dashboard/global/index' ),
+		'index' => array( '管理中心首页' => '?r=dashboard/index/index' ),
 		'text' => array(
 			0 => '管理中心首页',
 		)
 	),
 	1 => array(
-		'index' => array( '系统状态' => '?r=dashboard/global/status' ),
+		'index' => array( '系统状态' => '?r=dashboard/status/index' ),
 		'text' => array(
 			0 => '系统状态',
 		)
 	),
 	2 => array(
-		'index' => array( '单位管理' => '?r=dashboard/global/unit' ),
+		'index' => array( '单位管理' => '?r=dashboard/unit/index' ),
 		'text' => array(
 			0 => '单位管理',
 			1 => '单位企业的信息尽在此设置，您可以上传企业的LOGO,填写管理员邮箱等'
@@ -22,9 +22,9 @@ return array(
 	),
 	3 => array(
 		'index' => array(
-			'积分设置' => '?r=dashboard/global/creditsetup',
-			'积分公式' => '?r=dashboard/global/creditformula',
-			'积分策略' => '?r=dashboard/global/creditrule',
+			'积分设置' => '?r=dashboard/credit/setup',
+			'积分公式' => '?r=dashboard/credit/formula',
+			'积分策略' => '?r=dashboard/credit/rule',
 		),
 		'text' => array(
 			0 => '允许设置扩展积分，变动后提醒',
@@ -34,7 +34,7 @@ return array(
 	),
 	4 => array(
 		'index' => array(
-			'用户组设置' => '?r=dashboard/global/usergroup',
+			'用户组设置' => '?r=dashboard/usergroup/index',
 		),
 		'text' => array(
 			0 => '允许设置用户组的称谓，配置企业更具个性的用户组群及其积分范围',
@@ -42,9 +42,9 @@ return array(
 	),
 	5 => array(
 		'index' => array(
-			'性能优化' => '?r=dashboard/global/optimizecache',
-			'全文搜索设置' => '?r=dashboard/global/optimizesearch',
-			'Sphinx设置' => '?r=dashboard/global/optimizesphinx',
+			'性能优化' => '?r=dashboard/optimize/cache',
+			'全文搜索设置' => '?r=dashboard/optimize/search',
+			'Sphinx设置' => '?r=dashboard/optimize/sphinx',
 		),
 		'text' => array(
 			0 => '清空缓存，查看缓存使用清空',
@@ -65,7 +65,7 @@ return array(
 	),
 	6 => array(
 		'index' => array(
-			'时间设置' => '?r=dashboard/global/date',
+			'时间设置' => '?r=dashboard/date/index',
 		),
 		'text' => array(
 			0 => '时间设置',
@@ -73,7 +73,7 @@ return array(
 	),
 	7 => array(
 		'index' => array(
-			'上传设置' => '?r=dashboard/global/upload',
+			'上传设置' => '?r=dashboard/upload/index',
 		),
 		'text' => array(
 			0 => '上传设置',
@@ -81,7 +81,7 @@ return array(
 	),
 	8 => array(
 		'index' => array(
-			'手机短信设置' => '?r=dashboard/global/sms&type=setup',
+			'手机短信设置' => '?r=dashboard/sms/manager&type=setup',
 			'短信发送管理' => '?r=dashboard/global/sms&type=manager',
 			'模块使用权限' => '?r=dashboard/global/sms&type=access',
 		),
@@ -91,7 +91,7 @@ return array(
 	),
 	9 => array(
 		'index' => array(
-			'即时通讯绑定' => '?r=dashboard/global/im'
+			'即时通讯绑定' => '?r=dashboard/im/index'
 		),
 		'text' => array(
 			0 => 'RTX设置',
@@ -99,7 +99,7 @@ return array(
 	),
 	10 => array(
 		'index' => array(
-			'系统代码设置' => '?r=dashboard/global/syscode'
+			'系统代码设置' => '?r=dashboard/syscode/index'
 		),
 		'text' => array(
 			0 => '系统代码设置',
@@ -107,7 +107,7 @@ return array(
 	),
 	11 => array(
 		'index' => array(
-			'邮件设置' => '?r=dashboard/global/email',
+			'邮件设置' => '?r=dashboard/email/setup',
 			'邮件校验' => '?r=dashboard/global/email&op=check',
 		),
 		'text' => array(
@@ -129,7 +129,7 @@ return array(
 	),
 	12 => array(
 		'index' => array(
-			'系统图章' => '?r=dashboard/global/sysstamp',
+			'系统图章' => '?r=dashboard/sysstamp/index',
 		),
 		'text' => array(
 			0 => '系统图章',
@@ -137,7 +137,7 @@ return array(
 	),
 	13 => array(
 		'index' => array(
-			'导航设置' => '?r=dashboard/interface/nav',
+			'导航设置' => '?r=dashboard/nav/index',
 		),
 		'text' => array(
 			0 => '导航设置',
@@ -145,7 +145,7 @@ return array(
 	),
 	14 => array(
 		'index' => array(
-			'登陆页背景设置' => '?r=dashboard/interface/login',
+			'登陆页背景设置' => '?r=dashboard/login/index',
 		),
 		'text' => array(
 			0 => '登陆页背景设置',
@@ -165,7 +165,7 @@ return array(
 	),
 	16 => array(
 		'index' => array(
-			'更新缓存' => '?r=dashboard/manager/updatecache',
+			'更新缓存' => '?r=dashboard/updatecache/index',
 		),
 		'text' => array(
 			0 => '更新系统缓存',
@@ -173,7 +173,7 @@ return array(
 	),
 	17 => array(
 		'index' => array(
-			'系统公告' => '?r=dashboard/manager/announcement',
+			'系统公告' => '?r=dashboard/announcement/setup',
 		),
 		'text' => array(
 			0 => '系统公告',
@@ -181,7 +181,7 @@ return array(
 	),
 	18 => array(
 		'index' => array(
-			'数据库' => '?r=dashboard/manager/database',
+			'数据库' => '?r=dashboard/database/backup',
 		),
 		'text' => array(
 			0 => '数据库备份与恢复',
@@ -213,7 +213,7 @@ return array(
 	),
 	19 => array(
 		'index' => array(
-			'计划任务' => '?r=dashboard/manager/cron',
+			'计划任务' => '?r=dashboard/cron/index',
 		),
 		'text' => array(
 			0 => '计划任务',
@@ -221,7 +221,7 @@ return array(
 	),
 	19 => array(
 		'index' => array(
-			'文件权限检查' => '?r=dashboard/manager/fileperms',
+			'文件权限检查' => '?r=dashboard/fileperms/index',
 		),
 		'text' => array(
 			0 => '文件权限检查',
@@ -229,7 +229,7 @@ return array(
 	),
 	20 => array(
 		'index' => array(
-			'在线升级' => '?r=dashboard/manager/upgrade',
+			'在线升级' => '?r=dashboard/upgrade/index',
 		),
 		'text' => array(
 			0 => '在线升级',

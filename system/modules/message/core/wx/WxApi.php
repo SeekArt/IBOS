@@ -24,6 +24,7 @@ use application\core\utils\IBOS;
 use application\core\utils\WebSite;
 use application\modules\main\model\Setting;
 use application\modules\user\model\UserBinding;
+use CJSON;
 
 class WxApi extends Api {
 
@@ -98,13 +99,16 @@ class WxApi extends Api {
 }
 EOT;
 
-		$res = $this->fetchResult( $url, $post, 'post' );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$res = json_decode( $res, true );
-			return isset( $res['id'] ) ? intval( $res['id'] ) : 0;
-		} else {
-			return 0;
+		$return = $this->fetchResult( $url, $post, 'post' );
+		$isSuccess = $this->getSendIsSuccess( $return );
+		$res = CJSON::decode( $return, true );
+		if ( $res['errcode'] == '60008' ) {
+			$isSuccess = true; //部门已经存在的话，也继续同步部门操作
 		}
+		return array(
+			'isSuccess' => $isSuccess,
+			'data' => $res,
+		);
 	}
 
 	public function createUser( $user, $url ) {
@@ -112,6 +116,7 @@ EOT;
 		if ( empty( $depstr ) ) {
 			$depstr = 1;
 		}
+		$telephone = isset( $user['telephone'] ) ? $user['telephone'] : '';
 		$post = <<<EOT
 {
    "userid": "{$user['userid']}",
@@ -120,15 +125,15 @@ EOT;
    "position": "{$user['posname']}",
    "mobile": "{$user['mobile']}",
    "gender": {$user['gender']},
-   "tel": "{$user['telephone']}",
+   "tel": "{$telephone}",
    "email": "{$user['email']}",
    "weixinid": "{$user['weixin']}"
 }    
 EOT;
 		$res = $this->fetchResult( $url, $post, 'post' );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$res = json_decode( $res, true );
-			if ( $res['errcode'] == 0 ) {
+		if ( !is_array( $res ) ) {
+			$res = CJSON::decode( $res, true );
+			if ( $res['errcode'] == '0' ) {
 				return '';
 			} else {
 				return Code::getErrmsg( $res['errcode'] );
@@ -161,8 +166,8 @@ EOT;
 			'fetch_child' => 1,
 			'status' => $status
 				) );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$result = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$result = CJSON::decode( $res, true );
 			if ( isset( $result['userlist'] ) ) {
 				return $result['userlist'];
 			}
@@ -199,7 +204,7 @@ EOT;
 		$query = parse_url( $url, PHP_URL_QUERY );
 		!empty( $query ) && parse_str( $query );
 		if ( isset( $$field ) ) {
-			$route = 'http://www.ibos.com.cn/qiyehao/?host=' . urlencode( $this->getHostInfo() ) . "#{$mobileTag}/" . $$field;
+			$route = 'http://app.ibos.cn?host=' . urlencode( $this->getHostInfo() ) . "#{$mobileTag}/" . $$field;
 		} else {
 			$route = $url;
 		}
@@ -217,7 +222,7 @@ EOT;
 		$query = parse_url( $url, PHP_URL_QUERY );
 		!empty( $query ) && parse_str( $query );
 		if ( isset( $$field ) ) {
-			$route = 'http://www.ibos.com.cn/qiyehao_new/?host=' . urlencode( $this->getHostInfo() ) . "/#/{$mobileTag}/" . $$field;
+			$route = 'http://app.ibos.cn?host=' . urlencode( $this->getHostInfo() ) . "/#/{$mobileTag}/" . $$field;
 		} else {
 			$route = $url;
 		}
@@ -230,8 +235,8 @@ EOT;
 	 * @return boolean
 	 */
 	protected function getSendIsSuccess( $res ) {
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$res = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$res = CJSON::decode( $res, true );
 			return isset( $res['errcode'] ) && $res['errcode'] == 0;
 		}
 		return false;
@@ -245,7 +250,7 @@ EOT;
 		static $hostInfo = false;
 		if ( !$hostInfo ) {
 			if ( defined( 'CALLBACK' ) ) {
-				$hostInfo = rtrim( IBOS::app()->request->getHostInfo(), '/' );
+				$hostInfo = rtrim( Ibos::app()->request->getHostInfo(), '/' );
 			} else {
 				$hostInfo = rtrim( Env::getSiteUrl( Env::isHttps() ), '/' );
 			}

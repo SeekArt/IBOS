@@ -21,6 +21,12 @@ class NodeRelated extends Model {
 		return '{{node_related}}';
 	}
 
+	public function deleteAllByRoleIdWithKeys( $roleid, $exceptKeyS, $module ) {
+		$arr = explode( ',', $exceptKeyS );
+		$str = "'" . implode( "','", $arr ) . "'";
+		$con = sprintf( "`roleid` = %d AND `module` = '%s' AND `key` NOT IN ( %s ) ", $roleid, $module, $str );
+		$this->deleteAll( $con );
+	}
 	/**
 	 * 三个值组成唯一值，根据此值查找所属数据权限ID
 	 * @param string $id
@@ -65,7 +71,7 @@ class NodeRelated extends Model {
 	 * @return integer
 	 */
 	public function deleteAllByRoleId( $id ) {
-		return $this->deleteAll( '`roleid` = :id', array( ':id' => $id ) );
+		return $this->deleteAll( sprintf( "roleid = %d AND ( module NOT IN ('crm') OR module = 'crm' AND val = 0 )", $id ) );
 	}
 
 	/**

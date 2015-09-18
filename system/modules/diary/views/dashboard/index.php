@@ -166,7 +166,7 @@ use application\modules\dashboard\model\Stamp;
 		</form>
 	</div>
 </div>
-<script src="<?php echo util\IBOS::app()->assetManager->getAssetsUrl( 'diary' ); ?>/js/dbdiary.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo util\IBOS::app()->assetManager->getAssetsUrl( 'diary' ); ?>/js/diary_dashboard_index.js?<?php echo VERHASH; ?>"></script>
 <script>
 	Ibos.app.setPageParam({
 		AUTO_REVIEW: "<?php echo $config['autoreview']; ?>"

@@ -56,7 +56,8 @@ class Diary {
      */
     public static function joinSearchCondition( $search ) {
         $searchCondition = '';
-        $keyword = $search['keyword'];
+        //15-7-27 下午2:31 gzdzl 对keyword添加转义
+        $keyword = addslashes($search['keyword']);
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
         if ( !empty( $keyword ) ) {

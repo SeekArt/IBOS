@@ -116,10 +116,4 @@
 		</form>
 	</div>
 </div>
-<script>
-	(function() {
-		$("#sms_enable").on("change", function() {
-			$("#sms_setup").toggle();
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_sms.js"></script>

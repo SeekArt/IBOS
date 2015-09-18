@@ -32,7 +32,11 @@ use application\core\utils\File;
 					<div class="control-group">
 						<label class="control-label"><?php echo $lang['Enterprise corpcode'] ?></label>
 						<div class="controls">
-							<input type="text" name="corpcode" value="<?php echo $unit['corpcode']; ?>" <?php if ( $unit['corpcode'] ): ?>readonly <?php endif; ?>>
+							<input type="text" name="corpcode" value="<?php
+							if ( isset( $unit['corpcode'] ) ) {
+								echo $unit['corpcode'];
+							}
+							?>" <?php if ( isset( $unit['corpcode'] ) && !empty( $unit['corpcode'] ) ): ?>readonly <?php endif; ?>>
 						</div>
 					</div>
 					<div class="control-group">

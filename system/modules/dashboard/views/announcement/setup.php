@@ -83,25 +83,4 @@ use application\core\utils\String;
         </form>
     </div>
 </div>
-<script>
-    (function() {
-        // 删除选中
-        $('[data-act="del"]').on('click', function() {
-            var id = '', url = '<?php echo $this->createUrl( 'announcement/del' ); ?>';
-            $('[data-check="id"]:checked').each(function() {
-                id += this.value + ',';
-            });
-            if (id !== '') {
-                $('#sys_announcement_form').attr('action', url).submit();
-            } else {
-                $.jGrowl('<?php echo IBOS::lang( 'At least one record', 'error' ); ?>', {theme: 'error'});
-                return false;
-            }
-        });
-        // 排序
-        $('[data-act="sort"]').on('click', function() {
-            var url = '<?php echo $this->createUrl( 'announcement/setup' ); ?>';
-            $('#sys_announcement_form').attr('action', url).submit();
-        });
-    })();
-</script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_announcement.js"></script>

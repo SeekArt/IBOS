@@ -241,7 +241,7 @@ use application\modules\main\utils\Main;
 <script src='<?php echo STATICURL; ?>/js/app/ibos.treeCategory.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/art_default_index.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/article_default_index.js?<?php echo VERHASH; ?>'></script>
 <script type="text/javascript">
 	$(function(){
 		$(".o-art-approval").tooltip();

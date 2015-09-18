@@ -4,7 +4,7 @@
 	</div>
 	<div>
 		<?php if ( isset( $msg ) ): ?>
-			<div class="alert alert-error"">
+			<div class="alert alert-error">
 				<?php echo $msg; ?>
 			</div>
 		<?php else: ?>

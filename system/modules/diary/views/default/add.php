@@ -239,5 +239,5 @@
 <script src='<?php echo STATICURL; ?>/js/src/belt.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/diary.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/diarycm.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/diaryadd.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/diary_default_common.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/diary_default_add.js?<?php echo VERHASH; ?>'></script>

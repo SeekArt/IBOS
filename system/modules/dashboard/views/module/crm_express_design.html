@@ -81,33 +81,6 @@
 
 	</style>
 	<script src="../../../../../static/js/jquery.js"></script>
-	<script src="../../static/js/dashboard.js"></script>
-	<script>
-
-	(function(){
-		//快递单模板修改
-		var container = $("#express_template");
-		$("#add_print_item").on("click", function(){
-			var item = $("#print_item"),
-				value = item.val(),
-				text;
-			if(value != 0){
-				text = item.find(":selected").text();
-				new Dragbox({
-					content: text,
-					container: container
-				})
-			}
-		})
-
-		container.find(".drag-box").each(function(){
-			new Dragbox({
-				element: $(this),
-				container: container
-			})
-		})
-		
-	})()
-	</script>
+	<script src="../../static/js/db_crm_express_design.js"></script>
 </body>
 </html>

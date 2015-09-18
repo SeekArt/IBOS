@@ -90,10 +90,10 @@
 										<div class="control-group">
 											<label class="control-label">企业代码<span class="xcr">*</span></label>
 											<div class="controls">
-												<input type="text" name="qycode" class="span6" id="qy_code" data-type="qycode" placeholder="通常为4~20位英文缩写，不可更改 " />
+												<input type="text" name="qycode" class="span6" id="qy_code" data-type="qycode" placeholder="通常为4~20位英文或数字，不可更改 " />
 												<span id="qy_code_result"></span>
 												<span id="qy_code_tip" class="ml nomatch-tip">企业代码不能为空！</span>
-												<input type="hidden" id="qy_code_verify" value="1" />
+												<input type="hidden" id="qy_code_verify" value="1" data-status="unlink" />
 											</div>
 										</div>
 									</td>

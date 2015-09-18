@@ -17,12 +17,13 @@
 
 namespace application\modules\dashboard\controllers;
 
-use application\core\utils\WebSite;
 use application\core\utils\Convert;
 use application\core\utils\Env;
+use application\core\utils\WebSite;
 use application\modules\dashboard\model\Cache;
 use application\modules\dashboard\utils\Wx;
 use application\modules\department\utils\Department;
+use application\modules\message\core\wx\Code;
 use application\modules\message\core\wx\WxApi;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
@@ -90,10 +91,17 @@ class WxsyncController extends WxController {
 				$related = Cache::model()->fetchArrayByPk( 'deptrelated' );
 				$url = $this->createUrlByType( 'syncDept' );
 				foreach ( $depts as $key => $value ) {
+					$deptName = $value['deptname'];
+					$rest = count( $depts );
 					if ( $value['pid'] == 0 || isset( $related[$value['pid']] ) ) {
 						//todo::如果选择的部门不是顶级的，就不能设置成1了
 						$pid = $value['pid'] == 0 ? 1 : $related[$value['pid']];
-						$newId = WxApi::getInstance()->createDept( $value['deptname'], $pid, $value['sort'], $url );
+						$res = WxApi::getInstance()->createDept( $value['deptname'], $pid, $value['sort'], $url );
+						if ( $res['isSuccess'] ) {
+							$newId = $res['data']['id'];
+						} else {
+							$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => '部门同步失败，错误代码：' . $res['data']['errcode'] . '，错误原因：' . Code::getErrmsg( $res['data']['errcode'] ) ) );
+						}
 						if ( $newId > 0 ) {
 							$related[$value['deptid']] = $newId;
 							$count++;
@@ -107,8 +115,8 @@ class WxsyncController extends WxController {
 				if ( $count ) {
 					Cache::model()->updateByPk( 'depts', array( 'cachevalue' => serialize( $depts ) ) );
 					Cache::model()->updateByPk( 'deptrelated', array( 'cachevalue' => serialize( $related ) ) );
+					$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '正在同步部门【' . $deptName . '】，还剩下' . $rest . '个 ，请稍后..', 'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'dept' ) ) ) );
 				}
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '正在同步部门，请稍后..', 'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'dept' ) ) ) );
 			} else if ( $op == 'user' ) {
 				$related = Cache::model()->fetchArrayByPk( 'deptrelated' );
 				$error = Cache::model()->fetchArrayByPk( 'userfail' );

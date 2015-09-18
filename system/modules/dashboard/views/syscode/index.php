@@ -115,45 +115,4 @@
 	<input type="hidden" name='newcodes[<%=id%>][pid]' value="<%=pid%>" />
 	</td>
 </script>
-<script>
-	(function() {
-		$("#system_code_table").on("click", 'a', function() {
-			var self = $(this),
-					act = self.attr("data-act"),
-					target = self.attr("data-target");
-			switch (act) {
-				case "collapse":
-					customTable.collapseLine($(target));
-					break;
-				case "add":
-					var pid = $(target).data('id'), d = new Date(),
-							newCode = $.template('new_code', {id: d.getTime(), pid: pid});
-					customTable.addLine($(target), newCode);
-					break;
-				case "remove":
-					var line = self.parents("tr").eq(0);
-					if (target !== '') {
-						var removeIdObj = $('#removeId'),
-								removeId = removeIdObj.val(),
-								removeIdSplit = removeId.split(',');
-						removeIdSplit.push(target);
-						removeIdObj.val(removeIdSplit.join());
-					}
-					customTable.removeLine(line);
-					break;
-			}
-		});
-		// 检查输入情况
-		$('#sys_code_form').on('submit', function() {
-			var errCount = 0;
-			$('[data-type="number"],[data-type="name"]').each(function() {
-				if ($.trim(this.value) === '') {
-					$(this).blink().focus();
-					errCount++;
-					return false;
-				}
-			});
-			return errCount ? false : true;
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_syscode.js"></script>

@@ -3,14 +3,19 @@
  * 招聘管理模块JS
  * IBOS
  * @author		inaki
- * @version		$Id: recruit.js 4154 2014-09-20 08:12:13Z gzljj $
+ * @version		$Id: recruit.js 5511 2015-09-09 07:49:57Z gzzz $
  */
 
 var Recruit = {
 	$contactDialogForm: $("#contact_dialog_form"),
 	$interviewDialogForm: $("#interview_dialog_form"),
 	$bgcheckDialogForm: $("#bgcheck_dialog_form"),
-	
+	/**
+	 * 设置数据
+	 * @method _setData
+	 * @param {Object} data 传入JSON格式数据
+	 * @param {Object} $ctx 传入Jquery节点对象
+	 */
 	_setData: function(data, $ctx) {
 		var $elem, instance;
 		for(var name in data){
@@ -25,38 +30,52 @@ var Recruit = {
 			}
 		}
 	},
-
-	// 单项操作
+	/**
+	 * 单项操作
+	 * @method singleHandler
+	 * @param  {String}   url        传入发送地址
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	singleHandler: function(url, param, callback){
 		if(url){
 			$.post(url, param, function(res){
-				if(res.isSuccess === 1) {
-					Ui.tip(res.msg);
+				var hasSuccess = (res.isSuccess === 1);
+				if(hasSuccess) {
 					callback && callback(res);
-				} else {
-					Ui.tip(res.msg, 'danger');
 				}
+				Ui.tip(res.msg, hasSuccess ? "" : "danger" );
 			}, "json");
 		}
 	},
-	
-	// 多项操作
+	/**
+	 * 多项操作
+	 * @method multiHandler
+	 * @param  {String}   url        传入发送地址
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {String}   msg        弹窗层的对话
+	 * @param  {Function} [callback] 回到函数
+	 */
 	multiHandler: function(url, param, msg, callback){
 		if(url){
 			Ui.confirm(msg, function(){
 				$.post(url, param, function(res){
-					if(res.isSuccess === 1) {
+					var hasSuccess = (res.isSuccess === 1);
+					if(hasSuccess) {
 						Ui.tip(res.msg);
 						callback && callback(res);
-					} else {
-						Ui.tip(res.msg, "danger");
 					}
+					Ui.tip(res.msg, hasSuccess ? "" : "danger" );
 				}, "json");
 			});
 		}
 	},
-	
-	//删除多个单个或多个简历
+	/**
+	 * 删除多个单个或多个简历
+	 * @method deleteResumes
+	 * @param  {String}   ids        传入简历的IDs
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteResumes: function(ids, callback){
 		if(ids){
 			this.multiHandler(Ibos.app.url("recruit/resume/del"), {resumeids: ids}, Ibos.l('REC.DELETE_RESUMES_CONFIRM'), callback);
@@ -64,8 +83,11 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), "warning");
 		}
 	},
-	
-	// 导出单个联系记录
+	/**
+	 * 导出单个联系记录
+	 * @method exportContact
+	 * @param  {String} ids 传入简历的IDs
+	 */
 	exportContact: function(ids){
 		if(ids){
 			window.location = Ibos.app.url("recruit/contact/export", { contactids: ids });
@@ -73,14 +95,22 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), "warning");
 		}
 	},
-	
-	// 删除单个联系记录
+	/**
+	 * 删除单个联系记录
+	 * @method deleteContact
+	 * @param  {String}   id         传入联系记录的ID
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteContact: function(id, callback){
 		id &&
 		this.singleHandler(Ibos.app.url("recruit/contact/del"), { contactids: id }, callback);
 	},
-	
-	//删除多个联系记录
+	/**
+	 * 删除多个联系记录
+	 * @method deleteContact
+	 * @param  {String}   ids        传入联系记录的IDs
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteContacts: function(ids, callback){
 		if(ids){
 			this.multiHandler(Ibos.app.url("recruit/contact/del"), {contactids: ids}, Ibos.l('REC.DETELE_CONTACTS_CONFIRM'), callback);
@@ -88,7 +118,13 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), "warning" );
 		}
 	},
-	
+	/**
+	 * 更新联系人
+	 * @method deleteContact
+	 * @param  {String}   id         传入联系人的ID
+	 * @param  {String}   data       传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	_updateContact: function(id, data, callback){
 		if(id) {
 			$.post(Ibos.app.url("recruit/contact/edit", { op: "update" }), $.extend({ contactid: id }, data) , function(res){
@@ -101,8 +137,12 @@ var Recruit = {
 			}, "json");
 		}
 	},
-	
-	// 编辑联系记录
+	/**
+	 * 编辑联系记录
+	 * @method editContact
+	 * @param  {String}   id         传入联系记录的ID
+	 * @param  {Function} [callback] 回到函数
+	 */
 	editContact: function(id, callback){
 		var that = this;
 		$('#r_fullname').hide(); ///
@@ -126,16 +166,25 @@ var Recruit = {
 			}, "json");
 		}
 	},
-	
-	_saveContact: function(data, callback){
-		if(data){
-			$.post(Ibos.app.url("recruit/contact/add"), data, function(res){
+	/**
+	 * 保存联系记录
+	 * @method _saveContact
+	 * @param  {Object}   data       传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
+	_saveContact: function(param, callback){
+		if(param){
+			$.post(Ibos.app.url("recruit/contact/add"), param, function(res){
 				callback && callback(res);
 			});
 		}
 	},
-	
-	//添加联系记录
+	/**
+	 * 添加联系记录
+	 * @method addContact
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	addContact: function(param, callback){
 		var that = this;
 		$('#r_fullname').show(); ///
@@ -157,17 +206,25 @@ var Recruit = {
 			cancel: true
 		});
 	},
-
-
-	_saveInterview: function(data, callback){
-		if(data){
-			$.post(Ibos.app.url("recruit/interview/add"), data, function(res){
+	/**
+	 * 保存面试记录
+	 * @method _saveInterview
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
+	_saveInterview: function(param, callback){
+		if(param){
+			$.post(Ibos.app.url("recruit/interview/add"), param, function(res){
 				callback && callback(res);
 			});
 		}
 	},
-	
-	// 增加面试记录
+	/**
+	 * 增加面试记录
+	 * @method _saveInterview
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	addInterview: function(param, callback){
 		var that = this;
 		$('#r_fullname').show(); ///
@@ -185,14 +242,22 @@ var Recruit = {
 			cancel: true
 		});
 	},
-	
-	// 删除一条面试记录
+	/**
+	 * 删除一条面试记录
+	 * @method deleteInterview
+	 * @param  {String}   id         传入面试记录的id
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteInterview: function(id, callback){
 		id && 
 		this.singleHandler(Ibos.app.url("recruit/interview/del"), { interviewids: id }, callback);		
 	},
-	
-	// 删除多条面试记录
+	/**
+	 * 删除多条面试记录
+	 * @method deleteInterviews
+	 * @param  {String}   ids        传入面试记录的ids
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteInterviews: function(ids, callback){
 		if(ids) {
 			this.multiHandler(Ibos.app.url("recruit/interview/del"), { interviewids: ids }, Ibos.l('REC.DETELE_INTERVIEWS_CONFIRM'), callback);		
@@ -200,21 +265,31 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'),  'warning');
 		}
 	},
-	
-	_updateInterview: function(id, data, callback){
+	/**
+	 * 删除多条面试记录
+	 * @method _updateInterview
+	 * @param  {String}   id         传入面试记录的id
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
+	_updateInterview: function(id, param, callback){
 		if(id) {
-			$.post(Ibos.app.url("recruit/interview/edit", { op: "update" }), $.extend({ interviewid: id }, data) , function(res){
+			$.post(Ibos.app.url("recruit/interview/edit", { op: "update" }), $.extend({ interviewid: id }, param) , function(res){
 				if(res.isSuccess !== 0){
 					callback && callback(res);
 					Ui.tip('MODIFY_SUCCEED')
 				} else {
-					Ui.tip('MODIFY_FAILED', 'danger')
+					Ui.tip('MODIFY_FAILED', 'danger');
 				}
 			}, "json");
 		}
 	},
-	
-	// 编辑面试记录
+	/**
+	 * 编辑面试记录
+	 * @method editInterview
+	 * @param  {String}   id         传入面试记录的id
+	 * @param  {Function} [callback] 回到函数
+	 */
 	editInterview: function(id, callback){
 		var that = this;
 		$('#r_fullname').hide(); //
@@ -236,8 +311,11 @@ var Recruit = {
 			}, "json");
 		}
 	},
-	
-	// 导出面试记录
+	/**
+	 * 导出面试记录
+	 * @method exportInterview
+	 * @param  {String} ids 传入面试记录的ids
+	 */
 	exportInterview: function(ids){
 		if(ids){
 			window.location = Ibos.app.url("recruit/interview/export", { interviews: ids });
@@ -245,19 +323,28 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
 		}
 	},
-
-	_saveBgcheck: function(data, callback){
-		if(data){
-			$.post(Ibos.app.url("recruit/bgchecks/add"), data, function(res){
+	/**
+	 * 保存背景调查记录
+	 * @method _saveBgcheck
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
+	_saveBgcheck: function(param, callback){
+		if(param){
+			$.post(Ibos.app.url("recruit/bgchecks/add"), param, function(res){
 				callback && callback(res);
 			});
 		}
 	},
-	
-	// 增加背景调查记录
+	/**
+	 * 增加背景调查记录
+	 * @method addBgcheck
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	addBgcheck: function(param, callback){
 		var that = this;
-		$('#r_fullname').show();///
+		$('#r_fullname').show();
 		that.$bgcheckDialogForm.get(0).reset();
 		Ui.dialog({
 			id: "d_bgcheck",
@@ -278,14 +365,22 @@ var Recruit = {
 			cancel: true
 		});
 	},
-	
-	// 删除一条背景调查记录
+	/**
+	 * 删除一条背景调查记录
+	 * @method deleteBgcheck
+	 * @param  {String}   id         传入背景调查记录的id
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteBgcheck: function(id, callback){
 		id && 
-		this.singleHandler(Ibos.app.url("recruit/bgchecks/del"), { checkids: id }, callback);		
+		this.singleHandler(Ibos.app.url("recruit/bgchecks/del"), { checkids: id }, callback);
 	},
-	
-	// 删除多条背景调查记录
+	/**
+	 * 删除多条背景调查记录
+	 * @method deleteBgcheck
+	 * @param  {String}   ids        传入背景调查记录的ids
+	 * @param  {Function} [callback] 回到函数
+	 */
 	deleteBgchecks: function(ids, callback){
 		if(ids) {
 			this.multiHandler(Ibos.app.url("recruit/bgchecks/del"), { checkids: ids }, Ibos.l('REC.DETELE_INTERVIEWS_CONFIRM'), callback);		
@@ -293,21 +388,31 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
 		}
 	},
-	
+	/**
+	 * 更新背景调查记录
+	 * @method _updateBgcheck
+	 * @param  {String}   id         传入背景调查记录的id
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回到函数
+	 */
 	_updateBgcheck: function(id, data, callback){
 		if(id) {
 			$.post(Ibos.app.url("recruit/bgchecks/edit", { op: "update" }), $.extend({ checkid: id }, data) , function(res){
 				if(res.isSuccess !== 0){
 					callback && callback(res);
-					Ui.tip('@CM.MODIFY_SUCCEED')
+					Ui.tip('@CM.MODIFY_SUCCEED');
 				} else {
-					Ui.tip('@CM.MODIFY_FAILED', 'danger')
+					Ui.tip('@CM.MODIFY_FAILED', 'danger');
 				}
 			}, "json");
 		}
 	},
-	
-	// 编辑背景调查记录
+	/**
+	 * 编辑背景调查记录
+	 * @method editBgcheck
+	 * @param  {String}   id         传入背景调查记录的id
+	 * @param  {Function} [callback] 回到函数
+	 */
 	editBgcheck: function(id, callback){
 		var that = this;
 		$('#r_fullname').hide();///
@@ -333,8 +438,11 @@ var Recruit = {
 			}, "json");
 		}
 	},
-	
-	// 导出背景调查记录
+	/**
+	 * 导出背景调查记录
+	 * @method editBgcheck
+	 * @param  {String} ids 传入背景调查记录的ids
+	 */
 	exportBgcheck: function(ids){
 		if(ids){
 			window.location = Ibos.app.url("recruit/bgchecks/export", { checkids: ids });
@@ -342,12 +450,19 @@ var Recruit = {
 			Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
 		}
 	},
-	// 发送邮件
+	/**
+	 * 发送邮件
+	 * @method sendMail
+	 * @param  {String} ids 传入邮件的id
+	 */
 	sendMail: function(ids){
 		window.location.href = Ibos.app.url("recruit/resume/sendEmail", { resumeids: ids });
 	},
-
-	// 更改状态
+	/**
+	 * 更改状态
+	 * @method changeResumeStatus
+	 * @param  {String} status 传入状态值
+	 */
 	changeResumeStatus: function(status){
 		var $ckbs = U.getChecked("resume[]"),
 			ids = $ckbs.map(function(){
@@ -629,5 +744,5 @@ $(function(){
 		moveToEliminate: function(){
 			Recruit.changeResumeStatus("5");
 		}
-	})
+	});
 });

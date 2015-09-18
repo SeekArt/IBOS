@@ -20,12 +20,33 @@ class EmailBody extends Model {
 		return '{{email_body}}';
 	}
 
-	/**
-	 * 删除草稿
-	 * @param string $bodyIds 邮件主体ID
-	 * @param integer $archiveId 分类存档表ID
-	 * @return integer 影响的行数
-	 */
+    /**
+     * 15-8-25 下午2:18 gzdzl
+     * 
+     * 检查邮件是否已经存在，用于解决外部邮件重复接收问题
+     * 使用发送时间和发送人来判断是否重复
+     * 
+     * @param integer $sendtime 发送时间戳
+     * @param string $fromwebmail 发送人邮箱地址
+     * @return boolean 已经存在返回true，否则返回false
+     */
+    public static function isExist($sendtime, $fromwebmail) {
+        $result = IBOS::app()->db->createCommand()
+                ->select('bodyid')
+                ->from('{{email_body}}')
+                ->where('`sendtime` = ' . $sendtime . ' AND `fromwebmail` = ' . "'" . $fromwebmail . "'")
+                ->queryRow();
+        if ($result && !empty($result))
+            return true;
+        return false;
+    }
+
+    /**
+     * 删除草稿
+     * @param string $bodyIds 邮件主体ID
+     * @param integer $archiveId 分类存档表ID
+     * @return integer 影响的行数
+     */
 	public function delBody( $bodyIds, $archiveId = 0 ) {
 		$table = sprintf( '{{%s}}', $this->getTableName( $archiveId ) );
 		$bodys = IBOS::app()->db->createCommand()

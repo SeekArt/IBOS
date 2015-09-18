@@ -73,45 +73,4 @@
 		</form>
 	</div>
 </div>
-<script>
-	(function() {
-		var dateTimeParam = {};
-		//日期选择器
-		$("#date_start").datepicker({
-			pickTime: true,
-			pickSeconds: false,
-			format: 'yyyy-mm-dd hh:ii',
-			target: $("#date_end")
-		});
-
-		//内容输入提示
-		var htmlTemp = "<?php echo $lang['Announcement text tip']; ?>";
-		htmlTemp += "<?php echo $lang['Announcement link tip']; ?>";
-		$("#an_content").popover({
-			title: "<?php echo $lang['Tips']; ?>",
-			container: "body",
-			html: true,
-			content: htmlTemp
-		});
-		//编辑器
-		new P.SimpleEditor($("#anc_title_editor"), {
-			onSetColor: function(value) {
-				$('#anc_title').css("color", value ? value : "");
-			},
-			onSetBold: function(isBold) {
-				$('#anc_title').css("font-weight", isBold ? "700" : "400");
-			},
-			onSetItalic: function(isItalic) {
-				$('#anc_title').css("font-style", isItalic ? "italic" : "normal");
-			},
-			onSetUnderline: function(hasUnderline) {
-				$('#anc_title').css("text-decoration", hasUnderline ? "underline" : "none");
-			}
-		});
-		// 表单提交时，把subject的html写入input
-		$('#sys_announcement_form').on('submit', function() {
-			$('#subject').val("<span style='" + $('#anc_title')[0].style.cssText + "'>" + $('#anc_title').html() + "</span>");
-		});
-	})();
-
-</script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_announcement.js"></script>

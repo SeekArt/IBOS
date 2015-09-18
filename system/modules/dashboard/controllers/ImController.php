@@ -307,9 +307,9 @@ class ImController extends BaseController {
                 $api = $adapter->getApi();
                 $rs = $api->getUserList( array( 'timestamp' => 0 ) );
                 $bqqUsers = array();
-                if ( substr( $rs, 0, 5 ) !== 'error' ) {
-                    $rsArr = json_decode( $rs, true );
-                    if ( isset( $rsArr['ret'] ) && $rsArr['ret'] == 0 ) {
+				if ( !is_array( $rs ) ) {
+					$rsArr = CJSON::decode( $rs, true );
+					if ( isset( $rsArr['ret'] ) && $rsArr['ret'] == '0' ) {
                         $bqqUsers = $rsArr['data']['items'];
                     }
                 }

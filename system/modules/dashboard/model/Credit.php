@@ -18,6 +18,7 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
+use application\core\utils\IBOS;
 
 class Credit extends Model {
 
@@ -25,8 +26,18 @@ class Credit extends Model {
         return parent::model( $className );
     }
 
-    public function tableName() {
-        return '{{credit}}';
-    }
+	public function tableName() {
+		return '{{credit}}';
+	}
+	
+	/**
+	 * 更改表的自增值
+	 * @param type $value
+	 */
+	public function alterAutoIncrementValue( $value ) {
+		$sql = "ALTER table ".$this->tableName()." auto_increment =".$value;
+		IBOS::app()->db->createCommand()->setText( $sql )->execute();
+	}
+	
 
 }

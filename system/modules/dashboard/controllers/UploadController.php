@@ -36,12 +36,20 @@ class UploadController extends BaseController {
 				// 原图
 				$source = PATH_ROOT . '/static/image/watermark_preview.jpg';
 				if ( $operation == 'waterpreview' ) {
-					$trans = Env::getRequest( 'trans' );
+					$trans = Env::getRequest( 'trans',80 );
 					$type = Env::getRequest( 'type' );
 					$val = Env::getRequest( 'val' );
-					$pos = Env::getRequest( 'pos' );
+					$pos = Env::getRequest( 'pos',0 );
 					// 图片水印
 					if ( $type == 'image' ) {
+                                                                                                                     //15-7-27 下午2:14 gzdzl
+                                                                                                                     //图片水印时要判断文件是否存在
+						//没有相应的图片文件，接下来的图片处理会发生错误
+						if ( !file_exists( $val ) ) {
+							//TODO 这里需要更加合理的提示
+							die( '水印图片不存在' );
+						}
+                                                
 						$sInfo = Image::getImageInfo( $source );
 						$wInfo = Image::getImageInfo( $val );
 						// 如果水印图片大过预览图, 压缩水印图片
@@ -52,10 +60,13 @@ class UploadController extends BaseController {
 						Image::water( $source, $val, $temp, $pos, $trans, $quality );
 					} else {
 						// 文字水印
-						$hexColor = Env::getRequest( 'textcolor' );
-						$size = Env::getRequest( 'size' );
-						$fontPath = Env::getRequest( 'fontpath' );
+						$hexColor = Env::getRequest( 'textcolor','#ffffff' );//默认是#ffffff(白色)，格式不做判断
+						$size = intval( Env::getRequest( 'size', 16 ) ); //过滤无效输入
+                        $size = ( $size > 0 && $size <= 48 ) ? $size : 16; //文字水印大小限制在1-48
+						$fontPath = Env::getRequest( 'fontpath', 'msyh.ttf'); //字体默认是微软雅黑
 						$rgb = Convert::hexColorToRGB( $hexColor );
+                                                                                                                    //文字水印需要判断文字内容是否为空
+						$val = (!empty( $val )) ? $val : 'IBOS'; //空时默认是IBOS
 						Image::waterMarkString( $val, $size, $source, $temp, $pos, $quality, $rgb, self::TTF_FONT_PATH . $fontPath );
 					}
 					$image = $temp;
@@ -70,7 +81,8 @@ class UploadController extends BaseController {
 					'image' => $image,
 					'sourceSize' => Convert::sizeCount( File::fileSize( $source ) ),
 					'thumbSize' => Convert::sizeCount( File::fileSize( $image ) ),
-					'ratio' => (sprintf( "%2.1f", File::fileSize( $image ) / File::fileSize( $source ) * 100 )) . '%'
+					'ratio' => (sprintf( "%2.1f", File::fileSize( $image ) / File::fileSize( $source ) * 100 )) . '%',
+                                                                                                 'time' => time()
 				);
 				$this->render( 'imagePreview', $data );
 				exit();
@@ -86,12 +98,15 @@ class UploadController extends BaseController {
 		if ( $formSubmit ) {
 			$keys = $uploadKeys . ',' . $waterMarkkeys;
 			$keyField = explode( ',', $keys );
+			$status = 0;
 			foreach ( $_POST as $key => $value ) {
 				if ( in_array( $key, $keyField ) ) {
 					Setting::model()->updateSettingValueByKey( $key, $value );
-				} else if ( $key == 'watermarkstatus' ) {
-					Setting::model()->updateSettingValueByKey( 'watermarkstatus', 0 );
+				} 
+				if(array_key_exists('watermarkstatus', $_POST)){
+					$status = 1;
 				}
+				Setting::model()->updateSettingValueByKey( 'watermarkstatus', $status );
 			}
 			Cache::update( array( 'setting' ) );
 			$this->success( IBOS::lang( 'Save succeed', 'message' ) );

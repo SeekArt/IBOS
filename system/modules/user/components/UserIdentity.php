@@ -89,20 +89,22 @@ class UserIdentity extends CUserIdentity {
 				$user = array();
 				break;
 		}
-		// MD5 加密
-		$passwordMd5 = preg_match( '/^\w{32}$/', $password ) ? $password : md5( $password );
 		if ( empty( $user ) ) {
 			$status = self::USER_NOT_FOUND;
 		} else if ( $user['status'] == 1 ) {
 			$status = self::USER_LOCK;
 		} else if ( $user['status'] == 2 ) {
 			$status = self::USER_DISABLED;
-		} else if ( $user['password'] != md5( $passwordMd5 . $user['salt'] ) ) {
+		} else {
+			// MD5 加密
+			$passwordMd5 = preg_match( '/^\w{32}$/', $password ) ? $password : md5( md5( $password ) . $user['salt'] );
+			if ( $user['password'] != $passwordMd5 ) {
 			$status = self::USER_PASSWORD_INCORRECT;
 		} else if ( $isAdministrator && $user['isadministrator'] !== '1' ) {
 			$status = self::USER_NO_ACCESS;
 		} else {
 			$status = $user['uid'];
+			}
 		}
 		// 登录成功
 		if ( $status > 0 ) {

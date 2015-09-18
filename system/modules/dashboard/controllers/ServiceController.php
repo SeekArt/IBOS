@@ -17,13 +17,14 @@
 
 namespace application\modules\dashboard\controllers;
 
+use application\core\utils\Api;
 use application\core\utils\Cache;
 use application\core\utils\Cloud;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\WebSite;
 use application\modules\main\model\Setting;
-use application\core\utils\Api;
+use CJSON;
 
 class ServiceController extends BaseController {
 
@@ -62,8 +63,8 @@ class ServiceController extends BaseController {
 			'authkey' => IBOS::app()->setting->get( 'config/security/authkey' )
 		);
 		$res = WebSite::getInstance()->fetch( self::LOGIN_ROUTE, $param );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$info = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$info = CJSON::decode( $res, true );
 			$this->ajaxReturn( $info );
 		} else {
 			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => '操作失败，请重试！' ) );
@@ -76,8 +77,8 @@ class ServiceController extends BaseController {
 	public function actionOpen() {
 		$authkey = IBOS::app()->setting->get( 'config/security/authkey' );
 		$res = WebSite::getInstance()->fetch( self::OPEN_ROUTE, array( 'authkey' => $authkey ), 'post' );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			$result = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$result = CJSON::decode( $res, true );
 			if ( isset( $result['appid'] ) && isset( $result['secret'] ) ) {
 				$iboscloud = IBOS::app()->setting->get( 'setting/iboscloud' );
 				$iboscloud['isopen'] = 1;
@@ -101,8 +102,8 @@ class ServiceController extends BaseController {
 	public function getLoginInfo() {
 		$authkey = IBOS::app()->setting->get( 'config/security/authkey' );
 		$res = WebSite::getInstance()->fetch( self::CHECK_LOGIN_ROUTE, array( 'authkey' => $authkey ) );
-		if ( substr( $res, 0, 5 ) !== 'error' ) {
-			return json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			return CJSON::decode( $res, true );
 		}
 		return array();
 	}

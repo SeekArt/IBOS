@@ -20,6 +20,7 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
+use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\Page;
 use application\modules\role\model\AuthItemChild;
@@ -55,14 +56,15 @@ class RoleController extends OrganizationBaseController {
             // 获取插入ID，以便后续处理
             $newId = Role::model()->add( $data, true );
             // 权限处理
-            if ( isset( $_POST['nodes'] ) ) {
-                $this->updateAuthItem( $newId, $_POST['nodes'], $_POST['data-privilege'] );
+			if ( Env::getRequest( 'nodes', 'P' ) ) {
+				$this->updateAuthItem( $newId, Env::getRequest( 'nodes', 'P' ), Env::getRequest( 'data-privilege', 'P' ) );
             }
             CacheUtil::update( 'role' );
             $newId && Org::update();
             $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'role/edit', array( 'op' => 'member', 'id' => $newId ) ) );
         } else {
             $authItem = Auth::loadAuthItem();
+			$this->filterAuth( $authItem );
             $data['authItem'] = $authItem;
             $this->render( 'add', $data );
         }
@@ -84,10 +86,10 @@ class RoleController extends OrganizationBaseController {
                 Role::model()->modify( $id, $data );
             }
             // 权限处理
-            if ( isset( $_POST['nodes'] ) ) {
-                $this->updateAuthItem( $id, $_POST['nodes'], $_POST['data-privilege'] );
+			if ( Env::getRequest( 'nodes', 'P' ) ) {
+				$this->updateAuthItem( $id, Env::getRequest( 'nodes', 'P' ), Env::getRequest( 'data-privilege', 'P' ) );
             } else {
-                $this->updateAuthItem( $id, '', $_POST['data-privilege'] );
+				$this->updateAuthItem( $id, '', Env::getRequest( 'data-privilege', 'P' ) );
             }
             CacheUtil::update( 'role' );
             Org::update();
@@ -104,10 +106,31 @@ class RoleController extends OrganizationBaseController {
             $data['related'] = $relateCombine;
             // 所有权限节点
             $authItem = Auth::loadAuthItem();
+			$this->filterAuth( $authItem );
             $data['authItem'] = $authItem;
             $this->render( 'edit', $data );
         }
-    }
+	}
+
+	/**
+	 * 过滤crm的饼
+	 * @param type $related
+	 */
+	private function filterAuth( &$authItem ) {
+		foreach ( $authItem as $key => $auth ) {
+			if ( isset( $auth['group'] ) ) {
+				foreach ( $auth['group'] as $k => $row ) {
+					if ( isset( $row['node'] ) ) {
+						foreach ( $row['node'] as $node ) {
+							if ( $node['module'] == 'crm' && $node['type'] == 'data' ) {
+								unset( $authItem[$key]['group'][$k] );
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
     /**
      * 删除操作
@@ -120,6 +143,7 @@ class RoleController extends OrganizationBaseController {
             foreach ( $ids as $roleId ) {
                 // 删除角色
                 Role::model()->deleteByPk( $roleId );
+				$isInstallCrm = Module::getIsEnabled( 'crm' );
                 // 删除角色对应授权
                 IBOS::app()->authManager->removeAuthItem( $roleId );
                 // 删除辅助角色关联
@@ -206,13 +230,18 @@ class RoleController extends OrganizationBaseController {
             $role = $auth->createRole( $roleId, '', '', '' );
         }
         // 删除当前授权角色所有子项
-        AuthItemChild::model()->deleteByParent( $roleId );
+		AuthItemChild::model()->deleteByParentExceptRouteA( $roleId, AuthItemChild::model()->returnExceptRouteA() );
         if ( !empty( $authItem ) ) {
             foreach ( $authItem as $key => $nodeId ) {
                 $node = $nodes[$key];
                 // id相同为普通节点，反之为数据节点
                 if ( strcasecmp( $key, $nodeId ) !== 0 && $nodeId === 'data' ) {
                     $vals = $dataVal[$key];
+					foreach ( $vals as $valsKey => $valsValue ) {
+						if ( empty( $valsValue ) ) {
+							unset( $vals[$valsKey] );
+						}
+					}
                     if ( is_array( $vals ) ) {
                         NodeRelated::model()->addRelated( '', $roleId, $node );
                         foreach ( $vals as $id => $val ) {

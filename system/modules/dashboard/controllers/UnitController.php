@@ -21,6 +21,21 @@ class UnitController extends BaseController {
         // 是否提交
         if ( $formSubmit ) {
             $postData = array();
+            if ( isset( $_FILES['logo'] ) && !empty( $_FILES['logo']['name'] ) ) {
+                    if ( $_FILES['logo']['error'] != 0 ) {
+                            die( '抱歉，设置失败，请您重试！' );
+                    }
+                    $ext = strtolower( pathinfo( strip_tags( $_FILES['logo']['name'] ), PATHINFO_EXTENSION ) );
+                    if ( in_array( $ext, array( 'gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf' ) ) && !empty( $ext ) ) {
+                            $imginfo = getimagesize( $_FILES['logo']['tmp_name'] );
+                            if ( empty( $imginfo ) || ($ext == 'gif' && empty( $imginfo['bits'] )) ) {
+                                    die( '非法图像文件！' );
+                            }
+                    }
+                    else {
+                            die( '不是有效的图片文件' );
+                    }
+            }//15-7-27 下午2:09 gzdzl
             if ( !empty( $_FILES['logo']['name'] ) ) {
                 !empty( $unit['logourl'] ) && File::deleteFile( $unit['logourl'] );
                 $postData['logourl'] = $this->imgUpload( 'logo' );

@@ -7,14 +7,29 @@ use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
 
 // CORS 设置
+$str = strtolower($_SERVER['SERVER_SOFTWARE']);
+list($server) = explode('/', $str);
+
+if($server == "apache" || $server == "nginx" || $server == "lighttpd"){
+	if(isset($_SERVER['HTTP_ORIGIN'])){
+		header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
+	}
 header( 'Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS' );
 header( 'Access-Control-Allow-Credentials: true' );
 header( 'Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE' );
+	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+		exit();
+	}
+}else if($server == "iis"){
+	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 if ( isset( $_SERVER['HTTP_ORIGIN'] ) ) {
 	header( 'Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] );
 }
-if ( $_SERVER['REQUEST_METHOD'] == 'OPTIONS' ) {
-	exit();
+		header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS');
+		header('Access-Control-Allow-Credentials: true');
+		header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE');
+		exit();
+	}
 }
 
 // 程序根目录路径
@@ -34,7 +49,14 @@ $userId = Env::getRequest( 'userid' );
 $timestamp = Env::getRequest( 'timestamp' );
 $redirect = Env::getRequest( 'redirect' );
 $signature = Env::getRequest( 'signature' );
+$deadline = Env::getRequest( 'deadline' );
 $op = Env::getRequest( 'op' );
+if ( empty( $deadline ) ) {
+	$deadline = 60 * 60;
+}
+if ( TIMESTAMP - $timestamp > $deadline ) {
+	Env::iExit( '链接已经过期' );
+}
 
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 if ( strcmp( $signature, sha1( $aeskey . $timestamp ) ) != 0 ) {
@@ -65,8 +87,10 @@ function checkBind( $userId, $redirect ) {
 	if ( !empty( $userId ) ) {
 		$uid = UserBinding::model()->fetchUidByValue( $userId, 'co' );
 		if ( !empty( $uid ) ) {
-			dologin( $uid );
-			$isSuccess = true;
+			$resArr = dologin( $uid );
+			if ( $resArr['code'] > 0 ) {
+				$isSuccess = true;
+			}
 		}
 	}
 	if ( !empty( $redirect ) ) {

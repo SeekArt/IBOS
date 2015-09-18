@@ -9,14 +9,15 @@ use application\modules\dashboard\model\CreditLog;
 use application\modules\dashboard\model\CreditRule;
 use application\modules\dashboard\model\CreditRuleLog;
 use application\modules\main\model\Setting;
+use application\modules\message\core\co\CoApi;
 use application\modules\message\model\Notify;
 use application\modules\message\utils\Message as MessageUtil;
-use application\modules\message\core\co\CoApi;
 use application\modules\user\model as UserModel;
 use application\modules\user\model\UserBinding;
 use application\modules\user\utils\User as UserUtil;
 use CException;
 use CHttpSession;
+use CJSON;
 use Yii;
 
 class HomeController extends HomeBaseController {
@@ -65,6 +66,19 @@ class HomeController extends HomeBaseController {
 						$model['application\modules\user\model\UserProfile'][$key] = util\String::filterCleanHtml( $value );
 					} else if ( in_array( $key, $userField ) ) {
 						$model['application\modules\user\model\User'][$key] = util\String::filterCleanHtml( $value );
+					}
+				}
+				//简单检查一下手机、邮箱、电话和QQ格式
+				//手机就简单的看看是否是11位数字，可以做更严格的验证
+				if ( isset( $model['application\modules\user\model\User'] ) && isset( $model['application\modules\user\model\User']['mobile'] ) ) {
+					if ( !preg_match( "/^[0-9]{11}$/", $model['application\modules\user\model\User']['mobile'] ) ) {
+						$this->error( util\IBOS::lang( 'Phone number format error' ), $this->createUrl( 'home/personal' ) );
+					}
+				}
+				//邮箱地址检查
+				if ( isset( $model['application\modules\user\model\User'] ) && isset( $model['application\modules\user\model\User']['email'] ) ) {
+					if ( !preg_match( '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', $model['application\modules\user\model\User']['email'] ) ) {
+						$this->error( util\IBOS::lang( 'Email address format error' ), $this->createUrl( 'home/personal' ) );
 					}
 				}
 				// 更新操作
@@ -225,7 +239,8 @@ class HomeController extends HomeBaseController {
 		$api = util\Api::getInstance();
 		$url = $api->buildUrl( CoApi:: CO_URL . 'api/ibospublic', $param );
 		$res = $api->fetchResult( $url, $userArr, 'post' );
-		$resArr = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$resArr = CJSON::decode( $res, true );
 		//返回成功，则查找绑定表，
 		if ( $resArr['isSuccess'] ) {
 			$userBind = UserBinding::model()->fetchBindValue( $this->getUid(), 'co' );
@@ -238,10 +253,16 @@ class HomeController extends HomeBaseController {
 				$return = UserBinding::model()->add( $data );
 				if ( !$return ) {
 					$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '绑定失败' ) );
-				}
+					} else {
+						$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '绑定成功' ) );
 			}
 		}
+			} else {
 		$this->ajaxReturn( $resArr );
+			}
+		} else {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => $res['error'] ) );
+		}
 	}
 
 	public function actionUnbindco() {
@@ -452,9 +473,7 @@ class HomeController extends HomeBaseController {
 			$node['appdisabled'] = $coBinding == '1' ? 0 : 1;
 			$node['maildisabled'] = $user['validationemail'] == 0 || !$node['sendemail'] ? 1 : 0;
 			$node['smsdisabled'] = $user['validationmobile'] == 0 || !$node['sendsms'] ? 1 : 0;
-			if ( empty( $user['remindsetting'] ) ) {
-				$node['emailcheck'] = $node['smscheck'] = $node['appcheck'] = 1;
-			} else if ( isset( $user['remindsetting'][$id] ) ) {
+			if ( isset( $user['remindsetting'][$id] ) ) {
 				$node['appcheck'] = isset( $user['remindsetting'][$id]['app'] ) ? $user['remindsetting'][$id]['app'] : 0;
 				$node['emailcheck'] = isset( $user['remindsetting'][$id]['email'] ) ? $user['remindsetting'][$id]['email'] : 0;
 				$node['smscheck'] = isset( $user['remindsetting'][$id]['sms'] ) ? $user['remindsetting'][$id]['sms'] : 0;

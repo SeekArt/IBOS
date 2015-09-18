@@ -22,22 +22,32 @@ require_once ( $yii );
 
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 
+$str = strtolower($_SERVER['SERVER_SOFTWARE']);
+list($server) = explode('/', $str);
 
+if($server == "apache" || $server == "nginx" || $server == "lighttpd"){
+	if(isset($_SERVER['HTTP_ORIGIN'])){
+		header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
+	}
+	header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS');
+	header('Access-Control-Allow-Credentials: true');
+	header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE');
 
-// CORS 设置，有待讨论
-header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS');
-header('Access-Control-Allow-Credentials: true');
-header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE');
-
-// 由于手机端发送的请求不带 $_SERVER 信息，所以只在有请求头部时设置 Origin
-if(isset($_SERVER['HTTP_ORIGIN'])){
-	header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
+	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+		exit();
+	}
+}else if($server == "iis"){
+	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+		// CORS 设置，有待讨论
+		if(isset($_SERVER['HTTP_ORIGIN'])){
+			header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
+		}
+		header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS');
+		header('Access-Control-Allow-Credentials: true');
+		header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE');
+		exit();
+	}
 }
-
-if( $_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-	exit();
-}
-
 Yii::createApplication( 'application\core\components\Application', $config )->run();
 
 exit;

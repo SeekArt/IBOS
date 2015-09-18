@@ -198,6 +198,6 @@ use application\modules\vote\components\Vote;
 <script src='<?php echo STATICURL; ?>/js/app/ibos.treeCategory.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/newsadd.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/article_default_add.js?<?php echo VERHASH; ?>'></script>
 
 

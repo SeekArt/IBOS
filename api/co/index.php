@@ -22,7 +22,7 @@ Yii::createApplication( 'application\core\components\Application', $mainConfig )
 $result = trim( file_get_contents( "php://input" ), " \t\n\r" );
 // 解析
 if ( !empty( $result ) ) {
-	$msg = json_decode( $result, true );
+	$msg = CJSON::decode( $result, true );
 	switch ( $msg['op'] ) {
 		case 'verify':
 			$res = doverify( $msg['username'], $msg['password'] );
@@ -57,12 +57,12 @@ function doverify( $userName, $password ) {
 	if ( !empty( $user ) ) {
 		$password = md5( $password . $user['salt'] );
 		if ( strcmp( $user['password'], $password ) != 0 ) {
-			return array( 'isSuccess' => false, 'msg' => '身份验证失败' );
+			return array( 'isSuccess' => false, 'msg' => '身份验证失败，密码错误' );
 		}
 		if ( !$user['isadministrator'] ) {
 			return array( 'isSuccess' => false, 'msg' => '非管理员身份不能进行此操作' );
 		}
 		return array( 'isSuccess' => true );
 	}
-	return array( 'isSuccess' => false, 'msg' => '身份验证失败' );
+	return array( 'isSuccess' => false, 'msg' => '身份验证失败，不存在该用户' );
 }

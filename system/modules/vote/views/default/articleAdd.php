@@ -239,38 +239,5 @@ use application\core\utils\IBOS;
     })
 </script>
 <script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote.js?<?php echo VERHASH; ?>"></script>
-<script>
+<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote_default_articleadd.js?<?php echo VERHASH; ?>"></script>
 
-// @Todo: 图片与文字投票有大部分相似内容，此处考虑tab时只变更有区别的部分
-// 上传组件最在打开图片投票时初始化，不要在一进入页面只初始化
-    (function() {
-        // 投票项数验证，至少两条有效数据
-        $("#article_form").on("submit", function() {
-            var isVoteEnabled = $("#voteStatus").prop("checked"),
-                    $items;
-            if (isVoteEnabled) {
-                var voteType = Vote.getVoteType(),
-                        subject = $("#" + (voteType == "1" ? "vote_subject" : "imageVote_subject")).val().replace(/(^\s*)|(\s*$)/g, "");
-                if (subject == '' || subject == null) {
-                    Ui.tip(U.lang("VOTE.VOTE_TITLE"), "warning");
-                    return false;
-                }
-                $items = Vote.getValidItem();
-                if ($items.length < 2) {
-                    Ui.tip(U.lang("VOTE.WRITE_AT_LEAST_TWO_ITEM"), "warning");
-                    return false;
-                }
-            }
-        });
-
-        //加载完成后马上初始化三个投票项
-        $(function() {
-            for (var i = 0; i < 3; i++) {
-                Vote.textList.addItem();
-                Vote.picList.addItem();
-            }
-            ;
-        });
-    })();
-
-</script>

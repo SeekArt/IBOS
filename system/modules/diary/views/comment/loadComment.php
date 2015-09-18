@@ -80,7 +80,7 @@ use application\core\utils\String;
 		$(function() {
 			//初始化表情功能
 			var $cmt = $(".cmt");
-			initCommentEmotion($cmt);
+			Diary.initCommentEmotion($cmt);
 
 			var timer;
 			var _loadComment = function() {

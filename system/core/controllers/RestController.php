@@ -219,5 +219,16 @@ class RestController extends Controller {
 		$this->sendHttpStatus( $code );
 		exit( $this->encodeData( $data, strtolower( $type ) ) );
 	}
+	public function filterRoutes( $routes ) {
+		$notAuthArr = array(
+			'restroom/get',
+			'restmanager/put'
+		);
+		list($module, $action, $method) = explode('/', $routes);
+        if (in_array($action . '/' . $method, $notAuthArr)) {
+            return true;
+        }
+		parent::filterRoutes( $routes );
+	}
 
 }

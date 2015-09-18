@@ -193,6 +193,8 @@ return array(
 	'Reset' => '重置',
 	'Restore system Settings' => '恢复系统设置',
 	'Add credit' => '添加积分',
+	'Delete credit success' => '成功删除积分',
+	'Delete credit failed' => '删除积分失败',
 	'Credit name Cant be empty' => '积分名称不能为空',
 	// 'Credit rules greater than the specified number' => '已经超过新增规则指定条数',
 	'Credits formula invalid' => '积分公式包含无效变量或运算符',

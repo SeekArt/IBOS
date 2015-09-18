@@ -542,75 +542,13 @@ use application\core\utils\IBOS;
 </script>
 <script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote.js?<?php echo VERHASH; ?>"></script>
 <script type="text/javascript">
-	(function() {
-		// 投票项数验证，至少两条有效数据
-		$("#article_form").on("submit", function() {
-			var isVoteEnabled = $("#voteStatus").prop("checked"),
-					$items;
-			if (isVoteEnabled) {
-				$items = Vote.getValidItem();
-				if ($items.length < 2) {
-					Ui.tip(U.lang("VOTE.WRITE_AT_LEAST_TWO_ITEM"), "warning")
-					return false;
-				}
-			}
-		});
-
-		// 还原投票数据
-		$(function() {
-<?php if ( isset( $voteData['voteItemList'] ) && count( $voteData['voteItemList'] ) > 0 ): ?>
-				var voteData = $.parseJSON('<?php echo addslashes( json_encode( $voteData ) ) ?>'),
-						voteItemList = voteData.voteItemList,
-						txtItemCount = 0,
-						picItemCount = 0,
-						voteItem;
-				// 还原文字投票列表
-				if (voteData.vote.type === "1") {
-					for (var i = 0; i < voteItemList.length; i++) {
-						voteItem = voteItemList[i];
-						Vote.textList.addItem({id: voteItem.itemid, content: voteItem.content})
-						txtItemCount++
-					}
-					$("#vote_max_select").val(voteData.vote.maxselectnum)
-					// 还原图片投票列表
-				} else {
-					for (var i = 0; i < voteItemList.length; i++) {
-						voteItem = voteItemList[i];
-						Vote.picList.addItem({
-							id: voteItem.itemid,
-							content: voteItem.content,
-							picpath: voteItem.picpath,
-							thumburl: voteItem.thumburl
-						})
-						picItemCount++
-					}
-					$("#picvote_max_select").val(voteData.vote.maxselectnum)
-				}
-				// 保证至少显示三条
-				for (; txtItemCount < 3; txtItemCount++) {
-					Vote.textList.addItem({content: ""})
-				}
-				for (; picItemCount < 3; picItemCount++) {
-					Vote.picList.addItem({content: "", picpath: "", thumburl: ""})
-				}
-				// 没有投票数据时，直接输出三个空值
-<?php else: ?>
-				for (var i = 0; i < 3; i++) {
-					Vote.textList.addItem({content: ""})
-					Vote.picList.addItem({content: "", picpath: "", thumburl: ""})
-				}
-<?php endif; ?>
-
+var ArticleEdit = {
+	voteItemList :　<?php isset( $voteData['voteItemList'] ) && count( $voteData['voteItemList'] ) > 0 ?>,
+	voteData : $.parseJSON('<?php echo addslashes( json_encode( $voteData ) ) ?>')
+};
 <?php if ( isset( $voteData['vote']['type'] ) ): ?>
-				var type = '<?php echo $voteData['vote']['type']; ?>';
-				type == 2 && Vote.tab.on("#vote_pic");
+	var type = '<?php echo $voteData['vote']['type']; ?>';
+	type == 2 && Vote.tab.on("#vote_pic");
 <?php endif; ?>
-		});
-	})();
-
-
-
-
-
-
 </script>
+<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote_default_articleedit.js?<?php echo VERHASH; ?>"></script>

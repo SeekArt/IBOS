@@ -20,10 +20,10 @@ use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
 use application\modules\main\utils\Main;
 use application\modules\recruit\model\ResumeDetail;
 use application\modules\recruit\utils\Recruit as RecruitUtil;
+use CJSON;
 
 class BaseController extends Controller {
 
@@ -97,10 +97,11 @@ class BaseController extends Controller {
 
         if ( $type == 'advanced_search' ) {
             $search = $_POST['search'];
+			@$search['realname'] = addslashes( $search['realname'] );
             $methodName = 'join' . ucfirst( $this->id ) . 'SearchCondition';
             $this->condition = RecruitUtil::$methodName( $search, $this->condition );
         } else if ( $type == 'normal_search' ) {
-            $keyword = $_POST['keyword'];
+			$keyword = addslashes( $_POST['keyword'] );
             $this->condition = " rd.realname LIKE '%$keyword%' ";
         } else {
             $this->condition = $conditionCookie;
@@ -119,7 +120,7 @@ class BaseController extends Controller {
     public function actionCheckRealname() {
         $fullname = Env::getRequest( 'fullname' );
         $fullnameToUnicode = str_replace( '%', '\\', $fullname );
-        $fullnameToUtf8 = String::unicodeToUtf8( $fullnameToUnicode );
+		$fullnameToUtf8 = CJSON::unicodeToUTF8( $fullnameToUnicode );
         $realnames = ResumeDetail::model()->fetchAllRealnames();
         $isExist['statu'] = in_array( $fullnameToUtf8, $realnames ) ? true : false;
         $this->ajaxReturn( $isExist );

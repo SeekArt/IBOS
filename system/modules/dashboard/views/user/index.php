@@ -130,7 +130,7 @@ use application\modules\role\utils\Role as RoleUtil;
 												</td>
 												<td>											
 													<span class =  "fss xcr">
-														<?php echo isset( $role[$value['roleid']] ) ? $role[$value['roleid']]['rolename'] . ";" : ""; ?>
+													<?php echo isset( $role[$value['roleid']] ) ? $role[$value['roleid']]['rolename'] : " "; ?><!--2015年8月6日11:50:51 角色后面的逗号删掉 gzczj-->
 													</span>
 													<?php
 													if ( isset( $value['relatedRoleid'] ) && !empty( $value['relatedRoleid'] ) ) {
@@ -139,7 +139,7 @@ use application\modules\role\utils\Role as RoleUtil;
 															foreach ( $arr as $row ) {
 																?>
 																<span class ="fss">
-																	<?php echo $role[$row]['rolename'] . ";"; ?>
+																	<?php echo $role[$row]['rolename'] . " "; ?><!--  2015年8月6日12:40:34  辅助角色后面的分号删掉 界面的美化 gzczj-->
 																</span>
 																<?php
 															}

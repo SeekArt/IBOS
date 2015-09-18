@@ -234,10 +234,16 @@ use application\modules\user\utils\User;
 						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>
 						<a href="javascript:;" data-action="appDownload">移动端下载</a>
+						<?php
+						$qr = Ibos::app()->setting->get( 'setting/qrcode' );
+						$qrcode = isset( $qr ) ? $qr : '';
+						if ( !empty( $qrcode ) ) :
+							?>
 						<span class="ilsep">|</span>
 						<a href="javascript:;" data-action="followWx" class="im-link">
 							<i class="o-olw-crcode"></i>关注微信号
 						</a>
+						<?php endif; ?>
 					</div>
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>

@@ -19,6 +19,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
+use application\core\utils\PHPExcel;
 use application\modules\contact\model\Contact;
 use application\modules\contact\utils\Contact as ContactUtil;
 use application\modules\department\model\Department;
@@ -178,19 +179,17 @@ class BaseController extends Controller {
 			IBOS::lang( 'Email' ),
 			IBOS::lang( 'QQ' )
 		);
-		$str = implode( ',', $fieldArr ) . "\n";
-		foreach ( $userDatas as $user ) {
-			$realname = $user['realname'];
-			$posname = $user['posname'];
-			$telephone = $user['telephone'];
-			$mobile = $user['mobile'];
-			$email = $user['email'];
-			$qq = $user['qq'];
-			$str .= $realname . ',' . $posname . ',' . $telephone . ',' . $mobile . ',' . $email . ',' . $qq . "\n"; //用引文逗号分开 
+		$data = array();
+		foreach ( $userDatas as $key => $user ) {
+			$data[$key]['realname'] = $user['realname'];
+			$data[$key]['posname'] = $user['posname'];
+			$data[$key]['telephone'] = $user['telephone'];
+			$data[$key]['mobile'] = $user['mobile'];
+			$data[$key]['email'] = $user['email'];
+			$data[$key]['qq'] = $user['qq'];
 		}
-		$outputStr = iconv( 'utf-8', 'gbk//ignore', $str );
-		$filename = date( 'Y-m-d' ) . mt_rand( 100, 999 ) . '.csv';
-		File::exportCsv( $filename, $outputStr );
+		$filename = date( 'Y-m-d' ) . mt_rand( 100, 999 ) . '.xls';
+		PHPExcel::exportToExcel($filename, $fieldArr, $data);
 	}
 
 	/**

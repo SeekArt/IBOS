@@ -81,11 +81,4 @@
 		</form>
 	</div>
 </div>
-<script src="<?php echo $this->getAssetUrl(); ?>/js/approval.js"></script>
-<script>
-	$(function(){
-		var $select = $(".pf-select-area .control-group");
-		var val = $("#approve_level_select").find('option:selected').val();
-		process.switchDisplay($select, val);
-	});
-</script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_approval.js"></script>

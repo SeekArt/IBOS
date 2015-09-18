@@ -1,14 +1,14 @@
 <?php
 
 use application\core\utils\Cache;
-use application\core\utils\Module;
 use application\core\utils\Env;
+use application\core\utils\Module;
 use application\core\utils\String;
+use application\modules\dashboard\utils\Wx;
+use application\modules\main\model\Setting;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
-use application\modules\dashboard\utils\Wx;
 use application\modules\user\model\User;
-use application\modules\main\model\Setting;
 
 /**
  * 安装
@@ -305,7 +305,7 @@ if ( $option == 'envCheck' or $option == 'dbInit' ) { // 检测环境
 		$extraData = unserialize( $_POST['extraData'] );
 		$adminUsername = empty($extraData['username'])?'admin':$extraData['username'];
 		$adminEmail = $extraData['email'];
-		$adminRealname =  empty($extraData['realname'])?'管理员':$extraData['realname'];
+		$adminRealname = empty( $extraData['realname'] ) ? 'admin' : $extraData['realname'];
 		$adminAccesstoken = $extraData['accesstoken'];
 		$corpFullname = $extraData['fullname'];
 		$corpToken = $extraData['corptoken'];
@@ -369,7 +369,7 @@ if ( $option == 'envCheck' or $option == 'dbInit' ) { // 检测环境
 		$moduleSql = str_replace( '{dbpre}', $dbPre, $moduleSql );
 		mysql_query( $moduleSql );  // 提前创建module表，否则后续步骤不能初始化ibos
 		if ( mysql_errno() ) {
-			$errorMsg = $lang['Database errno 1044'];
+			$errorMsg = $lang['Database errno ' . mysql_errno()];
 			include 'errorInfo.php';
 			exit();
 		}
@@ -452,7 +452,7 @@ if ( $option == 'envCheck' or $option == 'dbInit' ) { // 检测环境
 } elseif ( $option == 'installing' ) { // 开始安装模块与数据库，注：模块安装有顺序要求，不然插入数据可能会报错
 	if ( isset( $_GET['installBegin'] ) && $_GET['installBegin'] == 1 ) { // 异步开始安装
 		$installModules = $_POST['installModules']; // 要安装的模块
-		$installModules = json_decode( $installModules );
+		$installModules = CJSON::decode( $installModules );
 		$installingModule = $_POST['installingModule'];
 		if ( empty( $installingModule ) ) {
 			$installingModule = $installModules[0];

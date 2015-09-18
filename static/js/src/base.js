@@ -3995,8 +3995,12 @@ $.fn.datepicker = function(options){
 					component: $tecp.length ? $tecp : false
 				}, opt));
 
-				$elem.datetimepicker("setEndDate", $targetElem.data("datetimepicker").getDate());
-				$targetElem.datetimepicker("setStartDate", $elem.data("datetimepicker").getDate());
+				if($targetElem.val()) {
+					$elem.datetimepicker("setEndDate", $targetElem.data("datetimepicker").getDate());
+				} 
+				if($elem.val()) {
+					$targetElem.datetimepicker("setStartDate", $elem.data("datetimepicker").getDate());
+				}
 
 				// 时间变更时，改变可选时间范围
 				$elem.on("changeDate", function(evt){				

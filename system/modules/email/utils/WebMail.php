@@ -8,9 +8,10 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\Xml;
+use application\modules\email\core\WebEmail;
 use application\modules\email\core\WebMailImap;
 use application\modules\email\core\WebMailPop;
-use application\modules\email\model\Email;
+use application\modules\email\model\Email as Email2;
 use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailWeb;
 use application\modules\email\utils\Email as EmailUtil;
@@ -69,18 +70,37 @@ class WebMail {
 	 * @return boolean 
 	 */
 	private static function connectServer( $conf = array() ) {
-		$connected = false;
-		if ( !empty( $conf ) ) {
-			if ( $conf['type'] == 'imap' ) {
-				$obj = new WebMailImap();
-			} else {
-				$obj = new WebMailPop();
-			}
-			if ( $obj->connect( $conf['server'], $conf['username'], $conf['password'], $conf['ssl'], $conf['port'] ) ) {
-				$connected = true;
-			}
-		}
-		return $connected;
+        $connected = false;
+        /*
+          $host = 'imap.qq.com';
+          $port = 993;
+          $user = 'ibos_gzdzl@qq.com';
+          $pass = '123456gzddzl';
+         */
+        $host = $conf['server'];
+        $port = $conf['port'];
+        $user = $conf['username'];
+        $pass = $conf['password'];
+        $ssl = $conf['ssl'];
+        $type = $conf['type'];
+        $webEmail = new WebEmail($host, $port, $user, $pass, $ssl, $type);
+        $connected = $webEmail->isConnected();
+        return $connected;
+        /**
+         * email test
+         * 15-8-24 下午1:53 gzdzl
+         */
+//		if ( !empty( $conf ) ) {
+//			if ( $conf['type'] == 'imap' ) {
+//				$obj = new WebMailImap();
+//			} else {
+//				$obj = new WebMailPop();
+//			}
+//			if ( $obj->connect( $conf['server'], $conf['username'], $conf['password'], $conf['ssl'], $conf['port'] ) ) {
+//				$connected = true;
+//			}
+//		}
+//return $connected;
 	}
 
 	/**
@@ -563,84 +583,173 @@ EOT;
 	 * @return int
 	 */
 	public static function receiveMail( $web ) {
-		self::$_web = $web;
-		@set_time_limit( 0 );
-		ignore_user_abort( true );
-		list($prefix,, ) = explode( '.', $web['server'] );
-		$user = User::model()->fetchByUid( $web['uid'] );
-		$pwd = String::authCode( $web['password'], 'DECODE', $user['salt'] ); //解密
-		//按类型加载所用的函数库
-		if ( $prefix == 'imap' ) {
-			$obj = new WebMailImap();
-		} else {
-			$obj = new WebMailPop();
-		}
-		$conn = $obj->connect( $web['server'], $web['username'], $pwd, $web['ssl'], $web['port'], 'plain' );
-		if ( !$conn ) {
-			return implode( ',', $obj->getError() );
-		} else {
-			$totalNum = $obj->countMessages( $conn, 'INBOX' );
-			if ( $totalNum > 0 ) {
-				$messagesStr = "1:" . $totalNum;
-			} else {
-				$messagesStr = "";
-			}
-			/* 获取头部 */
-			if ( $messagesStr != "" ) {
-				$headers = $obj->fetchHeaders( $conn, 'INBOX', $messagesStr );
-				$headers = $obj->sortHeaders( $headers, 'DATE', 'DESC' );  //if not from index array
-			} else {
-				$headers = false;
-			}
-			if ( $headers == false ) {
-				$headers = array();
-			}
-			$count = 0;
-			if ( count( $headers ) > 0 ) {
-				while ( list ($key, $val) = each( $headers ) ) {
-					$header = $headers[$key];
-					$time = $header->timestamp + 28800; //比林威治标准时间慢8小时，故加多8小时
-					if ( $web['lastrectime'] == 0 || $web['lastrectime'] < $time ) {
-						$count++;
-						$data = array();
-						$data['subject'] = str_replace( array( '<', '>' ), array( '&lt;', '&gt;' ), EmailLang::langDecodeSubject( $header->subject, CHARSET ) );
-						$encode = mb_detect_encoding( $data['subject'], array( 'ASCII', 'UTF-8', 'GB2312', 'GBK', 'BIG5' ) );
-						$data['subject'] = Convert::iIconv( $data['subject'], $encode, CHARSET );
-						$data['sendtime'] = $time;
-						$data['towebmail'] = $web['address'];
-						$data['issend'] = 1;
-						$data['fromid'] = $data['secrettoids'] = '';
-						$data['fromwebmail'] = EmailLang::langGetParseAddressList( $header->from );
-						if ( isset( $header->to ) && !empty( $header->to ) ) {
-							$data['toids'] = EmailLang::langGetParseAddressList( $header->to, ',' );
-						} else {
-							$data['toids'] = '';
-						}
-						if ( isset( $header->cc ) && !empty( $header->cc ) ) {
-							$data['copytoids'] = EmailLang::langGetParseAddressList( $header->cc, ',' );
-						} else {
-							$data['copytoids'] = '';
-						}
-						$body = self::getBody( $header->id, $conn, $obj, $header );
-						$data['content'] = implode( '', $body );
-						$data['size'] = EmailUtil::getEmailSize( $data['content'] );
-						$bodyId = EmailBody::model()->add( $data, true );
-						if ( $bodyId ) {
-							$email = array(
-								'toid' => $web['uid'],
-								'isread' => 0,
-								'fid' => $web['fid'],
-								'isweb' => 1,
-								'bodyid' => $bodyId
-							);
-							Email::model()->add( $email );
-						}
-					}
-				}
-				EmailWeb::model()->updateByPk( $web['webid'], array( 'lastrectime' => TIMESTAMP ) );
-			}
-			return $count;
-		}
+        //检测imap扩展是否开启
+        if (!extension_loaded('imap'))
+            return 0;
+        /**
+         * 'webid' => string '15' (length=2)
+          'address' => string 'jxnuoh@163.com' (length=14)
+          'username' => string 'jxnuoh' (length=6)
+          'password' => string 'b538axNhzMgW82AqlJXEzkmfvZVjiMvK0nhFHPLwdGlpOH8XWmkUklLt' (length=56)
+          'smtpserver' => string 'smtp.163.com' (length=12)
+          'smtpport' => string '25' (length=2)
+          'smtpssl' => string '0' (length=1)
+          'server' => string 'pop.163.com' (length=11)
+          'port' => string '110' (length=3)
+          'ssl' => string '0' (length=1)
+          'uid' => string '1' (length=1)
+          'nickname' => string 'fdsf' (length=4)
+          'lastrectime' => string '0' (length=1)
+          'fid' => string '19' (length=2)
+          'isdefault' => string '0' (length=1)
+         */
+        self::$_web = $web;
+        @set_time_limit(0);
+        //ignore_user_abort(true);
+        list($prefix,, ) = explode('.', $web['server']);
+        $user = User::model()->fetchByUid($web['uid']);
+        $pwd = String::authCode($web['password'], 'DECODE', $user['salt']); //解密
+
+        /**
+         * email 接收代码改写
+         * 15-8-25 上午9:14 gzdzl
+         */
+        $host = $web['server'];
+        $port = $web['port'];
+        $user = $web['address'];
+        $ssl = $web['ssl'] == '1' ? true : false;
+
+        $webEmail = new WebEmail($host, $port, $user, $pwd, $ssl, $prefix);
+        if ($webEmail->isConnected()) {
+            //var_dump($webEmail->getMessages());
+            $emails = $webEmail->getMessages();
+            foreach ($emails as $email) {
+                file_put_contents('email.txt', var_export($email, true));
+                $data['subject'] = $email['subject'];
+                $data['sendtime'] = strtotime($email['date']);
+                $data['towebmail'] = $web['address'];
+                $data['issend'] = 1;
+                $data['fromid'] = $data['secrettoids'] = '';
+                $data['fromwebmail'] = EmailLang::langGetParseAddressList($email['from']);
+                //收件人
+                $data['toids'] = isset($email['to']) ? serialize($email['to']) : '';
+                /**
+                 * @TODO 获取附件，现在怎么保存
+                 * 如果邮件有附件，添加邮件附件信息
+                 */
+                $data['remoteattachment'] = isset($email['attachments']) ? serialize($email['attachments'])
+                            : null;
+                //抄送人
+                $data['copytoids'] = isset($email['cc']) ? serialize($email['cc'])
+                            : '';
+                //TODO qq邮箱的body是中文时有问题，会得到空串
+                $data['content'] = $email['body'];
+                //邮件大小(body)
+                $data['size'] = strlen($data['content']);
+                //检查是否收取过（可以放在前面）
+                if (!EmailBody::isExist($data['sendtime'], $data['fromwebmail'])) {
+                    $bodyId = EmailBody::model()->add($data, true);
+                    if ($bodyId) {//邮件信息添加成功
+                        $emailData = array(
+                            'toid' => $web['uid'],
+                            'isread' => 0,
+                            'fid' => $web['fid'],
+                            'isweb' => 1,
+                            'bodyid' => $bodyId
+                        );
+                        Email2::model()->add($emailData);
+                    }
+                }
+                EmailWeb::model()->updateByPk($web['webid'],
+                        array('lastrectime' => TIMESTAMP));
+            }
+            return $webEmail->countMessages();
+        }
+        return 0;
+
+        /*
+          //按类型加载所用的函数库
+          if ($prefix == 'imap') {
+          $obj = new WebMailImap();
+          } else {
+          $obj = new WebMailPop();
+          }
+          $conn = $obj->connect($web['server'], $web['username'], $pwd,
+          $web['ssl'], $web['port'], 'plain');
+          if (!$conn) {
+          return implode(',', $obj->getError());
+          } else {
+          $totalNum = $obj->countMessages($conn, 'INBOX');
+          if ($totalNum > 0) {
+          $messagesStr = "1:" . $totalNum;
+          } else {
+          $messagesStr = "";
+          }
+          /* 获取头部
+          if ($messagesStr != "") {
+          $headers = $obj->fetchHeaders($conn, 'INBOX', $messagesStr);
+          $headers = $obj->sortHeaders($headers, 'DATE', 'DESC');  //if not from index array
+          } else {
+          $headers = false;
+          }
+          if ($headers == false) {
+          $headers = array();
+          }
+          $count = 0;
+          if (count($headers) > 0) {
+          while (list ($key, $val) = each($headers)) {
+          $header = $headers[$key];
+          $time = $header->timestamp + 28800; //比林威治标准时间慢8小时，故加多8小时
+          if ($web['lastrectime'] == 0 || $web['lastrectime'] < $time) {
+          $count++;
+          $data = array();
+          $data['subject'] = str_replace(array('<', '>'),
+          array('&lt;', '&gt;'),
+          EmailLang::langDecodeSubject($header->subject,
+          CHARSET));
+          $encode = mb_detect_encoding($data['subject'],
+          array('ASCII', 'UTF-8', 'GB2312', 'GBK', 'BIG5'));
+          $data['subject'] = Convert::iIconv($data['subject'],
+          $encode, CHARSET);
+          $data['sendtime'] = $time;
+          $data['towebmail'] = $web['address'];
+          $data['issend'] = 1;
+          $data['fromid'] = $data['secrettoids'] = '';
+          $data['fromwebmail'] = EmailLang::langGetParseAddressList($header->from);
+          if (isset($header->to) && !empty($header->to)) {
+          $data['toids'] = EmailLang::langGetParseAddressList($header->to,
+          ',');
+          } else {
+          $data['toids'] = '';
+          }
+          if (isset($header->cc) && !empty($header->cc)) {
+          $data['copytoids'] = EmailLang::langGetParseAddressList($header->cc,
+          ',');
+          } else {
+          $data['copytoids'] = '';
+          }
+          $body = self::getBody($header->id, $conn, $obj, $header);
+          $data['content'] = implode('', $body);
+          $data['size'] = EmailUtil::getEmailSize($data['content']);
+          $bodyId = EmailBody::model()->add($data, true);
+          if ($bodyId) {
+          $email = array(
+          'toid' => $web['uid'],
+          'isread' => 0,
+          'fid' => $web['fid'],
+          'isweb' => 1,
+          'bodyid' => $bodyId
+          );
+          Email::model()->add($email);
+          }
+          }
+          }
+          EmailWeb::model()->updateByPk($web['webid'],
+          array('lastrectime' => TIMESTAMP));
+          }
+          return $count;
+          }
+         */
 	}
 
 	/**
@@ -654,6 +763,7 @@ EOT;
 		$user = User::model()->fetchByUid( $web['uid'] );
 		$password = String::authCode( $web['password'], 'DECODE', $user['salt'] );
 		$mailer = IBOS::createComponent( 'application\modules\email\extensions\mailer\EMailer' );
+        $mailer = new \application\modules\email\extensions\mailer\EMailer();
 		$mailer->IsSMTP();
 		$mailer->SMTPDebug = 0;
 		$mailer->Host = $web['smtpserver'];

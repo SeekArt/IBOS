@@ -456,7 +456,7 @@ $(function(){
 			right: "agendaDay,agendaWeek,month"
 		},
 		hiddenDays: Ibos.app.g("calSettings").hiddenDays,
-		defaultView: "agendaWeek",//日历初始化时默认视图 agendaWeek（周视图）
+		defaultView: U.getCookie("schedule_state") ? U.getCookie("schedule_state") : "agendaWeek",//日历初始化时默认视图 /agendaWeek（周视图/ 获取cookie的schedule_state来初始化视图
 		timezone: "local",
 		scrollTime: "07:00:00",
 		allDayText: "",//定义日历上方显示全天信息的文本
@@ -554,7 +554,7 @@ $(function(){
 					view.name = "";
 					ins.changeView(name);
 					Ui.tip("@OPERATION_SUCCESS");
-				 })
+				 });
 			},
 			cancel: true,
 			padding: "20px"
@@ -571,7 +571,7 @@ $(function(){
 	$listButton.on("click", function(){
 		//将日程控件的内容隐藏，显示日程列表
 		$(".fc-view").children().hide();
-		$(".fc-view").append("<div class='cal-content'></div>")
+		$(".fc-view").append("<div class='cal-content'></div>");
 		$(".fc-header-center").hide();
 		$(".fc-button").removeClass("fc-state-active");
 
@@ -604,6 +604,10 @@ $(function(){
 
 	//点击日程类型(日，周，月)时，显示范围选择按钮
 	$(".fc-button").on("click", function(){
+		var state = this.className.split(" ")[1].substr(10);
+		if( $.inArray(state, settings.header.right.split(",") ) >=0 ){
+			U.setCookie("schedule_state", state);
+		}
 		$(".fc-header-center").show();
 		$(".fc-view").children().show();
 		$(".cal-content").hide();

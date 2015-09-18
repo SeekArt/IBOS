@@ -1,7 +1,15 @@
 <link href="<?php echo $this->getAssetUrl(); ?>/css/ibosco.css" type="text/css" rel="stylesheet">
 <div class="ct">
 	<div class="clearfix">
-		<h1 class="mt">绑定酷办公，体验真正的移动办公！</h1>
+		<h1 class="mt">酷办公</h1>
+		<ul class="mn">
+			<li>
+				<span>酷办公绑定</span>
+			</li>
+			<li>
+				<a href="<?php echo $this->createUrl( 'cosync/index' ) ?>">部门及用户同步</a>
+			</li>
+		</ul>
 	</div>
 	<div>
 		<!-- 企业信息 start -->

@@ -1,7 +1,15 @@
 <link href="<?php echo $this->getAssetUrl(); ?>/css/ibosco.css" type="text/css" rel="stylesheet">
 <div class="ct">
 	<div class="clearfix">
-		<h1 class="mt">绑定酷办公，体验真正的移动办公！</h1>
+		<h1 class="mt">酷办公</h1>
+		<ul class="mn">
+			<li>
+				<span>酷办公绑定</span>
+			</li>
+			<li>
+				<a href="<?php echo $this->createUrl( 'cosync/index' ) ?>">部门及用户同步</a>
+			</li>
+		</ul>
 	</div>
 	<div>
 		<!-- 企业信息 start -->
@@ -32,9 +40,25 @@
 					<?php endif; ?>
 				</div>
 				<?php if ( $op == 'index' ): ?>
+				<?php if($op == "first"){ ?>
 					<div id="rbox_box">
 						<!-- 酷办公账号匹配，登录成功 -->
 						<div class="rbox-box">
+							<!-- 如果是第一次未同步的 -->
+							<div>
+								<p class="xac fsl first-box">哎呀，你还没同步部门及用户哦！</p>
+								<hr>
+								<div class="xac">
+									<a class="btn btn-primary" href="<?php echo $this->createUrl( 'cosync/index' ) ?>">同步部门及用户</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php }else{ ?>
+					<div id="rbox_box">
+						<!-- 酷办公账号匹配，登录成功 -->
+						<div class="rbox-box">
+							<!-- 同步以后 -->
 							<div class="clearfix">
 								<div class="rinfo-box">
 									<p class="tits">已绑定</p>
@@ -53,6 +77,8 @@
 								<button type="button" class="btn btn-primary binding-btn" data-action="bindingIbosCo" data-token="<?php echo $data['accesstoken'] ?>">绑定酷办公用户</button>
 							</div>
 						</div>
+					</div>	
+				<?php } ?>
 					<?php endif; ?>
 					<?php if ( $op == 'unbindingoa' ): ?>
 						<!-- 本地没有绑定酷办公，但酷办公已绑定其他OA -->
@@ -103,7 +129,7 @@
 									</div>
 								</div>
 								<div class="warning-box-footer">
-									<a href="">
+									<a href="<?php echo $this->createUrl( 'cobinding/login' ); ?>">
 										<i class="o-link-logo"></i>
 										<span>重新登陆</span>
 									</a>
@@ -202,9 +228,8 @@
 <script type="text/javascript">
 	$(function() {
 		Ibos.app.s({
-			"CoCompanyName": "优网科技",
-			"IbosCompanyName": "优网科技",
-			"csrftoken": "123"
+	"CoCompanyName": "<?php echo $data['corpshortname']; ?>",
+	"IbosCompanyName": "<?php echo $data['corpshortname']; ?>"
 		});
 	});
 </script>

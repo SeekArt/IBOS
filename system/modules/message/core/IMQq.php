@@ -22,6 +22,7 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
+use CJSON;
 use Exception;
 
 class IMQq extends IM {
@@ -43,8 +44,10 @@ class IMQq extends IM {
                 return true;
             } else {
                 if ( !empty( $config['id'] ) && !empty( $config['token'] ) ) {
-                    $info = $this->getApi()->getCorBase();
-                    if ( isset( $info['ret'] ) && $info['ret'] == 0 ) {
+					$res = $this->getApi()->getCorBase();
+					if ( !is_array( $res ) ) {
+						$info = CJSON::decode( $res, true );
+						if ( isset( $info['ret'] ) && $info['ret'] == '0' ) {
                         return true;
                     }
                 }
@@ -138,13 +141,15 @@ EOT;
                     'mobile' => $user['mobile']
                 );
                 $result = $this->getApi()->addAccount( $data );
-                $res = json_decode( $result, true );
+				if ( !is_array( $result ) ) {
+					$res = CJSON::decode( $result, true );
                 if ( isset( $res['ret'] ) ) {
                     if ( $res['ret'] == 0 ) {
                         $this->setBinding( $user['uid'], implode( ',', $res['data'] ) );
                         $count++;
                     } else {
                         $this->setError( $res['msg'], self::ERROR_SYNC );
+						}
                     }
                 }
             }
@@ -171,12 +176,15 @@ EOT;
         try {
             foreach ( $users as $user ) {
                 $openId = UserBinding::model()->fetchBindValue( $user['uid'], 'bqq' );
-                $res = $this->getApi()->setStatus( $openId, $flag );
+				$re = $this->getApi()->setStatus( $openId, $flag );
+				if ( !is_array( $re ) ) {
+					$res = CJSON::decode( $re, true );
                 if ( isset( $res['ret'] ) ) {
                     if ( $res['ret'] == 0 ) {
                         $count++;
                     } else {
                         $this->setError( $res['msg'], self::ERROR_SYNC );
+						}
                     }
                 }
             }

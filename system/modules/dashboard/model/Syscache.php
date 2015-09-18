@@ -76,13 +76,11 @@ class Syscache extends Model {
         //如果缓存中存在数据
         if ( empty( $newArray ) ) {
             foreach ( $data as &$cache ) {
-                $isSerialized = ($cache == serialize( false ) || @unserialize( $cache ) !== false);
+				$isSerialized = @unserialize( $cache ) !== false;
                 $cache = $isSerialized ? unserialize( $cache ) : $cache;
             }
             //返回数据
             return $data;
-        } else {
-            $cacheNames = $newArray;
         }
         // 不存在缓存中，则查找syscache中的信息
         $caches = $this->fetchAll( sprintf( "FIND_IN_SET(name,'%s')", implode( ',', $cacheNames ) ) );
@@ -92,13 +90,7 @@ class Syscache extends Model {
                 //把数据写到缓存中
                 Cache::set( $sysCache['name'], $data[$sysCache['name']] );
             }
-            foreach ( $cacheNames as $name ) {
-                if ( $data[$name] === null ) {
-                    $data[$name] = null;
-                    Cache::rm( $name );
                 }
-            }
-        }
         return $data;
     }
 

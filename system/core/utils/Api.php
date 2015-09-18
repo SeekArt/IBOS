@@ -90,7 +90,12 @@ class Api extends System {
 		curl_setopt_array( $ch, $opt );
 		$result = curl_exec( $ch );
 		if ( $result === false ) {
-			return 'error:' . curl_error( $ch );
+			$curl_errno = curl_errno( $ch );
+			$curl_error = curl_error( $ch );
+			return array(
+				'error' => ApiCode::getInstance()->getCurlMsg( $curl_errno, $curl_error ),
+				'errno' => $curl_errno,
+			);
 		}
 		curl_close( $ch );
 		return $result;

@@ -156,7 +156,7 @@ Class LoopController extends BaseController {
         $endtime = Env::getRequest( 'endtimes' );  //循环结束时间
         $category = Env::getRequest( 'category' );  //颜色分类
         $getSetday = Env::getRequest( 'setday' );  //添加循环事务的日期
-        $setday = empty( $getSetday ) ? date( 'Y-m-h' ) : $getSetday;  //
+        $setday = empty( $getSetday ) ? date( 'Y-m-d' ) : $getSetday;  //
         $reply = Env::getRequest( 'reply' );
         $getRBegin = Env::getRequest( 'recurringbegin' );
         $rBegin = empty( $getRBegin ) ? time() : strtotime( $getRBegin );

@@ -14,14 +14,14 @@ class FailedLogin extends Model {
         return '{{failedlogin}}';
     }
 
-    /**
-     * 
-     * @param type $ip
-     * @return type
-     */
-    public function fetchIp( $ip ) {
+	/**
+	 * 
+	 * @param type $username
+	 * @return type 
+	 */
+	public function fetchUsername( $username ) {
         $criteria = array(
-            'condition' => sprintf( "ip='%s'", $ip )
+			'condition' => sprintf( "username='%s'" , $username )
         );
         return $this->fetch( $criteria );
     }
@@ -41,9 +41,9 @@ class FailedLogin extends Model {
      * 
      * @param string $ip
      */
-    public function updateFailed( $ip ) {
+	public function updateFailed( $username ){
         return $this->getDbConnection()->createCommand()
-                        ->setText( sprintf( "UPDATE %s SET count=count+1, lastupdate=%d WHERE ip='%s'", $this->tableName(), TIMESTAMP, $ip ) )
+				       ->setText( sprintf( "UPDATE %s SET count=count+1, lastupdate=%d WHERE username='%s'", $this->tableName(), TIMESTAMP, $username ) )
                         ->execute();
     }
 

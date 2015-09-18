@@ -103,11 +103,11 @@ class Role {
      * @return array 角色权限数组，键是路由 (e.g:module/controller/action),值为>0的升序数值
      */
     public static function getPurv( $roleId ) {
-        $access = Cache::get( 'purv_' . $roleId );
-        if ( !$access ) {
+        //$access = Cache::get( 'purv_' . $roleId );
+        //if ( !$access ) {
             $access = IBOS::app()->getAuthManager()->getItemChildren( $roleId );
             Cache::set( 'purv_' . $roleId, array_flip( array_map( 'strtolower', array_keys( $access ) ) ) );
-        }
+        //}
         return $access;
     }
 

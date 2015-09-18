@@ -110,6 +110,17 @@ class Module {
             $modelSql = file_get_contents( $modelSqlFile );
             self::executeSql( $modelSql );
         }
+		/**
+		 * 执行额外的sql语句
+		 */
+		$sqlFiles = glob( $installPath . '*.sql' );
+		foreach ( $sqlFiles as $sqlFile ) {
+			if ( file_exists( $sqlFile ) && $sqlFile != $installPath . 'model.sql' ) {
+				$modelSql = file_get_contents( $sqlFile );
+				self::executeSql( $modelSql );
+			}
+		}
+
         // 处理模块配置，写入数据
         $config = require $installPath . 'config.php';
         // 是否有模块图标文件,有的话写入数据库标识避免以后的引用判断
@@ -404,7 +415,7 @@ class Module {
      * 执行mysql.sql文件，创建数据表等
      * @param string $sql sql语句
      */
-    private static function executeSql( $sql ) {
+	public static function executeSql( $sql ) {
         $sqls = String::splitSql( $sql );
         $command = IBOS::app()->db->createCommand();
         if ( is_array( $sqls ) ) {

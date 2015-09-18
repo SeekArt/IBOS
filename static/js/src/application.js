@@ -235,30 +235,8 @@
 		// 当有未读新提醒时，标题闪动
 		if(data.unread_total > 0) {
 			Ui.blinkTitle(Ibos.l("NOTIFY.UNREAD_TOTAL", { count: data.unread_total }));
-
-			// 如果支持窗口通知且已获得权限
-			var n = window.webkitNotifications;
-
-			if(n && n.checkPermission() === 0 && U.getCookie("allow_desktop_notify") == "1") {
-				var title = Ibos.l("NOTIFY.UNREAD_TOTAL", { count: data.unread_total }),
-					content = Ibos.l("NOTIFY.TO_VIEW");
-
-				var noti = n.createNotification(Ibos.app.getStaticUrl("/image/logo_pic.png"), title, content);
-
-				noti.onclick = function(){
-					window.focus();
-					window.open(Ibos.app.url("message/notify/index"))
-				}
-
-				noti.ondisplay = function(evt){
-					setTimeout(function(){
-						evt.currentTarget.cancel();
-					}, 1e4);
-				}
-
-				noti.replaceId = "noti_msg";
-				noti.show();
-			}
+			// 浏览器窗口通知
+			// Ui.Notification.show(Ibos.l("NOTIFY.UNREAD_TOTAL", { count: data.unread_total }), Ibos.l("NOTIFY.TO_VIEW"));
 		} else {
 			Ui.blinkTitle(false);
 		}

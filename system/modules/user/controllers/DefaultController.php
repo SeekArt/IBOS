@@ -106,6 +106,19 @@ class DefaultController extends Controller {
 		} else {
 			// 用户名
 			$userName = util\Env::getRequest( 'username' );
+
+			/**
+			 * 15-7-27 下午2:58 gzdzl 添加转义
+			 * 如果有单引号就直接当做用户名不存在错误
+			 * userName中存在奇数个单引号会报错，使用addslashes转义后
+			 * 在没有找到对应账号时，会添加进登录失败表记录下来
+			 * 在同一个ip和同一个错误账号登录失败时，添加进表中会报错（数据完整性，主键重复）
+			 * 为了简单起见，直接把userName中含有单引号的都当做错误账号
+			 */
+			if ( preg_match( '/[\']+/', $userName ) ) {
+				$this->error( util\IBOS::lang( 'User not fount', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => 0 ) );
+			}
+
 			// 登录类型
 			if ( String::isMobile( $userName ) ) {
 				$loginType = 4;
@@ -280,17 +293,18 @@ class DefaultController extends Controller {
 	 * @param array $account
 	 * @return integer
 	 */
-	protected function loginCheck( $account ) {
+	protected function loginCheck( $account, $username ) {
 		$return = 0;
 		if ( $account['errorlimit'] != 0 ) {
+			$login = FailedLogin::model()->fetchUsername( $username );
 			$ip = util\IBOS::app()->setting->get( 'clientip' );
-			$login = FailedLogin::model()->fetchIp( $ip );
 			$errrepeat = intval( $account['errorrepeat'] );
 			$errTime = $account['errortime'] * 60;
 			$return = (!$login || (TIMESTAMP - $login['lastupdate'] > $errTime)) ? $errrepeat : max( 0, $errrepeat - $login['count'] );
 			if ( !$login ) {
 				FailedLogin::model()->add( array(
 					'ip' => $ip,
+					'username' => $username,
 					'count' => 0,
 					'lastupdate' => TIMESTAMP
 				) );
@@ -298,6 +312,7 @@ class DefaultController extends Controller {
 				FailedLogin::model()->deleteOld( $errTime + 1 );
 				FailedLogin::model()->add( array(
 					'ip' => $ip,
+					'username' => $username,
 					'count' => 0,
 					'lastupdate' => TIMESTAMP
 				) );

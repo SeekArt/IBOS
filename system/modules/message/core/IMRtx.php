@@ -22,6 +22,9 @@ use application\core\utils\Convert;
 use application\core\utils\IBOS;
 use application\modules\user\model\User;
 use application\modules\department\utils\Department as DepartmentUtil;
+use application\modules\message\utils\RtxDept as RtxDeptUtil;
+use application\modules\message\utils\RtxUser as RtxUserUtil;
+use application\core\utils\Env;
 
 class IMRtx extends IM {
 
@@ -43,10 +46,22 @@ class IMRtx extends IM {
      */
     private $users = array();
 
-    /**
-     * 
-     * @param type $flag
-     */
+	/**
+	 * rtx 用户管理
+	 * @var type 
+	 */
+	private $_userManager;
+
+	/**
+	 * rtx部门管理
+	 * @var type 
+	 */
+	private $_deptManager;
+
+	/**
+	 * 
+	 * @param type $flag
+	 */
     public function setPwd( $pwd ) {
         $this->pwd = String::filterCleanHtml( $pwd );
     }
@@ -92,31 +107,61 @@ class IMRtx extends IM {
      * @return boolean
      */
     public function syncOrg() {
-        $obj = $this->getObj( false );
-        $obj->Name = "USERSYNC";
-        $rtxParam = new \COM( 'rtxserver.collection' );
-        $xmlDoc = new \DOMDocument( '1.0', 'GB2312' );
-        $xml = $this->makeOrgstructXml();
-        if ( $xml ) {
-            $xmlDoc->load( 'userdata.xml' );
-            $rtxParam->Add( "DATA", $xmlDoc->saveXML() );
-            $rs = $obj->Call2( 1, $rtxParam );
-            $newObj = $this->getObj();
-            try {
-                $u = $newObj->UserManager();
-                foreach ( $this->users as $user ) {
-                    $u->SetUserPwd( Convert::iIconv( $user, CHARSET, 'gbk' ), $this->pwd );
-                }
-                return true;
-            } catch (Exception $exc) {
-                $this->setError( '同步过程中出现未知错误', self::ERROR_SYNC );
-                return false;
-            }
-        } else {
-            $this->setError( '无法生成组织架构XML文件', self::ERROR_SYNC );
-            return false;
-        }
-    }
+		//读取缓存的部门信息，很容易发生错误，所以是直接读取数据库的信息
+		//$deptArr = DepartmentUtil::loadDepartment();
+		//读取配置信息
+		$config = $this->getConfig();
+		//获取部门信息,不去读取缓存
+		$depts = IBOS::app()->db->createCommand()
+				->select( array( 'deptid', 'deptname', 'pid' ) )
+				->from( '{{department}}' )
+				->queryAll();
+		//部门管理工具实例
+		$rtxDeptUtil = new RtxDeptUtil( $config['server'], $config['sdkport'] );
+		$countDept = 0; //统计添加成功的部门
+		foreach ( $depts as $dept ) {
+			//中文的必须是GBK编码
+			$dept['deptname'] = iconv( 'UTF-8', 'GBK', $dept['deptname'] );
+			//判断部门是否已经存在
+			if ( !$rtxDeptUtil->isExistDept( $dept['deptname'] ) ) {
+				//暂时不添加部门的说明信息
+				$result = $rtxDeptUtil->addDept( intval( $dept['pid'] ), intval( $dept['deptid'] ), $dept['deptname'], '' );
+				if ( $result ) {
+					$countDept++; //添加成功一个就加一
+				}
+				//TODO 根据result判断是否添加成功，再做相应的处理，错误处理
+			}
+		}
+		//=====添加用户到组织架构=====
+		//获取用户
+		$users = IBOS::app()->db->createCommand()
+				->select( array( 'uid', 'deptid', 'username' ) )
+				->from( '{{user}} u' )
+				->where( '`status` = 0' )
+				->queryAll();
+		//添加用户
+		//注意这里的端口
+		$rtxUserUtil = new RtxUserUtil( $config['server'], $config['appport'] );
+		$countUser = 0;
+		foreach ( $users as $user ) {
+			//中文必须是GBK编码的
+			$user['username'] = iconv( 'UTF-8', 'GBK', $user['username'] );
+			//用户是否已经存在
+			if ( !$rtxUserUtil->isExistUser( $user['username'] ) ) {
+				//添加用户
+				$result = $rtxUserUtil->addUser( $user['deptid'], $user['uid'], $user['username'], $this->pwd );
+				if ( $result ) {
+					$countUser++;
+				}
+				//TODO 判断是否添加成功，错误处理
+			}
+		}
+		//部门和用户有添加成功就返回true
+		if ( ($countDept + $countUser) > 0 ) {
+			return true;
+		}
+		return false;
+	}
 
     /**
      * 同步用户
@@ -129,14 +174,30 @@ class IMRtx extends IM {
                 $obj = $this->getObj();
                 $userObj = $obj->UserManager();
                 foreach ( $syncUsers as $user ) {
-                    $userName = Convert::iIconv( $user['username'], CHARSET, 'gbk' );
-                    // 同步增加人员
-                    if ( $syncFlag == 1 ) {
-                        $realName = Convert::iIconv( $user['realname'], CHARSET, 'gbk' );
-                        $userObj->AddUser( $userName, 0 );
-                        $userObj->SetUserPwd( $userName, $this->getPwd() );
-                        $userObj->SetUserBasicInfo( $userName, $realName, -1, $user['mobile'], $user['email'], $user['telephone'], 0 );
-                        // 暂时屏蔽同步用户部门，这部分很不稳定，容易出问题。原因未知 @banyan
+					$userName = Convert::iIconv( $user['username'], CHARSET, 'GBK' );
+					// 同步增加人员
+					if ( $syncFlag == 1 ) {
+						//======同步用户@author gzdzl======
+						//读取配置
+						$config = $this->getConfig();
+						//rtx用户管理对象
+						$rtxUser = new RtxUserUtil( $config['server'], $config['appport'] );
+						//登陆密码
+						$password = $this->getPwd();
+						//是否已经存在
+						if ( !$rtxUser->isExistUser( $userName ) ) {
+							//添加用户
+							$result = $rtxUser->addUser( $user['deptid'], $user['uid'], $userName, $password );
+							//TODO 是否添加成功，添加失败的处理
+						}
+						//======//同步用户======
+						//之前的代码
+						//$realName = Convert::iIconv($user['realname'], CHARSET, 'gbk');
+						//$userObj->AddUser($userName, 0);
+						//$password = $this->getPwd();
+						//$userObj->SetUserPwd($userName, $password);
+						// $userObj->SetUserBasicInfo($userName, $realName, -1, $user['mobile'], $user['email'], $user['telephone'], 0);
+						// 暂时屏蔽同步用户部门，这部分很不稳定，容易出问题。原因未知 @banyan
                     } else {
                         // 删除人员
                         if ( $userObj->IsUserExist( $userName ) ) {
@@ -243,7 +304,11 @@ EOT;
             if ( !isset( $url['scheme'] ) && !isset( $url['host'] ) ) {
                 $str .= IBOS::app()->setting->get( 'siteurl' );
             }
-            $content = sprintf( "[%s|%s]", $content, $str . $this->getUrl() );
+			//15-7-28 下午7:10 gzdzl
+			//这里获取到的url地址有错误
+			//去掉问号（?）之前的字符
+			$pathUrl = substr( $this->getUrl(), strpos( $this->getUrl(), '?' ) );
+			$content = sprintf( "[%s|%s]", $content, $str . $pathUrl );
         }
         return Convert::iIconv( $content, CHARSET, 'gbk' );
     }
@@ -324,5 +389,56 @@ EOT;
         }
         return $str;
     }
+
+	private function addUserToRtx() {
+		//添加用户到组织架构中
+		//获取用户
+		$querys = IBOS::app()->db->createCommand()
+				->select( 'uid' )
+				->from( '{{user}} u' )
+				->where( '`status` = 0' )
+				->queryAll();
+		//添加用户
+		foreach ( $querys as $row ) {
+			//获取了很多没有必要的数据，有待优化
+			$user = User::model()->fetchByUid( $row['uid'] );
+			//添加用户之前判断是否已经存在该用户，如果已经存在是会出错的
+			// $userManager = $newObj->UserManager;
+			//编码一致
+			$nickname = iconv( 'UTF-8', 'GBK', $user['username'] );
+			//不存在才添加进去
+			$rtx = $this->getObj();
+			$userManager = $rtx->UserManager;
+			if ( !$userManager->IsUserExist( $nickname ) ) {
+				$gender = $user['gender'] == '1' ? 0 : 1;
+				//防止乱码
+				$username = iconv( 'UTF-8', 'GBK', $user['realname'] );
+				$userManager->AddUser( $nickname, 0 ); //添加用户，第二个参数给了例子是写0，暂时还知道用来干嘛的
+				$userManager->SetUserPwd( $nickname, $this->pwd ); //设置用户密码
+				//str1是手机，str2是email，str3是电话
+				//nickname是告诉设置哪一个用户的基本信息
+				//第三个参数应该是性别：0是男，1是女
+				//最后一个参数是认证类型：0本地认证，其他的貌似都是第三方认证（其他的不测试了）
+				//$UserManagerObj -> SetUserBasicInfo($nickname, $username, $gender, 'str1','str2','str3',0);
+				$userManager->SetUserBasicInfo( $nickname, $username, $gender, $user['mobile'], $user['email'], '', 0 );
+
+				//添加到部门（没有设置部门信息RTX会默认放到：顶级部门架构）
+				//在部门架构下的用户无法在rtx客户端中显示，必须是属于某一个部门
+				$queryDeptName = IBOS::app()->db->createCommand()
+						->select( 'deptname' )
+						->from( '{{department}}' )
+						->where( '`deptid` =' . $user['deptid'] )
+						->queryAll();
+				//查到有部门才设置用户部门，不设置的话可以添加进去，但是不可以在客户端中显示
+				if ( !empty( $queryDeptName[0]['deptname'] ) ) {
+					$dept = iconv( 'UTF-8', 'GBK', $queryDeptName[0]['deptname'] );
+					$rtx = $this->getObj();
+					$deptManager = $rtx->DeptManager;
+					$deptManager->AddUserToDept( $nickname, "", $dept, false );
+				}
+			}
+		}
+		return true;
+	}
 
 }

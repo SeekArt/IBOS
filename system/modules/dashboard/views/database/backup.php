@@ -206,28 +206,4 @@
 		</form>
 	</div>
 </div>
-<script>
-	(function(window, $) {
-		// 显示更多提示
-		$("#tip_more_ctrl").on("click", function() {
-			$("#tip_more").toggle();
-			$(this).remove();
-		});
-
-		// 展开更多选项 
-		var backupMode = $("#backup_mode");
-		$("#more_option").on("change", function() {
-			backupMode.toggle()
-			$("#backup_option").toggle();
-		});
-
-		$("[type='radio']", backupMode).on("change", function() {
-			$("#file_size_limit").toggle();
-		});
-
-		$("#backup_type").find("[type='radio']").on("change", function() {
-			$("#table_list").toggle();
-		});
-
-	})(window, window.jQuery);
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_database.js"></script>

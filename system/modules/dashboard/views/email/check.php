@@ -11,7 +11,7 @@
 		</ul>
 	</div>
 	<div>
-		<form action="<?php echo $this->createUrl( 'email/check' ); ?>" method='post' class="form-horizontal">
+		<form action="<?php echo $this->createUrl( 'email/check' ); ?>" method='post' class="form-horizontal" id="email_test_send">
 			<!-- 检测邮件发送设置 start -->
 			<div class="ctb">
 				<h2 class="st"><?php echo $lang['Check email setup']; ?></h2>
@@ -21,7 +21,7 @@
 							<?php echo $lang['Test sender']; ?>
 						</label>
 						<div class="controls">
-							<input name='testfrom' type="text">
+							<input name='testfrom' id="testfrom" type="text">
 						</div>
 					</div>
 					<div class="control-group">
@@ -29,7 +29,7 @@
 							<?php echo $lang['Test recipient']; ?>
 						</label>
 						<div class="controls">
-							<textarea name="testto" rows="3"></textarea>
+							<textarea name="testto" id="testto" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="control-group">
@@ -43,3 +43,6 @@
 		</form>
 	</div>
 </div>
+
+<script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
+<script src="<?php echo $assetUrl; ?>/js/db_email.js"></script>

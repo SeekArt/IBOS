@@ -259,7 +259,8 @@ class BaseController extends Controller {
 			$search = $_POST['search'];
 			$this->_condition = DiaryUtil::joinSearchCondition( $search );
 		} else if ( $type == 'normal_search' ) {
-			$keyword = $_POST['keyword'];
+                                                          //15-7-27 下午2:19 gzdzl 添加转义，防止SQL错误
+			$keyword = addslashes( isset( $_POST['keyword'] ) ? $_POST['keyword'] : null );
 			MainUtil::setCookie( 'keyword', $keyword, 10 * 60 );
 			$this->_condition = " content LIKE '%$keyword%' ";
 		} else {

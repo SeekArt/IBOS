@@ -60,13 +60,13 @@ class News extends Callback {
 			$items[0] = array(
 				'title' => "公司新闻(" . count( $lists ) . ")",
 				'description' => '',
-				'picurl' => 'http://www.ibos.com.cn/images/wx/news.png',
+				'picurl' => 'http://app.ibos.cn/img/banner/news.png',
 				'url' => ''
 			);
 			foreach ( $lists as $key => $row ) {
 				$key++;
-				$picUrl = 'http://www.ibos.com.cn/images/wx/' . $key . '.png';
-				$route = 'http://www.ibos.com.cn/qiyehao_new/?host=' . urlencode( $hostinfo ) . '/#/news/detail/' . $row['articleid'];
+				$picUrl = 'http://app.ibos.cn/img/sort/' . $key . '.png';
+				$route = 'http://app.ibos.cn?host=' . urlencode( $hostinfo ) . '/#/news/detail/' . $row['articleid'];
 				$item = array(
 					'title' => $row['subject'],
 					'description' => String::cutStr( strip_tags( $row['content'] ), 30 ),

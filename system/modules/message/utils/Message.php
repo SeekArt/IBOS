@@ -24,6 +24,7 @@ use application\modules\main\model\Setting;
 use application\modules\message\core as MessageCore;
 use application\modules\message\model\NotifySms;
 use application\modules\user\model\User;
+use CJSON;
 
 class Message {
 
@@ -62,7 +63,11 @@ class Message {
             );
             $rs = Cloud::getInstance()->fetchPush( $params );
             $data['posturl'] = Cloud::getInstance()->getUrl();
+			if ( !is_array( $rs ) ) {
             $data['return'] = $rs;
+			} else {
+				$data['return'] = CJSON::encode( $rs );
+			}
             NotifySms::model()->sendSms( $data );
             return true;
         } else {

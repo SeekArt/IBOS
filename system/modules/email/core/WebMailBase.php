@@ -202,6 +202,7 @@ class ICWebMailConnection {
 	public $selected;
 	public $cacheFP;
 	public $cacheMode;
+    public $message;
 
 }
 

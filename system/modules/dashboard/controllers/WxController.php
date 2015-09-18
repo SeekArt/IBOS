@@ -20,6 +20,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\WebSite;
 use application\modules\main\model\Setting;
 use application\modules\message\core\wx\WxApi;
+use CJSON;
 
 class WxController extends BaseController {
 
@@ -39,7 +40,8 @@ class WxController extends BaseController {
 		$aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 		$url = 'Api/WxCorp/isBinding';
 		$res = WebSite::getInstance()->fetch( $url, array( 'aeskey' => $aeskey ) );
-		$result = json_decode( $res, true );
+		if ( !is_array( $res ) ) {
+			$result = CJSON::decode( $res, true );
 		switch ( $result['type'] ) {
 			case 1 :
 				Setting::model()->updateSettingValueByKey( 'corpid', $result['corpid'] );
@@ -56,6 +58,7 @@ class WxController extends BaseController {
 				$this->msg = $result['msg'];
 				break;
 		}
+	}
 	}
 
 }

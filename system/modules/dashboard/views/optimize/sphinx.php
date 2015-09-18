@@ -43,20 +43,4 @@
 		</div>
 	</div>
 </div>
-<script>
-	(function() {
-		// 鼠标经过提示
-		$('#sphinxHost').popover({
-			title: U.lang("DB.TIP"),
-			content: U.lang("DB.SPHINX_HOST_TIP"),
-			trigger: "focus",
-			placement: 'top'
-		});
-		$("#sphinxPort").popover({
-			title: U.lang("DB.TIP"),
-			content: U.lang("DB.SPHINX_PORT_TIP"),
-			trigger: "focus",
-			placement: 'top'
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_optimize.js"></script>

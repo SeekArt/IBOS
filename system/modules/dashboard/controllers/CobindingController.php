@@ -17,16 +17,14 @@
 
 namespace application\modules\dashboard\controllers;
 
-use application\core\utils\WebSite;
-use application\core\utils\Convert;
+use application\core\model\Log;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\modules\user\model\User;
-use application\modules\user\model\UserBinding;
-use application\modules\user\utils\User as UserUtil;
+use application\modules\main\model\Setting;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
-use application\modules\main\model\Setting;
+use application\modules\user\model\UserBinding;
+use application\modules\user\utils\User as UserUtil;
 
 class CobindingController extends CoController {
 
@@ -121,7 +119,7 @@ class CobindingController extends CoController {
 			}
 		} else {
 			//根据Setting coinfo保存的accesstoken尝试登录
-			if ( $this->isBinding ) {
+			if ( $this->isBinding && !empty( $coinfo['mobile'] ) ) {
 				//说明过期，获取本地保存的mobile，写成readonly形式
 				$this->render( 'login', array( 'mobile' => $coinfo['mobile'], 'readonly' => true ) );
 			} else {
@@ -172,7 +170,7 @@ class CobindingController extends CoController {
 		$password = Env::getRequest( 'password' );
 		if ( $this->isBinding ) {
 			$coinfo = unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-			if ( $coinfo['mobile'] != $mobile ) {
+			if ( !empty( $coinfo['mobile'] ) && $coinfo['mobile'] != $mobile ) {
 				$this->ajaxReturn( array(
 					'isSuccess' => false,
 					'msg' => '请用oa绑定的酷办公的超级管理员账号登录'
@@ -185,7 +183,6 @@ class CobindingController extends CoController {
 			if ( $this->isBinding ) {
 				$corpRes = CoApi::getInstance()->getCorpByCorpToken( $tokenRes['data']['corptoken'] );
 				$aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-				$unit = unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 				if ( !empty( $corpRes['data']['aeskey'] ) ) {
 					if ( strcmp( $aeskey, $corpRes['data']['aeskey'] ) != 0 ) {
 						$this->ajaxReturn( array(

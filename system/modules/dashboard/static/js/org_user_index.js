@@ -138,8 +138,8 @@ $(document).ready(function() {
 							success = res.successCount,
 							failure = res.errorCount;
 						$wrap.waiting(false);
-						$('#download_error_info').toggle(failure).attr("href", url);
-						$('#download_error_tip').toggle(failure);
+						$('#download_error_info').toggle(!!failure).attr("href", url);
+						$('#download_error_tip').toggle(!!failure);
 						$("#batch_result_wrap").show();
 						$importwrap.hide();
 						$("#import_success").text(success);
@@ -181,7 +181,7 @@ $(document).ready(function() {
 		"addDiyDom": function(treeId, treeNode) {
 			var aObj = $("#" + treeNode.tId + "_a");
 			var optBtn = "<span class='utree-opt-wrap'>" +
-					"<a href='" + Ibos.app.url('dashboard/department/edit', {'op': 'get', 'id': treeNode.deptid}) + "' title='" + Ibos.l("org.EDIT_DEPARTMENT_INFO") + "' class='o-org-ztree-edit opt-btn opt-edit-btn'></a>" +
+					"<a href='" + Ibos.app.url('dashboard/department/edit', {'op': 'get', 'id': treeNode.deptid}) + "' title='" + Ibos.l("ORG.EDIT_DEPARTMENT_INFO") + "' class='o-org-ztree-edit opt-btn opt-edit-btn'></a>" +
 					"<a href='javascript:;' title='" + Ibos.l("ORG.DELETE_DEPARTMENT_TIP") + "' class='o-org-ztree-del opt-btn opt-del-btn' data-action='delZtreeNode' data-deptname='" + treeNode.deptname + "' id='" + treeNode.deptid + "'></a>" +
 					"</span>";
 

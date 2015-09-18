@@ -181,21 +181,21 @@ class Env {
 	 * @param string $type 类型 默认是GP 即为 GET/POST
 	 * @return mixed 
 	 */
-	public static function getRequest( $key, $type = 'GP' ) {
+    public static function getRequest($key, $type = 'GP', $defaultValue = null) {
 		$type = strtoupper( $type );
 		$request = IBOS::app()->request;
 		switch ( $type ) {
 			case 'G':
-				$var = $request->getQuery( $key );
+                $var = $request->getQuery($key, $defaultValue);
 				break;
 			case 'P':
-				$var = $request->getPost( $key );
+                $var = $request->getPost($key, $defaultValue);
 				break;
 			case 'C':
-				$var = isset( $_COOKIE[$key] ) ? $_COOKIE[$key] : null;
+                $var = isset($_COOKIE[$key]) ? $_COOKIE[$key] : $defaultValue;
 				break;
 			default :
-				$var = $request->getParam( $key );
+                $var = $request->getParam($key, $defaultValue);
 				break;
 		}
 		return $var;

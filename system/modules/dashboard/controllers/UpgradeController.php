@@ -379,11 +379,11 @@ class UpgradeController extends BaseController {
 		//筛选更新文件
 		list($modifyList, $showList) = Upgrade::compareBasefile( $updateFileList );
 		$data['step'] = 3;
-		if ( empty( $modifyList ) && empty( $showList ) ) {
-			$msg = IBOS::lang( 'Filecheck nofound md5file' );
-			$this->render( 'upgradeError', array( 'msg' => $msg ) );
-			exit();
-		} else {
+//		if ( empty( $modifyList ) && empty( $showList ) ) {
+//			$msg = Ibos::lang( 'Filecheck nofound md5file' );
+//			$this->render( 'upgradeError', array( 'msg' => $msg ) );
+//			exit();
+//		} else {
 			$list = array();
 			foreach ( $updateFileList as $file ) {
 				if ( isset( $modifyList[$file] ) ) {
@@ -406,7 +406,7 @@ class UpgradeController extends BaseController {
 						'{savePath}' => $savePath,
 						'{backPath}' => $backPath )
 			);
-		}
+//		}
 		// 更新步骤缓存
 		Upgrade::recordStep( 3 );
 		$this->render( 'upgradeCompare', $data );

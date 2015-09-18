@@ -164,8 +164,8 @@ use application\modules\main\utils\Main;
 			    ok: function(){
 			        this.DOM.content.find("form").submit();
 			    },
-			})
-		})
+			});
+		});
 
 		
 		$("[data-toggle='tooltip']").tooltip();

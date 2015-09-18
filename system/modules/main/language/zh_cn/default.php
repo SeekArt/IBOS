@@ -5,6 +5,7 @@
  * @version $Id: default.php 3674 2014-06-12 05:59:39Z gzhzh $
  */
 return array(
+	'not post request' => '不是post请求',
 	'Manager my module' => '管理我的模块',
 	'Restore default' => '恢复默认',
 	'Back to top' => '回到顶部',

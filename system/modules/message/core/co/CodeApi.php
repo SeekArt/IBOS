@@ -6,7 +6,13 @@ namespace application\modules\message\core\co;
  */
 class CodeApi {
 
-	const SUCCESS = 0;  // 成功
+	/**
+	 * 目前只有成功的用上了，继续这块代码编写的注意了：
+	 * 如果哪个用上了，就把那个改成字符串
+	 * ps：对应的接口记得不要用数字去判断，php不喜欢字符串，
+	 * 如果在判断里用了这里的“code”，而这里的又写成了数字，php会强行把字符串变成数字，最明显的错误例子就是var_dump('1e2'==100);这个结果是true
+	 */
+	const SUCCESS = '0';  // 成功
 	const TOKEN_INVALID = -1; // token 验证错误
 	const TOKEN_EXPIRY = -2; // token 过期
 	const TOKEN_OUT_RANGE = -3; // token 超出权限范围

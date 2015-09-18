@@ -9,20 +9,68 @@
 
 var Email = {
 	op: {
+        /**
+         * 删除日志
+         * @method deldiary
+         * @param  {Object} param 传入JSON格式数据
+         * @return {Object}       返回deffered对象
+         */
 		addWebMailBox: function(params) {
-			return $.post(Ibos.app.url("email/web/add", { inajax: 1}), params, null, 'json')
-			.done(function(res) {
-				$(Email).trigger('addWebMailBox', {
-					res: res,
-					params: params
-				});
-			});
+			var url = Ibos.app.url("email/web/add");
+				param = $.extend( {}, params, { inajax : 1 } );
+			return $.post(url, param, $.noop, 'json')
+					.done(function(res) {
+						$(Email).trigger('addWebMailBox', {
+							res: res,
+							params: params
+						});
+					});
+		},
+        /**
+         * 获取计数器
+         * @method getRefreshCounter
+         * @return {Object}       返回deffered对象
+         */
+		getRefreshCounter : function(){
+			var url = Ibos.app.url('email/api/getCount');
+			return $.post(url, $.noop);
+		},
+		/**
+		 * 获取访问
+		 * @method postAccess
+		 * @param  {String} url   访问的地址
+		 * @param  {Object} param 传入JSON格式数据
+		 * @param  {String} type  返回的内容格式
+		 * @return {Object}       返回deffered对象
+		 */
+		postAccess : function(url, param, type){
+			return type ? $.post(url, param, $.noop, type) : $.post(url, param, $.noop);
+		},
+		/**
+		 * 获取访问
+		 * @method getAccess
+		 * @param  {String} url   访问的地址
+		 * @param  {Object} param 传入JSON格式数据
+		 * @param  {String} type  返回的内容格式
+		 * @return {Object}       返回deffered对象
+		 */
+		getAccess : function(url, param, type){
+			return type ? $.post(url, param, $.noop, type) : $.post(url, param, $.noop);
 		}
 	},
-
+	/**
+	 * 获取选择邮箱的ID
+	 * @method getCheckedId
+	 * @return {String} 返回选择的邮箱IDs
+	 */
 	getCheckedId: function() {
 		return U.getCheckedValue("email");
 	},
+	/**
+	 * 邮箱checkbox样式优化
+	 * @method select
+	 * @param  {Object} selector 传入jquery节点对象
+	 */
 	select: function(selector) {
 		var $cks = $("input[type='checkbox'][name='email']");
 		$cks.each(function() {
@@ -30,8 +78,12 @@ var Email = {
 			$elem.prop('checked', $elem.is(selector)).label('refresh');
 		});
 	},
+	/**
+	 * 刷新计数器
+	 * @method refreshCounter
+	 */
 	refreshCounter: function() {
-		$.post(Ibos.app.url('email/api/getCount'), function(res) {
+		Email.op.getRefreshCounter().done(function(res) {
 			for (var prop in res) {
 				if (res.hasOwnProperty(prop)) {
 					if (res[prop] === 0) {
@@ -43,16 +95,29 @@ var Email = {
 			}
 		});
 	},
+	/**
+	 * 删除数据
+	 * @method removeRows
+	 * @param  {String} ids 传入要删除数据ID
+	 */
 	removeRows: function(ids) {
 		var arr = ids.split(',');
 		for (var i = 0, len = arr.length; i < len; i++) {
 			$('#list_tr_' + arr[i]).remove();
 		}
 	},
+	/**
+	 * 访问地址
+	 * @method access
+	 * @param  {String}   url     访问地址
+	 * @param  {Object}   param   传入JSON格式数据
+	 * @param  {Function} success 成功后回调函数
+	 * @param  {String}   msg     传入confirm内信息
+	 */
 	access: function(url, param, success, msg) {
 		var emailIds = this.getCheckedId();
 		var _ajax = function(url, param, success) {
-			$.post(url, param, function(res) {
+			Email.op.postAccess(url, param).done(function(res) {
 				if (res.isSuccess) {
 					if (success && $.isFunction(success)) {
 						success.call(null, res, emailIds);
@@ -63,96 +128,145 @@ var Email = {
 					Ui.tip(res.errorMsg, 'danger');
 				}
 			});
-		}
+		};
 		if (emailIds !== '') {
 			param = $.extend({emailids: emailIds}, param);
 			if (msg) {
 				Ui.confirm(msg, function() {
 					_ajax(url, param, success);
-				})
+				});
 			} else {
 				_ajax(url, param, success);
 			}
 		} else {
 			Ui.tip(Ibos.l("SELECT_AT_LEAST_ONE_ITEM"), 'warning');
 		}
-	}
-};
-
-
-(function() {
-	// 定时更新未读条数
-	// setTimeout(Email.refreshCounter, 5000)
-
-
-	var _moveToFolder = function(param) {
+	},
+	/**
+	 * 移动到文件夹
+	 * @param  {Object} param 传入JSON格式数据
+	 */
+	moveToFolder : function(param) {
 		Email.access(param.url, {fid: param.fid}, function(res, emailIds) {
 			Email.removeRows(emailIds);
 		});
 	}
-
-	// 自定义文件夹
-	var folderList = {
-		$container: $('[data-node-type="folderList"]'),
-		_itemTpl: '<li data-node-type="folderItem" data-folder-id="<%=fid%>"><a href="<%=url%>" title="<%=text%>"><%=text%></a></li>',
-		_formatData: function(data){
-			return $.extend({ 
-				url: '', 
-				fid: '', 
-				text: ''
-			}, data)
-		},
-		addItem: function(data){
-			return $.tmpl(this._itemTpl, this._formatData(data)).hide().appendTo(this.$container).fadeIn();
-		},
-		removeItem: function(fid){
-			return this.$container.find('[data-node-type="folderItem"][data-folder-id="' + fid + '"]').fadeOut(function(){
-				$(this).remove();
-			});
-		},
-		updateItem: function(fid, data){
-			return this.$container.find('[data-node-type="folderItem"][data-folder-id="' + fid + '"]')
-			.replaceWith($.tmpl(this._itemTpl, this._formatData(data)))
-		}
+};
+// 自定义文件夹
+Email.folderList = {
+	$container: $('[data-node-type="folderList"]'),
+	_itemTpl: '<li data-node-type="folderItem" data-folder-id="<%=fid%>"><a href="<%=url%>" title="<%=text%>"><%=text%></a></li>',
+	/**
+	 * 格式化数据(内部使用)
+	 * @method  _formatData
+	 * @param  {Object} data 传入JSON格式数据
+	 */
+	_formatData: function(data){
+		return $.extend({ 
+			url: '', 
+			fid: '', 
+			text: ''
+		}, data);
+	},
+	/**
+	 * 添加文件夹
+	 * @method addItem
+	 * @param  {Object} data 传入JSON格式数据
+	 */
+	addItem: function(data){
+		return $.tmpl(this._itemTpl, this._formatData(data)).hide().appendTo(this.$container).fadeIn();
+	},
+	/**
+	 * 删除文件夹
+	 * @method removeItem
+	 * @param  {String} fid 传入要删除的文件夹ID
+	 * @return {Object}     返回jquery节点对象
+	 */
+	removeItem: function(fid){
+		return this.$container.find('[data-node-type="folderItem"][data-folder-id="' + fid + '"]')
+					.fadeOut(function(){
+						$(this).remove();
+					});
+	},
+	/**
+	 * 更新文件夹
+	 * @method updateItem
+	 * @param  {String} fid  传入要删除的文件夹ID
+	 * @param  {Object} data 传入JSON格式数据
+	 * @return {Object}      返回jquery节点对象
+	 */
+	updateItem: function(fid, data){
+		return this.$container.find('[data-node-type="folderItem"][data-folder-id="' + fid + '"]')
+					.replaceWith( $.tmpl( this._itemTpl, this._formatData(data) ) );
 	}
-
-	// “移动至”文件夹列表
-	var moveTargetList = {
+};
+/**
+ * “移动至”文件夹列表
+ * @method moveTargetList
+ * @type {Object}
+ */
+Email.moveTargetList = {
 		$container: $('[data-node-type="moveTargetList"]'),
 		_itemTpl: '<li data-node-type="moveTargetItem" data-id="<%=fid%>"><a href="javascript:;" data-click="moveToFolder" data-param="{&quot;fid&quot;:&quot;<%=fid%>&quot;,&quot;url&quot;: &quot;/?r=email/api/mark&amp;op=move&quot;}"><%=text%></a></li>',
+		/**
+		 * 格式化数据(内部使用)
+		 * @method  _formatData
+		 * @param  {Object} data 传入JSON格式数据
+		 */
 		_formatData: function(data){
 			return $.extend({ 
 				fid: '', 
 				text: ''
-			}, data)
+			}, data);
 		},
+
+		/**
+		 * 添加文件夹
+		 * @method addItem
+		 * @param  {Object} data 传入JSON格式数据
+		 */
 		addItem: function(data){
 			var $items = this.$container.find("li");
 			return $.tmpl(this._itemTpl, this._formatData(data)).hide().insertBefore($items.eq(-1)).fadeIn();
 		},
+		/**
+		 * 删除文件夹
+		 * @method removeItem
+		 * @param  {String} fid 传入要删除的文件夹ID
+		 * @return {Object}     返回jquery节点对象
+		 */
 		removeItem: function(fid){
 			return this.$container.find('[data-node-type="moveTargetItem"][data-id="' + fid + '"]').fadeOut(function(){
 				$(this).remove();
 			});
 		},
+		/**
+		 * 更新文件夹
+		 * @method updateItem
+		 * @param  {String} fid  传入要删除的文件夹ID
+		 * @param  {Object} data 传入JSON格式数据
+		 * @return {Object}      返回jquery节点对象
+		 */
 		updateItem: function(fid, data){
 			return this.$container.find('[data-node-type="moveTargetItem"][data-id="' + fid + '"]')
-			.replaceWith($.tmpl(this._itemTpl, this._formatData(data)))
+			.replaceWith($.tmpl(this._itemTpl, this._formatData(data)));
 		}
-	}
+	};
+
+(function() {
+	// 定时更新未读条数
+	// setTimeout(Email.refreshCounter, 5000)
 
 	var eventHandler = {
 		"click": {
 			// 切换 抄送、密送、外部收件人显隐状态
 			"toggleRec": function(elem, param) {
-				var $target = $("#" + param.targetId), $input = $("#" + param.inputId), value = $input.val();
-				if (value === "0") {
-					$input.val("1");
-					$target.show();
-				} else {
-					$input.val("0");
-					$target.hide();
-				}
+				var $target = $("#" + param.targetId), $input = $("#" + param.inputId), 
+					value = $input.val(),
+					isValue = value === "0";
+
+				$input.val( isValue ? "1" : "0" );
+				$target[ isValue ? "show" : "hide" ]();
 			},
 			// 切换发送人详细信息
 			"toggleSenderDetail": function(elem, param) {
@@ -172,58 +286,69 @@ var Email = {
 					$brief.hide(0, function() {
 						$detail.slideDown(speed);
 						$elem.addClass("active");
-					})
+					});
 				}
 			},
 			// 发送快捷回复
 			"sendQuickReply": function(elem, param) {
-				var $content = $("#" + param.targetId), content = $content.val();
+				var $content = $("#" + param.targetId), 
+					content = $content.val(),
+					url = param.url;
+				param = {
+					content: content,
+					formhash: param.formhash,
+					islocal: 1
+				};
 				if ($.trim(content) === "") {
 					Ui.tip(Ibos.l('EM.INPUT_REPLY'), 'danger');
 				} else {
-					$.post(param.url, {
-						content: content,
-						formhash: param.formhash,
-						islocal: 1
-					}, function(res) {
+					Email.op.postAccess(url, param).done(function(res) {
 						if (res.isSuccess) {
 							Ui.tip(Ibos.l("REPLY_SUCCESS"), 'success');
 							$content.val('');
 						} else {
 							Ui.tip(res.errorMsg, 'danger');
 						}
-					}, 'json');
+					}, "json");
 				}
 			},
 			// 删除一封邮件，需要传入邮件id，及删除操作的Url地址
 			"deleteOneEmail": function(elem, param) {
-				var msg = Ibos.l("EM.DELETE_EMAIL_CONFIRM"), data = {}, url = param.url;
-				if (param.emailids && param.url) {
-					$.post(url, param, function(res) {
+				var msg = Ibos.l("EM.DELETE_EMAIL_CONFIRM"), 
+					data = {}, 
+					url = param.url;
+
+				if (param.emailids && url) {
+					Email.op.postAccess(url, param).done(function(res) {
 						if (res.isSuccess) {
 							window.location.href = res.url;
 						} else {
 							Ui.tip(res.errorMsg, 'danger');
 						}
-					}, 'json');
+					}, "json");
 				} else {
 					Ui.tip(Ibos.l('PARAM_ERROR'), 'danger');
 				}
 			},
 			// 切换是否标记为待办
 			"toggleMark": function(elem, param) {
-				var $elem = $(elem), toMark = $elem.hasClass("o-unmark");
+				var $elem = $(elem), 
+					toMark = $elem.hasClass("o-unmark"),
+					url = param.url;
+				param = {ismark: toMark};
+
 				$elem.hide().parent().append($('#img_loading').clone().show());
-				$.post(param.url, {ismark: toMark}, function(data) {
-					if (data.isSuccess) {
+
+				Email.op.postAccess(url, param).done(function(res) {
+					if (res.isSuccess) {
 						$elem.attr({
 							'class': (toMark ? 'o-mark' : 'o-unmark')
 						}).show().next('img').remove();
 						Email.refreshCounter();
 					} else {
-						Ui.tip(data.errorMsg, 'danger');
+						Ui.tip(res.errorMsg, 'danger');
 					}
-				},'json');
+				}, "json");
 			},
 			// 增加外部邮箱
 			"addWebMail": function(elem, param) {
@@ -249,8 +374,10 @@ var Email = {
 					id: "d_new_web_mail",
 					padding: "0 0",
 					init: function() {
-						var api = this;
-						$.get(Ibos.app.url("email/web/add", { inajax: 1}), function(res) {
+						var api = this,
+							url = Ibos.app.url("email/web/add"),
+							param = { inajax: 1};
+						Email.op.getAccess(url, param).done(function(res) {
 							res && api.content(res);
 						});
 					},
@@ -292,7 +419,10 @@ var Email = {
 					return false;
 				}
 				if (param.id && param.url) {
-					$.post(param.url, {webid: param.id}, function(res) {
+					var url = param.url;
+						param = { webid: param.id };
+
+					Email.op.postAccess(url, param).done(function(res) {
 						if (res.isSuccess) {
 							Ui.tip(Ibos.l("SETUP_SUCCEESS"));
 							$("[data-click='setDefaultWebMailBox']").each(function() {
@@ -312,37 +442,45 @@ var Email = {
 			},
 			// 删除外部邮箱
 			"deleteWebMailBox": function(elem, param) {
-				var ids = Email.getCheckedId();
-				Email.access(param.url, {webids: ids}, function(res, ids) {
+				var ids = Email.getCheckedId(),
+					url = param.url;
+					param = {webids: ids};
+				Email.access(url, param, function(res, ids) {
 					Email.removeRows(ids);
 				}, Ibos.l("EM.DELETE_EMAILBOX_CONFIRM"));
 			},
 			// 处理回执
 			"receipt": function(elem, param) {
-				$.get(param.url, {emailids: param.id}, function(res) {
+				var url = param.url;
+				param = {emailids: param.id};
+
+				Email.op.getAccess(url, param).done(function(res) {
 					if (res.isSuccess) {
 						$(elem).parent().parent().remove();
 					} else {
-						data.msg && Ui.tip(data.msg, "danger");
-						// 报错
+						res.msg && Ui.tip(res.msg, "danger");
 					}
 				});
 			},
+			// 接受邮件
 			"receiveMail": function(elem, param) {
+				var url = param.url;
 				$('.page-list').waiting(Ibos.l("EM.BEING_RECEIVE") + param.name + '...', 'mini', true);
-				$.get(param.url, function(data) {
+
+				Email.op.getAccess(url, null).done(function(res) {
 					$('.page-list').stopWaiting();
-					if (data.isSuccess) {
+					if (res.isSuccess) {
 						alert(Ibos.l('EM.RECEIVE_SUCCESS_TIP'));
 						window.location.reload();
 					} else {
-						Ui.tip(data.msg, "danger");
+						Ui.tip(res.msg, "danger");
 					}
 				}, 'json');
 			},
 			//设置所有为已读
 			"markReadAll": function(elem, param) {
-				$.post(param.url, function(res) {
+				var url = param.url;
+				Email.op.postAccess(url, null).done(function(res) {
 					if (res.isSuccess === true) {
 						Ui.tip(Ibos.l("OPERATION_SUCCESS"));
 						window.location.reload();
@@ -353,7 +491,7 @@ var Email = {
 			},
 			//移动至文件夹
 			"moveToFolder": function(elem, param) {
-				_moveToFolder(param);
+				Email.moveToFolder(param);
 			},
 			// 移动至新建文件夹
 			"moveToNewFolder": function(elem, param) {
@@ -367,10 +505,12 @@ var Email = {
 						ok: function() {
 							var folderName = $('#new_folder').val();
 							if ($.trim(folderName) !== '') {
-								$.post(param.newUrl, {name: folderName}, function(res) {
+								var url = param.newUrl,
+									moveParam = {name: folderName};
+								Email.op.postAccess(url, moveParam).done(function(res) {
 									if (res.isSuccess) {
 										param.fid = res.fid;
-										_moveToFolder(param);
+										Email.moveToFolder(param);
 									}
 								});
 							} else {
@@ -389,17 +529,19 @@ var Email = {
 					Email.removeRows(emailIds);
 				});
 			},
-			//
+			// 删除邮箱
 			"del": function(elem, param) {
 				Email.access(param.url, null, function(res, ids) {
 					Email.removeRows(ids);
 				}, Ibos.l("EM.DELETE_EMAIL_CONFIRM"));
 			},
+			// 删除外部邮箱
 			"deleteWebMail": function(elem, param) {
 				Email.access(param.url, null, function(res, ids) {
 					Email.removeRows(ids);
 				}, Ibos.l("EM.DELETE_WEBEMAIL_CONFIRM"));
 			},
+			// 回复所有
 			'replyAll': function(elem, param) {
 				if (param.isSecretUser) {
 					Ui.confirm(Ibos.l("EM.SCRECT_USER_REPLY"), function() {
@@ -409,14 +551,17 @@ var Email = {
 					window.location.href = param.url;
 				}
 			},
+			// 彻底删除
 			"erase": function(elem, param) {
 				Email.access(param.url, null, function(res, ids) {
 					Email.removeRows(ids);
 				}, Ibos.l("EM.CP_DELETE_EMAIL_CONFIRM"));
 			},
+			// 彻底删除一条邮件
 			"eraseOneEmail": function(elem, param){
 				Ui.confirm(Ibos.l("EM.CP_DELETE_EMAIL_CONFIRM"), function() {
-					$.post(param.url, null, function(res) {
+					var url = param.url;
+					Email.op.postAccess(url, null).done( function(res) {
 						if(res.isSuccess){
 							Ui.tip(Ibos.l("OPERATION_SUCCESS"), 'success');
 							window.location.href = Ibos.app.url("email/list/index", {op: "del"});
@@ -460,6 +605,7 @@ var Email = {
 					Email.removeRows(ids);
 				});
 			},
+			// 显示一条
 			"showRow": function(elem, param) {
 				$(elem).hide();
 				$("#" + param.targetId).show();
@@ -480,14 +626,16 @@ var Email = {
 			"selectRead": function() {
 				Email.select("[data-read='1']");
 			},
+			// 新建文件夹
 			"setupFolder": function(elem, param) {
 				Ui.dialog({
 					title: Ibos.l("EM.MY_FOLDER_SETUP"),
 					id: 'd_myfolder_setup',
 					padding: "0 0",
 					init: function() {
-						var api = this;
-						$.post(param.url, function(res) {
+						var api = this,
+							url = param.url;
+						Email.op.postAccess(url, null).done(function(res) {
 							res && api.content(res);
 						});
 					},
@@ -503,7 +651,7 @@ var Email = {
 				$row.data({
 					"sort": sort,
 					"name": name
-				})
+				});
 				$cells.eq(0).html('<input type="text" name="sort" class="input-small" size="2" value="' + (sort || "") + '">');
 				$cells.eq(1).html('<input type="text" name="name" class="input-small" value="' + (name || "") + '">');
 				$elem.attr('data-click', 'saveFolder').html(Ibos.l("SAVE")).next().attr('data-click', 'cancelFolderEdit').html(Ibos.l("CANCEL"));
@@ -514,7 +662,7 @@ var Email = {
 				$cells.eq(0).html($row.data("sort") || "");
 				$cells.eq(1).html($row.data("name") || "");
 
-				$row.removeData("sort name")
+				$row.removeData("sort name");
 				$elem.attr("data-click", "deleteFolder").html(Ibos.l("DELETE")).prev().attr("data-click", "editFolder").html(Ibos.l("EDIT"));
 			},
 			// 保存文件夹修改
@@ -526,29 +674,31 @@ var Email = {
 				} else if ($.trim(rowData[1].value) === "") {
 					$cells.eq(1).find("input").blink();
 				} else {
+					var url = param.saveUrl;
 					postData.fid = param.fid;
 					postData[rowData[0].name] = rowData[0].value;
 					postData[rowData[1].name] = rowData[1].value;
-					$.post(param.saveUrl, postData, function(res) {
+
+					Email.op.postAccess(url, postData).done(function(res) {
 						if (res.isSuccess) {
 							$cells.eq(0).html(rowData[0].value);
 							$cells.eq(1).html(rowData[1].value);
 							$elem.attr('data-click', 'editFolder').html(Ibos.l("EDIT")).next().attr('data-click', 'deleteFolder').html(Ibos.l("DELETE"));
 							// 更新侧栏对应文件夹信息
-							folderList.updateItem(param.fid, {
+							Email.folderList.updateItem(param.fid, {
 								fid: param.fid,
 								text: rowData[1].value,
 								url: Ibos.app.url('email/list/index', { op: 'folder', fid: res.fid })
 							});
 							// 更新“移动至”列表
-							moveTargetList.updateItem(param.fid, {
+							Email.moveTargetList.updateItem(param.fid, {
 								fid: param.fid,
 								text: rowData[1].value
-							})
+							});
 						} else {
 							Ui.tip(res.errorMsg, 'danger');
 						}
-					}, 'json');
+					}, "json");
 				}
 			},
 			// 删除文件夹
@@ -562,21 +712,23 @@ var Email = {
 						$("#clean_mail").label();
 					},
 					ok: function() {
-						var toCleanMail = $('#clean_mail').prop('checked');
-						$.post(param.delUrl, {fid: param.fid, delemail: +toCleanMail}, function(res) {
+						var toCleanMail = $('#clean_mail').prop('checked'),
+							url = param.delUrl,
+							params = {fid: param.fid, delemail: +toCleanMail};
+						Email.op.postAccess(url, params).done(function(res) {
 							if (res.isSuccess) {
 								// 移除一行
 								$(elem).parent().parent().fadeOut(function(){ 
 									$(this).remove();
 								});
 								// 移除侧栏对应文件夹
-								folderList.removeItem(param.fid);
+								Email.folderList.removeItem(param.fid);
 								// 移除“移到至”对应项
-								moveTargetList.removeItem(param.fid);
+								Email.moveTargetList.removeItem(param.fid);
 							} else {
 								Ui.tip(res.errorMsg, 'danger');
 							}
-						}, 'json');
+						}, "json");
 					}
 				});
 			},
@@ -593,10 +745,11 @@ var Email = {
 				} else if ($.trim(rowData[1].value) === "") {
 					$cells.eq(1).find("input").blink();
 				} else {
+					var url = param.addUrl;
 					postData[rowData[0].name] = rowData[0].value;
 					postData[rowData[1].name] = rowData[1].value;
 
-					$.post(param.addUrl, postData, function(res) {
+					Email.op.postAccess(url, postData).done(function(res) {
 						if (res.isSuccess) {
 							// 插入一行
 							$.tmpl("add_folder_tpl", $.extend({
@@ -607,20 +760,20 @@ var Email = {
 							$cells.eq(1).find("input").val("");
 
 							// 增加侧栏文件夹
-							folderList.addItem({ 
+							Email.folderList.addItem({ 
 								fid: res.fid,
 								text: rowData[1].value,
 								url: Ibos.app.url('email/list/index', { op: 'folder', fid: res.fid })
-							})
+							});
 							// 增加“移动至”项
-							moveTargetList.addItem({ 
+							Email.moveTargetList.addItem({ 
 								fid: res.fid,
 								text: rowData[1].value
-							})
+							});
 						} else {
 							Ui.tip(res.errorMsg, 'danger');
 						}
-					}, 'json');
+					}, "json");
 				}
 			}
 		},
@@ -682,11 +835,10 @@ var Email = {
 
 
 $(function(){
-
 	Ibos.evt.add({
+		// 我的文件夹
 		"toggleSidebarList": function(param, elem){
 			$(elem).toggleClass("active").parent().next().toggle();
 		}
 	});
-
 });

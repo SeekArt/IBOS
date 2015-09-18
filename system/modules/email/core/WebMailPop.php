@@ -6,6 +6,49 @@ use application\core\utils\File;
 
 class WebMailPop extends WebMailBase {
 
+    /**
+     * email test
+     * 15-8-24 上午9:54 gzdzl
+     * @param string $host
+     * @param string $user
+     * @param string $pass
+     * @param boolean $ssl
+     * @return boolean
+     */
+    protected function validationEmail($host, $user, $pass, $ssl = false) {
+        //防止超时
+        set_time_limit(120);
+        if ($ssl)
+            $fp = @fsockopen($host, 995, $errno, $errstr);
+        else
+            $fp = @fsockopen($host, 110, $errno, $errstr);
+
+        if (!$fp)
+            return false;
+        else {
+            stream_set_blocking($fp, 1);
+            $trash = fgets($fp);
+            unset($trash);
+            fwrite($fp, "USER $user\r\n");
+            $str = fgets($fp, 128);
+            if (preg_match("/^\+OK/", $str)) {
+                fwrite($fp, "PASS $pass\r\n");
+                //错误时有可能超时，所以设置最长运行时间为120秒
+                $passx = fgets($fp, 128);
+                if (preg_match("/^\+OK(.+)/", $passx)) {
+                    $auth = true;
+                } else {
+                    $auth = false;
+                }
+            } else {
+                $auth = false;
+            }
+            fwrite($fp, "QUIT\r\n");
+            fclose($fp);
+            file_put_contents('auth.txt', var_export($auth, true));
+            return $auth;
+        }
+    }
 	public function connect( $host, $user, $password, $ssl = false, $port = '', $authMethod = 'plain' ) {
 		$this->clearError();
 		$result = false;

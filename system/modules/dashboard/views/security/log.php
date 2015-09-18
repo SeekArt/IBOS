@@ -173,27 +173,6 @@
     </div>
 </div>
 <script>
-    (function($) {
-        //日期选择器
-        $("#date_start").datepicker({
-            format: 'mm-dd',
-            target: $("#date_end")
-        });
-
-        var url = '<?php echo $this->createUrl( 'security/log', $con ); ?>';
-        $('#query_act').on('click', function() {
-            var start = $('#start_time').val(), end = $('#end_time').val(), scope = $('#time_scope').val();
-            if (scope == '') {
-                $('#time_scope').blink();
-                return false;
-            }
-            url += '&timescope=' + scope + '&start=' + start + '&end=' + end;
-            window.location.href = url;
-
-        });
-        $('#actions').on('change', function() {
-            url += '&filteract=' + this.value;
-            window.location.href = url;
-        });
-    })(window.jQuery);
+Ibos.app.s({ level : "<?php echo $con["level"]; ?>"})
 </script>
+<script src="<?php echo $assetUrl; ?>/js/db_security.js"></script>

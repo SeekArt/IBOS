@@ -17,6 +17,14 @@ class UsergroupController extends BaseController {
     public function actionIndex() {
         $formSubmit = Env::submitCheck( 'userGroupSubmit' );
         if ( $formSubmit ) {
+            $pre = -9999999999;
+            foreach ( $_POST['groups'] as $k => $group ) {
+                    if ( intval( $group['creditshigher'] ) <= $pre ) {
+                            die( '错误：' . $group['title'] . '=>' . $group['creditshigher'] );
+                    } else {
+                            $pre = intval( $group['creditshigher'] );
+                    }
+            }
             // 更新与添加操作
             $groups = $_POST['groups'];
             $newGroups = isset( $_POST['newgroups'] ) ? $_POST['newgroups'] : array();

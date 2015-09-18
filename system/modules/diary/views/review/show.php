@@ -241,7 +241,7 @@ use application\modules\dashboard\model\Stamp;
 <script>
 	(function() {
 		var $comment = $('#comment');
-		initCommentEmotion($comment);
+		Diary.initCommentEmotion($comment);
 		//给日志内容图片<img>创建一个父级<a>以创建预览大图
 		$(".da-detail-table img").each(function(index, elem) {
             $(elem).wrap("<a data-lightbox='diary' href='" + elem.src + "' title='" + elem.title + "'></a>");
@@ -267,7 +267,7 @@ use application\modules\dashboard\model\Stamp;
 		$("[data-toggle='bamboo-pgb']").each(function() {
 			return $(this).studyplay_star({
 				Enabled: false
-			})
+			});
 		});
 	})();
 </script>

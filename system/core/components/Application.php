@@ -22,6 +22,7 @@ use application\modules\role\utils\Auth;
 use CAction;
 use CController;
 use CEvent;
+use CJSON;
 use CWebApplication;
 
 class Application extends CWebApplication {
@@ -52,7 +53,7 @@ class Application extends CWebApplication {
         if ( !defined( 'IN_DEBUG' ) ) {
             $this->_enabledModule = Module::model()->fetchAllEnabledModule();
             foreach ( $this->getEnabledModule() as $module ) {
-                $config = json_decode( $module['config'], true );
+				$config = CJSON::decode( $module['config'], true );
                 if ( isset( $config['behaviors'] ) ) {
                     $this->attachBehaviors( $config['behaviors'] );
                 }
@@ -99,7 +100,7 @@ class Application extends CWebApplication {
                         // 定义权限错误页面
                         $controller->redirect( $this->rbacErrorPage );
                     } else {
-                        $controller->error( IBOS::lang( 'Valid access', 'error' ), '', array( 'autoJump' => 0 ) );
+						$controller->error( IBOS::lang( 'Valid access', 'error' ), '', array( 'autoJump' => true, 'timeout' => 3 ) );
                     }
                 }
             }

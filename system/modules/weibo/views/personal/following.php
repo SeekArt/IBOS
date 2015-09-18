@@ -97,5 +97,5 @@ use application\modules\weibo\core\WbConst;
 	</div>
 </div>
 <script src="<?php echo $moduleAssetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wb.js"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wbfollow.js"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo.js"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo_personal_follow.js"></script>

@@ -7,10 +7,10 @@
 $(function() {
 	$("#fullname").ibosSelect({
 		width: "100%"
-	})
+	});
 
 	//高级搜索
-	$("#mn_search").search(true, function() {
+	$("#mn_search").search(null, function() {
 		Ibos.openAdvancedSearchDialog({
 			content: document.getElementById("mn_search_advance"),
 			ok: function() {

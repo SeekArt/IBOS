@@ -118,10 +118,37 @@ class Org {
 	 */
 	private static function initDept( $department ) {
 		$deptList = '';
-		if ( !empty( $department ) ) {
-			foreach ( $department as $deptId => $dept ) {
-				$deptList .= "{id: 'd_{$deptId}', text: '{$dept['deptname']}', name: '{$dept['deptname']}', iconSkin: 'department', type: 'department', pId: 'd_{$dept['pid']}', type: 3, enable: 1, open: 1},\n";
-			}
+        //15-7-28 下午7:39 gzdzl
+        //针对情况1的解决办法：
+        //判断是否是字符串，是的话反序列化
+        if (!is_array($department)) {
+            //反序列化失败返回false
+            $department = unserialize($department);
+        }
+        if (!empty($department) && is_array($department)) {
+            foreach ($department as $deptId => $dept) {
+                $deptList .= "{id: 'd_{$deptId}', text: '{$dept['deptname']}', name: '{$dept['deptname']}', iconSkin: 'department', type: 'department', pId: 'd_{$dept['pid']}', type: 3, enable: 1, open: 1},\n";
+            }
+        } else {
+            //debug:这种情况是不正常的情况才会到这里，所以可以暂时留着
+            /*
+             * 
+             * 这里发生错误导致的结果是：在新增用户时无法选择部门
+             * 
+             * 15-7-28 下午7:56
+             * @author gzdzl
+             * 目前发现出现问题出现的情况是：
+             * 1.后台管理清空的数据缓存后再操作新增部门时（清理数量缓存->添加部门）
+             * 
+             * 读取过来的缓存数据有错误，不是得到一个数组
+             * 成立的条件是$department是一个字符串（序列化后的数组），而不是数组
+             * 
+             * 针对情况1的解决办法：
+             * 判断是否是字符串，是的话反序列化
+             * 
+             * 反序列化失败这里也会运行
+             */
+            file_put_contents('dep_' . time() . '.txt', var_export($department, true));
 		}
 		return $deptList;
 	}
@@ -135,6 +162,8 @@ class Org {
 		$userList = '';
 		if ( !empty( $users ) ) {
 			foreach ( $users as $uid => $user ) {
+                if ($user['status'] == 2)
+                    continue; //过滤掉禁用的用户
 				$deptStr = $posStr = '';
 				if ( !empty( $user['alldeptid'] ) ) {
 					$deptStr = String::wrapId( $user['alldeptid'], 'd' );
@@ -168,7 +197,17 @@ class Org {
 	 */
 	private static function initPosition( $position ) {
 		$posList = '';
-		if ( !empty( $position ) ) {
+        /**
+         * 15-8-3 下午2:01 gzdzl
+         * 清空缓存的数据后，缓存的数据还没有添加回来之前
+         * 再添加岗位时，这里的position是一个字符串
+         * 需要反序列化回来变成数组
+         * unserialize发生错误返回false，并产生E_NOTICE
+         */
+        if (!is_array($position)) {
+            $position = @unserialize($position);
+        }
+        if (!empty($position) && is_array($position)) {
 			foreach ( $position as $posId => $position ) {
 				$posList .= "{id: 'p_{$posId}', text: '{$position['posname']}', name: '{$position['posname']}', iconSkin: 'position', type: 'position', pId:'f_{$position['catid']}', enable: 1, open: 0},\n";
 			}

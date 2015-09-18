@@ -28,6 +28,7 @@ use application\modules\position\utils\Position as PositionUtil;
 use application\modules\role\model\RoleRelated;
 use application\modules\role\utils\Role as RoleUtil;
 use application\modules\user\model as UserModel;
+use application\core\utils\PHPExcel;
 use CJSON;
 
 class User {
@@ -71,12 +72,88 @@ class User {
 	}
 
 	/**
-	 * 加载用户缓存
-	 * @return array
+	 * 加载用户缓存，其中键对应uid
+	 * 如果有传入$uids，如果是'1,2,3'格式的字符串，则转成数组，如果array(1,2,3)，继续：
+	 * 1、如果传入的uid存在，则取出来，重新组合成一个新的数组，格式和不传入$uids的格式一样：
+	  array(
+	  1 => array(
+	  'uid' => 1,
+	  'username' => '沐筱琴',
+	  'isadministrator' => 1,
+	  'deptid' => 1,
+	  'positionid' => 1,
+	  'roleid' => 1,
+	  'upuid' => 0,
+	  'groupid' => 2,
+	  'jobnumber' => '萌萌哒',
+	  'realname' => '沐筱琴',
+	  'password' => 'b04bdfc08616188a32754e21a43e6ee6',
+	  'gender' => 0,
+	  'weixin' => 'forsona',
+	  'mobile' => '13250302684',
+	  'email' => '2317216477@qq.com',
+	  'status' => 0,
+	  'createtime' => '1435830015',
+	  'credits' => 2,
+	  'newcomer' => 1,
+	  'salt' => 'LTmRXK',
+	  'validationemail' => 0,
+	  'validationmobile' => 0,
+	  'lastchangepass' => '1435907360',
+	  'guid' => '31163F94-7736-6798-3EE7-54011002FF5C',
+	  'group_title' => '初入江湖',
+	  'upgrade_percent' => 4,
+	  'next_group_credit' => 50,
+	  'level' => 2,
+	  'alldeptid' => '6,1',
+	  'allupdeptid' => '',
+	  'alldowndeptid' => '7,8,2,3,4,5,9',
+	  'relatedDeptId' => 6,
+	  'deptname' => '广州',
+	  'allposid' => '1,3',
+	  'relatedPosId' => '3',
+	  'posname' => '总经理',
+	  'allroleid' => '1,3',
+	  'relatedRoleId' => '3',
+	  'rolename' => '管理员',
+	  'space_url' => '?r=user/home/index&uid=1',
+	  'avatar_middle' => 'static.php?type=avatar&uid=1&size=middle&engine=LOCAL',
+	  'avatar_small' => 'static.php?type=avatar&uid=1&size=small&engine=LOCAL',
+	  'avatar_big' => 'static.php?type=avatar&uid=1&size=big&engine=LOCAL',
+	  'bg_big' => 'static.php?type=bg&uid=1&size=big&engine=LOCAL',
+	  'bg_small' => 'static.php?type=bg&uid=1&size=small&engine=LOCAL',
+	  'birthday' => '0',
+	  'telephone' => '',
+	  'address' => '',
+	  'qq' => '',
+	  'bio' => '',
+	  'remindsetting' => '',
+	  ),
+	  2 => array(
+	  //...
+	  ),
+	  );
+	 * 2、如果传入的uid都不存在，则直接返回全数组
+	 * 3、如果不传入uids，则返回全数组
+	 * @param mixed $uids
+	 * @return type
 	 */
-	public static function loadUser() {
+	public static function loadUser( $uids = '' ) {
 		$users = IBOS::app()->setting->get( 'cache/users' );
+		if ( !empty( $uids ) ) {
+			$uidArr = is_array( $uids ) ? $uids : explode( ',', $uids );
+			$return = array();
+			foreach ( $uidArr as $row ) {
+				if ( isset( $users[$row] ) ) {
+					$return[$row] = $users[$row];
+				} else {
+					continue;
+				}
+			}
+			return empty( $return ) ? $users : $return;
+		} else {
 		return $users;
+		}
 	}
 
 	/**
@@ -84,16 +161,46 @@ class User {
 	 * @param mixed $uids
 	 */
 	public static function exportUser( $uids ) {
+		set_time_limit( 0 );
 		$users = UserModel\User::model()->fetchAllByUids( $uids );
-		$xmlContents = Xml::arrayToXml( $users );
-		$xmlName = date( 'Y-m-d' ) . '-user';
-		if ( ob_get_length() ) {
-			ob_end_clean();
+		$usersData = self::fetchAttributeByUser( $users );
+		$header = array(
+			'用户名', '工号', '真实名字',
+			'密码', '性别', '微信号', '手机号',
+			'邮箱', '生日', '住宅电话', '地址', 'QQ', '自我介绍'
+		);
+		$filename = date( 'Y-m-d' ) . '导出用户数据.xls';
+		PHPExcel::exportToExcel( $filename, $header, $usersData );
+	}
+
+	/**
+	 * 过滤导出用户数据，只需要必须字段，并且转换某些数据格式
+	 * @param array $users 用户数组
+	 * @return array 返回数组
+	 */
+	private static function fetchAttributeByUser( $users ) {
+		$filterfields = array(
+			'username', 'jobnumber', 'realname',
+			'password', 'gender', 'weixin', 'mobile',
+			'email', 'birthday', 'telephone', 'address', 'qq', 'bio',
+		);
+		$return = array();
+		foreach ( $users as $key => $user ) {
+			foreach ( $user as $keynew => $value ) {
+				if ( in_array( $keynew, $filterfields ) ) {
+					if ( $keynew == 'password' ) {
+						$return[$key][$keynew] = '';
+					} elseif ( $keynew == 'gender' ) {
+						$return[$key][$keynew] = $value == 1 ? '男' : '女';
+					} elseif ( $keynew == 'birthday' && !empty( $value ) ) {
+						$return[$key][$keynew] = date( 'Y-m-d', $value );
+					} else {
+						$return[$key][$keynew] = $value;
+					}
+				}
+			}
 		}
-		header( "Cache-control: private" );
-		header( "Content-type: text/xml" );
-		header( "Content-Disposition: attachment; filename= {$xmlName}.xml" );
-		exit( $xmlContents );
+		return $return;
 	}
 
 	/**
@@ -203,7 +310,7 @@ class User {
 			$user['allupdeptid'] = DepartmentModel\Department::model()->queryDept( $user['alldeptid'] );
 			$user['alldowndeptid'] = DepartmentModel\Department::model()->fetchChildIdByDeptids( $user['alldeptid'] );
 			$user['relatedDeptId'] = implode( ',', $relatedDeptId );
-			$user['deptname'] = isset( $department[$user['deptid']] ) ? $department[$user['deptid']]['deptname'] : "";
+			$user['deptname'] = isset( $department[$user['deptid']]['deptname'] ) ? $department[$user['deptid']]['deptname'] : "";
 		} else {
 			$user['alldeptid'] = $user['allupdeptid'] = $user['alldowndeptid'] = $user['relatedDeptId'] = $user['deptname'] = '';
 		}

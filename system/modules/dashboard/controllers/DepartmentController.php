@@ -65,21 +65,24 @@ class DepartmentController extends OrganizationBaseController {
 	 * @return void
 	 */
 	public function actionEdit() {
-		if ( Env::getRequest( 'op' ) == 'structure' ) { // 排序
+		if ( Env::getRequest( 'op' ) == 'get' ) {
+			return $this->get();
+		}
 			$pid = Env::getRequest( 'pid' );
+		if ( Env::getRequest( 'op' ) == 'structure' ) { // 排序
 			$deptid = Env::getRequest( 'id' );
 			$index = Env::getRequest( 'index' ); // 排序后位置,0表示第一位，1表示第二位...
 			$status = $this->setStructure( $index, $deptid, $pid );
 			$this->ajaxReturn( array( 'isSuccess' => $status ), 'json' );
 		}
-		if ( Env::getRequest( 'op' ) == 'get' ) {
-			return $this->get();
-		}
 		$deptId = Env::getRequest( 'deptid' );
 		// 总部
-		if ( $deptId == 0 ) {
+		if ( $deptId == '0' ) {
 			//不再组织架构这里单独处理总公司，只保留全局设置的
 		} else {
+			if ( $deptId == $pid ) {
+				$this->error( Ibos::lang( 'update failed, up dept cannot be itself' ) );
+			}
 			$this->dealWithBranch();
 			$this->dealWithSpecialParams();
 			$data = Department::model()->create();

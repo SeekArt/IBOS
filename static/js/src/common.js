@@ -2130,6 +2130,94 @@ Ibos.core = {
 			U.setCookie('globalRemindType', theme);
 		};
 
+		// 窗口提示
+		Ui.Notification = {
+			NAME: 'noti',
+
+			LOGO: '/image/logo_pic.png',
+
+			// cookie: {
+			// 	NAME: 'allow_desktop_notify',
+			// 	EXPIRES: 7776000
+			// },
+
+			// isEnabled: function() {
+			// 	return U.getCookie(this.cookie.NAME) == "1";
+			// },
+
+			// enable: function() {
+			// 	U.setCookie(this.cookie.NAME, "1", this.cookie.EXPIRES);
+			// },
+
+			// disable: function() {
+			// 	U.setCookie(this.cookie.NAME, "");
+			// },
+
+			show: function(title, content, icon) {
+				var that = this;
+				var _show;
+				icon = icon || Ibos.app.getStaticUrl(this.LOGO);
+
+		    // 旧版本接口
+				if (window.webkitNotifications) {
+					var wnf = window.webkitNotifications;
+					_show = function() {
+						var notification = wnf.createNotification(icon, title, content);
+						notification.replaceId = that.NAME;
+						notification.onclick = function(){
+							window.focus();
+							window.open(Ibos.app.url("message/notify/index"));
+						};
+						notification.ondisplay = function(evt){
+							setTimeout(function(){
+								evt.currentTarget.cancel();
+							}, 1e4);
+						};
+						notification.show();
+						return notification;
+					};
+
+		      // 查看接口权限，未允许时，申请权限
+		      if (wnf.checkPermission() !== 0) {
+		        wnf.requestPermission(_show);
+					// 已允许时直接通知
+		      } else {
+		      	_show();
+		      }
+		    // 标准接口
+		    } else if("Notification" in window){
+		    	_show = function() {
+		    		var notification = new Notification(title, {
+		  		    "icon": icon,
+		  		    "body": content,
+		    		});
+		    		notification.onclick = function() {
+		    			window.focus();
+		    			window.open(Ibos.app.url("message/notify/index"));
+		    		};
+		    		notification.onshow = function() {
+		    			setTimeout(function(){
+		    				notification.close();
+		    			}, 1e4);
+		    		};
+		    		return notification;
+		    	};
+
+					// 已允许时直接通知
+		    	if(Notification.permission === "granted") {
+						_show();
+		    	} else if(Notification.permission === "default") {
+		    		Notification.requestPermission(function(permission) {
+				    	// 判断是否有权限
+				    	if (Notification.permission === "granted") {
+				  	    _show();
+				    	}
+		    		});
+		    	}
+		    }
+			}
+		};
+
 		window.Ui = $.extend(window.Ui, Ui);
 	})();
 

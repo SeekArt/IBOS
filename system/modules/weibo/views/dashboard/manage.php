@@ -84,7 +84,7 @@
 	</div>
 </div>
 <script src="<?php echo $moduleAssetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wbdashboard.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo_dashboard_common.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script>
 	// 复选框联动

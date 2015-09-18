@@ -138,12 +138,6 @@ use application\core\utils\IBOS;
 				<?php else: ?>
 					<i class="o-ibosco-unbind"></i>
 				<?php endif; ?>
-				<div class="dib vam mls">
-					<div>酷办公账号</div>
-					<?php if ( 0 )://未来如果本地要保存酷办公账号，这部分都要改 ?>
-						<div>13710943697</div>
-					<?php endif; ?>
-				</div>
 				<?php if ( !$co ): ?>
 					<!-- 绑定酷办公账号 -->
 					<a href="javascript:;" data-action="bindIbosco" class="pull-right btn">绑定</a>

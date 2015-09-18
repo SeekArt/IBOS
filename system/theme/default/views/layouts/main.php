@@ -143,6 +143,7 @@ use application\modules\user\utils\User;
 								<li rel="message"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=message' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
+                                                                <li rel="meeting"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=meeting' ); ?>" class="anchor">查看消息</a></li>
 							</ul>
 						</div>
 					</div>
@@ -247,15 +248,17 @@ use application\modules\user\utils\User;
 						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>
 						<a href="javascript:;" data-action="appDownload">移动端下载</a>
-						<span class="ilsep">|</span>
+
 					<?php
 						$qr = IBOS::app()->setting->get( 'setting/qrcode' );
 						$qrcode = isset( $qr ) ? $qr : '';
-						if ( !empty( $qrcode ) ) { ?>
-						<a href="javascript:;" data-action="followWx" class="im-link">
-							<i class="o-olw-crcode"></i>关注微信号
-						</a>
-					<?php } ?>
+						if ( !empty( $qrcode ) ) :
+							?>
+							<span class="ilsep">|</span>
+							<a href="javascript:;" data-action="followWx" class="im-link">
+								<i class="o-olw-crcode"></i>关注微信号
+							</a>
+					<?php endif; ?>
 					</div>
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>

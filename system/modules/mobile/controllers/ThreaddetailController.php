@@ -5,6 +5,7 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\modules\mobile\utils\Mobile;
+use application\modules\workflow\utils\Common;
 use application\modules\thread\controllers\DetailController;
 use application\modules\thread\core\ThreadSetting;
 use application\modules\thread\model\Thread;
@@ -52,13 +53,12 @@ class ThreadDetailController extends DetailController {
 		$uid = intval( Env::getRequest( 'uid' ) );
 		$status = intval( Env::getRequest( 'status' ) ); // 状态{1:进行中; 2：已完成; 4：已取消}
 		$data = $this->getThreadObj( $threadId )->getAssignment( $uid, $status );
-		$assignments = $this->handleAssignmentList( $data );
-		$members = $this->getThreadObj( $threadId )->getMembers();
-		$params = array(
-			'data' => $assignments,
-			'members' => $members
-		);
-		$this->ajaxReturn( array( 'datas' => $params ), Mobile::dataType() );
+		// $assignments = $this->handleAssignmentList( $data );
+		// $members = $this->getThreadObj( $threadId )->getMembers();
+		$this->ajaxReturn( array( 
+			'datas' => $data,
+			// 'members' => $members
+		), Mobile::dataType() );
 	}
 
 	/**
@@ -67,7 +67,20 @@ class ThreadDetailController extends DetailController {
 	protected function feed() {
 		$threadId = $_GET['id'];
 		$thread = Thread::model()->fetchByPk( $threadId );
-		$this->ajaxReturn( array( 'datas' => $thread ), Mobile::dataType() );
+		$properties = array(
+			'module' => 'thread',
+			'table' => 'thread',
+			'attributes' => array(
+				'rowid' => $thread['threadid'],
+				'moduleuid' => IBOS::app()->user->uid,
+				'touid' => $thread['designeeuid'],
+				'module_rowid' => $thread['threadid'],
+				'module_table' => 'thread',
+			)
+		);
+		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\thread\widgets\ThreadComment', $properties );
+		$list = $widget->getCommentList();
+		$this->ajaxReturn( array( 'datas' => $list ), Mobile::dataType() );
 	}
 
 	/**
@@ -87,7 +100,23 @@ class ThreadDetailController extends DetailController {
 		$threadId = $_GET['id'];
 		$uid = IBOS::app()->user->uid;
 		$flows = $this->getThreadObj( $threadId )->getFlowWithPage( $uid );
-		$this->ajaxReturn( array( 'data' => $flows ), Mobile::dataType() );
+		$flowsWithKey = $this->mergeFlowKey($flows);
+		$this->ajaxReturn( array( 'datas' => $flowsWithKey ), Mobile::dataType() );
+	}
+	private function mergeFlowKey($list) {
+		$flows = array();
+		foreach ( $list as $flow ) {
+			$param = array(
+				'runid' => $flow['runid'],
+				'flowid' => $flow['flowid'],
+				'processid' => $flow['processid'],
+				'flowprocess' => $flow['flowprocess']
+			);
+		  $key = Common::param( $param );
+			$flow = array_merge($flow, array( 'key' => $key ));
+			array_push( $flows, $flow );
+		}
+		return $flows;
 	}
 
 	/**
@@ -112,15 +141,28 @@ class ThreadDetailController extends DetailController {
 		$assignments = $this->getThreadObj( $threadId )->getAssignment();
 		$settingObj = new ThreadSetting();
 		$params = array(
-			'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, IBOS::app()->user->uid ),
-			'editAble' => $settingObj->chkEditAble( $threadId, IBOS::app()->user->uid ),
+			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, IBOS::app()->user->uid ),
+			// 'editAble' => $settingObj->chkEditAble( $threadId, IBOS::app()->user->uid ),
 			'members' => ThreadUtil::getInstance()->handleMembers( $threadId, $members ),
 			'attentions' => ThreadUtil::getInstance()->handleMembers( $threadId, $attentions ),
-			'counters' => $this->getCounters(),
-			'taskChart' => $this->getTaskChart( $members, $assignments ),
-			'processChart' => $this->getProcessChart( $assignments )
+			// 'counters' => $this->getCounters(),
+			// 'taskChart' => $this->getTaskChart( $members, $assignments ),
+			// 'processChart' => $this->getProcessChart( $assignments )
 		);
 		$this->ajaxReturn( array( 'datas' => $params ), Mobile::dataType() );
 	}
 
+	/**
+	 * 获取关联的模块
+	 * @return array
+	 */
+	private function getRelationModule() {
+		$modules = array();
+		$m = ThreadSetting::RELATIVE_MODULE;
+		$setting = IBOS::app()->setting->get( "setting/threadconfig" );
+		if ( isset( $setting[$m] ) && is_array( $setting[$m] ) ) {
+			$modules = array_keys( $setting[$m] );
+		}
+		return $modules;
+	}
 }

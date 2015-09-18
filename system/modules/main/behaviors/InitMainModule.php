@@ -109,7 +109,7 @@ class InitMainModule extends CBehavior {
 		$uid = Env::getRequest( 'uid' );
 		$swfHash = Env::getRequest( 'hash' );
 		if ( $uid && $swfHash ) {
-			define( 'IN_SWFHASH', true );
+            defined('IN_SWFHASH') or define('IN_SWFHASH', true);
 			$authKey = IBOS::app()->setting->get( 'config/security/authkey' );
 			if ( (empty( $uid )) || $swfHash != md5( substr( md5( $authKey ), 8 ) . $uid ) ) {
 				exit();
@@ -135,7 +135,7 @@ class InitMainModule extends CBehavior {
 			}
 			$user->login( $identity );
 		} else if ( IBOS::app()->user->isGuest ) {
-			define( 'IN_SWFHASH', false );
+            defined('IN_SWFHASH') or define('IN_SWFHASH', false);
 			// 未登录即跳转
 			if ( !$isUrlAllowedToGuests ) {
 				if ( IN_DASHBOARD ) {
@@ -158,12 +158,13 @@ class InitMainModule extends CBehavior {
 		IBOS::app()->performance->startMemoryUsageMarker();
 		// -------------------------------------------
 		// 可访问的静态资源文件夹
-		define( 'STATICURL', IBOS::app()->assetManager->getBaseUrl() );
+        // 添加defined判断，防止URL请求错误
+        defined('STATICURL') or define('STATICURL', Ibos::app()->assetManager->getBaseUrl());
 		// 是否用手机访问
-		define( 'IN_MOBILE', Env::checkInMobile() );
-		define( 'IN_DASHBOARD', Env::checkInDashboard() );
-		define( 'TIMESTAMP', time() );
-		define( 'IN_APP', Env::checkInApp() );
+        defined('IN_MOBILE') or define('IN_MOBILE', Env::checkInMobile());
+        defined('IN_DASHBOARD') or define('IN_DASHBOARD', Env::checkInDashboard());
+        defined('TIMESTAMP') or define('TIMESTAMP', time());
+        defined('IN_APP') or define('IN_APP', Env::checkInApp());
 		$this->setTimezone();
 		// 设置运行内存
 		if ( function_exists( 'ini_get' ) ) {
@@ -261,7 +262,15 @@ class InitMainModule extends CBehavior {
 		// 如果是未登录的用户，检查是否被ban IP
 		if ( $isNewSession ) {
 			if ( Env::ipBanned( $global['clientip'] ) ) {
+                //当访问的客户在禁止ip列表时，程序运行到这里会出错
+                //error方法没有定义
+                //解决是要调用正确的处理函数或是新定义一个error函数
 				IBOS::error( IBOS::lang( 'User banned', 'message' ) );
+                //直接返回403，禁止访问
+                //TODO 显示更加友好的提示信息
+                header("HTTP/1.1 403 Forbidden");
+                header("status: 403 Forbidden");
+                exit('<h1>Forbidden<h1>');
 			}
 		}
 		// 如果已登录用户，检查是否需要更新最后活动时间
@@ -332,6 +341,14 @@ class InitMainModule extends CBehavior {
 		}
 	}
 
+    /**
+     * 检查主授权
+     * @param mixed $event
+     * @author Ring 
+     */
+    public function handleCheckLicence($event) {
+        IBOS::app()->licence->checkMainLicence();
+    }
 
 	/**
 	 * 应用系统设置
@@ -345,11 +362,11 @@ class InitMainModule extends CBehavior {
 		// todo::检查系统设置里ip过滤是否启用，若启用，检查当前ip是否合法 @banyan
 		// 处理身份标识
 		if ( !IBOS::app()->user->isGuest ) {
-			define( 'FORMHASH', Env::formHash() );
+            defined('FORMHASH') or define('FORMHASH', Env::formHash());
 		} else {
-			define( 'FORMHASH', '' );
+            defined('FORMHASH') or define('FORMHASH', '');
 		}
-		define( 'VERHASH', $global['setting']['verhash'] );
+        defined('VERHASH') or define('VERHASH', $global['setting']['verhash']);
 		// 程序关闭处理
 		if ( $global['setting']['appclosed'] ) {
 			$route = IBOS::app()->getUrlManager()->parseUrl( IBOS::app()->getRequest() );

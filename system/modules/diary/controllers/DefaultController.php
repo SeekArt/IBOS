@@ -39,6 +39,7 @@ use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
+use application\core\model\Log;
 
 class DefaultController extends BaseController {
 
@@ -57,7 +58,10 @@ class DefaultController extends BaseController {
 			$uid = IBOS::app()->user->uid;
 			//是否搜索
 			if ( Env::getRequest( 'param' ) == 'search' ) {
+				//15-7-27 下午2:28 gzdzl 搜索必须是post类型请求
+				if ( Ibos::app()->request->isPostRequest ) {
 				$this->search();
+				}
 			}
 			$this->_condition = DiaryUtil::joinCondition( $this->_condition, "uid = $uid" );
 			$paginationData = Diary::model()->fetchAllByPage( $this->_condition );
@@ -154,6 +158,9 @@ class DefaultController extends BaseController {
 	 * @return void
 	 */
 	private function save() {
+		//15-7-27 下午2:23 gzdzl
+		//判断是否是POST请求，不是的话非法访问，则要做相应的错误处理
+		if ( Ibos::app()->request->isPostRequest ) {
 		$uid = IBOS::app()->user->uid;
 		$realname = User::model()->fetchRealnameByUid( $uid );
 		$originalPlan = $planOutside = array();
@@ -238,7 +245,22 @@ class DefaultController extends BaseController {
 			);
 			Notify::model()->sendNotify( $upUid, 'diary_message', $config, $uid );
 		}
+			/**
+			 * 日志记录
+			 * 
+			 * @TODO 日志创建统计
+			 */
+			$log = array(
+				'user' => Ibos::app()->user->username,
+				'ip' => Ibos::app()->setting->get( 'clientip' )
+			);
+			Log::write( $log, 'action', 'module.diary.default.save' );
 		$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
+		} else {
+			//15-7-27 下午2:22
+			//不是post类型过来的请求都跳转回到日志添加页面
+			IBOS::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/add' ) );
+		}
 	}
 
 	/**
@@ -403,6 +425,13 @@ class DefaultController extends BaseController {
 	 * @return void
 	 */
 	private function update() {
+		//15-7-27 下午2:24
+		//判断是否是post类型请求
+		if ( !Ibos::app()->request->isPostRequest ) {
+			//不是post请求跳到工作日志页面
+			Ibos::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/index' ) );
+		}
+
 		$diaryId = $_POST['diaryid'];
 		$diary = Diary::model()->fetchByPk( $diaryId );
 		$uid = IBOS::app()->user->uid;
@@ -551,6 +580,8 @@ class DefaultController extends BaseController {
 		if ( !empty( $diary['readeruid'] ) ) {
 			$readerArr = explode( ',', $diary['readeruid'] );
 			$readers = User::model()->fetchAllByPk( $readerArr );
+		} else {
+			$readers = '';
 		}
 		// 图章
 		$stampUrl = '';

@@ -3,7 +3,21 @@
  * @author 		inaki
  * @version 	$Id$
  */
-
+var HomeIndex = {
+	op : {
+		/**
+		 * 重新检测
+		 * [recheck
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象
+		 */
+		recheck : function(param){
+			var url = Ibos.app.url("user/home/checkSecurityRating");
+			param = $.extend({}, param, {"uid": Ibos.app.g("uid") });
+			return $.get(url, param, $.noop, 'json');
+		}
+	}
+};
 $(function() {
 	var contacts = document.getElementById('contacts');
 	var seriesData = Ibos.app.g("seriesData");
@@ -99,22 +113,26 @@ $(function() {
 			"rolling": function(evt, data) {
 				var styles = "xsr xco xcgn",
 					style,
-					desc;
+					className,
+					level;
+
 				if (data.value < 60) {
-					progress.setStyle("danger");
-					style = "xcr";
-					desc = Ibos.l("USER.SECURITY_LEVEL_1");
+					style = "danger";
+					className = "xcr";
+					level = 1;
 				} else if (data.value < 100) {
-					progress.setStyle("warning");
-					style = "xco";
-					desc = Ibos.l("USER.SECURITY_LEVEL_2");
+					style = "warning";
+					className = "xco";
+					level = 2;
 				} else if (data.value === 100) {
-					progress.setStyle("success");
-					style = "xcgn";
-					desc = Ibos.l("USER.SECURITY_LEVEL_3");
+					style = "success";
+					className = "xcgn";
+					level = 3;
 				}
-				$securityPoint.html(data.value).parent().removeClass(styles).addClass(style);
-				$securityDesc.html(desc).removeClass(styles).addClass(style);
+				progress.setStyle(style);
+
+				$securityPoint.html(data.value).parent().removeClass(styles).addClass(className);
+				$securityDesc.html( Ibos.l("USER.SECURITY_LEVEL_"+ level) ).removeClass(styles).addClass(className);
 			},
 			"rollstart": function() {
 				$securityDesc.css("visibility", "hidden");
@@ -130,17 +148,14 @@ $(function() {
 			var $that = $(this);
 			$that.button('loading');
 
-			$.get(Ibos.app.url("user/home/checkSecurityRating", {
-				"uid": Ibos.app.g("uid")
-			}), function(res) {
+			HomeIndex.op.recheck(null).done( function(res) {
 				if (res.IsSuccess) {
-					progress.setValue(res.rating)
+					progress.setValue(res.rating);
 				} else {
 					Ui.tip("@OPERATION_FAILED", 'danger');
 				}
 				$that.button('reset');
-			}, 'json');
+			});
 		});
 	}
-
 });

@@ -117,7 +117,7 @@ Class TaskController extends BaseController {
             if ( $this->upuid != $this->uid ) {
                 $config = array(
                     '{sender}' => User::model()->fetchRealnameByUid( $this->upuid ),
-                    '{subject}' => $_POST['text'],
+                    '{subject}' => htmlspecialchars($_POST['text']),
                     '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/task/index' )
                 );
                 Notify::model()->sendNotify( $this->uid, 'task_message', $config, $this->upuid );

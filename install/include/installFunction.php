@@ -24,7 +24,7 @@ function envCheck( $envItems ) {
 			$envItems[$key]['current'] = @ini_get( 'file_uploads' ) ? ini_get( 'upload_max_filesize' ) : 'unknow';
 		} elseif ( $key == 'gdversion' ) {
 			$tmp = function_exists( 'gd_info' ) ? gd_info() : array();
-			$envItems[$key]['current'] = empty( $tmp['GD Version'] ) ? 'noext' : $tmp['GD Version'];
+			$envItems[$key]['current'] = empty( $tmp['GD Version'] ) ? 'no' : $tmp['GD Version'];
 			unset( $tmp );
 		} elseif ( $key == 'diskspace' ) {
 			if ( function_exists( 'disk_free_space' ) ) {
@@ -91,7 +91,7 @@ function attachmentuploadCheck( $evnItem ) {
  * @return boolean
  */
 function gdversionCheck( $evnItem ) {
-	if ( strcmp( $evnItem['current'], $evnItem['r'] ) < 0 ) {
+	if ( $evnItem['current'] == 'no' || strcmp( $evnItem['current'], $evnItem['r'] ) < 0 ) {
 		return false;
 	} else {
 		return true;
@@ -104,10 +104,10 @@ function gdversionCheck( $evnItem ) {
  * @return boolean
  */
 function diskspaceCheck( $evnItem ) {
-	if ( intval( $evnItem['current'] ) > intval( $evnItem['r'] ) || $evnItem['current'] == 'unknow' ) {
-		return true;
-	} else {
+	if ( $evnItem['current'] == 'unknow' || intval( $evnItem['current'] ) < intval( $evnItem['r'] ) ) {
 		return false;
+	} else {
+		return true;
 	}
 }
 
@@ -250,8 +250,7 @@ function dirWriteable( $dir ) {
 	if ( is_dir( $dir ) ) {
 		if ( $fp = @fopen( "$dir/test.txt", 'w' ) ) {
 			@fclose( $fp );
-			@unlink( "$dir/test.txt" );
-			$writeable = 1;
+			$writeable = @unlink( "$dir/test.txt" );
 		} else {
 			$writeable = 0;
 		}
@@ -368,6 +367,16 @@ function install( $moduleName ) {
 	if ( file_exists( $modelSqlFile ) ) {
 		$modelSql = file_get_contents( $modelSqlFile );
 		executeSql( $modelSql );
+	}
+	/**
+	 * 执行额外的sql语句
+	 */
+	$sqlFiles = glob( $installPath . '*.sql' );
+	foreach ( $sqlFiles as $sqlFile ) {
+		if ( file_exists( $sqlFile ) && $sqlFile != $installPath . 'model.sql' ) {
+			$modelSql = file_get_contents( $sqlFile );
+			executeSql( $modelSql );
+		}
 	}
 	// 处理模块配置，写入数据
 	$config = require $installPath . 'config.php';

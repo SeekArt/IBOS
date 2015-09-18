@@ -30,7 +30,7 @@
 					</thead>
 					<tbody id="point_setup_tbody">
 						<?php foreach ( $data as $val ): ?>
-							<tr id="<?php echo $val['cid']; ?>">
+							<tr id="credit_<?php echo $val['cid']; ?>">
 								<td>
 									<input type="text" class="input-small" name="credit[<?php echo $val['cid']; ?>][name]" value="<?php echo $val['name']; ?>">
 								</td>
@@ -46,7 +46,7 @@
 								</td>
 								<td>
 									<?php if ( $val['system'] != 1 ): ?>
-										<a href="javascript:;" data-action="removeCreditRule" class="cbtn o-trash" title="<?php echo $lang['Del']; ?>"></a>
+										<a href="javascript:;" data-action="removeCreditRule" data-id="<?php echo $val['cid']; ?>" class="cbtn o-trash" title="<?php echo $lang['Del']; ?>"></a>
 									<?php endif; ?>
 								</td>
 							</tr>
@@ -74,18 +74,19 @@
 			</div>
 		</div>
 		<div>
+			<input type="hidden" name="removeId" id="removeId" />
 			<button class="btn btn-primary btn-large btn-submit" name="creditSetupSubmit" value="1" type="submit"><?php echo $lang['Submit'] ?></button>
 		</div>
 		<img id="loading_img" style="display:none;" src='<?php echo STATICURL ?>/image/common/loading.gif'/>
 	</form>
 </div>
 <script type="text/template" id="ext_credit_tpl">
-	<tr>
-	<td><input type="text" class="input-small"></td>
-	<td><input type="text" class="input-small"></td>
-	<td><input type="text" class="input-small"></td>
-	<td><input type="checkbox" data-toggle="switch" class="visi-hidden"></td>
-	<td><a href="javascript:;" data-action="removeCreditRule" class="cbtn o-trash" title="<?php echo $lang['Del']; ?>"></a></td>
+	<tr id="credit_<%= cid %>">
+	<td><input type="text" class="input-small" name="credit[<%= cid %>][name]"></td>
+	<td><input type="text" class="input-small" name="credit[<%= cid %>][initial]"></td>
+	<td><input type="text" class="input-small" name="credit[<%= cid %>][lower]"></td>
+	<td><input type="checkbox" data-toggle="switch" class="visi-hidden" name="credit[<%= cid %>][enable]"></td>
+	<td><a href="javascript:;" data-action="removeCreditRule" data-id="<%= cid %>" class="cbtn o-trash" title="<?php echo $lang['Del']; ?>"></a></td>
 	</tr>
 </script>
 <script>

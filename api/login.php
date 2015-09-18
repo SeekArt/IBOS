@@ -7,6 +7,8 @@ use application\core\utils\String;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\utils\Main;
 use application\modules\user\components\UserIdentity;
+use application\modules\user\model\FailedIp;
+use application\modules\user\model\FailedLogin;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
@@ -28,7 +30,7 @@ function dologin( $uid, $log = '' ) {
 		);
 		IBOS::app()->setting->copyFrom( $global );
 		LoadSysCache();
-		if ( IBOS::app()->user->isGuest ) {
+
 			$saltkey = Main::getCookie( 'saltkey' );
 			if ( empty( $saltkey ) ) {
 				$saltkey = String::random( 8 );
@@ -45,9 +47,12 @@ function dologin( $uid, $log = '' ) {
 				$loginType = 1;
 			};
 			$identity = new UserIdentity( $curUser['username'], $curUser['password'], $loginType );
+		$result = $identity->authenticate();
+		$ip = IBOS::app()->setting->get( 'clientip' );
+		if ( $result > 0 ) {
+			if ( IBOS::app()->user->isGuest || IBOS::app()->user->uid != $uid ) {
 			$identity->setId( $uid );
 			$identity->setPersistentStates( $curUser );
-			$ip = IBOS::app()->setting->get( 'clientip' );
 			// 先删除cookie，否则初始化user组件会出错
 			foreach ( $_COOKIE as $k => $v ) {
 				$cookiePath = $config['cookie']['cookiepath'];
@@ -61,7 +66,7 @@ function dologin( $uid, $log = '' ) {
 			if ( $account['allowshare'] != 1 ) {
 				$user->setStateKeyPrefix( IBOS::app()->setting->get( 'sid' ) );
 			}
-			$user->login( $identity );
+				$loginStatus = $user->login( $identity );
 			if ( !empty( $log ) ) {
 				$logArr = array(
 					'terminal' => $log,
@@ -78,6 +83,45 @@ function dologin( $uid, $log = '' ) {
 					UserUtil::checkUserGroup( $uid );
 				}
 			}
+				return array(
+					'code' => $loginStatus,
+					'msg' => $loginStatus ? '' : '登录失败',
+				);
+			} else {
+				return array(
+					'code' => $result,
+					'msg' => ''
+				);
+			}
+		} else {
+			switch ( $result ) {
+				case 0:
+					$msg = IBOS::lang( 'User not fount', 'user.default', array( '{username}' => $curUser['username'] ) );
+					break;
+				case -1:
+					$msg = IBOS::lang( 'User lock', 'user.default', array( '{username}' => $curUser['username'] ) );
+					break;
+				case -2:
+					$msg = IBOS::lang( 'User disabled', 'user.default', array( '{username}' => $curUser['username'] ) );
+					break;
+				case -3:
+					FailedLogin::model()->updateFailed( $curUser['username'] );
+					list($ip1, $ip2) = explode( '.', $ip );
+					$newIp = $ip1 . '.' . $ip2;
+					FailedIp::model()->insertIp( $newIp );
+					$log = array(
+						'user' => $curUser['username'],
+						'password' => String::passwordMask( $curUser['password'] ),
+						'ip' => $ip
+					);
+					Log::write( $log, 'illegal', 'module.user.login' );
+					$msg = IBOS::lang( 'User name or password is not correct', 'user.default' );
+					break;
+			}
+			return array(
+				'code' => $result,
+				'msg' => $msg,
+			);
 		}
 	}
 }

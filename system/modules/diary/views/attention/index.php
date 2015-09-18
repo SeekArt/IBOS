@@ -107,7 +107,7 @@ use application\core\utils\Env;
 	$(function() {
 		// 时间选择
 		$('#da_date_btn').datepicker().on("changeDate", function(evt) {
-			location.href = Ibos.app.url("diary/attention/index", { date: $.data(this, "date")})
+			location.href = Ibos.app.url("diary/attention/index", { date: $.data(this, "date")});
 		});
-	})
+	});
 </script>

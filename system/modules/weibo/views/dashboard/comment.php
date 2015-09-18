@@ -83,7 +83,7 @@
     </div>
 </div>
 <script src="<?php echo $moduleAssetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $moduleAssetUrl; ?>/js/wbdashboard.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $moduleAssetUrl; ?>/js/weibo_dashboard_common.js?<?php echo VERHASH; ?>"></script>
 <script>
     // 复选框联动
     $("#mn_search").search(

@@ -58,23 +58,6 @@
 	</div>
 </div>
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
-<script type="text/javascript">
-	$.formValidator.initConfig({formID: "position_add_form", errorFocus: true});
-
-	// 角色名称
-	$("#order_id").formValidator()
-			.regexValidator({
-				regExp: "notempty",
-				dataType: "enum",
-				onError: "排序序号不能为空"
-			});
-
-	$("#pos_name").formValidator()
-			.regexValidator({
-				regExp: "notempty",
-				dataType: "enum",
-				onError: "岗位名称不能为空"
-			});
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_position.js"></script>
 
 

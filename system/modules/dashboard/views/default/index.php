@@ -79,16 +79,13 @@ use application\core\utils\IBOS;
 								<?php echo $lang['Upload setting']; ?>
 							</a>
 						</li>
+						<!-- 
 						<li>
 							<a href="<?php echo $global['sms']; ?>" target="main" title="<?php echo $lang['Sms setting']; ?>">
 								<?php echo $lang['Sms setting']; ?>
 							</a>
 						</li>
-						<li>
-							<a href="<?php echo $global['im']; ?>" target="main" title="<?php echo $lang['Instant messaging binding']; ?>">
-								<?php echo $lang['Instant messaging binding']; ?>
-							</a>
-						</li>
+						-->
 						<li>
 							<a href="<?php echo $global['sysCode']; ?>" target="main" title="<?php echo $lang['System code setting']; ?>">
 								<?php echo $lang['System code setting']; ?>
@@ -300,6 +297,11 @@ use application\core\utils\IBOS;
 								<?php echo $lang['Weixin binding'] ?>
 							</a>
 						</li>
+						<li>
+							<a href="<?php echo $global['im']; ?>" target="main" title="<?php echo $lang['Instant messaging binding']; ?>">
+								<?php echo $lang['Instant messaging binding']; ?>
+							</a>
+						</li>
 					</ul>
 					<!-- 全局 -->
 					<ul id="db_global_list" style="display:none;">
@@ -338,11 +340,6 @@ use application\core\utils\IBOS;
 						<li>
 							<a href="<?php echo $global['sms']; ?>" target="main" title="<?php echo $lang['Sms setting']; ?>">
 								<?php echo $lang['Sms setting']; ?>
-							</a>
-						</li>
-						<li>
-							<a href="<?php echo $global['im']; ?>" target="main" title="<?php echo $lang['Instant messaging binding']; ?>">
-								<?php echo $lang['Instant messaging binding']; ?>
 							</a>
 						</li>
 						<li>
@@ -509,10 +506,21 @@ use application\core\utils\IBOS;
 		<script src="<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>"></script>
 		<script src="<?php echo $assetUrl; ?>/js/frame.js?<?php echo VERHASH; ?>"></script>
 		<script>
+		$(function(){
+			var refer = U.getUrlParam().refer;
+			if(refer !== ""){
+				var $referElem = $('#sub_nav [href="' + unescape(refer) + '"]');
+				var $subMenu = $referElem.closest("ul");
+				var $nav = $('[data-href="#' + $subMenu.attr("id") + '"]');
+				$nav.click();
+				$referElem.click();
+			}
+			
 			$(document).on("click", "a[target='main']", function() {
 				var title = '<?php echo $lang['Admin control']; ?> -' + $(this).html();
 				document.title = title;
 			})
+		});
 		</script>
 	</body>
 </html>

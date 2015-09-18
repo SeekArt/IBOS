@@ -74,35 +74,4 @@
 		</form>
 	</div>
 </div>
-<script>
-	function beforeSubmit() {
-		var enabled = new Array();
-		$('#select_left').find('option').each(function(i, n) {
-			enabled.push($(n).val());
-		});
-		$('#enabled_module').val(enabled.join(','));
-	}
-	(function() {
-		crossSelect.leftSelect = $("#select_left");
-		crossSelect.rightSelect = $("#select_right");
-		$("#toLeftBtn").on("click", function() {
-			crossSelect.rightToLeft();
-		});
-		$("#toRightBtn").on("click", function() {
-			crossSelect.leftToRight()
-		});
-		$("#select_all_left").on("click", function() {
-			crossSelect.leftSelectAll()
-		});
-		$("#select_all_right").on("click", function() {
-			crossSelect.rightSelectAll();
-		});
-		$("#select_left").on('dblclick', 'option', function() {
-			crossSelect.moveToRight(this);
-		});
-		$("#select_right").on('dblclick', 'option', function() {
-			crossSelect.moveToLeft(this);
-		});
-	})();
-
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_sms.js"></script>

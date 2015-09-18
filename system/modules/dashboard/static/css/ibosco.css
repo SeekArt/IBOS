@@ -173,3 +173,89 @@
 .result-info-table tbody td{
 	padding: 0 10px;
 }
+.first-box{
+	padding: 80px 0;
+}
+
+
+/*  酷办公同步时样式 */
+.setting-bind-iframe{
+	width: 386px;
+	padding: 3px;
+	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	position: relative;
+	overflow: hidden;
+	border: 1px solid #EBEFF6;
+}
+
+.o-weixin-tip,
+.o-ibos-tip,
+.o-transport-right,
+.o-transport-left,
+.o-opt-success,
+.o-opt-faliue{
+	background-image: url(../image/cobind_setting.png);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+.o-weixin-tip,
+.o-ibos-tip,
+.o-opt-success,
+.o-opt-faliue{
+	width: 72px;
+	height: 72px;
+}
+.o-weixin-tip{
+	background-position: 0 0;
+	margin-left: 10px;
+}
+.o-ibos-tip{
+	background-position: -90px 0;
+}
+.o-opt-success{
+	background-position: -180px 0;
+}
+.o-opt-faliue{
+	background-position: -270px 0;
+}
+.o-transport-right,
+.o-transport-left{
+	width: 120px;
+	height: 12px;
+}
+.o-transport-right{
+	background-position: 0 -90px;
+}
+.o-transport-left{
+	background-position: -120px -90px;
+}
+.conpamy-info-wrap{
+	margin-left: 40px;
+}
+.error-info-table{
+	width: 724px;
+}
+
+.o-co-tip, .o-ibo-tip{
+	width: 40px;
+	height: 40px;
+	display: inline-block;
+	background-repeat: no-repeat;
+	background-image: url(../image/snyc_setting.png);
+}
+.o-ibo-tip{
+	background-position: left top;
+}
+.o-co-tip{
+	background-position: right top;
+}
+
+
+.sync-wrap{
+	width: 158px;
+}

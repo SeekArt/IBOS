@@ -85,7 +85,7 @@ class Calendar extends Callback {
 		$items[0] = array(
 			'title' => "最近的待办(" . count( $lists ) . ")，点击即可完成",
 			'description' => '',
-			'picurl' => 'http://www.ibos.com.cn/images/wx/calendar.png',
+			'picurl' => 'http://app.ibos.cn/img/banner/calendar.png',
 			'url' => ''
 		);
 		foreach ( $lists as $key => $row ) {
@@ -93,7 +93,7 @@ class Calendar extends Callback {
 			$item = array(
 				'title' => $row['text'],
 				'description' => '',
-				'picurl' => 'http://www.ibos.com.cn/images/wx/' . $key . '.png',
+				'picurl' => 'http://app.ibos.cn/img/sort/' . $key . '.png',
 				'url' => WxApi::getInstance()->createOauthUrl( WxApi::getInstance()->getHostInfo() . '/api/wxqy/callback.php?type=todo&param=' . $row['id'], $this->appId )
 			);
 			$items[] = $item;

@@ -27,7 +27,7 @@ return array(
             'name' => '人才管理',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'resume' => array( 'index', 'add', 'show', 'edit', 'sendEmail', 'del' )
+                'resume' => array( 'index', 'add', 'show', 'edit', 'sendemail', 'del' )
             )
         ),
         'contact' => array(

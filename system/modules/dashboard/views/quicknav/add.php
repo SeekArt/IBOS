@@ -4,7 +4,7 @@
 		<h1 class="mt"><?php echo $lang['Quicknav setting']; ?></h1>
 	</div>
 	<div>
-		<form action="<?php echo $this->createUrl('quicknav/add'); ?>" method="post" class="form-horizontal">
+		<form action="<?php echo $this->createUrl('quicknav/add'); ?>" method="post" id="quick_nav_form" class="form-horizontal">
 			<div class="ctb">
 				<h2 class="st"><?php echo $lang['Custom navigation']; ?></h2>
 				<!-- @Todo: 据说这里需要程序端做判断 -->
@@ -30,7 +30,7 @@
 					<div class="control-group">
 						<label class="control-label"><?php echo $lang['The link address']; ?></label>
 						<div class="controls">
-							<input type="text" name="url" placeholder="<?php echo $lang['The link example']; ?>">
+							<input type="text" name="url" placeholder="<?php echo $lang['The link example']; ?>" id="qn_url">
 						</div>
 					</div>
 
@@ -65,4 +65,5 @@
 </div>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/handlers.js"></script>
-<script src="<?php echo $assetUrl; ?>/js/quicknav_edit.js?<?php echo VERHASH; ?>"></script>
+<script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
+<script src="<?php echo $assetUrl; ?>/js/db_quicknav_edit.js?<?php echo VERHASH; ?>"></script>

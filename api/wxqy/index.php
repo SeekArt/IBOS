@@ -34,7 +34,7 @@ if ( !empty( $echoStr ) ) {
 $result = trim( file_get_contents( "php://input" ), " \t\n\r" );
 // 解析
 if ( !empty( $result ) ) {
-	$msg = json_decode( $result, true );
+	$msg = CJSON::decode( $result, true );
 	if ( !empty( $msg ) ) {
 		$uid = UserBinding::model()->fetchUidByValue( $msg['properties']['userId'], 'wxqy' );
 		if ( $uid ) {

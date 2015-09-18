@@ -151,33 +151,4 @@ use application\core\utils\DateTime;
 		</div>
 	</div>
 </div>
-<script>
-	(function() {
-		$("#QQ_enable").on("change", function() {
-			$("#QQ_setup, #syncs").toggle();
-		});
-		Ibos.events.add({
-			'mb': function(param, $elem) {
-				var url = Ibos.app.url('dashboard/im/bindinguser');
-				Ui.ajaxDialog(url, {
-					id: "d_bindinguser",
-					title: "绑定用户",
-					padding: 0,
-					ok: function() {
-						var data = parent.$('#bind_form').serializeArray();
-						$.post(url, data, function(data) {
-							if (data.isSuccess) {
-								Ui.tip('绑定成功', 'success');
-								Ui.closeDialog();
-							} else {
-								Ui.tip('未知错误，绑定失败', 'error');
-							}
-						});
-						return false;
-					},
-					cancel: true
-				});
-			}
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_im.js"></script>

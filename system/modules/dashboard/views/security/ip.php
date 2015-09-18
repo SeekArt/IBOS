@@ -115,39 +115,4 @@ use application\core\utils\IBOS;
 	</td>
 	</tr>
 </script>
-<script>
-	(function() {
-		var ipRecTbody = $("#ip_rec_tbody"),
-				addOneItem = function(tpl) {
-					ipRecTbody.append(tpl);
-				};
-		// 增加项
-		$("#add_ip_rec").on("click", function() {
-			var d = new Date(), ipRecTpl = $.template('ip_rec_template', {id: d.getTime()});
-			addOneItem(ipRecTpl);
-		});
-		// 删除项
-		$('#ip_rec_table').on("click", ".o-trash", function() {
-			$(this).parents("tr").first().remove();
-		});
-		// 删除选中
-		$('[data-act="del"]').on('click', function() {
-			var id = '';
-			$('[data-check="ip"]:checked').each(function() {
-				id += this.value + ',';
-			});
-			if (id !== '') {
-				$('#form_act').val('del');
-				$('#sys_security_form').submit();
-			} else {
-				$.jGrowl('<?php echo IBOS::lang( 'At least one record', 'error' ); ?>', {theme: 'error'});
-				return false;
-			}
-		});
-		// 清空
-		$('[data-act="clear"]').on('click', function() {
-			$('#form_act').val('clear');
-			$('#sys_security_form').submit();
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_security.js"></script>

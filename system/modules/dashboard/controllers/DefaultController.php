@@ -87,11 +87,15 @@ class DefaultController extends BaseController {
 			} else {
 				$loginType = 1;
 			};
+                                                          //15-7-27 下午2:03 gzdzl 添加对userName的转义，防止SQL错误
+			$userName = addslashes( $userName );
 			$identity = new UserIdentity( $userName, $passWord, $loginType );
 			$result = $identity->authenticate( true );
 			if ( $result > 0 ) {
 				IBOS::app()->user->login( $identity );
-
+				if ( IBOS::app()->user->uid != 1 ) {
+					MainUtil::checkLicenseLimit( true );
+				}
 
 				$this->success( IBOS::lang( 'Login succeed' ), $defaultUrl . (!empty( $refer ) ? '&refer=' . urlencode( $refer ) : '') );
 			} else {

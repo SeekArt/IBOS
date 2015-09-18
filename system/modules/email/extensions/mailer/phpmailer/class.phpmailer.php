@@ -1,4 +1,5 @@
 <?php
+namespace application\modules\email\extensions\mailer\phpmailer;
 /*~ class.phpmailer.php
 .---------------------------------------------------------------------------.
 |  Software: PHPMailer - PHP email class                                    |
@@ -44,7 +45,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '<') ) {
  * @package PHPMailer
  */
 
-namespace application\modules\email\extensions\mailer\phpmailer;
+
 
 use application\modules\email\extensions\mailer\phpmailer\extras\html2text;
 use Exception;

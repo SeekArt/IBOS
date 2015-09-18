@@ -153,6 +153,6 @@ use application\modules\main\utils\Main;
 <script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/diary.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/reviewindex.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/diary_review_index.js?<?php echo VERHASH; ?>'></script>
 
 

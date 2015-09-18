@@ -185,7 +185,7 @@ class File {
 			if ( $errno || $status['http_code'] != 200 ) {
 				return;
 			} else {
-				return !$limit ? $data : substr( $data, 0, $limit );
+				return !$limit ? $data : substr( $data, $position, $limit );
 			}
 		}
 

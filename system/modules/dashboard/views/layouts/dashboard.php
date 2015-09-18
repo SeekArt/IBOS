@@ -55,7 +55,6 @@ use application\modules\user\utils\User;
 		<script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>'></script>
 		<script src="<?php echo $this->getAssetUrl(); ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-		<script src="<?php echo $this->getAssetUrl(); ?>/js/dashboard.js?<?php echo VERHASH; ?>"></script>
 	</head>
 	<body>
 		<?php echo $content; ?>

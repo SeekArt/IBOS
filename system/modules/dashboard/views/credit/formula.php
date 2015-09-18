@@ -75,19 +75,4 @@
 		</div>
 	</form>
 </div>
-<script>
-	(function() {
-		var $calc = $("#calculator");
-		creditCalculator($calc);
-		$calc.on("change", function(evt, data) {
-			$("#calculator_input").val(data.result);
-			$("#calculator_expression").val(data.template);
-		});
-		// 鼠标经过提示
-		$("#calculator_screen").popover({
-			title: U.lang("DB.TIP"),
-			content: U.lang("DB.CREDIT_TIP"),
-			trigger: "hover"
-		});
-	})();
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_credit_fomula.js"></script>

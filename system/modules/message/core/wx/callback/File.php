@@ -79,7 +79,7 @@ class File extends Callback {
 		$items[0] = array(
 			'title' => "为你找到以下文件，请输入ID或点击链接后下载",
 			'description' => '',
-			'picurl' => 'http://www.ibos.com.cn/images/wx/file.png',
+			'picurl' => 'http://app.ibos.cn/img/banner/file.png',
 			'url' => ''
 		);
 		foreach ( $lists as $row ) {

@@ -44,7 +44,7 @@ class VoteUtil {
      * 判断用户是否投过票
      * @param string $relatedModule 关联模块名称
      * @param integer $relatedId  关联模块id
-     * @param integer $uid  访问当前投票用户UID,如果不填，则默认Ibos::app()->user->uid
+     * @param integer $uid  访问当前投票用户UID,如果不填，则默认IBOS::app()->user->uid
      * @return boolean true为已投，false为没投过票
      */
     public static function checkVote( $relatedModule, $relatedId, $uid = 0 ) {

@@ -41,8 +41,22 @@ if ( $uid ) {
         'client_ip' => Env::getClientIp()
     );
     $api = new BQQApi( $properties );
-    $status = $api->getVerifyStatus( array( 'open_id' => $openId, 'hashskey' => $hashskey ) );
-    if ( $status['ret'] == 0 ) {
+	$res = $api->getVerifyStatus( array( 'open_id' => $openId, 'hashskey' => $hashskey ) );
+	/**
+	 * 原先代码里上面的res直接是status，并且没有下面的is_array的判断和json解码，
+	 * 这里涉及到php的一个奇怪的特点：php不喜欢字符串。这里不做讨论
+	 */
+	/**
+	 * 这里返回的是一个json！
+	 */
+	if ( is_array( $res ) ) {
+		Env::iExit( $res['error'] );
+	}
+	/**
+	 * 这里还是加了第二个参数，因为这样更清晰
+	 */
+	$status = CJSON::decode( $res, true );
+	if ( $status['ret'] == '0' ) {
         dologin( $uid, 'bqqsso' );
         if ( $returnurl == 'index' ) {
             header( 'Location: ../../index.php', true );

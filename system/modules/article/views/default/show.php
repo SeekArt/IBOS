@@ -97,8 +97,8 @@ use application\modules\vote\components\Vote;
 						<div class="clearfix fill-nn art-funbar">
 							<?php if ( isset( $isApprovaler ) && $isApprovaler ): ?>
 								<div class="pull-left">
-									<button type="button" data-action="verifyArticle" class="btn btn-large btn-primary" id="approval_btn">审核通过</button>
-									<button type="button" class="btn btn-large" id="art_rollback">退回</button>
+									<button type="button" class="btn btn-large btn-primary" data-action="verifyArticle">审核通过</button>
+									<button type="button" class="btn btn-large" data-action="backArticle">退回</button>
 								</div>
 							<?php endif; ?>
 							<?php if ( !empty( $data['approval'] ) ): ?>
@@ -263,4 +263,4 @@ use application\modules\vote\components\Vote;
 <script src='<?php echo STATICURL; ?>/js/src/emotion.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/art_default_show.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/article_default_show.js?<?php echo VERHASH; ?>'></script>

@@ -99,9 +99,9 @@ class Upgrade {
      */
     public static function compareBasefile( $upgradeFileList ) {
         $ibosFiles = @file( IBOS::getPathOfAlias( 'application.ibosfiles' ) . '.md5' );
-        if ( !$ibosFiles ) {
-            return array();
-        }
+//		if ( !$ibosFiles ) {
+//			return array();
+//		}
         $newUpgradeFileList = array();
         foreach ( $upgradeFileList as $hashFile ) {
             if ( file_exists( PATH_ROOT . '/' . $hashFile ) ) {
@@ -109,6 +109,7 @@ class Upgrade {
             }
         }
         $modifyList = $showList = $searchList = array();
+		if ( !empty( $ibosFiles ) ) {
         foreach ( $ibosFiles as $line ) {
             $file = trim( substr( $line, 34 ) );
             $md5DataNew[$file] = substr( $line, 0, 32 );
@@ -121,6 +122,7 @@ class Upgrade {
                 }
             }
         }
+		}
         return array( $modifyList, $showList );
     }
 
@@ -199,7 +201,7 @@ class Upgrade {
         }
         //下载这个文件
         $tempUploadFileUrl = self::UPGRADE_URL . $upgradeInfo['latestversion'] . '/' . $upgradeInfo['latestrelease'] . '/' . self::$locale . '/' . $folder . '/' . $file . '.sc';
-        $response = File::fileSockOpen( $tempUploadFileUrl, $offset, '', '', false, '', 15, true, 'URLENCODE', false, $position );
+		$response = File::fileSockOpen( $tempUploadFileUrl, $offset, '', '', false, '', 15, true, 'URLENCODE', true, $position );
         if ( $response ) {
             if ( $offset && strlen( $response ) == $offset ) {
                 $downloadFileFlag = false;

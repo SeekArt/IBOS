@@ -79,7 +79,7 @@ $(function() {
 			containerId: "file_target",
 			inputId: "attachmentid"
 		}
-	})
+	});
 
 	// 岗位选择         
 	$("#recruittargetposition").userSelect({

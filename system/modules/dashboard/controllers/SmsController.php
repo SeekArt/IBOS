@@ -12,6 +12,7 @@ use application\core\utils\String;
 use application\modules\main\model\Setting;
 use application\modules\message\model\NotifySms;
 use application\modules\message\utils\Message;
+use CJSON;
 
 class SmsController extends BaseController {
 
@@ -44,7 +45,7 @@ class SmsController extends BaseController {
                     $url = "http://sms.bechtech.cn/Api/getLeft/data/json?accesskey={$accessKey}&secretkey={$secretKey}";
                     $return = File::fileSockOpen( $url );
                     if ( $return ) {
-                        $return = json_decode( $return, true );
+						$return = CJSON::decode( $return, true );
                         if ( isset( $return['result'] ) ) {
                             $smsLeft = $return['result'];
                         }

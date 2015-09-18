@@ -65,5 +65,5 @@ use application\core\utils\IBOS;
 	</div>
 </div>
 <script src='<?php echo $assetUrl; ?>/js/message.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/notifydetail.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/message_notify_detail.js?<?php echo VERHASH; ?>'></script>
 

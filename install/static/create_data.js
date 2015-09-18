@@ -38,7 +38,9 @@ var dbInit = {
 			role = res.isadmin, // 返回0为非管理员，1为管理员
 			shortname = res.shortname,
 			$result = $("#relation_content"),
-			$cophone = $("#cophone");
+			$cophone = $("#cophone"),
+			$qycode = $("#qy_code"),
+			$codeVerify = $("#qy_code_verify"); 
 		$("#mobile").val("");
 		$("#password").val("");
 		Ui.dialog.get("relation_dialog").close();
@@ -73,7 +75,7 @@ var dbInit = {
 				// 设置酷办公用户角色，用户退出时还原视图
 				$("[data-action='exitAccount']").attr("data-role", role);
 				// 如果是管理员, 企业代码显示出来,且状态改为只读
-				$("#qy_code").val(code).removeAttr("data-type").hide();
+				$qycode.val(code).removeAttr("data-type").hide();
 				$("#qy_code_result").text(code).show();
 				// 如果是管理员, 企业简称显示出来
 				$("#short_name").val(shortname);
@@ -81,11 +83,14 @@ var dbInit = {
 				// 非管理员则提示是否退出原有企业
 				Ui.confirm("你不是“ " + shortname + " ”的超级管理员, 绑定后将退出原有企业, 是否确定绑定？", function() {
 					$cophone.text(mobile);
+					$codeVerify.attr("data-status", "link");
 					$result.animate({top: "-60px"}, 500);
 				});
 			}
 		} else {
+			$qycode.val("");
 			$cophone.text(mobile);
+			$codeVerify.attr("data-status", "link");
 			$result.animate({top: "-60px"}, 500);
 		}
 	},
@@ -143,7 +148,7 @@ var validate = {
 			$tip = $("#" + id + "_tip");
 		if(value){
 			if (!reg.account.test(value)) {
-				$tip.text("账号格式不正确").show();
+				$tip.text("请输入正确的手机号！").show();
 				return false;
 			}
 		}else{
@@ -172,13 +177,14 @@ var validate = {
 	// 对企业代码进行验证
 	"qycode": function(id) {
 		var val = $("#" + id).val(),
-				$tip = $("#" + id + "_tip"),
-				ajaxverify = +$("#" + id + "_verify").val();
+			$tip = $("#" + id + "_tip"),
+			ajaxverify = +$("#" + id + "_verify").val(),
+			status = $("#" + id + "_verify").data("status");
 		if (!reg.qycode.test(val)) {
 			$tip.text("企业代码格式不正确！").show();
 			return false;
 		} else {
-			if (!ajaxverify) {
+			if(status == "link" && !ajaxverify){
 				$tip.text("企业代码已存在！").show();
 				return false;
 			}
@@ -265,22 +271,27 @@ $(function() {
 				param = {code: val},
 				$tip = $("#" + id + "_tip"),
 				$ajaxverify = $("#" + id + "_verify");
+				status = $ajaxverify.attr("data-status");
 			// 先验证企业代码
-			dbInit.op.verifyCorpCode(param).done(function(res) {
-				if (res.isSuccess) {
-					var isAvailable = res.available;
-					if (!isAvailable) {
-						$tip.text("企业代码已存在！").show();
-						$ajaxverify.val("0");
+			if(status == "link"){
+				dbInit.op.verifyCorpCode(param).done(function(res) {
+					if (res.isSuccess) {
+						var isAvailable = res.available;
+						if (!isAvailable) {
+							$tip.text("企业代码已存在！").show();
+							$ajaxverify.val("0");
+						} else {
+							$ajaxverify.val("1");
+							$tip.hide();
+						}
+						validate.qycode(id);
 					} else {
-						$ajaxverify.val("1");
-						$tip.hide();
+						Ui.tip(res.msg, "danger");
 					}
-				} else {
-					Ui.tip(res.msg, "danger");
-				}
-			});
-			validate.qycode(id);
+				});
+			}else{
+				validate.qycode(id);
+			}
 		},
 		"focus": function() {
 			$("#" + this.id + "_tip").hide();
@@ -394,7 +405,8 @@ $(function() {
 					$name = $("#short_name"),
 					$code = $("#qy_code"),
 					$resCode = $("#qy_code_result"),
-					$extraData = $("#extraData");
+					$extraData = $("#extraData"),
+					$verify = $("#qy_code_verify"); 
 				// 切换为登录酷办公的状态
 				$cophone.text("");
 				$content.animate({top: 0}, 500);
@@ -403,14 +415,12 @@ $(function() {
 				$resCount.text("").hide();
 				$adCount.attr("data-type", "account").val("").show();
 				$extraData.val("");
-				// 若为管理员
-				if (role) {
-					// 将企业代码转换为可写状态
-					$resCode.text("").hide();
-					$code.attr("data-type", "qycode").val("").show();
-					// 将企业简称转换为可写状态
-					$name.val("");
-				}
+				// 将企业代码转换为可写状态
+				$resCode.text("").hide();
+				$code.attr("data-type", "qycode").val("").show();
+				// 将企业简称转换为可写状态
+				$name.val("");
+				$verify.val("1").attr("data-status", "unlink");
 			});
 		},
 		// 切换注册页和登录页

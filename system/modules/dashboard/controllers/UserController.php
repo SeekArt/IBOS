@@ -26,6 +26,7 @@ use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\Page;
 use application\core\utils\String;
+use application\core\utils\PHPExcel;
 use application\extensions\ExcelReader\Spreadsheet_Excel_Reader;
 use application\modules\dashboard\model\Cache;
 use application\modules\department\components\DepartmentCategory as ICDepartmentCategory;
@@ -72,8 +73,11 @@ class UserController extends OrganizationBaseController {
 		}
 
 		$data = Array();
-		if ( Env::submitCheck( 'search' ) ) {
-			$key = $_POST['keyword'];
+		if ( Env::submitCheck( 'search' ) && Ibos::app()->request->isPostRequest ) {
+			//添加转义
+			//15-7-31 下午3:10 gzdzl
+			//这里存在有keyword单引号SQL错误
+			$key = addslashes( $_POST['keyword'] );
 			$condition = User::model()->getConditionByDeptIdType( false, $type );
 			$list = User::model()->fetchAll( "(`username` LIKE '%{$key}%' OR `realname` LIKE '%{$key}%') AND " . $condition );
 		} else {
@@ -367,14 +371,11 @@ class UserController extends OrganizationBaseController {
 		$attachs = Attach::getAttachData( $attachId, false );
 		$attach = array_shift( $attachs ); // 附件
 		$file = File::getAttachUrl() . '/' . $attach['attachment'];
-		$reader = new Spreadsheet_Excel_Reader();
-		$reader->setOutputEncoding( 'utf-8' );
-		$reader->read( $file );
+		$data = PHPExcel::excelToArray( $file );
 		$err = array();
 		$successCount = 0;
-		if ( isset( $reader->sheets[0]['cells'] ) && is_array( $reader->sheets[0]['cells'] ) ) {
-			unset( $reader->sheets[0]['cells'][1] ); // 去掉excel头
-			$count = count( $reader->sheets[0]['cells'] );
+		if ( !empty( $data ) && is_array( $data ) ) {
+			$count = count( $data );
 
 			$users = UserUtil::loadUser();
 			$allUsers = User::model()->fetchAllSortByPk( 'uid' ); // 全部用户，包括锁定、禁用等
@@ -386,35 +387,25 @@ class UserController extends OrganizationBaseController {
 				$convert['jobnumber'][] = $user['jobnumber']; // 已存在的工号
 			}
 			// 邮件格式
-			$emailPreg = "/^[_.0-9a-z-a-z-]+@([0-9a-z][0-9a-z-]+.)+[a-z]{2,4}$/";
-			$ip = IBOS::app()->setting->get( 'clientip' );
-			foreach ( $reader->sheets[0]['cells'] as $k => $row ) {
+			$ip = Ibos::app()->setting->get( 'clientip' );
+			foreach ( $data as $k => $row ) {
 				//以下数组下标跟导入表的每一列位置对应，如导入出现问题，请检查位置与格式！
 				$salt = String::random( 6 );
-				$origPass = isset( $row[2] ) ? $row[2] : '';
+				$origPass = !empty( $row[3] ) ? $row[3] : '123456'; //默认密码为123456
 				$data = array(
 					'salt' => $salt,
-					'username' => isset( $row[1] ) ? trim( $row[1] ) : '', // 姓名
+					'username' => !empty( $row[0] ) ? trim( $row[0] ) : '', // 用户名
 					'password' => !empty( $origPass ) ? md5( md5( trim( $origPass ) ) . $salt ) : '', // 密码
-					'realname' => isset( $row[3] ) ? trim( $row[3] ) : '', // 真实姓名
-					'gender' => isset( $row[4] ) && trim( $row[4] ) == '女' ? 0 : 1, // 性别
-					'mobile' => isset( $row[5] ) ? trim( $row[5] ) : '', // 手机
-					'email' => isset( $row[6] ) ? trim( $row[6] ) : '', // 邮箱
-					'weixin' => isset( $row[7] ) ? trim( $row[7] ) : '', // 微信
-					'jobnumber' => isset( $row[8] ) ? trim( $row[8] ) : '', // 工号
+					'realname' => !empty( $row[2] ) ? trim( $row[2] ) : '', // 真实姓名
+					'gender' => !empty( $row[4] ) && trim( $row[4] ) == '女' ? 0 : 1, // 性别
+					'mobile' => !empty( $row[6] ) ? trim( $row[6] ) : '', // 手机
+					'email' => !empty( $row[7] ) ? trim( $row[7] ) : '', // 邮箱
+					'weixin' => !empty( $row[5] ) ? trim( $row[5] ) : '', // 微信
+					'jobnumber' => !empty( $row[1] ) ? trim( $row[1] ) : '', // 工号
 				);
-				if ( empty( $data['username'] ) || empty( $data['password'] ) || empty( $data['realname'] ) || empty( $data['mobile'] ) || empty( $data['email'] ) ) {
-					$err[$k] = array( 'reason' => '用户名、密码、真实姓名、手机、邮箱不能为空！' );
-				} else if ( in_array( $data['username'], $convert['username'] ) ) {
-					$err[$k] = array( 'reason' => '用户名已存在！' );
-				} else if ( in_array( $data['mobile'], $convert['mobile'] ) ) {
-					$err[$k] = array( 'reason' => '手机号码已存在！' );
-				} else if ( in_array( $data['email'], $convert['email'] ) ) {
-					$err[$k] = array( 'reason' => '邮箱已存在！' );
-				} else if ( !empty( $data['jobnumber'] ) && in_array( $data['jobnumber'], $convert['jobnumber'] ) ) {
-					$err[$k] = array( 'reason' => '工号已存在！' );
-				} else if ( !preg_match( $emailPreg, $data['email'] ) ) {
-					$err[$k] = array( 'reason' => '邮件格式错误！' );
+				$result = self::checkUserData( $data, $convert );
+				if ( !empty( $result ) ) {
+					$err[$k]['reason'] = $result;
 				}
 				if ( isset( $err[$k]['reason'] ) ) {
 					$err[$k]['username'] = $data['username'];
@@ -429,7 +420,16 @@ class UserController extends OrganizationBaseController {
 								'lastip' => $ip
 							)
 					);
-					UserProfile::model()->add( array( 'uid' => $newId ) );
+					$profile_data = array(
+						'uid' => $newId,
+						'birthday' => !empty( $row[8] ) ? ( $row[8] != 0 ? strtotime( $row[8] ) : 0 ) : 0,
+						'telephone' => !empty( $row[9] ) ? $row[9] : '',
+						'address' => !empty( $row[10] ) ? $row[10] : '',
+						'qq' => !empty( $row[11] ) ? $row[11] : '',
+						'bio' => !empty( $row[12] ) ? $row[12] : '',
+					);
+					//往user_profile添加相关数据，即使为空，要不然会报错
+					UserProfile::model()->add( $profile_data );
 					$newUser = User::model()->fetchByPk( $newId );
 					$users[$newId] = UserUtil::wrapUserInfo( $newUser );
 					// 同步用户钩子
@@ -454,25 +454,75 @@ class UserController extends OrganizationBaseController {
 	}
 
 	/**
+	 * 检查提交用户数据是否完整、或者有冲突
+	 * @param type $data 需要检查的数组
+	 * @param type $convert 检查标准数组
+	 * @return string 返回错误信息
+	 */
+	protected static function checkUserData( $data, $convert ) {
+		// 邮件格式匹配正则
+		$emailPreg = "/^[_.0-9a-z-a-z-]+@([0-9a-z][0-9a-z-]+.)+[a-z]{2,4}$/";
+		$err = '';
+		if ( empty( $data['username'] ) || empty( $data['password'] ) || empty( $data['realname'] ) || empty( $data['mobile'] ) || empty( $data['email'] ) ) {
+			$err = '用户名、密码、真实姓名、手机、邮箱不能为空';
+		} else if ( in_array( $data['username'], $convert['username'] ) ) {
+			$err = $data['username'] . '用户名已存在';
+		} else if ( in_array( $data['mobile'], $convert['mobile'] ) ) {
+			$err = $data['mobile'] . '手机号码已存在';
+		} else if ( in_array( $data['email'], $convert['email'] ) ) {
+			$err = $data['email'] . '邮箱已存在';
+		} else if ( !empty( $data['jobnumber'] ) && in_array( $data['jobnumber'], $convert['jobnumber'] ) ) {
+			$err = $data['jobnumber'] . '工号已存在';
+		} else if ( !preg_match( $emailPreg, $data['email'] ) ) {
+			$err = $data['email'] . '邮件格式错误';
+		}
+		return $err;
+	}
+
+	/**
 	 * 下载导入错误文件
+	 * 导出CSV格式
+	 */
+//	protected function downError() {
+//		$error = Cache::model()->fetchArrayByPk( 'userimportfail' );
+//		Cache::model()->delete( "`cachekey` = 'userimportfail'" );
+//		$fieldArr = array(
+//			Ibos::lang( 'Line' ),
+//			Ibos::lang( 'Username' ),
+//			Ibos::lang( 'Realname' ),
+//			Ibos::lang( 'Error reason' ),
+//		);
+//		$str = implode( ',', $fieldArr ) . "\n";
+//		foreach ( $error as $line => $row ) {
+//			$param = array( $line, $row['username'], $row['realname'], $row['reason'] );
+//			$str .= implode( ',', $param ) . "\n"; //用引文逗号分开 
+//		}
+//		$outputStr = iconv( 'utf-8', 'gbk//ignore', $str );
+//		$filename = Ibos::lang( 'Import error record' ) . '.csv';
+//		File::exportCsv( $filename, $outputStr );
+//	}
+	/**
+	 * 下载导入用户错误文件
+	 * 导出Excel格式
 	 */
 	protected function downError() {
 		$error = Cache::model()->fetchArrayByPk( 'userimportfail' );
 		Cache::model()->delete( "`cachekey` = 'userimportfail'" );
+		$return = array();
+		foreach ( $error as $key => $row ) {
+			$return[$key]['line'] = $key;
+			$return[$key]['username'] = $row['username'];
+			$return[$key]['realname'] = $row['realname'];
+			$return[$key]['reason'] = $row['reason'];
+		}
+		$filename = $filename = date( 'Y-m-d' ) . '用户导入错误信息.xls';
 		$fieldArr = array(
 			IBOS::lang( 'Line' ),
 			IBOS::lang( 'Username' ),
 			IBOS::lang( 'Realname' ),
 			IBOS::lang( 'Error reason' ),
 		);
-		$str = implode( ',', $fieldArr ) . "\n";
-		foreach ( $error as $line => $row ) {
-			$param = array( $line, $row['username'], $row['realname'], $row['reason'] );
-			$str .= implode( ',', $param ) . "\n"; //用引文逗号分开 
-		}
-		$outputStr = iconv( 'utf-8', 'gbk//ignore', $str );
-		$filename = IBOS::lang( 'Import error record' ) . '.csv';
-		File::exportCsv( $filename, $outputStr );
+		PHPExcel::exportToExcel( $filename, $fieldArr, $return );
 	}
 
 	/**
@@ -500,6 +550,7 @@ class UserController extends OrganizationBaseController {
 		}
 		$return = User::model()->updateByUids( $uidArr, $attributes );
 		Org::update();
+		CacheUtil::update( 'users' );
 		return $this->ajaxReturn( array( 'isSuccess' => !!$return ), 'json' );
 	}
 

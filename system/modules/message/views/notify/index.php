@@ -18,12 +18,12 @@ use application\core\utils\IBOS;
 					<?php if ( $unreadCount > 0 ): ?><button type="button" class="btn" data-action="markNoticeRead"><?php echo $lang['Set read']; ?></button><?php endif; ?>
 					<button type="button" onclick="location.href = '<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal', array( 'op' => 'remind' , 'uid' => IBOS::app()->user->uid) ); ?>'" class="btn"><?php echo $lang['Remind set']; ?></button>
 				</div>
-				<div class="pull-right" style="margin-top: 10px;" title="启用桌面通知功能，目前只支持chrome和safari浏览器">
+				<!-- 	<div class="pull-right" style="margin-top: 10px;" title="启用桌面通知功能，目前只支持chrome和safari浏览器">
 					<label class="checkbox">
 						<input type="checkbox" id="enable_desktop_notify">
 						使用桌面通知
 					</label>
-				</div>
+				</div> -->
 			</div>
 			<div class="page-list-mainer">
 				<?php if ( $unreadCount > 0 ): ?>
@@ -104,4 +104,4 @@ use application\core\utils\IBOS;
 	</div>
 </div>
 <script src='<?php echo $assetUrl; ?>/js/message.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/notifyindex.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/message_notify_index.js?<?php echo VERHASH; ?>'></script>

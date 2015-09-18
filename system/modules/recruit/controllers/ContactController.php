@@ -66,7 +66,6 @@ class ContactController extends BaseController {
             }
             $data = ICResumeContact::processAddOrEditData( $_POST );
             $data['resumeid'] = $resumeid;
-            ;
             $contactid = ResumeContact::model()->add( $data, true );
             if ( $contactid ) {
                 // 返回刚添加的联系记录

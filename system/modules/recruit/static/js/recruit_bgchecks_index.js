@@ -7,7 +7,7 @@
 $(function() {
 	$("#fullname").ibosSelect({ width: "50%" });
 	//高级搜索
-	$("#mn_search").search(true, function(){
+	$("#mn_search").search(null, function(){
 		Ibos.openAdvancedSearchDialog({
 			content: document.getElementById("mn_search_advance"),
 			init: function(){
@@ -17,5 +17,5 @@ $(function() {
 				this.DOM.content.find("form").submit();
 			}
 		});
-	})
+	});
 });

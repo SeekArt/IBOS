@@ -63,6 +63,7 @@ class FolderController extends BaseController {
 		$sort = Env::getRequest( 'sort' );
 		$name = Env::getRequest( 'name' );
 		if ( !empty( $name ) ) {
+            $name = htmlspecialchars($name);
 			$data = array(
 				'sort' => intval( $sort ),
 				'name' => $name,

@@ -96,17 +96,4 @@
 		</form>
 	</div>
 </div>
-
-<script>
-	$("#psw_strength").ibosSlider({
-		min: 5,
-		max: 32,
-		scale: 9,
-		range: 'min',
-		tip: true,
-		tipFormat: function(value) {
-			return value + '<?php echo $lang['Bit']; ?>'
-		},
-		target: '#minlength'
-	});
-</script>
+<script src="<?php echo $assetUrl; ?>/js/db_security.js"></script>

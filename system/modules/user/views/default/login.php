@@ -217,6 +217,6 @@ echo trim( $image, ',' );
 				Ibos.app.s("followWxUrl", 'http://www.ibos.com.cn/api/show/qrcode?qrcode=' + qrcode);
 <?php } ?>
 		</script>
-		<script src='<?php echo $assetUrl; ?>/js/login.js?<?php echo VERHASH; ?>'></script>
+		<script src='<?php echo $assetUrl; ?>/js/user_default_login.js?<?php echo VERHASH; ?>'></script>
     </body>
 </html>

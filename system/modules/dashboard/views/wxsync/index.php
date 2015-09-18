@@ -67,8 +67,7 @@
 										<p class="mbs">
 											<span><?php echo $lang['IBOS not sync wechat']; ?>
 											</span>
-											<span class = "fsl xwb xcbu"><?php echo count( $oaUnbind );
-?></span>
+											<span class = "fsl xwb xcbu"><?php echo count( $oaUnbind );?></span>
 											<span>人</span>
 										</p>
 										<div>
@@ -188,22 +187,3 @@
 	</div>
 </div>
 <script type="text/javascript" src="<?php echo $this->getAssetUrl(); ?>/js/syncdata.js"></script>
-<script type="text/javascript">
-	$(function() {
-	// 绑定的开关操作
-	$("#bind_opt_checkbox").on("change", function() {
-	var isbind = $(this).prop("checked"),
-	status = isbind ? 1 : 0,
-	param = {status: status},
-	url = Ibos.app.url('dashboard/wxbinding/toggleSwitch');
-	$.post(url, param, function(res) {
-	if (res.isSuccess) {
-	Ui.tip(res.msg);
-	$("#sync_opt_wrap").toggle(isbind);
-	} else {
-	Ui.tip(res.msg, 'danger');
-	}
-	});
-	});
-	});
-</script>

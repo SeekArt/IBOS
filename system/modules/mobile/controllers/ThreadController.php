@@ -7,6 +7,7 @@ use application\core\utils\IBOS;
 use application\modules\mobile\utils\Mobile;
 use application\modules\thread\controllers\OpController;
 use application\modules\thread\model\Thread;
+use application\modules\thread\model\ThreadAttention;
 use application\modules\thread\utils\Thread as ThreadUtil;
 use CJSON;
 
@@ -38,20 +39,33 @@ class ThreadController extends OpController {
 			$this->search( $offset );
 		}
 		$condition = " (`designeeuid`={$uid} OR `chargeuid`={$uid} OR FIND_IN_SET({$uid}, `participantuid`) ) AND `status`={$status}";
-		$result = IBOS::app()->db->createCommand()
+		$ob =IBOS::app()->db->createCommand();
+		if($status == 1) {
+			$ob->setLimit( self::DEFAULT_PAGE_SIZE );
+		}
+		$result = $ob
 				->select( '*' )
 				->from( '{{thread}}' )
 				->where( $condition )
 				->order( 'addtime DESC' )
-				->limit( self::DEFAULT_PAGE_SIZE )
 				->offset( $offset )
 				->queryAll();
+		$result = $this->mergeAttentionStatus($result);
 		if ( count( $result ) < self::DEFAULT_PAGE_SIZE ) {
 			$hasMore = false;
 		} else {
 			$hasMore = true;
 		}
 		$this->ajaxReturn( array_merge( array( 'datas' => $result, 'hasMore' => $hasMore ) ) );
+	}
+	private function mergeAttentionStatus($list) {
+		$result = array();
+		$attenThreadIds = ThreadAttention::model()->fetchThreadIdsByUid( IBOS::app()->user->uid );
+		foreach ( $list as $thread ) {
+			$thread = array_merge($thread, array('isAttention' => in_array( $thread['threadid'], $attenThreadIds )));
+			array_push( $result, $thread );
+		}
+		return $result;
 	}
 
 	/**

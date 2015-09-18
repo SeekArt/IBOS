@@ -493,8 +493,8 @@ class WeiboController extends BaseController {
             $return['isSuccess'] = false;
             $this->ajaxReturn( $return, Mobile::dataType() );
         }
-        $data['cid'] = Comment::model()->addComment( $data );
         $data['ctime'] = TIMESTAMP;
+		$data['cid'] = Comment::model()->addComment( $data );
         if ( $data['cid'] ) {
             $return['isSuccess'] = true;
         }

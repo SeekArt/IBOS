@@ -93,7 +93,7 @@ $(function() {
 											$('#h').val(c.h); //需裁剪的高度
 										}
 									});
-								})
+								});
 						});
 
 
@@ -140,8 +140,8 @@ $(function() {
 					height: Math.round(ry * img_height) + 'px',
 					marginLeft: '-' + Math.round(rx * coords.x) + 'px',
 					marginTop: '-' + Math.round(ry * coords.y) + 'px'
-				}
-			}
+				};
+			};
 			//根据包裹的容器宽高,设置被除数
 			$('#crop-preview-180').css(getOffset(180, 180));
 			$('#crop-preview-60').css(getOffset(60, 60));

@@ -9,9 +9,11 @@ $(function() {
 
 	Ibos.evt.add({
 		"addCreditRule": function(){
-			var $row;
+			var $row, $date = new Date;
 			if (_validateMaxNum()) {
-				$row = $.tmpl("ext_credit_tpl");
+				$row = $.tmpl("ext_credit_tpl", {
+					cid : $date.getTime()
+				});
 				// 模块初始化完成后，初始化switch控件
 				$row.find("[data-toggle='switch']").iSwitch();
 				$extCreditTbody.append($row);
@@ -20,7 +22,12 @@ $(function() {
 			}
 		},
 		"removeCreditRule": function(param, elem){
-			$(elem).parent().parent().remove();
+			var delId = $(elem).attr('data-id'), removeIdObj = $('#removeId'), removeIdSplit;
+			removeId = removeIdObj.val();
+			removeIdSplit = removeId.split(',');
+			removeIdSplit.push(delId);
+			removeIdObj.val(removeIdSplit.join());
+			$('#credit_' + delId).remove();
 		},
 		"resetCreditRule": function(){
 			Ui.confirm(Ibos.l("CREDIT.SURE_RESET_CREDIT_SETTING"), function() {

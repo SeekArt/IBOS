@@ -69,4 +69,4 @@
 
 	$(".dsh-limit-entry").find("input[type=checkbox]").label();
 </script>
-<script src='<?php echo $assetUrl; ?>/js/limit_permissions.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/db_permissions.js'></script>

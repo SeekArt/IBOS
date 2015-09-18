@@ -80,4 +80,4 @@
 		</form>
 	</div>
 </div>
-<script src="<?php echo $this->getAssetUrl(); ?>/js/approval.js"></script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_approval.js"></script>

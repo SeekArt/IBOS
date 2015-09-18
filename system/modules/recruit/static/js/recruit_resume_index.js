@@ -23,7 +23,7 @@ $(function() {
 	});
 
 	//高级搜索
-	$("#mn_search").search(true, function() {
+	$("#mn_search").search(null, function() {
 		Ibos.openAdvancedSearchDialog({
 			content: document.getElementById("mn_search_advance"),
 			ok: function() {
@@ -31,7 +31,6 @@ $(function() {
 			}
 		});
 	});
-
 
 	// 岗位选择 		
 	$("#user_position").userSelect({

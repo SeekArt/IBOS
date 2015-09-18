@@ -129,3 +129,38 @@ L.CREDIT = {
 	"SURE_RESET_CREDIT_SETTING" :"确定重置积分设置？"
 }
 
+//数据库
+L.DATABASE = {
+	"CONFIRM_ACTION" : "确认操作",
+	"CONFIRM_IMPORT" : "确认要导入该备份吗？",
+	"AT_LEAST_ONE_RECORD" : "请至少选择一条数据",
+	"CONFIRM_DECOMPRESS" : "确认要解压该备份吗？"
+}
+
+//即时通讯绑定
+L.IM = {
+	"SYNCHRONIZE_OA" : "导入RTX组织架构到OA"
+}
+
+//性能优化
+L.OPTIMIZE = {
+	"SPHINX_SUBINDEX_IP" : "填写 Sphinx 配置中的标题主索引名及标题增量索引名.注意：多个索引使用半角逗号",
+	"SPHINX_MSGINDEX_TIP" : "填写 Sphinx 配置中的全文主索引名及全文增量索引名.注意：多个索引使用半角逗号",
+	"SPHINX_MAXQUERY_TIP" : "填写最大搜索时间，以毫秒为单位。参数必须是非负整数。默认值为 0，意思是不做限制",
+	"SPHINX_LIMIT_TIP" : "填写最大返回匹配项数目，必须是非负整数，默认值10000",
+	"SPH_RANK_PROXIMITY_BM25_DESC" : "默认模式，同时使用词组评分和 BM25 评分，并且将二者结合。[默认]",
+	"SPH_RANK_BM25_DESC" : "统计相关度计算模式，仅使用 BM25 评分计算(与大多数全文检索引擎相同)。这个模式比较快，但是可能使包含多个词的查询的结果质量下降。",
+	"SPH_RANK_NONE_DESC" : "禁用评分的模式，这是最快的模式。实际上这种模式与布尔搜索相同。所有的匹配项都被赋予权重1"
+}
+
+//手机短信
+L.SMS = {
+	"SMS_DEL_CONFIRM" : "您确定要删除选中短信记录吗?",
+	"SMS_ADVANCED_SEARCH" : "短信高级搜索"
+}
+
+//图片上传
+L.UPLOAD = {
+	"UPLOAD_PICTURE_FIRST" : "请先上传图片",
+	"WATERMARK_PREVIEW" : "水印预览"
+}

@@ -53,14 +53,14 @@ class CalendarClick extends ClickEvent {
         $items[0] = array(
             'title' => "今天的日程",
             'description' => '',
-            'picurl' => 'http://www.ibos.com.cn/images/wx/calendar.png',
+            'picurl' => 'http://app.ibos.cn/img/banner/calendar.png',
             'url' => ''
         );
         $hostinfo = WxApi::getInstance()->getHostInfo();
         foreach ( $lists['events'] as $key => $row ) {
             $key++;
-            $picUrl = 'http://www.ibos.com.cn/images/wx/' . $key . '.png';
-            $route = 'http://www.ibos.com.cn/qiyehao_new/?host=' . urlencode( $hostinfo ) . '/#/calendar/' . $row['calendarid'];
+            $picUrl = 'http://app.ibos.cn/img/banner/' . $key . '.png';
+            $route = 'http://app.ibos.cn?host=' . urlencode( $hostinfo ) . '/#/calendar/' . $row['calendarid'];
             $item = array(
                 'title' => sprintf( '【%s - %s】%s', date( 'H:i', $row['starttime'] ), date( 'H:i', $row['endtime'] ), $row['subject'] ),
                 'description' => '',

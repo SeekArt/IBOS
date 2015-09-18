@@ -111,6 +111,7 @@ class Article {
 		$searchCondition = '';
 
 		$keyword = $search['keyword'];
+		$keyword = addslashes( $search['keyword'] );
 		$starttime = $search['starttime'];
 		$endtime = $search['endtime'];
 

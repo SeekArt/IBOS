@@ -17,5 +17,6 @@ L.DA = {
 		SHOW_UNDERLINGS:             "TA们是您的直属下属和部门成员，点击 <span class='o-caret'><i class='caret'></i></span> 展开查看下属的下属",
 		REMIND_UNDERLINGS:           "点这儿提醒这群懒货写日志~！",
 		MARK_UNDERLINGS:             "点亮 <i class='o-da-unasterisk'></i> 关注即可添加此人到左侧“已关注日志”，方便查看。"	
-	}
-}
+	},
+	HAVE_REMINDED: 						 "已提醒"
+};

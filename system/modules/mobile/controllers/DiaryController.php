@@ -20,6 +20,7 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
+use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\dashboard\model\Stamp;
@@ -28,9 +29,11 @@ use application\modules\diary\model\Diary;
 use application\modules\diary\model\DiaryAttention;
 use application\modules\diary\model\DiaryRecord;
 use application\modules\diary\utils\Diary as DiaryUtil;
+use application\modules\message\model\Comment;
 use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use CPagination;
 
 class DiaryController extends BaseController {
 
@@ -277,13 +280,86 @@ class DiaryController extends BaseController {
 		} else {
 			$params['readers'] = '';
 		}
+		//图章
 		if ( !empty( $diary['stamp'] ) ) {
-			$params['stampUrl'] = Stamp::model()->fetchStampById( $diary['stamp'] );
+			$stamp = Stamp::model()->fetchStampById( $diary['stamp'] );
+			$params['stampUrl'] = File::fileName( Stamp::STAMP_PATH ) . $stamp;
 		}
+		//评论
+		$params['list'] = $this->getCommentList( $diary );
 		$this->ajaxReturn( $params, Mobile::dataType() );
 	}
 
-	function actionAdd() {
+	private function getCommentList( $diary ) {
+		$limit = Env::getRequest( 'limit', 'P', 5 );
+		$offset = Env::getRequest( 'offset', 'P', 0 );
+		$arr = array(
+			'module' => 'diary',
+			'table' => 'diary',
+			'attributes' => array(
+				'rowid' => $diary['diaryid'],
+				'moduleuid' => IBOS::app()->user->uid,
+				'limit' => $limit,
+				'offset' => $offset,
+			),
+		);
+		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\diary\widgets\DiaryComment', $arr );
+		$list = $widget->getCommentList();
+		return $list;
+	}
+	/**
+	 * 增加一条评论
+	 * @return type
+	 */
+	public function actionAddComment() {
+		// 返回结果集默认值
+		$return = array( 'isSuccess' => false );
+		if ( IBOS::app()->request->isPostRequest ) {
+			$post = $_POST;
+			// 安全过滤
+			foreach ( $post as $key => $val ) {
+				$post[$key] = String::filterCleanHtml( $post[$key] );
+			}
+			// 判断资源是否被删除
+			$sourceInfo = Diary::model()->fetchByPk( $post['diaryid'] );
+			if ( !$sourceInfo ) {
+				$return['isSuccess'] = false;
+				$this->ajaxReturn( $return, Mobile::dataType() );
+			}
+			$content = String::filterDangerTag( $post['content'] );
+			$sourceUrl = IBOS::app()->urlManager->createUrl( 'mobile/diary/show', array( 'id' => $post['diaryid'] ) );
+			$data = array_merge( $post, array(
+				'module' => 'diary',
+				'table' => 'diary',
+				'rowid' => $post['diaryid'],
+				'moduleuid' => IBOS::app()->user->uid,
+				'content' => $content,
+				'data' => '',
+				'ctime' => TIMESTAMP,
+				'isdel' => 0,
+				'url' => $sourceUrl,
+				'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( String::filterCleanHtml( $content ), 50 ) ), 'diary.default' ),
+				'uid' => Env::getRequest( 'uid' ),
+				'tocid' => Env::getRequest( 'tocid' ),
+				'touid' => Env::getRequest( 'touid' ),
+				'from' => Env::getRequest( 'from', 'P', 1 ),
+				'commentcount' => Env::getRequest( 'commentcount', 'P', 0 ),
+					) );
+			$data['cid'] = Comment::model()->addComment( $data );
+			if ( $data['cid'] ) {
+				$return['isSuccess'] = true;
+				$return['msg'] = '';
+			} else {
+				$return['msg'] = '添加失败';
+			}
+		} else {
+			$return['msg'] = 'not post request';
+		}
+
+		$this->ajaxReturn( $return, Mobile::dataType() );
+	}
+
+	public function actionAdd() {
 		$dataType = 'JSON';
 		$callback = Env::getRequest( 'callback' );
 		if ( isset( $callback ) ) {

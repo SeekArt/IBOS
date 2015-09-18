@@ -19,6 +19,7 @@
 namespace application\core\utils;
 
 use application\core\model\Log;
+use CJSON;
 
 class Mail {
 
@@ -46,9 +47,9 @@ class Mail {
             )
         );
         $rs = Cloud::getInstance()->fetchPush( $data );
-        if ( substr( $rs, 0, 5 ) !== 'error' ) {
-            $res = json_decode( $rs, true );
-            if ( $res['code'] == 0 ) {
+		if ( !is_array( $rs ) ) {
+			$res = CJSON::decode( $rs, true );
+			if ( $res['code'] == '0' ) {
                 return true;
             }
         }

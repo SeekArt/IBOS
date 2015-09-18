@@ -3,7 +3,7 @@
  * 后台模块
  * @module Dashboard
  * @author inaki
- * @version $Id: dashboard.js 4111 2014-09-16 02:56:50Z zhangrong $
+ * @version $Id: dashboard.js 5453 2015-08-14 10:25:36Z gzzz $
  * @modified 2013-05-04
  */
 
@@ -328,15 +328,28 @@ var creditCalculator = function($context){
 			_inputHandler[type].call(null, value)
 		}
 	}
+
+	function getEntryKey(entryName) {
+		for(var i in validateEntrys) {
+			if(validateEntrys[i] === entryName) {
+				return i;
+			}
+		}
+	}
 	// 初始化函数, 根据已有节点的值
 	var init = function($display){
 		$display.find("[data-type]").each(function(){
 			var value = $.attr(this, "data-value"),
 				type = $.attr(this, "data-type");
+			// input(value, type);
 			$item = $(this);
 			_setKeyStatus(type);
 			_setBracket();
-			_cache.push(value);
+			if(type === 'entry') {
+				_cache.push(getEntryKey(value));
+			} else {
+				_cache.push(value);
+			}
 		});
 	}
 	_setKeyStatus();
@@ -356,6 +369,10 @@ var creditCalculator = function($context){
 		} else{
 			input(value, type);
 		}
+	});
+
+	$display.on("click", function(evt){
+		evt.stopPropagation();
 	});
 	
 	return {

@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS {{resume_contact}};
 CREATE TABLE IF NOT EXISTS {{resume_contact}} (
   `contactid` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '联系id',
   `resumeid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '简历id',
-  `input` tinyint(4) unsigned NOT NULL DEFAULT '0' COMMENT '录入者',
+  `input` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '录入者',
   `inputtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '录入时间',
   `contact` varchar(255) NOT NULL DEFAULT '' COMMENT '联系方式',
   `purpose` varchar(255) NOT NULL DEFAULT '' COMMENT '联系目的',

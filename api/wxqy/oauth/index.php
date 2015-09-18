@@ -27,8 +27,8 @@ if ( strcmp( $signature, md5( $aeskey . $userId ) ) != 0 ) {
 if ( !empty( $userId ) ) {
 	$uid = UserBinding::model()->fetchUidByValue( $userId, 'wxqy' );
 	if ( $uid ) {
-		dologin( $uid );
-		if ( !IBOS::app()->user->isGuest ) {
+		$resArr = dologin( $uid );
+		if ( !IBOS::app()->user->isGuest && $resArr['code'] > 0 ) {
 			$redirect = Env::getRequest( 'redirect' );
 			$url = base64_decode( $redirect );
 			$parse = parse_url( $url );
@@ -39,8 +39,11 @@ if ( !empty( $userId ) ) {
 				header( 'Location:../../../' . $url, true );
 				exit();
 			}
+		} else {
+			if ( $resArr['code'] < 0 ) {
+				Env::iExit( $resArr['msg'] );
+			}
 		}
-		Env::iExit( IBOS::app()->user->isGuest ? 'fail' : 'success'  );
 	}
 }
 Env::iExit( '用户验证失败,尝试以下步骤的操作：<br/>'

@@ -73,12 +73,7 @@ class User extends Model {
 	 * @param 需要插入的用户 $data
 	 * @param 唯一字段的配置 $uniqueConfig，格式：key对应数据表里的字段，value对应这个字段的解释
 	 */
-	public function checkUnique(
-	$data, $uniqueConfig = array(
-		'mobile' => '手机号',
-		'username' => '用户名',
-	)
-	) {
+	public function checkUnique( $data, $uniqueConfig = array( 'mobile' => '手机号', 'username' => '用户名', ) ) {
 		$arr1 = $arr2 = array();
 		foreach ( $uniqueConfig as $k => $v ) {
 			if ( !empty( $data[$k] ) ) {
@@ -287,6 +282,18 @@ class User extends Model {
 			}
 		}
 		return isset( $roleIds[$roleId] ) ? $roleIds[$roleId] : array();
+	}
+	/**
+	 * 获取所有的uid（暂时crm用到）
+	 * @param boolean $returnDisabled 是否禁用用户一起返回
+	 * @return array
+	 */
+	public function fetchAllUid( $returnDisabled = true ) {
+		$condition = $returnDisabled ? 1 : " status != 2 ";
+		$criteria = array( 'select' => 'uid', 'condition' => "{$condition}" );
+		$uids = $this->fetchAll( $criteria );
+		$uids = util\Convert::getSubByKey( $uids, 'uid' );
+		return $uids;
 	}
 
 	/**
@@ -565,4 +572,36 @@ class User extends Model {
 		return User::model()->count( 'roleid = :roleid AND status != 2', array( ':roleid' => $roleId ) );
 	}
 
+	/**
+	 * 根据某个条件更新用户信息
+	 * @param mixed $uids 用户ID字符串或数组
+	 * @param array $attributes 要更新字段值
+	 * @return integer
+	 * @author Sam 2015-08-21 <gzxgs@ibos.com.cn>
+	 */
+	public function updateByConditions( $uids, $attributes = array(), $condition = "" ) {
+		$uids = is_array( $uids ) ? $uids : explode( ',', $uids );
+		if ( !empty( $condition ) ) {
+			$condition = "FIND_IN_SET(uid,'" . implode( ',', $uids ) . "') AND " . $condition;
+		} else {
+			$condition = "FIND_IN_SET(uid,'" . implode( ',', $uids ) . "')";
+		}
+		$this->updateAll( $attributes, $condition );
+//		$users = UserUtil::loadUser();
+//		//重新建立缓存
+//		$records = $this->findAllByPk( $uids );
+//		if ( !empty( $records ) ) {
+//			foreach ( $records as $rec ) {
+//				$user = $rec->attributes;
+//				$users[$user['uid']] = UserUtil::wrapUserInfo( $user );
+//			}
+//			$this->makeCache( $users );
+//		}
+//		return $counter;
+	}
+
+	public function checkIsExistByMobile( $mobile ) {
+		$result = $this->fetch( 'mobile  = :mobile', array( ':mobile' => $mobile ) );
+		return !empty( $result ) ? true : false;
+	}
 }

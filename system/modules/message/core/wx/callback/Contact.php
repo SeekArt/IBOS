@@ -90,11 +90,11 @@ EOT;
 		$items[0] = array(
 			'title' => "为您找到以下人员",
 			'description' => '',
-			'picurl' => 'http://www.ibos.com.cn/images/wx/contact.png',
+			'picurl' => 'http://app.ibos.cn/img/banner/contact.png',
 			'url' => ''
 		);
 		foreach ( $lists as $row ) {
-			$route = 'http://www.ibos.com.cn/qiyehao_new/?host=' . urlencode( $hostInfo ) . '/#/contacts/detail/' . $row['uid'];
+			$route = 'http://app.ibos.cn?host=' . urlencode( $hostInfo ) . '/#/contacts/detail/' . $row['uid'];
 
 			$item = array(
 				'title' => $row['realname'], 'description' => '',

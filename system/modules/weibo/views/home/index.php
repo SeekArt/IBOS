@@ -455,6 +455,20 @@ use application\core\utils\Module;
         </ul>
     </div>
 </div>
+
+<!-- 图片上传后显示内容 -->
+<script type="text/template" id="showPreview_tpl">
+    <div class="wb-upload-preview">
+    <img src="<%= attachUrl %>" title="<%= attachName %>" alt="<%= attachName %>">
+    <div class="wb-reupload-modal"></div>
+    <div class="wb-upload-pic"><i class="pic-holder active"></i> <p>重新上传</p></div>
+    <div class="wb-reupload-bar"> 
+    <div class="wb-reupload-bar-bg rdb"></div> 
+    <span>"<%= attachName %>"</span> 
+    <a href="javascript:;" data-action="removePic" class="cbtn o-trash"></a> 
+    </div>
+    </div>
+</script>
 <script>
     var params = {
         wbnums: '<?php echo IBOS::app()->setting->get( 'setting/wbnums' ); ?>',
@@ -478,19 +492,5 @@ use application\core\utils\Module;
 <script src="<?php echo STATICURL; ?>/js/app/ibos.charCount.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo STATICURL; ?>/js/src/emotion.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $assetUrl; ?>/js/wb.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo $assetUrl; ?>/js/wbhome.js?<?php echo VERHASH; ?>"></script>
-<script type="text/javascript">
-    $(function() {
-        //初始化表情功能
-        $('#wb_face').ibosEmotion({
-            target: $('#wb_pub_textarea')
-        });
-
-        $("#mn_search").search(function(val) {
-            if ($.trim(val) !== '') {
-                window.location.href = Ibos.app.url('weibo/home/index', {feedkey: val, type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
-            }
-        });
-    });
-</script>
+<script src="<?php echo $assetUrl; ?>/js/weibo.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/weibo_home_index.js?<?php echo VERHASH; ?>"></script>

@@ -57,7 +57,7 @@
 </div>
 <style>.tooltip{ z-index: 10000}</style>
 
-<script src='<?php echo $assetUrl; ?>/js/limit_permissions.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/db_permissions.js?<?php echo VERHASH; ?>'></script>
 <script>
 	// 指定授权角色
 	$("#role_select").ibosSelect({
