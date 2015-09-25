@@ -47,11 +47,11 @@ var PmIndex = {
 	 */
 	checkPmForm: function() {
 		if ($.trim($('#to_uid').val()) === '') {
-			Ui.tip(U.lang('RECEIVER_CANNOT_BE_EMPTY'), 'danger');
+			Ui.tip(Ibos.l('RECEIVER_CANNOT_BE_EMPTY'), 'danger');
 			return false;
 		}
 		if ($.trim($('#to_message').val()) === '') {
-			Ui.tip(U.lang('CONTENT_CANNOT_BE_EMPTY'), 'danger');
+			Ui.tip(Ibos.l('CONTENT_CANNOT_BE_EMPTY'), 'danger');
 			return false;
 		}
 		return true;
@@ -78,7 +78,7 @@ var PmIndex = {
 	 * @param {type} ids 传入删除私信的IDs
 	 */
 	delPm: function(ids) {
-		Ui.confirm('你确认删除选中私信吗？该操作不可恢复', function(){
+		Ui.confirm(Ibos.l("MESSAGE.DELETE_MESSAGE_OPERATE_NOT_RESTORE"), function(){
 			var param = {id: ids};
 			PmIndex.op.delPm(param).done(function(data) {
 				if (data.IsSuccess) {
@@ -87,9 +87,9 @@ var PmIndex = {
 							$(this).remove();
 						});
 					});
-					Ui.tip(U.lang('DELETE_SUCCESS'));
+					Ui.tip(Ibos.l('DELETE_SUCCESS'));
 				} else {
-					Ui.tip(U.lang('DELETE_FAILED'), 'danger');
+					Ui.tip(Ibos.l('DELETE_FAILED'), 'danger');
 				}
 			});
 		});
@@ -106,9 +106,9 @@ var PmIndex = {
 				$.each(ids.split(','), function(n, i) {
 					$('#pm_' + i + ' span.bubble').remove();
 				});
-				Ui.tip(U.lang('OPERATION_SUCCESS'));
+				Ui.tip(Ibos.l('OPERATION_SUCCESS'));
 			} else {
-				Ui.tip(U.lang('OPERATION_FAILED'), 'danger');
+				Ui.tip(Ibos.l('OPERATION_FAILED'), 'danger');
 			}
 		});
 	}
@@ -151,7 +151,7 @@ $(function(){
 			if (ids) {
 				PmIndex.readPm(ids);
 			} else {
-				Ui.tip(U.lang("SELECT_AT_LEAST_ONE_ITEM"), 'danger');
+				Ui.tip(Ibos.l("SELECT_AT_LEAST_ONE_ITEM"), 'danger');
 			}
 		}, 
 		// 标识所有已读
@@ -160,9 +160,9 @@ $(function(){
 				if (data.IsSuccess) {
 					$('#pm_list span.bubble').remove();
 					$('.band-primary').remove();
-					Ui.tip(U.lang("SAVE_SUCCESS"));
+					Ui.tip(Ibos.l("SAVE_SUCCESS"));
 				} else {
-					Ui.tip(U.lang("OPERATION_FAILED"), 'danger');
+					Ui.tip(Ibos.l("OPERATION_FAILED"), 'danger');
 				}
 			});
 		},
@@ -178,18 +178,18 @@ $(function(){
 			if (ids) {
 				PmIndex.delPm(ids);
 			} else {
-				Ui.tip(U.lang("SELECT_AT_LEAST_ONE_ITEM"), 'danger');
+				Ui.tip(Ibos.l("SELECT_AT_LEAST_ONE_ITEM"), 'danger');
 			}
 		},
 		// 发送私信
 		"sendPm": function(){
 			Ui.dialog({
-				title: U.lang("SEND_PM"),
+				title: Ibos.l("SEND_PM"),
 				content: document.getElementById('pm_message'),
 				id: 'pmbox',
 				padding: 0,
 				lock: true,
-				okVal: U.lang("SEND"),
+				okVal: Ibos.l("SEND"),
 				ok: function(){
 					if (PmIndex.checkPmForm()) {
 						PmIndex.sendPm();

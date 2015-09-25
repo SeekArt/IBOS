@@ -32,6 +32,7 @@ var CommentIndex = {
 					});
 				});
 				Ui.tip("@DELETE_SUCCESS");
+				window.location.reload();
 			} else {
 				Ui.tip("@DELETE_FAILED", 'danger');
 			}

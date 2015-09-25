@@ -2,47 +2,47 @@
  * Article/default/index
  */
 
-var ArticleIndex = ArticleIndex || {};
-
-/**
- * 选中一条或多条新闻时，出现操作菜单
- * @method selectNewsShowMenu
- * @return {[type]} [description]
- */
-ArticleIndex.selectNewsShowMenu = function(){
-    $(document).on("change", 'input[type="checkbox"][name="article[]"]', function(){
-        var $opBtn = $('#art_more'),
-            hasSelected = !!U.getChecked('article[]').length;
-        $opBtn.toggle(hasSelected);
-        setTimeout(function(){
-            $opBtn.toggleClass("open", hasSelected);
-        }, 0);
-    });
-};
-/**
- * 高级搜索
- * @method highSearch
- */
-ArticleIndex.highSearch = function(){
-    $("#mn_search").search(null, function(){
-        Ui.dialog({
-            id: "d_advance_search",
-            title: U.lang("ADVANCED_SETTING"),
-            content: document.getElementById("mn_search_advance"),
-            cancel: true,
-            init: function(){
-                var form = this.DOM.content.find("form")[0];
-                form && form.reset();
-                // 初始化日期选择
-                $("#date_start").datepicker({ target: $("#date_end") });
-            },
-            ok: function(){
-                this.DOM.content.find("form").submit();
-            },
+var ArticleIndex = {
+    /**
+     * 选中一条或多条新闻时，出现操作菜单
+     * @method selectNewsShowMenu
+     * @return {[type]} [description]
+     */
+    selectNewsShowMenu : function(){
+        $(document).on("change", 'input[type="checkbox"][name="article[]"]', function(){
+            var $opBtn = $('#art_more'),
+                hasSelected = !!U.getChecked('article[]').length;
+            $opBtn.toggle(hasSelected);
+            setTimeout(function(){
+                $opBtn.toggleClass("open", hasSelected);
+            }, 0);
         });
-    });
+    },
+    /**
+     * 高级搜索
+     * @method highSearch
+     */
+    highSearch : function(){
+        $("#mn_search").search(null, function(){
+            Ui.dialog({
+                id: "d_advance_search",
+                title: U.lang("ADVANCED_SETTING"),
+                content: document.getElementById("mn_search_advance"),
+                cancel: true,
+                init: function(){
+                    var form = this.DOM.content.find("form")[0];
+                    form && form.reset();
+                    // 初始化日期选择
+                    $("#date_start").datepicker({ target: $("#date_end") });
+                },
+                ok: function(){
+                    this.DOM.content.find("form").submit();
+                },
+            });
+        });
+    }
 };
-	
+
 
 $(function() {
     //选中一条或多条新闻时，出现操作菜单
@@ -121,12 +121,8 @@ $(function() {
                     	};
 
 					Article.op.highLight(param).done(function(res){
-						if(res.isSuccess === true){
-							Ui.tip(res.msg);
-							window.location.reload();
-						}else{
-                            Ui.tip(res.msg, "warning");
-                        }
+                        res.isSuccess && window.location.reload();
+                        Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
 					});
 				}
     		});
@@ -150,12 +146,8 @@ $(function() {
                         };
 
                     Article.op.topArticle(param).done(function(res){
-                        if(res.isSuccess === true){
-                            Ui.tip(res.msg);
-                            window.location.reload();
-                        }else{
-                            Ui.tip(res.msg, "warning");
-                        }
+                        res.isSuccess && window.location.reload();
+                        Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
                     });
     			}
     		});
@@ -165,11 +157,9 @@ $(function() {
             Ui.confirm(U.lang("ART.SURE_DEL_ARTICLE"), function() {
         		Article.op.removeArticles(param.id).done(function(res) {
         			if( res.isSuccess === true ){
-        				Ui.tip(res.msg);
         				$(elem).closest("tr").remove();
-        			}else{
-                        Ui.tip(res.msg, "warning");
-                    }
+        			}
+                    Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
         		});
             });
     	},
@@ -179,13 +169,11 @@ $(function() {
             Ui.confirm(U.lang("ART.SURE_DEL_ARTICLE"), function() {
         		Article.op.removeArticles(aids).done(function(res){
         			if( res.isSuccess === true ){
-    					Ui.tip( res.msg);
         				$.each(aids.split(","), function(index, aid){
         					$("[data-node-type='articleRow'][data-id='" + aid + "']").remove();
         				});
-        			}else{
-                        Ui.tip(res.msg, "warning");
-                    }
+        			}
+                    Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
         		});
             });
     	},
@@ -195,12 +183,8 @@ $(function() {
                 param = { articleids: articleids };
     		if(articleids.length > 0){
                 Article.op.verifyArticle(param).done(function(res){
-                    if(res.isSuccess === true){
-                        Ui.tip(res.msg);
-                        window.location.reload();
-                    }else{
-                        Ui.tip( res.msg , 'warning');
-                    }
+                    res.isSuccess && window.location.reload();
+                    Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
                 });
     		}else{
     			Ui.tip(U.lang("SELECT_AT_LEAST_ONE_ITEM"), 'warning');
@@ -219,12 +203,8 @@ $(function() {
 						var reason = $("#rollback_textarea").val(),
                             param = { articleids: articleids, reason: reason };
                         Article.op.backArticle(param).done(function(res){
-                            if(res.isSuccess===true){
-                                Ui.tip(res.msg);
-                                window.location.reload();
-                            }else{
-                                Ui.tip( res.msg , 'warning');
-                            }
+                            res.isSuccess && window.location.reload();
+                            Ui.tip(res.msg, res.isSuccess ? "" : "wraning");
                         });
 					}
 				});

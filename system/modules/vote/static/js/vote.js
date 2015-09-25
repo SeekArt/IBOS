@@ -44,7 +44,7 @@ var Vote = {
 	getMaxSelectTpl: function(count){
 		var tpl = "";
 		for(var i = 1; i <= count; i++){
-			tpl += '<option value="' + i + '">' + (i === 1 ? U.lang("VOTE.SINGLE_ITEM") : U.lang("VOTE.MAX_ITEM", { count: i})) + '</option>';
+			tpl += '<option value="' + i + '">' + (i === 1 ? Ibos.l("VOTE.SINGLE_ITEM") : Ibos.l("VOTE.MAX_ITEM", { count: i})) + '</option>';
 		}	
 		return tpl;
 	},
@@ -105,7 +105,7 @@ Vote.tab = new P.Tab(Vote.$tab, "a", function($elem){
 	        file_post_name:                 'Filedata',
 	        post_params:                    {module:'vote'},
 	        button_width:                   "80",
-	        button_height:                   "60",
+	        button_height:                  "60",
 	        custom_settings: {
 	            success: function(file, data){
 	                $(this.movieElement).siblings("[data-picpath]").val(data.url);
@@ -152,7 +152,6 @@ $(function(){
 	$('#picvote_max_select').on('change',function(){
 	    $('#picvote_ismulti').val(this.value === "1" ? 0 : 1);
 	});
-
 });
 
 

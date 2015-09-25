@@ -72,7 +72,7 @@ use application\core\utils\Env;
 															<span class="fss"><?php echo $user['mobile']; ?></span>
 														</td>
 														<td width="133">
-															<div class="w120">
+															<div class="w120 ellipsis" title="<?php echo $user['email']; ?>">
 																<span class="fss"><?php echo $user['email']; ?></span>
 															</div>
 														</td>                                               

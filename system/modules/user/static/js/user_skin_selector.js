@@ -2,7 +2,148 @@
  * 用户-banner选择功能
  * @version 	$Id$
  */
-var Skin = {};
+var Skin = {
+	/**
+	 * 打开皮肤管理窗口
+	 * @method openSkinDialog
+	 * @param  {Object} conf 传入JSON格式参数
+	 * @return {Object}      返回当前窗口对象
+	 */
+	openSkinDialog : function(conf){
+		var dialog = Ui.dialog(
+			$.extend({
+				id: "d_skin_bg",
+				title: Ibos.l("USER.INDIVIDUALITY_SETTING"),
+				ok: false,
+				padding: 0
+			}, conf)
+		);
+
+		if (!Skin.skinDialogInited) {
+			Ibos.statics.loads([
+				Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload.packaged.js"),
+				Ibos.app.getStaticUrl("/js/lib/SWFUpload/handlers.js")
+			])
+			.done(function() {
+				dialog.content(document.getElementById("skin_bg"));
+				//初始化自定义模版上传功能
+				Ibos.upload.image({
+					upload_url: Ibos.app.url("user/skin/uploadBg", {
+						"uid": Ibos.app.g("uid"),
+						"hash": Ibos.app.g("upload").hash
+					}),
+
+					file_size_limit: "2MB", //设置图片最大上传值
+
+					button_placeholder_id: "skin_bg_choose",
+					button_width: "550",
+					button_height: "170",
+					button_image_url: "",
+
+					custom_settings: {
+						progressId: "skin_choose_area",
+
+						success: function(file, data) {
+							if (data.isSuccess) {
+								Skin.skinUploadSuccess(file, data);
+							} else {
+								Ui.tip(data.msg, 'danger');
+								return false;
+							}
+						}
+					}
+				});
+				Skin.skinDialogInited = true;
+			});
+		} else {
+			dialog.content(document.getElementById("skin_bg"));
+		}
+
+		return dialog;
+	},
+
+	/**
+	 * 上传自定义皮肤成功
+	 * @method  skinUploadSuccess
+	 * @param  {Object} file 传入文件对象
+	 * @param  {Object} data 传入JSON格式数据
+	 */
+	skinUploadSuccess : function(file, data) {
+		U.loadImage(data.file, function(img) {
+			var defaultWidth = img.width,
+				defaultHeight = img.height;
+
+			Ibos.statics.load({
+				type: "css",
+				url: Ibos.app.getAssetUrl("user", "/css/jquery.Jcrop.min.css")
+			});
+
+			Ibos.statics.load(Ibos.app.getAssetUrl("user", "/js/jquery.Jcrop.min.js"))
+				.done(function() {
+					$(".skin-choose-area").removeClass("active");
+					var $preview = $('#preview_hidden');
+					$preview.show();
+					//赋值到对应控件
+					$('#sk_img_src').val(data.file);
+					//上传图片成功后，将重新上传按钮隐藏
+					$("#skin_reupload_img").show();
+
+					$(img).show().appendTo($preview)
+					//裁剪插件
+					.Jcrop({
+						bgColor: '#333', //选区背景色
+						bgFade: true, //选区背景渐显
+						fadeTime: 1000, //背景渐显时间
+						allowSelect: false, //是否可以选区，
+						allowResize: true, //是否可以调整选区大小
+						minSize: [170, 550], //可选最小大小
+						boxWidth: 550, //画布宽度
+						boxHeight: 170, //画布高度
+						setSelect: [0, 0, 550, 170], //初始化时位置
+						aspectRatio: 3.33,
+						onSelect: function(c) { //选择时动态赋值，该值是最终传给程序的参数！
+							$('#sk_x').val(c.x); //需裁剪的左上角X轴坐标
+							$('#sk_y').val(c.y); //需裁剪的左上角Y轴坐标
+							$('#sk_w').val(c.w); //需裁剪的宽度
+							$('#sk_h').val(c.h); //需裁剪的高度
+						}
+					});
+
+
+					var img_height = 0;
+					var img_width = 0;
+					var real_height = img.height;
+					var real_width = img.width;
+
+					if (real_height > real_width && real_height > 170) {
+						var persent = real_height / 170;
+						real_height = 170;
+						real_width = real_width / persent;
+					} else if (real_width > real_height && real_width > 550) {
+						var persent = real_width / 550;
+						real_width = 550;
+						real_height = real_height / persent;
+					}
+					if (real_height < 170) {
+						img_height = (170 - real_height) / 2;
+					}
+					if (real_width < 550) {
+						img_width = (550 - real_width) / 2;
+					}
+
+					$preview.css({
+						width: (550 - img_width),
+						height: (170 - img_height),
+						paddingTop: img_height,
+						paddingLeft: img_width
+					});
+				});
+		});
+	}
+};
+// 皮肤窗口是否初始化
+Skin.skinDialogInited = false;
+
 (function(){
 	/**
 	 * 页面列表
@@ -169,146 +310,6 @@ var Skin = {};
 	window.Skin.SkinList = SkinList;
 })();
 
-// 皮肤窗口是否初始化
-Skin.skinDialogInited = false;
-/**
- * 打开皮肤管理窗口
- * @method openSkinDialog
- * @param  {Object} conf 传入JSON格式参数
- * @return {Object}      返回当前窗口对象
- */
-Skin.openSkinDialog = function(conf){
-	var dialog = Ui.dialog(
-		$.extend({
-			id: "d_skin_bg",
-			title: Ibos.l("USER.INDIVIDUALITY_SETTING"),
-			ok: false,
-			padding: 0
-		}, conf)
-	);
-
-	if (!Skin.skinDialogInited) {
-		Ibos.statics.loads([
-			Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload.packaged.js"),
-			Ibos.app.getStaticUrl("/js/lib/SWFUpload/handlers.js")
-		])
-		.done(function() {
-			dialog.content(document.getElementById("skin_bg"));
-			//初始化自定义模版上传功能
-			Ibos.upload.image({
-				upload_url: Ibos.app.url("user/skin/uploadBg", {
-					"uid": Ibos.app.g("uid"),
-					"hash": Ibos.app.g("upload").hash
-				}),
-
-				file_size_limit: "2MB", //设置图片最大上传值
-
-				button_placeholder_id: "skin_bg_choose",
-				button_width: "550",
-				button_height: "170",
-				button_image_url: "",
-
-				custom_settings: {
-					progressId: "skin_choose_area",
-
-					success: function(file, data) {
-						if (data.isSuccess) {
-							Skin.skinUploadSuccess(file, data);
-						} else {
-							Ui.tip(data.msg, 'danger');
-							return false;
-						}
-					}
-				}
-			});
-			Skin.skinDialogInited = true;
-		});
-	} else {
-		dialog.content(document.getElementById("skin_bg"));
-	}
-
-	return dialog;
-};
-
-/**
- * 上传自定义皮肤成功
- * @method  skinUploadSuccess
- * @param  {Object} file 传入文件对象
- * @param  {Object} data 传入JSON格式数据
- */
-Skin.skinUploadSuccess = function(file, data) {
-	U.loadImage(data.file, function(img) {
-		var defaultWidth = img.width,
-			defaultHeight = img.height;
-
-		Ibos.statics.load({
-			type: "css",
-			url: Ibos.app.getAssetUrl("user", "/css/jquery.Jcrop.min.css")
-		});
-
-		Ibos.statics.load(Ibos.app.getAssetUrl("user", "/js/jquery.Jcrop.min.js"))
-			.done(function() {
-				$(".skin-choose-area").removeClass("active");
-				var $preview = $('#preview_hidden');
-				$preview.show();
-				//赋值到对应控件
-				$('#sk_img_src').val(data.file);
-				//上传图片成功后，将重新上传按钮隐藏
-				$("#skin_reupload_img").show();
-
-				$(img).show().appendTo($preview)
-				//裁剪插件
-				.Jcrop({
-					bgColor: '#333', //选区背景色
-					bgFade: true, //选区背景渐显
-					fadeTime: 1000, //背景渐显时间
-					allowSelect: false, //是否可以选区，
-					allowResize: true, //是否可以调整选区大小
-					minSize: [170, 550], //可选最小大小
-					boxWidth: 550, //画布宽度
-					boxHeight: 170, //画布高度
-					setSelect: [0, 0, 550, 170], //初始化时位置
-					aspectRatio: 3.33,
-					onSelect: function(c) { //选择时动态赋值，该值是最终传给程序的参数！
-						$('#sk_x').val(c.x); //需裁剪的左上角X轴坐标
-						$('#sk_y').val(c.y); //需裁剪的左上角Y轴坐标
-						$('#sk_w').val(c.w); //需裁剪的宽度
-						$('#sk_h').val(c.h); //需裁剪的高度
-					}
-				});
-
-
-				var img_height = 0;
-				var img_width = 0;
-				var real_height = img.height;
-				var real_width = img.width;
-
-				if (real_height > real_width && real_height > 170) {
-					var persent = real_height / 170;
-					real_height = 170;
-					real_width = real_width / persent;
-				} else if (real_width > real_height && real_width > 550) {
-					var persent = real_width / 550;
-					real_width = 550;
-					real_height = real_height / persent;
-				}
-				if (real_height < 170) {
-					img_height = (170 - real_height) / 2;
-				}
-				if (real_width < 550) {
-					img_width = (550 - real_width) / 2;
-				}
-
-				$preview.css({
-					width: (550 - img_width),
-					height: (170 - img_height),
-					paddingTop: img_height,
-					paddingLeft: img_width
-				});
-			});
-	});
-};
-
 $(function() {
 	//点击换肤,进行自定义和模板选择
 	$("#skin_choose").click(Skin.openSkinDialog);
@@ -371,7 +372,6 @@ $(function() {
 		if (selectedId) {
 			//当删除选定模版后只剩一张模版图片时，不能删除
 			if (skinCount > 1) {
-
 				Ui.confirm(Ibos.l("USER.DELETE_CHOOSE_MODEL"), function() {
 					$.post(Ibos.app.url("user/skin/delbg"), {
 						id: selectedId
@@ -382,7 +382,6 @@ $(function() {
 							Ui.tip("@OPERATION_SUCCESS");
 						}
 					}, "json");
-
 				});
 			} else {
 				Ui.tip("@USER.IS_LAST_MODEL", "warning");
@@ -428,12 +427,7 @@ $(function() {
 		// 隐藏重新上传按钮
 		$("#skin_reupload_img").hide();
 		$(".skin-choose-area").addClass("active");
-		$("#preview_hidden").empty().hide().css({
-			'padding-top': 0,
-			'padding-left': 0,
-			'width': '9999px',
-			'height': '9999px'
-		});
+		$("#preview_hidden").empty().hide().addClass("preview-hide");
 		$("#sk_img_src").val("");
 	}
 

@@ -517,14 +517,22 @@
         function() {
           // We don't want to jump the whole width, since an image
           // might be cut at the edge
-          var width = context.nav_display_width - 50;
+          var width = context.nav_display_width - 50,
+              left = 0;
           if(context.settings.scroll_jump > 0) {
             var width = context.settings.scroll_jump;
           };
           if($(this).is('.ad-forward')) {
-            var left = context.thumbs_wrapper.scrollLeft() + width;
+            var $widths = context.thumbs_wrapper.find("ul").width();
+
+            if( context.thumbs_wrapper.scrollLeft() > $widths - width*2 ){
+              left = $widths - context.nav_display_width;
+            }else{
+              left = context.thumbs_wrapper.scrollLeft() + width;
+            }
+
           } else {
-            var left = context.thumbs_wrapper.scrollLeft() - width;
+            left = context.thumbs_wrapper.scrollLeft() - width;
           };
           if(context.settings.slideshow.stop_on_scroll) {
             context.slideshow.stop();
@@ -545,7 +553,12 @@
               if(has_scrolled > 30 && context.settings.slideshow.stop_on_scroll) {
                 context.slideshow.stop();
               };
-              var left = context.thumbs_wrapper.scrollLeft() + 1;
+              var left = context.thumbs_wrapper.scrollLeft() + 1,
+                  $widths = context.thumbs_wrapper.find("ul").width();
+
+              if( context.thumbs_wrapper.scrollLeft() >= ($widths - context.nav_display_width) ){
+                left = $widths - context.nav_display_width;
+              }
               if(direction == 'left') {
                 left = context.thumbs_wrapper.scrollLeft() - 1;
               };
@@ -841,8 +854,15 @@
         this.thumbs_wrapper.find('a:not(.ad-active) img').fadeTo(300, this.settings.thumb_opacity);
         thumb.find('img').fadeTo(300, 1);
       };
-      var left = thumb[0].parentNode.offsetLeft;
+      var left = thumb[0].parentNode.offsetLeft,
+          $widths = this.thumbs_wrapper.find("ul").width();
+
       left -= (this.nav_display_width / 2) - (thumb[0].offsetWidth / 2);
+
+      if( left >= ($widths - this.nav_display_width)  ){
+        left = $widths - this.nav_display_width;
+      }
+      
       this.thumbs_wrapper.animate({scrollLeft: left +'px'});
     },
     fireCallback: function(fn) {

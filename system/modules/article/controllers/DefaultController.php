@@ -33,6 +33,7 @@ use application\modules\vote\model\Vote;
 use application\modules\vote\model\VoteItem;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
+use application\core\model\Log;
 
 class DefaultController extends BaseController {
 
@@ -111,6 +112,7 @@ class DefaultController extends BaseController {
 			$this->condition = ArticleUtil::joinSearchCondition( $_POST['search'], $this->condition );
 		} else if ( $type == 'normal_search' ) {
 			$keyword = $_POST['keyword'];
+            $keyword = addslashes($keyword);
 			$this->condition = " subject LIKE '%$keyword%' ";
 			MainUtil::setCookie( 'keyword', $keyword, 10 * 60 );
 		} else {
@@ -297,6 +299,17 @@ class DefaultController extends BaseController {
 			} else if ( $article['status'] == '2' ) {
 				$this->SendPending( $article, $uid );
 			}
+            /**
+             * 日志记录
+             * 
+             * @TODO 新闻创建统计
+             */
+            $log = array(
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get('clientip')
+                , 'isSuccess' => 1
+            );
+            Log::write($log, 'action', 'module.article.default.add');
 			$this->success( util\IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
 		} else {
 			$this->$option();

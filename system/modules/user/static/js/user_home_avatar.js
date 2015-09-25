@@ -39,8 +39,8 @@ $(function() {
 							$(img).attr("id", "cropbox").show().appendTo(preview);
 							var img_height = 0;
 							var img_width = 0;
-							var real_height = img.height;
-							var real_width = img.width;
+							var real_height = img.offsetHeight;
+							var real_width = img.offsetWidth;
 							if (real_height > real_width && real_height > 408) {
 								var persent = real_height / 408;
 								real_height = 408;

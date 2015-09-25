@@ -137,9 +137,13 @@
     <div class="xac result-info-wrap">
     <i class="o-opt-success mb"></i>
     <p class="mbm">
+	<% if( data.successCount > 0 ){ %>
     <span class="fsl">成功同步</span>
     <span class="fsl xcbu"><%= data.successCount %></span>
     <span class="fsl">个员工信息</span>
+	<% }else{ %>
+    <span class="fsl xcbu"><%= data.msg %></span>
+	<% } %>
     </p>
     </div>
 </script>

@@ -389,7 +389,7 @@
 .art-pic-list .attl-item:hover .o-trash{ visibility: visible; }
 
 
-.ad-gallery { 
+.art-ct .ad-gallery { 
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
@@ -397,7 +397,7 @@
 	border: 1px solid #EBEFF6; 
 	background-color: #F9FBFF;
 }
-.ad-gallery .ad-nav{ width: 600px; padding: 20px 70px;}
+.art-ct .ad-gallery .ad-nav{ width: 600px; padding: 20px 70px;}
 .ad-gallery .ad-image-wrapper{ height: 550px; }
 .ad-gallery .ad-thumbs li{
 	padding-right: 12px;
@@ -414,22 +414,22 @@
 .ad-gallery .ad-thumbs li .ad-active{ 
 	border-color: #3497DB;
 }
-.ad-gallery .ad-thumbs li a img,
-.ad-gallery .ad-thumbs li a.ad-active img{ border: 0 none;}
-.ad-gallery .ad-forward, .ad-gallery .ad-back{ top: 20px; }
-.ad-gallery .ad-back{ left: 20px; }
-.ad-gallery .ad-forward{ right: 20px; }
-.ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image, 
-.ad-gallery .ad-image-wrapper .ad-next .ad-next-image{
+.ad-gallery .ad-thumbs .ad-thumb-list li a img,
+.ad-gallery .ad-thumbs .ad-thumb-list li a.ad-active img{ border: 0 none;}
+.ad-gallery .ad-nav .ad-forward, .ad-gallery .ad-nav .ad-back{ top: 20px;}
+.ad-gallery .ad-nav .ad-back{ left: 20px; } 
+.ad-gallery .ad-nav .ad-forward{ right: 20px;}
+.art-ct .ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image, 
+.art-ct .ad-gallery .ad-image-wrapper .ad-next .ad-next-image{
 	top: 50%;
 	margin-top: -42px;
 	width:  64px;
 	height: 84px;
 }
-.ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image{ left: 20px; }
-.ad-gallery .ad-image-wrapper .ad-next .ad-next-image{ right: 20px; }
-.ad-gallery .ad-forward,
-.ad-gallery .ad-back{
+.art-ct .ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image{ left: 20px; }
+.art-ct .ad-gallery .ad-image-wrapper .ad-next .ad-next-image{ right: 20px; }
+.ad-gallery .ad-nav .ad-forward,
+.ad-gallery .ad-nav .ad-back{
 	width: 30px;
 	height: 104px;
 	background-position: 0 50%;
@@ -511,4 +511,12 @@
 .mc-header .mnv li a .bubble{
 	top: 4px;
 	right: 12px;
+}
+
+/* js中所需要的样式 */
+.h-auto{
+	height: auto;
+}
+.reader-tab-h{
+	height: 300px;
 }

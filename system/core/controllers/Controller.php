@@ -89,6 +89,7 @@ class Controller extends CController {
         $this->setPageState( 'breadCrumbs', null );
         !isset( $data['assetUrl'] ) && $data['assetUrl'] = $this->getAssetUrl();
         $data['lang'] = IBOS::getLangSources( $langSources );
+		$data['language'] = IBOS::app()->getLanguage();
         return parent::render( $view, $data, $return );
     }
 

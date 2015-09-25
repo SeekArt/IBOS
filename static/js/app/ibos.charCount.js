@@ -66,6 +66,9 @@
 					pressing = false;
 				}
 			});
+			$display.on("click", function(){
+				$me.focus();
+			});
 			triggerChange();
 		});
 	};

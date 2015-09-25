@@ -10,54 +10,81 @@
  */
 
 (function(){
-	// @Todo 日程列表
+	// 日程列表
 	var calList = (function(){
-		var _access = function(param, success) {
+		/**
+		 * 数据访问
+		 * @method _access
+		 * @param  {Object}   param     传入JSON格式数据
+		 * @param  {Object}  			返回deffered对象
+		 */
+		var _access = function(param) {
 			if(!PAGE_URL.list) {
 				return false;
 			}
-			$.post(PAGE_URL.list, param, function(res) {
-				if(res.isSuccess) {
-					// tip 操作成功
-					success && success.call(null, res);
-				} else {
-					// tip 操作失败
-				}
-			}, "json")
-		}
-
+			return $.post(PAGE_URL.list, param, $.noop, "json");
+		};
+		/**
+		 * 获取当前项目
+		 * @method _getRow
+		 * @param  {String} id 当期的ID
+		 * @return {Object}    返回当前的jquery节点
+		 */
 		var _getRow = function(id) {
 			return $("#cal_list_" + id);
-		}
+		};
 
 
 		return {
+			/**
+			 * 项目完成
+			 * @method itemComplete
+			 * @param  {String} id 传入当前的id
+			 */
 			itemComplete: function(id){
 				var $row = _getRow(id);
 				$row.addClass("cal-list-complete");
 				$row.find(".o-ok").addClass("active");
 			},
-
+			/**
+			 * 项目未完成
+			 * @method itemUncomplete
+			 * @param  {String} id 传入当前的id
+			 */
 			itemUncomplete: function(id){
 				var $row = _getRow(id);
 				$row.removeClass("cal-list-complete");
 				$row.find(".o-ok").removeClass("active");
 			},
-
+			/**
+			 * 项目完成
+			 * @method ajaxItemComplete
+			 * @param  {String} id 传入当前的id
+			 */
 			ajaxItemComplete: function(id){
-				var that = this;
-				_access({ op: "complete", id: id, complete: 1}, function(){
+				var that = this,
+					param = { op: "complete", id: id, complete: 1};
+				_access(param).done(function(){
 					that.itemComplete(id);
 				});
 			},
-
+			/**
+			 * 项目未完成
+			 * @method ajaxItemUncomplete
+			 * @param  {String} id 传入当前的id
+			 */
 			ajaxItemUncomplete: function(id){
-				var that = this;
-				_access({ op: "complete", id: id, complete: 0}, function(){
+				var that = this,
+					param = { op: "complete", id: id, complete: 0};
+				_access(param).done(function(){
 					that.itemUncomplete(id);
 				});
 			},
-
+			/**
+			 * 删除当前行
+			 * @method deleteRow
+			 * @param  {String} id 传入当前的id
+			 */
 			deleteRow: function(id){
 				var $row = _getRow(id);
 					$nextRow = $row.next();
@@ -74,14 +101,23 @@
 
 				$row.remove();
 			},
-
+			/**
+			 * 删除当前行
+			 * @method ajaxDeleteRow
+			 * @param  {String} id 传入当前的id
+			 */
 			ajaxDeleteRow: function(id){
-				var that = this;
-				_access({ op: "delete", id: id}, function(){
+				var that = this,
+					param = { op: "delete", id: id};
+				_access(param).done(function(){
 					that.deleteRow(id);
 				});
 			},
-
+			/**
+			 * 打开编辑窗口
+			 * @method openEditDialog
+			 * @param  {String} id 传入当前的id
+			 */
 			openEditDialog: function(id){
 				var that = this,
 					_init = false,
@@ -103,7 +139,8 @@
 					},
 					width: 500
 				});
-				_access({op: "getdetail", id: id}, function(res){
+				var param = {op: "getdetail", id: id};
+				_access(param).done(function(res){
 					// 读取完后设置内容
 					d.content(res.content);
 					// 初始化复选框
@@ -124,15 +161,9 @@
 						var isComplete = $.attr(this, "data-complete") === "1" ? true : false,
 							$elem = $(this);
 
-						if(isComplete) {
-							that.ajaxItemUncomplete(id);
-							$elem.attr("data-complete", "0").text(U.lang('CM.COMPLETE'))
-							.next().hide();
-						} else {
-							that.ajaxItemComplete(id);
-							$elem.attr("data-complete", "1").text(U.lang('CM.UNCOMPLETE'))
-							.next().show();
-						}
+						that[ isComplete ?　'ajaxItemUncomplete' : 'ajaxItemComplete' ](id);
+						$elem.attr("data-complete", isComplete ? "1" : "0").text( U.lang( isComplete ? 'CM.COMPLETE' : 'CM.UNCOMPLETE' ) )
+						.next()[ isComplete ? "show" : "hide"]();
 					});
 
 					// 初始化时间选择
@@ -156,29 +187,30 @@
 						}
 					});
 					_init = true;
-				})
+				});
 			}
-		}	
+		};
 	})();
-
+	// 事件处理
 	var eventHandler = {
 		"click": {
+			// 切换项目完成状态
 			"toggleItemComplete": function(elem, param){
-				if($(elem).hasClass("active")){
-					calList.ajaxItemUncomplete(param.id);
-				} else{
-					calList.ajaxItemComplete(param.id);
-				}
+				var isActive = $(elem).hasClass("active");
+				calList[isActive ? "ajaxItemUncomplete" : "ajaxItemComplete"](param.id);
 			},
+			// 删除当前行
 			"deleteRow": function(elem, param){
 				calList.ajaxDeleteRow(param.id);
 			},
+			// 编辑当前行
 			"editRow": function(elem, param){
 				calList.openEditDialog(param.id);
 			}
 		}
-	}
+	};
 
+	// 事件委派处理
 	var _trigger = function(elem, type) {
 		var prop = "data-" + type,
 			name = $.attr(elem, prop),
@@ -188,10 +220,9 @@
 			param = $(elem).data("param");
 			return eventHandler[type][name].call(eventHandler[type], elem, param);
 		}	
-	}
+	};
 
 	$(document).on("click", "[data-click]", function(){
 		_trigger(this, "click");
-	})
-
+	});
 })();

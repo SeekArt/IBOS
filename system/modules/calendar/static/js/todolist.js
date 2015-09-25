@@ -1,9 +1,11 @@
+// 任务列表
 var TodoList = function($list, options) {
 	this.$list = $list;
 	this.options = $.extend({}, TodoList.defaults, options);
 	this.globalData = [];
 	this._init();
 };
+// 默认参数
 TodoList.defaults = {
 	scrollSensitivity: 20,
 	scrollSpeed: 20,
@@ -12,10 +14,17 @@ TodoList.defaults = {
 
 TodoList.prototype = {
 	constructor: TodoList,
+	/**
+	 * 初始化事件
+	 * @method _init
+	 */
 	_init: function() {
 		this._bindEvent();
 	},
-
+	/**
+	 * 事件绑定
+	 * @method _bindEvent
+	 */
 	_bindEvent: function() {
 
 		var that = this,
@@ -39,7 +48,7 @@ TodoList.prototype = {
 					$next = $item.parent().next().find(".todo-item").first();
 				}
 				return that._focusItem($next);
-			}
+			};
 		if(!this.options.disabled){
 			// 完成
 			this.$list.on("click", ".o-todo-complete", function() {
@@ -76,7 +85,6 @@ TodoList.prototype = {
 						content = $ct.text();
 					$ct.data("content", content);
 					// Event.edit;
-					// console.log("todo-list: ", "edit");
 					that._trigger("edit");
 				},
 				"blur": function() {
@@ -84,13 +92,16 @@ TodoList.prototype = {
 						id = that._getItemIdByChild($ct),
 						oldContent = $ct.data("content"),
 						content = $ct.text();
+					if( content === "" ){
+						that.removeItem(id);
+						return false;
+					}
 					if (oldContent !== content) {
 						that.setData(id, {
 							text: content
-						})
-						// Event.save
-						// console.log("todo-list: ", "save");
-						that._trigger("save", id, content);
+					});
+					// Event.save
+					that._trigger("save", id, content);
 					}
 				}
 			}, ".todo-item-content")
@@ -99,8 +110,11 @@ TodoList.prototype = {
 				var id = that._getItemIdByChild($(this)),
 					data = {
 						pid: id
-					}
-				that.addItem(data);
+					},
+					childContent = $.trim( $(this).closest(".todo-entry").find(".todo-item-content:last").html() );
+				if( childContent !== "" ){
+					that.addItem(data);
+				}
 			})
 			// 快捷键
 			.on("keydown", ".todo-item-content", function(evt) {
@@ -147,19 +161,37 @@ TodoList.prototype = {
 			this._bindDragStartEvent();
 		}
 	},
-
+	/**
+	 * 获取入口节点
+	 * @method _getEntryByChild
+	 * @param  {Object} $el 传入jquery节点对象
+	 * @return {Object}     返回jquery节点对象
+	 */
 	_getEntryByChild: function($el) {
 		return $el.parents(".todo-entry").eq(0);
 	},
-
+	/**
+	 * 获取项目节点
+	 * @method _getItemByChild
+	 * @param  {Object} $el 传入jquery节点对象
+	 * @return {Object}     返回jquery节点对象
+	 */
 	_getItemByChild: function($el) {
 		return $el.parents(".todo-item").eq(0);
 	},
-
+	/**
+	 * 获取项目节点的id
+	 * @method _getItemByChild
+	 * @param  {Object} $el 传入jquery节点对象
+	 * @return {String}     返回项目节点的id
+	 */
 	_getItemIdByChild: function($el) {
 		return this._getItemByChild($el).attr("data-id");
 	},
-
+	/**
+	 * 绑定拖拽开始事件
+	 * @method _bindDragStartEvent
+	 */
 	_bindDragStartEvent: function() {
 		var that = this,
 			options = this.options;
@@ -170,7 +202,6 @@ TodoList.prototype = {
 					id = $item.attr("data-id");
 
 				// Event.start
-				// console.log("todo-list: ", "start");
 				that._trigger("start", id);
 				evt.currentId = id;
 
@@ -191,9 +222,13 @@ TodoList.prototype = {
 				that._bindDragStopEvent();
 				evt.preventDefault();
 			}
-		})
+		});
 	},
-
+	/**
+	 * 绑定拖拽中事件
+	 * @method _bindDragStartEvent
+	 * @param {Object} evt 事件对象
+	 */
 	_bindDragingEvent: function(evt) {
 		var that = this,
 			$doc = $(document),
@@ -209,10 +244,10 @@ TodoList.prototype = {
 		$doc.on("mousemove.todo.draging", function(e) {
 			// Event.sort
 			// console.log("todo-list: ", "sort");
-			that._trigger("sort")
+			that._trigger("sort");
 
 			e.scrollTop = $doc.scrollTop();
-			e.scrollLeft = $doc.scrollLeft()
+			e.scrollLeft = $doc.scrollLeft();
 
 			var endX = e.clientX,
 				endY = e.clientY,
@@ -254,7 +289,7 @@ TodoList.prototype = {
 								currentId: currentId,
 								targetId: targetId,
 								type: "down"
-							}
+							};
 							that._trigger("change", that._change);
 						}
 					}
@@ -279,8 +314,8 @@ TodoList.prototype = {
 								currentId: currentId,
 								targetId: targetId,
 								type: "up"
-							}
-							that._trigger("change", that._change)
+							};
+							that._trigger("change", that._change);
 						}
 					}
 				}
@@ -290,11 +325,17 @@ TodoList.prototype = {
 			e.preventDefault();
 		});
 	},
-
+	/**
+	 * 解绑拖拽中事件
+	 * @method _bindDragStartEvent
+	 */
 	_unbindDragingEvent: function() {
 		$(document).off(".todo.draging");
 	},
-
+	/**
+	 * 绑定拖拽结束事件
+	 * @method _bindDragStartEvent
+	 */
 	_bindDragStopEvent: function() {
 		var that = this;
 		$(document).on("mouseup.todo.dragstop", function(e) {
@@ -313,14 +354,20 @@ TodoList.prototype = {
 			// Event.stop
 			// console.log("todo-list: ", "stop");
 			that._trigger("stop", that._change);
-			delete that._change
+			delete that._change;
 		});
 	},
-
+	/**
+	 * 解绑拖拽事件
+	 * @method _bindDragStartEvent
+	 */
 	_unbindDragEndEvent: function() {
 		$(document).off(".todo.dragstop");
 	},
-
+	/**
+	 * 设置帮助开
+	 * @method _setHelperOn
+	 */
 	_setHelperOn: function() {
 		var hpPos = this.$current.position(),
 			hpWidth = this.$current.width(),
@@ -330,16 +377,21 @@ TodoList.prototype = {
 				"top": hpPos.top,
 				"left": hpPos.left,
 				"width": hpWidth,
-				// "height":   hpHeight,
 				"z-index": "1000"
 			};
 		this.$current.addClass("todo-helper").css(hpStyle);
 	},
-
+	/**
+	 * 设置帮助关
+	 * @method _setHelperOn
+	 */
 	_setHelperOff: function() {
 		this.$current && this.$current.removeClass("todo-helper").attr("style", "");
 	},
-
+	/**
+	 * 设置占位符开
+	 * @method _setPlaceholderOn
+	 */
 	_setPlaceholderOn: function() {
 		var $ph = $("<div class='todo-placeholder'></div>"),
 			phHeight = this.$current.outerHeight();
@@ -349,31 +401,38 @@ TodoList.prototype = {
 		}).insertAfter(this.$current);
 		this.$placeholder = $ph;
 	},
-
+	/**
+	 * 设置占位符关
+	 * @method _setPlaceholderOff
+	 */
 	_setPlaceholderOff: function() {
 		this.$placeholder.replaceWith(this.$current);
 		this.$placeholder = null;
 	},
-
+	/**
+	 * 添加子项
+	 * @method _addSubItem
+	 * @param  {Object} data 传入JSON格式数据
+	 * @return {Object}      模板数据
+	 */
 	_addSubItem: function(data) {
 		var isComplete = data.complete === "1" ? true : false,
 			date = typeof data.date === "undefined" ? "" : data.date,
 			text = typeof data.text === "undefined" ? "" : data.text,
 			tpl = '<div class="todo-item todo-sub-item ' + (isComplete ? "todo-complete" : "") + '" data-id="' + data.id + '" data-pid="' + data.pid + '" >' +
-			// View
-			'<div class="todo-item-left"></div>' +
-				'<div class="todo-item-center">' +
-				'<a href="javascript:;" class="pull-left ' + (isComplete ? "o-todo-complete" : "o-todo-uncomplete") + '"></a> ' +
-				'<div class="todo-item-content"' + (this.options.disabled ? '' : 'contentEditable') + '>' +
-				text +
-				'</div>' +
-				'</div>' +
-				'<div class="todo-item-right">' +
-				( this.options.disabled ? '' :
-				'<div class="todo-operate">' +
-				' <a href="javascript:;" title="' + U.lang("DELETE") + '" class="cbtn o-trash"></a>' +
-				'</div>') +
-				'</div>' +
+					'<div class="todo-item-left"></div>' +
+					'<div class="todo-item-center">' +
+						'<a href="javascript:;" class="pull-left ' + (isComplete ? "o-todo-complete" : "o-todo-uncomplete") + '"></a> ' +
+						'<div class="todo-item-content"' + (this.options.disabled ? '' : 'contentEditable') + '>' +
+							text +
+						'</div>' +
+					'</div>' +
+					'<div class="todo-item-right">' +
+						( this.options.disabled ? '' :
+						'<div class="todo-operate">' +
+							' <a href="javascript:;" title="' + U.lang("DELETE") + '" class="cbtn o-trash"></a>' +
+						'</div>') +
+					'</div>' +
 				'</div>',
 			$item = $(tpl),
 			$wrap;
@@ -381,7 +440,7 @@ TodoList.prototype = {
 		for (var i = 0, len = this.globalData.length; i < len; i++) {
 			// 当新建子项的pid指向的父项已存在时,插入父项所在容器
 			if (data.pid === this.globalData[i].id) {
-				$wrap = this.globalData[i].item.parent()
+				$wrap = this.globalData[i].item.parent();
 				if ($wrap && $wrap.length) {
 					$item.appendTo($wrap);
 					this._focusItem($item);
@@ -389,11 +448,15 @@ TodoList.prototype = {
 					this.addData(data);
 				}
 			}
-			// 当不存在时，...
 		}
 		return $item;
 	},
-
+	/**
+	 * 添加项目
+	 * @method _addItem
+	 * @param  {Object} data 传入JSON格式数据
+	 * @return {Object}      模板数据
+	 */
 	_addItem: function(data) {
 		var that = this,
 			markCls = data.mark === "1" ? "o-todo-mark" : "o-todo-unmark",
@@ -401,27 +464,27 @@ TodoList.prototype = {
 			date = typeof data.date === "undefined" ? "" : data.date,
 			text = typeof data.text === "undefined" ? "" : data.text,
 			tpl = '<div class="todo-item todo-item-movable ' + (isCompelte ? "todo-complete" : "") + '" data-id="' + data.id + '">' +
-				'<div class="todo-item-left">' +
-				' <a href="javascript:;" class="o-todo-drag"></a>' +
-				' <a href="javascript:;" class="' + (isCompelte ? "o-todo-complete" : "o-todo-uncomplete") + '"></a>' +
-				' <a href="javascript:;" class="' + markCls + '"></a>' +
-				'</div>' +
-				'<div class="todo-item-center">' +
-				'<div class="todo-item-content"' + (this.options.disabled ? '' : 'contentEditable') + '>' +
-				text +
-				'</div>' +
-				'</div>' +
-				'<div class="todo-item-right">' +
-				' <div class="date form_datetime">' +
-				' <input disabled class="todo-date" value="' + date + '" />' +
-				' </div>' +
-				' <div class="todo-operate">' +
-				( this.options.disabled ? '' :
-				' <a href="javascript:;" title="' + U.lang('CAL.ADD_SUB_ITEM') + '" class="cbtn o-plus"></a>' +
-				' <a href="javascript:;" title="' + U.lang('CAL.DEADLINE') + '" class="cbtn o-date mls"></a>' +
-				' <a href="javascript:;" title="' + U.lang('DELETE') + '" class="cbtn o-trash mls"></a>')  +
-				' </div>' +
-				'</div>' +
+					'<div class="todo-item-left">' +
+						' <a href="javascript:;" class="o-todo-drag"></a>' +
+						' <a href="javascript:;" class="' + (isCompelte ? "o-todo-complete" : "o-todo-uncomplete") + '"></a>' +
+						' <a href="javascript:;" class="' + markCls + '"></a>' +
+					'</div>' +
+					'<div class="todo-item-center">' +
+						'<div class="todo-item-content"' + (this.options.disabled ? '' : 'contentEditable') + '>' +
+							text +
+						'</div>' +
+					'</div>' +
+					'<div class="todo-item-right">' +
+						' <div class="date form_datetime">' +
+							' <input disabled class="todo-date" value="' + date + '" />' +
+						' </div>' +
+						' <div class="todo-operate">' +
+							( this.options.disabled ? '' :
+							' <a href="javascript:;" title="' + U.lang('CAL.ADD_SUB_ITEM') + '" class="cbtn o-plus"></a>' +
+							' <a href="javascript:;" title="' + U.lang('CAL.DEADLINE') + '" class="cbtn o-date mls"></a>' +
+							' <a href="javascript:;" title="' + U.lang('DELETE') + '" class="cbtn o-trash mls"></a>')  +
+						' </div>' +
+					'</div>' +
 				'</div>',
 			$item = $(tpl);
 		// 时间选择器
@@ -436,10 +499,10 @@ TodoList.prototype = {
 					$item.addClass(focusCls);
 				},
 				"hide": function() {
-					that._trigger("date", data.id, $(this).data("datetimepicker").getLocalDate())
+					that._trigger("date", data.id, $(this).data("datetimepicker").getLocalDate());
 					$item.removeClass(focusCls);
 				}
-			})
+			});
 		}
 
 		$item.prependTo(this.$list).wrap("<div class='todo-entry" +  (this.options.disabled ? " todo-disabled" : "") + "' data-id='" + data.id + "'></div>");
@@ -447,7 +510,12 @@ TodoList.prototype = {
 		this.addData(data);
 		return $item;
 	},
-
+	/**
+	 * 焦点项目
+	 * @method _focusItem
+	 * @param  {Object} $item 传入jquery节点对象
+	 * @return {Boolean}      true
+	 */
 	_focusItem: function($item) {
 		// 假设传入参数为ID时
 		var $content;
@@ -460,30 +528,34 @@ TodoList.prototype = {
 			return true;
 		}
 	},
-
+	/**
+	 * 添加项目
+	 * @method addItem
+	 * @param {Object}  data     传入JSON格式数据
+	 * @param {Boolean} hasSaved 是否保存
+	 */
 	addItem: function(data, hasSaved) {
 		var $item,
 			isChildren;
 		if (!data || typeof data !== "object") {
-			throw new Error("{TodoList.addItem}: 数据类型不正确")
+			throw new Error("{TodoList.addItem}: "+ U.lang("CAL.DATATYPE_NOT_CORRECT"));
 		}
 		if (typeof data.id === "undefined") {
 			data.id = U.uniqid() || "todo_item_" + $.now();
 		}
+
 		isChildren = typeof data.pid !== "undefined" ? true : false;
-		if (isChildren) {
-			$item = this._addSubItem(data);
-		} else {
-			$item = this._addItem(data);
-		}
+		$item = this[ isChildren ? "_addSubItem" : "_addItem" ](data);
+
 		// Event.add
-		if (!hasSaved) {
-			// console.log("todo-list: ", "add");
-			this._trigger("add", data)
-		}
+		(!hasSaved) && this._trigger("add", data);
 		return $item;
 	},
-	// 仅用于初始化
+	/**
+	 * 仅用于初始化
+	 * @method set
+	 * @param {Object} data 传入JSON格式数据
+	 */
 	set: function(data) {
 		var sub = [],
 			i,
@@ -491,27 +563,32 @@ TodoList.prototype = {
 		// 先插入所有父级项，避免子项先于父项出现时的错误
 		for (i = 0, len = data.length; i < len; i++) {
 			if (typeof data[i].pid !== "undefined") {
-				sub.push(data[i])
+				sub.push(data[i]);
 			} else {
-				this.addItem(data[i], true)
+				this.addItem(data[i], true);
 			}
 		}
 		// 再插入子级项
 		if (sub.length) {
 			for (i = 0, len = sub.length; i < len; i++) {
-				this.addItem(sub[i], true)
+				this.addItem(sub[i], true);
 			}
 		}
-
 	},
-
+	/**
+	 * 获取项目
+	 * @method getItem
+	 * @param {String} id 项目id
+	 */
 	getItem: function(id) {
 		var data = this.getData(id);
 		return data ? data.item : null;
 	},
-
-
-
+	/**
+	 * 删除项目
+	 * @method removeItem
+	 * @param {String} id 项目id
+	 */
 	removeItem: function(id) {
 		var data = this.getData(id),
 			delIds = [],
@@ -529,27 +606,34 @@ TodoList.prototype = {
 				// 不能直接对数组进行删除，会导致循环出错
 				for (i = 0, len = this.globalData.length; i < len; i++) {
 					if (this.globalData[i].pid == id) {
-						delIds.push(this.globalData[i].id)
+						delIds.push(this.globalData[i].id);
 					}
 				}
 				// 循环要删除数据的id
 				for (i = 0, len = delIds.length; i < len; i++) {
-					this.removeData(delIds[i])
+					this.removeData(delIds[i]);
 				}
 			}
 			this.removeData(id);
 
 			// Event.remove
 			// console.log("todo-list: ", "remove");
-			this._trigger("remove", id)
+			this._trigger("remove", id);
 		}
 	},
-
+	/**
+	 * 添加数据
+	 * @method addData
+	 * @param {Obejct} data 传入JSON格式数据
+	 */
 	addData: function(data) {
 		this.globalData.push(data);
 	},
-
-
+	/**
+	 * 获取数据
+	 * @method getData
+	 * @param {String} id 数据id
+	 */
 	getData: function(id) {
 		var result = null;
 		for (var i = 0, len = this.globalData.length; i < len; i++) {
@@ -560,7 +644,11 @@ TodoList.prototype = {
 		}
 		return result;
 	},
-
+	/**
+	 * 删除数据
+	 * @method removeData
+	 * @param {String} id 数据id
+	 */
 	removeData: function(id) {
 		for (var i = 0, len = this.globalData.length; i < len; i++) {
 			if (id == this.globalData[i].id) {
@@ -569,33 +657,24 @@ TodoList.prototype = {
 			}
 		}
 	},
-
+	/**
+	 * 设置数据
+	 * @method setData
+	 * @param {String} id   数据id
+	 * @param {Obejct} data 传入JSON格式数据
+	 */
 	setData: function(id, data) {
 		var result = this.getData(id);
-		if (result) {
-			$.extend(result, data);
-		}
+		result && $.extend(result, data);
 	},
-
+	/**
+	 * 设置完成
+	 * @method setComplete
+	 * @param {String} id   项目id
+	 */
 	setComplete: function(id) {
 		var that = this,
 			$item = this.getItem(id);
-		// 	pid = $item.attr("data-pid"),
-		// 	_setComplete = function($item){
-		// 		var itemId = $item.attr("data-id");
-
-		// 		$item.addClass("todo-complete").find(".o-todo-uncomplete")
-		// 		.removeClass("o-todo-uncomplete").addClass("o-todo-complete");
-
-		// 		that.setData(itemId, {complete: "1"});
-		// 	};
-		// if(!pid){
-		// 	$item.parent().find(".todo-item").each(function(){
-		// 		_setComplete($(this));
-		// 	})
-		// }else{
-		// 	_setComplete($item);
-		// }
 
 		$item.addClass("todo-complete").find(".o-todo-uncomplete")
 			.removeClass("o-todo-uncomplete").addClass("o-todo-complete");
@@ -603,31 +682,16 @@ TodoList.prototype = {
 		that.setData(id, {
 			complete: "1"
 		});
-
-		// Event.complete
-		// console.log("todo-list: ", "complete");
-		this._trigger("complete", id, true)
+		this._trigger("complete", id, true);
 	},
-
+	/**
+	 * 设置未完成
+	 * @method setUncomplete
+	 * @param {String} id   项目id
+	 */
 	setUncomplete: function(id) {
 		var that = this,
 			$item = this.getItem(id);
-		// 	pid = $item.attr("data-pid"),
-		// 	_setUncomplete = function($item){
-		// 		var itemId = $item.attr("data-id");
-
-		// 		$item.addClass("todo-uncomplete").find(".o-todo-complete")
-		// 		.removeClass("o-todo-complete").addClass("o-todo-uncomplete");
-
-		// 		that.setData(itemId, {complete: "0"});
-		// 	};
-		// if(!pid){
-		// 	$item.parent().find(".todo-item").each(function(){
-		// 		_setUncomplete($(this));
-		// 	})
-		// }else{
-		// 	_setUncomplete($item);
-		// }
 
 		$item.removeClass("todo-complete").find(".o-todo-complete")
 			.removeClass("o-todo-complete").addClass("o-todo-uncomplete");
@@ -635,13 +699,14 @@ TodoList.prototype = {
 		that.setData(id, {
 			complete: "0"
 		});
-
-		// Event.complete
-		// console.log("todo-list: ", "uncomplete");
-		this._trigger("complete", id, false)
+		this._trigger("complete", id, false);
 
 	},
-
+	/**
+	 * 设置标记
+	 * @method setMark
+	 * @param {String} id   项目id
+	 */
 	setMark: function(id) {
 		var $item = this.getItem(id);
 
@@ -649,30 +714,38 @@ TodoList.prototype = {
 		this.setData(id, {
 			mark: "1"
 		});
-		// Event.mark
-		// console.log("todo-list: ", "mark");
-		this._trigger("mark", id, true)
+		this._trigger("mark", id, true);
 	},
-
+	/**
+	 * 设置未标记
+	 * @method setUnmark
+	 * @param {String} id   项目id
+	 */
 	setUnmark: function(id) {
 		var $item = this.getItem(id);
 		$item.find(".o-todo-mark").removeClass("o-todo-mark").addClass("o-todo-unmark");
 		this.setData(id, {
 			mark: "0"
 		});
-		// Event.mark
-		// console.log("todo-list: ", "unmark");
-		this._trigger("mark", id, false)
+		this._trigger("mark", id, false);
 	},
-
-	_trigger: function(name /*, arguments */ ) {
+	/**
+	 * 触发
+	 * @method setUnmark
+	 * @param {String} name  项目名称
+	 */
+	_trigger: function(name ) {
 		var argu;
 		if (this.options[name] && $.isFunction(this.options[name])) {
 			argu = Array.prototype.slice.call(arguments, 1);
-			return this.options[name].apply(this, argu)
+			return this.options[name].apply(this, argu);
 		}
 	},
-
+	/**
+	 * 加载数据
+	 * @method load
+	 * @param  {String} url 传入url地址
+	 */
 	load: function(url) {
 		var that = this;
 		if (typeof url === "string") {
@@ -683,7 +756,7 @@ TodoList.prototype = {
 				success: function(data) {
 					that._addItems(data);
 				}
-			})
+			});
 		}
 	}
 };

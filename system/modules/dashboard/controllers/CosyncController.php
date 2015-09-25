@@ -12,7 +12,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\Api;
 use application\core\utils\String;
 use application\core\utils\Convert;
@@ -28,6 +28,7 @@ use application\modules\user\model\UserCount;
 use application\modules\user\utils\User as UserUtil;
 use application\modules\department\utils\Department;
 use application\modules\department\model\Department as DepartmentModel;
+use application\modules\dashboard\utils\CoSync;
 use CJSON;
 use Yii;
 
@@ -108,8 +109,8 @@ class CosyncController extends CoController {
 			//调用接口，向酷办公发送同步用户请求
 			$this->handleCoData( $op = 'createUser', CJSON::encode( $ibosUsers ), $sendInvite, $datum );
 
-			Cache::model()->add( array( 'cachekey' => 'cosendinvite', 'cachevalue' => serialize( $sendInvite ) ) ); //发送企业邀请
-			Cache::model()->add( array( 'cachekey' => 'codatum', 'cachevalue' => serialize( $datum ) ) );
+			//Cache::model()->add( array( 'cachekey' => 'cosendinvite', 'cachevalue' => serialize( $sendInvite ) ) ); 
+			//Cache::model()->add( array( 'cachekey' => 'codatum', 'cachevalue' => serialize( $datum ) ) );
 			Cache::model()->add( array( 'cachekey' => 'cousers', 'cachevalue' => serialize( $coUsers ) ) );
 			Cache::model()->add( array( 'cachekey' => 'cototal', 'cachevalue' => serialize( $coUsers ) ) );
 			Cache::model()->add( array( 'cachekey' => 'codeptrelated', 'cachevalue' => serialize( array() ) ) );
@@ -144,10 +145,10 @@ class CosyncController extends CoController {
 			} else if ( $op == 'user' ) {
 				$related = Cache::model()->fetchArrayByPk( 'codeptrelated' );
 				$error = Cache::model()->fetchArrayByPk( 'couserfail' );
-				$success = Cache::model()->fetchArrayByPk( 'cousersuccess' ); // 同步成功
 				$total = count( Cache::model()->fetchArrayByPk( 'cototal' ) );
-				$sendInvite = Cache::model()->fetchArrayByPk( 'cosendinvite' );
-				$datum = Cache::model()->fetchArrayByPk( 'codatum' );
+				$success = Cache::model()->fetchArrayByPk( 'cousersuccess' ); // 同步成功
+				//$sendInvite = Cache::model()->fetchArrayByPk( 'cosendinvite' );
+				//$datum = Cache::model()->fetchArrayByPk( 'codatum' );
 
 				if ( Env::getRequest( 'act' ) == 'reset' ) {
 					$userdata = User::model()->fetchAllByUids( array_keys( $error ) );
@@ -158,75 +159,33 @@ class CosyncController extends CoController {
 					$downloadlink = $this->createUrl( 'cosync/downerror' );
 					$errorCount = count( $error );
 					$successCount = intval( $total - $errorCount );
-					if ( $errorCount == $total and $total != 0 ) {
+					if ( $errorCount == $total && $total != 0 ) {
 						$this->ajaxReturn( array( 'errorCount' => $errorCount, 'tpl' => 'error', 'msg' => $errorCount . '个联系人无法同步，请根据错误信息修正后，点击重新同步。 ', 'downUrl' => $downloadlink, 'url' => $this->createUrl( 'cosync/sync', array( 'op' => 'user', 'act' => 'reset' ) ) ) );
 					} else if ( $errorCount > 0 ) {
 						$this->ajaxReturn( array( 'successCount' => $successCount, 'errorCount' => $errorCount, 'tpl' => 'half', 'msg' => $errorCount . '个联系人无法同步，请根据错误信息修正后，点击重新同步。 ', 'downUrl' => $downloadlink, 'url' => $this->createUrl( 'cosync/sync', array( 'op' => 'user', 'act' => 'reset' ) ) ) );
 					} else {
 						Cache::model()->deleteAll( "FIND_IN_SET(cachekey,'codepts,codeptrelated')" );
-						$this->ajaxReturn( array( 'successCount' => $successCount, 'tpl' => 'success', 'isSuccess' => true, 'msg' => '成功全部完成！' ) );
+						$this->ajaxReturn( array( 'successCount' => $successCount, 'tpl' => 'success', 'isSuccess' => true, 'msg' => '所有用户已经同步完成' ) );
 						exit();
 					}
 				}
-				//此处加载缓存以及更新用户缓存必须，要不然会出错或者会产生重复数据。
-				CacheUtil::load( 'usergroup' ); // 要注意小写
-				CacheUtil::update( 'users' ); // 用户缓存依赖usergroup缓存，单独更新
-				foreach ( $userdata as $key => $param ) {
-					$checkIsExist = User::model()->checkIsExistByMobile( $param['mobile'] );
-					//判断手机号不存在,执行创建用户
-					//从酷办公获取用户在本地创建新的用户，暂时是没有部门关联的
-					if ( $checkIsExist === false ) {
-						$param['salt'] = !empty( $param['salt'] ) ? $param['salt'] : String::random( 6 );
-						$param['password'] = !empty( $param['password'] ) ? $param['password'] : md5( md5( $param['mobile'] ) . $param['salt'] );
-						$param['groupid'] = !empty( $param['groupid'] ) ? $param['groupid'] : '2';
-						$param['createtime'] = TIMESTAMP;
-						$param['guid'] = String::createGuid();
-						$data = User::model()->create( $param );
-						unset( $data['uid'] );
-						$newId = User::model()->add( $data, true );
-						if ( $newId ) {
-							UserCount::model()->add( array( 'uid' => $newId ) );
-							$ip = Ibos::app()->setting->get( 'clientip' );
-							UserStatus::model()->add( array( 'uid' => $newId, 'regip' => $ip, 'lastip' => $ip ) );
-							//用户user_profile一定要有相关的用户数据，即使为空，要不然会出错
-							UserProfile::model()->add( array( 'uid' => $newId ) );
-							//创建用户绑定
-							$binding = UserBinding::model()->add( array( 'uid' => $newId, 'bindvalue' => $param['guid'], 'app' => 'co' ) );
-							if ( !$binding ) {
-								$error[$key]['uid'] = $param['uid'];
-								$error[$key]['realname'] = $param['realname'];
-								$error[$key]['mobile'] = $param['mobile'];
-								$error[$key]['errormsg'] = '绑定用户出错';
-							}
-							$success[$param['uid']] = $param['mobile'];
-							/**
-							 * 重新建立缓存
-							 */
-							$newUser = User::model()->fetchByPk( $newId );
-							$newusers = UserUtil::loadUser();
-							$newusers[$newId] = UserUtil::wrapUserInfo( $newUser );
-							User::model()->makeCache( $newusers );
-						} else {
-							$error[$key]['uid'] = $param['uid'];
-							$error[$key]['realname'] = $param['realname'];
-							$error[$key]['mobile'] = $param['mobile'];
-							$error[$key]['errormsg'] = '创建用户出错';
-						}
-					}
-					unset( $userdata[$key] );
-					break;
-				}
-				Cache::model()->updateByPk( 'couserfail', array( 'cachevalue' => serialize( $error ) ) );
-				Cache::model()->updateByPk( 'cousers', array( 'cachevalue' => serialize( $userdata ) ) );
-				Cache::model()->updateByPk( 'cousersuccess', array( 'cachevalue' => serialize( $success ) ) ); //成功同步用户
+				$return = CoSync::CreateUser( $userdata, $success, $error, $break = true ); //调用工具类创建用户
+				Cache::model()->updateByPk( 'couserfail', array( 'cachevalue' => serialize( $return['data']['error'] ) ) );
+				Cache::model()->updateByPk( 'cousers', array( 'cachevalue' => serialize( $return['data']['users'] ) ) );
+				Cache::model()->updateByPk( 'cousersuccess', array( 'cachevalue' => serialize( $return['data']['success'] ) ) ); //成功同步用户
 				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '正在处理用户同步，请稍后...', 'url' => $this->createUrl( 'cosync/sync', array( 'op' => 'user' ) ) ) );
 			}
 		}
 	}
 
+
 	/**
-	 * 调用接口，获取酷办公数据
-	 * 外添加了 $datum 参数 ,代表是否发送企业邀请
+	 * 调用接口，获取酷办公数据或者进行相关操作
+	 * @param type $op 所要操作
+	 * @param type $data 所要发送的数据，在发送之前最好用json_encode处理
+	 * @param type $sendInvite 是否发送邀请
+	 * @param type $datum 以哪个平台组织架构为准
+	 * @return type
 	 */
 	private function handleCoData( $op, $data = array(), $sendInvite = 1, $datum = 0 ) {
 		$signature = self::getSignature( $this->aeskey, $this->oaUrl );

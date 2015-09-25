@@ -479,7 +479,7 @@
 } 
 .org-utree.ztree li a:hover .utree-opt-wrap,
 .position-ztree.ztree li a:hover .ptree-opt-wrap{
-	display: inline-flex;
+	display: inline-block;
 }
 a.level0:hover a.opt-btn,
 a.level1:hover a.opt-btn,

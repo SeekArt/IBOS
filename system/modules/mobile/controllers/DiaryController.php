@@ -28,6 +28,7 @@ use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
 use application\modules\diary\model\DiaryAttention;
 use application\modules\diary\model\DiaryRecord;
+use application\modules\diary\model\DiaryStats;
 use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\message\model\Comment;
 use application\modules\mobile\utils\Mobile;
@@ -281,12 +282,18 @@ class DiaryController extends BaseController {
 			$params['readers'] = '';
 		}
 		//图章
+		$stampBasePath = File::fileName( Stamp::STAMP_PATH );
 		if ( !empty( $diary['stamp'] ) ) {
 			$stamp = Stamp::model()->fetchStampById( $diary['stamp'] );
-			$params['stampUrl'] = File::fileName( Stamp::STAMP_PATH ) . $stamp;
+			$params['stampUrl'] = $stampBasePath . $stamp;
 		}
+		$allStampA = Stamp::model()->fetchAll();
+		$params['stampBasePath'] = $stampBasePath;
+		$params['allStamps'] = $allStampA;
 		//评论
 		$params['list'] = $this->getCommentList( $diary );
+		$params['isSup'] = UserUtil::checkIsSub( $uid, $diary['uid'] );
+		$params['isShare'] = Diary::model()->checkUidIsShared( $uid, $diary['diaryid'] );
 		$this->ajaxReturn( $params, Mobile::dataType() );
 	}
 
@@ -344,11 +351,24 @@ class DiaryController extends BaseController {
 				'touid' => Env::getRequest( 'touid' ),
 				'from' => Env::getRequest( 'from', 'P', 1 ),
 				'commentcount' => Env::getRequest( 'commentcount', 'P', 0 ),
+				'stamp' => Env::getRequest( 'stamp', 'P', 0 ),
 					) );
 			$data['cid'] = Comment::model()->addComment( $data );
+			$diaryid = $sourceInfo['diaryid'];
+			$allStamp = Stamp::model()->fetchAll( array( 'select' => 'id' ) );
+			$stampArr = Convert::getSubByKey( $allStamp, 'id' );
+			$stamp = in_array( $data['stamp'], $stampArr ) ? intval( $data['stamp'] ) : 0;
+			if ( $stamp == 0 ) {
+				Diary::model()->modify( $diaryid, array( 'isreview' => 1 ) );
+			} else {
+				Diary::model()->modify( $diaryid, array( 'isreview' => 1, 'stamp' => $stamp ) );
+				$uid = $sourceInfo['uid'];
+				DiaryStats::model()->scoreDiary( $diaryid, $uid, $stamp );
+			}
 			if ( $data['cid'] ) {
 				$return['isSuccess'] = true;
 				$return['msg'] = '';
+				$return['data'] = $data;
 			} else {
 				$return['msg'] = '添加失败';
 			}

@@ -72,9 +72,9 @@ class AssignmentController extends DefaultController {
     				$opApi->sendNotify( $uid, $assignmentId, $data['subject'], $uidArr, 'assignment_new_message' );
     			}
     			// 发表一条编辑评论
-    			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Eidt the assignment' ) );
+				$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Eidt the assignment', 'assignment.default' ) );
     			// 记录日志
-    			AssignmentLog::model()->addLog( $uid, $assignmentId, 'edit', IBOS::lang( 'Eidt the assignment' ) );
+				AssignmentLog::model()->addLog( $uid, $assignmentId, 'edit', IBOS::lang( 'Eidt the assignment', 'assignment.default' ) );
     			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Update succeed', 'message' ) ) );
     		} else {
     			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Update failed', 'message' ) ) );

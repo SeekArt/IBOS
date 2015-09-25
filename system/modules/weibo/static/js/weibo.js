@@ -69,7 +69,7 @@ var Wb = (function() {
 			return false;
 		}
 		$elem.button({
-			loadingText: "<i class='loading-small'></i> " + U.lang("WB.ISLOADING")
+			loadingText: "<i class='loading-small'></i> " + Ibos.l("WB.ISLOADING")
 		}).button("loading").data("isLoading", true);
 		$.get(url, param, function(res) {
 			if (res.isSuccess) {
@@ -225,13 +225,14 @@ var Wb = (function() {
 		updateNewBar: function(data) {
 			var $newBar = $("[data-node-type='feedNewBar']");
 			if (!$newBar.length) {
-				$newBar = $('<a href="javascript:;" class="wb-see-new" data-node-type="feedNewBar" data-action="updateFeed" style="display: none;"></a>').prependTo($('[data-node-type="feedList"]'));
+				$newBar = $('<a href="javascript:;" class="wb-see-new" data-node-type="feedNewBar" data-action="updateFeed" style="display: none;"></a>')
+					.prependTo($('[data-node-type="feedList"]'));
 			}
 			// 没有新微博时不显示
 			if (data.status == -1 || data.status == 0) {
 				$newBar.fadeOut(200);
 			} else {
-				$newBar.html(U.lang("WB.FEED_NEW_MSG", {
+				$newBar.html(Ibos.l("WB.FEED_NEW_MSG", {
 					count: data.count
 				})).fadeIn(200).data("html", data.html).data("maxId", data.maxId);
 			}
@@ -241,7 +242,8 @@ var Wb = (function() {
 		 * @method updateFeed
 		 */
 		updateFeed: function() {
-			var $newBar = $("[data-node-type='feedNewBar']"), html = $newBar.data('html');
+			var $newBar = $("[data-node-type='feedNewBar']"), 
+				html = $newBar.data('html');
 			Wb.maxId = $newBar.data("maxId");
 			this.insertFeedBefore(html);
 			$newBar.removeData("html maxId");
@@ -256,7 +258,7 @@ var Wb = (function() {
 			Ui.closeDialog("d_feed_forward");
 			Ui.ajaxDialog(Ibos.app.url('weibo/share/index', param), {
 				id: "d_feed_forward",
-				title: U.lang("WB.FORWARD"),
+				title: Ibos.l("WB.FORWARD"),
 				width: 500,
 				init: function() {
 					var $content = this.DOM.content,
@@ -337,7 +339,7 @@ var Wb = (function() {
 		 * @param {String} name   要@的名字
 		 */
 		setDefaultAt: function($input, name) {
-			var val = U.lang('REPLY') + " @" + name + " ： ";
+			var val = Ibos.l('REPLY') + " @" + name + " ： ";
 			$input.focus().val($input.val() + " " + val);
 		}
 	};
@@ -357,13 +359,14 @@ var Wb = (function() {
 			},
 			// 转发微博
 			"feedForward": function(param, elem) {
-				var $form = $(elem.form), $forwardBox = $form.closest("[data-node-type='feedForwardBox']");
+				var $form = $(elem.form), 
+					$forwardBox = $form.closest("[data-node-type='feedForwardBox']");
 				$forwardBox.waiting(null, 'normal', true);
 				Wb.feedForward($form.serializeArray()).done(function(res) {
 					if (res.isSuccess) {
 						$forwardBox.waiting(false);
 						Ui.closeDialog("d_feed_forward");
-						Ui.tip(U.lang("WB.FORWARD_SUCCESS"));
+						Ui.tip(Ibos.l("WB.FORWARD_SUCCESS"));
 						Wb.insertFeedBefore(res.data);
 					}
 				});
@@ -405,7 +408,7 @@ var Wb = (function() {
 							$commentText.val("").trigger("focus");
 							var $res = $(res.data);
 							$cmList.prepend($res);
-							Ui.tip(U.lang("COMMENT.SUCCESS"));
+							Ui.tip(Ibos.l("COMMENT.SUCCESS"));
 							$elem.data("disabledSubmit", true);
 							setTimeout(function() {
 								$elem.removeData("disabledSubmit");
@@ -436,7 +439,7 @@ var Wb = (function() {
 								$diggList.prepend(res.data);
 							}
 							// 更新赞数及描述
-							$elem.html('<i class="o-wbi-good active"></i>' + U.lang('WB.DIGGED') + '（' + res.count + '）');
+							$elem.html('<i class="o-wbi-good active"></i>' + Ibos.l('WB.DIGGED') + '（' + res.count + '）');
 						} else {
 							$items.filter('[data-uid="' + Ibos.app.g('uid') + '"]').remove();
 							// 若赞列表中没有条目，则隐藏弹出层
@@ -445,7 +448,7 @@ var Wb = (function() {
 							}
 
 							// 更新赞数
-							$elem.html('<i class="o-wbi-good"></i>' + U.lang('WB.DIGG') + '（' + res.count + '）');
+							$elem.html('<i class="o-wbi-good"></i>' + Ibos.l('WB.DIGG') + '（' + res.count + '）');
 						}
 					} else {
 						Ui.tip(res.msg, 'warning');
@@ -461,7 +464,7 @@ var Wb = (function() {
 								$diggItem = $(elem).parent(),
 								$diggBox = $diggItem.closest('[data-node-type="feedDiggBox"]');
 						// 更新赞状态
-						$feedDiggBtn.html('<i class="o-wbi-good"></i>' + U.lang('WB.DIGG') + '（' + res.count + '）');
+						$feedDiggBtn.html('<i class="o-wbi-good"></i>' + Ibos.l('WB.DIGG') + '（' + res.count + '）');
 
 						// 若赞列表中没有条目，则隐藏弹出层
 						if (!$diggItem.siblings().length) {
@@ -476,7 +479,7 @@ var Wb = (function() {
 				Ui.closeDialog('d_digg_user');
 				Ui.ajaxDialog(Ibos.app.url('message/feed/alldigglist', param), {
 					id: 'd_allowed_user',
-					title: U.lang('WB.VIEWDIGGLIST'),
+					title: Ibos.l('WB.VIEWDIGGLIST'),
 					width: 380,
 					padding: 0
 				});
@@ -486,7 +489,7 @@ var Wb = (function() {
 				Ui.closeDialog('d_allowed_user');
 				Ui.ajaxDialog(Ibos.app.url('message/feed/allowedlist', param), {
 					id: 'd_allowed_user',
-					title: U.lang('WB.VIEWALLOWEDLIST'),
+					title: Ibos.l('WB.VIEWALLOWEDLIST'),
 					width: 380,
 					padding: 0
 				});
@@ -498,7 +501,7 @@ var Wb = (function() {
 			// 删除一篇微博
 			"removeFeed": function(param, elem) {
 				var $elem = $(elem), $feedBox = $elem.closest('[data-node-type="feedBox"]');
-				Ui.confirm(U.lang("WB.REMOVE_FEED_CONFIRM"), function() {
+				Ui.confirm(Ibos.l("WB.REMOVE_FEED_CONFIRM"), function() {
 					Wb.removeFeed(param).done(function(res) {
 						if (res.isSuccess) {
 							$feedBox.fadeOut(500, function() {

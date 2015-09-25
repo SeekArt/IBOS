@@ -90,6 +90,7 @@ class PositionController extends OrganizationBaseController {
 			// 获取插入ID，以便后续处理
 			$newId = Position::model()->add( $data, true );
 			CacheUtil::update( 'position' );
+            //$newId为真才执行后面的判断
 			$newId && Org::update();
 			$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'position/edit', array( 'op' => 'member', 'id' => $newId ) ) );
 		} else {

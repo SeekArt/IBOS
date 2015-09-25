@@ -227,8 +227,8 @@ class DateTime {
 	public static function getStrTimeScope( $strTime, $time = TIMESTAMP ) {
 		switch ( $strTime ) {
 			case 'today':
-				$start = strtotime( date( 'today 00:00:00', $time ) );
-				$end = strtotime( date( 'today 23:59:59', $time ) );
+				$start = strtotime( 'today 00:00:00', $time );
+				$end = strtotime( 'today 23:59:59', $time );
 				break;
 			case 'yesterday':
 				$start = strtotime( 'yesterday 00:00:00', $time );
@@ -251,14 +251,18 @@ class DateTime {
 				$end = strtotime( "last day of last month 23:59:59", $time );
 				break;
 			default:
-				$start = $end = null;
-				break;
-		}
-		return array(
-			'start' => $start,
-			'end' => $end
-		);
-	}
+                /**
+                 * 返回当天时间的范围
+                 */
+                $start = strtotime( "{$strTime} 00:00:00", $time ) ? strtotime( "{$strTime} 00:00:00", $time ) : NULL;
+                $end = strtotime( "{$strTime} 23:59:59", $time ) ? strtotime( "{$strTime} 23:59:59", $time ) : NULL;
+                break;
+        }
+        return array(
+            'start' => $start,
+            'end' => $end
+        );
+    }
 
 	/**
 	 * 根据秒数获得更人性化的时间提示

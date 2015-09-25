@@ -75,6 +75,8 @@ class ModuleController extends BaseController {
         if ( $status ) {
 			$jumpUrl = $this->createUrl( 'permissions/setup', array('module' => $moduleName));
             Cache::update();
+			// 清除缓存文件
+			IBOS::app()->cache->clear();
             $this->success( IBOS::lang( 'Install module success' ), $jumpUrl );
         } else {
             $this->error( IBOS::lang( 'Install module failed' ) );
@@ -90,6 +92,8 @@ class ModuleController extends BaseController {
         if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
             $status = ModuleUtil::uninstall( $moduleName );
             Cache::update();
+			// 清除缓存文件
+			IBOS::app()->cache->clear();
             $this->ajaxReturn( array( 'IsSuccess' => (boolean) $status ), 'json' );
         }
     }

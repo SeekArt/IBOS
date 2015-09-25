@@ -3,7 +3,7 @@
  * 头像上传页面
  * @module User
  * @type Layout
- * @version $Id: avatar.css 3546 2014-06-04 03:05:32Z gzzcs $
+ * @version $Id: avatar.css 5606 2015-09-23 10:19:32Z gzzz $
  * @modified 2013-09-04
  * @author banyan
  */
@@ -40,7 +40,7 @@
 .crop30 { height: 30px; width: 30px; border-radius: 50%; }
 .update-pic .save-pic { clear: left; margin-right: 20px; }
 .update-pic .uppic-btn { float: right; }
-.preview { position: absolute; top: 0; left: 0; z-index: 11; width: 450px; height: 253px; overflow: hidden; background:#fff; display: none; }
+.preview { position: absolute; top: 0; left: 0; z-index: 11; width: 450px; height: 253px; background:#fff; display: none; }
 .size-tip{ width: 71px; margin-top: -32px; }
 .upload-area .swfupload{ position: relative; z-index: 5; }
 .upload-area .img-upload-mask{ z-index: 10; }

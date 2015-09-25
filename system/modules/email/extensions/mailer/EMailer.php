@@ -1,6 +1,7 @@
 <?php
 
 namespace application\modules\email\extensions\mailer;
+
 /**
  * EMailer class file.
  *
@@ -30,7 +31,7 @@ namespace application\modules\email\extensions\mailer;
 /**
  * Include the the PHPMailer class.
  */
-require_once(dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'phpmailer' . DIRECTORY_SEPARATOR . 'class.phpmailer.php');
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'phpmailer' . DIRECTORY_SEPARATOR . 'class.phpmailer.php');
 
 /**
  * EMailer is a simple wrapper for the PHPMailer library.
@@ -40,8 +41,6 @@ require_once(dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'phpmailer' . DIRECTORY
  * @package application.extensions.emailer 
  * @since 1.0
  */
-
-
 use application\modules\email\extensions\mailer\phpmailer\PHPMailer;
 use CException;
 use application\core\utils\IBOS;
@@ -105,8 +104,8 @@ class EMailer {
      *
      * @param string $value pathLayouts
      */
-    public function setPathLayouts( $value ) {
-        if ( !is_string( $value ) && !preg_match( "/[a-z0-9\.]/i" ) )
+    public function setPathLayouts($value) {
+        if (!is_string($value) && !preg_match("/[a-z0-9\.]/i"))
             throw new CException( IBOS::t( 'EMailer', 'pathLayouts must be a Ibos alias path' ) );
         $this->pathLayouts = $value;
     }
@@ -125,8 +124,8 @@ class EMailer {
      *
      * @param string $value pathViews
      */
-    public function setPathViews( $value ) {
-        if ( !is_string( $value ) && !preg_match( "/[a-z0-9\.]/i" ) )
+    public function setPathViews($value) {
+        if (!is_string($value) && !preg_match("/[a-z0-9\.]/i"))
             throw new CException( IBOS::t( 'EMailer', 'pathViews must be a Ibos alias path' ) );
         $this->pathViews = $value;
     }
@@ -151,9 +150,9 @@ class EMailer {
      * @param array $params the parameters
      * @return mixed
      */
-    public function __call( $method, $params ) {
+    public function __call($method, $params) {
         if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer') {
-            return call_user_func_array( array( $this->_myMailer, $method ), $params );
+            return call_user_func_array(array($this->_myMailer, $method), $params);
         } else
             throw new CException( IBOS::t( 'EMailer', 'Can not call a method of a non existent object' ) );
     }
@@ -164,7 +163,7 @@ class EMailer {
      * @param string $name the property name
      * @param string $value the property value
      */
-    public function __set( $name, $value ) {
+    public function __set($name, $value) {
         if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer')
             $this->_myMailer->$name = $value;
         else
@@ -177,7 +176,7 @@ class EMailer {
      * @param string $name
      * @return mixed
      */
-    public function __get( $name ) {
+    public function __get($name) {
         if (is_object($this->_myMailer) && get_class($this->_myMailer) === 'application\modules\email\extensions\mailer\phpmailer\PHPMailer')
             return $this->_myMailer->$name;
         else
@@ -212,9 +211,9 @@ class EMailer {
      * @param array $vars
      * @param string $layout
      */
-    public function getView( $view, $vars = array(), $layout = null ) {
+    public function getView($view, $vars = array(), $layout = null) {
         $body = IBOS::app()->controller->renderPartial( $this->pathViews . '.' . $view, array_merge( $vars, array( 'content' => $this->_myMailer ) ), true );
-        if ( $layout === null ) {
+        if ($layout === null) {
             $this->_myMailer->Body = $body;
         } else {
             $this->_myMailer->Body = IBOS::app()->controller->renderPartial( $this->pathLayouts . '.' . $layout, array( 'content' => $body ), true );

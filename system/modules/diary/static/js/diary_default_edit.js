@@ -1,47 +1,47 @@
-var DiaryEdit = DiaryEdit || {};
-
-/**
- * 初始化日志编辑页面
- * @method initDiaryAddPage
- */
-DiaryEdit.initDiaryEditPage = function(){
-    // 编辑器初始化
-    var ue = UE.getEditor('editor', {
-        initialFrameWidth: 700,
-        autoHeightEnabled:true,
-        toolbars: UEDITOR_CONFIG.mode.simple
-    });
-    // 焦点设置
-    ue.ready(function(){
-        ue.addListener("contentchange", function(){
-            $("#diary_form").trigger("formchange");
+var DiaryEdit = {
+    /**
+     * 初始化日志编辑页面
+     * @method initDiaryAddPage
+     */
+    initDiaryEditPage : function(){
+        // 编辑器初始化
+        var ue = UE.getEditor('editor', {
+            initialFrameWidth: 700,
+            autoHeightEnabled:true,
+            toolbars: UEDITOR_CONFIG.mode.simple
         });
-        $('[data-node-type="oldPlanInput"]').eq(0).focus();
-    });
-
-    // 初始化时添加计划外
-    var unplannedData = Ibos.app.g('unplannedData');
-    $.each(unplannedData, function(index, data){
-        DiaryCommon.diaryRecord.addRow({
-            subject: data.content,
-            schedule: data.schedule
+        // 焦点设置
+        ue.ready(function(){
+            ue.addListener("contentchange", function(){
+                $("#diary_form").trigger("formchange");
+            });
+            $('[data-node-type="oldPlanInput"]').eq(0).focus();
         });
-    });
-    DiaryCommon.diaryRecord.addRow();
+
+        // 初始化时添加计划外
+        var unplannedData = Ibos.app.g('unplannedData');
+        $.each(unplannedData, function(index, data){
+            DiaryCommon.diaryRecord.addRow({
+                subject: data.content,
+                schedule: data.schedule
+            });
+        });
+        DiaryCommon.diaryRecord.addRow();
 
 
-    // 初始化时添加工作计划
-    var planData = Ibos.app.g('planData');
-    $.each(planData, function(index, data){
+        // 初始化时添加工作计划
+        var planData = Ibos.app.g('planData');
+        $.each(planData, function(index, data){
+            DiaryCommon.diaryPlan.addRow({
+                subject: data.content,
+                range: data.timeremind
+            });
+        });
         DiaryCommon.diaryPlan.addRow({
-            subject: data.content,
-            range: data.timeremind
+            subject: "",
+            range: ""
         });
-    });
-    DiaryCommon.diaryPlan.addRow({
-        subject: "",
-        range: ""
-    });
+    }
 };
 
 $(function(){

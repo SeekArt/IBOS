@@ -932,3 +932,11 @@
 .upload-btn{
 	margin-top: 16px;
 }
+
+
+.preview-hide{
+	padding-top: 0;
+	padding-left: 0;
+	width: 9999px;
+	height: 9999px;
+}

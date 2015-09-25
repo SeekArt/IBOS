@@ -63,7 +63,8 @@ class Email {
 	public static function mergeSearchCondition( $search, $uid ) {
 		$condition = "(eb.fromid = {$uid} OR e.toid = {$uid})";
 		// 关键字
-		$keyword = stripcslashes( $search['keyword'] );
+                                        // 15-7-22 下午1:57 gzdzl 添加对keyword的转义，防止SQL错误
+		$keyword = addslashes( stripcslashes( $search['keyword'] ) );
 		// 查询位置
 		$pos = isset( $search['pos'] ) ? $search['pos'] : 'all';
 		// 文件夹

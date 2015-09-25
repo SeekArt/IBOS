@@ -3,7 +3,7 @@ $(function(){
 	$.formValidator.initConfig({formID: "email_form", onError: Ibosapp.formValidate.pageError});
 	$("#toids").formValidator({ 
 		relativeID: "toids_row",
-		onFocus: Ibos.l("EM.SELECT_RECEIVER")
+		onFocus: U.lang("EM.SELECT_RECEIVER")
 	})
 	.functionValidator({
 		fun: function(txt, elem){
@@ -13,15 +13,15 @@ $(function(){
 			}
 			return true;
 		},
-	 	onError: Ibos.l("EM.SELECT_RECEIVER")
+	 	onError: U.lang("EM.SELECT_RECEIVER")
 	})
-	.on("change", function(){ $(this).trigger("blur") });
+	.on("change", function(){ $(this).trigger("blur"); });
 
 	$("#mal_title").formValidator()
 	.regexValidator({
 		dataType: "enum",
 		regExp: "notempty",
-		onError: Ibos.l("RULE.SUBJECT_CANNOT_BE_EMPTY")
+		onError: U.lang("RULE.SUBJECT_CANNOT_BE_EMPTY")
 	});
 
 
@@ -35,7 +35,7 @@ $(function(){
 	});
 
 	/*---- 离开页面提示 */
-	Ibos.checkFormChange("#email_form", Ibos.l("EM.MAIL_UNSAVE_WARNING"));
+	Ibos.checkFormChange("#email_form", U.lang("EM.MAIL_UNSAVE_WARNING"));
 	ue.addListener("contentChange", function(){
 		$("#email_form").trigger("formchange");
 	});

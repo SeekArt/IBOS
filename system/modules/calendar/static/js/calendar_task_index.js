@@ -9,6 +9,12 @@ $(function() {
 		$todoAdd = $("#todo_add");
 
 	var todoList = new TodoList($todoList, {
+		/**
+		 * 待办事件标记
+		 * @method mark
+		 * @param  {String} id    待办事件的id
+		 * @param  {Boolean} mark 是否mark
+		 */
 		mark: function(id, mark) {
 			_sendRequest(Ibos.app.url("calendar/task/edit", {
 				op: "mark"
@@ -17,7 +23,12 @@ $(function() {
 				mark: (mark ? 1 : 0)
 			});
 		},
-
+		/**
+		 * 待办事件完成
+		 * @method complete
+		 * @param  {String}  id    	  待办事件的id
+		 * @param  {Boolean} complete 是否complete
+		 */
 		complete: function(id, complete) {
 			_sendRequest(Ibos.app.url("calendar/task/edit", {
 				op: "complete"
@@ -26,33 +37,45 @@ $(function() {
 				complete: (complete ? 1 : 0)
 			});
 		},
-
-		// start: function() {},
-		// sort: function() {},
-		// change: function() {},
-	
+		/**
+		 * 停止待办事件
+		 * @method stop
+		 * @param  {Object} data 传入JSON格式数据
+		 */
 		stop: function(data) { //拖拽过程中
 			data && _sendRequest(Ibos.app.url("calendar/task/edit", {
-				op: sort
+				op: "sort"
 			}), data);
 		},
-
+		/**
+		 * 添加待办事件
+		 * @method add
+		 * @param  {Object} data 传入JSON格式数据
+		 */
 		add: function(data) {
 			_sendRequest(Ibos.app.url("calendar/task/add"), {
 				id: data.id,
 				pid: data.pid,
 				text: data.text
 			});
-			$("#no_data_tip").hide()
+			$("#no_data_tip").hide();
 		},
-
+		/**
+		 * 删除待办事件
+		 * @method remove
+		 * @param  {String}  id    	  待办事件的id
+		 */
 		remove: function(id) { //删除任务
 			_sendRequest(Ibos.app.url("calendar/task/del"), {
 				id: id
 			});
 		},
-
-		// edit: function() {},
+		/**
+		 * 保存待办事件
+		 * @method save
+		 * @param  {String} id   待办事件的id
+		 * @param  {String} text 待办事件的内容
+		 */
 		save: function(id, text) { //保存(编辑或者添加最后步骤时都用到)
 			_sendRequest(Ibos.app.url("calendar/task/edit", {
 				op: "save"
@@ -61,8 +84,13 @@ $(function() {
 				text: text
 			});
 		},
-
-		date: function(id, date) { //完成时间
+		/**
+		 * 完成时间
+		 * @method date
+		 * @param  {String} id   待办事件的id
+		 * @param  {String} date 时间
+		 */
+		date: function(id, date) { //
 			_sendRequest(Ibos.app.url("calendar/task/edit", {
 				op: "date"
 			}), {
@@ -88,9 +116,11 @@ $(function() {
 		var $add;
 		if (evt.which === 13) {
 			$add = $(this);
-			todoList.addItem({
-				text: $add.val()
-			});
+			if( $.trim( $add.val() ) !== "" ) {
+				todoList.addItem({
+					text: $add.val()
+				});
+			}
 			$add.val("");
 		}
 	});
@@ -112,6 +142,7 @@ $(function() {
 	//搜索
 	$("#mn_search").search();
 
+
 	// 新手引导
 	setTimeout(function() {
 		Ibos.guide("cal_task_index", function() {
@@ -127,7 +158,7 @@ $(function() {
 				guideData.push({
 					element: dragSelector,
 					intro: Ibos.l("CAL.INTRO.TASK_DRAG")
-				})
+				});
 			}
 
 			if ($(dateSelector).length) {

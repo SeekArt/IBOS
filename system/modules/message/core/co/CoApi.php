@@ -15,11 +15,9 @@
 
 namespace application\modules\message\core\co;
 
-use application\core\utils\WebSite;
 use application\core\utils\Api;
-use application\core\utils\Env;
-use application\core\utils\File;
-use application\modules\main\model\Setting;
+use application\core\utils\ApiCode;
+use CJSON;
 
 class CoApi extends Api {
 
@@ -141,8 +139,8 @@ class CoApi extends Api {
 		);
 		$postJson = json_encode( $post );
 		$param = $this->returnSignParam();
-		$url = Api::getInstance()->buildUrl( self::API_USER_GET_TOKEN, $param );
-		$res = Api::getInstance()->fetchResult( $url, $postJson, 'post' );
+		$url = $this->buildUrl( self::API_USER_GET_TOKEN, $param );
+		$res = $this->fetchResult( $url, $postJson, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -159,7 +157,7 @@ class CoApi extends Api {
 		if ( !empty( $uid ) ) {
 			$param['uid'] = $uid;
 		}
-		$res = Api::getInstance()->fetchResult( self::API_USER_GET_INFO, $param );
+		$res = $this->fetchResult( self::API_USER_GET_INFO, $param );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -172,7 +170,7 @@ class CoApi extends Api {
 		$param = array(
 			'corptoken' => $corptoken,
 		);
-		$res = Api::getInstance()->fetchResult( self::API_CORP_GET_INFO, $param );
+		$res = $this->fetchResult( self::API_CORP_GET_INFO, $param );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -195,7 +193,7 @@ class CoApi extends Api {
 	 */
 	public function updateCorpByCorpToken( $corptoken, $post ) {
 		$postData = json_encode( $post );
-		$res = Api::getInstance()->fetchResult( self::API_CORP_UPDATE_INFO . '?corptoken=' . $corptoken, $postData, 'post' );
+		$res = $this->fetchResult( self::API_CORP_UPDATE_INFO . '?corptoken=' . $corptoken, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -208,7 +206,7 @@ class CoApi extends Api {
 		$param = array(
 			'corptoken' => $corptoken,
 		);
-		$res = Api::getInstance()->fetchResult( self::API_CORP_QUIT, $param );
+		$res = $this->fetchResult( self::API_CORP_QUIT, $param );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -228,7 +226,7 @@ class CoApi extends Api {
 	 */
 	public function createCorpByToken( $accesstoken, $post ) {
 		$postData = json_encode( $post );
-		$res = Api::getInstance()->fetchResult( self::API_CORP_CREATE . '?accesstoken=' . $accesstoken, $postData, 'post' );
+		$res = $this->fetchResult( self::API_CORP_CREATE . '?accesstoken=' . $accesstoken, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -242,8 +240,8 @@ class CoApi extends Api {
 			'mobile' => $mobile,
 		);
 		$param = $this->returnSignParam( $get );
-		$url = Api::getInstance()->buildUrl( self::API_CHECK_MOBILE, $param );
-		$res = Api::getInstance()->fetchResult( $url, $get );
+		$url = $this->buildUrl( self::API_CHECK_MOBILE, $param );
+		$res = $this->fetchResult( $url, $get );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -267,8 +265,8 @@ class CoApi extends Api {
 		$post['password'] = md5( $post['password'] );
 		$postData = json_encode( $post );
 		$param = $this->returnSignParam();
-		$url = Api::getInstance()->buildUrl( self::API_USER_REGISTER, $param );
-		$res = Api::getInstance()->fetchResult( $url, $postData, 'post' );
+		$url = $this->buildUrl( self::API_USER_REGISTER, $param );
+		$res = $this->fetchResult( $url, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -280,8 +278,8 @@ class CoApi extends Api {
 	public function getVerifyCode( $post ) {
 		$postData = json_encode( $post );
 		$param = $this->returnSignParam();
-		$url = Api::getInstance()->buildUrl( self::API_VERIFYCODE_GET, $param );
-		$res = Api::getInstance()->fetchResult( $url, $postData, 'post' );
+		$url = $this->buildUrl( self::API_VERIFYCODE_GET, $param );
+		$res = $this->fetchResult( $url, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -293,8 +291,8 @@ class CoApi extends Api {
 	public function checkVerifyCode( $post ) {
 		$postData = json_encode( $post );
 		$param = $this->returnSignParam();
-		$url = Api::getInstance()->buildUrl( self::API_VERIFYCODE_CHECK, $param );
-		$res = Api::getInstance()->fetchResult( $url, $postData, 'post' );
+		$url = $this->buildUrl( self::API_VERIFYCODE_CHECK, $param );
+		$res = $this->fetchResult( $url, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -314,8 +312,8 @@ class CoApi extends Api {
 			'unique' => $unique,
 				) );
 		$param = $this->returnSignParam();
-		$url = Api::getInstance()->buildUrl( self::API_CORP_SEARCH, $param );
-		$res = Api::getInstance()->fetchResult( $url, $postData, 'post' );
+		$url = $this->buildUrl( self::API_CORP_SEARCH, $param );
+		$res = $this->fetchResult( $url, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
@@ -330,8 +328,7 @@ class CoApi extends Api {
 			'timestamp' => time(),
 			'platform' => 'ibos',
 		);
-		$param = array_merge( $param, $arr );
-		$param['sign'] = $this->getSignature( $param );
+		$param['sign'] = $this->getSignature( array_merge( $param, $arr ) );
 		return $param;
 	}
 
@@ -355,11 +352,17 @@ class CoApi extends Api {
 	/**
 	 * 让json_decode的第二个默认参数是false改成true
 	 * @param string $res 返回的json格式字符串
-	 * @param boolean $bool
 	 * @return type
 	 */
-	public function returnJsonDecode( $res, $bool = true ) {
-		return json_decode( $res, $bool );
+	public function returnJsonDecode( $res ) {
+		if ( !is_array( $res ) ) {
+			return CJSON::decode( $res, true );
+		} else {
+			return array(
+				'code' => ApiCode::CURL_ERROR,
+				'message' => $res['error'],
+			);
+		}
 	}
 
 //————————————————————

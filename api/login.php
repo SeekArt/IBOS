@@ -39,14 +39,8 @@ function dologin( $uid, $log = '' ) {
 			$curUser = User::model()->fetchByUid( $uid );
 			// 开始登录
 			// 登录类型
-			if ( String::isMobile( $curUser['username'] ) ) {
 				$loginType = 4;
-			} else if ( String::isEmail( $curUser['username'] ) ) {
-				$loginType = 2;
-			} else {
-				$loginType = 1;
-			};
-			$identity = new UserIdentity( $curUser['username'], $curUser['password'], $loginType );
+		$identity = new UserIdentity( $curUser['mobile'], $curUser['password'], $loginType );
 		$result = $identity->authenticate();
 		$ip = IBOS::app()->setting->get( 'clientip' );
 		if ( $result > 0 ) {
@@ -85,12 +79,12 @@ function dologin( $uid, $log = '' ) {
 			}
 				return array(
 					'code' => $loginStatus,
-					'msg' => $loginStatus ? '' : '登录失败',
+					'msg' => $loginStatus ? '登录成功' : '登录失败',
 				);
 			} else {
 				return array(
 					'code' => $result,
-					'msg' => ''
+					'msg' => '已登录'
 				);
 			}
 		} else {

@@ -105,53 +105,55 @@ VoteImage.votePic = function($ctx, selector, maxNum){
 	};
 };
 
-var $vote = $("#vote"),
-	max = VoteImage.max,
-	vote = VoteImage.votePic($vote, 'li', max);
+$(function(){
+	var $vote = $("#vote"),
+		max = VoteImage.max,
+		vote = VoteImage.votePic($vote, 'li', max);
 
- $('#vote_submit').on('click',function(){
-     var $elem = $(this),
-     	 relatedmodule = $('#relatedmodule').val(),
-         relatedid = $('#relatedid').val(),
-         voteItemids = vote.val();
+	 $('#vote_submit').on('click',function(){
+	     var $elem = $(this),
+	     	 relatedmodule = $('#relatedmodule').val(),
+	         relatedid = $('#relatedid').val(),
+	         voteItemids = vote.val();
 
-		if(!voteItemids){
-            Ui.tip(U.lang('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
-			return false;
-		}
-	var param = {
-		relatedmodule: relatedmodule,
-		relatedid:relatedid,
-		voteItemids:voteItemids
-	};
-	VoteImage.op.clickVote(param).done(function(data) {
-		if(typeof data === 'object'){
-			var voteItemList = data.voteItemList,
-				htmlStr = "";
-            for(var i = 0; i < voteItemList.length; i++){
-                 var data = {
-                        picpath: voteItemList[i].picpath,
-                        content: voteItemList[i].content,
-                        percentage:voteItemList[i].percentage,
-                        number: voteItemList[i].number
-                    };
+			if(!voteItemids){
+	            Ui.tip(U.lang('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
+				return false;
+			}
+		var param = {
+			relatedmodule: relatedmodule,
+			relatedid:relatedid,
+			voteItemids:voteItemids
+		};
+		VoteImage.op.clickVote(param).done(function(data) {
+			if(typeof data === 'object'){
+				var voteItemList = data.voteItemList,
+					htmlStr = "";
+	            for(var i = 0; i < voteItemList.length; i++){
+	                 var data = {
+	                        picpath: voteItemList[i].picpath,
+	                        content: voteItemList[i].content,
+	                        percentage:voteItemList[i].percentage,
+	                        number: voteItemList[i].number
+	                    };
 
-                htmlStr += $.template('vote_pic_template', data);
-            }
-            $vote.html(htmlStr)
-            .parent().after("<p>您已经投过票，谢谢您的参与</p>");
+	                htmlStr += $.template('vote_pic_template', data);
+	            }
+	            $vote.html(htmlStr)
+	            .parent().after(Ibos.l("VOTE.HAS_VOTE_THANKS"));
 
-            $elem.remove();
-            // 已投过则禁止投票
-            vote.disable();
-        }
-			
-		window.setTimeout(function(){
-			var voteCountParam = {relatedmodule: relatedmodule,relatedid:relatedid};
+	            $elem.remove();
+	            // 已投过则禁止投票
+	            vote.disable();
+	        }
+				
+			window.setTimeout(function(){
+				var voteCountParam = {relatedmodule: relatedmodule,relatedid:relatedid};
 
-			VoteImage.op.getVoteCount(voteCountParam).done(function(data) {
-				$('.plate em').html(data);
-			});
-		},100);
-	});
- });			
+				VoteImage.op.getVoteCount(voteCountParam).done(function(data) {
+					$('.plate em').html(data);
+				});
+			},100);
+		});
+	 });			
+});

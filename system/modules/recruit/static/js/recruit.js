@@ -3,7 +3,7 @@
  * 招聘管理模块JS
  * IBOS
  * @author		inaki
- * @version		$Id: recruit.js 5511 2015-09-09 07:49:57Z gzzz $
+ * @version		$Id: recruit.js 5570 2015-09-17 09:19:19Z gzzz $
  */
 
 var Recruit = {
@@ -62,7 +62,6 @@ var Recruit = {
 				$.post(url, param, function(res){
 					var hasSuccess = (res.isSuccess === 1);
 					if(hasSuccess) {
-						Ui.tip(res.msg);
 						callback && callback(res);
 					}
 					Ui.tip(res.msg, hasSuccess ? "" : "danger" );
@@ -129,8 +128,8 @@ var Recruit = {
 		if(id) {
 			$.post(Ibos.app.url("recruit/contact/edit", { op: "update" }), $.extend({ contactid: id }, data) , function(res){
 				if(res.isSuccess !== 0){
-					callback && callback(res);
 					Ui.tip(Ibos.l('CM.MODIFY_SUCCEED'));
+					callback && callback(res);
 				} else {
 					Ui.tip(Ibos.l('CM.MODIFY_FAILED'), 'danger');
 				}
@@ -472,7 +471,7 @@ var Recruit = {
 			$.post(Ibos.app.url("recruit/resume/edit", { op: "status" }), {resumeid: ids, status: status } , function(res){
 				if(res.isSuccess !== 0){
 					$ckbs.each(function(){
-						$(this).parent().parent().parent().find("td:eq(7)").text(res.showStatus);
+						$(this).closest("tr").find("td:eq(7)").text(res.showStatus);
 					});
 					Ui.tip(res.msg);
 				}
@@ -512,7 +511,7 @@ $(function(){
 			if(id){
 				Ui.confirm(Ibos.l('DELETE_RESUME_CONFIRM'), function(){
 					Recruit.singleHandler(Ibos.app.url("recruit/resume/del"), { resumeid: id }, function(res){
-						$elem.parent().parent().remove();
+						$elem.closest("tr").remove();
 					});
 				});
 			}
@@ -527,7 +526,7 @@ $(function(){
 
 			Recruit.deleteResumes(ids, function(ids){
 				$ckbs.each(function(){
-					$(this).parent().parent().parent().remove();
+					$(this).closest("tr").remove();
 				});
 			});
 		},
@@ -584,7 +583,7 @@ $(function(){
 				if (res && res.contactid) {
 					$row = $.tmpl('contact_template', res);
 					$row.find("input[type='checkbox']").label();
-					$elem.parent().parent().replaceWith($row);
+					$elem.closest("tr").replaceWith($row);
 				}
 			});
 		},
@@ -594,7 +593,7 @@ $(function(){
 			var $elem = $(elem);
 			var contactids = $elem.attr("data-id");
 			Recruit.deleteContact(contactids, function(){
-				$elem.parent().parent().remove();
+				$elem.closest("tr").remove();
 			});
 		},
 
@@ -607,7 +606,7 @@ $(function(){
 
 			Recruit.deleteContacts(ids, function(ids){
 				$ckbs.each(function(){
-					$(this).parent().parent().parent().remove();
+					$(this).closest("tr").remove();
 				});
 			});
 		},
@@ -640,7 +639,7 @@ $(function(){
 			var $elem = $(elem);
 			var interviewid = $elem.attr("data-id");
 			Recruit.deleteInterview(interviewid, function(){
-				$elem.parent().parent().remove();
+				$elem.closest("tr").remove();
 			});
 		},
 
@@ -653,7 +652,7 @@ $(function(){
 
 			Recruit.deleteInterviews(ids, function(ids){
 				$ckbs.each(function(){
-					$(this).parent().parent().parent().remove();
+					$(this).closest("tr").remove();
 				});
 			});
 		},
@@ -664,7 +663,7 @@ $(function(){
 			Recruit.editInterview($elem.attr("data-id"), function(res){
 				$row = $.tmpl('interview_template', res);
 				$row.find("input[type='checkbox']").label();
-				$elem.parent().parent().replaceWith($row);
+				$elem.closest("tr").replaceWith($row);
 			});
 		},
 
@@ -695,7 +694,7 @@ $(function(){
 			Recruit.editBgcheck($elem.attr("data-id"), function(res){
 				$row = $.tmpl('bgchecks_template', res);
 				$row.find("input[type='checkbox']").label();
-				$elem.parent().parent().replaceWith($row);
+				$elem.closest("tr").replaceWith($row);
 			});
 		},
 
@@ -703,7 +702,7 @@ $(function(){
 		"deleteBgcheck": function(param, elem) {
 			var $elem = $(elem);
 			Recruit.deleteBgcheck($elem.attr("data-id"), function(){
-				$elem.parent().parent().remove();
+				$elem.closest("tr").remove();
 			});
 		},
 
@@ -716,7 +715,7 @@ $(function(){
 
 			Recruit.deleteBgchecks(ids, function(){
 				$ckbs.each(function(){
-					$(this).parent().parent().parent().remove();
+					$(this).closest("tr").remove();
 				});
 			});
 		},

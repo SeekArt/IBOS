@@ -114,10 +114,12 @@ class Module {
 		 * 执行额外的sql语句
 		 */
 		$sqlFiles = glob( $installPath . '*.sql' );
+		if ( !empty( $sqlFiles ) ) {
 		foreach ( $sqlFiles as $sqlFile ) {
 			if ( file_exists( $sqlFile ) && $sqlFile != $installPath . 'model.sql' ) {
 				$modelSql = file_get_contents( $sqlFile );
 				self::executeSql( $modelSql );
+				}
 			}
 		}
 

@@ -76,7 +76,7 @@
       left: 0;
       z-index: 9;
     }
-      .ad-gallery .ad-image-wrapper .ad-image a img {
+      .ad-gallery .ad-image-wrapper .ad-image  img {
         border: 0;
       }
       .ad-gallery .ad-image-wrapper .ad-image .ad-image-description {

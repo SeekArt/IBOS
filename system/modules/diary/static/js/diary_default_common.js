@@ -1,203 +1,198 @@
 // 新增页和编辑页的一些共有交互
 
-var DiaryCommon = DiaryCommon || {};
-
-DiaryCommon.op = {
+var DiaryCommon = {
+    op : {
+        /**
+         * 设置默认共享人
+         * @method sharSetting
+         * @param  {Object} param 传入JSON格式数据
+         * @return {Object}       返回deffered对象
+         */
+        shareSetting : function(param){
+            var url = Ibos.app.url('diary/default/edit');
+                param = $.extend({}, param, {op : "setShare"});
+            return $.post(url, param, $.noop);
+        }
+    },
     /**
-     * 设置默认共享人
-     * @method sharSetting
-     * @param  {Object} param 传入JSON格式数据
-     * @return {Object}       返回deffered对象
+     * 工作计划表格操作 - 增删
+     * @method diaryPlan
      */
-    shareSetting : function(param){
-        var url = Ibos.app.url('diary/default/edit');
-            param = $.extend({}, param, {op : "setShare"});
-        return $.post(url, param, $.noop);
+    diaryPlan : (function(){
+        var $daPlan = $("#da_plan"),
+            $daPlanRowspanCell = $("#da_plan_rowspan");
+
+        var diaryPlanInstance = new Diary.orderTable($daPlan, "tpl_da_plan");
+        return {
+            $container: $daPlan,
+            reflowRowspan: function(){
+                $daPlanRowspanCell.attr("rowspan", this.$container.find("tr").length);
+            },
+            addRow: function(data) {
+                var that = this;
+
+                return diaryPlanInstance.add(data, function($row){
+                    that.reflowRowspan();
+                });
+            },
+            removeRow: function(id){
+                diaryPlanInstance.remove(id);
+                this.reflowRowspan();
+            },
+            focusRow: function(id, dir){
+                var $row;
+                $row = diaryPlanInstance[ dir === "prev" ? "getPrevRow" : "getNextRow" ](id);
+                if($row && $row.is(".da-detail-row")) {
+                    diaryPlanInstance.focus($row);
+                    return true;
+                }
+            },
+            focus: diaryPlanInstance.focus
+        };
+    })(),
+    /**
+     * 工作日志表格操作 - 增删
+     * @method diaryRecord
+     */
+    diaryRecord : (function(){
+        var $daRowspanCell = $("#schedule_plan"),
+            $daComplete = $("#da_complete");
+
+        var diaryRecordInstance = new Diary.orderTable($daComplete, "tpl_diary_record" );
+        return {
+            $container: $daComplete,
+            reflowRowspan: function(){
+                $daRowspanCell.attr("rowspan", this.$container.find("tr").length);
+            },
+            addRow: function(data) {
+                var that = this;
+                data = data || {};
+                data.schedule = typeof data.schedule === "undefined" ? 10 : parseInt(data.schedule);
+                return diaryRecordInstance.add(data, function($row){
+                    // 初始化进度条
+                    var $star = $row.find("[data-node-type='starProgress']");
+                    $star.studyplay_star({
+                        CurrentStar: data.schedule,
+                        prefix: $star.attr("data-id")
+                    }, function(value, $el) {
+                        // 此处确保初始化目标的下一个节点为其对应input控件
+                        $el.next().val(value);
+                    });
+
+                    that.reflowRowspan();
+                });
+            },
+            removeRow: function(id){
+                diaryRecordInstance.remove(id);
+                this.reflowRowspan();
+            },
+            focusRow: function(id, dir){
+                var $row;
+                $row = diaryRecordInstance[ dir === "prev" ? "getPrevRow" : "getNextRow" ](id);
+                if($row && $row.is(".da-detail-row")) {
+                    diaryRecordInstance.focus($row);
+                    return true;
+                }
+            },
+            focus: diaryRecordInstance.focus
+        };
+    })(),  
+    /**
+     * 工作日志事件操作
+     * @method diaryRecord
+     */
+    eventHandler : function(){
+        var $daComplete = $("#da_complete"),
+            $daPlan = $("#da_plan");
+
+        // 工作日志移除一行
+        $daComplete.on("click", ".o-trash", function() {
+            DiaryCommon.diaryRecord.removeRow($.attr(this, "data-id"));
+        });
+
+        // 工作日志添加移除快捷键
+        $daComplete.on("keydown", "input", function(evt) {
+            var rowId = $.attr(this, "data-id");
+            Diary.keyHandler(evt, {
+                "enter": function(evt){
+                    if($.trim(evt.target.value) !== "") {
+                        DiaryCommon.diaryRecord.focus(DiaryCommon.diaryRecord.addRow());
+                    }
+                    evt.preventDefault();
+                },
+                "backspace": function(evt){
+                    if($.trim(evt.target.value) === "" ) {
+                        DiaryCommon.diaryRecord.removeRow(rowId);
+                        evt.preventDefault();
+                    }
+                },
+                "tab": function(evt){
+                    var canFocus;
+                    canFocus = DiaryCommon.diaryRecord.focusRow(rowId, evt.shiftKey ? "prev": "next");
+                    canFocus && evt.preventDefault();
+                }
+            });
+        });
+
+        // 工作计划移除一行
+        $daPlan.on("click", ".o-trash", function() {
+            DiaryCommon.diaryPlan.removeRow($.attr(this, "data-id"));
+        });
+
+        // 工作计划添加移除快捷键
+        $daPlan.on("keydown", "input", function(evt) {
+            var rowId = $.attr(this, "data-id");
+            Diary.keyHandler(evt, {
+                "enter": function(evt){
+                    if($.trim(evt.target.value) !== "") {
+                        DiaryCommon.diaryPlan.focus(DiaryCommon.diaryPlan.addRow());
+                    }
+                    evt.preventDefault();
+                },
+                "delete": function(evt){
+                    if($.trim(evt.target.value) === "" ) {
+                        DiaryCommon.diaryPlan.removeRow(rowId);
+                        evt.preventDefault();
+                    }
+                },
+                "tab": function(evt){
+                    var canFocus;
+                    canFocus = DiaryCommon.diaryPlan.focusRow(rowId, evt.shiftKey ? "prev": "next");
+                    canFocus && evt.preventDefault();
+                }
+            });
+        });
+    },
+    /**
+     * 初始化页面
+     * @method initPage
+     */
+    initPage : function(){
+        // 工作日志进度条初始化
+        $("[data-node-type='starProgress']").each(function(){
+            $(this).studyplay_star({
+                prefix: $.attr(this, "data-id")
+            }, function(value, $elem){
+                $elem.next().val(value);
+            });
+        });
+
+        // 上传事件初始化
+        Ibos.upload.attach({
+            post_params: { module:'diary' },
+            custom_settings: {
+                containerId: "file_target",
+                inputId: "attachmentid"
+            }
+        });
+
+        //表单改动离开页面提示
+        Ibos.checkFormChange("#diary_form");
     }
 };
-/**
- * 工作计划表格操作 - 增删
- * @method diaryPlan
- */
-DiaryCommon.diaryPlan = (function(){
-    var $daPlan = $("#da_plan"),
-        $daPlanRowspanCell = $("#da_plan_rowspan");
 
-    var diaryPlanInstance = new Diary.orderTable($daPlan, "tpl_da_plan");
-    return {
-        $container: $daPlan,
-        reflowRowspan: function(){
-            $daPlanRowspanCell.attr("rowspan", this.$container.find("tr").length);
-        },
-        addRow: function(data) {
-            var that = this;
 
-            return diaryPlanInstance.add(data, function($row){
-                that.reflowRowspan();
-            });
-        },
-        removeRow: function(id){
-            diaryPlanInstance.remove(id);
-            this.reflowRowspan();
-        },
-        focusRow: function(id, dir){
-            var $row;
-            if(dir === "prev") {
-                $row = diaryPlanInstance.getPrevRow(id);
-            } else {
-                $row = diaryPlanInstance.getNextRow(id);
-            }
-            if($row && $row.is(".da-detail-row")) {
-                diaryPlanInstance.focus($row);
-                return true;
-            }
-        },
-        focus: diaryPlanInstance.focus
-    };
-})();
-/**
- * 工作日志表格操作 - 增删
- * @method diaryRecord
- */
-DiaryCommon.diaryRecord = (function(){
-    var $daRowspanCell = $("#schedule_plan"),
-        $daComplete = $("#da_complete");
 
-    var diaryRecordInstance = new Diary.orderTable($daComplete, "tpl_diary_record" );
-    return {
-        $container: $daComplete,
-        reflowRowspan: function(){
-            $daRowspanCell.attr("rowspan", this.$container.find("tr").length);
-        },
-        addRow: function(data) {
-            var that = this;
-            data = data || {};
-            data.schedule = typeof data.schedule === "undefined" ? 10 : parseInt(data.schedule);
-            return diaryRecordInstance.add(data, function($row){
-                // 初始化进度条
-                var $star = $row.find("[data-node-type='starProgress']");
-                $star.studyplay_star({
-                    CurrentStar: data.schedule,
-                    prefix: $star.attr("data-id")
-                }, function(value, $el) {
-                    // 此处确保初始化目标的下一个节点为其对应input控件
-                    $el.next().val(value);
-                });
-
-                that.reflowRowspan();
-            });
-        },
-        removeRow: function(id){
-            diaryRecordInstance.remove(id);
-            this.reflowRowspan();
-        },
-        focusRow: function(id, dir){
-            var $row;
-            if(dir === "prev") {
-                $row = diaryRecordInstance.getPrevRow(id);
-            } else {
-                $row = diaryRecordInstance.getNextRow(id);
-            }
-            if($row && $row.is(".da-detail-row")) {
-                diaryRecordInstance.focus($row);
-                return true;
-            }
-        },
-        focus: diaryRecordInstance.focus
-    };
-})();  
-/**
- * 工作日志事件操作
- * @method diaryRecord
- */
-DiaryCommon.eventHandler = function(){
-    var $daComplete = $("#da_complete"),
-        $daPlan = $("#da_plan");
-
-    // 工作日志移除一行
-    $daComplete.on("click", ".o-trash", function() {
-        DiaryCommon.diaryRecord.removeRow($.attr(this, "data-id"));
-    });
-
-    // 工作日志添加移除快捷键
-    $daComplete.on("keydown", "input", function(evt) {
-        var rowId = $.attr(this, "data-id");
-        Diary.keyHandler(evt, {
-            "enter": function(evt){
-                if($.trim(evt.target.value) !== "") {
-                    DiaryCommon.diaryRecord.focus(DiaryCommon.diaryRecord.addRow());
-                }
-                evt.preventDefault();
-            },
-            "backspace": function(evt){
-                if($.trim(evt.target.value) === "" ) {
-                    DiaryCommon.diaryRecord.removeRow(rowId);
-                    evt.preventDefault();
-                }
-            },
-            "tab": function(evt){
-                var canFocus;
-                canFocus = DiaryCommon.diaryRecord.focusRow(rowId, evt.shiftKey ? "prev": "next");
-                canFocus && evt.preventDefault();
-            }
-        });
-    });
-
-    // 工作计划移除一行
-    $daPlan.on("click", ".o-trash", function() {
-        DiaryCommon.diaryPlan.removeRow($.attr(this, "data-id"));
-    });
-
-    // 工作计划添加移除快捷键
-    $daPlan.on("keydown", "input", function(evt) {
-        var rowId = $.attr(this, "data-id");
-        Diary.keyHandler(evt, {
-            "enter": function(evt){
-                if($.trim(evt.target.value) !== "") {
-                    DiaryCommon.diaryPlan.focus(DiaryCommon.diaryPlan.addRow());
-                }
-                evt.preventDefault();
-            },
-            "delete": function(evt){
-                if($.trim(evt.target.value) === "" ) {
-                    DiaryCommon.diaryPlan.removeRow(rowId);
-                    evt.preventDefault();
-                }
-            },
-            "tab": function(evt){
-                var canFocus;
-                canFocus = DiaryCommon.diaryPlan.focusRow(rowId, evt.shiftKey ? "prev": "next");
-                canFocus && evt.preventDefault();
-            }
-        });
-    });
-};
-/**
- * 初始化页面
- * @method initPage
- */
-DiaryCommon.initPage = function(){
-    // 工作日志进度条初始化
-    $("[data-node-type='starProgress']").each(function(){
-        $(this).studyplay_star({
-            prefix: $.attr(this, "data-id")
-        }, function(value, $elem){
-            $elem.next().val(value);
-        });
-    });
-
-    // 上传事件初始化
-    Ibos.upload.attach({
-        post_params: { module:'diary' },
-        custom_settings: {
-            containerId: "file_target",
-            inputId: "attachmentid"
-        }
-    });
-
-    //表单改动离开页面提示
-    Ibos.checkFormChange("#diary_form");
-};
 
 
 

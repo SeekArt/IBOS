@@ -637,11 +637,9 @@ EOT;
                  * @TODO 获取附件，现在怎么保存
                  * 如果邮件有附件，添加邮件附件信息
                  */
-                $data['remoteattachment'] = isset($email['attachments']) ? serialize($email['attachments'])
-                            : null;
+                $data['remoteattachment'] = isset($email['attachments']) ? serialize($email['attachments']) : null;
                 //抄送人
-                $data['copytoids'] = isset($email['cc']) ? serialize($email['cc'])
-                            : '';
+                $data['copytoids'] = isset($email['cc']) ? serialize($email['cc']) : '';
                 //TODO qq邮箱的body是中文时有问题，会得到空串
                 $data['content'] = $email['body'];
                 //邮件大小(body)
@@ -660,8 +658,7 @@ EOT;
                         Email2::model()->add($emailData);
                     }
                 }
-                EmailWeb::model()->updateByPk($web['webid'],
-                        array('lastrectime' => TIMESTAMP));
+                EmailWeb::model()->updateByPk($web['webid'], array('lastrectime' => TIMESTAMP));
             }
             return $webEmail->countMessages();
         }

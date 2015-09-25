@@ -8,22 +8,40 @@ var flag = 0,
 		USER: "3"
 	};
 
+// 步骤选择
 var chooseStep = {
-	//上一步
+	/**
+	 * 上一步
+	 * @method  previous
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	previous: function(elem) {
 		var $parent = $(elem).closest(".mark");
 		$parent.removeClass("show").addClass("hidden")
 			.prev().removeClass("hidden").addClass("show");
 	},
-	//下一步
+	/**
+	 * 下一步
+	 * @method  next
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	next: function(elem) {
 		var $parent = $(elem).closest(".mark");
-		$parent.removeClass("show").addClass("hidden");
-		$parent.next().removeClass("hidden").addClass("show");
+		$parent.removeClass("show").addClass("hidden")
+			.next().removeClass("hidden").addClass("show");
 	}
 };
 
+
 var administrator = {
+	/**
+	 * ajax获取数据
+	 * @method ajax
+	 * @param  {String}   url     传入url地址
+	 * @param  {Object}   param   传入JSON格式数据
+	 * @param  {Function} success 成功后回调函数
+	 * @param  {Function} error   失败后回调函数
+	 */
 	ajax: function(url, param, success, error) {
 		$.post(url, param, function(res) {
 			if (res.isSuccess) {
@@ -31,13 +49,18 @@ var administrator = {
 					success.call(null, res);
 				}
 			} else {
-				$.isFunction(error) && error.call(null, res)
+				$.isFunction(error) && error.call(null, res);
 			}
 		}, 'json');
 	}
 };
 //提交数据后,将输入框内容重置为空,显示提示填写内容
 var view = {
+	/**
+	 * 重置
+	 * @method restore
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	restore: function(elem) {
 		var value = $(elem);
 		var lenght = value.length;
@@ -46,15 +69,6 @@ var view = {
 		}
 	}
 };
-
-/*var validatAccount = function() {
-	var isValid = $.formValidator.isOneValid('username') && $.formValidator.isOneValid('password');
-	if(isValid){
-		$('#add_account').removeAttr('disabled');
-	}else{
-		$('#add_account').attr("disabled","disabled");
-	}
-} */
 
 $(function() {
 	// 通用AJAX验证配置
@@ -89,36 +103,38 @@ $(function() {
 	.inputValidator({
 		min: 4,
 		max: 20,
-		onError: U.lang("V.USERNAME_VALIDATE")
+		onError: Ibos.l("V.USERNAME_VALIDATE")
 	})
 	//验证用户名是否已被注册
 	.ajaxValidator($.extend(ajaxValidateSettings, {
-		onError: U.lang("V.USERNAME_EXISTED")
+		onError: Ibos.l("V.USERNAME_EXISTED")
 	}));
 
 	//密码验证
+	var pwdMin = Ibos.app.g("passwordMinLength"),
+		pwdMax = Ibos.app.g("passwordMaxLength");
 	$("#password").formValidator({
 		validatorGroup: valiGroup.USER
 	})
 	.inputValidator({
-		min: Ibos.app.g("passwordMinLength"),
-		max: Ibos.app.g("passwordMaxLength"),
-		onError: U.lang("V.PASSWORD_PREG", {
-			min: Ibos.app.g("passwordMinLength"),
-			max: Ibos.app.g("passwordMaxLength"),
-			mixed: Ibos.app.g("passwordMixed") == '1' ?  U.lang("RULE.CONTAIN_NUM_AND_LETTER") : ''
+		min: pwdMin,
+		max: pwdMax,
+		onError: Ibos.l("V.PASSWORD_PREG", {
+			min: pwdMin,
+			max: pwdMax,
+			mixed: Ibos.app.g("passwordMixed") == '1' ?  Ibos.l("RULE.CONTAIN_NUM_AND_LETTER") : ''
 		})
 	})
 	.regexValidator({
 		regExp: Ibos.app.g('passwordRegex'),
 		dataType:"string",
 		onError: Ibos.app.g('passwordMixed') ? 
-				U.lang("V.PASSWORD_PREG", { 
-					min: Ibos.app.g("passwordMinLength"),
-					max: Ibos.app.g("passwordMaxLength"), 
-					mixed: U.lang("RULE.CONTAIN_NUM_AND_LETTER")
+				Ibos.l("V.PASSWORD_PREG", { 
+					min: pwdMin,
+					max: pwdMax, 
+					mixed: Ibos.l("RULE.CONTAIN_NUM_AND_LETTER")
 				}) 
-				: U.lang("RULE.PASSWORD")
+				: Ibos.l("RULE.PASSWORD")
 	});
 
 	//电话号码验证
@@ -129,11 +145,11 @@ $(function() {
 	.regexValidator({
 		regExp: "mobile",
 		dataType: "enum",
-		onError: U.lang("MOBILE_VALIDATE")
+		onError: Ibos.l("MOBILE_VALIDATE")
 	})
 	//验证手机是否已被注册
 	.ajaxValidator($.extend(ajaxValidateSettings, {
-		onError: U.lang("V.MOBILE_EXISTED"),
+		onError: Ibos.l("V.MOBILE_EXISTED"),
 	}));
 
 	//邮件地址验证
@@ -144,11 +160,11 @@ $(function() {
 	.regexValidator({
 		regExp: "email",
 		dataType: "enum",
-		onError: U.lang("EMAIL_ADDRESS_VALIDATE")
+		onError: Ibos.l("EMAIL_ADDRESS_VALIDATE")
 	})
 	//验证邮箱是否已被注册
 	.ajaxValidator($.extend(ajaxValidateSettings, {
-		onError: U.lang("V.EMAIL_EXISTED"),
+		onError: Ibos.l("V.EMAIL_EXISTED"),
 	}));
 
 	//真实姓名验证
@@ -159,7 +175,7 @@ $(function() {
 	.regexValidator({
 		regExp: "notempty",
 		dataType: "enum",
-		onError: U.lang("RULE.REALNAME_CANNOT_BE_EMPTY")
+		onError: Ibos.l("RULE.REALNAME_CANNOT_BE_EMPTY")
 	});
 
 	//公司全称验证
@@ -169,7 +185,7 @@ $(function() {
 	.regexValidator({
 		regExp: "notempty",
 		dataType: "enum",
-		onError: U.lang("RULE.INVALID_FORMAT")
+		onError: Ibos.l("RULE.INVALID_FORMAT")
 	});
 
 	//公司简称验证
@@ -179,7 +195,7 @@ $(function() {
 	.regexValidator({
 		regExp: "notempty",
 		dataType: "enum",
-		onError: U.lang("RULE.INVALID_FORMAT")
+		onError: Ibos.l("RULE.INVALID_FORMAT")
 	});
 
 	//系统URL验证
@@ -189,7 +205,7 @@ $(function() {
 	.regexValidator({
 		regExp: ["url", "local"],
 		dataType: "enum",
-		onError: U.lang("RULE.URL_INVALID_FORMAT")
+		onError: Ibos.l("RULE.URL_INVALID_FORMAT")
 	});
 
 	//填写内容验证
@@ -199,7 +215,7 @@ $(function() {
 	.regexValidator({
 		regExp: "notempty",
 		dataType: "enum",
-		onError: U.lang("RULE.INVALID_FORMAT")
+		onError: Ibos.l("RULE.INVALID_FORMAT")
 	});
 
 	//点击上一步
@@ -208,27 +224,11 @@ $(function() {
 		chooseStep.previous($elem);
 	});
 
-
-	/*var accountValidat = setInterval(function() {
-		var isValid = $.formValidator.isOneValid('username') && $.formValidator.isOneValid('password');
-		if(isValid){
-			$('#add_account').removeAttr('disabled');
-		}else{
-			$('#add_account').attr("disabled","disabled");
-		}
-	}, 500);*/
-
-	//点击下一步 ///////重复了
-	//	$(".as-next-step").on("click", function() {
-	//		var $elem = $(this);
-	//		chooseStep.next($elem);
-	//	});
-
 	// 隐藏初始化引导界面
 	$(".closs-init").on("click", function() {
 		//取消遮罩
 		Ui.modal.hide();
-		$("#initialize_guide").css("display", "none");
+		$("#initialize_guide").hide();
 		In.startIntro();
 	});
 	// 下次再填，提交给后台保存cookie，本次登陆不再提醒引导
@@ -236,7 +236,6 @@ $(function() {
 		$.post(Ibos.app.url('main/default/guide'), {
 			op: 'guideNextTime'
 		});
-		//		In.startIntro();
 	});
 
 	//第一步骤中点击下一步时的操作	
@@ -277,7 +276,7 @@ $(function() {
 	//第二步骤中点击下一步时的操作	
 	$("#next_step_two").on("click", function() {
 		chooseStep.next("#next_step_two");
-		$.formValidator.resetTipState(valiGroup.USER)
+		$.formValidator.resetTipState(valiGroup.USER);
 	});
 
 	//点击继续添加操作
@@ -317,8 +316,8 @@ $(function() {
 				$("#success_add_page").animate({
 					marginTop: '0'
 				}, 200);
-				$("#add_account").css("display", "none");
-				$("#continue_add").css("display", "block");
+				$("#add_account").hide();
+				$("#continue_add").show();
 
 			}, function(res) {
 				Ui.tip(res.msg, 'danger');
@@ -332,7 +331,7 @@ $(function() {
 		$("#success_add_page").animate({
 			marginTop: '-228px'
 		}, 200);
-		$("#add_account").css("display", "block");
-		$(this).css("display", "none");
+		$("#add_account").show();
+		$(this).hide();
 	});
 });

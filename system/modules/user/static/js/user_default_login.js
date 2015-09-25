@@ -4,138 +4,138 @@
  * @author 		inaki
  * @version 	$Id$
  */
-var Login = {};
-//切换找回密码表格
-Login.togglePanel = {
-	/**
-	 * 初始化表格
-	 * @method init
-	 */
-	init : function(){
-		this.lgPanel = $("#login_panel");
-		this.pswPanel = $("#get_password_panel");
+var Login = {
+	//切换找回密码表格
+	togglePanel : {
+		/**
+		 * 初始化表格
+		 * @method init
+		 */
+		init : function(){
+			this.lgPanel = $("#login_panel");
+			this.pswPanel = $("#get_password_panel");
 
-		Ui.focusForm(this.lgPanel);
+			Ui.focusForm(this.lgPanel);
 
-		this._bind();
+			this._bind();
+		},
+		/**
+		 * 登录面板和密码的切换
+		 * @method _toggle
+		 */
+		_toggle : function(){
+			this.lgPanel.toggle();
+			this.pswPanel.toggle();
+		},
+		/**
+		 * 事件操作
+		 * @method _bind
+		 */
+		_bind : function(){
+			var that = this;
+
+			$("#to_get_password").on("click", function(){
+				var userName;
+				that._toggle();
+				Ui.focusForm(that.pswPanel);
+				// 同步登陆框用户名 至 找回密码面板 用户名
+				userName = that.lgPanel.find("[name='username']").val();
+				that.pswPanel.find("[name='username']").val(userName);
+			}).tooltip();
+
+
+			$("#to_login").on("click", function(){
+				that._toggle();
+				Ui.focusForm(that.lgPanel);
+			});
+		}
 	},
-	/**
-	 * 登录面板和密码的切换
-	 * @method _toggle
-	 */
-	_toggle : function(){
-		this.lgPanel.toggle();
-		this.pswPanel.toggle();
+
+	//公告内容过多时自动滚动
+	autoScroll : function(){
+		// 公告内容过多时自动滚动
+		var $anc = $("#lg_anc_ct"),
+			ANC_MAX_HEIGHT = 40, // 公告内容最大高度
+			mgt = 0, // margin-top 公告内容当前上边距值
+			ancHeight = $anc.outerHeight(),
+			scrollSpeed = 2000, // 毫秒
+			timer;
+
+		var autoScroll = function() {
+			timer = setInterval(function(){
+				mgt -= 20;
+				if (-mgt >= ancHeight) {
+					mgt = ANC_MAX_HEIGHT;
+					$anc.css({"margin-top": mgt});
+				} else {
+					$anc.animate({"margin-top": mgt});
+				}
+			}, scrollSpeed);
+		};
+
+		if (ancHeight > ANC_MAX_HEIGHT){
+			autoScroll();
+			$anc.hover(function(){
+				clearInterval(timer);
+			}, autoScroll);
+		}
 	},
-	/**
-	 * 事件操作
-	 * @method _bind
-	 */
-	_bind : function(){
-		var that = this;
+	// 账号和密码验证，提示
+	formValidator : function(){
+		$.formValidator.initConfig({formID: "login_form", errorFocus: true});
 
-		$("#to_get_password").on("click", function(){
-			var userName;
-			that._toggle();
-			Ui.focusForm(that.pswPanel);
-			// 同步登陆框用户名 至 找回密码面板 用户名
-			userName = that.lgPanel.find("[name='username']").val();
-			that.pswPanel.find("[name='username']").val(userName);
-		}).tooltip();
+		// 账号验证
+		$("#account").formValidator({
+			onFocus: function(){
+				Ibosapp.formValidate.setGroupState("#account");
+				return Ibos.l("V.INPUT_ACCOUNT");
+			},
+			onCorrect: function(){
+				Ibosapp.formValidate.setGroupState("#account", "correct");
+			},
+			relativeID: "account_wrap"
+		})
+		.regexValidator({
+			regExp: "notempty",
+			dataType: "enum",
+			onError: function(){
+				Ibosapp.formValidate.setGroupState("#account", "error");
+				return Ibos.l("V.INPUT_ACCOUNT");
+			}
+		});
 
+		// 密码验证
+		$("#password").formValidator({
+			onFocus: function(){
+				Ibosapp.formValidate.setGroupState("#password");
+				return Ibos.l("V.INPUT_POSSWORD");
+			},
+			onCorrect: function(){
+				Ibosapp.formValidate.setGroupState("#password", "correct");
+			}
+		})
+		.regexValidator({
+			regExp: "notempty",
+			dataType: "enum",
+			onError: function(){
+				Ibosapp.formValidate.setGroupState("#password", "error");
+				return Ibos.l("V.INPUT_POSSWORD");
+			}
+		});
 
-		$("#to_login").on("click", function(){
-			that._toggle();
-			Ui.focusForm(that.lgPanel);
+		// 根据 cookie 还原“自动登录” 的勾选状态
+		if (U.getCookie("lastautologin") == 1){
+			$("[name='autologin']").label("check");
+		}
+
+		// 记住 “自动登录” 的勾选状态
+		$("#login_form").on("submit", function(){
+			if($.formValidator.pageIsValid()){
+				U.setCookie("lastautologin", +$("[name='autologin']").prop('checked'));
+			}
 		});
 	}
 };
-
-//公告内容过多时自动滚动
-Login.autoScroll = function(){
-	// 公告内容过多时自动滚动
-	var $anc = $("#lg_anc_ct"),
-		ANC_MAX_HEIGHT = 40, // 公告内容最大高度
-		mgt = 0, // margin-top 公告内容当前上边距值
-		ancHeight = $anc.outerHeight(),
-		scrollSpeed = 2000, // 毫秒
-		timer;
-
-	var autoScroll = function() {
-		timer = setInterval(function(){
-			mgt -= 20;
-			if (-mgt >= ancHeight) {
-				mgt = ANC_MAX_HEIGHT;
-				$anc.css({"margin-top": mgt});
-			} else {
-				$anc.animate({"margin-top": mgt});
-			}
-		}, scrollSpeed);
-	};
-
-	if (ancHeight > ANC_MAX_HEIGHT){
-		autoScroll();
-		$anc.hover(function(){
-			clearInterval(timer);
-		}, autoScroll);
-	}
-};
-// 账号和密码验证，提示
-Login.formValidator = function(){
-	$.formValidator.initConfig({formID: "login_form", errorFocus: true});
-
-	// 账号验证
-	$("#account").formValidator({
-		onFocus: function(){
-			Ibosapp.formValidate.setGroupState("#account");
-			return U.lang("V.INPUT_ACCOUNT");
-		},
-		onCorrect: function(){
-			Ibosapp.formValidate.setGroupState("#account", "correct");
-		},
-		relativeID: "account_wrap"
-	})
-	.regexValidator({
-		regExp: "notempty",
-		dataType: "enum",
-		onError: function(){
-			Ibosapp.formValidate.setGroupState("#account", "error");
-			return U.lang("V.INPUT_ACCOUNT");
-		}
-	});
-
-	// 密码验证
-	$("#password").formValidator({
-		onFocus: function(){
-			Ibosapp.formValidate.setGroupState("#password");
-			return U.lang("V.INPUT_POSSWORD");
-		},
-		onCorrect: function(){
-			Ibosapp.formValidate.setGroupState("#password", "correct");
-		}
-	})
-	.regexValidator({
-		regExp: "notempty",
-		dataType: "enum",
-		onError: function(){
-			Ibosapp.formValidate.setGroupState("#password", "error");
-			return U.lang("V.INPUT_POSSWORD");
-		}
-	});
-
-	// 根据 cookie 还原“自动登录” 的勾选状态
-	if (U.getCookie("lastautologin") == 1){
-		$("[name='autologin']").label("check");
-	}
-
-	// 记住 “自动登录” 的勾选状态
-	$("#login_form").on("submit", function(){
-		if($.formValidator.pageIsValid()){
-			U.setCookie("lastautologin", +$("[name='autologin']").prop('checked'));
-		}
-	});
-};
-
 $(function(){
 	// 切换找回密码表格
 	Login.togglePanel.init();
@@ -211,10 +211,10 @@ $(function(){
 	Ibos.evt.add({
 		// 清除痕迹
 		"clearCookie": function(){
-			var result = window.confirm(U.lang("LOGIN.CLEAR_COOKIE_CONFIRM"));
+			var result = window.confirm(Ibos.l("LOGIN.CLEAR_COOKIE_CONFIRM"));
 			if (result) {
 				U.clearCookie();
-				Ui.tip(U.lang("LOGIN.CLEARED_COOKIE"));
+				Ui.tip(Ibos.l("LOGIN.CLEARED_COOKIE"));
 			}
 		},
 		// 切换登录方式

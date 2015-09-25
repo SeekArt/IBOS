@@ -90,12 +90,75 @@ use application\modules\calendar\utils\Calendar;
 		<% } %>
 	</div>
 </script>
+
+
 <script type="text/template" id="cal_info_menu_tpl">
 	<div class="cal-info-menu">
 		<p>时间：<%= time %></p>
 		<p>活动：<%= evt %></p>
 		<p>属性：<%= type %></p>
 	</div>
+</script>
+
+<script type="text/template" id="tpl_calender_list">
+<div class="clearfix time-switch">
+	<div class="btn-group ml pull-right">
+		<button type="button" class="btn" data-action="changeTime"  data-type="subtract" id="prev_month">
+			<i class="glyphicon-chevron-left"></i>
+		</button>
+		<button type="button" class="btn" data-action="changeTime" data-type="add" id="next_month">
+			<i class="glyphicon-chevron-right"></i>
+		</button>
+	</div>
+</div>
+<div class="calendar-list-wrap">
+	<ul class="calendar-list">
+		<% var _lastDay = ""; %>
+		<% if(dataArray.length) { %>
+			<% for(var i = 0; i < dataArray.length; i++ ) { %>
+				<li <% if(dataArray[i].day === _lastDay) { %>class="same-day" <%} else{ %>class="diff-day" <% }%>>
+					<div class="cal-main-item">
+						<table class="table table-hover cal-table">
+							<tbody>
+								<tr>
+									<td width="1">
+										<div class="color-info" style="background-color:<%= dataArray[i].color %>"></div>
+									</td>
+									<td width="100">									
+											<div class="clearfix cal-date">
+												<div class="pull-left cal-day-time"><%= dataArray[i].day %></div>
+												<div class="pull-left mls fss">
+													<p><%= dataArray[i].week %></p>
+													<p><%= dataArray[i].yearAndMonth %></p>
+												</div>
+											</div>
+										<% _lastDay = dataArray[i].day;%>
+									</td>
+									<td width="100">
+										<span class="tcm">
+											<% if(dataArray[i].allDay) { %>
+												全天
+											<% }else{ %>
+												<%= dataArray[i].start %> - <%= dataArray[i].end %>
+											<% } %>
+										</span>
+									</td>
+									<td>
+										<span class="xcm <% if (dataArray[i].status == '1') { %> cal-finish <% }else{ %> <% } %>fc-title"><%= dataArray[i].title %></span>
+									</td>
+									<td width="80">
+										<a href="javascript:;" class="<% if ( dataArray[i].status == '0') { %>o-ok <% }else{ %> o-finish <% } %> cbtn" <% if ( dataArray[i].status == '0') { %> data-action="finishCal" <% }else{ %> data-action="unfinishCal" <% } %> data-id="<%= dataArray[i].id %>" title="完成"></a>
+										<a href="javascript:;" class="o-trash cbtn mls" data-action="deleteCal" data-id="<%= dataArray[i].id %>" title="删除"></a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</li>
+			<% } %>
+		<% } %>
+	</ul>
+</div>
 </script>
 
 <script src='<?php echo STATICURL; ?>/js/lib/moment.min.js?<?php echo VERHASH; ?>'></script>

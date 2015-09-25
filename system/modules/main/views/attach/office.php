@@ -133,7 +133,7 @@ use application\core\utils\IBOS;
 		<script src="<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>"></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
 		<script src="<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>"></script>
-		<script src="<?php echo $assetUrl; ?>/js/tangerocx.js?<?php echo VERHASH; ?>"></script>
+		<script src="<?php echo $assetUrl; ?>/js/main_attach_office.js?<?php echo VERHASH; ?>"></script>
 		<script>
 			$(document).ready(function() {
 				var height = $(window).height()-9;

@@ -607,6 +607,8 @@ class DefaultController extends BaseController {
 			'isShowDiarytime' => $isShowDiarytime,
 			'allowComment' => $this->getIsAllowComment( $fromController, $uid, $diary )
 		);
+		$params['isSup'] = UserUtil::checkIsSub( $uid, $diary['uid'] );
+		$params['isShare'] = Diary::model()->checkUidIsShared( $uid, $diary['diaryid'] );
 		$detailAlias = 'application.modules.diary.views.detail';
 		$detailView = $this->renderPartial( $detailAlias, $params, true );
 		$this->ajaxReturn( array( 'data' => $detailView, 'isSuccess' => true ) );

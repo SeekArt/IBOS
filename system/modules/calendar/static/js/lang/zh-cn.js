@@ -35,5 +35,6 @@ L.CAL = {
 
 		// 下属日程
 		VIEW_UNDERLINGS:        "点这儿可切换查看下属的日程、任务。"
-	}
-}
+	},
+	DATATYPE_NOT_CORRECT : 		"数据类型不正确"
+};

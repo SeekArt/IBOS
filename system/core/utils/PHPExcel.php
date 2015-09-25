@@ -4,18 +4,19 @@
  * PHPExcel 操作类
  * To change this template file, choose Tools | Templates
  * @author Sam <gzxgs@ibos.com.cn>
+ * @update 2015-9-10 11:06:27
  */
 
 namespace application\core\utils;
 
-/**
- * Description of PHPExcel
- *
- * @author Sam
- */
 class PHPExcel {
 
-	//导出excel
+	/**
+	 * 导出excel文件
+	 * @param type $filename 需要导出文件名（带有后缀xls、xlsx）
+	 * @param type $header  导出头信息
+	 * @param type $body 导出数据
+	 */
 	public static function exportToExcel( $filename, $header, $body ) {
 		set_time_limit( 0 );
 		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
@@ -57,21 +58,21 @@ class PHPExcel {
 		exit;
 	}
 
-	//读取excel数据
-	public static function excelToArray( $filePath, $startRow = 2 ) {
+	/**
+	 * 读取excel数据转换成数组
+	 * @param type $filePath 文件路径
+	 * @param type $header  是否带有头信息（默认带有头信息）
+	 * @return array
+	 */
+	public static function excelToArray( $filePath, $header = true ) {
 		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
 		$fileType = \PHPExcel_IOFactory::identify( $filePath ); //文件名自动判断文件类型
 		$objReader = \PHPExcel_IOFactory::createReader( $fileType );
 		$objPHPExcel = $objReader->load( $filePath );
-		$sheet = $objPHPExcel->getActiveSheet( 0 ); //第一个工作簿
-		$highestRow = $sheet->getHighestRow();	 //取得总行数 
-		$highestColumn = $sheet->getHighestColumn(); //取得总列数
-		$data = array();
-		$row = $startRow;
-		for ( $row; $row <= $highestRow; $row++ ) {
-			for ( $column = 'A'; $column <= $highestColumn; $column++ ) {
-				$data[$row][] = trim( $sheet->getCell( $column . $row )->getValue() );
-			}
+		$sheet = $objPHPExcel->getActiveSheet(); //活动工作簿
+		$data = $sheet->ToArray(); //直接转换成数组，带有头信息
+		if ( $header === true ) {
+			unset($data[0]); //去掉头信息
 		}
 		return $data;
 	}

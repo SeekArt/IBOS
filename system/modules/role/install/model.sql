@@ -4,8 +4,7 @@ CREATE TABLE `{{auth_assignment}}` (
   `userid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
   `bizrule` text NOT NULL COMMENT '关联到这个项目的业务逻辑',
   `data` text NOT NULL COMMENT '当执行业务规则的时候所传递的额外的数据',
-  PRIMARY KEY (`itemname`,`userid`),
-  CONSTRAINT `itemname` FOREIGN KEY (`itemname`) REFERENCES `{{auth_item}}` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`itemname`,`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{auth_item}}`;
@@ -23,9 +22,7 @@ CREATE TABLE `{{auth_item_child}}` (
   `parent` varchar(64) NOT NULL,
   `child` varchar(64) NOT NULL,
   PRIMARY KEY (`parent`,`child`),
-  KEY `child` (`child`),
-  CONSTRAINT `parent` FOREIGN KEY (`parent`) REFERENCES `{{auth_item}}` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `child` FOREIGN KEY (`child`) REFERENCES `{{auth_item}}` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `child` (`child`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{node}}`;

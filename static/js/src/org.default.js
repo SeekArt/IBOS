@@ -26,6 +26,9 @@ var Ibos = Ibos || {};
 				return data;
 			}
 			for (var i = 0, len = data.length; i < len; i++) {
+				if( Object.prototype.toString.call(data[i]) === "[object Function]" || data[i] == null){
+					continue;
+				}
 				if(matcher(data[i])){
 					results.push(data[i]);
 				}

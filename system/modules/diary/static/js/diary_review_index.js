@@ -44,38 +44,38 @@ var RevIndex = {
 			popover.options.content = content;
 		}
 	},
+	/**
+	 * 查看点评，阅读人员
+	 * @method seeCommentReader
+	 * @return {[type]} [description]
+	 */
+	seeCommentReader : function(){
+		// 查看点评，阅读人员
+		var $daList = $("#da_list");
 
+		var $daComment = $daList.find("[data-node-type='showComment']"),
+			$daReader = $daList.find("[data-node-type='showReader']"),
+			popoverSetting = {
+				content: "Loading...",
+				placement: "bottom",
+				html: true
+			},
+			popoverUrl = Ibos.app.url('diary/default/index'),
+			popoverParam = { diaryid: $.attr(this, "data-id") };
+
+		// 阅读ajax
+		$daReader.popover(popoverSetting).on("show", function() {
+			popoverParam.op = 'getreaderlist';
+			RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
+		});
+		//点评ajax
+		$daComment.popover(popoverSetting).on("show", function() {
+			popoverParam.op = 'getcommentlist';
+			RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
+		});
+	}
 };
-/**
- * 查看点评，阅读人员
- * @method seeCommentReader
- * @return {[type]} [description]
- */
-RevIndex.seeCommentReader = function(){
-	// 查看点评，阅读人员
-	var $daList = $("#da_list");
 
-	var $daComment = $daList.find("[data-node-type='showComment']"),
-		$daReader = $daList.find("[data-node-type='showReader']"),
-		popoverSetting = {
-			content: "Loading...",
-			placement: "bottom",
-			html: true
-		},
-		popoverUrl = Ibos.app.url('diary/default/index'),
-		popoverParam = { diaryid: $.attr(this, "data-id") };
-
-	// 阅读ajax
-	$daReader.popover(popoverSetting).on("show", function() {
-		popoverParam.op = 'getreaderlist';
-		RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
-	});
-	//点评ajax
-	$daComment.popover(popoverSetting).on("show", function() {
-		popoverParam.op = 'getcommentlist';
-		RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
-	});
-};
 
 $(function(){
 	//查看点评，阅读人员
@@ -88,20 +88,20 @@ $(function(){
 			if($("#mng_list .mng-item-user").length) {
 				guideData.push({
 					element: "#mng_list .mng-item-user", 
-					intro: Ibos.l("DA.INTRO.SHOW_UNDERLINGS")
+					intro: U.lang("DA.INTRO.SHOW_UNDERLINGS")
 				});
 			}
 			if($(".o-da-bell").length) {
 				guideData.push({
 					element: ".o-da-bell", 
-					intro: Ibos.l("DA.INTRO.REMIND_UNDERLINGS")
+					intro: U.lang("DA.INTRO.REMIND_UNDERLINGS")
 				});
 			}
 
 			if($(".da-list-item").length){
 				guideData.push({
 					element: ".da-list-item .avatar-circle", 
-					intro: Ibos.l("DA.INTRO.MARK_UNDERLINGS")
+					intro: U.lang("DA.INTRO.MARK_UNDERLINGS")
 				});
 			}
 			return guideData;
@@ -119,8 +119,7 @@ $(function(){
 			var $elem = $(elem),
 				isAtt = $elem.hasClass("o-da-asterisk");
 
-			// 取消星标 unattention
-			// 星标 	attention
+			// 取消星标 unattention | 星标 	attention
 			astParam = { op: (isAtt ? 'unattention' : 'attention'), auid: param.id };
 
 			RevIndex.op.toggleAsterisk(astParam).done(function(res){

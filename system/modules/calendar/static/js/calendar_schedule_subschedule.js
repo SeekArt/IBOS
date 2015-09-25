@@ -29,5 +29,5 @@ $(function(){
 		function(){
 			$(".mng-item.sub").eq(0).removeClass("introing");
 		});
-	}, 1000)
+	}, 1000);
 });

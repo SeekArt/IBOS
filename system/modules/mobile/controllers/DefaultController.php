@@ -75,7 +75,6 @@ class DefaultController extends BaseController {
 		$ip = IBOS::app()->setting->get( 'clientip' );
 
 		$cookieTime = 0;
-
 		if ( !$passWord || $passWord != addslashes( $passWord ) ) {
 			$this->ajaxReturn( array( 'login' => false, 'msg' => IBOS::lang( 'Passwd illegal', 'user.default' ) ), Mobile::dataType() );
 		}
@@ -192,7 +191,7 @@ class DefaultController extends BaseController {
 		);
 
 		$rs = Cloud::getInstance()->fetch( 'Api/Push/Token', $param, 'post' );
-		if ( substr( $rs, 0, 5 ) !== 'error' ) {
+		if ( !is_array( $rs ) ) {
 			$this->ajaxReturn( array( 'isSucess' => true ), Mobile::dataType() );
 		}
 		$this->ajaxReturn( array( 'isSucess' => false ), Mobile::dataType() );

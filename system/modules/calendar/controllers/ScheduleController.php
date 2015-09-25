@@ -128,7 +128,7 @@ Class ScheduleController extends BaseController {
 		$eTime = empty( $getEndTime ) ? date( "y-m-d h:i", time() ) : $getEndTime;
 		//日程的主题
 		$getTitle = Env::getRequest( 'CalendarTitle' );
-		$title = empty( $getTitle ) ? '' : $getTitle;
+        $title = empty($getTitle) ? '' : htmlspecialchars($getTitle);
 		if ( $this->uid != $this->upuid ) {
 			$title .= ' (' . User::model()->fetchRealnameByUid( $this->upuid ) . ')';
 		}

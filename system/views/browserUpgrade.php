@@ -17,15 +17,32 @@
 		<li>
 			安装强大、好用的标准浏览器
 			<div>	
-				<a href="http://www.google.com/chrome/">Chrome</a>
-				<a href="http://www.mozilla.org/zh-CN/firefox/new/">Firefox</a>
+				<a href="http://www.google.cn/chrome/browser/desktop/index.html">Chrome</a>
+				<a href="http://www.firefox.com.cn/download/">Firefox</a>
 				<a href="http://www.opera.com/zh-cn">Opera</a>
-				<a href="http://www.apple.com/safari/">Safari</a>
+				<a href="http://www.apple.com/cn/safari/">Safari</a>
 			</div>
 		</li>
 		<li>
 			<a href="http://www.ibos.com.cn/file/99">如果您还是习惯使用当前的浏览器,请安装 Chrome 框架</a>
 		</li>
 	</ul>
+	<h2></h2>
+	<h3>如果你的浏览器版本高于 IE 8，请按以下步骤设置（以 IE10 为例）</h3>
+	<ol>
+		<li>按下键盘F12</li>
+		<li>
+			修改 “浏览器模式：IE10 兼容性视图” 为 “浏览器模式 Internet Explorer 10(B)”
+			<br>
+			<br>
+			<img src="data/login/ie10_兼容.png">
+			<br>
+			<br>
+			<img src="data/login/ie10.png">
+		</li>
+		<li>
+			<a href="/">返回首页</a>
+		</li>
+	</ol>
 </body>
 </html>

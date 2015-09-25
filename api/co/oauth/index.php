@@ -88,7 +88,7 @@ function checkBind( $userId, $redirect ) {
 		$uid = UserBinding::model()->fetchUidByValue( $userId, 'co' );
 		if ( !empty( $uid ) ) {
 			$resArr = dologin( $uid );
-			if ( $resArr['code'] > 0 ) {
+			if ( $resArr['code'] >= 0 ) {
 				$isSuccess = true;
 			}
 		}

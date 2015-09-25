@@ -636,24 +636,24 @@ class Email extends Model {
 		}
 	}
 
-	/**
-	 * 私有方法，合并存档分表的查询条件，返回组合后的条件
-	 * @param string $conditions
-	 * @return string
-	 */
-	private function mergeSplitCondition( $conditions = '' ) {
-		$conditions .= strpos( $conditions, 'WHERE' ) ? ' AND' : '';
-		//附加公共条件，待办邮件和未读邮件不能移动
-		$conditions .= ' e.`ismark`=0 AND e.`isread`=1 AND b.`bodyid` IS NOT NULL';
-		//附加子条件
-		$addition = array();
-		$addition[] = 'e.`fid` = 1 AND e.`isdel` = 0';  //收件箱
-		$addition[] = 'e.`fid` = 1 AND b.`issend` = 1 AND b.`issenderdel` != 1'; //已发送
-		$addition[] = 'b.`issend` = 1 AND b.`issenderdel` != 1 AND b.`towebmail`!=\'\''; //外发邮件
-		//连接条件
-		$conditions .= ' AND ((' . implode( ') OR (', $addition ) . '))';
-		return $conditions;
-	}
+    /**
+     * 私有方法，合并存档分表的查询条件，返回组合后的条件
+     * @param string $conditions
+     * @return string
+     */
+    private function mergeSplitCondition($conditions = '') {
+        $conditions .= strpos($conditions, 'WHERE') ? ' AND' : '';
+        //附加公共条件，待办邮件和未读邮件不能移动
+        $conditions .= ' e.`ismark`=0 AND e.`isread`=1 AND b.`bodyid` IS NOT NULL';
+        //附加子条件
+        $addition = array();
+        $addition[] = 'e.`fid` = 1 AND e.`isdel` = 0';  //收件箱
+        $addition[] = 'e.`fid` = 1 AND b.`issend` = 1 AND b.`issenderdel` != 1'; //已发送
+        $addition[] = 'b.`issend` = 1 AND b.`issenderdel` != 1 AND b.`towebmail`!=\'\''; //外发邮件
+        //连接条件
+        $conditions .= ' AND ((' . implode(') OR (', $addition) . '))';
+        return $conditions;
+    }
 
 	/**
 	 * 根据查询条件获取邻近的邮件数据

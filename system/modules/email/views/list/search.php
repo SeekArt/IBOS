@@ -160,7 +160,9 @@ use application\core\utils\Convert;
 		);
 
 		// 列表条数设置
-		var $pageNumCtrl = $("#page_num_ctrl"), $pageNumMenu = $("#page_num_menu"), pageNumSelect = new P.PseudoSelect($pageNumCtrl, $pageNumMenu, {
+		var $pageNumCtrl = $("#page_num_ctrl"), 
+			$pageNumMenu = $("#page_num_menu"), 
+			pageNumSelect = new P.PseudoSelect($pageNumCtrl, $pageNumMenu, {
 			template: '<i class="o-setup"></i> <span><%=text%></span> <i class="caret"></i>'
 		});
 		$pageNumCtrl.on("select", function(evt) {

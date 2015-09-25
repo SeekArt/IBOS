@@ -140,6 +140,7 @@
 .da-detail-table td{ border: 1px solid #EBEFF6; background-color: #FFF; }
 .da-detail-table th{ text-align: center; color: #ccc; }
 .da-detail-table td{ color: #58585C; }
+.da-detail-table td input{ line-height: 26px; }
 .da-detail-table .sep{ border-right-color: #F9E2DC; }
 .da-detail-table .mini-date{ color: #82939E; }
 .da-detail-header{ background: url(../image/diary.png) no-repeat 360px -160px; }

@@ -26,7 +26,7 @@ $(function() {
 				return false;
 			}
 			param.offset = $elem.data('offset');
-			$elem.button({loadingText: "<i class='loading-mini'></i> " + U.lang("WB.ISLOADING")}).button("loading");
+			$elem.button({loadingText: "<i class='loading-mini'></i> " + Ibos.l("WB.ISLOADING")}).button("loading");
 			$elem.data("isLoading", true);
 			WbFollow.op.loadMoreFollowing(param).done(function(res) {
 				if (res.isSuccess) {

@@ -1,11 +1,11 @@
-.w140{
+.mw140{
 	max-width: 140px;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
 }
 .w220{
 	width: 230px;
+}
+.w120{
+	width:120px;
 }
 .fsst{
 	font-size: 16px;

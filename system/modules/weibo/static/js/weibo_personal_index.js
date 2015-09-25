@@ -47,8 +47,6 @@ $(function() {
 							$(this).remove();
 						});
 						$newList.animate({"left": 0});
-					} else {
-						// 没有更多了？？
 					}
 					$elem.removeData("isLoading");
 				}

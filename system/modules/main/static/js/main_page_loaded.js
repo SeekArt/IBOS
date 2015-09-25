@@ -1,12 +1,36 @@
 var SinglePage = {
 	op: {
-		// 获取模板内容
-		getTemplate: function(tplName, callback) {
+		/**
+		 * 获取模板内容
+		 * [getTemplate description]
+		 * @param  {String}   tplName  传入模板名字
+		 * @return {Object}            返回deffered对象
+		 */
+		getTemplate: function(tplName) {
 			if (tplName) {
-				$.post(Ibos.app.url('dashboard/page/getcontent'), {fileUrl: tplName}, callback, "json");
+				var url = Ibos.app.url('dashboard/page/getcontent'),
+					param = {fileUrl: tplName};
+				return $.post(url, param, $.noop, "json");
 			}
+		},
+		/**
+		 * 保存
+		 * @method save
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象
+		 */
+		save : function(param){
+			var url = Ibos.app.url("main/page/save");
+			param = $.extend({}, param, {saveSubmit : 1});
+			return $.post(url, param, $.noop, 'json');
 		}
 	},
+	/**
+	 * 打开发送窗口
+	 * @method openPostWindow
+	 * @param  {String} data 传入数据
+	 * @param  {String} url  传入发送的地址
+	 */
 	openPostWindow: function(data, url) {
 		var tempForm = document.createElement("form");
 
@@ -27,12 +51,17 @@ var SinglePage = {
 		tempForm.submit();
 		document.body.removeChild(tempForm);
 	},
-	// 选择公文模板 
+	/**
+	 * 选择公文模板
+	 * @method selectTemplate
+	 * @param  {String} tpl    传入模板
+	 * @param  {String} pageid 页面ID
+	 */
 	selectTemplate: function(tpl, pageid) {
 		if (tpl) {
 			// 取消模板时，询问是否清空编辑器
 			if (tpl == "") {
-				Ui.confirm("是否清空编辑器内容?", function() {
+				Ui.confirm(Ibos.l("MAIN.CLEAR_EDIT_CONTENT"), function() {
 					ue.ready(function() {
 						ue.setContent("");
 					});
@@ -40,15 +69,19 @@ var SinglePage = {
 			} else {
 				var setTemplate = function(){
 					window.location.href = Ibos.app.url( "main/page/edit", {tpl: tpl, pageid: pageid, op: 'switchTpl'} );
-				}
+				};
 				if (ue.getContent() !== "") {
-					Ui.confirm("切换模版将清空内容，确定切换吗?", setTemplate);
+					Ui.confirm(Ibos.l("MAIN.TOGGLE_TPL_CONTENT_EMPTY"), setTemplate);
 				} else {
 					setTemplate();
 				}
 			}
 		}
 	},
+	/**
+	 * 关闭弹窗
+	 * @method closeWindow
+	 */
 	closeWindow: function(){
 		setInterval(function(){
 			window.opener = null; 
@@ -56,39 +89,10 @@ var SinglePage = {
 			window.close(); 
 		}, 1000);
 	}
-}
+};
 
 
 $(function() {
-	Ibos.evt.add({
-		// 预览
-		"preview": function() {
-			var tpl = $("#moduel-type").children("li.active").find("a").attr("data-value"),
-				url = Ibos.app.url("main/page/preview", {tpl: tpl}),
-				content = ue.getContent();
-			SinglePage.openPostWindow(content, url);
-		},
-		"close": function(){
-			SinglePage.closeWindow();
-		},
-		"save": function(){
-			var content = UE.getEditor("editor").getContent(),
-				saveUrl = Ibos.app.url("main/page/save", {saveSubmit: 1}),
-				tpl = $("#moduel-type").children("li.active").find("a").attr("data-value"),
-				name = $("#navname").val(),
-				navid = $("#navid").val(),
-				pageid = $("#pageid").val();
-			$.post(saveUrl, { tpl: tpl, content: content, navid: navid, pageid: pageid }, function(res){
-				if(res.isSuccess){
-					Ui.tip("@SAVE_SUCEESS");
-					window.location.href = Ibos.app.url( "main/page/edit", {  pageid: res.pageid, name: name } );
-				} else {
-					Ui.tip(res.msg, 'warning');
-				}
-			}, 'json');
-		}
-	});
-
 	// 编辑器初始化
 	// UEDITOR_CONFIG.mode.simple[0].push('source');
 	ue = UE.getEditor('editor', {
@@ -108,4 +112,36 @@ $(function() {
 	 	SinglePage.selectTemplate(tpl, pageid);
 	 });
 
+
+	Ibos.evt.add({
+		// 预览
+		"preview": function() {
+			var tpl = $("#moduel-type").children("li.active").find("a").attr("data-value"),
+				url = Ibos.app.url("main/page/preview", {tpl: tpl}),
+				content = ue.getContent();
+			SinglePage.openPostWindow(content, url);
+		},
+		// 关闭
+		"close": function(){
+			SinglePage.closeWindow();
+		},
+		// 保存
+		"save": function(){
+			var content = UE.getEditor("editor").getContent(),
+				tpl = $("#moduel-type").children("li.active").find("a").attr("data-value"),
+				name = $("#navname").val(),
+				navid = $("#navid").val(),
+				pageid = $("#pageid").val()，
+				param = { tpl: tpl, content: content, navid: navid, pageid: pageid };
+
+			SinglePage.op.save(param).done(function(res){
+				if(res.isSuccess){
+					Ui.tip("@SAVE_SUCEESS");
+					window.location.href = Ibos.app.url( "main/page/edit", {  pageid: res.pageid, name: name } );
+				} else {
+					Ui.tip(res.msg, 'warning');
+				}
+			});
+		}
+	});
 });

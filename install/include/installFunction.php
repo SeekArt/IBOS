@@ -104,7 +104,10 @@ function gdversionCheck( $evnItem ) {
  * @return boolean
  */
 function diskspaceCheck( $evnItem ) {
-	if ( $evnItem['current'] == 'unknow' || intval( $evnItem['current'] ) < intval( $evnItem['r'] ) ) {
+	if ( $evnItem['current'] == 'unknow' ) {
+		return true; //阿里上根本测不出来大小，所以直接就返回true
+	}
+	if (intval( $evnItem['current'] ) < intval( $evnItem['r'] ) ) {
 		return false;
 	} else {
 		return true;
@@ -362,7 +365,7 @@ function install( $moduleName ) {
 	global $coreModules, $sysDependModule;
 	defined( 'IN_MODULE_ACTION' ) or define( 'IN_MODULE_ACTION', true );
 	$installPath = getInstallPath( $moduleName );
-	// 安装模块模型(如果有)
+	// 安装模块模型(如果有)		
 	$modelSqlFile = $installPath . 'model.sql';
 	if ( file_exists( $modelSqlFile ) ) {
 		$modelSql = file_get_contents( $modelSqlFile );
@@ -372,12 +375,15 @@ function install( $moduleName ) {
 	 * 执行额外的sql语句
 	 */
 	$sqlFiles = glob( $installPath . '*.sql' );
-	foreach ( $sqlFiles as $sqlFile ) {
-		if ( file_exists( $sqlFile ) && $sqlFile != $installPath . 'model.sql' ) {
-			$modelSql = file_get_contents( $sqlFile );
-			executeSql( $modelSql );
+	if ( !empty( $sqlFiles ) ) {
+		foreach ( $sqlFiles as $sqlFile ) {
+			if ( file_exists( $sqlFile ) && $sqlFile != $installPath . 'model.sql' ) {
+				$modelSql = file_get_contents( $sqlFile );
+				executeSql( $modelSql );
+			}
 		}
 	}
+
 	// 处理模块配置，写入数据
 	$config = require $installPath . 'config.php';
 	$icon = MODULE_PATH . $moduleName . '/static/image/icon.png';

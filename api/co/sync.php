@@ -1,20 +1,13 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
 use application\core\utils\Cache;
-use application\core\utils\Org;
-use application\core\utils\String;
-use application\core\utils\Convert;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\model\Setting;
 use application\modules\user\model\User;
-use application\modules\user\utils\User as UserUtil;
 use application\modules\department\model\Department;
 use application\modules\user\model\UserBinding;
-use application\modules\user\model\UserCount;
-use application\modules\user\model\UserProfile;
-use application\modules\user\model\UserStatus;
+use application\modules\dashboard\utils\CoSync;
 
 // 程序根目录路径
 define( 'PATH_ROOT', dirname( __FILE__ ) . '/../../' );
@@ -71,11 +64,11 @@ if ( !empty( $result ) ) {
 			$res = array( 'isSuccess' => false, 'msg' => '未知操作' );
 			break;
 	}
-	Env::iExit( json_encode( $res ) );
+	Env::iExit( CJSON::encode( $res ) );
 }
 
 /**
- * 
+ * 获取用户id以及用户真实姓名
  * @return array
  */
 function getUserList() {
@@ -161,17 +154,21 @@ function setBinding( $list ) {
 	//UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
 	$count = 0;
 	foreach ( $list as $row ) {
-		$checkbinding = UserBinding::model()->find( sprintf( "`uid` = '%s' AND `bindvalue` = '%s' AND `app` = 'co'", $row['uid'], $row['guid'] ) );
+		//判断是否已经绑定,此处做了容错处理
+		$data = array( 'uid' => $row['uid'], 'bindvalue' => $row['guid'], 'app' => 'co' );
+		$checkbinding = UserBinding::model()->find( sprintf( "`uid` = '%s' AND `app` = 'co'", $row['uid'] ) );
 		if ( empty( $checkbinding ) ) {
-			$res = UserBinding::model()->add( array( 'uid' => $row['uid'], 'bindvalue' => $row['guid'], 'app' => 'co' ) );
-			$res and $count++;
+			$res = UserBinding::model()->add( $data );
+		} else {
+			$res = UserBinding::model()->modify( $checkbinding['id'], $data );
 		}
+		$res and $count++;
 	}
 	// 设置绑定标识
 	if ( $count > 0 ) {
 		Setting::model()->updateSettingValueByKey( 'cobinding', '1' );
 	}
-	return array( 'isSuccess' => true );
+	return array( 'isSuccess' => true, 'data' => true );
 }
 
 /**
@@ -192,44 +189,13 @@ function setUnbind() {
  * update by Sam 2015-08-24 <gzxgs@ibos.com.cn>
  */
 function setCreat( $data ) {
-	//根据手机号去判断是否需要添加用户信息
 	if ( !empty( $data ) ) {
-		//此处加载缓存以及更新用户缓存必须，要不然会出错。
-		Cache::load( 'usergroup' ); // 要注意小写
-		Cache::update( 'users' ); // 用户缓存依赖usergroup缓存，单独更新
-		foreach ( $data as $param ) {
-			$checkIsExist = User::model()->checkIsExistByMobile( $param['mobile'] );
-			//判断手机号不存在,执行创建用户
-			if ( $checkIsExist === false ) {
-	$param['salt'] = !empty( $param['salt'] ) ? $param['salt'] : String::random( 6 );
-				$param['password'] = !empty( $param['password'] ) ? $param['password'] : md5( md5( $param['mobile'] ) . $param['salt'] );
-	$param['groupid'] = !empty( $param['groupid'] ) ? $param['groupid'] : '2';
-	$param['createtime'] = TIMESTAMP;
-				$param['guid'] = String::createGuid();
-	$data = User::model()->create( $param );
-				unset( $data['uid'] );
-	$newId = User::model()->add( $data, true );
-	if ( $newId ) {
-					UserCount::model()->add( array( 'uid' => $newId ) );
-					$ip = IBOS::app()->setting->get( 'clientip' );
-					UserStatus::model()->add( array( 'uid' => $newId, 'regip' => $ip, 'lastip' => $ip ) );
-					//往user_profile添加用户相关数据（即使为空记录），要不然会报错
-					UserProfile::model()->add( array( 'uid' => $newId ) );
-					//创建用户绑定
-					UserBinding::model()->add( array( 'uid' => $newId, 'bindvalue' => $param['guid'], 'app' => 'co' ) );
-					// 重建缓存，给新增用户生成缓存
-					$newUser = User::model()->fetchByPk( $newId );
-					$users = UserUtil::loadUser();
-					$users[$newId] = UserUtil::wrapUserInfo( $newUser );
-					User::model()->makeCache( $users );
-					// 更新组织架构js调用接口
-					//Org::update();
-					// 同步用户钩子
-					//Org::hookSyncUser($newId, $origPass, 1);
-					//CacheUtil::update();
-				}
-			}
-		}
+		CoSync::CreateUser( $data ); //直接调用工具类执行创建用户，暂时不用理会返回信息
+		//以下的那些错误或者成功的用户信息，其实目前并没有用到
+		//Cache::model()->deleteAll( "FIND_IN_SET(cachekey,'cousers,couserfail,cousersuccess')" );
+		//Cache::model()->add( array( 'cachekey' => 'cousers', 'cachevalue' => serialize( $return['data']['users'] ) ) );
+		//Cache::model()->add( array( 'cachekey' => 'couserfail', 'cachevalue' => serialize( $return['data']['error'] ) ) );
+		//Cache::model()->add( array( 'cachekey' => 'cousersuccess', 'cachevalue' => serialize( $return['data']['success'] ) ) ); // 成功同步的用户
 	}
 }
 
@@ -237,29 +203,14 @@ function setCreat( $data ) {
  * 创建部门
  * @param type $coDepartmentList 添加部门列表
  * @author Sam
- * 2015-08-24 <gzxgs@ibos.com.cn>
+ * @time 2015-08-24 <gzxgs@ibos.com.cn>
  */
 function setCreatDapartment( $coDepartmentList ) {
-	//对比两个部门，得到不同的部门ID数组，然后设置所属于这些部门的用户的deptID设置为0
-	$ibosDepartmentList = Department::model()->fetchAll();
-	$ibosDepartmentIdArray = Convert::getSubByKey( $ibosDepartmentList, $pKey = 'deptid' );
-	$coDepartmentIdArray = Convert::getSubByKey( $coDepartmentList, $pKey = 'deptid' );
-	//获取差异数组ID
-	$DepartmentIdsResult = array_diff( $ibosDepartmentIdArray, $coDepartmentIdArray );
-	$users = Syscache::model()->fetchAllCache( 'users' );
-	$uids = Convert::getSubByKey( $users['users'], 'uid' );
-	$attributes = array( 'deptid' => 0 );
-	$condition = "";
-	if ( !empty( $DepartmentIdsResult ) ) {
-		$differentDepartmentIds = implode( ',', $DepartmentIdsResult );
-		$condition = '`deptid` IN  (' . $differentDepartmentIds . ')';
-	}
-	User::model()->updateByConditions( $uids, $attributes, $condition );
-	//删除IBOS所有部门
+	//删除IBOS所有部门,推倒所有部门重新建立
 	Department::model()->deleteAll();
 	foreach ( $coDepartmentList as $department ) {
 		Department::model()->add( $department );
 	}
-	//更新部门缓存，目的是为了IBOS能够及时看到同步数据
+	//更新部门缓存,避免缓存问题
 	Cache::update( array( 'department' ) );
 }

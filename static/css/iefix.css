@@ -99,7 +99,7 @@ input[type="color"] {
 input[type="text"].input-large,
 input[type="password"].input-large{
 	min-height: auto;
-	height: 48px;
+	height: 50px;
 }
 select.input-small,
 input[type="text"].input-small,

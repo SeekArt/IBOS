@@ -26,9 +26,10 @@ var Ntd = {
 						Msg.removeTimelineItem($item);
 					});
 				});
-				Ui.tip(U.lang("DELETE_SUCCESS"));
+				Ui.tip(Ibos.l("DELETE_SUCCESS"));
+				window.location.reload();
 			} else {
-				Ui.tip(U.lang("DELETE_FAILED"), "danger");
+				Ui.tip(Ibos.l("DELETE_FAILED"), "danger");
 			}
 		});
 	}
@@ -44,7 +45,7 @@ $(function(){
 	Ibos.evt.add({
 		// 删除单个详情通知
 		'removeDetailNotice': function(param){
-			Ui.confirm(U.lang("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
+			Ui.confirm(Ibos.l("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
 				Ntd.remove(param.id);
 			});
 		},
@@ -52,11 +53,11 @@ $(function(){
 		'removeDetailNotices': function(){
 			var ids = U.getCheckedValue("remind");
 			if (ids) {
-				Ui.confirm(U.lang("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
+				Ui.confirm(Ibos.l("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
 					Ntd.remove(ids);
 				});
 			} else {
-				Ui.tip(U.lang("SELECT_AT_LEAST_ONE_ITEM"), "warning");
+				Ui.tip(Ibos.l("SELECT_AT_LEAST_ONE_ITEM"), "warning");
 			}
 		}
 	});

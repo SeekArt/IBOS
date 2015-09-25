@@ -75,7 +75,7 @@ use application\modules\main\utils\Main;
                 </div>
             <?php endif; ?>
         </div>
-        <div class="xac fill">
+        <div class="xac fill-hh">
             <!-- if 有前一篇日志时 -->
             <?php if(!empty($preDiary)): ?>
                 <i class="o-diary-clock"></i>

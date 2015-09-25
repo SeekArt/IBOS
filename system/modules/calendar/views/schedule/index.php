@@ -170,7 +170,6 @@ use application\modules\calendar\utils\Calendar;
 </script>
 
 <script>
-
 	Ibos.app.s({
 		calSettings : {
 			// 日程开始时间

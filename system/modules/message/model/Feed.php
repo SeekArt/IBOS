@@ -946,7 +946,7 @@ class Feed extends Model {
 				$notCount = $from == "share" ? ($data['comment'] == 1 ? false : true) : false;
 				Comment::model()->addComment( $c, false, $notCount, $lessUids );
 			}
-			//添加话题
+			//添加话题 
 			FeedTopic::model()->addTopic( html_entity_decode( $d['body'], ENT_QUOTES ), $res['feedid'], $feedType );
 			// 渲染数据
 			$rdata = $res;   // 渲染完后的结果

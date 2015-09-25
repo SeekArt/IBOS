@@ -24,7 +24,7 @@ var Msg = {
 		$(selector).toggleClass("msg-box-open");
 
 		if (param["reply_name"]) {
-			$textarea.val("回复 @" + param["reply_name"] + " ：").trigger("change");
+			$textarea.val( Ibos.l("REPLY") +" @" + param["reply_name"] + " ：").trigger("change");
 		} else {
 			$textarea.val("").trigger("change");
 		}

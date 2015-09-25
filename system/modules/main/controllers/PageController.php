@@ -81,7 +81,7 @@ Class PageController extends Controller {
 			'page' => $page,
 			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
 			'pageTitle' => $pageTitle,
-			'breadCrumbs' => $this->getBreadCrumbs()
+			'breadCrumbs' => $this->getBreadCrumbs($pageTitle)
 		);
 		$view = 'data.page.' . $page['template'];
 		$html = $this->renderPartial( $view, $params, true );
@@ -124,7 +124,7 @@ Class PageController extends Controller {
 			'content' => $content,
 			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
 			'pageTitle' => $pageTitle,
-			'breadCrumbs' => $this->getBreadCrumbs()
+			'breadCrumbs' => $this->getBreadCrumbs($pageTitle)
 		);
 		$this->checkTplIsExist( $tpl );
 		$view = 'data.page.' . $tpl;

@@ -27,7 +27,7 @@ use application\core\utils\File;
 									<div class="stamp-img">
 										<div class="stamp-img-uploadbg"></div>
 										<div class="stamp-img-upload" id="stamp_upload_<?php echo $stamp['id']; ?>_wrap">
-											<span id="stamp_upload_<?php echo $stamp['id']; ?>">
+											<span id="stamp_upload_<?php echo $stamp['id']; ?>"></span>
 										</div>
 										<img <?php if ( !empty( $stamp['stamp'] ) ): ?>src="<?php echo File::fileName( $stampUrl . $stamp['stamp'] ); ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
 										<input type="hidden" name="stamps[<?php echo $stamp['id']; ?>][stamp]" value="<?php echo $stamp['stamp']; ?>" />
@@ -35,7 +35,7 @@ use application\core\utils\File;
 									<div class="stamp-icon">
 										<div class="stamp-icon-uploadbg"></div>
 										<div class="stamp-icon-upload" id="stamp_icon_upload_<?php echo $stamp['id']; ?>_wrap">
-											<span id="stamp_icon_upload_<?php echo $stamp['id']; ?>">
+											<span id="stamp_icon_upload_<?php echo $stamp['id']; ?>"></span>
 										</div>
 										<img <?php if ( !empty( $stamp['icon'] ) ): ?>src="<?php echo File::fileName( $stampUrl . $stamp['icon'] ); ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
 										<input type="hidden" name="stamps[<?php echo $stamp['id']; ?>][icon]" value="<?php echo $stamp['icon']; ?>" />
@@ -73,7 +73,7 @@ use application\core\utils\File;
 	<div class="stamp-item-hd">
 	<div class="row">
 	<div class="span4">
-	<input type="text" name="newstamps[<%=id%>][sort]" value="<%=sort%>" class="input-small" />
+	<input type="text" name="newstamps[<%=id%>][sort]" value="<%= sort+1 %>" class="input-small" />
 	</div>
 	<div class="span8">
 	<input type="text" name="newstamps[<%=id%>][code]" value="" class="input-small">
@@ -83,7 +83,7 @@ use application\core\utils\File;
 	<div class="stamp-img stamp-img-new">
 	<div class="stamp-img-uploadbg"></div>
 	<div class="stamp-img-upload" id="stamp_upload_<%=id%>_wrap">
-	<span id="stamp_upload_<%=id%>">
+	<span id="stamp_upload_<%=id%>"></span>
 	</div>
 	<img src="" alt="">
 	<input type="hidden" name="newstamps[<%=id%>][stamp]" value="" />
@@ -91,7 +91,7 @@ use application\core\utils\File;
 	<div class="stamp-icon stamp-icon-new">
 	<div class="stamp-icon-uploadbg"></div>
 	<div class="stamp-icon-upload" id="stamp_icon_upload_<%=id%>_wrap">
-	<span id="stamp_icon_upload_<%=id%>">
+	<span id="stamp_icon_upload_<%=id%>"></span>
 	</div>
 	<img src="" alt="">
 	<input type="hidden" name="newstamps[<%=id%>][icon]" value="" />

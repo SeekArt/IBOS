@@ -109,5 +109,6 @@ use application\core\utils\String;
 	})
 	
 </script>
+<script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/message.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/message_pm_index.js?<?php echo VERHASH; ?>'></script>

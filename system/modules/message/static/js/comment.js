@@ -413,7 +413,7 @@ var Comment = (function() {
 		 * @param {String} name   要@的名字
 		 */
 		_setDefaultAt: function($input, name) {
-			var val = L.REPLY + " @" + name + " ： ";
+			var val = Ibos.l("REPLY") + " @" + name + " ： ";
 			$input.focus().val(val);
 		}
 	});

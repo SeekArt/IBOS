@@ -4,7 +4,53 @@
  * @author 		inaki
  * @version 	$Id$
  */
+var LoopIndex = {
+	op : {
+		/**
+		 * 添加周期性日程
+		 * @method addLoop
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象  
+		 */
+		addLoop : function(param){
+			var url = Ibos.app.url('calendar/loop/add');
+			return $.post(url, param, $.noop, 'json');
+		},
+		/**
+		 * 编辑周期性日程
+		 * @method editLoop
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象  
+		 */
+		editLoop : function(param){
+			var url = Ibos.app.url('calendar/loop/edit');
+			return $.post(url, param, $.noop);
+		},
+		/**
+		 * 删除周期性日程
+		 * @method delLoop
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象  
+		 */
+		delLoop : function(param){
+			var url = Ibos.app.url('calendar/loop/del');
+			return $.post(url, param, $.noop, 'json');
+		},
+		/**
+		 * 获取单个周期性日程信息
+		 * @method getLoopInfo
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象  
+		 */
+		getLoopInfo : function(param){
+			var url = Ibos.app.url('calendar/loop/edit');
+			param = $.extend({}, param, {op : 'geteditdata'});
+			return $.get(url, param, $.noop);
+		}
+	}
+};
 $(function(){
+	// 获取周期性任务列表
 	var loopData = Ibos.app.g("loopList");
 	if(!loopData.length){
 		$("#no_data_tip").show();
@@ -16,15 +62,11 @@ $(function(){
 	$loopBody.on("list.add list.update", function(evt, data){
 		data.item.find(".checkbox input[type='checkbox']").label();
 	});
-
+	// 默认的颜色
 	var defaultColors = ["#3497DB", "#A6C82F", "#F4C73B", "#EE8C0C", "#E76F6F", "#AD85CC", "#98B2D1", "#82939E"],
 		getColor = function(value){
 			value = parseInt(value, 10);
-			if(defaultColors[value]) {
-				return defaultColors[value];
-			} else {
-				return defaultColors[0];
-			}
+			return defaultColors[ defaultColors[value] ? value :  0];
 		},
 		toTplData = function(data){
 			return {
@@ -33,8 +75,8 @@ $(function(){
 				subject: data.subject,
 				uptime: data.uptime,
 				cycle: data.cycle
-			}
-		}
+			};
+		};
 
 	for(var i = 0; i < loopData.length; i++) {
 		loopTable.addItem(toTplData(loopData[i]));
@@ -42,17 +84,25 @@ $(function(){
 
 
 	var loop = {
-		//改变循环类型(周/月/年)
+		/** 
+		 * 改变循环类型(周/月/年)
+		 * @method  _setType
+		 * @param {String} type 设置循环类型
+		 */
 		_setType: function(type){
 			$("#repeat_per_" + type).show().siblings().hide();
 			if(type === "year") {
 				$("#loop_year_day_picker").datepicker({
 					format: "mm-dd"
-				})
+				});
 			}
 		},
 
-		// 获取新建编辑对话框中的数据 
+		/**
+		 * 获取新建编辑对话框中的数据
+		 * @method  _getDialogData
+		 * @return {Object} 返回对话框的参数
+		 */
 		_getDialogData: function(){
 			return {
 				subject: $("#loop_subject").val(),
@@ -60,8 +110,6 @@ $(function(){
 				// 复数？？
 				endtimes: $("#loop_end_time").val(),
 				category: $('#loop_theme').val(),
-
-				// setday: $('#c_setday').val(),
 				reply: true,
 				recurringbegin: $('#loop_start_day').val(),
 				recurringend: $('#loop_end_day').val(),
@@ -69,10 +117,12 @@ $(function(){
 				weekbox: U.getCheckedValue("weekbox[]"),
 				month: $('#loop_month_day').val(),
 				year: $('#loop_year_day').val()
-			}
+			};
 		},
-
-		// 设置新建编辑对话框中的数据 
+		/**
+		 * 设置新建编辑对话框中的数据
+		 * @param  {Object} data 传入JSON格式数据
+		 */
 		_setDialogData: function(data){
 			var that = this,
 				$form = $("#add_calendar_form"),
@@ -103,9 +153,8 @@ $(function(){
 			!U.isUnd(data.category) && $('#loop_theme').val(data.category).trigger("change");
 
 			$("#loop_start_day_datepicker").datetimepicker("setLocalDate", startDate);
-			if(endDate) {
-				$('#loop_end_day_datepicker').datetimepicker("setLocalDate", endDate);
-			}
+			
+			(endDate) && $('#loop_end_day_datepicker').datetimepicker("setLocalDate", endDate);
 
 
 			!U.isUnd(data.recurringtype) && $("#loop_type").val(data.recurringtype);
@@ -115,25 +164,33 @@ $(function(){
 			}).trigger("change");
 
 			// 还原复选框选中状态
-			if(data.recurringtype === "week"){
-				vals = data.recurringtime.split(",")
-				$form.find("[name='weekbox[]']").each(function(){
-					$(this).prop("checked", $.inArray(this.value, vals) !== -1).label("refresh");
-				})			
-			} else if(data.recurringtype === "month") {
-				data.recurringtime && $('#loop_month_day').val(data.recurringtime);
-			} else if(data.recurringtype === "year") {
-				data.recurringtime && $("#loop_year_day").val(data.recurringtime);
+			switch(data.recurringtype){
+				case "week" :
+					 vals = data.recurringtime.split(",");
+					 $form.find("[name='weekbox[]']").each(function(){
+					 	$(this).prop("checked", $.inArray(this.value, vals) !== -1).label("refresh");
+					 });
+					break;
+				case "month" :
+				case "year" :
+					data.recurringtime && $("#loop_"+ data.recurringtype +"_day").val(data.recurringtime);
+					break;
 			}
 		},
-
-		// 检验提交的数据
-		// @Todo;
+		/**
+		 * 检验提交的数据
+		 * @param  {Object} data 传入JSON格式数据
+		 * @return {Boolean}     返回真
+		 */
 		_validateData: function(data){
 			return true;
 		},
-
-		_showDialog: function(options){ // title, ok, init, cancel
+		/**
+		 * 显示弹窗
+		 * @method _showDialog
+		 * @param  {Object} options 传入JSON格式数据 title, ok, init, cancel
+		 */
+		_showDialog: function(options){ 
 			var that = this;
 			options = options || {};
 			Ui.dialog({
@@ -141,10 +198,12 @@ $(function(){
 				title: options.title,
 				content: Dom.byId('loop_dialog'),
 				ok: function(){
-					var loopData = that._getDialogData();
-					if(that._validateData(loopData)) {
-						options.ok && options.ok(loopData);
+					if ($.trim($('#loop_subject').val()) === '') {
+						$('#loop_subject').blink().focus();
+						return false;
 					}
+					var loopData = that._getDialogData();
+					that._validateData(loopData) && options.ok && options.ok(loopData);
 				},
 				init: function(){
 					// 开始时间 结束时间组 这里由于做了容错，所以不对时间范围做限制
@@ -166,7 +225,6 @@ $(function(){
 						theme = $pickerInput.val();
 
 					var setColor = function(val){
-						
 						color = getColor(val);
 						$pickerBtn.css("background-color", color);
 					};
@@ -188,11 +246,14 @@ $(function(){
 			});
 		},
 
-		//新增周期性事务
+		/**
+		 * 新增周期性事务
+		 * @method add
+		 */
 		add: function(){
 			var that = this;
 			this._showDialog({
-				title: Ibos.l("CAL.PREIODIC_AFFAIRS"),
+				title: U.lang("CAL.PREIODIC_AFFAIRS"),
 				init: function(){
 					that._setDialogData({
 						subject: "",
@@ -205,41 +266,43 @@ $(function(){
 					});
 				},
 				ok: function(data){
-					$.post(Ibos.app.url('calendar/loop/add'), data, function(res){
+					LoopIndex.op.addLoop(data).done(function(res){
 						if(res.isSuccess) {
 							loopTable.addItem(toTplData(res), true);
 							Ui.tip('@OPERATION_SUCCESS');
 						} else {
 							Ui.tip('@OPERATION_FAILED', 'danger');
 						}
-					}, "json");
+					});
 					$("#no_data_tip").hide();
 				}
 			});
 		},
-
-		//编辑周期性事务
+		/** 
+		 * 编辑周期性事务
+		 * @method  edit
+		 * @param  {String} id 周期性事务的ID
+		 */
 		edit: function(id) {
 			var that = this;
 
 			Ui.dialog({
-				title: Ibos.l("CAL.PREIODIC_AFFAIRS"),
+				title: U.lang("CAL.PREIODIC_AFFAIRS"),
 				init: function(){
-					var api = this;
-
-					$.get(Ibos.app.url('calendar/loop/edit', { op: 'geteditdata'}), { 
-						editCalendarid: id 
-					}, function(res){
-						api.close();
+					var _this = this,
+						param = { editCalendarid: id };
+					LoopIndex.op.getLoopInfo(param).done(function(res){
+						_this.close();
 						that._showDialog({
-							title: Ibos.l("CAL.PREIODIC_AFFAIRS"),
+							title: U.lang("CAL.PREIODIC_AFFAIRS"),
 							init: function(){
 								that._setDialogData(res);
 							},
 							ok: function(data){
-								$.post(Ibos.app.url('calendar/loop/edit'), $.extend({ editCalendarid: id }, data), function(res){
+								var param = $.extend({ editCalendarid: id }, data);
+								LoopIndex.op.editLoop(param).done(function(res){
 									if(res.isSuccess){
-										res.calendarid = id
+										res.calendarid = id;
 										loopTable.updateItem(toTplData(res));
 										Ui.tip('@OPERATION_SUCCESS');
 									} else {
@@ -252,14 +315,16 @@ $(function(){
 				}
 			});
 		},
-
-		//删除周期性事务
+		/** 
+		 * 删除周期性事务
+		 * @method  remove
+		 * @param  {String} id 周期性事务的ID
+		 */
 		remove: function(id) {
 			if(id){
-				Ui.confirm(Ibos.l("CAL.CONFIRM_TO_DELETE_THIS_SERIES"), function(){
-					$.post(Ibos.app.url('calendar/loop/del'), { 
-						delCalendarid: id
-					}, function(res){
+				Ui.confirm(U.lang("CAL.CONFIRM_TO_DELETE_THIS_SERIES"), function(){
+					var param = { delCalendarid: id };
+					LoopIndex.op.delLoop(param).done(function(res){
 						var ids;
 						if(res.isSuccess) {
 							ids = id.split(",");
@@ -270,32 +335,36 @@ $(function(){
 						} else {
 							Ui.tip("@OPERATION_FAILED", "warning");
 						}
-					}, "json")
-				})
+					});
+				});
 			}
 		}
-	}
+	};
 
 
 	Ibos.evt.add({
-		addLoop: function(){ loop.add() },
+		// 添加周期性任务
+		addLoop: function(){ loop.add(); },
 
+		// 编辑周期性任务
 		editLoop: function(param, elem){
 			var id = $.attr(elem, 'data-id');
 			loop.edit(id);
 		},
 
+		// 删除单个周期性任务
 		deleteLoop: function(param, elem){
 			loop.remove($.attr(elem, 'data-id'));
 		},
 
+		// 删除多个周期性任务
 		deleteLoops: function(){
 			var ids = U.getCheckedValue("loop[]");
 			if(!ids) {
 				Ui.tip("@SELECT_AT_LEAST_ONE_ITEM", "warning");
 				return false;
 			}
-			loop.remove(ids)
+			loop.remove(ids);
 		}
 	});
 });

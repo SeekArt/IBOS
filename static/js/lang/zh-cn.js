@@ -319,7 +319,11 @@ var L = {
     CONFIRM_DEL_COMMENT: "确认要删除这条信息？",
     VOTE: {
         MAX_ITEM: "最多可选择<%=count%>项",
-        SINGLE_ITEM: "单项"
+        SINGLE_ITEM: "单项",
+        SELECT_ONE_AT_LEAST_OBJECT: "请至少选择一个投票项",
+        HAS_VOTE_THANKS: "<p>您已经投过票，谢谢您的参与</p>",
+        VOTE_TITLE: "请输入投票标题", 
+        WRITE_AT_LEAST_TWO_ITEM: "请至少填写两个投票项",
     },
     CONTACT: {
         ADD_TOP_CONTACTS: "添加常用联系人",

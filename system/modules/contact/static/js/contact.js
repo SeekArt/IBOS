@@ -3,226 +3,225 @@
  * 日程安排
  */
 
-var ContactList = ContactList || {};
-
-ContactList.op = {
-	/**
-	 * 显示侧边栏人员信息
-	 * @method getProfile
-	 * @param  {Object} param 传入JSON格式数据
-	 * @return {Object}       返回deffered对象
-	 */
-	getProfile : function(param){
-		var url = Ibos.app.url('contact/default/ajaxApi');
-			param = $.extend({}, param, {op: 'getProfile'});
-		return $.post(url, param, $.noop);
-	},
-	/**
-	 * 改变常用联系人状态
-	 * @method changeConstant
-	 * @param  {Object} param 传入JSON格式数据
-	 * @return {Object}       返回deffered对象
-	 */
-	changeConstant : function(param){
-		var url = Ibos.app.url('contact/default/ajaxApi');
-			param = $.extend({}, param, {op: 'changeConstant'});
-		return $.post(url, param, $.noop);
-	},
-	/**
-	 * 打印常用联系人
-	 * @method printContact
-	 * @param  {Object} param 传入JSON格式数据
-	 * @return {Object}       返回deffered对象
-	 */
-	printContact : function(param){
-		var url = Ibos.app.url('contact/default/printContact');
-		return $.post(url, param, $.noop);
-	}
-};
-/**
- * 初始化表单
- * @method  initForm
- */
-ContactList.initForm = function(){
-	//初始化添加外部联系人的生日日期选择
-	$("#date_time").datepicker();
-
-	$.formValidator.initConfig({
-		formId: "add_user_form"
-	});
-
-	$("#add_user_name").formValidator()
-	.regexValidator({
-		regExp: "notempty",
-		dataType: "enum",
-		onError: U.lang("RULE.REALNAME_CANNOT_BE_EMPTY")
-	});
-
-	$("#add_user_phone").formValidator()
-	.regexValidator({
-		regExp: "mobile",
-		dataType: "enum",
-		onError: U.lang("RULE.MOBILE_INVALID_FORMAT")
-	});
-
-	$("#add_user_email").formValidator()
-	.regexValidator({
-		regExp: "email",
-		dataType: "enum",
-		onError: U.lang("RULE.EMAIL_INVALID_FORMAT")
-	});
-
-	$("#add_user_qq").formValidator()
-	.regexValidator({
-		regExp: "qq",
-		dataType: "enum",
-		onError: U.lang("CONT.QQ_INVALID_FORMAT")
-	});
-
-	//TODO: 添加外部联系人
-	$("#add_user_form").submit(function() {
-		$("#save_info_btn").trigger("click");
-		var self = $(this),
-			isPass = $.formValidator.pageIsValid();
-		if(isPass){
-			$.post("", self.serialize(), function(res){
-				if(res.isSuccess){
-					$("#close_add_wrap").trigger("click");
-					window.location.reload();
-					Ibos.l(U.lang("CONT.SUCCESS_ADD_CONTACT"), "success");
-				}
-			}, "json");
-		}
-		return false;
-	});
-};
-
-/**
- * 侧栏信息栏的现实与隐藏的操作，已经搜索栏长度的改变
- * @method  contact
- */
-ContactList.contact = {
-	/**
-	 * 联系人侧边栏信息的显示和隐藏
-	 * @method sidebarDisplay
-	 */
-	sidebarDisplay:{
-		show: function($elem) {
-			$elem.animate({
-				width: '520px',
-				marginLeft: '261px'
-			}, 200);
+var ContactList = {
+	op : {
+		/**
+		 * 显示侧边栏人员信息
+		 * @method getProfile
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象
+		 */
+		getProfile : function(param){
+			var url = Ibos.app.url('contact/default/ajaxApi');
+				param = $.extend({}, param, {op: 'getProfile'});
+			return $.post(url, param, $.noop);
 		},
-		hide: function($elem) {
-			$elem.animate({
-				width: '0',
-				marginLeft: '780px'
-			}, 200);
-		}
-	},
-	/**
-	 * 搜索框宽度的变动
-	 * @method searchToggle
-	 */
-	searchToggle: {
-		expand: function($search){
-			$search.removeClass('w230').addClass('span7');
+		/**
+		 * 改变常用联系人状态
+		 * @method changeConstant
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象
+		 */
+		changeConstant : function(param){
+			var url = Ibos.app.url('contact/default/ajaxApi');
+				param = $.extend({}, param, {op: 'changeConstant'});
+			return $.post(url, param, $.noop);
 		},
-		collapse: function($search){
-			$search.removeClass('span7').addClass('w230');
+		/**
+		 * 打印常用联系人
+		 * @method printContact
+		 * @param  {Object} param 传入JSON格式数据
+		 * @return {Object}       返回deffered对象
+		 */
+		printContact : function(param){
+			var url = Ibos.app.url('contact/default/printContact');
+			return $.post(url, param, $.noop);
 		}
 	},
 	/**
-	 * 头像的上传
-	 * @method avatarUpLoad
-	 * @param  {Object} 传入JSON格式参数 
+	 * 初始化表单
+	 * @method  initForm
 	 */
-	avatarUpLoad: function(uploadParam) {
-		var attachUpload = Ibos.upload.image($.extend({
-			button_placeholder_id: "upload_img",
-			file_size_limit: "2000", //设置图片最大上传值
-			button_width: "100",
-			button_height: "100",
-			button_image_url: "",
-			custom_settings: {
-				//头像上传成功后的操作
-				success: function(file, data) {
-					if(data.IsSuccess){
-						// 上传头像的路径
-						$("#img_src").val(data.file);
-						//将上传后的图片显示出来
-						$("#portrait_img").css("display", "block").attr("src", data.data);
-					
-						//当头像上传成功后,鼠标移入移除时,显示和隐藏头像的覆盖层
-						$("#pc_avatar_wrap").hover(function() {
-							$("#tip_tier").toggle();
-						});
-					} else {
-						Ui.tip(data.msg, 'danger');
-						return false;
+	initForm : function(){
+		//初始化添加外部联系人的生日日期选择
+		$("#date_time").datepicker();
+
+		$.formValidator.initConfig({
+			formId: "add_user_form"
+		});
+
+		$("#add_user_name").formValidator()
+		.regexValidator({
+			regExp: "notempty",
+			dataType: "enum",
+			onError: U.lang("RULE.REALNAME_CANNOT_BE_EMPTY")
+		});
+
+		$("#add_user_phone").formValidator()
+		.regexValidator({
+			regExp: "mobile",
+			dataType: "enum",
+			onError: U.lang("RULE.MOBILE_INVALID_FORMAT")
+		});
+
+		$("#add_user_email").formValidator()
+		.regexValidator({
+			regExp: "email",
+			dataType: "enum",
+			onError: U.lang("RULE.EMAIL_INVALID_FORMAT")
+		});
+
+		$("#add_user_qq").formValidator()
+		.regexValidator({
+			regExp: "qq",
+			dataType: "enum",
+			onError: U.lang("CONT.QQ_INVALID_FORMAT")
+		});
+
+		$("#add_user_form").submit(function() {
+			$("#save_info_btn").trigger("click");
+			var self = $(this),
+				isPass = $.formValidator.pageIsValid();
+			if(isPass){
+				$.post("", self.serialize(), function(res){
+					if(res.isSuccess){
+						$("#close_add_wrap").trigger("click");
+						window.location.reload();
+						U.tip(U.lang("CONT.SUCCESS_ADD_CONTACT"), "success");
 					}
-				},
-				progressId: "portrait_img_wrap"
+				}, "json");
 			}
-		}, uploadParam));
+			return false;
+		});
 	},
-	//
+
 	/**
-	 * 计算侧栏信息栏和字母导航栏的定位及高度的计算
-	 * @method calculateSidebar
+	 * 侧栏信息栏的现实与隐藏的操作，已经搜索栏长度的改变
+	 * @method  contact
 	 */
-	calculateSidebar: function(){
-		var cwtop = $('#cl_list_header').offset().top,
-		dctop = $(document).scrollTop(),
-		windowHeight = $(window).height(),
-		mcheight = $('.mc').height();
+	contact : {
+		/**
+		 * 联系人侧边栏信息的显示和隐藏
+		 * @method sidebarDisplay
+		 */
+		sidebarDisplay:{
+			show: function($elem) {
+				$elem.animate({
+					width: '520px',
+					marginLeft: '261px'
+				}, 200);
+			},
+			hide: function($elem) {
+				$elem.animate({
+					width: '0',
+					marginLeft: '780px'
+				}, 200);
+			}
+		},
+		/**
+		 * 搜索框宽度的变动
+		 * @method searchToggle
+		 */
+		searchToggle: {
+			expand: function($search){
+				$search.removeClass('w230').addClass('span7');
+			},
+			collapse: function($search){
+				$search.removeClass('span7').addClass('w230');
+			}
+		},
+		/**
+		 * 头像的上传
+		 * @method avatarUpLoad
+		 * @param  {Object} 传入JSON格式参数 
+		 */
+		avatarUpLoad: function(uploadParam) {
+			var attachUpload = Ibos.upload.image($.extend({
+				button_placeholder_id: "upload_img",
+				file_size_limit: "2000", //设置图片最大上传值
+				button_width: "100",
+				button_height: "100",
+				button_image_url: "",
+				custom_settings: {
+					//头像上传成功后的操作
+					success: function(file, data) {
+						if(data.IsSuccess){
+							// 上传头像的路径
+							$("#img_src").val(data.file);
+							//将上传后的图片显示出来
+							$("#portrait_img").show().attr("src", data.data);
+						
+							//当头像上传成功后,鼠标移入移除时,显示和隐藏头像的覆盖层
+							$("#pc_avatar_wrap").hover(function() {
+								$("#tip_tier").toggle();
+							});
+						} else {
+							Ui.tip(data.msg, 'danger');
+							return false;
+						}
+					},
+					progressId: "portrait_img_wrap"
+				}
+			}, uploadParam));
+		},
+		/**
+		 * 计算侧栏信息栏和字母导航栏的定位及高度的计算
+		 * @method calculateSidebar
+		 */
+		calculateSidebar: function(){
+			var cwtop = $('#cl_list_header').offset().top,
+			dctop = $(document).scrollTop(),
+			windowHeight = $(window).height(),
+			mcheight = $('.mc').height();
 
-		var slidtop = dctop - cwtop;
-			linkheight = mcheight - slidtop,
-			rollingSlideHeight = linkheight + 'px',
-			mcheightval = mcheight + 'px',
-			slidtopval = -slidtop + 'px',
-			nletterHeightVal = mcheight - 60 + 'px',
-			rletterHeightVal = linkheight - 60 + 'px',
-			$rollingSidebar = $("#cl_rolling_sidebar"),
-			$addWrap = $("#add_contacter_wrap"),
-			$letterSidebar = $("#cl_letter_sidebar"),
-			$funbar = $("#cl_funbar"),
+			var slidtop = dctop - cwtop;
+				linkheight = mcheight - slidtop,
+				rollingSlideHeight = linkheight + 'px',
+				mcheightval = mcheight + 'px',
+				slidtopval = -slidtop + 'px',
+				nletterHeightVal = mcheight - 60 + 'px',
+				rletterHeightVal = linkheight - 60 + 'px',
+				$rollingSidebar = $("#cl_rolling_sidebar"),
+				$addWrap = $("#add_contacter_wrap"),
+				$letterSidebar = $("#cl_letter_sidebar"),
+				$funbar = $("#cl_funbar");
 
-			isSlidtop = slidtop > 0,
-			$addWrapTop = isSlidtop ? '60px' : slidtopval,
-			$addWrapHeight = isSlidtop ? rollingSlideHeight : mcheightval,
-			is = isSlidtop ? 'rolling' : 'normal',
-			is2 = isSlidtop ? 'normal' : 'rolling';
+			if (slidtop > 0) {
+				$addWrap.css({"top": '60px', "height": rollingSlideHeight});
+				$rollingSidebar.css({"top": '60px', "height": rollingSlideHeight});
+				$letterSidebar.css({'height': rletterHeightVal})
+					.addClass('sidebar-rolling').removeClass('sidebar-normal');
+				$funbar.addClass('funbar-rolling').removeClass('funbar-normal');
+			} else {
+				$addWrap.css({"top": slidtopval, "height": mcheightval});
+				$rollingSidebar.css({"top": slidtopval, "height": mcheightval});
+				$letterSidebar
+					.addClass('sidebar-normal').removeClass('sidebar-rolling');
+				$funbar.addClass('funbar-normal').removeClass('funbar-rolling');
+			}
 
-		$addWrap.css({"top": $addWrapTop, "height": $addWrapHeight});
-		$rollingSidebar.css({"top": $addWrapTop , "height": $addWrapHeight});
-		$letterSidebar.css({'height': isSlidtop ? rletterHeightVal : nletterHeightVal})
-			.addClass( 'sidebar-'+  is ).removeClass( 'sidebar-'+ is2 );
-		$funbar.addClass( 'funbar-'+  is ).removeClass( 'funbar-'+ is2 );
-
-	},
-	/**
-	 * 格式化用户信息
-	 * @method formatUserInfo
-	 * @param  {String} param 传入用户ID
-	 * @return {Object}       返回JSON格式数据
-	 */
-	formatUserInfo: function(param){
-		if(param.indexOf("u") === 0){
-			var arr = param.split(",");
-			var data = $.map(arr, function(uid){
-				 	var data = Ibos.data.getUser(uid);
-				  	return { uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone };
-				});
-			return data;
-		}else{
-			var avatar = Ibos.app.g("emptyAvatar");
-			return [{name: "未知", avatar: avatar, phone: param}];
+		},
+		/**
+		 * 格式化用户信息
+		 * @method formatUserInfo
+		 * @param  {String} param 传入用户ID
+		 * @return {Object}       返回JSON格式数据
+		 */
+		formatUserInfo: function(param){
+			if(param.indexOf("u") === 0){
+				var arr = param.split(",");
+				var data = $.map(arr, function(uid){
+					 	var data = Ibos.data.getUser(uid);
+					  	return { uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone };
+					});
+				return data;
+			}else{
+				var avatar = Ibos.app.g("emptyAvatar");
+				return [{name: "未知", avatar: avatar, phone: param}];
+			}
 		}
 	}
 };
-
 $(function() {
 	//计算侧栏信息栏和字母导航栏的定位及高度的计算
 	ContactList.contact.calculateSidebar();
@@ -295,10 +294,10 @@ $(function() {
 			if (res.isSuccess) {
 				//调整列表中对应行中标识是否为常用联系人
 				$trelem.attr({'class': 'o-'+(toFocus ? 'nomark' : 'mark'),
-							'title': (toFocus ? Ibos.l("CONTACT.ADD_TOP_CONTACTS") : Ibos.l("CONTACT.CANCLE_TOP_CONTACTS"))});
+							'title': (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))});
 				//调整侧栏中标识是否为常用联系人
 				$aelem.attr({'class': 'o-si-'+(toFocus ? 'nomark' : 'mark')});
-				Ui.tip(Ibos.l("OPERATION_SUCCESS"));
+				Ui.tip(U.lang("OPERATION_SUCCESS"));
 			}
 		});
 	});
@@ -314,7 +313,7 @@ $(function() {
 		ContactList.op.changeConstant(param).done(function(res) {
 			if (res.isSuccess) {
 				$tr.remove();
-				Ui.tip(Ibos.l("OPERATION_SUCCESS"));
+				Ui.tip(U.lang("OPERATION_SUCCESS"));
 			}
 		});
 	});
@@ -333,15 +332,15 @@ $(function() {
 		ContactList.op.changeConstant(param).done(function(res) {
 			if (res.isSuccess) {
 				$elem.attr({"class" : 'o-si-'+(toFocus ? 'nomark' : 'mark'),
-					"title" : (toFocus ? Ibos.l("CONTACT.ADD_TOP_CONTACTS") : Ibos.l("CONTACT.CANCLE_TOP_CONTACTS"))
+					"title" : (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))
 				});
 				//调整列表中对应用户是否为常用联系人的标识
 				$trelem.attr({'class': 'o-'+(toFocus ? 'nomark' : 'mark'),
-					'title': (toFocus ? Ibos.l("CONTACT.ADD_TOP_CONTACTS") : Ibos.l("CONTACT.CANCLE_TOP_CONTACTS"))
+					'title': (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))
 				});
 				
 				$mark.waiting(false); 
-				Ui.tip(Ibos.l("OPERATION_SUCCESS"));
+				Ui.tip(U.lang("OPERATION_SUCCESS"));
 			}
 		});
 	});
@@ -390,7 +389,7 @@ $(function() {
 		$(".org-dept-table tr").removeClass("active");
 		$elem.addClass("active");
 	});
-
+	
 	setInterval(function(){
 		ContactList.contact.calculateSidebar();
 

@@ -4774,6 +4774,9 @@ a.badge:focus {
   opacity: 1;
   /*top: -1px;*/
 }
+.control-group input{
+  line-height: 26px;
+}
 .checkbox .icon,
 .radio .icon {
   display: none\9;
@@ -5784,6 +5787,9 @@ div.jGrowl div.jGrowl-notification.primary {
   text-indent: -9999px;
   background-position: -125px -45px;
   display: none;
+}
+.search > input{
+  line-height: 26px;
 }
 .search-config a {
   background-position: -5px -45px;

@@ -45,9 +45,9 @@ var Nt = {
 						$('#remind_' + i).remove();
 					});
 				});
-				Ui.tip(U.lang('DELETE_SUCCESS'));
+				Ui.tip(Ibos.l('DELETE_SUCCESS'));
 			} else {
-				Ui.tip(U.lang('DELETE_FAILED'), 'danger');
+				Ui.tip(Ibos.l('DELETE_FAILED'), 'danger');
 			}
 		});
 	},
@@ -63,9 +63,9 @@ var Nt = {
 				$.each(ids.split(','), function(n, i) {
 					$('#remind_' + i + ' span.bubble').remove();
 				});
-				Ui.tip(U.lang('OPERATION_SUCCESS'));
+				Ui.tip(Ibos.l('OPERATION_SUCCESS'));
 			} else {
-				Ui.tip(U.lang('OPERATION_FAILED', 'danger'));
+				Ui.tip(Ibos.l('OPERATION_FAILED', 'danger'));
 			}
 		});
 	}
@@ -79,7 +79,7 @@ $(function(){
 				Nt.markRead(ids);
 				Ibosapp.dropnotify.getCount();
 			} else {
-				Ui.tip(U.lang('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
+				Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
 			}
 		},
 		
@@ -89,9 +89,9 @@ $(function(){
 					$('span.bubble').hide();
 					$(elem).parent().hide();
 					Ibosapp.dropnotify.getCount();
-					Ui.tip(U.lang('OPERATION_SUCCESS'), 'success');
+					Ui.tip(Ibos.l('OPERATION_SUCCESS'), 'success');
 				} else {
-					Ui.tip(U.lang('OPERATION_FAILED', 'danger'));
+					Ui.tip(Ibos.l('OPERATION_FAILED', 'danger'));
 				}
 			});
 		},
@@ -100,16 +100,16 @@ $(function(){
 		"removeNotices": function() {
 			var ids = U.getCheckedValue("remind");
 			if (ids) {
-				Ui.confirm(U.lang("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
+				Ui.confirm(Ibos.l("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
 					Nt.remove(ids);
 				});
 			} else {
-				Ui.tip(U.lang('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
+				Ui.tip(Ibos.l('SELECT_AT_LEAST_ONE_ITEM'), 'warning');
 			}
 		},
 
 		"removeNotice": function(param) {
-			Ui.confirm(U.lang("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
+			Ui.confirm(Ibos.l("MSG.NOTIFY_REMOVE_CONFIRM"), function(){
 				Nt.remove(param.id);
 			});
 		},

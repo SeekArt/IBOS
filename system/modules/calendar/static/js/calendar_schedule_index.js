@@ -10,17 +10,17 @@ $(function(){
 			var guideData = [
 				{
 					element: ".fc-slot2 .fc-widget-content",
-					intro: Ibos.l("CAL.INTRO.CALENDAR_ADD"),
+					intro: U.lang("CAL.INTRO.CALENDAR_ADD"),
 					position: "top"
 				},
 				{
 					element: "tbody .fc-agenda-axis.fc-widget-header",
-					intro: Ibos.l("CAL.INTRO.WORKTIME"),
+					intro: U.lang("CAL.INTRO.WORKTIME"),
 					position: "right"
 				},
 				{
 					element: ".fc-header-right",
-					intro: Ibos.l("CAL.INTRO.VIEWTYPE"),
+					intro: U.lang("CAL.INTRO.VIEWTYPE"),
 					position: "left"
 				}
 			];
@@ -28,8 +28,8 @@ $(function(){
 			if($(".fc-event").length) {
 				guideData.push({
 					element: ".fc-event",
-					intro: Ibos.l("CAL.INTRO.CALENDAR_DRAG")
-				})
+					intro: U.lang("CAL.INTRO.CALENDAR_DRAG")
+				});
 			}
 
 			return guideData;

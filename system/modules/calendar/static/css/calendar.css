@@ -119,6 +119,9 @@
 	padding: 10px 20px;
 	border-bottom: 1px solid #E4EDF2;
 }
+.todo-header input{
+	line-height: 26px;
+}
 .todo-item{
 	padding: 10px;
 	border-bottom: 1px solid #E4EDF2;

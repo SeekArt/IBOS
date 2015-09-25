@@ -12,6 +12,7 @@ var OCX = function(settings) {
 	this._init();
 };
 
+// 默认参数
 OCX.defaults = {
 	docOpen: false,
 	op: '',
@@ -27,12 +28,12 @@ OCX.defaults = {
 OCX.prototype = {
 	constructor: OCX,
 	/**
-	 * 
-	 * @returns {undefined}
+	 * 初始化
+	 * @method _init
 	 */
 	_init: function() {
 		if (!$(this.settings.obj).is('object')) {
-			$.error("(OCX): 错误的文档对象");
+			$.error("(OCX): "+ Ibos.l("MAIN.ERROR_DOC_OBJECT"));
 		}
 		// 读取/设置是否使用UTF-8在智能提交中传输网页数据
 		this.settings.obj.IsUseUTF8Data = (document.charset === "utf-8");
@@ -55,13 +56,9 @@ OCX.prototype = {
 				this.onDocumentOpened();
 			}
 		} catch (err) {
-			var msg = '不能使用微软Office软件打开文档！\n\n是否尝试使用金山WPS文字处理软件打开文档？';
+			var msg = Ibos.l("MAIN.DOC_OPEN");
 			if (window.confirm(msg)) {
-				if (this.settings.op === 'edit') {
-					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, true, false, "WPS.Document");
-				} else {
-					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, true, true, "WPS.Document");
-				}
+				this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, true, (this.settings.op === 'edit' ? false : true), "WPS.Document");
 			}
 		} finally {
 
@@ -71,6 +68,11 @@ OCX.prototype = {
 	 * 
 	 * @param {type} op
 	 * @returns {undefined}
+	 */
+	/**
+	 * 打开文档的方式
+	 * @method _openDocumentByOP
+	 * @param  {String]} op 文档打开的方式
 	 */
 	_openDocumentByOP: function(op) {
 		switch (op) {
@@ -94,23 +96,23 @@ OCX.prototype = {
 				}
 				break;
 			default:
-				$.error("(OCX): 未知打开操作");
+				$.error("(OCX): "+ Ibos.l("MAIN.UNKNOWN_OPEN_OPERATE"));
 				break;
 		}
 	},
+	/**
+	 * 文档打开
+	 * @method onDocumentOpened
+	 */
 	onDocumentOpened: function() {
-//		var s;
 		try {
 			this.settings.docOpen = true;
-//			if (0 == str.length) {
-//				var str = this.settings.fileName;
-//			}
+
 			this.settings.obj.Caption = this.settings.fileName;
 			if (this.settings.fileName.indexOf(".ppt") < 0 && this.settings.fileName.indexOf(".PPT") < 0) {
 				this._setDocUser(this.settings.user);
 			}
-//			s = "未知应用程序";
-//			if (obj) {
+
 			switch (this.settings.op) {
 				case "edit":
 					this.setReadOnly(false);
@@ -128,19 +130,20 @@ OCX.prototype = {
 				default:
 					break;
 			}
-//				s = obj.Application.Name;
-//			}
 		} catch (err) {
-			window.status = "OnDocumentOpened事件的Script产生错误。" + err.number + ":" + err.description;
+			window.status = "OnDocumentOpened"+ Ibos.l("MAIN.EVENT_SCRIPT_ERROR") + err.number + ":" + err.description;
 		}
 	},
-	//设置文档为只读
+	/**
+	 * 设置文档为只读
+	 * @method setReadOnly
+	 * @param {String} boolvalue 是否为只读
+	 */
 	setReadOnly: function(boolvalue) {
 		var appName, i;
 		try {
-			if (boolvalue) {
-				this.settings.obj.IsShowToolMenu = false;
-			}
+			boolvalue && (this.settings.obj.IsShowToolMenu = false);
+
 			if (!this.settings.docOpen) {
 				return;
 			}
@@ -171,10 +174,14 @@ OCX.prototype = {
 				}
 			}
 		} catch (err) {
-			alert("错误：" + err.number + ":" + err.description);
+			alert( Ibos.l("MAIN.ERROR") +"：" + err.number + ":" + err.description);
 		}
 	},
-	//设置用户名
+	/**
+	 * 设置用户名
+	 * @method _setDocUser
+	 * @param {String} cuser 传入用户名的值
+	 */
 	_setDocUser: function(cuser) {
 		if (!this.settings.docOpen) {
 			return;
@@ -183,7 +190,11 @@ OCX.prototype = {
 			UserName = cuser;
 		}
 	},
-	//如果原先的表单定义了OnSubmit事件，保存文档时首先会调用原先的事件。
+	/**
+	 * 如果原先的表单定义了OnSubmit事件，保存文档时首先会调用原先的事件。
+	 * @method _beforeSubmit
+	 * @return {Boolean} 返回真假 
+	 */
 	_beforeSubmit: function() {
 		var form = document.forms[0];
 		if (form.onsubmit) {
@@ -199,8 +210,7 @@ OCX.prototype = {
 	 * 一个paraObj对象。paraObj.FFN包含表单的最后一个<input type=file name=XXX>的name
 	 * paraObj.PARA包含了表单的其它数据，比如：f1=v1&f2=v2&f3=v3.其中,v1.v2.v3是经过
 	 * javascript的escape函数编码的数据。
-	 * @param {type} paraObj
-	 * @returns {undefined}
+	 * @param 	{Object} 	paraObj 传入Object对象
 	 */
 	_genDominoPara: function(paraObj) {
 		var fmElements = document.forms[0].elements;
@@ -235,38 +245,42 @@ OCX.prototype = {
 			}
 		}
 	},
+	/**
+	 * 获取日志
+	 * @method _getLog
+	 */
 	_getLog: function() {
 
 	},
 	/**
 	 * 设置页面布局
-	 * @returns {undefined}
+	 * @method changeLayout
 	 */
 	changeLayout: function() {
 		try {
 			this.settings.obj.showdialog(5);
 		} catch (err) {
-			alert("错误：" + err.number + ":" + err.description);
+			alert(Ibos.l("MAIN.ERROR") + "：" + err.number + ":" + err.description);
 		}
 	},
 	/**
 	 * 打印文档
-	 * @returns {undefined}
+	 * @method  printDoc 
 	 */
 	printDoc: function() {
 		try {
 			this.settings.obj.printout(true);
 		} catch (err) {
 			if (err.number != -2147467260) {
-				alert("错误：" + err.number + ":" + err.description);
+				alert(Ibos.l("MAIN.ERROR") + "：" + err.number + ":" + err.description);
 			}
 		}
 	},
 	/**
 	 * 保存文档为PDF到本地
-	 * @param {type} IsPermitPrint
-	 * @param {type} IsPermitCopy
-	 * @returns {undefined}
+	 * @method saveAsPDFFile
+	 * @param  {type} IsPermitPrint
+	 * @param  {type} IsPermitCopy
 	 */
 	saveAsPDFFile: function(IsPermitPrint, IsPermitCopy) {
 		try {
@@ -274,7 +288,7 @@ OCX.prototype = {
 		}
 		catch (err) {
 			if (err.number == -2147467259) {
-				if (window.confirm("该功能需要软件【PDFCreator】支持,点击确定前往官网下载安装。")) {
+				if (window.confirm( Ibos.l("MAIN.FUNCTION_NEED_SUPPORT") )) {
 					window.location.href = 'http://www.ibos.com.cn/download/PDFCreator-1_2_3_setup.zip';
 				}
 			}
@@ -283,10 +297,10 @@ OCX.prototype = {
 	},
 	/**
 	 * 屏蔽by banyan
-	 * @returns {undefined}
+	 * @method showLog
 	 */
 	showLog: function() {
-		if (this.settings.ocxlog.style.display === "none") {
+		/*if (this.settings.ocxlog.style.display === "none") {
 			this.settings.ocxlog.style.display = "block";
 			this.settings.obj.style.display = "none";
 			if (this.settings.ocxlog.innerText === "") {
@@ -295,16 +309,23 @@ OCX.prototype = {
 		} else {
 			this.settings.ocxlog.style.display = "none";
 			this.settings.obj.style.display = "block";
+		}*/
+		if ( $(this.settings.ocxlog).is(":hidden") ) {
+			if (this.settings.ocxlog.innerText === "") {
+				this._getLog();
+			}
 		}
+		$(this.settings.ocxlog).toggle();
+		$(this.settings.obj).toggle();
 	},
 	/**
 	 * 此函数用来保存当前文档。主要使用了控件的SaveToURL函数。有关此函数的详细用法，请参阅手册
-	 * @param {type} opflag
-	 * @returns {undefined}
+	 * @method saveDoc
+	 * @param  {Boolean} opflag 操作标签
 	 */
 	saveDoc: function(opflag) {
-		var retStr = new String;
-		var paraObj = new Object();
+		var retStr = new String(),
+			paraObj = new Object();
 		paraObj.PARA = "";
 		paraObj.FFN = "";
 		try {
@@ -314,11 +335,11 @@ OCX.prototype = {
 			document.forms[0].docsize.value = this.settings.obj.DocSize;
 			this.__genDominoPara(paraObj);
 			if (!paraObj.FFN) {
-				alert("参数错误：控件的第二个参数没有指定。");
+				alert( Ibos.l("MAIN.PARAM_ERROR") );
 				return false;
 			}
 			if (!this.settings.docOpen) {
-				alert("没有打开的文档。");
+				alert( Ibos.l("MAIN.NOT_OPEN_DOC") );
 				return false;
 			}
 
@@ -345,18 +366,20 @@ OCX.prototype = {
 				case "5":
 				case "6":
 				case "read":
-					alert("文档处于阅读状态，您不能保存到服务器。");
+					alert( Ibos.l("MAIN.DOC_READER_STATU") );
+					break;
 				default:
 					break;
 			}
 		}
 		catch (err) {
-			alert("不能保存到URL：" + err.number + ":" + err.description);
+			alert( Ibos.l("MAIN.NOT_SAVE_URL") + "：" + err.number + ":" + err.description);
 		}
 	},
 	/**
 	 * 进入或退出痕迹保留状态
-	 * @param {type} bool
+	 * @method  setMarkModify
+	 * @param 	{Boolean} 	bool 
 	 * @returns {undefined}
 	 */
 	setMarkModify: function(bool) {
@@ -367,7 +390,8 @@ OCX.prototype = {
 	},
 	/**
 	 * 显示/不显示修订文字
-	 * @param {type} bool
+	 * @method  showRevisions
+	 * @param 	{Boolean} 	bool 
 	 * @returns {undefined}
 	 */
 	showRevisions: function(bool) {
@@ -378,6 +402,7 @@ OCX.prototype = {
 	},
 	/**
 	 * 从本地增加图片到文档指定位置
+	 * @method  addPictureFromLocal
 	 * @returns {undefined}
 	 */
 	addPictureFromLocal: function() {
@@ -392,7 +417,8 @@ OCX.prototype = {
 	},
 	/**
 	 * 从本地增加电子印章
-	 * @param {type} key
+	 * @method  addSignFromLocal
+	 * @param 	{type} 		key
 	 * @returns {undefined}
 	 */
 	addSignFromLocal: function(key) {
@@ -406,6 +432,7 @@ OCX.prototype = {
 	},
 	/**
 	 * 开始手写签名
+	 * @method  handSign
 	 * @param {type} key
 	 * @returns {undefined}
 	 */
@@ -420,7 +447,8 @@ OCX.prototype = {
 	},
 	/**
 	 * 开始全屏手写签名
-	 * @param {type} key
+	 * @method  fullHandSign
+	 * @param 	{type} 		key
 	 * @returns {undefined}
 	 */
 	fullHandSign: function(key) {
@@ -434,6 +462,7 @@ OCX.prototype = {
 	},
 	/**
 	 * 开始手绘
+	 * @method  handDraw
 	 * @returns {undefined}
 	 */
 	handDraw: function() {
@@ -449,16 +478,16 @@ OCX.prototype = {
 	},
 	/**
 	 * 开始全屏手绘
+	 * @method  fullHandDraw
 	 * @returns {undefined}
 	 */
 	fullHandDraw: function() {
-		if (this.settings.docOpen) {
-			this.settings.obj.DoHandDraw2();
-		}
+		(this.settings.docOpen) && this.settings.obj.DoHandDraw2();
 	},
 	/**
 	 * 检查签名结果
-	 * @param {type} key
+	 * @method  checkSign
+	 * @param 	{type} 		key
 	 * @returns {undefined}
 	 */
 	checkSign: function(key) {
@@ -467,6 +496,12 @@ OCX.prototype = {
 			// 可选参数 IsSilent 缺省为FAlSE，表示弹出验证对话框,否则，只是返回验证结果到返回值
 		}
 	},
+	/**
+	 * 添加文档头部
+	 * @method  addDocHeader
+	 * @param 	{String} 	url 传入地址
+	 * @returns {undefined}
+	 */
 	addDocHeader: function(url) {
 		try {
 			//选择对象当前文档的所有内容
@@ -479,7 +514,7 @@ OCX.prototype = {
 			this.settings.obj.AddTemplateFromURL(url);
 			var bookMarkName = "zhengwen";
 			if (!this.settings.obj.ActiveDocument.BookMarks.Exists(bookMarkName)) {
-				alert("Word 模板中不存在名称为：\"" + bookMarkName + "\"的书签！\n关于套红模版制作，请咨询技术支持人员。");
+				alert( Ibos.l("MAIN.TMPL_TITLE_NOT_EXIST") + bookMarkName + Ibos.l("MAIN.SKILL_SUPPORT_CHARGE") );
 				return;
 			}
 			var bkmkObj = this.settings.obj.ActiveDocument.BookMarks(bookMarkName);
@@ -489,58 +524,42 @@ OCX.prototype = {
 			this.setMarkModify(true);
 		}
 		catch (err) {
-			alert("错误：" + err.number + ":" + err.description);
+			alert( Ibos.l("MAIN.ERROR") + "：" + err.number + ":" + err.description);
 		}
 	}
 };
 Ibos.evt.add({
-	/**
-	 * 保存
-	 */
+	// 保存
 	"save": function(param, elem) {
 		return OCX.saveDoc(param.flag);
 	},
-	/**
-	 * 页面设置
-	 */
+	// 页面设置
 	"chgLayout": function(param, elem) {
 		return OCX.changeLayout();
 	},
-	/**
-	 * 打印
-	 */
+	// 打印
 	"print": function(param, elem) {
 		return OCX.printDoc();
 	},
-	/**
-	 * 导出PDF
-	 */
+	// 导出PDF
 	"export": function(param, elem) {
 		return OCX.saveAsPDFFile(true, true);
 	},
-	/**
-	 * 此功能暂先不做
-	 */
+	// 此功能暂先不做
 	"showLog": function(param, elem) {
 
 	},
-	/**
-	 * 保留痕迹与否
-	 */
+	// 保留痕迹与否
 	"setMarkModify": function(param, elem) {
 		var $elem = $(elem);
 		return OCX.setMarkModify($elem.prop('checked'));
 	},
-	/**
-	 * 显示痕迹与否
-	 */
+	// 显示痕迹与否
 	"showRevisions": function(param, elem) {
 		var $elem = $(elem);
 		return OCX.showRevisions($elem.prop('checked'));
 	},
-	/**
-	 * 模板套红
-	 */
+	// 模板套红
 	"selectWord": function(param, elem) {
 		var url = OCX.settings.pathUrl + 'wordmodel/view/index.php';
 		var myleft = (screen.availWidth - 650) / 2;
@@ -548,54 +567,38 @@ Ibos.evt.add({
 		paramStr += ",top=0,left=" + myleft + ",height=350,width=400";
 		window.open(url, 'select', paramStr);
 	},
-	/**
-	 * 插入本地图片
-	 */
+	// 插入本地图片
 	"addPictureFromLocal": function(param, elem) {
 		return OCX.addPictureFromLocal();
 	},
-	/**
-	 * 全屏手写签名
-	 */
+	// 全屏手写签名
 	"fullHandSign": function(param, elem) {
 		var key = param.key;
 		return OCX.fullHandSign(key);
 	},
-	/**
-	 * 全屏手工绘图
-	 */
+	// 全屏手工绘图
 	"fullHandDraw": function(param, elem) {
 		return OCX.fullHandDraw();
 	},
-	/**
-	 * 插入手写签名
-	 */
+	// 插入手写签名
 	"handSign": function(param, elem) {
 		var key = param.key;
 		return OCX.handSign(key);
 	},
-	/**
-	 * 插入手工绘图
-	 */
+	// 插入手工绘图
 	"handDraw": function(param, elem) {
 		return OCX.handDraw();
 	},
-	/**
-	 * 加盖本地电子印章
-	 */
+	// 加盖本地电子印章
 	"addSignFromLocal": function(param, elem) {
 		var key = param.key;
 		return OCX.addSignFromLocal(key);
 	},
-	/**
-	 * 加盖服务器电子印章
-	 */
+	// 加盖服务器电子印章
 	"addSignFromServer": function(param, elem) {
 		// 暂时先不做
 	},
-	/**
-	 * 验证签名及印章
-	 */
+	// 验证签名及印章
 	"checkSign": function(param, elem) {
 		var key = param.key;
 		return OCX.checkSign(key);

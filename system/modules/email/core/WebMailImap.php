@@ -4,45 +4,45 @@ namespace application\modules\email\core;
 
 class WebMailImap extends WebMailBase {
 
-	/**
-	 * 链接服务器，返回链接对象
-	 * @param type $host
-	 * @param type $user
-	 * @param type $password
-	 * @param type $authMethod
-	 */
-	public function connect( $host, $user, $password, $ssl = false, $port = '', $authMethod = 'plain' ) {
-		$this->clearError();
-		//strip slashes
-		$user = stripslashes( $user );
-		$password = stripslashes( $password );
-		$result = false;
-		//initialize connection
-		$conn = new ICWebMailConnection();
-		$conn->error = "";
-		$conn->errorNum = 0;
-		$conn->selected = "";
-		$conn->host = $host;
+    /**
+     * 链接服务器，返回链接对象
+     * @param type $host
+     * @param type $user
+     * @param type $password
+     * @param type $authMethod
+     */
+    public function connect($host, $user, $password, $ssl = false, $port = '', $authMethod = 'plain') {
+        $this->clearError();
+        //strip slashes
+        $user = stripslashes($user);
+        $password = stripslashes($password);
+        $result = false;
+        //initialize connection
+        $conn = new ICWebMailConnection();
+        $conn->error = "";
+        $conn->errorNum = 0;
+        $conn->selected = "";
+        $conn->host = $host;
 
-		//check input
-		if ( empty( $host ) ) {
-			$this->setError( "Invalid host" );
-		}
-		if ( empty( $user ) ) {
-			$this->setError( "Invalid user" );
-		}
-		if ( empty( $password ) ) {
-			$this->setError( "Invalid password" );
-		}
-		$error = $this->getError();
-		if ( !empty( $error ) ) {
-			return false;
-		}
+        //check input
+        if (empty($host)) {
+            $this->setError("Invalid host");
+        }
+        if (empty($user)) {
+            $this->setError("Invalid user");
+        }
+        if (empty($password)) {
+            $this->setError("Invalid password");
+        }
+        $error = $this->getError();
+        if (!empty($error)) {
+            return false;
+        }
 
-		//check for SSL
-		if ( $ssl ) {
-			$host = "ssl://" . $host;
-		}
+        //check for SSL
+        if ($ssl) {
+            $host = "ssl://" . $host;
+        }
 
 		//open socket connection
 		$conn->fp = @fsockopen( $host, $port );

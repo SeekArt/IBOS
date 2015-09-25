@@ -2,7 +2,6 @@
  * 普通用户初始化引导
  * @version $Id$
  */
-
 var guideUrl = Ibos.app.url('main/default/guide');
 
 //设置对应项匹配成功后的百分比值
@@ -23,33 +22,59 @@ var vali = {
 	birthday: false
 };
 
-var valiField = ['password', 'avatar', 'mobile', 'email', 'birthday']
+// 验证类型
+var valiField = ['password', 'avatar', 'mobile', 'email', 'birthday'];
 
 
 var valiGroup = {
 	PASSWORD: "2"
 };
+
 //第二步骤中,完成某项后对应头部的下一步骤提示和对应完成增加值
 var tip = {
 	password: $.noop,
+	/**
+	 * 手机
+	 * @method mobile
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	mobile: function(elem) {
 		$(elem).text(U.lang("GUIDE.WRITE_PHONE_NUMBER"));
 		$(elem).next().text("+10%");
 	},
+	/**
+	 * 邮箱
+	 * @method email
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	email: function(elem) {
 		$(elem).text(U.lang("GUIDE.WRITE_EMAIL_ADDRESS"));
 		$(elem).next().text("+10%");
 	},
+	/**
+	 * 生日
+	 * @method birthday
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	birthday: function(elem) {
 		$(elem).text(U.lang("GUIDE.WRITE_PERSONAL_BIRTHDAY"));
 		$(elem).next().text("+10%");
 	},
+	/**
+	 * 头像
+	 * @method avatar
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	avatar: function(elem) {
 		$(elem).text(U.lang("GUIDE.UPLOAD_REAL_AVATAR"));
 		$(elem).next().text("+30%");
 	}
 };
 
+/**
+ * 检查个人信息数据
+ * @method  checkPersonalData
+ */
 function checkPersonalData(){
 	var field;
 	for (var i = 0; i < valiField.length; i++) {
@@ -64,36 +89,55 @@ function checkPersonalData(){
 
 //各项设置值的匹配
 var validate = {
-	//手机匹配
+	/**
+	 * 手机匹配
+	 * @method mobile
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	mobile: function(elem) {
 		var reg = /\S+/;
 		var elemval = $("#" + elem).val();
 		var value = $.formValidator.isOneValid(elem);
 
-		vali.mobile = value && reg.test(elemval)
+		vali.mobile = value && reg.test(elemval);
 
 		checkPersonalData();
 	},
-	//邮件匹配
+	/**
+	 * 邮件匹配
+	 * @method email
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	email: function(elem) {
 		var reg = /\S+/;
 		var elemval = $("#" + elem).val();
 		var value = $.formValidator.isOneValid(elem);
-		vali.email = value && reg.test(elemval)
+		vali.email = value && reg.test(elemval);
 		checkPersonalData();
 	},
-	//生日匹配
+	/**
+	 * 生日匹配
+	 * @method birthday
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	birthday: function(elem) {
 		var reg = /\S+/;
 		var values = $("#" + elem).val();
 		var value = $.formValidator.isOneValid(elem);
-		vali.birthday = value && reg.test(values)
+		vali.birthday = value && reg.test(values);
 		checkPersonalData();
 	}
 };
 
 //密码设置时,成功和失败情况下,进度条和提示锁的表现切换
 var view = {
+	/**
+	 * 密码设置失败
+	 * @method failure
+	 * @param  {Number} progress 进度值
+	 * @param  {Object} flock    失败的提示锁
+	 * @param  {Object} slock    成功的提示锁
+	 */
 	failure: function(progress, flock, slock) {
 		var failureState = $(flock);
 		var successState = $(slock);
@@ -104,10 +148,17 @@ var view = {
 			successState.css("z-index", "5");
 		});
 	},
+	/**
+	 * 密码设置成功
+	 * @method success
+	 * @param  {Number} progress 进度值
+	 * @param  {Object} flock    失败的提示锁
+	 * @param  {Object} slock    成功的提示锁
+	 */
 	success: function(progress, flock, slock) {
 		var failureState = $(flock);
 		var successState = $(slock);
-		initialize.setPdProgress(progress)
+		initialize.setPdProgress(progress);
 		successState.show();
 		failureState.fadeOut(500, function() {
 			successState.css("z-index", "10");
@@ -118,16 +169,30 @@ var view = {
 
 //当完成度到90%时,进度条颜色的改变
 var progressState = {
+	/**
+	 * 正在进行的进度条样式改变
+	 * @method going
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	going: function(elem) {
 		$(elem).removeClass("progress-bar-success");
 	},
+	/**
+	 * 结束后的进度条样式改变
+	 * @method approachFinish
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	approachFinish: function(elem) {
 		$(elem).addClass("progress-bar-success");
 	}
 };
 
 var initialize = {
-	//第二步骤循环匹配后的视图操作
+	/**
+	 * 第二步骤循环匹配后的视图操作
+	 * @method setProgress
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	setProgress: function(elem) {
 		var p = 0;
 		for (var i in vali) {
@@ -137,7 +202,11 @@ var initialize = {
 		$("#progress_three").css("width", p + "%");
 		$(elem).css("width", p + "%");
 	},
-	//第一步骤匹配后的视图操作
+	/**
+	 * 第一步骤匹配后的视图操作
+	 * @method setPdProgress
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	setPdProgress: function(elem) {
 		var p = 0;
 		if (vali.password) {
@@ -146,7 +215,11 @@ var initialize = {
 		$(elem).css("width", p + "%");
 		$("#percent_nub_one").text(p);
 	},
-	//第一步骤的匹配操作
+	/**
+	 * 第一步骤的匹配操作
+	 * @method matchTo
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	matchTo: function() {
 		var isValid = $.formValidator.isOneValid;
 		var raw = isValid("raw_password");
@@ -161,6 +234,13 @@ var initialize = {
 		}
 		initialize.setProgress("#progress_two");
 	},
+	/**
+	 * 判断值是否达到90%
+	 * @method judge
+	 * @param  {Number} p    进度值
+	 * @param  {Object} elem 传入Jquery节点对象
+	 * @return {[type]}      [description]
+	 */
 	judge: function(p, elem) {
 		if (p >= 90) {
 			//进度条颜色变绿色
@@ -172,6 +252,13 @@ var initialize = {
 			$(elem).text(U.lang("GUIDE.DATA_HAS_NOT_FILLED_OUT")).next().text(U.lang("GUIDE.CONTINUE_TO_IMPROVE"));
 		}
 	},
+	/**
+	 * ajax访问
+	 * @method ajax
+	 * @param  {String}   url       传入请求url地址
+	 * @param  {Object}   param     传入JSON格式数据
+	 * @param  {Function} [success] 成功后的回调函数
+	 */
 	ajax: function(url, param, success) {
 		$.post(url, param, function(res) {
 			if (res.isSuccess) {
@@ -182,6 +269,11 @@ var initialize = {
 			}
 		}, 'json');
 	},
+	/**
+	 * 头像
+	 * @Method avatar
+	 * @param  {Object} uploadParam 传入JSON格式数据
+	 */
 	avatar: function(uploadParam) {
 		var attachUpload = Ibos.upload.image($.extend({
 			button_placeholder_id: "upload_img",
@@ -220,15 +312,23 @@ var initialize = {
 	}
 };
 
-//步骤选择
+// 步骤选择
 var chooseStep = {
-	//上一步
+	/**
+	 * 上一步
+	 * @method  previous
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	previous: function(elem) {
 		var $parent = $(elem).closest(".mark");
 		$parent.removeClass("show").addClass("hidden")
 				.prev().removeClass("hidden").addClass("show");
 	},
-	//下一步
+	/**
+	 * 下一步
+	 * @method  next
+	 * @param  {Object} elem 传入Jquery节点对象
+	 */
 	next: function(elem) {
 		var $parent = $(elem).closest(".mark");
 		$parent.removeClass("show").addClass("hidden");
@@ -275,7 +375,7 @@ $(function() {
 	//初始化日期选择
 	$("#date_time").datepicker().on("show", function(){
 		$(this).data('datetimepicker').widget.css("z-index", "2001");
-	})
+	});
 
 	// 通用AJAX验证配置
 	var ajaxValidateSettings = {
@@ -287,7 +387,7 @@ $(function() {
 			//数据是否可用？可用则返回true，否则返回false
 			return !!res.isSuccess;
 		}
-	}
+	};
 
 	$.formValidator.initConfig({
 		formID: "ins_form"
@@ -401,10 +501,6 @@ $(function() {
 		$.post(Ibos.app.url('main/default/guide'), {op: 'guideNextTime'});
 		$.formValidator.resetTipState(valiGroup.PASSWORD);
 	});
-
-	/*@Todo:
-	 当步骤比较多时,抽象每个步骤中下一步时的操作
-	 */
 
 	//间隔0.5秒检测表单中对应项是否满足条件,并改变视图
 	setInterval(function() {

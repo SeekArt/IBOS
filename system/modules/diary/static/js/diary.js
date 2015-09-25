@@ -62,13 +62,13 @@ var Diary = {
         $item[ $act ? "removeClass" : "addClass" ]("open");
 	},
     /**
-     * 
+     * 切换树显隐状态
      * @method toggleTree
-     * @param  {[type]}   $tree      [description]
+     * @param  {Object}   $tree      传入Jquery节点对象
      * @param  {Function} [callback] 回调函数
      */
 	toggleTree: function($tree, callback){
-		var isShowed = $tree.css("display") !== "none" ? true : false;
+		var isShowed = !$tree.is(":hidden");
 
         $tree[isShowed ? "hide" : "show"]();
 
@@ -78,10 +78,15 @@ var Diary = {
      * 改变计划时间
      * @method changePlanDate
      * @param  {Object} date 传入Date日期对象
+     * @return {Object}      返回jquery节点对象
      */
 	changePlanDate: function(date){
 		var	$elem = $("#da_plan_date_display"), // [data-node-type='planDate']
-            tpl = '<strong><%=day%></strong> <div class="mini-date-body"> <p><%=weekDay%></p> <p> <%=fullYear%>-<%=month%></p> </div> ',
+            tpl =   '<strong><%= day %></strong>'+ 
+                    '<div class="mini-date-body">'+ 
+                        '<p><%= weekDay %></p> '+
+                        '<p> <%= fullYear %>-<%= month %></p> '+
+                    '</div> ',
 
             param = {
                 day: this._fixDate(date.getDate()),
@@ -99,144 +104,154 @@ var Diary = {
      */
     _fixDate : function(num){
         return +num >= 10 ? num : "0" + num;
-    }
-};
-/**
- * 键盘事件处理
- * @method keyHandler
- * @param  {[type]} evt      [description]
- * @param  {[type]} handlers [description]
- */
-Diary.keyHandler = function(evt, handlers){
-    var keycodes = {
-        "up": 38,
-        "down": 40,
-        "delete": 46,
-        "enter": 13,
-        "tab": 9,
-        "backspace": 8
-    };
-    handlers = handlers || {};
-    for(var i in keycodes){
-        if(keycodes.hasOwnProperty(i) && keycodes[i] === evt.which) {
-            handlers[i] && handlers[i].call(evt.target, evt);
-        }
-    }
-};
-/**
- * 排序表格
- * @method orderTable
- * @param  {Object} $container 传入Jquery节点对象
- * @param  {String} template   传入JS模板ID
- * @param  {Object} options    传入JSON格式参数
- */
-Diary.orderTable = function($container, template, options){
-    options = $.extend({
-        indexSelector: "[data-toggle='badge']",
-        indexFormat: "<%=index%>."
-    }, options);
-
-    var _cache = {};
-
-    this.reorderIndex = function(){
-        $container.find(options.indexSelector).each(function(i){
-            $(this).text($.template(options.indexFormat, {index: (i + 1)}));
-        });
-    };
-
-    this.getPrevRow = function(id) {
-        return _cache[id].elem.prev("tr");
-    };
-
-    this.getNextRow = function(id){
-        return _cache[id].elem.next("tr");
-    };
-
-    this.focus = function($row){
-        $("input[type='text']", $row).focus();
-    };
-
-    this.add = function(data, callback){
-        var $row;
-        data = $.extend({ id: parseInt(U.uniqid(), 16), subject: ""}, data);
-
-        $row = $.tmpl(template, data);
-        // 插入倒数第二行
-        $row.insertBefore($container.find("tr:last"));
-
-        _cache[data.id] = {
-            elem: $row,
-            data: data
+    },
+    /**
+     * 键盘事件处理
+     * @method keyHandler
+     * @param  {[type]} evt      [description]
+     * @param  {[type]} handlers [description]
+     */
+    keyHandler : function(evt, handlers){
+        var keycodes = {
+            "up": 38,
+            "down": 40,
+            "delete": 46,
+            "enter": 13,
+            "tab": 9,
+            "backspace": 8
         };
-
-        // 重新排序
-        this.reorderIndex();
-        
-        callback && callback($row);
-        return $row;
-    };
-
-    this.remove = function(id, callback) {
-        if(_cache[id] && _cache[id].elem) {
-            this.focus(this.getPrevRow(id));
-            _cache[id].elem.remove();
+        handlers = handlers || {};
+        for(var i in keycodes){
+            if(keycodes.hasOwnProperty(i) && keycodes[i] === evt.which) {
+                handlers[i] && handlers[i].call(evt.target, evt);
+            }
         }
-        delete _cache[id];
-        // 重新排序
-        this.reorderIndex();
-        callback && callback();
-    };
-};
-/**
- * 创建标尺
- * @method createVernier
- * @param  {Object} $elem   传入Jquery节点对象
- * @param  {Object} options 传入JSON格式参数
- */
-Diary.createVernier = function($elem, options){
-    var $container = $("<ul class='vernier'></ul>"),
-        isFormatValid,
-        cellWidth,
-        res,
-        num;
+    },
+    /**
+     * 排序表格
+     * @method orderTable
+     * @param  {Object} $container 传入Jquery节点对象
+     * @param  {String} template   传入JS模板ID
+     * @param  {Object} options    传入JSON格式参数
+     */
+    orderTable : function($container, template, options){
+        options = $.extend({
+            indexSelector: "[data-toggle='badge']",
+            indexFormat: "<%=index%>."
+        }, options);
 
-    options =  $.extend({
-        cell: 10,   // 总单元格数
-        subcell: 1, // 每单元格里子单元格数，即没有标识的格子
-        min: 0,     // 单元格起点
-        step: 1,    // 每单元格每代表的数值
-        template: "<%=num%>",   // 标识模板
-        format: null // 标尺格式化函数
-    }, options);
+        var _cache = {};
 
-    options.cell = Number(options.cell) || 10;
+        this.reorderIndex = function(){
+            $container.find(options.indexSelector).each(function(i){
+                $(this).text($.template(options.indexFormat, {index: (i + 1)}));
+            });
+        };
+        this.getPrevRow = function(id) {
+            return _cache[id].elem.prev("tr");
+        };
+        this.getNextRow = function(id){
+            return _cache[id].elem.next("tr");
+        };
+        this.focus = function($row){
+            $("input[type='text']", $row).focus();
+        };
+        this.add = function(data, callback){
+            var $row;
+            data = $.extend({ id: parseInt(U.uniqid(), 16), subject: ""}, data);
 
-    isFormatValid = options.format && typeof options.format === "function";
-    cellWidth = 100 / (options.cell);
+            $row = $.tmpl(template, data);
+            // 插入倒数第二行
+            $row.insertBefore($container.find("tr:last"));
 
-    for(var i = 0; i < options.cell; i++) {
-        var num = options.min + i * options.step;
-        if(isFormatValid) {
-            res = options.format(num);
-            num = typeof res !== "undefined" ? res : num;
+            _cache[data.id] = {
+                elem: $row,
+                data: data
+            };
+
+            // 重新排序
+            this.reorderIndex();
+            
+            callback && callback($row);
+            return $row;
+        };
+        this.remove = function(id, callback) {
+            if(_cache[id] && _cache[id].elem) {
+                this.focus(this.getPrevRow(id));
+                _cache[id].elem.remove();
+            }
+            delete _cache[id];
+            // 重新排序
+            this.reorderIndex();
+            callback && callback();
+        };
+    },
+    /**
+     * 创建标尺
+     * @method createVernier
+     * @param  {Object} $elem   传入Jquery节点对象
+     * @param  {Object} options 传入JSON格式参数
+     */
+    createVernier : function($elem, options){
+        var $container = $("<ul class='vernier'></ul>"),
+            isFormatValid,
+            cellWidth,
+            res,
+            num;
+
+        options =  $.extend({
+            cell: 10,   // 总单元格数
+            subcell: 1, // 每单元格里子单元格数，即没有标识的格子
+            min: 0,     // 单元格起点
+            step: 1,    // 每单元格每代表的数值
+            template: "<%= num %>",   // 标识模板
+            format: null // 标尺格式化函数
+        }, options);
+
+        options.cell = Number(options.cell) || 10;
+
+        isFormatValid = options.format && typeof options.format === "function";
+        cellWidth = 100 / (options.cell);
+
+        for(var i = 0; i < options.cell; i++) {
+            var num = options.min + i * options.step;
+            if(isFormatValid) {
+                res = options.format(num);
+                num = typeof res !== "undefined" ? res : num;
+            }
+            var isCell = i % options.subcell === 0;
+
+            $("<li class='vernier-"+ (isCell ? "cell" : "subcell") +"'>"+ (isCell ? num : "") +"</li>").width(cellWidth + "%").appendTo($container);
         }
-        var isCell = i % options.subcell === 0;
-
-        $("<li class='vernier-"+ (isCell ? "cell" : "subcell") +"'>"+ (isCell ? num : "") +"</li>").width(cellWidth + "%").appendTo($container);
+        $container.appendTo($elem);
+    },
+    /**
+     * 删除日志
+     * @param  {String} diaryId 传入日志ID
+     */
+    removeDiary : function(diaryId){
+        var param = { diaryids: diaryId };
+        Diary.op.delDiary(param).done(function(res){
+            Ui.tip(res.msg, (res.isSuccess ? "" : "warning") );
+            res.isSuccess && ( window.location.href = Ibos.app.url("diary/default/index") );
+        });
+    },
+    /**
+     * 初始化表情函数
+     * @method initCommentEmotion
+     * @param  {Object} $context 传入Jquery节点对象
+     */
+    initCommentEmotion : function($context) {
+            //按钮[data-node-type="commentEmotion"]
+        $('[data-node-type="commentEmotion"]', $context).each(function(){
+            var $elem = $(this),
+                $target = $elem.closest('[data-node-type="commentBox"]').find('[data-node-type="commentText"]');
+                $elem.ibosEmotion({ target: $target });
+            }
+        );
     }
-    $container.appendTo($elem);
 };
-/**
- * 删除日志
- * @param  {String} diaryId 传入日志ID
- */
-Diary.removeDiary = function(diaryId){
-    var param = { diaryids: diaryId };
-    Diary.op.delDiary(param).done(function(res){
-        Ui.tip(res.msg, (res.isSuccess ? "" : "warning") );
-        res.isSuccess && ( window.location.href = Ibos.app.url("diary/default/index") );
-    });
-};
+
 
 var diaryComment = {
     module: 'diary',
@@ -268,20 +283,7 @@ var loadMoreDiaryComment = function($button, param){
         }
     });
 };
-/**
- * 初始化表情函数
- * @method initCommentEmotion
- * @param  {Object} $context 传入Jquery节点对象
- */
-Diary.initCommentEmotion = function($context) {
-        //按钮[data-node-type="commentEmotion"]
-    $('[data-node-type="commentEmotion"]', $context).each(function(){
-        var $elem = $(this),
-            $target = $elem.closest('[data-node-type="commentBox"]').find('[data-node-type="commentText"]');
-            $elem.ibosEmotion({ target: $target });
-        }
-    );
-};
+
 
 $(function(){
     // 阅读人员ajax

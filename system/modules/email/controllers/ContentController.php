@@ -20,6 +20,7 @@ use application\modules\officialdoc\model\Officialdoc;
 use application\modules\thread\model\Thread;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use application\core\model\Log;
 
 class ContentController extends BaseController {
 
@@ -36,6 +37,20 @@ class ContentController extends BaseController {
         //  不做任何事，只跳转收件箱。因为内容控制器不需要索引页
         $this->redirect( 'list/index' );
     }
+
+    //test
+    /*
+      public function actionNew() {
+      $this->checkUserSize();
+      if (Env::submitCheck('formhash')) {
+      //获取发送的邮件内容
+      $bodyData = $this->beforeSaveBody();
+      //写入数据库
+      $bodyId = EmailBody::model()->add($bodyData, true);
+      $this->save($bodyId, $bodyData);
+      }
+      }
+     */
 
     /**
      * 写邮件

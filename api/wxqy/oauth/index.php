@@ -28,7 +28,7 @@ if ( !empty( $userId ) ) {
 	$uid = UserBinding::model()->fetchUidByValue( $userId, 'wxqy' );
 	if ( $uid ) {
 		$resArr = dologin( $uid );
-		if ( !IBOS::app()->user->isGuest && $resArr['code'] > 0 ) {
+		if ( !IBOS::app()->user->isGuest && $resArr['code'] > '0' ) {
 			$redirect = Env::getRequest( 'redirect' );
 			$url = base64_decode( $redirect );
 			$parse = parse_url( $url );
@@ -40,9 +40,7 @@ if ( !empty( $userId ) ) {
 				exit();
 			}
 		} else {
-			if ( $resArr['code'] < 0 ) {
-				Env::iExit( $resArr['msg'] );
-			}
+			Env::iExit( $resArr['msg'] );
 		}
 	}
 }

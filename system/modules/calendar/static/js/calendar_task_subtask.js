@@ -10,6 +10,12 @@ $(function() {
 		subUid = Ibos.app.g("subUid"),
 
 		todoList = new TodoList($todoList, {
+			/**
+			 * 待办事件标记
+			 * @method mark
+			 * @param  {String} id    待办事件的id
+			 * @param  {Boolean} mark 是否mark
+			 */
 			mark: function(id, mark) {
 				_sendRequest(Ibos.app.url("calendar/task/edit", {
 					op: "mark",
@@ -19,6 +25,12 @@ $(function() {
 					mark: (mark ? 1 : 0)
 				});
 			},
+			/**
+			 * 待办事件完成
+			 * @method complete
+			 * @param  {String}  id    	  待办事件的id
+			 * @param  {Boolean} complete 是否complete
+			 */
 			complete: function(id, complete) {
 				_sendRequest(Ibos.app.url("calendar/task/edit", {
 					op: "complete",
@@ -28,11 +40,21 @@ $(function() {
 					complete: (complete ? 1 : 0)
 				});
 			},
+			/**
+			 * 停止待办事件
+			 * @method stop
+			 * @param  {Object} data 传入JSON格式数据
+			 */
 			stop: function(data) {
 				data && _sendRequest(Ibos.app.url("calendar/task/edit", {
 					op: "sort"
 				}), data);
 			},
+			/**
+			 * 添加待办事件
+			 * @method add
+			 * @param  {Object} data 传入JSON格式数据
+			 */
 			add: function(data) {
 				_sendRequest(Ibos.app.url("calendar/task/add", {
 					uid: subUid
@@ -41,8 +63,13 @@ $(function() {
 					pid: data.pid,
 					text: data.text
 				});
-				$("#no_data_tip").hide()
+				$("#no_data_tip").hide();
 			},
+			/**
+			 * 删除待办事件
+			 * @method remove
+			 * @param  {String}  id    	  待办事件的id
+			 */
 			remove: function(id) { //删除任务
 				_sendRequest(Ibos.app.url("calendar/task/del", {
 					uid: subUid
@@ -50,6 +77,12 @@ $(function() {
 					id: id
 				});
 			},
+			/**
+			 * 保存待办事件
+			 * @method save
+			 * @param  {String} id   待办事件的id
+			 * @param  {String} text 待办事件的内容
+			 */
 			save: function(id, text) { //保存(编辑或者添加最后步骤时都用到)
 				_sendRequest(Ibos.app.url("calendar/task/edit", {
 					op: "save",
@@ -59,6 +92,12 @@ $(function() {
 					text: text
 				});
 			},
+		/**
+		 * 完成时间
+		 * @method date
+		 * @param  {String} id   待办事件的id
+		 * @param  {String} date 时间
+		 */
 			date: function(id, date) { //完成时间
 				_sendRequest(Ibos.app.url("calendar/task/edit", {
 					op: "date",
@@ -81,7 +120,7 @@ $(function() {
 		param.formhash = Ibos.app.g('formHash');
 
 		$.post(url, param, function(res) {
-			callback && callback(res)
+			callback && callback(res);
 		}, "json");
 	}
 

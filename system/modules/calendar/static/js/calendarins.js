@@ -1,15 +1,23 @@
 // 在日程模块下， evt大多代表的是日程任务，而不是js事件
-// @Todo 实现更好的分离
 var Cld = {
+	// 主题
 	themes: [ "#3497DB", "#A6C82F", "#F4C73B", "#EE8C0C", "#E76F6F", "#AD85CC", "#98B2D1", "#82939E"],
+	// 日期格式
 	DATE_FORMAT: "YYYY-M-DD",
+	// 时间格式
 	TIME_FORMAT: "HH:mm",
+	// 完整时间格式
 	DATETIME_FORMAT: "YYYY-M-DD HH:mm",
-
+	// 创建日期节点
 	detailMenu: new Ui.Menu($("<div></div>").appendTo(document.body), { 
 		id: "cal_info_menu"
 	}),
-
+	/**
+	 * 显示详细目录
+	 * @method showDetailMenu
+	 * @param  {Object} evt   日期任务
+	 * @param  {Object} jsEvt 事件对象
+	 */
 	showDetailMenu: function(evt, jsEvt){
 		var _this = this;
 		this._timer = setTimeout(function(){
@@ -30,10 +38,15 @@ var Cld = {
 			_this.detailMenu.$menu.offset({
 				top: jsEvt.pageY,
 				left: jsEvt.pageX
-			})
+			});
 		}, 500);
 	},
-
+	/**
+	 * 隐藏详细目录
+	 * @method hideDetailMenu
+	 * @param  {Object} evt   日期任务
+	 * @param  {Object} jsEvt 事件对象
+	 */
 	hideDetailMenu: function(evt, jsEvt){
 		var _this = this;
 		clearTimeout(this._timer);
@@ -44,13 +57,16 @@ var Cld = {
 				if(!$.contains(jsEvt.currentTarget, e.toElement)) {
 					_this.detailMenu.hide();
 				}
-			})
+			});
 			return false;
 		}
 		this.detailMenu.hide();
 	},
-
-	// 将日程事件属性解析为ajax参数
+	/**
+	 * 将日程事件属性解析为ajax参数
+	 * @method _parseEvtToParam
+	 * @param  {Object} evt 日期任务
+	 */
 	_parseEvtToParam: function(evt){
 		var oldStartTime = (evt.prevStart ? evt.prevStart : evt.start).format(this.DATETIME_FORMAT) || null,
 			oldEndTime = (evt.prevEnd ? evt.prevEnd : evt.end).format(this.DATETIME_FORMAT) || null;
@@ -65,28 +81,30 @@ var Cld = {
 			IsAllDayEvent: +evt.allDay,
 			type: evt.type,
 			timezone: evt.start.zone()/-60
-		}
+		};
 
 		// 全天日程时，直接设置开始时分和结束时分为　"00:00:00"
 		if(ret.IsAllDayEvent) {
 			evt.start.hour(0).minute(0).second(0);
-			ret.CalendarStartTime = evt.start.format(this.DATETIME_FORMAT);
-			ret.CalendarEndTime = evt.end.format(this.DATETIME_FORMAT);
 		// 非全天日程时，格式为 "yyyy-MM-dd HH:mm:ss"
 		} else {
 			// 从全天日程移动到普通日程时，evt里的 end 属性为 null 导致出错
 			// 这是 fullcalendar1.1.0的bug，在新版本中已修复
 			// 不过由于修改过大，目前没办法快速升级
 			// 这里先使用 Hack 这种情况
-			
 			evt.end = evt.end || evt.start.clone().add(2, 'h');
-			ret.CalendarStartTime = evt.start.format(this.DATETIME_FORMAT);
-			ret.CalendarEndTime = evt.end.format(this.DATETIME_FORMAT);
 		}
+		ret.CalendarStartTime = evt.start.format(this.DATETIME_FORMAT);
+		ret.CalendarEndTime = evt.end.format(this.DATETIME_FORMAT);
 
 		return ret;
 	},
-
+	/**
+	 * 解析数据参数
+	 * @method _parseDataToParam
+	 * @param  {Object} evtData 日期数据
+	 * @return {Object}         返回相应的参数
+	 */
 	_parseDataToParam: function(evtData){
 		var start = moment(evtData.start),
 			end = moment(evtData.end);
@@ -101,9 +119,14 @@ var Cld = {
 			IsAllDayEvent: +evtData.allDay,
 			type: evtData.type,
 			timezone: start.zone()/-60
-		}
+		};
 	},
-
+	/**
+	 * 格式化时间间隔
+	 * @method formatInterval
+	 * @param  {[type]} evt [description]
+	 * @return {[type]}     [description]
+	 */
 	formatInterval: function(evt){
 		var LOCAL_DATE_FORMAT = U.lang("CAL.EVT_VIEW_FORMAT");
 		return evt.acrossDay ?
@@ -112,19 +135,33 @@ var Cld = {
 			evt.start.format(LOCAL_DATE_FORMAT) :
 			evt.start.format(LOCAL_DATE_FORMAT) + " " + evt.start.format(this.TIME_FORMAT) + " - " + evt.end.format(this.TIME_FORMAT);
 	},
-
+	/**
+	 * 保存上一次事件
+	 * @method saveEvtPrevTime
+	 * @param  {Object} evt 日期任务
+	 */
 	saveEvtPrevTime: function(evt){
 		evt.prevStart = new moment(evt.start);
 		evt.prevEnd = new moment(evt.end);
 	},
-
+	/**
+	 * 更新日期任务
+	 * @method updateEvt
+	 * @param  {Object} evt 日期任务
+	 */
 	updateEvt: function(evt){
-		Cldm.update(this._parseEvtToParam(evt), function(res){
+		Cldm.update(this._parseEvtToParam(evt)).done(function(res){
 			res.isSuccess && Ui.tip(U.lang("CAL.UPDATE_EVT_SUCCESS"));
 			evt.prevStart = evt.prevEnd = null;
 		});
 	},
-
+	/**
+	 * 删除日期任务
+	 * @method removeEvt
+	 * @param  {Object} evt     日期任务
+	 * @param  {Object} view    视图
+	 * @param  {Object} doption 
+	 */
 	removeEvt: function(evt, view, doption){
 		var _this = this;
 		doption = doption || "this"; // only after all
@@ -134,70 +171,70 @@ var Cld = {
 				type: evt.type,
 				doption: doption,
 				CalendarStartTime: evt.start.format(_this.DATETIME_FORMAT)
-			}, function(res) {
+			}).done(function(res) {
 				var evts = view.calendar.clientEvents();
 				var mid = evt.id.substr(11);
 				// 删除所有的周期性日程
-				if(doption === "all") {
+				if(doption === "all" || doption === "after" ) {// 删除后续的周期性日程
 					$.each(evts, function(i, e){
 						if(e.id.length > 11 && e.id.substr(11) == mid && e.start >= evt.start) {
 							view.calendar.removeEvents(e.id);
 						}
-					})
-				}
-				// 删除后续的周期性日程
-				else if(doption === "after" ){
-					$.each(evts, function(i, e){
-						if(e.id.length > 11 && e.id.substr(11) == mid && e.start >= evt.start) {
-							view.calendar.removeEvents(e.id);
-						}
-					})
-				} else {
+					});
+				}else {
 					view.calendar.removeEvents(evt.id);
 				}
 				res.isSuccess && Ui.tip(U.lang("CAL.REMOVE_EVT_SUCCESS"));
-			})
+			});
 		});
 	},
-
+	/**
+	 * 结束日期任务
+	 * @method finishEvt
+	 * @param  {Object}   evt        日期任务
+	 * @param  {Object}   view       视图
+	 * @param  {Function} [callback] 回调函数
+	 */
 	finishEvt: function(evt, view, callback){
-		var param = this._parseEvtToParam(evt);
-		if(evt.status == "1") {
-			Cldm.unfinish(param, function(res){
-				if(res.isSuccess) {
-					evt.status = "0";
-					evt.className = "";
-					view.calendar.updateEvent(evt);
-					callback && callback(evt);
-				}
-			});
-		} else {
-			Cldm.finish(param, function(res){
-				if(res.isSuccess) {
-					evt.status = "1";
-					evt.className = "fc-event-finish";
-					view.calendar.updateEvent(evt);
-					callback && callback(evt);
-				}
-			});
-		}
+		var param = this._parseEvtToParam(evt),
+			status = evt.status == "1";
+		Cldm[ status ? "unfinish" :"finish" ](param).done(function(res){
+			if(res.isSuccess) {
+				evt.status = status ? "0" : "1";
+				evt.className = status ? "" : "fc-event-finish";
+				view.calendar.updateEvent(evt);
+				callback && callback(evt);
+			}
+		});
 	},
-
+	/**
+	 * 保存日期任务
+	 * @method saveEvt
+	 * @param  {Object}   evt        日期任务
+	 * @param  {Object}   view       视图
+	 * @param  {Function} [callback] 回调函数
+	 */
 	saveEvt: function(evt, view, callback){
-		Cldm.update(this._parseEvtToParam(evt), function(res){
+		Cldm.update(this._parseEvtToParam(evt)).done(function(res){
 			if(res.isSuccess){
 				view.calendar.updateEvent(evt);
 				Ui.tip(U.lang("CAL.UPDATE_EVT_SUCCESS"));
 			}
-			callback && callback(res)
-		})
+			callback && callback(res);
+		});
 	},
-
+	/**
+	 * 创建日期任务
+	 * [createEvt description]
+	 * @param  {Object}   evt        日期任务
+	 * @param  {Object}   view       视图
+	 * @param  {Function} [callback] 回调函数
+	 */
 	createEvt: function(evt, view, callback){
 		evt.allDay = evt.end.diff(evt.start, "day", true) >= 1;
 		var param = this._parseEvtToParam(evt);
 
-		Cldm.add(param, function(res){
+		Cldm.add(param).done(function(res){
 			if(res.isSuccess) {
 				evt.id = res.data + "";
 				// view.calendar.renderEvent(evt, true)
@@ -205,9 +242,16 @@ var Cld = {
 				Ui.tip(U.lang("CAL.NEW_EVT_SUCCESS"));
 			}
 			callback && callback(res);
-		})
+		});
 	},
-
+	/**
+	 * 显示窗口
+	 * @mehtod showDialog
+	 * @param  {Object} evt   日期对象
+	 * @param  {Object} jsEvt 事件对象
+	 * @param  {Object} view  视图
+	 * @param  {String} op    操作
+	 */
 	showDialog: function(evt, jsEvt, view, op){
 		var _this = this,
 			dialog,
@@ -267,15 +311,10 @@ var Cld = {
 				evt.title = title;
 				evt.color = color || _this.themes[0];
 				evt.category = $.inArray(color, _this.themes);
-				if(evt.id) {
-					_this.saveEvt(evt, view, function(){
-						dialog.close();
-					});
-				} else {
-					_this.createEvt(evt, view, function(){
-						dialog.close();
-					});
-				}
+				
+				_this[evt.id ? "saveEvt" : "createEvt" ](evt, view, function(){
+					dialog.close();
+				});
 			}
 		});
 		
@@ -313,7 +352,7 @@ var Cld = {
 					if(!$.contains(wrap[0], e.target)) {
 						_this.close();
 					}
-				})
+				});
 			},
 			focus: false,
 			resize: false,
@@ -323,25 +362,26 @@ var Cld = {
 };
 
 var Cldm = {
-	parseEvtData: function(evts){
-		return $.map(evts, function(evt){
-			return $.extend(evt, {
-				allDay: evt.allDay == "1",     // 是否全天日程
-				acrossDay: evt.acrossDay == "1",  // 是否跨天日程
-				color: Cld.themes[(evt.category != "-1" ? evt.category : 0)], // 主题
-				editable: evt.editable == "1",   // 是否可编辑
-				className: evt.status == "1" ? "fc-event-finish" : "",
-			})
-		});
-	},
-	getAll: function(param, callback){
+	/**
+	 * 获取所有日期任务
+	 * @method getAll
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
+	getAll: function(param){
 		var mom = new moment();
 		param = $.extend({
 			timezone: mom.zone()/-60,
 			uid: Ibos.app.g("calSettings").uid
 		}, param);
-		$.post(Ibos.app.url("calendar/schedule/index", {"op": "list"}), param, callback, "json");
+		return $.post(Ibos.app.url("calendar/schedule/index", {"op": "list"}), param, $.noop, "json");
 	},
+	/**
+	 * 添加日期任务
+	 * @method add
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
 	add: function(param, callback){
 		param = $.extend({
 			timezone: (new moment).zone()/-60,
@@ -350,42 +390,94 @@ var Cldm = {
 			uid: Ibos.app.g("calSettings").uid
 		}, param);
 
-		$.post(Ibos.app.url("calendar/schedule/add"), param, callback, "json");
+		return $.post(Ibos.app.url("calendar/schedule/add"), param, $.noop, "json");
 	},
-	update: function(param, callback){
+	/**
+	 * 更新日期任务
+	 * @method update
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
+	update: function(param){
 		param = $.extend({
 			timezone: (new moment).zone()/-60,
 			Category: -1,
 			uid: Ibos.app.g("calSettings").uid
-		}, param)
-		$.post(Ibos.app.url("calendar/schedule/edit"), param, callback, "json");
+		}, param);
+		return $.post(Ibos.app.url("calendar/schedule/edit"), param, $.noop, "json");
 	},
-	remove: function(param, callback){
-		$.post(Ibos.app.url("calendar/schedule/del"), $.extend({
+	/**
+	 * 删除日期任务
+	 * @method remove
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
+	remove: function(param){
+		return $.post(Ibos.app.url("calendar/schedule/del"), $.extend({
 			uid: Ibos.app.g("calSettings").uid
-		}, param), callback, "json");
+		}, param), $.noop, "json");
 	},
+	/**
+	 * 结束日期任务
+	 * @method finish
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
 	finish: function(param, callback){
-		$.post(Ibos.app.url("calendar/schedule/edit", {"op": "finish"}), $.extend({
+		return $.post(Ibos.app.url("calendar/schedule/edit", {"op": "finish"}), $.extend({
 			uid: Ibos.app.g("calSettings").uid
-		}, param), callback, "json");
+		}, param), $.noop, "json");
 	},
-	unfinish: function(param, callback){
-		$.post(Ibos.app.url("calendar/schedule/edit", {"op": "nofinish"}), $.extend({
+	/**
+	 * 未结束日期任务
+	 * @method unfinish
+	 * @param  {Object} param 传入JSON格式数据
+	 * @param  {Object}       返回deffered对象
+	 */
+	unfinish: function(param){
+		return $.post(Ibos.app.url("calendar/schedule/edit", {"op": "nofinish"}), $.extend({
 			uid: Ibos.app.g("calSettings").uid
-		}, param), callback, "json");
+		}, param), $.noop, "json");
+	},
+	/**
+	 * 解析事件数据
+	 * @method parseEvtData
+	 * @param  {Object} evts 日期任务
+	 * @return {Object}      返回继承的参数
+	 */
+	parseEvtData: function(evts){
+		return $.map(evts, function(evt){
+			return $.extend(evt, {
+				allDay: evt.allDay == "1",     // 是否全天日程
+				acrossDay: evt.acrossDay == "1",  // 是否跨天日程
+				color: Cld.themes[(evt.category != "-1" ? evt.category : 0)], // 主题
+				editable: evt.editable == "1",   // 是否可编辑
+				className: evt.status == "1" ? "fc-event-finish" : "",
+			});
+		});
 	}
 };
 
 var op ={
+	/**
+	 * 获取日期数组
+	 * @method getCalendarArray
+	 * @param  {Object}   param      传入JSON格式数据
+	 * @param  {Function} [callback] 回调函数
+	 */
 	getCalendarArray : function(param,callback){
-		Cldm.getAll({ startDate: param.start, endDate: param.end, viewtype: param.type }, function(res){
+		Cldm.getAll({ startDate: param.start, endDate: param.end, viewtype: param.type }).done(function(res){
 			Ibos.app.s("calendarArray", res.events);
-		var	calendarArray = Cldm.parseEvtData(res.events);
+			var	calendarArray = Cldm.parseEvtData(res.events);
 			callback(calendarArray);
-
 		});
 	},
+	/**
+	 * 重置日期数组
+	 * @method resetCalendarArray
+	 * @param  {Array} array 日期数组
+	 * @return {Array}       日期数组
+	 */
 	resetCalendarArray : function(array){
 		var arryLength =  array.length,
 			resetArray = [],
@@ -402,11 +494,17 @@ var op ={
 				yearAndMonth: yearAndMonth,
 				start: start,
 				end: end
-			})
+			});
 			resetArray.push(data[i]);
 		}
 		return resetArray;
 	},
+	/**
+	 * 获取日期任务
+	 * @method getEvt
+	 * @param  {String} id 任务ID
+	 * @return {String}    任务ID
+	 */
 	getEvt: function(id){
 		var evtArr = Ibos.app.g("calendarArray");
 		if(evtArr && evtArr.length) {
@@ -418,6 +516,15 @@ var op ={
 };
 
 var calendar = {
+	/**
+	 * 获取新的模板
+	 * @method getNewTmpl
+	 * @param  {Object} $elem jquery节点对象
+	 * @param  {String} start 开始时间
+	 * @param  {String} end   结束时间
+	 * @param  {String} type  类型
+	 * @return {String}       模板
+	 */
 	getNewTmpl : function($elem, start, end, type){
 		if(type == "add"){
 			var startDay = moment(start).add(1,"month").format("YYYY-MM-DD"),
@@ -449,6 +556,7 @@ var calendar = {
 };
 
 $(function(){
+	// 设置日期参数
 	var settings = {
 		header: {
 			left: "today hehe",
@@ -494,10 +602,10 @@ $(function(){
 			Cld.updateEvt(evt);
 		},
 		eventMouseover: function(evt, jsEvt, view){
-			Cld.showDetailMenu(evt, jsEvt)
+			Cld.showDetailMenu(evt, jsEvt);
 		},
 		eventMouseout: function(evt, jsEvt, view){
-			Cld.hideDetailMenu(evt, jsEvt)
+			Cld.hideDetailMenu(evt, jsEvt);
 		},
 		events: function(start, end, timezone, callback){
 			var viewTypeMap = {
@@ -510,12 +618,12 @@ $(function(){
 				startDate: start.format(Cld.DATE_FORMAT),
 				endDate: end.format(Cld.DATE_FORMAT),
 				viewtype: viewTypeMap[this.getView().name],
-			}, function(res){
+			}).done(function(res){
 				var data = Cldm.parseEvtData(res.events);
 				callback(data);
 			});
 		}
-	}
+	};
 	if(Ibos.app.g("calSettings").minTime && Ibos.app.g("calSettings").minTime != 0) {
 		settings.minTime = moment([1970, 0, 1, Ibos.app.g("calSettings").minTime, 0, 0]).format("HH:mm:ss");
 	}
@@ -539,8 +647,8 @@ $(function(){
 
 				$.each(res, function(i, v){
 					if(v.name === "calviewinterval") {
-						interval = v.value.split(",")
-					} else if(v.name="calviewhiddenday"){
+						interval = v.value.split(",");
+					} else if( v.name == "calviewhiddenday"){
 						hiddenDays.push(+v.value);
 					}
 				});
@@ -639,10 +747,10 @@ $(function(){
 				param = Cld._parseDataToParam(evt),
 				liLength = $(".calendar-list li").length-1;
 
-			Cldm.remove(param, function(res){
+			Cldm.remove(param).done(function(res){
 				if(res.isSuccess){
 					//重置存储的全局数据
-					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }, function(res){
+					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }).done(function(res){
 						Ibos.app.s("calendarArray", res.events);
 					});
 
@@ -673,10 +781,10 @@ $(function(){
 				end = $range.attr("data-end"),
 				param = Cld._parseDataToParam(evt);
 
-			Cldm.finish(param, function(res){
+			Cldm.finish(param).done(function(res){
 				if(res.isSuccess){
 					//重置存储的全局数据
-					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }, function(res){
+					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }).done(function(res){
 						Ibos.app.s("calendarArray", res.events);
 					});
 
@@ -699,10 +807,10 @@ $(function(){
 				start = $range.attr("data-start"),
 				end = $range.attr("data-end"),
 				param = Cld._parseDataToParam(evt);
-			Cldm.unfinish(param, function(res){
+			Cldm.unfinish(param).done(function(res){
 				if(res.isSuccess){
 					//重置存储的全局数据
-					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }, function(res){
+					Cldm.getAll({ startDate: start, endDate: end, viewtype: "month" }).done(function(res){
 						Ibos.app.s("calendarArray", res.events);
 					});
 

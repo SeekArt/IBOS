@@ -460,4 +460,18 @@ class Diary extends Model {
         return $this->fetchAllSortByPk( 'diaryid', $criteria );
     }
 
+	public function checkUidIsShared( $uid, $diaryid ) {
+		$row = $this->findByPk( $diaryid );
+		$shareuidS = $row->attributes['shareuid'];
+		if ( !empty( $shareuidS ) ) {
+			$shareuidA = explode( ',', $shareuidS );
+		} else {
+			$shareuidA = array();
+		}
+		if ( in_array( $uid, $shareuidA ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

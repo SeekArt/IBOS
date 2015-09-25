@@ -30,16 +30,17 @@ var WbDash = {
 	 * @param  {Function} [callback] 回调函数
 	 */
 	removeAccess: function(ids, url, param, msg, callback) {
-		var that = this, send = function(u, p, c) {
-			p.formhash = Ibos.app.g('formHash');
-			$.post(u, p, function(res) {
-				if (res.isSuccess) {
-					that.removeItemsById(param.ids);
-					Ui.tip(Ibos.l("DELETE_SUCCESS"));
-					c && c(res);
-				}
-			}, 'json');
-		};
+		var that = this, 
+			send = function(u, p, c) {
+				p.formhash = Ibos.app.g('formHash');
+				$.post(u, p, function(res) {
+					if (res.isSuccess) {
+						that.removeItemsById(param.ids);
+						Ui.tip(Ibos.l("DELETE_SUCCESS"));
+						c && c(res);
+					}
+				}, 'json');
+			};
 		// 需要至少选中一项
 		if (ids) {
 			param.ids = ids;

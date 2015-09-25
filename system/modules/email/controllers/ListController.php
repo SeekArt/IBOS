@@ -45,6 +45,7 @@ class ListController extends BaseController {
             $op = 'inbox';
         }
         $data = $this->getListData( $op );
+ 
         $this->setPageTitle( IBOS::lang( 'Email center' ) );
         $this->setPageState( 'breadCrumbs', array(
             array( 'name' => IBOS::lang( 'Personal Office' ) ),

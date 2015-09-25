@@ -104,7 +104,7 @@ class PositionCategoryController extends OrganizationBaseController {
 	 */
 	public function actionDelete() {
 		$catid = Env::getRequest( 'catid' );
-		// 判断顶级分类少于一个不给删除
+		// 判断顶级分类少于一个不给删除 
 		$category = PositionCategory::model()->fetchByPk( $catid );
 		$supCategoryNum = PositionCategory::model()->countByAttributes( array( 'pid' => 0 ) );
 		if ( !empty( $category ) && $category['pid'] == 0 && $supCategoryNum == 1 ) {

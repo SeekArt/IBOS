@@ -158,7 +158,7 @@ use application\core\utils\Convert;
 															<span class="fss"><?php echo $user['mobile']; ?></span>
 														</td>
 														<td width="163">
-															<div class="w140">
+															<div class="mw140 ellipsis">
 																<span class="fss"><?php echo $user['email']; ?></span>
 															</div>
 														</td>                                                      

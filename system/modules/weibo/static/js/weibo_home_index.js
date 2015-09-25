@@ -24,9 +24,11 @@ HomeIndex.picUpload = function(){
 		$('<div class="wb-upload-modal" data-node-type="uploadModal"></div>')
 				.appendTo($picBox).fadeTo(1000, 0.5);
 		// showProgress
-		$('<div class="wb-upload-progress" data-node-type="uploadProgress"><div data-node-type="uploadProgressbar"></div> <span>上传中 <em data-node-type="uploadPercent">0%</em></span></div>')
-				.appendTo($picBox)
-				.find('[data-node-type="progressbar"]').progressbar();
+		var tmpl = '<div class="wb-upload-progress" data-node-type="uploadProgress">'+
+						'<div data-node-type="uploadProgressbar"></div> '+
+						'<span>上传中 <em data-node-type="uploadPercent">0%</em></span>'+
+					'</div>';
+		$(tmpl).appendTo($picBox).find('[data-node-type="progressbar"]').progressbar();
 	};
 	/**
 	 * 上传过程
@@ -95,6 +97,16 @@ HomeIndex.picUpload = function(){
 };
 
 $(function() {
+	// 右侧栏定位
+	(function() {
+		var $sb = $("#wb_sidebar"), 
+			$mn = $("#wb_home_mainer");
+		$sb.affixTo($mn);
+	})();
+
+	// 图片上传
+	HomeIndex.picUpload();
+
 	// 微博最大字数
 	var WBNUMS = Ibos.app.g('wbnums') || 200;
 	// 发布框
@@ -114,17 +126,6 @@ $(function() {
 	        window.location.href = Ibos.app.url('weibo/home/index', {feedkey: val, type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
 	    }
 	});
-
-
-	// 右侧栏定位
-	(function() {
-		var $sb = $("#wb_sidebar"), $mn = $("#wb_home_mainer");
-		$sb.affixTo($mn);
-	})();
-
-
-	// 图片上传
-	HomeIndex.picUpload();
 
 	// 发布类型
 	var publishPicType = false;
@@ -211,22 +212,23 @@ $(function() {
 		},
 		// 图片内容
 		"pic": function(param, elem) {
-			var $elem = $(elem), $picBox = $elem.closest("[data-node-type='publishWrap']").find("[data-node-type='picBox']");
+			var $elem = $(elem), 
+				$picBox = $elem.closest("[data-node-type='publishWrap']").find("[data-node-type='picBox']");
 			$elem.toggleClass("active");
 			publishPicType = !publishPicType;
 			$picBox.toggle();
 		},
 		// 右栏快速关注
 		"quickFollow": function(param, elem) {
-			var $elem = $(elem), $followBox = $elem.closest("[data-node-type='quickFollowBox']");
+			var $elem = $(elem), 
+				$followBox = $elem.closest("[data-node-type='quickFollowBox']");
 			$elem.button("loading");
-			// @Debug: 测试数据
 			// 这里一个请求，处理了关注和返回新推荐用户数据
 			// 如果后台实现不方便可分成两次请求
 			$.get("system/modules/weibo/views/t_newpush.php", param, function(res) {
 				// 此处关注成功后，如果有其他的推荐用户，会替代节点
 				if (res.isSuccess) {
-					$elem.button("reset").html("已关注");
+					$elem.button("reset").html(Ibos.l("FOLLOWED"));
 					if (res.data) {
 						$followBox.replaceWith(res.data);
 					} else {

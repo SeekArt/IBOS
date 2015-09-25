@@ -160,7 +160,7 @@ class DefaultController extends Controller {
 		if ( !$passWord || $passWord != addslashes( $passWord ) ) {
 			$this->error( util\IBOS::lang( 'Passwd illegal' ) );
 		}
-		$errornum = $this->loginCheck( $account );
+		$errornum = $this->loginCheck( $account, $userName );
 		// 日志
 		$ip = util\IBOS::app()->setting->get( 'clientip' );
 		// 开始验证

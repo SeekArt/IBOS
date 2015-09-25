@@ -73,7 +73,8 @@ use application\modules\user\utils\User;
 <script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>'></script>
 <script src="<?php echo STATICURL; ?>/js/lib/ueditor/editor_config.js"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/ueditor/editor_all_min.js"></script>
-<script src='<?php echo $assetUrl; ?>/js/singlePage.js?<?php echo VERHASH; ?>'></script>				
+<script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>  
+<script src='<?php echo $assetUrl; ?>/js/main_page_loaded.js?<?php echo VERHASH; ?>'></script>				
 <script>
     Ibos.app.setPageParam({
         "assetUrl": "<?php echo $assetUrl; ?>"

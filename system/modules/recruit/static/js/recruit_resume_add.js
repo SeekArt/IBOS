@@ -44,7 +44,7 @@ $(function() {
 					});
 				}
 			}
-		};
+		}
 	};
 
 	initCustomValidator("resume_form", $.parseJSON(Ibos.app.g("resumeFieldRule")), $.parseJSON(Ibos.app.g("resumeFieldRuleRegex")));
