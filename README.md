@@ -41,7 +41,7 @@ IBOS 是一个基于PHP开发，免费开源的，快速、高效的协同办公
 ## 帮助文档
 
 * 使用说明： http://doc.ibos.com.cn
-* 技术文档： http://doc.ibos.com.cn/article/lists/category/dev
+* 技术文档： http://doc.ibos.com.cn/ibosopen
 * 客户端：   http://www.ibos.cn
 * 讨论区：   http://bbs.ibos.com.cn/
 * 交流群：   346679925
