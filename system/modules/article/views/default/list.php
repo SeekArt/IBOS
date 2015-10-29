@@ -142,7 +142,7 @@ use application\modules\main\utils\Main;
 								</td>
 								<td>
 									<a href="<?php echo $this->createUrl( 'default/index', array( 'op'=>'show','articleid' => $data['articleid'] ) ); ?>" 
-									   class="art-list-title"><?php echo $data['subject']; ?></a>
+									   class="art-list-title" target="_blank"><?php echo $data['subject']; ?></a>
 									<!-- 当置顶时显示下面图标 -->
 									<?php if($data['istop']==1){ ?>
 									<span class="o-art-top"></span>

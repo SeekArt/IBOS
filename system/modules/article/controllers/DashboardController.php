@@ -1,5 +1,12 @@
 <?php
 
+namespace application\modules\article\controllers;
+
+use application\core\utils\Cache;
+use application\core\utils\IBOS;
+use application\modules\dashboard\controllers\BaseController;
+use application\modules\main\model\Setting;
+
 /**
  * 信息中心后台控制器------ 后台控制器文件
  *
@@ -14,14 +21,6 @@
  * @version $Id: DashboardController.php 639 2013-06-20 09:42:12Z gzwwb $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
-
-namespace application\modules\article\controllers;
-
-use application\core\utils\Cache;
-use application\core\utils\IBOS;
-use application\modules\dashboard\controllers\BaseController;
-use application\modules\main\model\Setting;
-
 class DashboardController extends BaseController {
 
     public function getAssetUrl( $module = '' ) {

@@ -1,19 +1,5 @@
 <?php
 
-/**
- * 信息中心模块------文章默认控制器文件
- *
- * @link http://www.ibos.com.cn/
- * @copyright Copyright &copy; 2008-2013 IBOS Inc
- * @author gzwwb <gzwwb@ibos.com.cn>
- */
-/**
- * 信息中心模块------文章默认控制器，继承BaseController
- * @package application.modules.article.components
- * @version $Id: DefaultController.php 5175 2015-06-17 13:25:24Z Aeolus $
- * @author gzwwb <gzwwb@ibos.com.cn>
- */
-
 namespace application\modules\article\controllers;
 
 use application\core\utils as util;
@@ -34,6 +20,20 @@ use application\modules\vote\model\VoteItem;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 use application\core\model\Log;
+
+/**
+ * 信息中心模块------文章默认控制器文件
+ *
+ * @link http://www.ibos.com.cn/
+ * @copyright Copyright &copy; 2008-2013 IBOS Inc
+ * @author gzwwb <gzwwb@ibos.com.cn>
+ */
+/**
+ * 信息中心模块------文章默认控制器，继承BaseController
+ * @package application.modules.article.components
+ * @version $Id: DefaultController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @author gzwwb <gzwwb@ibos.com.cn>
+ */
 
 class DefaultController extends BaseController {
 
@@ -305,8 +305,8 @@ class DefaultController extends BaseController {
              * @TODO 新闻创建统计
              */
             $log = array(
-                'user' => Ibos::app()->user->username,
-                'ip' => Ibos::app()->setting->get('clientip')
+                'user' => IBOS::app()->user->username,
+                'ip' => IBOS::app()->setting->get('clientip')
                 , 'isSuccess' => 1
             );
             Log::write($log, 'action', 'module.article.default.add');

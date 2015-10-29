@@ -217,7 +217,7 @@ class DefaultController extends Controller {
 			} else if ( $result === -2 ) {
 				$this->error( util\IBOS::lang( 'User disabled', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
 			} else if ( $result === -3 ) {
-				FailedLogin::model()->updateFailed( $ip );
+				FailedLogin::model()->updateFailed( $userName );
 				list($ip1, $ip2) = explode( '.', $ip );
 				$newIp = $ip1 . '.' . $ip2;
 				FailedIp::model()->insertIp( $newIp );

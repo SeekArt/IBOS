@@ -1,5 +1,13 @@
 <?php
 
+namespace application\modules\article\controllers;
+
+use application\core\utils\IBOS;
+use application\core\utils\Env;
+use application\modules\article\core\ArticleCategory;
+use application\modules\article\model\ArticleCategory as CateModel;
+use application\modules\dashboard\model\Approval;
+
 /**
  * 信息中心模块------ 分类控制器文件
  *
@@ -14,14 +22,6 @@
  * @version $Id: CategoryController.php 5175 2015-06-17 13:25:24Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
-
-namespace application\modules\article\controllers;
-
-use application\core\utils\IBOS;
-use application\core\utils\Env;
-use application\modules\article\core\ArticleCategory;
-use application\modules\article\model\ArticleCategory as CateModel;
-use application\modules\dashboard\model\Approval;
 
 class CategoryController extends BaseController {
 

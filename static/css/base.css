@@ -1542,9 +1542,9 @@ input[type="button"].btn-block {
 }
 .btn.active,
 .btn:active {
-  background: #f1f1f1;
-  -webkit-box-shadow: inset 0 1px 1px #e4e4e4;
-  box-shadow: inset 0 1px 1px #e4e4e4;
+  background: #e6e6e6;
+  -webkit-box-shadow: inset 0 1px 1px #adadad;
+  box-shadow: inset 0 1px 1px #adadad;
 }
 .btn.disabled:hover,
 .btn[disabled]:hover,
@@ -1567,12 +1567,6 @@ fieldset[disabled] .btn:active {
   -webkit-box-shadow: 0 1px 2px #e8eaeb, inset 0 1px 0 #ffffff;
   box-shadow: 0 1px 2px #e8eaeb, inset 0 1px 0 #ffffff;
   border-color: #dadce6;
-}
-.btn.active,
-.btn:active {
-  background: #f1f1f1;
-  -webkit-box-shadow: inset 0 1px 1px #e4e4e4;
-  box-shadow: inset 0 1px 1px #e4e4e4;
 }
 .btn-primary {
   background-color: #3497db;
@@ -5049,8 +5043,8 @@ a.badge:focus {
   background-position: -170px -90px;
 }
 /* 
-	component.css
-	一些组件样式或基本组件的样式 
+  component.css
+  一些组件样式或基本组件的样式 
 */
 
 /* 此样式用来解决开关在初始化前会出现短时间checkbox状态的问题 */
@@ -5061,16 +5055,16 @@ input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
 
 /* popover */
 .popover-w{
-	-webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
-	box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
-	background-color: #FFF;
-	color: #82939E;
-	max-width: none;
-	border-color: #DADFE6;
+  -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .15);
+  background-color: #FFF;
+  color: #82939E;
+  max-width: none;
+  border-color: #DADFE6;
 }
 .popover-w .popover-title{
-	background-color: #FFF;
-	border-color: #FFF;
+  background-color: #FFF;
+  border-color: #FFF;
 }
 .popover-w.bottom .arrow:after { border-bottom-color: #FFF; }
 .popover-w.right .arrow:after{ border-right-color: #FFF; }
@@ -5090,18 +5084,18 @@ input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
 .datepicker { position: relative;}
 .datepicker .datepicker-input{ padding-right: 40px; background-color: #FFF; }
 .datepicker .datepicker-btn {
-	border-radius: 4px; 
-	position: absolute;
-	top: 5px;
-	right: 5px;
-	width: 30px; 
-	height: 30px;
-	background: #EBEDF0 url("../image/component.png") no-repeat 5px -245px;
+  border-radius: 4px; 
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 30px; 
+  height: 30px;
+  background: #EBEDF0 url("../image/component.png") no-repeat 5px -245px;
 }
 .datepicker .datepicker-btn:hover,
 .datepicker .datepicker-btn.active{
-	background-color: #3497DB;
-	background-position: -35px -245px;
+  background-color: #3497DB;
+  background-position: -35px -245px;
 }
 .datepicker-small .datepicker-btn,
 .datepicker-small .datepicker-btn:hover,
@@ -5121,25 +5115,25 @@ input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
 .ajax-pagination{ height: 40px; }
 .ajax-pagination .pagination > a,
 .ajax-pagination .pagination > span{
-	-webkit-transition: background linear 0.1s;
-	-moz-transition: background linear 0.1s;
-	-o-transition: background linear 0.1s;
-	transition: background linear 0.1s;
-	border-radius: 4px;
-	float: left;
-	margin-right: 5px;
-	padding: 5px 11px;
-	line-height: 20px;
-	text-decoration: none;
-	color: #829393;
-	font-weight: 700;
-	font-family: Arial, 'Microsoft Yahei';
-	background-color: #FFF;
+  -webkit-transition: background linear 0.1s;
+  -moz-transition: background linear 0.1s;
+  -o-transition: background linear 0.1s;
+  transition: background linear 0.1s;
+  border-radius: 4px;
+  float: left;
+  margin-right: 5px;
+  padding: 5px 11px;
+  line-height: 20px;
+  text-decoration: none;
+  color: #829393;
+  font-weight: 700;
+  font-family: Arial, 'Microsoft Yahei';
+  background-color: #FFF;
 }
 .ajax-pagination .pagination > a:hover,
 .ajax-pagination .pagination > span.current{
-	background-color: #3497db;
-	color: #FFF;
+  background-color: #3497db;
+  color: #FFF;
 }
 .ajax-pagination .pagination .pagination-controll{ padding: 0 5px; }
 .ajax-pagination .pagination .pager{ padding: 0 10px; }
@@ -5866,24 +5860,24 @@ div.jGrowl div.jGrowl-notification.primary {
   height: 300px;
   overflow: auto;
   /* for Ie
-		scrollBar-face-color: green; 
-		scrollBar-hightLight-color: red; 
-		scrollBar-3dLight-color: orange; 
-		scrollBar-darkshadow-color:blue; 
-		scrollBar-shadow-color:yellow; 
-		scrollBar-arrow-color:purple; 
-		scrollBar-track-color:black; 
-		scrollBar-base-color:pink;
-		*/
+    scrollBar-face-color: green; 
+    scrollBar-hightLight-color: red; 
+    scrollBar-3dLight-color: orange; 
+    scrollBar-darkshadow-color:blue; 
+    scrollBar-shadow-color:yellow; 
+    scrollBar-arrow-color:purple; 
+    scrollBar-track-color:black; 
+    scrollBar-base-color:pink;
+    */
   /* for webkit
-		-webkit-scrollbar: red; //滚动条整体部分
-		-webkit-scrollbar-button: green; //滚动条两端的按钮
-		-webkit-scrollbar-track //外层轨道
-		-webkit-scrollbar-track-piece// 内层轨道，滚动条中间部分（除去）
-		-webkit-scrollbar-thumb //（拖动条？滑块？滚动条里面可以拖动的那个，肿么翻译好呢？）
-		-webkit-scrollbar-corner //边角
-		-webkit-resizer //定义右下角拖动块的样式
-		*/
+    -webkit-scrollbar: red; //滚动条整体部分
+    -webkit-scrollbar-button: green; //滚动条两端的按钮
+    -webkit-scrollbar-track //外层轨道
+    -webkit-scrollbar-track-piece// 内层轨道，滚动条中间部分（除去）
+    -webkit-scrollbar-thumb //（拖动条？滑块？滚动条里面可以拖动的那个，肿么翻译好呢？）
+    -webkit-scrollbar-corner //边角
+    -webkit-resizer //定义右下角拖动块的样式
+    */
 }
 .select-box-mainer-aside {
   background-color: #f9fbff;
@@ -6041,20 +6035,20 @@ div.jGrowl div.jGrowl-notification.primary {
 .co-clock,
 .co-close
 {
-	display: inline-block;
-	width: 30px;
-	height: 30px;
-	background-image: url(../image/btn_icon.png);
-	background-repeat: no-repeat;
-	vertical-align: middle;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background-image: url(../image/btn_icon.png);
+  background-repeat: no-repeat;
+  vertical-align: middle;
 }
 .o-message {
-	background-position: 0 -80px;
-	direction: ltr;
-	text-indent: -9999px;
+  background-position: 0 -80px;
+  direction: ltr;
+  text-indent: -9999px;
 }
 .o-message:hover{
-	background-position: 0 -120px;
+  background-position: 0 -120px;
 }
 a:hover .o-plus,
 .o-plus:hover,
@@ -6280,8 +6274,8 @@ a:hover .o-form-design,
 .o-sl16-clock{ background-position: -32px 0; }
 .o-slr16-clock{ background-position: -32px -32px; }
 /* 
-	short.css
-	短类
+  short.css
+  短类
 */
 
 /*------------------------------------------------------------------------------- Short */
@@ -6295,37 +6289,52 @@ a:hover .o-form-design,
 .posa-tr{ position: absolute; top: 0; right: 0; }
 
 .mb{ margin-bottom: 20px; }
+.mbh{ margin-bottom: 15px; }
 .mbs{ margin-bottom: 10px; }
 .mbm{ margin-bottom: 5px;}
 .mbz{ margin-bottom: 0!important; }
 
-.mtz{ margin-top: 0; }
-.mtm{ margin-top: 5px; }
+.mt{ margin-top: 20px; }
+.mth{ margin-top: 15px; }
 .mts{ margin-top: 10px; }
+.mtm{ margin-top: 5px; }
+.mtz{ margin-top: 0!important;; }
 
 .ml{ margin-left: 20px; }
+.mlh{ margin-left: 15px; }
 .mls{ margin-left: 10px; }
 .mlm{ margin-left: 5px; }
+.mlz{ margin-left: 0!important; }
+
+.mr{ margin-right: 20px; }
+.mrh{ margin-right: 15px; }
+.mrs{ margin-right: 10px; }
+.mrm{ margin-right: 5px; }
+.mrz{ margin-right: 0!important; }
 
 .pt{ padding-top: 20px; }
 .pth{ padding-top: 15px; }
 .pts{ padding-top: 10px; }
 .ptm{ padding-top: 5px; }
+.ptz{ margin-left: 0!important; }
 
 .pb{ padding-bottom: 20px; }
 .pbh{ padding-bottom: 15px; }
 .pbs{ padding-bottom: 10px; }
 .pbm{ padding-bottom: 5px; }
+.pbz{ margin-left: 0!important; }
 
 .pl{ padding-left: 20px; }
 .plh{ padding-left: 15px; }
 .pls{ padding-left: 10px; }
 .plm{ padding-left: 5px; }
+.plz{ margin-left: 0!important; }
 
 .pr{ padding-right: 20px; }
 .prh{ padding-right: 15px; }
 .prs{ padding-right: 10px; }
 .prm{ padding-right: 5px; }
+.prz{ margin-left: 0!important; }
 
 
 .ovh{ overflow: hidden; }
@@ -6364,21 +6373,21 @@ a:hover .o-form-design,
 .vam { vertical-align: middle; }
 
 .summary{
-	font-size: 12px;
-	line-height: 24px;
+  font-size: 12px;
+  line-height: 24px;
 }
 
 
 /* shadow inset 用作内饰线 */
 .sdi{
-	-webkit-box-shadow: inset 0 1px 0 #FFF;
-	-moz-box-shadow: inset 0 1px 0 #FFF;
-	box-shadow: inset 0 1px 0 #FFF;
+  -webkit-box-shadow: inset 0 1px 0 #FFF;
+  -moz-box-shadow: inset 0 1px 0 #FFF;
+  box-shadow: inset 0 1px 0 #FFF;
 }
 .sdil{
-	-webkit-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
-	-moz-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
-	box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+  -webkit-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+  -moz-box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
+  box-shadow: inset 0 1px 0 rgba(235, 239, 246, 0.4);
 }
 
 /* 颜色 */
@@ -6426,27 +6435,27 @@ input.xcgn{ color: #7CB81C; } /*Green*/
 
 .bdrt,
 .rdt{ 
-	-webkit-border-top-left-radius:  4px;
-	-webkit-border-top-right-radius:  4px;
-	-moz-border-top-left-radius:  4px;
-	-moz-border-top-right-radius: 4px;
-	border-top-left-radius:  4px;
-	border-top-right-radius: 4px; 
+  -webkit-border-top-left-radius:  4px;
+  -webkit-border-top-right-radius:  4px;
+  -moz-border-top-left-radius:  4px;
+  -moz-border-top-right-radius: 4px;
+  border-top-left-radius:  4px;
+  border-top-right-radius: 4px; 
 }
 .bdrb,
 .rdb{
-	-webkit-border-bottom-left-radius:  4px;
-	-webkit-border-bottom-right-radius:  4px;
-	-moz-border-bottom-left-radius:  4px;
-	-moz-border-bottom-right-radius: 4px;
-	border-bottom-left-radius:  4px;
-	border-bottom-right-radius: 4px; 
+  -webkit-border-bottom-left-radius:  4px;
+  -webkit-border-bottom-right-radius:  4px;
+  -moz-border-bottom-left-radius:  4px;
+  -moz-border-bottom-right-radius: 4px;
+  border-bottom-left-radius:  4px;
+  border-bottom-right-radius: 4px; 
 }
 
 .ellipsis{
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .o16,

@@ -1,5 +1,15 @@
 <?php
 
+
+namespace application\modules\article\controllers;
+
+use application\core\controllers\Controller;
+use application\core\utils\IBOS;
+use application\core\utils\Module;
+use application\core\utils\String;
+use application\modules\article\core\ArticleCategory;
+use application\modules\dashboard\model\Approval;
+
 /**
  * 文章模块------ 基类控制器文件
  *
@@ -13,16 +23,6 @@
  * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
-
-namespace application\modules\article\controllers;
-
-use application\core\controllers\Controller;
-use application\core\utils\IBOS;
-use application\core\utils\Module;
-use application\core\utils\String;
-use application\modules\article\core\ArticleCategory;
-use application\modules\dashboard\model\Approval;
-
 class BaseController extends Controller {
 
     /**

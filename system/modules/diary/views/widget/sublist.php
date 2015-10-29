@@ -13,7 +13,7 @@ use application\modules\diary\utils\Diary;
 						<span class="o-caret dept" data-action="toggleUnderlingsList"><i class="caret"></i></span>
 						<a href="<?php echo $this->getController()->createUrl( $deptRoute, array( 'uid' => $dept['subUids'] ) ); ?>">
 							<i class="o-org"></i>
-							<?php echo $dept['deptname']; ?>
+                            <?php echo isset( $dept['deptname'] ) ? $dept['deptname'] : '暂无'; ?>
 						</a>
 					</div>
 					<ul class="mng-scd-list">
@@ -93,7 +93,7 @@ use application\modules\diary\utils\Diary;
 	//查看所有下属
 	$("#mng_list").on("click", ".view-all", function() {
 		var $el = $(this);
-		$.get('<?php echo $this->getController()->createUrl( 'review/index', array( 'op' => 'getsubordinates', 'item' => '99999',  'act' => $fromController ) ) ?>', {uid: $el.attr('data-uid')}, function(data) {
+        $.get('<?php echo $this->getController()->createUrl( 'review/index', array( 'op' => 'getsubordinates', 'item' => '99999', 'act' => $fromController ) ) ?>', {uid: $el.attr('data-uid')}, function(data) {
 			$el.parent().replaceWith(data);
 		});
 	});

@@ -411,11 +411,11 @@ Class ScheduleController extends BaseController {
 			foreach ( $users as $user ) {
 				if ( $num < $item )
 					$htmlStr.='<li class="mng-item sub">
-                                            <a href="' . $this->createUrl( 'schedule/subSchedule', array( 'uid' => $user['uid'] ) ) . '">
+                                            <a href="' . $this->createUrl('schedule/subSchedule', array('uid' => $user['uid'])) . '">
                                                 <img src="' . $user['avatar_middle'] . '" alt="">
                                                 ' . $user['realname'] . '
-												<a href="' . $this->createUrl( 'schedule/subschedule', array( 'uid' => $user['uid'] ) ) . '" class="o-cal-calendar pull-right mlm" title="日程"></a>
-												<a href="' . $this->createUrl( 'task/subtask', array( 'uid' => $user['uid'] ) ) . '" class="o-cal-todo pull-right" title="任务"></a>
+												<a href="' . $this->createUrl('schedule/subschedule', array('uid' => $user['uid'])) . '" class="o-cal-calendar pull-right mlm" title="日程"></a>
+												<a href="' . $this->createUrl('task/subtask', array('uid' => $user['uid'])) . '" class="o-cal-todo pull-right" title="任务"></a>
                                             </a>
 											
                                         </li>';

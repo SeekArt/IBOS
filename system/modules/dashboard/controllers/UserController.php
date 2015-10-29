@@ -79,7 +79,7 @@ class UserController extends OrganizationBaseController {
 			//这里存在有keyword单引号SQL错误
 			$key = addslashes( $_POST['keyword'] );
 			$condition = User::model()->getConditionByDeptIdType( false, $type );
-			$list = User::model()->fetchAll( "(`username` LIKE '%{$key}%' OR `realname` LIKE '%{$key}%') AND " . $condition );
+			$list = User::model()->fetchAll( "( `username` LIKE '%{$key}%' OR `realname` LIKE '%{$key}%' OR `mobile` LIKE '%{$key}%' ) AND " . $condition );
 		} else {
 			$count = User::model()->countByDeptIdType( $deptId, $type );
 			$pages = Page::create( $count );

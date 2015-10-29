@@ -121,11 +121,13 @@ use application\modules\vote\components\Vote;
 							<label for="status"><?php echo $lang['Information Status']; ?></label>
 							<div>
 								<div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
-									<label class="btn active" <?php if($aitVerify != 0): ?>style="display:none"<?php endif; ?>>
+									<?php if($aitVerify == 0): ?>
+									<label class="btn active">
 										<input type="radio" name="status" value="2" <?php if($aitVerify == 0): ?>checked<?php endif;?>>
 										<?php echo IBOS::lang( 'Wait verify' ); ?>
 									</label>
-									<label class="btn active" <?php if($aitVerify != 1): ?>style="display:none"<?php endif; ?>>
+									<?php endif; ?>
+									<label class="btn active" <?php if($aitVerify != 1): ?>style="display:none;"<?php endif; ?>>
 										<input type="radio" name="status" value="1" <?php if($aitVerify == 1): ?>checked<?php endif;?>>
 										<?php echo IBOS::lang( 'Publish' ); ?>
 									</label>

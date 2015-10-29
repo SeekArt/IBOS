@@ -62,6 +62,7 @@ var ArticleShow = {
 			}
 		};
 
+
 		// 加载查阅人员情况
 		$("#isread_tab").on("shown", function(){
 			var articleid = $('#articleid').val(),
@@ -74,7 +75,7 @@ var ArticleShow = {
 					$("#isread").append(moreHtml);	
 				}
 			});
-		});
+		}).trigger("shown");
 
 		// 展开所有阅读人员
 		$(document).on('click', '.reader-all', function() {

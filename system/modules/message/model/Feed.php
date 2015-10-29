@@ -803,9 +803,9 @@ class Feed extends Model {
 		// 获取作者信息
 		$user = User::model()->fetchByUid( $_data['uid'] );
 		// 处理数据
-		$_data['data'] = unserialize( $_data['feeddata'] );
+        $_data['data'] = @unserialize( $_data['feeddata'] );
 		// 模版变量赋值
-		$var = $_data['data'];
+        $var = isset( $_data['data'] ) ? $_data['data'] : array();
 		if ( !empty( $var['attach_id'] ) ) {
 			$var['attachInfo'] = util\Attach::getAttach( $var['attach_id'] );
 			$attachUrl = util\File::getAttachUrl();

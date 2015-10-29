@@ -219,7 +219,7 @@ var ArticleAdd = {
 
 			        if(results){
 			        	// 没有协议前缀，自动补全
-			        	window.open(results[1] ? url : "http://" + url);
+			        	window.open(results[1] ? url : "http://" + url, "_blank");
 			        } else {
 			        	Ui.tip(U.lang("RULE.URL_INVALID_FORMAT"), "warning")
 			        }

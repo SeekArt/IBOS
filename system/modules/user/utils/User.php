@@ -160,10 +160,29 @@ class User {
 	 * 导出用户xml格式
 	 * @param mixed $uids
 	 */
+//	public static function exportUser( $uids ) {
+//		$users = UserModel\User::model()->fetchAllByUids( $uids );
+//		$xmlContents = Xml::arrayToXml( $users );
+//		$xmlName = date( 'Y-m-d' ) . '-user';
+//		if ( ob_get_length() ) {
+//			ob_end_clean();
+//		}
+//		header( "Cache-control: private" );
+//		header( "Content-type: text/xml" );
+//		header( "Content-Disposition: attachment; filename= {$xmlName}.xml" );
+//		exit( $xmlContents );
+//	}
+	
+	/**
+	 * 导出用户Excel格式
+	 * 浏览器直接输出文件
+	 * @param type $uids 所选择用户ID
+	 */
 	public static function exportUser( $uids ) {
 		set_time_limit( 0 );
 		$users = UserModel\User::model()->fetchAllByUids( $uids );
 		$usersData = self::fetchAttributeByUser( $users );
+		//导出表格头信息，要跟所导出数据一一对应
 		$header = array(
 			'用户名', '工号', '真实名字',
 			'密码', '性别', '微信号', '手机号',
@@ -846,6 +865,7 @@ class User {
 				break;
 			case '0': // 一天
 				$cookieTime = 86400;
+                break;
 			default:
 				$cookieTime = 0;
 				break;

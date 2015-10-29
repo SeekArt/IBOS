@@ -268,9 +268,7 @@ class Controller extends CController {
             //判断jumpUrl是否为空，如果是空的话在错误提示页面会不停地重复跳转
             //默认跳转回到网站首页
             if ( empty( $params['jumpUrl'] ) ) {
-                    $params['jumpUrl'] = (intval( $_SERVER['SERVER_PORT'] ) == 80) ?
-                                    $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] :
-                                    $_SERVER['REQUEST_SCHEME'] . ':' . $_SERVER['SERVER_PORT'] . '//' . $_SERVER['SERVER_NAME'];
+                $params['jumpUrl'] = '/';
             }//15-7-27 下午1:51 gzdzl
             // 渲染视图
             $viewPath = $basePath = IBOS::app()->getViewPath();

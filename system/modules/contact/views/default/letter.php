@@ -66,7 +66,7 @@ use application\core\utils\Env;
 															<span class="fss"><?php echo $user['posname']; ?></span>
 														</td>
 														<td width="120">
-															<span class="fss"><?php echo $user['telephone']; ?></span>
+                                                            <span class="fss"><?php echo isset( $user['telephone'] ) ? $user['telephone'] : ''; ?></span>
 														</td>
 														<td width="133">
 															<span class="fss"><?php echo $user['mobile']; ?></span>

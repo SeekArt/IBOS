@@ -1,16 +1,14 @@
 <?php
 
-/**
- *  author:banyan
- */
-
 namespace application\modules\article\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\String;
-
+/**
+ * 评论处理类
+ */
 class CommentController extends Controller {
 
 	/**
