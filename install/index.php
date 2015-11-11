@@ -431,9 +431,9 @@ if ( $option == 'envCheck' or $option == 'dbInit' ) { // 检测环境
 			$dbInitData['adminPassword'] = '';
 		} else {
 			$dbInitData = array(
-				'username' => '', // 数据库用户名
-				'password' => '', // 数据库密码
-				'host' => 'localhost', // 数据库服务器
+				'username' => 'root', // 数据库用户名
+				'password' => 'root', // 数据库密码
+				'host' => '127.0.0.1', // 数据库服务器
 				'port' => '', // 端口
 				'dbname' => 'ibos', // 数据库名
 				'tableprefix' => 'ibos_', // 数据表前缀

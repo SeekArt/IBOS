@@ -130,7 +130,7 @@
 														echo ':' . $dbInitData['port'];
 													}
 													?>">
-													<span class="write-tip">一般为localhost</span>
+													<span class="write-tip">一般为127.0.0.1,比localhost快</span>
 												</div>
 											</div>
 											<div class="control-group">
