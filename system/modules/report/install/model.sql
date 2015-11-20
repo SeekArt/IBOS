@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS {{report_statistics}} (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO {{setting}} (`skey` ,`svalue`) VALUES ('reportconfig', 'a:6:{s:16:"reporttypemanage";s:0:"";s:11:"stampenable";i:1;s:11:"pointsystem";i:5;s:12:"stampdetails";s:40:"0:10,0:9,0:8,0:7,0:6,4:5,5:4,2:3,1:2,8:1";s:10:"autoreview";i:1;s:15:"autoreviewstamp";i:1;}');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','总结计划','report/default/index','0','1','0','2','report');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','总结计划','report/default/index','0','1','0','5','report');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('总结计划','0','report','dashboard','index','','10','0');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('report_message','工作总结与计划消息提醒','report','report/default/New message title','report/default/New message content','1','1','1','2');
 INSERT INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表工作总结与计划', 'addreport', '3', '2', '0', '2','1');

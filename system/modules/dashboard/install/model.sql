@@ -305,6 +305,7 @@ INSERT INTO `{{syscode}}` VALUES ('88', '78', 'CAMERA', '88', '相机', '1', 'ca
 INSERT INTO `{{syscode}}` VALUES ('89', '78', 'SLIDE', '89', '幻灯片', '1', 'slide.png');
 
 INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('1', '0', '首页', 'javascript:void(0)', '0', '1', '0', '1','','0', '0');
+INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('2', '0', '个人办公', 'javascript:void(0)', '0', '1', '0', '3','','0', '0');
 
 
 INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('10', '1', '个人门户', 'weibo/home/index', '0', '1', '0', '2','','0', '0');

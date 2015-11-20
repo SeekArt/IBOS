@@ -71,7 +71,7 @@ INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `content
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('calendar_message','日程消息提醒','calendar','calendar/default/New schedule message title','calendar/default/New schedule message content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('task_message','任务消息提醒','calendar','calendar/default/New task message title','calendar/default/New task message content','1','1','1','2');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('日程安排','0','calendar','dashboard','index','','11','0');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','日程','calendar/schedule/index','0','1','0','3','calendar');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','待办','calendar/task/index','0','1','0','5','calendar');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','日程','calendar/schedule/index','0','1','0','1','calendar');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','待办','calendar/task/index','0','1','0','2','calendar');
 INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ( '1', 'system','calendar', '日程提醒', 'CronCalendarRemind.php', '1393516800', '1393603200', '-1', '-1', '-1', '0');
 INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('calendar','日程','calendar/schedule/index','提供企业工作日程安排','4','1');

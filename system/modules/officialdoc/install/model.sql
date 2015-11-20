@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS {{doc_back}} (
 REPLACE INTO `{{setting}}` (`skey`,`svalue`) VALUES ('docconfig','a:2:{s:11:"docapprover";i:0;s:16:"doccommentenable";i:1;}');
 REPLACE INTO `{{syscache}}`(`name`, `type`, `dateline`, `value`) VALUES ('officialdoccategory','1','0','');
 INSERT INTO `{{doc_category}}`(`pid`, `name`, `sort`) VALUES ('0','默认分类','0');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','公文','officialdoc/officialdoc/index','0','1','0','7','officialdoc');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','公文管理','officialdoc/officialdoc/index','0','1','0','7','officialdoc');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('公文','0','officialdoc','dashboard','index','','10','0');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_message','公文消息提醒','officialdoc','officialdoc/default/New message title','officialdoc/default/New message content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_verify_message','信息中心公文审核提醒','officialdoc','officialdoc/default/New verify message title','officialdoc/default/New verify message content','1','1','1','2');

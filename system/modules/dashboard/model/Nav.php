@@ -35,12 +35,21 @@ class Nav extends Model {
      */
     public function fetchAllByAllPid() {
         $return = array();
-        $roots = $this->fetchAll( '`pid` = 0 ORDER BY `sort` ASC' );
-        foreach ( $roots as $root ) {
-            $root['child'] = $this->fetchAll( "`pid` = {$root['id']} ORDER BY `sort` ASC" );
-            $return[$root['id']] = $root;
+        $all = $this->fetchAll();
+        $result = array();
+        foreach ( $all as $v ) {
+            $result[$v['id']] = $v;
         }
-        return $return;
+        foreach ( $result as $key => &$row ) {
+            if ( !isset( $result[$row['pid']] ) ) {
+                $row['pid'] = 0;
+                $row['child'] = array();
+            } else {
+                $result[$row['pid']]['child'][] = $row;
+                unset( $result[$key] );
+            }
+        }
+        return $result;
     }
 
     /**
