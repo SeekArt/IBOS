@@ -3,7 +3,7 @@
 namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Page;
 use application\modules\email\model\Email;
 use application\modules\email\utils\Email as EmailUtil;

@@ -98,6 +98,19 @@
                                                     <a href="javascript:;" title="删除附件" class="cbtn o-trash" data-id="<?php echo $value['aid']; ?>" data-node-type="attachRemoveBtn"></a>
                                                     <i class="atti"><img width="44" height="44" src="<?php echo $value['iconsmall']; ?>" alt="<?php echo $value['filename']; ?>" title="<?php echo $value['filename']; ?>"></i>
                                                     <div class="attc"><?php echo $value['filename']; ?></div> 
+                    								<span class="fss mlm">
+                    									<a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+                    									<?php if (isset($value['officereadurl'])): ?>
+                    										<a href="javascript:;" class="mlm" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
+                    											<?php echo $lang['Read']; ?>
+                    										</a>
+                    									<?php endif; ?>
+                    									<?php if (isset($value['officeediturl'])): ?>
+                    										<a href="javascript:;" class="mlm" data-action="editOfficeFile" data-param='{"href": "<?php echo $value['officeediturl']; ?>"}' title="<?php echo $lang['Edit']; ?>">
+                    											<?php echo $lang['Edit']; ?>
+                    										</a>
+                    									<?php endif; ?>
+                    								</span>
                                                 </div>
                                                 <?php endforeach; ?>
                                 			<?php endif; ?>

@@ -36,7 +36,7 @@ class DiaryRecord extends Model {
 	 * @param integer $plantime
 	 */
 	public function fetchAllByPlantime( $plantime, $uid = 0 ) {
-		$uid = empty( $uid ) ? IBOS::app()->user->uid : $uid;
+		$uid = empty( $uid ) ? IBOS::app()->user->uid : $uid; 
 		$records = DiaryRecord::model()->fetchAll( array(
 			'condition' => 'plantime=:plantime AND uid=:uid',
 			'order' => 'recordid ASC',

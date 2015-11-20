@@ -76,7 +76,7 @@ class BaseController extends Controller {
      * @return void
      */
     public function actionGetRealname() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( IBOS::app()->request->isAjaxRequest ) { 
             $keyword = Env::getRequest( 'keyword' );
             $records = ResumeDetail::model()->fetchPKAndRealnameByKeyword( $keyword );
             parent::ajaxReturn( $records );

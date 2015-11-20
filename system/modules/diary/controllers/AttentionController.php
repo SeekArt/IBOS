@@ -266,7 +266,7 @@ class AttentionController extends BaseController {
 		$this->setPageTitle( IBOS::lang( 'Show Attention diary' ) );
 		$this->setPageState( 'breadCrumbs', array(
 			array( 'name' => IBOS::lang( 'Personal Office' ) ),
-			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ), 
 			array( 'name' => IBOS::lang( 'Show Attention diary' ) )
 		) );
 		$this->render( 'show', $params );

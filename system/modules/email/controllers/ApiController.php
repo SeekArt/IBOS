@@ -161,13 +161,11 @@ class ApiController extends BaseController {
 					);
 					Notify::model()->sendNotify( $fromInfo['fromid'], 'email_receive_message', $config );
 				}
-			default:
-				if ( isset( $valueDriver[$op] ) ) {
 					list($key, $value) = $valueDriver[$op];
 					$status = Email::model()->setField( $key, $value, $condition );
-				} else {
+				break;
+			default:
 					$status = false;
-				}
 				break;
 		}
 		$errorMsg = !$status ? IBOS::lang( 'Operation failure', 'message' ) : '';

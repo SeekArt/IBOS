@@ -285,8 +285,8 @@ class ContentController extends BaseController {
                 }
             }
             //外部邮箱的
-            if (!is_numeric($email['toids'][0])) {//内部邮件toids第一个字符一定是数字
-                $ids = @unserialize($email['toids']);
+            if (!empty($email['toids']) && !is_numeric($email['toids'][0])) {//内部邮件toids第一个字符一定是数字
+                $ids = unserialize($email['toids']);
                 if ($ids) {
                     //去掉第一个收件人，会和下面的towebmail重复
                     $email['toids'] = array_pop($ids);
@@ -295,7 +295,7 @@ class ContentController extends BaseController {
             }
             //外部邮箱的
             if (isset($email['copytoids'][0]) && !is_numeric($email['copytoids'][0])) {
-                $copys = @unserialize($email['copytoids']);
+                $copys = unserialize($email['copytoids']);
                 if ($copys)
                     $email['copytoids'] = implode(',', $copys);
             }

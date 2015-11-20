@@ -51,10 +51,10 @@ OCX.prototype = {
 		var re = /&amp;/g;
 		this.settings.attachUrl = this.settings.attachUrl.replace(re, "&");
 		try {
-			if ($.browser.msie) {
+			 // if ($.browser.msie) {
+			 	this.onDocumentOpened();
 				this._openDocumentByOP(this.settings.op);
-				this.onDocumentOpened();
-			}
+			 // }
 		} catch (err) {
 			var msg = Ibos.l("MAIN.DOC_OPEN");
 			if (window.confirm(msg)) {
@@ -85,7 +85,7 @@ OCX.prototype = {
 			case 'read':
 				if (this.settings.attachUrl) {
 					// 以异步方式开始打开URL文档。该方法执行完毕，控件将从URL下载指定文档并打开。
-					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl);
+					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, false, true);
 				}
 				break;
 			case 'edit':
@@ -115,10 +115,10 @@ OCX.prototype = {
 
 			switch (this.settings.op) {
 				case "edit":
-					this.setReadOnly(false);
+					this.settings.obj.setReadOnly(false);
 					break;
 				case "read":
-					this.setReadOnly(this.settings.op == "read" ? false : true);
+					this.settings.obj.setReadOnly(this.settings.op == "read" ? true : false);
 					if (this.settings.fileName.indexOf(".xls") > 0 || this.settings.fileName.indexOf(".XLS") > 0) {
 						var sheets = this.settings.obj.ActiveDocument.Sheets;
 						var sc = sheets.Count;
@@ -332,8 +332,8 @@ OCX.prototype = {
 			if (!this._beforeSubmit()) {
 				return false;
 			}
-			document.forms[0].docsize.value = this.settings.obj.DocSize;
-			this.__genDominoPara(paraObj);
+			document.forms[0].docsize = this.settings.obj.DocSize;
+			this._genDominoPara(paraObj);
 			if (!paraObj.FFN) {
 				alert( Ibos.l("MAIN.PARAM_ERROR") );
 				return false;
@@ -347,7 +347,7 @@ OCX.prototype = {
 				case "1":
 				case "2":
 				case '3':
-					retStr = this.settings.obj.SaveToURL(this.settings.actionUrl, paraObj.FFN, "", this.settings.fileName, 0);
+					retStr = this.settings.obj.SaveToURL(this.settings.actionUrl, paraObj.FFN, paraObj.PARA + "filepath=" + this.settings.attachUrl, this.settings.fileName, 0);
 					document.all("attachmentid").value = retStr;
 					if (opflag === 1) {
 						this.settings.docOpen = false;
@@ -355,11 +355,13 @@ OCX.prototype = {
 					}
 					break;
 				case "edit":
-					lock_ref();
-					retStr = this.settings.obj.SaveToURL(this.settings.actionUrl, paraObj.FFN, "", this.settings.fileName, 0);
-					alert(retStr);
+					// lock_ref();
+					retStr = this.settings.obj.SaveToURL(this.settings.actionUrl, paraObj.FFN, paraObj.PARA + "filepath=" + this.settings.attachUrl, this.settings.fileName, 0);
+					retStr = $.parseJSON(retStr);
+					alert(this.settings.fileName + "--" + retStr.msg);
 					if (opflag === 1) {
 						this.settings.docOpen = false;
+						window.open('','_parent','');
 						window.close();
 					}
 					break;
@@ -510,7 +512,7 @@ OCX.prototype = {
 			curSel.WholeStory();
 			curSel.Cut();
 			//插入模板
-			url = this.settings.pathUrl + "wordmodel/view/get.php?model=" + url;
+			url = this.settings.staticurl + "wordmodel/view/get.php?model=" + url;
 			this.settings.obj.AddTemplateFromURL(url);
 			var bookMarkName = "zhengwen";
 			if (!this.settings.obj.ActiveDocument.BookMarks.Exists(bookMarkName)) {
@@ -561,7 +563,11 @@ Ibos.evt.add({
 	},
 	// 模板套红
 	"selectWord": function(param, elem) {
-		var url = OCX.settings.pathUrl + 'wordmodel/view/index.php';
+		if( OCX.settings.attachName.indexOf('xls') != -1){
+			alert('excel不能使用插入套红');
+			return;
+		}
+		var url = OCX.settings.staticurl + 'wordmodel/view/index.php';
 		var myleft = (screen.availWidth - 650) / 2;
 		var paramStr = "menubar=0,toolbar=0,status=0,resizable=1,scrollbars=1";
 		paramStr += ",top=0,left=" + myleft + ",height=350,width=400";

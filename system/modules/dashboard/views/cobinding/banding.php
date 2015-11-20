@@ -57,7 +57,7 @@
                     </tbody>
                 </table>
                 <input type="hidden" name="map" id="result_map_value" value="">
-                <input type="hidden" name="_csrf" value='<?php echo Ibos::$app->getRequest()->getCsrfToken(); ?>' />
+                <input type="hidden" name="_csrf" value='<?php echo IBOS::$app->getRequest()->getCsrfToken(); ?>' />
             </div>
         </div>
     </div>

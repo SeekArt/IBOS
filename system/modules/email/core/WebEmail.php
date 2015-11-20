@@ -31,8 +31,8 @@ class WebEmail {
         }
         $this->mailbox = $this->mailbox . '}';
         set_time_limit(120);
-        error_reporting(0);
-        $this->imap = @imap_open($this->mailbox, $user, $pass);
+        //error_reporting(0);
+        $this->imap = imap_open($this->mailbox, $user, $pass);
     }
 
     public function isConnected() {
@@ -72,7 +72,7 @@ class WebEmail {
     }
 
     public function getUnreadMessages($withbody = true) {
-        $emails = [];
+        $emails = array();
         $result = imap_search($this->imap, 'UNSEEN');
         if ($result) {
             foreach ($result as $k => $i) {

@@ -65,7 +65,7 @@ class DocsController extends BaseController {
 		$datas = Officialdoc::model()->fetchAllAndPage( $this->_condition );
 		if ( isset( $datas["datas"] ) ) {
 			foreach ( $datas["datas"] as $k => $v ) {
-				$datas["datas"][$k]["content"] = mb_substr( strip_tags( $v["content"] ), 0, 15 );
+                $datas["datas"][$k]["content"] = mb_substr( strip_tags( $v["content"] ), 0, 15, 'utf-8' );
 			}
 		}
 		$officialDocList = ICOfficialdoc::getListDatas( $datas['datas'] );

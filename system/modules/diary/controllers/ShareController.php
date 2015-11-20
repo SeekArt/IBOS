@@ -83,7 +83,7 @@ class ShareController extends BaseController {
                 $date = date( 'Y-m-d', $time );
             }
             // 取得shareuid字段中包含作者的数据
-            $uid = IBOS::app()->user->uid;
+            $uid = IBOS::app()->user->uid; 
             $condition = "FIND_IN_SET('$uid',shareuid) AND uid NOT IN($uid) AND diarytime=$time";
             $paginationData = Diary::model()->fetchAllByPage( $condition );
             $params = array(

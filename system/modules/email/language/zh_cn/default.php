@@ -194,6 +194,7 @@ return array(
 	'Email archive' => '邮件归档',
 	'System' => '系统',
 	'Read' => '阅读',
+	'View' => '查看',
 	'Already receive' => '{reader}已经阅读了您的邮件【{title}】。',
 	'Associated with the thread' => '关联主线',
 	'Not associated' => '不关联主线',

@@ -73,7 +73,7 @@ class UserController extends OrganizationBaseController {
 		}
 
 		$data = Array();
-		if ( Env::submitCheck( 'search' ) && Ibos::app()->request->isPostRequest ) {
+		if ( Env::submitCheck( 'search' ) && IBOS::app()->request->isPostRequest ) {
 			//添加转义
 			//15-7-31 下午3:10 gzdzl
 			//这里存在有keyword单引号SQL错误
@@ -387,7 +387,7 @@ class UserController extends OrganizationBaseController {
 				$convert['jobnumber'][] = $user['jobnumber']; // 已存在的工号
 			}
 			// 邮件格式
-			$ip = Ibos::app()->setting->get( 'clientip' );
+			$ip = IBOS::app()->setting->get( 'clientip' );
 			foreach ( $data as $k => $row ) {
 				//以下数组下标跟导入表的每一列位置对应，如导入出现问题，请检查位置与格式！
 				$salt = String::random( 6 );
@@ -487,10 +487,10 @@ class UserController extends OrganizationBaseController {
 //		$error = Cache::model()->fetchArrayByPk( 'userimportfail' );
 //		Cache::model()->delete( "`cachekey` = 'userimportfail'" );
 //		$fieldArr = array(
-//			Ibos::lang( 'Line' ),
-//			Ibos::lang( 'Username' ),
-//			Ibos::lang( 'Realname' ),
-//			Ibos::lang( 'Error reason' ),
+//			IBOS::lang( 'Line' ),
+//			IBOS::lang( 'Username' ),
+//			IBOS::lang( 'Realname' ),
+//			IBOS::lang( 'Error reason' ),
 //		);
 //		$str = implode( ',', $fieldArr ) . "\n";
 //		foreach ( $error as $line => $row ) {
@@ -498,7 +498,7 @@ class UserController extends OrganizationBaseController {
 //			$str .= implode( ',', $param ) . "\n"; //用引文逗号分开 
 //		}
 //		$outputStr = iconv( 'utf-8', 'gbk//ignore', $str );
-//		$filename = Ibos::lang( 'Import error record' ) . '.csv';
+//		$filename = IBOS::lang( 'Import error record' ) . '.csv';
 //		File::exportCsv( $filename, $outputStr );
 //	}
 	/**

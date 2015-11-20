@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Module;
 use application\core\utils\String;
 use application\modules\diary\model\DiaryAttention;

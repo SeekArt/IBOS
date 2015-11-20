@@ -47,7 +47,7 @@ class StatDiarySummary extends StatDiaryBase {
      * @param array $time 时间范围
      */
     protected function renderPersonal( $time ) {
-        $uid = IBOS::app()->user->uid;
+        $uid = IBOS::app()->user->uid; 
         $data = array(
             'total' => Diary::model()->countDiaryTotalByUid( $uid, $time['start'], $time['end'] ),
             'beingreviews' => Diary::model()->countReviewTotalByUid( $uid, $time['start'], $time['end'] ),

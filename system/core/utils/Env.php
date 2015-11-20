@@ -227,12 +227,15 @@ class Env {
 			// ---- 表单提交变量检查 ----
 			$isPostRequest = IBOS::app()->request->getIsPostRequest();
 			$emptyFlashProtected = empty( $_SERVER['HTTP_X_FLASH_VERSION'] );
-			$emptyReferer = empty( $_SERVER['HTTP_REFERER'] );
+            $emptyReferer = isset($_SERVER['HTTP_REFERER']) ? empty($_SERVER['HTTP_REFERER']) : true;
 			$formHash = IBOS::app()->request->getParam( 'formhash' );
 			$formHashCorrect = !empty( $formHash ) && $formHash == self::formHash();
 			// -------------------------
 			$formPostCorrect = ( $isPostRequest && $formHashCorrect && $emptyFlashProtected && $emptyReferer );
+            $refererEqualsHost = true;
+            if(!$emptyReferer) {
 			$refererEqualsHost = preg_replace( "/https?:\/\/([^\:\/]+).*/i", "\\1", $_SERVER['HTTP_REFERER'] ) == preg_replace( "/([^\:]+).*/", "\\1", $_SERVER['HTTP_HOST'] );
+            }
 			// ----------------------
 			if ( $allowGet or ( $formPostCorrect or $refererEqualsHost ) ) {
 				return true;

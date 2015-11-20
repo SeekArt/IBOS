@@ -21,6 +21,7 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\Xml;
+use application\core\utils\Env;
 use CWidget;
 
 class Office extends CWidget {
@@ -127,10 +128,50 @@ class Office extends CWidget {
     public function handleRequest() {
         $allowedOps = array( 'lock', 'save' );
         $op = filter_input( INPUT_GET, 'op', FILTER_SANITIZE_STRING );
+            $bool = $this->save();
+        if($bool) {
+            return json_encode(array('isSuccess' => true, 'msg' => '保存成功'));
+        } else {
+            return json_encode(array('isSuccess' => false, 'msg' => '保存失败'));
+        }
     }
 
     /**
-     * 
+     * 文件保存
+     * @return boolean
+     */
+    private function save() {
+
+        $file = 'Filedata';
+
+        if (empty($_FILES) || $_FILES[$file]['error'] != 0) {
+            return false;
+        }
+
+        $filepath = Env::getRequest('filepath');
+        if(empty($filepath)) {
+            return false;
+        }
+        //$filename = filename($filepath);
+
+        if(file_exists($filepath) && is_file($filepath) && is_writable($filepath)) {
+            $bak = rename($filepath, $filepath.'.bak');
+            $bool = $bak && move_uploaded_file($_FILES[$file]['tmp_name'],$filepath);
+            if($bool) {
+                // 保存新文件成功，删除掉原来的文件
+                @unlink($filepath.'.bak');
+            } else {
+                // 保存新文件失败，重命名备份文件回原文件名
+                rename($filepath.'.bak', $filepath);
+            }
+            return $bool;
+        }
+
+        return false;
+    }
+
+    /**
+     *
      * @param type $var
      * @return array
      */
@@ -183,6 +224,9 @@ class Office extends CWidget {
         if ( isset( $param[3] ) ) {
             $ext = unserialize( $param[3] );
             $return = array_merge( $return, $ext );
+        }
+        if(isset($param['op'])) {
+            $return['op'] = $param['op'];
         }
         return $return;
     }

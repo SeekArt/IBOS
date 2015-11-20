@@ -70,7 +70,7 @@ class SkinController extends HomeBaseController {
         // 获取上传域并上传到临时目录
         $upload = File::getUpload( $_FILES['Filedata'] );
         if ( !$upload->save() ) {
-            $this->ajaxReturn( array( 'msg' => Ibos::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
+            $this->ajaxReturn( array( 'msg' => IBOS::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
         } else {
             $info = $upload->getAttach();
             $file = File::getAttachUrl() . '/' . $info['type'] . '/' . $info['attachment'];
@@ -78,7 +78,7 @@ class SkinController extends HomeBaseController {
             $tempSize = File::imageSize( $fileUrl );
             //判断宽和高是否符合头像要求
             if ( $tempSize[0] < 1000 || $tempSize[1] < 300 ) {
-                $this->ajaxReturn( array( 'msg' => Ibos::lang( 'Bg size error' ), 'isSuccess' => false ), 'json' );
+                $this->ajaxReturn( array( 'msg' => IBOS::lang( 'Bg size error' ), 'isSuccess' => false ), 'json' );
             }
             $this->ajaxReturn( array( 'data' => $fileUrl, 'file' => $file, 'isSuccess' => true ) );
         }

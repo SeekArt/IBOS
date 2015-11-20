@@ -97,7 +97,7 @@ class WeiboController extends BaseController {
         UserUtil::updateCreditByAction( 'addweibo', IBOS::app()->user->uid );
         // 微博来源设置
         $data['from'] = Env::getFromClient( $data['from'], $data['module'] );
-        //$lang = Ibos::getLangSources();
+        //$lang = IBOS::getLangSources();
         $return['data'] = $data; // $this->renderPartial( 'feedlist', array( 'list' => array( $data ), 'lang' => $lang ), true );
         // 动态ID
         $return['feedid'] = $data['feedid'];

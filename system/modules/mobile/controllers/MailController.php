@@ -95,7 +95,7 @@ class MailController extends BaseController {
 //		}
 //
 //		$conditions = $lastid ? $where . " and e.emailid < {$lastid}" : $where;
-//		$list = Ibos::app()->db->createCommand()
+//		$list = IBOS::app()->db->createCommand()
 //				->select( "*" )
 //				->from( "{{email}} e" )
 //				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -113,7 +113,7 @@ class MailController extends BaseController {
 //			}
 //		}
 //		$minid = min( $ids );
-//		$email = Ibos::app()->db->createCommand()
+//		$email = IBOS::app()->db->createCommand()
 //				->select( "*" )
 //				->from( "{{email}} e" )
 //				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -129,15 +129,15 @@ class MailController extends BaseController {
 //	private function search( $kw ) {
 //		$search['keyword'] = $kw;
 //		$type = isset( $_GET["type"] ) ? $_GET["type"] : "";
-//		$uid = Ibos::app()->user->uid;
+//		$uid = IBOS::app()->user->uid;
 //		$lastid = isset( $_GET["lastid"] ) ? intval( $_GET["lastid"] ) : 0;
 //		$condition = array();
-//		$condition = EmailUtil::mergeSearchCondition( $search, Ibos::app()->user->uid );
+//		$condition = EmailUtil::mergeSearchCondition( $search, IBOS::app()->user->uid );
 //		$condition['condition'] .= "AND ( e.isweb = 0)";
 ////		$conditionStr = base64_encode( serialize( $condition ) );
 //
 //		if ( empty( $condition ) ) {
-//			$this->error( Ibos::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );
+//			$this->error( IBOS::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );
 //		}
 //		$datas = $this->searchPage( $type, $uid, $lastid, $condition );
 //		var_dump( $datas['list'] );

@@ -64,7 +64,7 @@ class DiaryApi extends MessageApi {
         $return = array();
         $viewAlias = 'application.modules.diary.views.indexapi.diary';
         $today = date( 'Y-m-d' );
-        $uid = IBOS::app()->user->uid;
+        $uid = IBOS::app()->user->uid; 
         $data = array(
             'diary' => Diary::model()->fetch( 'diarytime = :diarytime AND uid = :uid', array( ':diarytime' => strtotime( $today ), ':uid' => $uid ) ),
             'calendar' => $this->loadCalendar(),

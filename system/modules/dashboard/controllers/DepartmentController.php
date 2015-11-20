@@ -81,7 +81,7 @@ class DepartmentController extends OrganizationBaseController {
 			//不再组织架构这里单独处理总公司，只保留全局设置的
 		} else {
 			if ( $deptId == $pid ) {
-				$this->error( Ibos::lang( 'update failed, up dept cannot be itself' ) );
+				$this->error( IBOS::lang( 'update failed, up dept cannot be itself' ) );
 			}
 			$this->dealWithBranch();
 			$this->dealWithSpecialParams();

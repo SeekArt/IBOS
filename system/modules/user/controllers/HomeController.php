@@ -129,25 +129,28 @@ class HomeController extends HomeBaseController {
 					$this->error( util\IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'home/index' ) );
 				}
 			}
-			$dataProvider = 'get' . ucfirst( $op );
 			//查找酷办公是否有绑定
 			$uid = $this->getUid();
 			$isCo = UserBinding::model()->getIsBinding( $uid, 'co' );
 			$cobinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
-			$data = array(
-				'user' => $this->getUser(),
+            $dataCo = array(
 				'co' => $isCo,
 				'cobinding' => $cobinding
 			);
+            $dataProvider = 'get' . ucfirst( $op );
+            $data = array();
 			if ( method_exists( $this, $dataProvider ) ) {
-				$data = array_merge( $data, $this->$dataProvider() );
+                $data = $this->$dataProvider();
 			}
-			$data['op'] = $op;
+            $param = array_merge( array(
+                'user' => $this->getUser(),
+                'op' => $op,
+                    ), $data, $dataCo );
 			$this->setPageState( 'breadCrumbs', array(
 				array( 'name' => util\IBOS::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
 				array( 'name' => util\IBOS::lang( 'Profile' ) )
 			) );
-			$this->render( $op, $data );
+            $this->render( $op, $param );
 		}
 	}
 

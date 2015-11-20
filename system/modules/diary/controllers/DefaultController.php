@@ -21,7 +21,7 @@ use application\core\utils\Convert;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Module;
 use application\core\utils\String;
 use application\modules\calendar\model\Calendars;
@@ -59,7 +59,7 @@ class DefaultController extends BaseController {
 			//是否搜索
 			if ( Env::getRequest( 'param' ) == 'search' ) {
 				//15-7-27 下午2:28 gzdzl 搜索必须是post类型请求
-				if ( Ibos::app()->request->isPostRequest ) {
+				if ( IBOS::app()->request->isPostRequest ) {
 				$this->search();
 				}
 			}
@@ -160,7 +160,7 @@ class DefaultController extends BaseController {
 	private function save() {
 		//15-7-27 下午2:23 gzdzl
 		//判断是否是POST请求，不是的话非法访问，则要做相应的错误处理
-		if ( Ibos::app()->request->isPostRequest ) {
+		if ( IBOS::app()->request->isPostRequest ) {
 		$uid = IBOS::app()->user->uid;
 		$realname = User::model()->fetchRealnameByUid( $uid );
 		$originalPlan = $planOutside = array();
@@ -251,15 +251,15 @@ class DefaultController extends BaseController {
 			 * @TODO 日志创建统计
 			 */
 			$log = array(
-				'user' => Ibos::app()->user->username,
-				'ip' => Ibos::app()->setting->get( 'clientip' )
+				'user' => IBOS::app()->user->username,
+				'ip' => IBOS::app()->setting->get( 'clientip' )
 			);
 			Log::write( $log, 'action', 'module.diary.default.save' );
-		$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
+			$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
 		} else {
 			//15-7-27 下午2:22
 			//不是post类型过来的请求都跳转回到日志添加页面
-			IBOS::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/add' ) );
+			IBOS::app()->request->redirect( IBOS::app()->createUrl( 'diary/default/add' ) );
 		}
 	}
 
@@ -427,9 +427,9 @@ class DefaultController extends BaseController {
 	private function update() {
 		//15-7-27 下午2:24
 		//判断是否是post类型请求
-		if ( !Ibos::app()->request->isPostRequest ) {
+		if ( !IBOS::app()->request->isPostRequest ) {
 			//不是post请求跳到工作日志页面
-			Ibos::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/index' ) );
+			IBOS::app()->request->redirect( IBOS::app()->createUrl( 'diary/default/index' ) );
 		}
 
 		$diaryId = $_POST['diaryid'];

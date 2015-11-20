@@ -197,7 +197,7 @@ EOT;
 						$data['total'] = $totalCount;
 						$data['html'] = $html;
 					} else {
-						$data['msg'] = IBOS::lang( 'Search result noexists' );
+						$data['msg'] = IBOS::lang( 'Search result noexists' ); 
 					}
 				} else {
 					$data['msg'] = IBOS::lang( 'Search result noexists' );

@@ -103,7 +103,7 @@ class EmailBody extends Model {
 		$source = intval( $source );
 		$target = intval( $target );
 		if ( $source != $target ) {
-			$db = IBOS::app()->db->createCommand();
+			$db = IBOS::app()->db->createCommand(); 
 			$text = sprintf( "REPLACE INTO {{%s}} SELECT * FROM {{%s}} WHERE bodyid IN ('%s')", $this->getTableName( $target ), $this->getTableName( $source ), implode( ',', $bodyIds ) );
 			$db->setText( $text )->execute();
 			return $db->delete( sprintf( '{{$s}}', $this->getTableName( $source ) ), "FIND_IN_SET(bodyid,'" . implode( ',', $bodyIds ) . ")" );

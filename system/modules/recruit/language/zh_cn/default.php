@@ -182,6 +182,7 @@ return array(
     //----------------resume/show.php----------------------
     'View complete details' => '查看完整信息',
 	'Piece' => '个',
+	'View' => '查看',
 	'Download' => '下载',
 	'Dump file cabinet' => '转存到文件柜',
 	//----------------dashboard/index.php-------------------

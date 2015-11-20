@@ -19,7 +19,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;

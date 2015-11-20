@@ -61,8 +61,7 @@ class WebController extends BaseController {
                         $remote = unserialize($query['remoteattachment']);
                         if ($remote[$i - 1]['name'] == $email['attachments'][$i - 1]['name']) {
                             //下载
-                            $attach = $webEmail->getAttachment($email['uid'],
-                                    $i - 1);
+                            $attach = $webEmail->getAttachment($email['uid'], $i - 1);
                             header('Content-Description: File Transfer');
                             header('Content-Type: application/octet-stream');
                             header('Content-Disposition: attachment; filename=' . basename($attach['name']));
@@ -417,10 +416,10 @@ class WebController extends BaseController {
               	$web = WebMail::getEmailConfig($web['address'], $web['password']);
               } else {
               // 没有的话，需要配置更详细的服务器信息，返回错误提示
-              $errMsg = Ibos::lang('More server info');
+              $errMsg = IBOS::lang('More server info');
               }
              */
-            $errMsg = Ibos::lang('More server info');
+            $errMsg = IBOS::lang('More server info');
             $passCheck = false;
         }
         if ( !$passCheck ) {

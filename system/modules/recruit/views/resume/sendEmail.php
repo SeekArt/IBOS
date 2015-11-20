@@ -71,7 +71,7 @@
 												<span><?php echo isset( $firstAddr ) ? $firstAddr : ''; ?></span>
 												<i class="caret"></i>
 											</a>
-											<a target="_blank" href="<?php echo Yii::app()->createUrl( 'email/default/webemail',array( 'uid' => Ibos::app()->user->uid ) ); ?>" class="btn btn-narrow">
+											<a target="_blank" href="<?php echo Yii::app()->createUrl( 'email/default/webemail',array( 'uid' => IBOS::app()->user->uid ) ); ?>" class="btn btn-narrow">
 												<i class="o-setup"></i>
 											</a>
 										</div>

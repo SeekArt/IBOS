@@ -4,7 +4,7 @@
  * 组织架构模块函数库
  *
  * @package application.app.user.utils
- * @version $Id: org.php -1   $
+ * @version $Id: org.php -1   $ 
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

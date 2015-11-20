@@ -183,9 +183,16 @@
 	</div>
 </div>
 <script type="text/javascript">
+(function(){
+	var data = [<?php foreach($roles as $role):?>{text:"<?php echo $role['rolename']; ?>", id: <?php echo $role['roleid']; ?>},<?php endforeach;?>];
+	$.each(data, function(index, item){
+		if( item == null ){
+			data.splice(index, 1);
+		}
+	});
 	// 角色初选择框始化
 	$("#role_select").ibosSelect({
-		data: [<?php foreach($roles as $role):?>{text:"<?php echo $role['rolename']; ?>", id: <?php echo $role['roleid']; ?>},<?php endforeach;?>],
+		data: data,
 		width: '100%',
 		multiple: false,
 		placeholder: "请选择角色"
@@ -193,11 +200,12 @@
 
 	// 辅助角色初始化
 	$("#auxiliary_role_select").ibosSelect({
-		data: [<?php foreach($roles as $role):?>{text:"<?php echo $role['rolename']; ?>", id: <?php echo $role['roleid']; ?>},<?php endforeach;?>],
+		data: data,
 		width: '100%',
 		multiple: true,
 		placeholder: "可以选择多个辅助角色"
 	});
+})();
 </script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>

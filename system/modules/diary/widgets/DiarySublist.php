@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\user\utils\User as UserUtil;
 use CWidget;

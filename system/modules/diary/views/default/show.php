@@ -143,6 +143,16 @@ use application\modules\dashboard\model\Stamp;
 											</div>
 											<span class="fss">
 												<a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+	                                            <?php if (isset($value['officereadurl'])): ?>
+	                                                <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
+	                                                    <?php echo $lang['Read']; ?>
+	                                                </a>
+	                                            <?php endif; ?>&nbsp;&nbsp;
+	                                            <?php if (isset($value['officeediturl'])): ?>
+	                                                <a href="javascript:;" data-action="editOfficeFile" data-param='{"href": "<?php echo $value['officeediturl']; ?>"}' title="<?php echo $lang['Edit']; ?>">
+	                                                    <?php echo $lang['Edit']; ?>
+	                                                </a>
+	                                            <?php endif; ?>
 												<!-- 转存到文件柜，等实现文件柜功能再开启 -->
 												<!--<a href="#">转存到文件柜</a>-->
 											</span>

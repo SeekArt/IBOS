@@ -105,7 +105,12 @@ use application\modules\user\model\User;
 									<span class="tcm"><?php echo '(' . $attache['filesize'] . ')'; ?></span>
 								</div>
 								<span class="fss">
-									<a href="<?php echo $attache['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+									<a href="<?php echo $attache['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+									<?php if (isset($attache['officereadurl'])): ?>
+										<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $attache['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
+											<?php echo $lang['Read']; ?>
+										</a>
+									<?php endif; ?>
 								</span>
 							</div>
 						</div>

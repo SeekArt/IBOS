@@ -51,7 +51,7 @@ class VoteAttach extends Attach {
 //					ImageUtil::thumb( $attachment, $thumbName, $thumbWidth, $thumbHeight );
 //				} else {
 //					$tempFile = File::getTempPath() . 'tmp.' . $attach['ext'];
-//					$orgImgname = Ibos::engine()->IO()->file()->fetchTemp( File::fileName( $attachment ), $attach['ext'] );
+//					$orgImgname = IBOS::engine()->IO()->file()->fetchTemp( File::fileName( $attachment ), $attach['ext'] );
 //					ImageUtil::thumb( $orgImgname, $tempFile, $thumbWidth, $thumbHeight );
 //					File::createFile( $thumbName, file_get_contents( $tempFile ) );
 //				}

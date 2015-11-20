@@ -9,7 +9,7 @@
 
 namespace application\core\utils;
 
-class IBOS extends \Yii {
+class IBOS extends \Yii { 
 
     /**
      * 当前平台引擎

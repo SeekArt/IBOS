@@ -38,11 +38,11 @@ class Attach {
 		3 => 'word',
 		4 => 'excel',
 		5 => 'ppt',
-		6 => 'txt',
-		7 => 'code',
-		8 => 'swf',
-		9 => 'photo',
-		10 => 'pdf',
+		6 => 'pdf',
+		7 => 'txt',
+		8 => 'photo',
+		9 => 'code',
+		10 => 'swf',
 		11 => 'html',
 		12 => 'exe',
 		13 => 'rar',
@@ -232,7 +232,7 @@ class Attach {
 	 * @return array
 	 * @since IBOS1.0
 	 */
-	public static function getAttach( $aid, $down = true, $officeDown = true, $edit = false, $delete = false, $getRealAddress = false ) {
+	public static function getAttach( $aid, $down = true, $officeDown = true, $edit = true, $delete = false, $getRealAddress = false ) {
 		$data = array();
 		if ( !empty( $aid ) ) {
 			$data = self::getAttachData( $aid );
@@ -243,9 +243,9 @@ class Attach {
 			$val['filetype'] = String::getFileExt( $val['filename'] );
 			$val['origsize'] = $val['filesize'];
 			$val['filesize'] = Convert::sizeCount( $val['filesize'] );
-			if ( $getRealAddress ) {
-				$val['attachment'] = File::getAttachUrl() . '/' . $val['attachment'];
-			}
+//			if ( $getRealAddress ) {
+//				$val['attachment'] = File::getAttachUrl() . '/' . $val['attachment'];
+//			}
 			$val['filename'] = trim( $val['filename'] );
 			$val['delete'] = $delete;
 			$val['down'] = $down;
@@ -259,13 +259,19 @@ class Attach {
 			if ( $val['down'] ) {
 				$val['downurl'] = $urlManager->createUrl( 'main/attach/download', array( 'id' => $idString ) );
 			}
-			$inOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 5 ) );
-			if ( $inOfficeRange && $val['down_office'] ) {
+			$readOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 6 ) );
+			if ( $readOfficeRange && $val['down_office'] ) {
 //				$val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'read' ) ) ) );
-                $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( IBOS::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
+//                          $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( IBOS::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
+                            $val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'read' ) );
 			}
-			if ( $inOfficeRange && $val['edit'] ) {
-				$val['officeediturl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'edit' ) ) ) );
+                        if( in_array( self::attachType( $val['filetype'], 'id' ), range( 7,8 ) ) ){
+                            $val['officereadurl'] = File::getAttachUrl() . '/' . $val['attachment'];
+                        }
+			$editOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 5 ) );
+			if ( $editOfficeRange && $val['edit'] ) {
+//                            $val['officeediturl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'edit' ) ) ) );
+                            $val['officeediturl'] =  $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'edit' ) );
 			}
 		}
 		return $data;
@@ -299,15 +305,15 @@ class Attach {
 				$typeId = 12;
 			} elseif ( in_array( $type, array( 'html', 'htm' ) ) ) {
 				$typeId = 11;
-			} elseif ( in_array( $type, array( 'pdf' ) ) ) {
-				$typeId = 10;
-			} elseif ( in_array( $type, array( 'jpg', 'gif', 'png', 'bmp' ) ) ) {
-				$typeId = 9;
 			} elseif ( in_array( $type, array( 'swf', 'swi' ) ) ) {
-				$typeId = 8;
+				$typeId = 10;
 			} elseif ( in_array( $type, array( 'php', 'js', 'pl', 'cgi', 'asp' ) ) ) {
-				$typeId = 7;
+				$typeId = 9;
+			} elseif ( in_array( $type, array( 'jpg', 'gif', 'png', 'bmp' ) ) ) {
+				$typeId = 8;
 			} elseif ( in_array( $type, array( 'txt', 'rtf', 'wri', 'chm' ) ) ) {
+				$typeId = 7;
+			} elseif ( in_array( $type, array( 'pdf' ) ) ) {
 				$typeId = 6;
 			} elseif ( in_array( $type, array( 'pptx', 'pptm', 'ppt', 'potx', 'potm', 'pot', 'pps', 'ppsx', 'ppsm', 'ppam', 'ppa' ) ) ) {
 				$typeId = 5;

@@ -50,7 +50,7 @@
 					correctCls = "input-group-correct";
 
 				switch(state) {
-					case "correct": 
+					case "correct":
 						$group.removeClass(errorCls).addClass(correctCls);
 						break;
 					case "error":
@@ -89,15 +89,15 @@
 						}
 
 						content += '<td>'+
-								'<div class="stamp-item" data-node="stampItem" title="' + stamp[i].title + '" data-stamp="' + stamp[i].stamp + '" data-path="'+ stamp[i].path + '" data-value="' + stamp[i].value + '">' + 
-									'<div class="stamp-img-wrap"><img width="60" height="24" src="' + stamp[i].path + '" alt="' + stamp[i].title + '"/></div>' + 
+								'<div class="stamp-item" data-node="stampItem" title="' + stamp[i].title + '" data-stamp="' + stamp[i].stamp + '" data-path="'+ stamp[i].path + '" data-value="' + stamp[i].value + '">' +
+									'<div class="stamp-img-wrap"><img width="60" height="24" src="' + stamp[i].path + '" alt="' + stamp[i].title + '"/></div>' +
 									// 定义了图章分数点时
 									(typeof stamp[i].point !== "undefined" ?
 									'<div class="stamp-point"><strong>' + (stamp[i].point||0) + '</strong>' + Ibos.l('YUANCAPITAL.CENT') + '</div>' :
 									'') +
 								'</div>' +
 							'</td>';
-						
+
 						if(i === stamp.length - 1){
 							content += '</tr>';
 						}
@@ -134,8 +134,8 @@
 						if(!isNaN(value)) {
 							popover.$tip.find("a").removeClass("active");
 							$(this).addClass("active");
-							_currentValue = value;	
-							
+							_currentValue = value;
+
 							// 此处发布stampChange事件
 							$elem.attr("data-value", _currentValue).trigger("stampChange", { value: _currentValue, path:path, stamp:stamp });
 							popover.hide();
@@ -223,8 +223,8 @@
 			startCount: function() {
 				var _this = this;
 				setInterval(function(){
-					_this.getCount();	
-				}, _this.interval); 
+					_this.getCount();
+				}, _this.interval);
 				this.getCount();
 			}
 		}
@@ -384,7 +384,7 @@
 					hideDelay: 0,
 					showDelay: 0
 				});
-				
+
 				$menu.on({
 					"show": function(evt){ $ctrl.addClass("open") },
 					"hide": function(evt){ $ctrl.removeClass("open") }
@@ -413,7 +413,7 @@
 			if(isNew){
 				var newNavLength = $this.parent().find(".o-new-nav-tip").length - 1,
 					param = {id: id, pid: pid, newlength: newNavLength},
-					url = ""; 
+					url = "";
 				$.post(url, param, function(res){});
 			}
 		});
@@ -423,7 +423,7 @@
 		(function(){
 			var navScroll = {
 				$navWrap: $("#nvw"),
-				
+
 				maxScrollLeft: 0, // 导航条左移极限值
 
 				wrapWidth: 0, // 容器宽度
@@ -442,7 +442,7 @@
 				init: function(){
 					var _this = this,
 						cooldown = false; // 减少 mousemove 执行次数
-					
+
 					var wrapOffsetLeft, // 容器左侧页面距离
 						totalWidth; // 导航项总宽度和，实际导航宽度
 
@@ -502,14 +502,14 @@
 
 				// 重定位活动中的菜单
 				positionMenu: function(){
-					// 找到当前活动中的导航项及其对应 
+					// 找到当前活动中的导航项及其对应
 					var $activeNav = this.$navWrap.find("li.open");
 					var $activeMenu;
 
 					if($activeNav.length) {
 
 						$activeMenu = $($activeNav.attr("data-target"));
-					
+
 						if($activeMenu.length) {
 							$activeMenu.position({
 								at: "left bottom",
@@ -535,8 +535,8 @@
 				});
 			$newLink.on("click", function(){
 
-			});	
-				
+			});
+
 		})();
 
 
@@ -574,13 +574,13 @@
 				padding: 0,
 				cancel: true,
 				cancelVal: Ibos.l("CLOSE"),
-				init: function(){ 
+				init: function(){
 					Ibos.dialogUpload($.extend(true, {
 						button_placeholder_id: "datt_upload_placeholder",
 						custom_settings: {
 							containerId: "datt_list"
 						}
-					}, param)); 
+					}, param));
 				},
 				close: function(){
 					// 由于 swfupload 生成的 object 对象一旦被隐藏(display:none; visiability: hidden) 会重新初始化
@@ -650,7 +650,7 @@
 						password: $ajaxPwd.val()
 					}, function(res){
 						// 登陆成功
-						if(res.isSuccess) {	
+						if(res.isSuccess) {
 							_this.close();
 						// 登陆失败
 						} else {
@@ -696,7 +696,7 @@
 				onError: Ibos.l("V.INPUT_USERNAME")
 			});
 
-			$("#ajax_password").formValidator({ 
+			$("#ajax_password").formValidator({
 				onFocus: Ibos.l("V.INPUT_POSSWORD"),
 				validatorGroup: "100"
 			})
@@ -955,12 +955,50 @@
 		Ibos.evt.add({
 			// 使用外部文档阅读器
 			"viewOfficeFile": function(param, elem, evt){
-				Ui.openFrame(param.href, {
-					title: false,
-					id: "d_office_file",
-					width: 800,
-					height: 600
-				})
+				var suffix = param.href.substr( param.href.lastIndexOf('.')+1 );
+				if( suffix == 'txt'){
+					Ui.openFrame(param.href, {
+						title: false,
+						id: "d_office_file",
+						width: 800,
+						height: 600
+					});
+				}else if( $.inArray(suffix, ["jpg", "jpeg", "png", "gif"]) > -1 ){
+					// 读取初始化需要的文件
+					var _loadFiles = function(callback){
+						if(typeof FullGallery !== "undefined") {
+							callback && callback();
+						} else {
+							U.loadCss(Ibos.app.getStaticUrl("/js/lib/gallery/jquery.gallery.css"));
+							U.loadCss(Ibos.app.getStaticUrl("/js/app/fullGallery/fullGallery.css"));
+
+							var galleryJsPath = Ibos.app.getStaticUrl("/js/lib/gallery/jquery.gallery.js"),
+								mousewheelJsPath = Ibos.app.getStaticUrl("/js/lib/jquery.mousewheel.js"),
+								fullGalleryJsPath = Ibos.app.getStaticUrl("/js/app/fullGallery/fullGallery.js");
+
+							$.when($.getScript(galleryJsPath), $.getScript(mousewheelJsPath))
+							.done(function(){
+								$.getScript(fullGalleryJsPath, callback);
+							});
+						}
+					};
+					_loadFiles(function(){
+						new FullGallery(
+							[{
+								url: param.href,
+								thumburl: param.href
+							}],
+							{ start_at_index: 0 }
+						).$nav.hide();
+					});
+				}else{
+					window.open(param.href, "_blank");
+				}
+			},
+
+			// 使用外部文档编辑器
+			"editOfficeFile": function(param, elem){
+				window.open(param.href, "_blank");
 			},
 
 			// 从文件柜中选择附件
@@ -1065,7 +1103,7 @@
 			"calling": function(param, elem){
 				Ibos.showMeetingDialog();
 			},
-			
+
 			//发送私信
 			"sendPrivateLetter": function(param, elem){
 				Ibos.showPmDialog();
@@ -1203,7 +1241,7 @@
 		 * 编辑器内容本地缓存处理
 		 * 百度编辑器 1.4.1 以后的版本增加草稿箱功能，等到版本升级后可以去掉这里的代码
 		 * @class EditorCache
-		 * @constructor 
+		 * @constructor
 		 * @for Ibos
 		 * @param {Ueditor} ue   百度编辑器实例
 		 * @param {String|Element|Jquery} form 编辑器所在表单节点

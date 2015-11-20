@@ -522,6 +522,21 @@ use application\core\utils\String;
 										<img width="44" height="44" src="<?php echo $fileInfo['iconsmall']; ?>" alt="<?php echo $fileInfo['filename']; ?>" title="<?php echo $fileInfo['filename']; ?>">
 									</i>
 									<div class="attc"><?php echo $fileInfo['filename']; ?></div>
+									<span class="fss mlm">
+										<a href="<?php echo $fileInfo['downurl']; ?>" class="anchor"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+										<?php if (isset($fileInfo['officereadurl'])): ?>
+											<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $fileInfo['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
+												<?php echo $lang['View']; ?>
+											</a>
+										<?php endif; ?>&nbsp;&nbsp;
+										<?php if (isset($fileInfo['officeediturl'])): ?>
+											<a href="javascript:;" data-action="editOfficeFile" data-param='{"href": "<?php echo $fileInfo['officeediturl']; ?>"}' title="<?php echo $lang['Edit']; ?>">
+												<?php echo $lang['Edit']; ?>
+											</a>
+										<?php endif; ?>
+										<!-- 转存至文件柜 -->
+										<!--<a href="#" class="anchor"><?php // echo $lang['Dump file cabinet']; ?></a>-->
+									</span>
 								</div>
 								<?php endforeach; ?>
 								<?php endif; ?>

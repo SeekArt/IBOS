@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 后台模块文件
+ * 后台模块文件 
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @link http://www.ibos.com.cn/

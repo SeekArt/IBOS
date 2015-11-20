@@ -173,7 +173,7 @@ class Article {
 	public static function getScopeUidArr( $data ) {
 		$uidArr = array();
 		if ( $data['deptid'] == 'alldept' ) {
-			$users = IBOS::app()->setting->get( 'cache/users' );
+			$users = IBOS::app()->setting->get( 'cache/users' ); 
 			foreach ( $users as $value ) {
 				$uidArr[] = $value['uid'];
 			}

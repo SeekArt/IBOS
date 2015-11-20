@@ -72,7 +72,7 @@ class Message {
             return true;
         } else {
             // 客户自定义接口，待项目版定制
-            /* $setting = Ibos::app()->setting->get( 'setting' );
+            /* $setting = IBOS::app()->setting->get( 'setting' );
               if ( $setting['smsenabled'] && in_array( $module, $setting['smsmodule'] ) ) {
 
               } */

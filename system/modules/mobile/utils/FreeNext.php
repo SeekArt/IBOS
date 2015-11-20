@@ -265,7 +265,7 @@ class FreeNext extends Base {
 		);
 //		Main::setCookie( 'flow_turn_flag', 1, 30 );
 		$this->ajaxReturn( $datas, Mobile::dataType() );
-//        $url = Ibos::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+//        $url = IBOS::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 //        $this->getController()->redirect( $url );
 	}
 
@@ -349,12 +349,12 @@ class FreeNext extends Base {
 //        $presetDesc = !is_null( $preset ) ? $var['lang']['Default step'] : '';
 //        $userNameStr = User::model()->fetchRealnamesByUids( $prcsUserNext );
 //        $content = $var['lang']['To the steps'] . $processIdNext . $presetDesc . ',' . $var['lang']['Transactor'] . ':' . $userNameStr;
-//        Common::runlog( $var['runid'], $var['processid'], 0, Ibos::app()->user->uid, 1, $content );
+//        Common::runlog( $var['runid'], $var['processid'], 0, IBOS::app()->user->uid, 1, $content );
 //        //-------end------------
 //        //-- 设置当前步骤所有人为已转交 --
 //        FlowRunProcess::model()->updateAll( array( 'flag' => 3 ), sprintf( "runid = %d AND processid = %d", $var['runid'], $var['processid'] ) );
 //        //-- 设置当前步骤自己的结束时间 --
-//        FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], Ibos::app()->user->uid ) );
+//        FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], IBOS::app()->user->uid ) );
 //        //-- 短信提醒 --
 //        $content = filter_input( INPUT_POST, 'message', FILTER_SANITIZE_STRING );
 //        if ( !is_null( $content ) ) {
@@ -365,7 +365,7 @@ class FreeNext extends Base {
 //                'flowprocess' => $var['flowprocess']
 //            );
 //            $ext = array(
-//                '{url}' => Ibos::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
+//                '{url}' => IBOS::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
 //                '{message}' => $content
 //            );
 //            Notify::model()->sendNotify( $prcsUserNext, 'workflow_turn_notice', $ext );
@@ -378,7 +378,7 @@ class FreeNext extends Base {
 //            FlowRunProcess::model()->updateAll( array( 'flag' => 4 ), sprintf( "runid = %d AND (processid = %d OR processid = %d)", $var['runid'], $prcsFirst, $prcsNext ) );
 //        }
 //        Main::setCookie( 'flow_turn_flag', 1, 30 );
-//        $url = Ibos::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+//        $url = IBOS::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 //        $this->getController()->redirect( $url );
 //    }
 

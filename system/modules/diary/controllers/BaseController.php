@@ -55,7 +55,7 @@ class BaseController extends Controller {
 	 */
 	public function getUnreviews() {
 		//获取所有直属下属id
-		$uidArr = User::model()->fetchSubUidByUid( IBOS::app()->user->uid );
+		$uidArr = User::model()->fetchSubUidByUid( IBOS::app()->user->uid ); 
 		$count = 0;
 		foreach ( $uidArr as $subUid ) {
 			$diarys = Diary::model()->fetchAll( 'uid=:uid AND isreview=:isreview', array( ':uid' => $subUid, ':isreview' => 0 ) );

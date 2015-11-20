@@ -74,7 +74,7 @@ class Email {
 			$queryArchiveId = 0;
 			$folder = 0;
 		} elseif ( $folder == 'all' ) {//全部邮件（包含归档）
-			$ids = IBOS::app()->setting->get( 'setting/emailtableids' );
+			$ids = IBOS::app()->setting->get( 'setting/emailtableids' ); 
 			$queryArchiveId = $ids;
 			$folder = 0;
 		} elseif ( strpos( $folder, 'archive_' ) !== false ) { //某一个归档

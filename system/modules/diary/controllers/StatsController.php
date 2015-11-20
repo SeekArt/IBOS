@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Module;
 use application\modules\statistics\utils\StatCommon as StatCommonUtil;
 

@@ -250,7 +250,7 @@ EOT;
 		static $hostInfo = false;
 		if ( !$hostInfo ) {
 			if ( defined( 'CALLBACK' ) ) {
-				$hostInfo = rtrim( Ibos::app()->request->getHostInfo(), '/' );
+				$hostInfo = rtrim( IBOS::app()->request->getHostInfo(), '/' );
 			} else {
 				$hostInfo = rtrim( Env::getSiteUrl( Env::isHttps() ), '/' );
 			}

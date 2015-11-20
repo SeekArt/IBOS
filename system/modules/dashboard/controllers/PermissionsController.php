@@ -161,7 +161,7 @@ class PermissionsController extends BaseController {
                     $node = $nodeList[$key];
                     if ( empty( $nodeRelated ) ) {
                         if ( strcasecmp( $key, $nodeId ) !== 0 && $nodeId === 'data' ) {
-                            $vals = $privilege[$key];
+                            $vals = array_filter( $privilege[$key] );
                             if ( is_array( $vals ) ) {
                                 NodeRelated::model()->addRelated( '', $roleid, $node );
                                 foreach ( $vals as $id => $val ) {

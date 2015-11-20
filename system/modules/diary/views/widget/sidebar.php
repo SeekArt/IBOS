@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 
 ?>
 <li <?php if ( $inPersonal ): ?>class="active"<?php endif; ?>>

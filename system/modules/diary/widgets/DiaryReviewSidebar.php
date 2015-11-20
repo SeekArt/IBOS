@@ -17,7 +17,7 @@ class DiaryReviewSidebar extends CWidget {
 	public function run() {
 		$data = array(
 			'hasSub' => DiaryUtil::checkIsHasSub(),
-			'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
+			'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ), 
 			'config' => DiaryUtil::getSetting(),
 			'id' => $this->getController()->getId(),
 		);

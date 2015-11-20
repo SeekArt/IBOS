@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Module;
 use application\modules\statistics\core\StatConst;
 use application\modules\statistics\utils\StatCommon;

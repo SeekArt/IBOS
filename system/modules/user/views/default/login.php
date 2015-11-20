@@ -8,7 +8,7 @@ use application\modules\dashboard\model\LoginTemplate;
 <html lang="en">
     <head>
         <meta charset=<?php echo CHARSET; ?> />
-        <title><?php echo Ibos::app()->setting->get( 'title' ); ?></title>
+        <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
         <link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico">
         <meta name="generator" content="IBOS <?php echo VERSION; ?>" />
         <meta name="author" content="IBOS Team" />
@@ -93,7 +93,7 @@ use application\modules\dashboard\model\LoginTemplate;
                                     <input type="submit" name="loginsubmit" value="<?php echo $lang['Login']; ?>" tabIndex="104" class="btn btn-primary btn-large btn-block">
                                     <input type="hidden" name="cookietime" value="<?php echo $cookietime; ?>" />
                                     <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" />
-                                    <input type="hidden" name="refer" value="<?php echo Ibos::app()->user->getReturnUrl(); ?>" />
+                                    <input type="hidden" name="refer" value="<?php echo IBOS::app()->user->getReturnUrl(); ?>" />
                                 </div>
                             </div>
                             <div class="fill" id="get_password_panel" style="display: none;" >
@@ -162,22 +162,22 @@ use application\modules\dashboard\model\LoginTemplate;
                 <!-- Quick link -->
                 <div class="copyright">
                     <div class="quick-link">
-                        <a target="_blank" href="http://doc.ibos.com.cn"><?php echo Ibos::lang( 'Ibos help', 'default' ); ?></a>
+                        <a target="_blank" href="http://doc.ibos.com.cn"><?php echo IBOS::lang( 'Ibos help', 'default' ); ?></a>
                         <span class="ilsep">|</span>
-                        <a target="_blank" href="http://bbs.ibos.com.cn"><?php echo Ibos::lang( 'Ibos feedback', 'default' ); ?></a>
+                        <a target="_blank" href="http://bbs.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
                         <span class="ilsep">|</span>
-                        <a target="_blank" href="<?php echo Ibos::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><?php echo Ibos::lang( 'Control center', 'default' ); ?></a>
+                        <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><?php echo IBOS::lang( 'Control center', 'default' ); ?></a>
                         <span class="ilsep">|</span>
-                        <a href="javascript:;" data-action="showCert"><?php echo Ibos::lang( 'Certificate of authorization', 'default' ); ?></a>
+                        <a href="javascript:;" data-action="showCert"><?php echo IBOS::lang( 'Certificate of authorization', 'default' ); ?></a>
                         <span class="ilsep">|</span>
-                        <a target="_blank" href="http://www.ibos.com.cn/file/99"><?php echo Ibos::lang( 'Chrome frame', 'default' ); ?></a>
+                        <a target="_blank" href="http://www.ibos.com.cn/file/99"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
                         <span class="ilsep">|</span>
                         <a href="javascript:;" data-action="appDownload">移动端下载</a>
                     </div>
                     Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>
-						Processed in <code><?php echo Ibos::app()->performance->endClockAndGet(); ?></code> second(s).
-						<code><?php echo Ibos::app()->performance->getDbstats(); ?></code> queries. 
+						Processed in <code><?php echo IBOS::app()->performance->endClockAndGet(); ?></code> second(s).
+						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries. 
 					<?php endif; ?>
                 </div>
             </div>
@@ -186,7 +186,7 @@ use application\modules\dashboard\model\LoginTemplate;
         <script>
 			var G = {
 				VERHASH: '<?php echo VERHASH; ?>',
-				SITE_URL: '<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>',
+				SITE_URL: '<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>',
 				STATIC_URL: '<?php echo STATICURL; ?>',
 				formHash: '<?php echo FORMHASH ?>',
 				page: "login",

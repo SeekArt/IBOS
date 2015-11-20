@@ -94,8 +94,8 @@ class SettingController extends BaseController {
 
     public function actionUpdate() {
         // 如果不是本人操作，不能进行提交操作
-//		if ( $uid !== Ibos::app()->user->uid ) {
-//			throw new EnvException( Ibos::lang( 'Parameters error', 'error' ) );
+//		if ( $uid !== IBOS::app()->user->uid ) {
+//			throw new EnvException( IBOS::lang( 'Parameters error', 'error' ) );
 //		}
         // 个人资料提交
         $profileField = array( 'birthday', 'bio', 'telephone', 'address', 'qq' );
@@ -119,7 +119,7 @@ class SettingController extends BaseController {
         }
         // 更新缓存
         UserUtil::cleanCache( IBOS::app()->user->uid );
-//			$this->success( Ibos::lang( 'Save succeed', 'message' ) );
+//			$this->success( IBOS::lang( 'Save succeed', 'message' ) );
 //		echo "<script>parent.settingCallback('图片大小不能超过2M',false)</script>";
         exit();
     }

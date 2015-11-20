@@ -78,9 +78,10 @@ class AttachController extends Controller {
 	public function actionOffice() {
 		if ( util\Env::submitCheck( 'formhash' ) ) {
 			$widget = util\IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\main\widgets\Office', array() );
-			return $widget->handleRequest();
+            echo $widget->handleRequest();
 		} else {
 			$data = $this->getData();
+            $data['decodeArr']['op'] = util\Env::getRequest('op');
 			$widget = $this->createWidget( 'application\modules\main\widgets\Office', array( 'param' => $data['decodeArr'], 'attach' => $data['attach'] ) );
 			echo $widget->run();
 		}

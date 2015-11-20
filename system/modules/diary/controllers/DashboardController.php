@@ -19,7 +19,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\model\Setting;

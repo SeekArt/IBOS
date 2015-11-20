@@ -744,10 +744,10 @@ class WorkController extends BaseController {
 			'flowprocess' => 1,
 			'fromnew' => 1
 		);
-		// if ( Ibos::app()->request->getIsAjaxRequest() ) {
+		// if ( IBOS::app()->request->getIsAjaxRequest() ) {
 		$this->ajaxReturn( array( 'isSuccess' => true, 'key' => WfCommonUtil::param( $param ) ), Mobile::dataType() );
 		// } else {
-		//     $url = Ibos::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => WfCommonUtil::param( $param ) ) );
+		//     $url = IBOS::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => WfCommonUtil::param( $param ) ) );
 		//     header( "Location: $url" );
 		// }
 		// } else {
@@ -761,7 +761,7 @@ class WorkController extends BaseController {
 		// 	$data = array(
 		// 		'flow' => $flow->toArray(),
 		// 		'runName' => $runName
-		// 		// ,'lang' => Ibos::getLangSources()
+		// 		// ,'lang' => IBOS::getLangSources()
 		// 	);			
 		// 	$this->ajaxReturn( $data, Mobile::dataType() );
 		// }		
@@ -1565,7 +1565,7 @@ class WorkController extends BaseController {
 		} // end else
 		//------------------- 流程监控的硬性转交，要模拟接收办理过程------手机端不需要 -----------------
 		// if ( $op == "manage" ) {
-		// 	$parent = Ibos::app()->db->createCommand()
+		// 	$parent = IBOS::app()->db->createCommand()
 		// 			->select( 'parent' )
 		// 			->from( '{{flow_run_process}}' )
 		// 			->where( sprintf( "runid = %d AND processid = %d AND flowprocess = %d", $runId, $processId, $flowProcess ) )
@@ -1575,10 +1575,10 @@ class WorkController extends BaseController {
 		// 	if ( $parent && $parent != "0" ) {
 		// 		$sql.=" AND flowprocess IN ('$parent')";
 		// 	}
-		// 	Ibos::app()->db->createCommand()->setText( $sql )->execute();
+		// 	IBOS::app()->db->createCommand()->setText( $sql )->execute();
 		// }
 		// MainUtil::setCookie( 'flow_turn_flag', 1, 30 );
-		// $url = Ibos::app()->urlManager->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+		// $url = IBOS::app()->urlManager->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 		// $this->redirect( $url );
 		$this->ajaxReturn( array( "isSuccess" => true ), Mobile::dataType() );
 	}
@@ -2229,7 +2229,7 @@ class WorkController extends BaseController {
 					// 'inajax' => $inajax,
 					// 'op' => $op
 			);
-//            $url = Ibos::app()->urlManager->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+//            $url = IBOS::app()->urlManager->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 //            $this->redirect( $url );
 			$this->ajaxReturn( array( 'isSuccess' => true, 'data' => $data ), Mobile::dataType() );
 		}

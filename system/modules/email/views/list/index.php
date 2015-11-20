@@ -1,6 +1,6 @@
 <?php 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 ?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/email.css?<?php echo VERHASH; ?>">

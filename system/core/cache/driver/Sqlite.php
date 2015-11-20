@@ -15,7 +15,7 @@ class Sqlite extends Cache {
      */
     public function __construct( $options = array() ) {
         if ( !extension_loaded( 'sqlite' ) ) {
-            throw new CException( Ibos::lang( 'Not support', 'error' ) . ':sqlite' );
+            throw new CException( IBOS::lang( 'Not support', 'error' ) . ':sqlite' );
         }
         if ( empty( $options ) ) {
             $options = array(

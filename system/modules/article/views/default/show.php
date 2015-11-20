@@ -71,6 +71,11 @@ use application\modules\vote\components\Vote;
 												</div>
 												<span class="fss">
 													<a href="<?php echo $fileInfo['downurl']; ?>" class="anchor">下载</a>&nbsp;&nbsp;
+		                                            <?php if (isset($fileInfo['officereadurl'])): ?>
+		                                                <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $fileInfo['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
+		                                                    <?php echo $lang['View']; ?>
+		                                                </a>
+		                                            <?php endif; ?>
 													<!--<a href="#" class="anchor">转存到文件柜</a>-->
 												</span>
 											</div>

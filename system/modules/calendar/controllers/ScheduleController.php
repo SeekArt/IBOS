@@ -25,6 +25,7 @@ use application\modules\calendar\utils\Calendar as CalendarUtil;
 use application\modules\message\model\Notify;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use application\core\model\Log;
 
 Class ScheduleController extends BaseController {
 

@@ -21,7 +21,7 @@ use application\core\model\Model;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Database;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\String;
 use application\modules\email\controllers\BaseController;
 use application\modules\main\model\Attachment;

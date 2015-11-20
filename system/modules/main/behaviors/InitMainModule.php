@@ -159,7 +159,7 @@ class InitMainModule extends CBehavior {
 		// -------------------------------------------
 		// 可访问的静态资源文件夹
         // 添加defined判断，防止URL请求错误
-        defined('STATICURL') or define('STATICURL', Ibos::app()->assetManager->getBaseUrl());
+        defined('STATICURL') or define('STATICURL', IBOS::app()->assetManager->getBaseUrl());
 		// 是否用手机访问
         defined('IN_MOBILE') or define('IN_MOBILE', Env::checkInMobile());
         defined('IN_DASHBOARD') or define('IN_DASHBOARD', Env::checkInDashboard());
@@ -265,7 +265,7 @@ class InitMainModule extends CBehavior {
                 //当访问的客户在禁止ip列表时，程序运行到这里会出错
                 //error方法没有定义
                 //解决是要调用正确的处理函数或是新定义一个error函数
-				IBOS::error( IBOS::lang( 'User banned', 'message' ) );
+				//IBOS::error( IBOS::lang( 'User banned', 'message' ) );
                 //直接返回403，禁止访问
                 //TODO 显示更加友好的提示信息
                 header("HTTP/1.1 403 Forbidden");

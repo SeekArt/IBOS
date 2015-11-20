@@ -110,6 +110,7 @@ return array(
     'Month' => '月',
     'Read' => '阅读',
     'View' => '查阅',
+    'Edit' => '编辑',
     'Submit time' => '提交时间',
     'Download' => '下载',
     'Archived to a filing cabinet' => '转存到文件柜',

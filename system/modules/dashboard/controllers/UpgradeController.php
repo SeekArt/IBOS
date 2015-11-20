@@ -380,7 +380,7 @@ class UpgradeController extends BaseController {
 		list($modifyList, $showList) = Upgrade::compareBasefile( $updateFileList );
 		$data['step'] = 3;
 //		if ( empty( $modifyList ) && empty( $showList ) ) {
-//			$msg = Ibos::lang( 'Filecheck nofound md5file' );
+//			$msg = IBOS::lang( 'Filecheck nofound md5file' );
 //			$this->render( 'upgradeError', array( 'msg' => $msg ) );
 //			exit();
 //		} else {

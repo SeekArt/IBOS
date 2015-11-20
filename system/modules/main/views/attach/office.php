@@ -84,7 +84,7 @@ use application\core\utils\IBOS;
 							<td width="100%" valign="top">
 								<!-- 控件放置容器 -->
 								<div class="view-area" style="z-index: 2;">
-									<object width="100%" height="100%" id="OCX" classid="clsid:C9BC4DFF-4248-4a3c-8A49-63A7D317F404" codebase="<?php echo $officePath; ?>OfficeControl.cab#version=5,0,2,4">
+									<object width="100%" height="100%" id="OCX" classid="clsid:C9BC4DFF-4248-4a3c-8A49-63A7D317F404" codebase="<?php echo STATICURL; ?>/office/OfficeControl.cab#version=5,0,2,9">
 										<?php if ( $param['op'] == 'edit' ): ?>
 											<param name="IsNoCopy" value="0">
 											<param name="FileSave" value="1">
@@ -126,6 +126,7 @@ use application\core\utils\IBOS;
 						</tr>
 					</tbody>
 				</table>
+				<input type="file" name="Filedata" style="display:none;">
 				<input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" />
 			</form>
 		</div>
@@ -133,6 +134,7 @@ use application\core\utils\IBOS;
 		<script src="<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>"></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
 		<script src="<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
 		<script src="<?php echo $assetUrl; ?>/js/main_attach_office.js?<?php echo VERHASH; ?>"></script>
 		<script>
 			$(document).ready(function() {
@@ -149,6 +151,7 @@ use application\core\utils\IBOS;
 				attachName: '<?php echo $fileName; ?>',
 				fileName: '<?php echo $fileName; ?>',
 				user: '<?php echo IBOS::app()->user->realname; ?>',
+				staticurl: '<?php echo STATICURL; ?>/office/'
 			};
 			var OCX = new OCX(settings);
 <?php if ( $param['op'] == 'edit' && $typeId == '3' ): ?>

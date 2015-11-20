@@ -8,14 +8,18 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\Xml;
-use application\modules\email\core\WebEmail;
-use application\modules\email\core\WebMailImap;
-use application\modules\email\core\WebMailPop;
+use application\modules\email\extensions\mailer\EMailer;
 use application\modules\email\model\Email as Email2;
 use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailWeb;
-use application\modules\email\utils\Email as EmailUtil;
 use application\modules\user\model\User;
+use ezcMailFile;
+use ezcMailImapTransport;
+use ezcMailImapTransportOptions;
+use ezcMailParser;
+use ezcMailPop3Transport;
+use ezcMailPop3TransportOptions;
+use ezcMailTransportException;
 
 class WebMail {
 
@@ -71,21 +75,54 @@ class WebMail {
 	 */
 	private static function connectServer( $conf = array() ) {
         $connected = false;
+        // 新认证方法，不依赖 imap 扩展
+        require PATH_ROOT . '/system/modules/email/extensions/vendor/autoload.php';
+        if ($conf['type'] == 'pop') {
+            $options = new ezcMailPop3TransportOptions ();
+            if ($conf['ssl'] == 1) {
+                $options->ssl = true;
+            }
+            $pop3 = new ezcMailPop3Transport($conf['server'], $conf['port'], $options);
+            try {
+                $pop3->authenticate($conf['username'], $conf['password']);
+                // 没有异常就是认证通过了
+                $connected = true;
+            } catch (ezcMailTransportException $exc) {
+                //echo $exc->getTraceAsString();
+                // @todo 邮箱验证异常处理
+            }
+        } elseif ($conf['type'] == 'imap') {
+            $options = new ezcMailImapTransportOptions();
+            if ($conf['ssl'] == 1) {
+                $options->ssl = true;
+            }
+            $imap = new ezcMailImapTransport($conf['server'], $conf['port'], $options);
+            try {
+                $imap->authenticate($conf['username'], $conf['password']);
+                $connected = true;
+            } catch (ezcMailTransportException $exc) {
+                //echo $exc->getTraceAsString();
+                // @todo 邮箱验证异常处理
+            }
+        } else {
+            return false;
+        }
+        return $connected;
         /*
           $host = 'imap.qq.com';
           $port = 993;
           $user = 'ibos_gzdzl@qq.com';
           $pass = '123456gzddzl';
          */
-        $host = $conf['server'];
-        $port = $conf['port'];
-        $user = $conf['username'];
-        $pass = $conf['password'];
-        $ssl = $conf['ssl'];
-        $type = $conf['type'];
-        $webEmail = new WebEmail($host, $port, $user, $pass, $ssl, $type);
-        $connected = $webEmail->isConnected();
-        return $connected;
+//        $host = $conf['server'];
+//        $port = $conf['port'];
+//        $user = $conf['username'];
+//        $pass = $conf['password'];
+//        $ssl = $conf['ssl'];
+//        $type = $conf['type'];
+//        $webEmail = new WebEmail($host, $port, $user, $pass, $ssl, $type);
+//        $connected = $webEmail->isConnected();
+//        return $connected;
         /**
          * email test
          * 15-8-24 下午1:53 gzdzl
@@ -584,8 +621,8 @@ EOT;
 	 */
 	public static function receiveMail( $web ) {
         //检测imap扩展是否开启
-        if (!extension_loaded('imap'))
-            return 0;
+        //if (!extension_loaded('imap'))
+        //    return 0;
         /**
          * 'webid' => string '15' (length=2)
           'address' => string 'jxnuoh@163.com' (length=14)
@@ -603,51 +640,97 @@ EOT;
           'fid' => string '19' (length=2)
           'isdefault' => string '0' (length=1)
          */
+        error_reporting(E_ALL ^ E_NOTICE);
+        set_time_limit(600);
         self::$_web = $web;
-        @set_time_limit(0);
         //ignore_user_abort(true);
         list($prefix,, ) = explode('.', $web['server']);
         $user = User::model()->fetchByUid($web['uid']);
         $pwd = String::authCode($web['password'], 'DECODE', $user['salt']); //解密
-
-        /**
-         * email 接收代码改写
-         * 15-8-25 上午9:14 gzdzl
+        /*
+         * email 接收邮件新实现，不依赖 imap 扩展
          */
-        $host = $web['server'];
-        $port = $web['port'];
-        $user = $web['address'];
-        $ssl = $web['ssl'] == '1' ? true : false;
-
-        $webEmail = new WebEmail($host, $port, $user, $pwd, $ssl, $prefix);
-        if ($webEmail->isConnected()) {
-            //var_dump($webEmail->getMessages());
-            $emails = $webEmail->getMessages();
-            foreach ($emails as $email) {
-                file_put_contents('email.txt', var_export($email, true));
-                $data['subject'] = $email['subject'];
-                $data['sendtime'] = strtotime($email['date']);
-                $data['towebmail'] = $web['address'];
-                $data['issend'] = 1;
-                $data['fromid'] = $data['secrettoids'] = '';
-                $data['fromwebmail'] = EmailLang::langGetParseAddressList($email['from']);
-                //收件人
-                $data['toids'] = isset($email['to']) ? serialize($email['to']) : '';
-                /**
-                 * @TODO 获取附件，现在怎么保存
-                 * 如果邮件有附件，添加邮件附件信息
-                 */
-                $data['remoteattachment'] = isset($email['attachments']) ? serialize($email['attachments']) : null;
-                //抄送人
-                $data['copytoids'] = isset($email['cc']) ? serialize($email['cc']) : '';
-                //TODO qq邮箱的body是中文时有问题，会得到空串
-                $data['content'] = $email['body'];
-                //邮件大小(body)
-                $data['size'] = strlen($data['content']);
-                //检查是否收取过（可以放在前面）
-                if (!EmailBody::isExist($data['sendtime'], $data['fromwebmail'])) {
+        require PATH_ROOT . '/system/modules/email/extensions/vendor/autoload.php';
+        if ($prefix == 'pop') {
+            $options = new ezcMailPop3TransportOptions ();
+            if ($web['ssl'] == 1) {
+                $options->ssl = true;
+            }
+            $options->timeout = 30;
+            $pop3 = new ezcMailPop3Transport($web['server'], $web['port'], $options);
+            try {
+                $pop3->authenticate($web['username'], $pwd);
+                // $num 邮件数
+                // $size　总大小
+                $pop3->status($num, $size);
+                // @todo 判断是否读取过，读取 100 封之前的邮件，读取新邮件
+                // 读取最新的 100 封
+                if (0 < $num && $num <= 100) {
+                    // 少于等于 100 封时全部去读
+                    $set = $pop3->fetchAll();
+                } elseif ($num > 100) {
+                    // 多于 100 封时， 读取最新的 100 封
+                    // 最新邮件的 message id 最大 (mysql 中的自增主键)
+                    $set = $pop3->fetchFromOffset($num - 100, 100);
+                } else {
+                    return 0;
+                }
+                $return = count($set);
+                $parser = new ezcMailParser ();
+                $mail = $parser->parseMail($set);
+                for ($i = 0; $i < count($mail); $i ++) {
+                    // 收件人
+                    $toemails = array();
+                    if ($mail[$i]->to && !empty($mail[$i]->to)) {
+                        for ($j = 0; $j < count($mail[$i]->to); $j++) {
+                            $toemails[] = $mail[$i]->to[$j]->email;
+                        }
+                    }
+                    $data['towebmail'] = implode(';', $toemails);
+                    $data['toids'] = serialize($toemails);
+                    // 密送人
+                    $bccmails = array();
+                    if ($mail[$i]->bcc && !empty($mail[$i]->bcc)) {
+                        for ($j = 0; $j < count($mail[$i]->bcc); $j++) {
+                            $bccmails[] = $mail[$i]->bcc[$j]->email;
+                        }
+                    }
+                    $data['secrettoids'] = serialize($bccmails);
+                    // 抄送人
+                    $ccmails = array();
+                    if ($mail[$i]->cc && !empty($mail[$i]->cc)) {
+                        for ($j = 0; $j < count($mail[$i]->cc); $j++) {
+                            $ccmails[] = $mail[$i]->cc[$j]->email;
+                        }
+                    }
+                    $data['copytoids'] = serialize($ccmails);
+                    $data['subject'] = $mail[$i]->subject;
+                    // @todo 这里返回来的邮件内容有时可能是空
+                    $data['content'] = isset($mail[$i]->body->text) ? $mail[$i]->body->text : "(null)";
+                    $data['size'] = $mail[$i]->size;
+                    $data['sendtime'] = $mail[$i]->timestamp;
+                    // 发件人
+                    $data['fromwebmail'] = $mail[$i]->from->email;
+                    // @todo 外部邮件接收 issend 写死是 1 是否正确?
+                    $data['issend'] = 1;
+                    // 附件
+                    $parts = $mail[$i]->fetchParts();
+                    $files = array();
+                    foreach ($parts as $k => $part) {
+                        if ($part instanceof ezcMailFile) {
+                            // 中文文件名需要解码
+                            // base64 | quoted_printable_decode
+                            // copy($part->fileName, basename($part->fileName));
+                            $files[$k]['name'] = $part->fileName;
+                            $files[$k]['contentType'] = $part->contentType;
+                            $files[$k]['mimeType'] = $part->mimeType;
+                            $files[$k]['size'] = $part->size;
+                            // 文件保存策略：size 是小于 2M 时保存
+                        }
+                    }
+                    $data['remoteattachment'] = serialize($files);
                     $bodyId = EmailBody::model()->add($data, true);
-                    if ($bodyId) {//邮件信息添加成功
+                    if ($bodyId) {
                         $emailData = array(
                             'toid' => $web['uid'],
                             'isread' => 0,
@@ -657,13 +740,166 @@ EOT;
                         );
                         Email2::model()->add($emailData);
                     }
+                    EmailWeb::model()->updateByPk($web['webid'], array('lastrectime' => TIMESTAMP));
                 }
-                EmailWeb::model()->updateByPk($web['webid'], array('lastrectime' => TIMESTAMP));
+                return $return;
+            } catch (ezcMailTransportException $exc) {
+                die($exc->getTraceAsString());
+                // @todo 邮件接收异常处理
             }
-            return $webEmail->countMessages();
+        } elseif ($prefix == 'imap') {
+            $options = new ezcMailImapTransportOptions();
+            if ($web['ssl'] == 1) {
+                $options->ssl = true;
+            }
+            $options->timeout = 30;
+            $imap = new ezcMailImapTransport($web['server'], $web['port'], $options);
+            try {
+                $imap->authenticate($web['username'], $pwd);
+                // IMAP 方式的必须
+                $imap->selectMailbox('Inbox');
+                // $num 邮件数
+                // $size　总大小
+                $imap->status($num, $size);
+                // @todo 判断是否读取过，读取 100 封之前的邮件，读取新邮件
+                // 读取最新的 100 封
+                if (0 < $num && $num <= 100) {
+                    // 少于等于 100 封时全部去读
+                    $set = $imap->fetchAll();
+                } elseif ($num > 100) {
+                    // 多于 100 封时， 读取最新的 100 封
+                    // 最新邮件的 message id 最大 (mysql 中的自增主键)
+                    $set = $imap->fetchFromOffset($num - 100, 100);
+                } else {
+                    return 0;
+                }
+                $return = count($set);
+                $parser = new ezcMailParser ();
+                $mail = $parser->parseMail($set);
+                for ($i = 0; $i < count($mail); $i ++) {
+                    // 收件人
+                    $toemails = array();
+                    if ($mail[$i]->to && !empty($mail[$i]->to)) {
+                        for ($j = 0; $j < count($mail[$i]->to); $j++) {
+                            $toemails[] = $mail[$i]->to[$j]->email;
+                        }
+                    }
+                    $data['towebmail'] = implode(';', $toemails);
+                    $data['toids'] = serialize($toemails);
+                    // 密送人
+                    $bccmails = array();
+                    if ($mail[$i]->bcc && !empty($mail[$i]->bcc)) {
+                        for ($j = 0; $j < count($mail[$i]->bcc); $j++) {
+                            $bccmails[] = $mail[$i]->bcc[$j]->email;
+                        }
+                    }
+                    $data['secrettoids'] = serialize($bccmails);
+                    // 抄送人
+                    $ccmails = array();
+                    if ($mail[$i]->cc && !empty($mail[$i]->cc)) {
+                        for ($j = 0; $j < count($mail[$i]->cc); $j++) {
+                            $ccmails[] = $mail[$i]->cc[$j]->email;
+                        }
+                    }
+                    $data['copytoids'] = serialize($ccmails);
+                    $data['subject'] = $mail[$i]->subject;
+                    // @todo 这里返回来的邮件内容有时可能是空
+                    $data['content'] = isset($mail[$i]->body->text) ? $mail[$i]->body->text : "(null)";
+                    $data['size'] = $mail[$i]->size;
+                    $data['sendtime'] = $mail[$i]->timestamp;
+                    // 发件人
+                    $data['fromwebmail'] = $mail[$i]->from->email;
+                    // @todo 外部邮件接收 issend 写死是 1 是否正确?
+                    $data['issend'] = 1;
+                    // 附件
+                    $parts = $mail[$i]->fetchParts();
+                    $files = array();
+                    foreach ($parts as $k => $part) {
+                        if ($part instanceof ezcMailFile) {
+                            // 中文文件名需要解码
+                            // base64 | quoted_printable_decode
+                            // copy($part->fileName, basename($part->fileName));
+                            $files[$k]['name'] = $part->fileName;
+                            $files[$k]['contentType'] = $part->contentType;
+                            $files[$k]['mimeType'] = $part->mimeType;
+                            $files[$k]['size'] = $part->size;
+                            // @todo 附件是否保存下来
+                        }
+                    }
+                    $data['remoteattachment'] = serialize($files);
+                    $bodyId = EmailBody::model()->add($data, true);
+                    if ($bodyId) {
+                        $emailData = array(
+                            'toid' => $web['uid'],
+                            'isread' => 0,
+                            'fid' => $web['fid'],
+                            'isweb' => 1,
+                            'bodyid' => $bodyId
+                        );
+                        Email2::model()->add($emailData);
+                    }
+                    EmailWeb::model()->updateByPk($web['webid'], array('lastrectime' => TIMESTAMP));
+                }
+                return $return;
+            } catch (ezcMailTransportException $exc) {
+//                die($exc->getTraceAsString());
+                // @todo 接收邮件异常处理
+            }
+        } else {
+            return 0;
         }
-        return 0;
-
+        /**
+         * email 接收代码改写
+         */
+//        $host = $web['server'];
+//        $port = $web['port'];
+//        $user = $web['address'];
+//        $ssl = $web['ssl'] == '1' ? true : false;
+//
+//        $webEmail = new WebEmail($host, $port, $user, $pwd, $ssl, $prefix);
+//        if ($webEmail->isConnected()) {
+//            //var_dump($webEmail->getMessages());
+//            $emails = $webEmail->getMessages();
+//            foreach ($emails as $email) {
+//                file_put_contents('email.txt', var_export($email, true));
+//                $data['subject'] = $email['subject'];
+//                $data['sendtime'] = strtotime($email['date']);
+//                $data['towebmail'] = $web['address'];
+//                $data['issend'] = 1;
+//                $data['fromid'] = $data['secrettoids'] = '';
+//                $data['fromwebmail'] = EmailLang::langGetParseAddressList($email['from']);
+//                //收件人
+//                $data['toids'] = isset($email['to']) ? serialize($email['to']) : '';
+//                /**
+//                 * @TODO 获取附件，现在怎么保存
+//                 * 如果邮件有附件，添加邮件附件信息
+//                 */
+//                $data['remoteattachment'] = isset($email['attachments']) ? serialize($email['attachments']) : null;
+//                //抄送人
+//                $data['copytoids'] = isset($email['cc']) ? serialize($email['cc']) : '';
+//                //TODO qq邮箱的body是中文时有问题，会得到空串
+//                $data['content'] = $email['body'];
+//                //邮件大小(body)
+//                $data['size'] = strlen($data['content']);
+//                //检查是否收取过（可以放在前面）
+//                if (!EmailBody::isExist($data['sendtime'], $data['fromwebmail'])) {
+//                    $bodyId = EmailBody::model()->add($data, true);
+//                    if ($bodyId) {//邮件信息添加成功
+//                        $emailData = array(
+//                            'toid' => $web['uid'],
+//                            'isread' => 0,
+//                            'fid' => $web['fid'],
+//                            'isweb' => 1,
+//                            'bodyid' => $bodyId
+//                        );
+//                        Email2::model()->add($emailData);
+//                    }
+//                }
+//                EmailWeb::model()->updateByPk($web['webid'], array('lastrectime' => TIMESTAMP));
+//            }
+//            return $webEmail->countMessages();
+//        }
+//        return 0;
         /*
           //按类型加载所用的函数库
           if ($prefix == 'imap') {
@@ -747,20 +983,20 @@ EOT;
           return $count;
           }
          */
-	}
+    }
 
-	/**
-	 * 发送外部邮件
-	 * @param string $toUser 要发送的邮件地址，可多个
-	 * @param array $body
-	 * @param array $web
-	 * @return mixed boolean|发送成功 string|错误信息
-	 */
+    /**
+     * 发送外部邮件
+     * @param string $toUser 要发送的邮件地址，可多个
+     * @param array $body
+     * @param array $web
+     * @return mixed boolean|发送成功 string|错误信息
+     */
 	public static function sendWebMail( $toUser, $body, $web ) {
 		$user = User::model()->fetchByUid( $web['uid'] );
 		$password = String::authCode( $web['password'], 'DECODE', $user['salt'] );
 		$mailer = IBOS::createComponent( 'application\modules\email\extensions\mailer\EMailer' );
-        $mailer = new \application\modules\email\extensions\mailer\EMailer();
+        $mailer = new EMailer();
 		$mailer->IsSMTP();
 		$mailer->SMTPDebug = 0;
 		$mailer->Host = $web['smtpserver'];

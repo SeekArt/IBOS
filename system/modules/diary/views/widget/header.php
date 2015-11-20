@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 
 ?>
 <div class="clearfix">

@@ -3,7 +3,7 @@
 /**
  * 字符串操作工具类文件
  *
- * @author banyanCheung <banyan@ibos.com.cn>
+ * @author banyanCheung <banyan@ibos.com.cn> 
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2013 IBOS Inc
  */

@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\IBOS; 
 use application\core\utils\Module;
 use application\modules\diary\utils\Diary;
 use application\modules\statistics\core\StatConst;

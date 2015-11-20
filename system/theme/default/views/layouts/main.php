@@ -60,7 +60,8 @@ use application\modules\user\utils\User;
 				<div class="wrap">		
 					<div class="logo">
 						<?php $unit = IBOS::app()->setting->get( 'setting/unit' ); ?>
-						<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php if( !empty( $unit['logourl'] ) ): echo $unit['logourl']; else: ?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
+						<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php if( !empty( $unit['logourl'] ) ): echo $unit['logourl']; 
+						else: ?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
 					</div>
 					<!-- Nav -->
 					<?php $navs = IBOS::app()->setting->get( 'cache/nav' ); ?>

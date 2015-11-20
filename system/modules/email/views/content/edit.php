@@ -124,11 +124,23 @@
 						</div>
 						<div class="attl" id="file_target">
 							<?php if(isset($email['attach'])): ?>
-								<?php foreach ($email['attach'] as $value): ?>
+								<?php
+								foreach ($email['attach'] as $value): ?>
 								<div class="attl-item" data-node-type="attachItem">
 									<a href="javascript:;" title="删除附件" class="cbtn o-trash" data-id="<?php echo $value['aid']; ?>" data-node-type="attachRemoveBtn"></a>
 									<i class="atti"><img width="44" height="44" src="<?php echo $value['iconsmall']; ?>" alt="<?php echo $value['filename']; ?>" title="<?php echo $value['filename']; ?>"></i>
-									<div class="attc"><?php echo $value['filename']; ?></div> 
+									<div class="attc"><?php echo $value['filename']; ?></div>&nbsp;&nbsp;
+									<a target="_blank" href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+									<?php if (isset($value['officereadurl'])): ?>
+										<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
+											<?php echo $lang['Read']; ?>
+										</a>
+									<?php endif; ?>&nbsp;&nbsp;
+									<?php if (isset($value['officeediturl'])): ?>
+										<a href="javascript:;" data-action="editOfficeFile" data-param='{"href": "<?php echo $value['officeediturl']; ?>"}' title="<?php echo $lang['Edit']; ?>">
+											<?php echo $lang['Edit']; ?>
+										</a>
+									<?php endif; ?>
 								</div>
 								<?php endforeach; ?>
 							<?php endif; ?>
