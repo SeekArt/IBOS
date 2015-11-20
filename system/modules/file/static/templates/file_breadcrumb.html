@@ -1,0 +1,10 @@
+<!-- Tempalte: 面包屑模板 -->
+<% for(var i = 0, len = breadcrumbs.length; i < len; i++){ %>
+	<!-- 当前活动项 -->
+	<% if(i == len - 1) { %>
+		<a href="javascript:;" data-fid="<%= breadcrumbs[i].fid %>" class="current"><%= breadcrumbs[i].name %></a>
+	<% } else { %>
+		<a href="javascript:;" data-fid="<%= breadcrumbs[i].fid %>"><%= breadcrumbs[i].name %></a>
+		<i class="o-fc-level mls"></i>
+	<% } %>
+<% } %>

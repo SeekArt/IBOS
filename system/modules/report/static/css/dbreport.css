@@ -1,0 +1,19 @@
+.ps-table{
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-color: #DADFE6;
+}
+.ps-table thead th{ background-color: #FFF; border: 0 none; }
+.ps-table .checkbox,
+.ps-table .radio{ margin-bottom: 0; }
+.ps-table th,
+.ps-table td{ height: auto; }
+.ps-table th:first-child,
+.ps-table td:first-child{ border-color: #DADFE6; }
+
+.stamp-slot{ border-radius: 4px; width: 60px; height: 24px; border: 1px dashed #DADFE6; background-color: #FFF;}
+.stamp-slot.active{ border-color: #3497DB; }
+
+.stamp-item-box { overflow: hidden; margin-left: -10px; min-height: 20px;}
+.stamp-item-box .stamp-item{ float: left; margin: 0 0 10px 10px; }

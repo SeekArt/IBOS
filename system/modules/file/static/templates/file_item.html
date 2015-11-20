@@ -1,0 +1,31 @@
+<!-- Tempalte: 文件、文件夹模板 -->
+<div class="fc-icon">
+	<!-- 文件 -->
+	<% if(type == 0) { %>
+		<!-- 图片类型-->
+		<% if(thumb) { %>
+			<div class="fc-img"><img src="<%= thumb %>" title="<%= name %>" /></div>
+		<!-- 其他文件类型 -->
+		<% } else if(typeof iconbig !== "undefined") { %>
+			<img src="<%= iconbig %>" title="<%= name %>" />
+		<% } %>
+	<!-- 文件夹 -->
+	<% } else { %>
+		<i class="file-icon o-folder-normal" title="<%= name %>"></i>
+	<% } %>
+</div>
+
+<span class="file-name" title="<%= name %>"><%= name %></span>
+
+<div class="file-desc">
+	<!-- 文件，显示大小 -->
+	<% if(type == 0) { %>
+		<%= formattedsize %>
+	<!-- 文件夹，显示创建时间 -->
+	<% } else { %>
+		<%= formattedaddtime %>
+	<% } %>
+</div>
+<% if(type == 0) { %>
+	<i class="oc-checkbox"></i>
+<% } %>

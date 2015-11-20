@@ -1,0 +1,22 @@
+.o-rp-personal,
+.o-rp-appraise{
+	background: url(../image/report.png) no-repeat;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+}
+.active .o-rp-personal{ background-position: -20px 0; }
+.o-rp-appraise{ background-position: -40px 0; } /* 评阅 */
+.active .o-rp-appraise{ background-position: -60px 0; }
+
+.in-rp-personal-empty, .in-rp-appraise-empty{
+	position: relative;
+	width: 488px;
+	height: 300px;
+}
+.in-rp-personal-empty{ background: url(../image/empty_personal.png) no-repeat center center; }
+.in-rp-appraise-empty{ background: url(../image/empty_appraise.png) no-repeat center center; }
+
+.in-rp-add{ position: absolute; top: 196px; left: 156px; width: 128px; height: 30px; }

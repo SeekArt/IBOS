@@ -1,0 +1,17 @@
+.in-officialdoc-empty{
+	background: url(../image/empty_docs.png) no-repeat center center;
+	width: 488px;
+	height: 300px;
+}
+
+.in-officialdoc .table tr td{
+	padding-top: 15px;
+	padding-bottom: 14px;
+}
+.in-officialdoc .title{
+	display: block;
+	width: 320px; 
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
