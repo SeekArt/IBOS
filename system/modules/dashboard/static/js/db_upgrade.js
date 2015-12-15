@@ -38,7 +38,7 @@
 			upgrade: function(obj) {
 				var aObj = $(obj), target = aObj.data('target');
 				$.artDialog({
-					title: "<?php echo Ibos::lang( 'Confirm action', 'message' ); ?>",
+					title: "<?php echo IBOS::lang( 'Confirm action', 'message' ); ?>",
 					content: '<?php echo $lang['Upgrade backup remind']; ?>',
 					id: 'confirm_upgrade_act',
 					lock: true,
