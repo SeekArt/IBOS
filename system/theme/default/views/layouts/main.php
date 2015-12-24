@@ -116,12 +116,12 @@ use application\modules\user\utils\User;
 					<div class="usi">
 						<div class="btn-group">
 							<a href="javascript:;" data-toggle="dropdown" id="user_login_ctrl">
-<?php echo String::cutStr( IBOS::app()->user->realname, 6 ); ?>
+                                <?php echo String::cutStr( IBOS::app()->user->realname, 6 ); ?>
 								<i class="caret caret-small"></i>
 							</a>
 						</div>
 						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message" id="user_fun_ctrl">
-<?php echo IBOS::lang( 'Message', 'default' ); ?>
+                            <?php echo IBOS::lang( 'Message', 'default' ); ?>
 						</a>
 					</div>
 					<div class="posr">
@@ -144,7 +144,9 @@ use application\modules\user\utils\User;
 								<li rel="message"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=message' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
-                                                                <li rel="meeting"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=meeting' ); ?>" class="anchor">查看消息</a></li>
+                                <li rel="meeting"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=meeting' ); ?>" class="anchor">查看消息</a></li>
+                                <li rel="car"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=car' ); ?>" class="anchor">查看消息</a></li>
+                                <li rel="assets"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=assets' ); ?>" class="anchor">查看消息</a></li>
 							</ul>
 						</div>
 					</div>

@@ -159,7 +159,9 @@ var L = {
         ASSIGNMENT: "条新任务",
         EMAIL: "封新邮件",
         MESSAGE: "条新消息",
-        MEETING:"条会议管理消息"
+        MEETING:"条会议管理消息",
+        CAR: "条车辆管理消息",
+        ASSETS:"条资产管理消息"
     },
     CNUM: {
         ONE: "一",

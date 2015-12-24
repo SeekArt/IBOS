@@ -404,7 +404,7 @@ var U = Ibos.Util = (function(){
 		}
 		return {
 			escape: escape,
-			unescape: escape
+			unescape: unescape
 		}
 	})();
 

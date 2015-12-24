@@ -6316,25 +6316,25 @@ a:hover .o-form-design,
 .pth{ padding-top: 15px; }
 .pts{ padding-top: 10px; }
 .ptm{ padding-top: 5px; }
-.ptz{ margin-left: 0!important; }
+.ptz{ padding-top: 0!important; }
 
 .pb{ padding-bottom: 20px; }
 .pbh{ padding-bottom: 15px; }
 .pbs{ padding-bottom: 10px; }
 .pbm{ padding-bottom: 5px; }
-.pbz{ margin-left: 0!important; }
+.pbz{ padding-bottom: 0!important; }
 
 .pl{ padding-left: 20px; }
 .plh{ padding-left: 15px; }
 .pls{ padding-left: 10px; }
 .plm{ padding-left: 5px; }
-.plz{ margin-left: 0!important; }
+.plz{ padding-left: 0!important; }
 
 .pr{ padding-right: 20px; }
 .prh{ padding-right: 15px; }
 .prs{ padding-right: 10px; }
 .prm{ padding-right: 5px; }
-.prz{ margin-left: 0!important; }
+.prz{ padding-right: 0!important; }
 
 
 .ovh{ overflow: hidden; }
