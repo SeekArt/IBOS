@@ -4,7 +4,7 @@
     $(document.body).trigger("formchange");
 
     var $info = $('#upgrade_info'),
-            coverUrl = "<?php echo $coverUrl; ?>",
+            coverUrl = Ibos.app.g("coverUrl"),
             upgrade = {
                 /**
                  * 通用步骤执行方法
@@ -19,7 +19,7 @@
                  * 步骤分发
                  * @param {integer} step 当前步骤
                  * @param {object} data 服务器返回操作数据
-                 * @returns {@exp;upgrade@call;processingShowUpgrade|@exp;upgrade@call;processingCompareFile|@exp;upgrade@call;processingDownloadFile}					
+                 * @returns {@exp;upgrade@call;processingShowUpgrade|@exp;upgrade@call;processingCompareFile|@exp;upgrade@call;processingDownloadFile}
                  */
                 processingStep: function (step, data) {
                     switch (step) {
@@ -86,7 +86,7 @@
                  */
                 ftpSetup: function (target) {
                     $.artDialog({
-                        title: "<?php echo $lang['Ftp setting']; ?>",
+                        title: Ibos.l("UPGRADE.FTP_SETTING"),
                         content: $.template('ftp_setup'),
                         id: 'sys_ftp_setup',
                         cancel: true,

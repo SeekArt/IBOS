@@ -1,6 +1,6 @@
 /**
  * 后台模块中文语言包
- * 
+ *
  */
 
 var L = L || {};
@@ -22,12 +22,12 @@ L.DB = {
 
 	// 全局 -- 即时通讯绑定
 	"BIND_USER": "绑定用户",
-	"BIND_SUCCESS": "绑定成功", 
-	"BIND_FAILED": "未知错误，绑定失败", 
+	"BIND_SUCCESS": "绑定成功",
+	"BIND_FAILED": "未知错误，绑定失败",
 
-	"RTX_SYNC_CONFIRM": "确认要开始同步吗？该操作不可恢复！", 
+	"RTX_SYNC_CONFIRM": "确认要开始同步吗？该操作不可恢复！",
 	"RTX_SYNC_TITLE": "同步组织架构",
-	"RTX_SYNC_CONTENT": "同步中，请稍等……", 
+	"RTX_SYNC_CONTENT": "同步中，请稍等……",
 	"RTX_SYNC_SUCCESS": "同步成功完成",
 
 	// 界面 -- 快捷导航设置
@@ -163,4 +163,16 @@ L.SMS = {
 L.UPLOAD = {
 	"UPLOAD_PICTURE_FIRST" : "请先上传图片",
 	"WATERMARK_PREVIEW" : "水印预览"
+}
+
+// 在线升级
+L.UPGRADE = {
+	UPGRADE_AUTOMATICALL: "自动升级",
+	SURE_OPERATE: "确认操作",
+	UPGRADE_BACKUP_REMIND: "自动升级前请您先备份程序及数据库，确定开始升级吗？",
+	SURE: "确定",
+	DOWN: '下载',
+	UPGRADE_FORCE: "强制升级",
+	UPGRADE_REGULAR: "正常升级",
+	FTP_SETTING: "ftp设置"
 }

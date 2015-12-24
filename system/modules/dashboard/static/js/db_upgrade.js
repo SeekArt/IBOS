@@ -2,7 +2,7 @@
 	var $info = $('#upgrade_info'),
 		upgrade = {
 			// 默认请求路由
-			baseUrl: '<?php echo $this->createUrl( 'upgrade/index' ); ?>',
+			baseUrl: Ibos.app.url('upgrade/index'),
 			/**
 			 * 检查升级
 			 * @returns {mixed}
@@ -21,7 +21,7 @@
 					if (data.isHaveUpgrade) {
 						var list = '', op = '';
 						$.each(data.list, function(i, n) {
-							op = n.upgrade ? '<a class="btn" data-act="upgrade" data-target="' + n.link + '"><?php echo $lang['Upgrade automatically']; ?></a>' : n.link;
+							op = n.upgrade ? '<a class="btn" data-act="upgrade" data-target="' + n.link + '">'+ Ibos.l("UPGRADE.UPGRADE_AUTOMATICALL") +'</a>' : n.link;
 							list += $.template('list_tr', {desc: n.desc, op: op});
 						});
 						$info.html($.template('list_table', {list: list}));
@@ -38,13 +38,13 @@
 			upgrade: function(obj) {
 				var aObj = $(obj), target = aObj.data('target');
 				$.artDialog({
-					title: "<?php echo IBOS::lang( 'Confirm action', 'message' ); ?>",
-					content: '<?php echo $lang['Upgrade backup remind']; ?>',
+					title: Ibos.l("UPGRADE.SURE_OPERATE"),
+					content: Ibos.l("UPGRADE.UPGRADE_BACKUP_REMIND"),
 					id: 'confirm_upgrade_act',
 					lock: true,
 					ok: function() {
 						// 进度条
-						$info.html("<img src='<?php echo STATICURL; ?>/image/common/loading.gif' />");
+						$info.html("<img src='"+ Ibos.app.getStaticUrl('/image/common/loading.gif') +"' />");
 						$.get(target, function(data) {
 							return upgrade.processingStep(data.step, data.data);
 						}, 'json');
@@ -93,7 +93,7 @@
 				if (data.IsSuccess) {
 					upgrade.getAndPass(data.url);
 				} else {
-					$info.append('<button type="button" data-target="' + data.url + '" data-loading-text="<?php echo $lang['Downloading']; ?>" autocomplete="off" data-act="processStep" class="btn"><?php echo $lang['Sure']; ?></button>');
+					$info.append('<button type="button" data-target="' + data.url + '" data-loading-text="'+ Ibos.l("UPGRADE.DOWN") +'" autocomplete="off" data-act="processStep" class="btn">'+ Ibos.l("UPGRADE.SURE") +'</button>');
 				}
 
 			},
@@ -115,7 +115,7 @@
 						release: data.param.release,
 						actionUrl: data.url,
 						actionClass: data.forceUpgrade ? 'btn-danger' : 'btn-primary',
-						actionDesc: data.forceUpgrade ? '<?php echo $lang['Upgrade force']; ?>' : '<?php echo $lang['Upgrade regular']; ?>'
+						actionDesc: data.forceUpgrade ? Ibos.l("UPGRADE.UPGRADE_FORCE") : Ibos.l("UPGRADE.UPGRADE_REGULAR")
 					};
 					$info.html($.template('compare_list', variable));
 				}
@@ -203,7 +203,7 @@
 			 */
 			ftpSetup: function(target) {
 				$.artDialog({
-					title: "<?php echo $lang['Ftp setting']; ?>",
+					title: Ibos.l("UPGRADE.FTP_SETTING"),
 					content: $.template('ftp_setup'),
 					id: 'sys_ftp_setup',
 					cancel: true,

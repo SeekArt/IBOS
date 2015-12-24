@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 5139 2015-06-03 02:23:48Z gzljj $
+ *	@version $Id: common.css 5952 2015-12-14 10:04:23Z gzcsh $
  *	@modified 2013-03-22  
  */
 
@@ -1631,4 +1631,47 @@ a.progressCancel:hover {
 }
 .user-info-form .toggle-btn{
 	padding: 9px 11px;
+}
+
+/*管理员管理*/
+.admin-list{
+	margin-left: -20px;
+}
+.admin-list li{
+	position: relative;
+	height: 135px;
+	width: 100px;
+	margin-bottom: 20px;
+	margin-left: 40px;
+	float: left;
+	list-style: none;
+	text-align: center;
+}
+.admin-list img{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+}
+.admin-list .admin-item-body{
+	position: relative;
+	top: 108px;
+}
+.admin-edit-btn{
+	position: absolute;
+	top: 0;
+	left: 15px;
+	display: none;
+}
+.admin-list li:hover .admin-edit-btn{
+	display: block;
+}
+.rolesuper-add{
+	position: ;
+	top: 2px;
+}
+.rolesuper-add:hover .upload-add-icon{
+	background-position: -96px 0;
 }

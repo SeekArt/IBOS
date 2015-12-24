@@ -9,6 +9,11 @@
  * @author banyan <banyan@ibos.com.cn>
  */
 return array(
+    'Edit success' => '编辑成功',
+    'Add success' => '添加成功',
+    'Edit failed' => '编辑失败',
+    'Add failed' => '添加失败',
+    'Param error' => '参数错误',
 	'Check' => '检测',
 	'Upload image' => '上传图片',
 	'Del' => '删除',
@@ -121,7 +126,7 @@ return array(
 	'Online upgrade' => '在线升级',
 	'Module' => '模块',
 	'Service' => '服务',
-	'Shop' => '商店',
+    'Shop' => '云服务',
 	'System stamp' => '系统图章',
 	'Approval process' => '审批流程',
 	// GlobalController
@@ -171,6 +176,9 @@ return array(
 	'Prefix' => '称谓',
 	'Integration range' => '积分范围',
 	'Add new user group' => '添加新用户组',
+    'superadmin cannot beyond 3' => '超级管理员不能超过三个',
+    'superadmin must set at least one' => '超级管理员必须至少一个',
+    'superadmin setting must contain yourself' => '超级管理员设置不允许排除自己',
 	// --------------------------------------------------------------
 	// 积分设置
 	// --------------------------------------------------------------
@@ -836,6 +844,7 @@ return array(
 	'Department personnel management' => '部门用户管理',
 	'Role management' => '角色权限管理',
 	'Position management' => '岗位管理',
+    'Admin managment' => '管理员管理',
 	'Add user' => '新增用户',
 	'Lock' => '锁定',
 	'Disabled' => '禁用',
@@ -872,4 +881,5 @@ return array(
 	'Error reason' => '错误原因',
 	'Import error record' => '导入用户错误信息',
 	'Leave at least a Category' => '请至少保留一个分类',
+    'update failed, up dept cannot be itself' => '编辑失败，顶级部门不能为自己',
 );
