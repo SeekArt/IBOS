@@ -145,4 +145,5 @@ use application\core\utils\IBOS;
 			</div>
 			</div>
 </script>
+<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js"></script>
 <script src="<?php echo $assetUrl; ?>/js/db_upgrade.js"></script>

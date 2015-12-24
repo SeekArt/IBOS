@@ -117,5 +117,7 @@ use application\core\utils\IBOS;
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(ib, s);
     })();
+    Ibos.app.s({coverUrl: "<?php echo $coverUrl; ?>"})
 </script>
+<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js"></script>
 <script src="<?php echo $assetUrl; ?>/js/db_upgrade_cover.js"></script>
