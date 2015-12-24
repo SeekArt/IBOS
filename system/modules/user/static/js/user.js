@@ -185,12 +185,12 @@ $(function() {
 						$verify.blink().focus();
 						return false;
 					}
-					var param = {
+					var checkData = {
 						uid: Ibos.app.g("currentUid"),
 						data: encodeURI(verify),
 						op: param.type
 					};
-					userCenter.op.checkVerify(param).done(function(res) {
+					userCenter.op.checkVerify(checkData).done(function(res) {
 						if (res.isSuccess) {
 							Ui.tip('@OPERATION_SUCCESS');
 							dialog.close();
