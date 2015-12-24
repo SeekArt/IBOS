@@ -1,0 +1,4 @@
+ibos:
+  image: tutum/ibos
+  ports:
+    - 80:80
