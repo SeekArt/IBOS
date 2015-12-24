@@ -96,6 +96,8 @@ use application\modules\user\utils\User as UserUtil;
 								<li rel="unread_notify"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
+								<li rel="car"><span></span>，<a href="" class="anchor">查看消息</a></li> 
+								<li rel="assets"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 							</ul>
 						</div>
 					</div>
