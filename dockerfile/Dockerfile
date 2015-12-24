@@ -1,25 +1,4 @@
-FROM tutum/lamp:latest
-MAINTAINER Fernando Mayo <fernando@tutum.co>, Feng Honglin <hfeng@tutum.co>
-
-# Install plugins
-RUN apt-get update && \
-  apt-get -y install php5-gd && \
-  rm -rf /var/lib/apt/lists/*
-
-# Download latest version of IBOS into /app
-RUN rm -fr /app && git clone --depth=1 https://github.com/SeekArt/IBOS.git /app
-
-# Configure IBOS to connect to local DB
-ADD config.php /app/system/config/config.php
-
-# Modify permissions to allow plugin upload
-RUN chown -R www-data:www-data /app /var/www/html
-
-# Add database setup script
-ADD create_mysql_admin_user.sh /create_mysql_admin_user.sh
-ADD create_db.sh /create_db.sh
-RUN chmod +x /*.sh
-
-
-EXPOSE 80 3306
-CMD ["/run.sh"]
+FROM index.alauda.cn/tutum/apache-php:latest
+RUN rm -fr /app
+ADD . /app
+RUN composer install
