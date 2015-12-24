@@ -252,7 +252,16 @@ class ContentController extends BaseController {
         $id = is_null( $_GET['id'] ) ? 0 : intval( $_GET['id'] );
         if ( $id ) {
             $data = array();
+            // 我发送的邮件
+            if (isset($_GET['op']) && $_GET['op'] === 'send') {
+                $email = EmailBody::model()->fetchById($id, $this->archiveId);
+                $data['isSend'] = TRUE;
+            }
+            // 我接收的邮件
+            else {
             $email = Email::model()->fetchById( $id, $this->archiveId );
+                $data['isSend'] = FALSE;
+            }
             if ( !$email ) {
                 $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'list/index' ) );
             }

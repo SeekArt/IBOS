@@ -105,7 +105,7 @@ class ApiController extends BaseController {
 		$opList = array(
 			'todo', 'read', 'unread', 'sendreceipt',
 			'cancelreceipt', 'del', 'restore',
-			'batchdel', 'move'
+            'batchdel', 'move', 'delFromSend'
 		);
 		if ( !in_array( $op, $opList ) ) {
 			exit();
@@ -123,16 +123,24 @@ class ApiController extends BaseController {
 			'restore' => array( 'isdel', 0 )
 		);
 		switch ( $op ) {
+            case 'delFromSend':
+                $next = Email::model()->fetchNext($id, $this->uid, $this->fid, $this->archiveId);
+                if (!empty($next)) {
+                    $extends['url'] = $this->createUrl('content/show', array('id' => $next['emailid'], 'archiveid' => $this->archiveId));
+                } else {
+                    $extends['url'] = $this->createUrl('list/index');
+                }
+                $condition = sprintf('fromid = %s AND FIND_IN_SET(bodyid, "%s")', $this->uid, $id);
+                $status = EmailBody::model()->deleteSenderEmail($condition);
+                Email::model()->verifyIsDeleteData($id, $this->archiveId);
+                break;
 			case 'del':
 			case 'batchdel':
-				// 删除邮件要获取删除后跳转的ID
-				if ( $op == 'del' ) {
 					$next = Email::model()->fetchNext( $id, $this->uid, $this->fid, $this->archiveId );
 					if ( !empty( $next ) ) {
 						$extends['url'] = $this->createUrl( 'content/show', array( 'id' => $next['emailid'], 'archiveid' => $this->archiveId ) );
 					} else {
 						$extends['url'] = $this->createUrl( 'list/index' );
-					}
 				}
 				$status = Email::model()->setField( 'isdel', 3, $condition );
 				break;
@@ -161,11 +169,13 @@ class ApiController extends BaseController {
 					);
 					Notify::model()->sendNotify( $fromInfo['fromid'], 'email_receive_message', $config );
 				}
+            default:
+                if (isset($valueDriver[$op])) {
 					list($key, $value) = $valueDriver[$op];
 					$status = Email::model()->setField( $key, $value, $condition );
-				break;
-			default:
+                } else {
 					$status = false;
+                }
 				break;
 		}
 		$errorMsg = !$status ? IBOS::lang( 'Operation failure', 'message' ) : '';
