@@ -41,10 +41,13 @@ use application\core\utils\IBOS;
 						<div class="btn-group">
                             <button type="button" class="btn" data-click="restore" data-param="{&quot;url&quot;:&quot;<?php echo $this->createUrl('api/mark', array('op' => 'restore')); ?>&quot;}"><?php echo $lang['Restore']; ?></button>
 						</div>
-					<?php endif; ?>
-					<?php if ( in_array( $op, array( 'del', 'send' ) ) ): ?>
-						<div class="btn-group">
+                        <div class="btn-group">
                             <button type="button" class="btn" data-click="erase" data-param="{&quot;url&quot;:&quot;<?php echo $this->createUrl('api/cpDel'); ?>&quot;}"><?php echo $lang['Completely remove']; ?></button>
+                        </div>
+					<?php endif; ?>
+                    <?php if ($op == 'send'): ?>
+						<div class="btn-group">
+                            <button type="button" class="btn" data-click="del" data-param="{&quot;url&quot;:&quot;<?php echo $this->createUrl('api/mark', array('op' => 'delFromSend')); ?>&quot;}"><?php echo $lang['Completely remove']; ?></button>
 						</div>
 					<?php endif; ?>
 					<?php if ( $op == 'draft' ): ?>
@@ -139,6 +142,10 @@ use application\core\utils\IBOS;
 									$id = $data['bodyid'];
 									$clickUrl = $this->createUrl( 'content/edit', array( 'id' => $id ) );
 									$isRead = 1;
+                                }  else if ($op == 'send') {
+                                    $id = $data['bodyid'];
+                                    $clickUrl = $this->createUrl('content/show', array('op' => 'send', 'id' => $id));
+                                    $isRead = 1;
 								} else {
 									$id = $data['emailid'];
 									$clickUrl = $this->createUrl( 'content/show', array( 'id' => $id ) );
@@ -152,7 +159,7 @@ use application\core\utils\IBOS;
 										</label>
 									</td>
 									<td width="40" class="j-read">
-										<?php if ( $isRead == 0 ): ?><i class="o-mal-new"></i><?php endif; ?><?php if ( !empty( $data['attachmentid'] ) ): ?><i class="o-mal-attach"></i><?php endif; ?>
+                                        <?php if ($op != 'send' && $isRead == 0): ?><i class="o-mal-new"></i><?php endif; ?><?php if (!empty($data['attachmentid'])): ?><i class="o-mal-attach"></i><?php endif; ?>
 									</td>
 									<?php if ( $op != 'send' && $op != 'draft' ): ?>
 										<td width="70">
@@ -163,7 +170,7 @@ use application\core\utils\IBOS;
 									<?php endif; ?>
 									<td>
 										<a href="<?php echo $clickUrl; ?>" class="art-list-title">
-											<?php if ( $isRead == 0 ): ?><strong class="<?php echo $importantClass; ?>"><?php echo $data['subject']; ?></strong><?php else: ?><span class="<?php echo $importantClass; ?>"><?php echo $data['subject']; ?></span><?php endif; ?>
+                                            <?php if ($op != 'send' && $isRead == 0): ?><strong class="<?php echo $importantClass; ?>"><?php echo $data['subject']; ?></strong><?php else: ?><span class="<?php echo $importantClass; ?>"><?php echo $data['subject']; ?></span><?php endif; ?>
 										</a>
 									</td>
 									<td width="120"><div class="fss"><?php echo Convert::formatDate( $data['sendtime'], 'u' ); ?></div></td>

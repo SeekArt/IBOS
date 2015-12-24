@@ -40,7 +40,11 @@ use application\core\utils\String;
                     ?>" class="btn"><?php echo $lang['Forward']; ?></a>
 				</div>
 				<div class="btn-group">
-					<?php if ( $email['isdel'] == 0 ): ?>
+                    <?php if ($isSend === TRUE): ?>
+                        <a class="btn" data-click="eraseOneEmail" data-param="{&quot;url&quot;:&quot;<?php
+                        echo $this->createUrl('api/mark', array('op' => 'delFromSend', 'emailids' => $email['bodyid']));
+                        ?>&quot;}"><?php echo $lang['Completely remove']; ?></a>
+                    <?php elseif ($email['isdel'] == 0 && $isSend === FALSE): ?>
                         <a href="javascript:;" class="btn" data-click="deleteOneEmail" data-param="{&quot;emailids&quot;: &quot;<?php echo $email['emailid']; ?>&quot;,&quot;fid&quot;: &quot;<?php echo $email['fid']; ?>&quot;,&quot;archiveid&quot;: &quot;<?php echo $this->archiveId; ?>&quot;,&quot;url&quot;: &quot;<?php
                         echo $this->createUrl('api/mark', array('op' => 'del'));
                         ?>&quot;}"><?php echo $lang['Delete']; ?></a>
@@ -57,10 +61,10 @@ use application\core\utils\String;
 					<a href="#" class="btn dropdown-toggle" data-toggle="dropdown"><?php echo $lang['More option']; ?></a>
 					<ul class="dropdown-menu">
                         <li><a href="<?php
-                            echo $this->createUrl('content/export', array('op' => 'eml', 'id' => $email['emailid']));
+                            echo $this->createUrl('content/export', array('op' => 'eml', 'id' => $email['bodyid']));
                             ?>" target="_blank" ><?php echo $lang['Export eml']; ?></a></li>
                         <li><a href="<?php
-                            echo $this->createUrl('content/export', array('op' => 'excel', 'id' => $email['emailid']));
+                            echo $this->createUrl('content/export', array('op' => 'excel', 'id' => $email['bodyid']));
                             ?>" target="_blank"><?php echo $lang['Export excel']; ?></a></li>
 					</ul>
 				</div>

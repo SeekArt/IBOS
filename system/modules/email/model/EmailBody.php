@@ -161,4 +161,38 @@ class EmailBody extends Model {
 		}
 	}
 
+    /**
+     * 根据 bodyid 获取一封完整的邮件信息
+     * @param  integer $id        bodyid
+     * @param  integer $archiveId 判断表
+     * @return array 
+     */
+    public function fetchById($id, $archiveId = 0) {
+        $mainTable = Email::model()->getTableName($archiveId);
+        $bodyTable = $this->getTableName($archiveId);
+        $field = 'eb.bodyid, fromid, toids, copytoids, secrettoids, subject, content, sendtime, attachmentid, issend, ';
+        $field .= 'important, size, fromwebmail, towebmail, issenderdel, isneedreceipt, emailid, toid, isread, isdel, ';
+        $field .= 'fid, isreceipt, ismark, isweb';
+        $email = Ibos::app()->db->createCommand()
+                ->select($field)
+                ->from('{{' . $bodyTable . '}} eb')
+                ->leftJoin('{{' . $mainTable . '}} e', 'eb.bodyid = e.bodyid')
+                ->where('eb.bodyid = ' . intval($id))
+                ->queryRow();
+        return is_array($email) ? $email : array();
+    }
+
+    /**
+     * debug 718
+     * 从已发送的邮箱列表中删除对应的邮件
+     * @param string  $condition  查询条件
+     * @return boolen  处理结果
+     */
+    public function deleteSenderEmail($condition) {
+        $mainTable = Email::model()->tableName();
+        $bodyTable = $this->tableName();
+        $sql = sprintf("UPDATE {$bodyTable} SET issenderdel = 1 WHERE %s", $condition);
+        return Ibos::app()->db->createCommand($sql)->query() ? TRUE : FALSE;
+    }
+
 }

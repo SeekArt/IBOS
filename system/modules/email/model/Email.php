@@ -268,16 +268,55 @@ class Email extends Model {
 					$isSuccess++;
 				}
 			}
+            $this->verifyIsDeleteData($bodyId, $archiveId);
 		}
 		return $isSuccess;
 	}
 
-	/**
-	 * 根据文件夹id和uid获取邮件ID
-	 * @param integer $fid 文件夹
-	 * @param integer $uid 用户ID
-	 * @return array 邮件ID数组
-	 */
+    /**
+     * 处理 completelyDelete() 方法中逻辑漏洞
+     * 每次删除操作结束后根据 bodyid 检查一遍这封邮件是否同时被所有收件方以及发件方删除
+     * 是的话删除该条邮件数据记录
+     * @param  string  $bodyId    邮件 ID 
+     * @param  integer $archiveId 判断表
+     * @return void
+     * @author isakura@yumisakura.cn
+     */
+    public function verifyIsDeleteData($bodyId, $archiveId = 0) {
+        $mainTable = sprintf('{{%s}}', $this->getTableName($archiveId));
+        $bodyTable = sprintf('{{%s}}', EmailBody::model()->getTableName($archiveId));
+        $bodyRow = EmailBody::model()->find(
+                array(
+                    'select' => 'toids, copytoids, secrettoids',
+                    'condition' => "FIND_IN_SET(`bodyid`, :bodyid) AND issenderdel = 1",
+                    'params' => array(':bodyid' => $bodyId),
+                )
+        );
+        if (!empty($bodyRow)) {
+            $toids = !empty($bodyRow->toids) ? $bodyRow->toids : '';
+            $toids .=!empty($bodyRow->copytoids) ? ',' . $bodyRow->copytoids : '';
+            $toids .=!empty($bodyRow->secrettoids) ? ',' . $bodyRow->secrettoids : '';
+            $row = Ibos::app()->db->createCommand()
+                    ->select('emailid')
+                    ->from($mainTable)
+                    ->where(array(
+                        'AND',
+                        sprintf("FIND_IN_SET(`toid`, '%s')", $toids),
+                        sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId)
+                    ))
+                    ->queryRow();
+            if (empty($row)) {
+                Ibos::app()->db->createCommand()->delete($bodyTable, sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId));
+            }
+        }
+    }
+
+    /**
+     * 根据文件夹id和uid获取邮件ID
+     * @param integer $fid 文件夹
+     * @param integer $uid 用户ID
+     * @return array 邮件ID数组
+     */
 	public function fetchAllEmailIdsByFolderId( $fid, $uid ) {
 		$record = $this->fetchAllByAttributes( array( 'fid' => $fid, 'toid' => $uid ), array( 'select' => 'emailid' ) );
 		$emailIds = Convert::getSubByKey( $record, 'emailid' );
@@ -364,14 +403,28 @@ class Email extends Model {
 		return (array) $list;
 	}
 
-	/**
-	 * 根据列表数据获取指定动作未读邮件数
-	 * @param string $operation 列表动作
-	 * @param integer $uid 用户ID
-	 * @param integer $fid 文件夹ID
-	 * @param integer $archiveId 存档表ID
-	 * @return integer 统计数
-	 */
+    /**
+     * 获取已删除邮件列表时，使用 UNION 合并上被删除的已发送邮件
+     * 在 fetchAllByListParam() 方法中被使用到
+     * @param string  $sql       需要加上的后半段 UNION 语句
+     * @param string  $field     sql 中需要替换掉 SELECT 中的变量
+     * @param integer $archiveId 判断表
+     * @author isakura@yumisakura.cn
+     */
+    private function addSenderDeledEmail($sql, $field, $archiveId = 0) {
+        $mainTable = $this->getTableName($archiveId);
+        $bodyTable = EmailBody::model()->getTableName($archiveId);
+        return sprintf($sql, $field);
+    }
+
+    /**
+     * 根据列表数据获取指定动作未读邮件数
+     * @param string $operation 列表动作
+     * @param integer $uid 用户ID
+     * @param integer $fid 文件夹ID
+     * @param integer $archiveId 存档表ID
+     * @return integer 统计数
+     */
 	public function countUnreadByListParam( $operation, $uid = 0, $fid = 0, $archiveId = 0, $subOp = '' ) {
 		$param = $this->getListParam( $operation, $uid, $fid, $archiveId, true, $subOp );
 		return $this->countListParam( $param );
@@ -435,7 +488,7 @@ class Email extends Model {
 			'table' => "{{{$mainTable}}} e LEFT JOIN {{{$bodyTable}}} eb on e.bodyid = eb.bodyid",
 			'condition' => $getUnread ? 'e.isread = 0 AND ' : '',
 			'order' => '',
-			'group' => ''
+            'group' => '',
 		);
 		switch ( $operation ) {
 			case 'inbox': // 收件箱
@@ -450,8 +503,9 @@ class Email extends Model {
 				$param['condition'] = "eb.fromid = '{$uid}' AND eb.issend != 1";
 				break;
 			case 'send': // 发件箱
-				$param['condition'] = "eb.fromid = '{$uid}' AND eb.issend = 1 AND e.fid = 1 AND eb.issenderdel != 1";
-				$param['group'] = 'eb.bodyid';
+                $param['field'] = '*';
+                $param['table'] = "{{{$bodyTable}}} eb";
+                $param['condition'] = "eb.fromid = '{$uid}' AND eb.issenderdel != 1";
 				break;
 			case 'archive':// 存档邮件
 				if ( $archiveId && $subOp ) {
@@ -467,6 +521,7 @@ class Email extends Model {
 				}
 			case 'del': // 已删除
 				$param['condition'] .= "e.toid ='{$uid}' AND (e.isdel = 3 OR e.isdel = 4 OR e.isdel = 1)";
+                $param['group'] = 'eb.bodyid';
 				break;
 			case 'folder': // 个人文件夹
 				if ( $fid ) {
