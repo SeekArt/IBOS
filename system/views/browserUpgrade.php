@@ -30,18 +30,33 @@
 	<h2></h2>
 	<h3>如果你的浏览器版本高于 IE 8，请按以下步骤设置（以 IE10 为例）</h3>
 	<ol>
-		<li>按下键盘F12</li>
 		<li>
-			修改 “浏览器模式：IE10 兼容性视图” 为 “浏览器模式 Internet Explorer 10(B)”
+			在IE选项栏中选择“工具”选项
 			<br>
 			<br>
-			<img src="data/login/ie10_兼容.png">
+			<img src="data/login/ie-guide-1.png">
 			<br>
 			<br>
-			<img src="data/login/ie10.png">
 		</li>
 		<li>
-			<a href="/">返回首页</a>
+			在点选“工具选项后弹出的下拉框中选择“兼容性视图设置”选项”
+			<br>
+			<br>
+			<img src="data/login/ie-guide-2.png">
+			<br>
+			<br>
+		</li>
+		<li>
+			进入兼容性视图设置后，取消“在兼容性视图中显示所有网站”和“在兼容性视图中显示Intranet站点”两个选项勾选，</br>
+			在确定“已添加到兼容性视图中的网站”内部无内容后，点击下面 <b>返回首页</b> 即可解决
+			<br>
+			<br>
+			<img src="data/login/ie-guide-3.png">
+			<br>
+			<br>
+		</li>
+		<li>
+			<a href="/?r=main/default/index">返回首页</a>
 		</li>
 	</ol>
 </body>
