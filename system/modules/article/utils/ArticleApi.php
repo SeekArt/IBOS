@@ -116,7 +116,7 @@ class ArticleApi {
 				}
 			}
 		}
-		return $articles;
+		return $articles; 
 	}
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\String; 
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_article.css'?>">
 <!-- IE 8 Hack 加入空script标签延迟html加载，为了让空值图片能正常显示 -->
