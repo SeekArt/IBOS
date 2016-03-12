@@ -1,0 +1,144 @@
+[
+    {
+        "name": "zetacomponents/base",
+        "version": "1.9",
+        "version_normalized": "1.9.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zetacomponents/Base.git",
+            "reference": "f20df24e8de3e48b6b69b2503f917e457281e687"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://packagist.phpcomposer.com/files/zetacomponents/Base/f20df24e8de3e48b6b69b2503f917e457281e687.zip",
+            "reference": "f20df24e8de3e48b6b69b2503f917e457281e687",
+            "shasum": ""
+        },
+        "require-dev": {
+            "zetacomponents/unit-test": "*"
+        },
+        "time": "2014-09-19 03:28:34",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Sergey Alexeev"
+            },
+            {
+                "name": "Sebastian Bergmann"
+            },
+            {
+                "name": "Jan Borsodi"
+            },
+            {
+                "name": "Raymond Bosman"
+            },
+            {
+                "name": "Frederik Holljen"
+            },
+            {
+                "name": "Kore Nordmann"
+            },
+            {
+                "name": "Derick Rethans"
+            },
+            {
+                "name": "Vadym Savchuk"
+            },
+            {
+                "name": "Tobias Schlitt"
+            },
+            {
+                "name": "Alexandru Stanoi"
+            }
+        ],
+        "description": "The Base package provides the basic infrastructure that all packages rely on. Therefore every component relies on this package.",
+        "homepage": "https://github.com/zetacomponents"
+    },
+    {
+        "name": "zetacomponents/mail",
+        "version": "1.8.1",
+        "version_normalized": "1.8.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/zetacomponents/Mail.git",
+            "reference": "33f0fce2c156b26a850d495a3b069ad1c1e40854"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "http://packagist.phpcomposer.com/files/zetacomponents/Mail/33f0fce2c156b26a850d495a3b069ad1c1e40854.zip",
+            "reference": "33f0fce2c156b26a850d495a3b069ad1c1e40854",
+            "shasum": ""
+        },
+        "require": {
+            "zetacomponents/base": "~1.8"
+        },
+        "require-dev": {
+            "zetacomponents/unit-test": "*"
+        },
+        "time": "2014-11-04 10:14:21",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Sergey Alexeev"
+            },
+            {
+                "name": "Sebastian Bergmann"
+            },
+            {
+                "name": "Jan Borsodi"
+            },
+            {
+                "name": "Raymond Bosman"
+            },
+            {
+                "name": "Frederik Holljen"
+            },
+            {
+                "name": "Kore Nordmann"
+            },
+            {
+                "name": "Derick Rethans"
+            },
+            {
+                "name": "Vadym Savchuk"
+            },
+            {
+                "name": "Tobias Schlitt"
+            },
+            {
+                "name": "Alexandru Stanoi"
+            },
+            {
+                "name": "Christian Michel"
+            },
+            {
+                "name": "Sinisa Dukaric"
+            },
+            {
+                "name": "Mikko Koppanen"
+            }
+        ],
+        "description": "The component allows you construct and/or parse Mail messages conforming to  the mail standard. It has support for attachments, multipart messages and HTML  mail. It also interfaces with SMTP to send mail or IMAP, POP3 or mbox to  retrieve e-mail.",
+        "homepage": "https://github.com/zetacomponents"
+    }
+]
