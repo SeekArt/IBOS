@@ -19,7 +19,7 @@ use application\core\utils\String;
 				</div>
 				<div class="btn-group">
                     <a href="<?php
-                    echo $this->createUrl('content/add', array('op' => 'reply', 'id' => $email['bodyid']));
+                    echo $this->createUrl('content/add', array('op' => 'reply', 'id' => $email['emailid']));
                     ?>" class="btn btn-primary" ><?php echo $lang['Reply']; ?></a>
 					<a href="javascript:;" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 						<i class="caret"></i>
@@ -27,7 +27,7 @@ use application\core\utils\String;
 					<ul class="dropdown-menu">
 						<li>
                             <a data-click="replyAll" data-param="{&quot;url&quot;: &quot;<?php
-                            echo $this->createUrl('content/add', array('op' => 'replyall', 'id' => $email['bodyid']));
+                            echo $this->createUrl('content/add', array('op' => 'replyall', 'id' => $email['emailid']));
                             ?>&quot;,&quot;isSecretUser&quot;:<?php
                                echo $isSecretUser ? 1 : 0;
                                ?>}" href="javascript:;"><?php echo $lang['Reply all']; ?></a>
@@ -42,7 +42,7 @@ use application\core\utils\String;
 				<div class="btn-group">
                     <?php if ($isSend === TRUE): ?>
                         <a class="btn" data-click="eraseOneEmail" data-param="{&quot;url&quot;:&quot;<?php
-                        echo $this->createUrl('api/mark', array('op' => 'delFromSend', 'emailids' => $email['bodyid']));
+                        echo $this->createUrl('api/mark', array('op' => 'delFromSend', 'emailids' => $email['emailid']));
                         ?>&quot;}"><?php echo $lang['Completely remove']; ?></a>
                     <?php elseif ($email['isdel'] == 0 && $isSend === FALSE): ?>
                         <a href="javascript:;" class="btn" data-click="deleteOneEmail" data-param="{&quot;emailids&quot;: &quot;<?php echo $email['emailid']; ?>&quot;,&quot;fid&quot;: &quot;<?php echo $email['fid']; ?>&quot;,&quot;archiveid&quot;: &quot;<?php echo $this->archiveId; ?>&quot;,&quot;url&quot;: &quot;<?php
@@ -61,10 +61,10 @@ use application\core\utils\String;
 					<a href="#" class="btn dropdown-toggle" data-toggle="dropdown"><?php echo $lang['More option']; ?></a>
 					<ul class="dropdown-menu">
                         <li><a href="<?php
-                            echo $this->createUrl('content/export', array('op' => 'eml', 'id' => $email['bodyid']));
+                            echo $this->createUrl('content/export', array('op' => 'eml', 'id' => $email['emailid']));
                             ?>" target="_blank" ><?php echo $lang['Export eml']; ?></a></li>
                         <li><a href="<?php
-                            echo $this->createUrl('content/export', array('op' => 'excel', 'id' => $email['bodyid']));
+                            echo $this->createUrl('content/export', array('op' => 'excel', 'id' => $email['emailid']));
                             ?>" target="_blank"><?php echo $lang['Export excel']; ?></a></li>
 					</ul>
 				</div>

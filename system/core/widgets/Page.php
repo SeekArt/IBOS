@@ -5,7 +5,7 @@
  *
  * @package application.core.widgets
  * @version $Id: Page.php 5175 2015-06-17 13:25:24Z Aeolus $
- * @author Ring <Ring@ibos.com.cn>
+ * @author Ring <Ring@ibos.com.cn> 
  */
 
 namespace application\core\widgets;

@@ -55,7 +55,7 @@ class Syscode extends Model {
 	 * @param string $key 以哪个字段作为下标
 	 * @return array
 	 */
-	public function fetchSubByPnum( $number, $key = 'id' ) {
+    public function fetchSubByPnum($number, $key = 'id', $flag = false) {
 		$res = array();
 		$pData = $this->fetchByNum( $number );
 		if ( !empty( $pData ) ) {
@@ -64,10 +64,12 @@ class Syscode extends Model {
 				'order' => '`sort` ASC'
 			) );
 		}
+        if ($flag === false) {
 		foreach ($res as $v){
 			$kVal = $v[$key];
 			$res[$kVal] = $v;
 		}
+        }
 		return $res;
 	}
 

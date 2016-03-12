@@ -45,7 +45,7 @@ class Role {
      */
     public static function setRole( $roleId, $users ) {
         // 该岗位原有的用户
-        $oldUids = User::model()->fetchUidByRoleId( $roleId, false );
+        $oldUids = User::model()->fetchAllUidByRoleids($roleId, false, true);
         // 这一次提交的用户
         $userId = explode( ',', trim( $users, ',' ) );
         $newUids = String::getUid( $userId );

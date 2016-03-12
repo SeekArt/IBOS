@@ -34,7 +34,7 @@ class Position extends CBehavior {
      */
     public function handlePosition( $event ) {
         $records = PosModel::model()->fetchAllSortByPk( 'positionid' );
-        Syscache::model()->modify( 'position', $records );
+        Syscache::model()->modifyCache( 'position', $records );
     }
 
 }

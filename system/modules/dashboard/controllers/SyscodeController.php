@@ -15,10 +15,12 @@ class SyscodeController extends BaseController {
             $newCodes = isset( $_POST['newcodes'] ) ? $_POST['newcodes'] : array();
             // 更新操作
             foreach ( $codes as $id => $code ) {
+                $code['name'] = \CHtml::encode( $code['name'] );
                 Syscode::model()->modify( $id, $code );
             }
             // 新增操作
             foreach ( $newCodes as $newCode ) {
+                $newCode['name'] = \CHtml::encode( $newCode['name'] );
                 Syscode::model()->add( $newCode );
             }
             // 删除操作

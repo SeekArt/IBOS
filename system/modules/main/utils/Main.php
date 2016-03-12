@@ -18,6 +18,8 @@ namespace application\modules\main\utils;
 
 use application\core\model\Module;
 use application\core\utils\IBOS;
+use application\core\utils\String;
+use application\modules\main\model\Setting;
 use application\modules\user\model\User;
 
 class Main {
@@ -92,10 +94,23 @@ class Main {
 	 * @return string
 	 */
 	public static function getIncentiveWord() {
+        $useIncentiveword = IBOS::app()->params->incentiveword;
+        if (true === $useIncentiveword):
 		$words = IBOS::getLangSource( 'incentiveword' );
 		$luckyOne = array_rand( $words );
 		$source = $words[$luckyOne];
 		return IBOS::lang( 'Custom title', 'main.default' ) . $source[array_rand( $source )];
+        else:
+            $title = ' ';
+            $unit = Setting::model()->fetchSettingValueByKey('unit');
+            if (!empty($unit)):
+                $unitArray = String::utf8Unserialize($unit);
+                if (isset($unitArray['shortname'])):
+                    $title = $unitArray['shortname'] . '- IBOS协同办公平台';
+                endif;
+            endif;
+            return $title;
+        endif;
 	}
 
 	/**
@@ -146,6 +161,13 @@ class Main {
 				$class = 'application\modules\\' . $module . '\\utils\\' . ucfirst( $file ) . 'Api';
 				if ( class_exists( $class ) ) {
 					$api = new $class;
+                    $close = false;
+                    if (method_exists($api, 'close')):
+                        $close = $api->close();
+                    endif;
+                    if (true === $close):
+                        continue;
+                    endif;
 					$data[$widget] = $api->$method();
 				}
 			}
@@ -153,11 +175,35 @@ class Main {
 		return $data;
 	}
 
+    /**
+     * 临时： 检查授权人数,在以后版本中可能废除
+     */
 
-	/**
-	 * 为JS提供全局的一些模块参数
-	 * @return array
-	 */
+    /**
+     *
+     * @param type $logout
+     * @param type $addNums 如果再添加“addNums”人，会不会超出授权人数
+     */
+    public static function checkLicenseLimit($logout = false, $addNums = 0, $url = 'http://www.ibos.com.cn/') {
+        if (!defined('LICENCE_LIMIT')) {
+            exit('授权信息错误，请联系管理员检查');
+        }
+        $count = intval(User::model()->count("`status` IN (1,0)"));
+        $count = $count + $addNums;
+        if ($count > LICENCE_LIMIT) {
+            $msg = '导入用户数已超授权范围，你的授权只支持' . LICENCE_LIMIT . '用户登录，如需扩展人数请访问IBOS官网联系申请。';
+            if ($logout) {
+                IBOS::app()->user->logout();
+            }
+            IBOS::app()->getController()->error($msg, $url, array('autoJump' => false, 'jumpLinksOptions' => array('官网' => $url)), IBOS::app()->request->getIsAjaxRequest());
+            exit();
+        }
+    }
+
+    /**
+     * 为JS提供全局的一些模块参数
+     * @return array
+     */
 	public static function getModuleParamsForJs() {
 		$modules = Module::model()->fetchAllEnabledModule();
 		$params = array();

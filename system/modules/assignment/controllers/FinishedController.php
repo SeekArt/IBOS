@@ -81,7 +81,7 @@ class FinishedController extends BaseController {
             // 关键字
             $keyword = Env::getRequest('keyword');
             //添加对keyword的转义，防止SQL错误
-            $keyword = addslashes($keyword);
+            $keyword = \CHtml::encode($keyword);
             if (!empty($keyword)) {
                 $this->_condition = " (`subject` LIKE '%$keyword%' ";
                 $users = User::model()->fetchAll("`realname` LIKE '%$keyword%'");

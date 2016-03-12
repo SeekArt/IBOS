@@ -18,8 +18,11 @@
 namespace application\modules\user\components;
 
 use application\core\utils as util;
+use application\core\utils\IBOS;
 use application\modules\main\model as MainModel;
 use application\modules\main\utils\Main as MainUtil;
+use application\modules\role\model\Role;
+use application\modules\role\model\RoleRelated;
 use application\modules\user\model as UserModel;
 use application\modules\user\utils\User as UserUtil;
 use CWebUser;
@@ -158,4 +161,17 @@ class User extends CWebUser {
         return $neededReset;
     }
 
+    public function getRoleType() {
+        $uid = IBOS::app()->user->uid;
+        $roleid = IBOS::app()->user->roleid;
+        $relatedRoleId = RoleRelated::model()->fetchAllRoleIdByUid( $uid );
+        $roleIds = array_merge( array( $roleid ), (array) $relatedRoleId );
+        $allroleidS = implode( ',', array_unique( $roleIds ) );
+        $roleType = IBOS::app()->db->createCommand()
+                ->select( 'roletype' )
+                ->from( Role::model()->tableName() )
+                ->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )
+                ->queryScalar();
+        return $roleType;
+    }
 }

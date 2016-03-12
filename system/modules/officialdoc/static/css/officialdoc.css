@@ -31,6 +31,7 @@
 .o-art-comment,
 .o-art-isread,
 .o-art-version,
+.o-art-isread,
 .o-art-issign,
 .o-art-isnosign,
 .o-art-immediately-sign,
@@ -62,6 +63,7 @@
 	height: 32px;
 }
 .o-art-comment,
+.o-art-isread,
 .o-art-issign,
 .o-art-version,
 .o-art-isnosign{
@@ -102,6 +104,8 @@
 .active .o-art-isread{ background-position: -120px -100px; }
 .o-art-version{ background-position: -70px -248px; }
 .active .o-art-version{ background-position: -70px -224px; }
+.o-art-isread{ background-position: -96px -250px; }
+.active .o-art-isread{ background-position: -124px -250px; }
 .o-art-issign{ background-position: 0 -248px; }
 .active .o-art-issign{ background-position: 0 -224px; }
 .o-art-isnosign{ background-position: -48px -248px; }
@@ -275,7 +279,7 @@
 	margin-bottom: 20px;
 	padding: 20px;
 	position: relative;
-	min-height: 1200px;
+	/*min-height: 1200px;*/
 	border-top:1px #ddd solid;
 	border-bottom: 1px #ddd solid;
 	background-color: #fff;

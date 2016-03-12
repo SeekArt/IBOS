@@ -65,7 +65,7 @@ OCX.prototype = {
 		}
 	},
 	/**
-	 * 
+	 *
 	 * @param {type} op
 	 * @returns {undefined}
 	 */
@@ -75,6 +75,7 @@ OCX.prototype = {
 	 * @param  {String]} op 文档打开的方式
 	 */
 	_openDocumentByOP: function(op) {
+		var _this = this;
 		switch (op) {
 			case 'newdoc':
 				this.settings.obj.CreateNew('Word.Document');
@@ -86,11 +87,24 @@ OCX.prototype = {
 				if (this.settings.attachUrl) {
 					// 以异步方式开始打开URL文档。该方法执行完毕，控件将从URL下载指定文档并打开。
 					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, false, true);
+					_this.isOpen(function(){
+						if( _this.settings.obj.DocType == 1 ){
+							_this.showRevisions(false);
+							_this.setMarkModify(false);
+						}
+						_this.setReadOnly(true);
+					});
 				}
 				break;
 			case 'edit':
 				if (this.settings.attachUrl) {
 					this.settings.obj.BeginOpenFromURL(this.settings.attachUrl, true, false);
+					_this.isOpen(function(){
+						if( _this.settings.obj.DocType == 1 ){
+							_this.showRevisions(true);
+							_this.setMarkModify(true);
+						}
+					});
 				} else {
 					this.settings.obj.CreateNew("Word.Document");
 				}
@@ -99,6 +113,17 @@ OCX.prototype = {
 				$.error("(OCX): "+ Ibos.l("MAIN.UNKNOWN_OPEN_OPERATE"));
 				break;
 		}
+	},
+	// 判断是否已经打开文档
+	isOpen: function(callback){
+		var timer = null,
+			_this = this;
+		timer = setInterval(function(){
+			if( _this.settings.obj && this.settings.obj.ActiveDocument){
+				callback && callback();
+				clearInterval(timer);
+			}
+		}, 100);
 	},
 	/**
 	 * 文档打开
@@ -147,6 +172,7 @@ OCX.prototype = {
 			if (!this.settings.docOpen) {
 				return;
 			}
+
 			with (this.settings.obj.ActiveDocument) {
 				appName = new String(Application.Name);
 				// Word
@@ -193,7 +219,7 @@ OCX.prototype = {
 	/**
 	 * 如果原先的表单定义了OnSubmit事件，保存文档时首先会调用原先的事件。
 	 * @method _beforeSubmit
-	 * @return {Boolean} 返回真假 
+	 * @return {Boolean} 返回真假
 	 */
 	_beforeSubmit: function() {
 		var form = document.forms[0];
@@ -225,15 +251,17 @@ OCX.prototype = {
 					break;
 				case "radio":
 				case "checkbox":
-					if (elObj.checked) {
+					if (elObj.checked && elObj.name) {
 						paraObj.PARA += (elObj.name + "=" + escape(elObj.value) + "&");
 					}
 					break;
 				case "select-multiple":
-					for (j = 0; j < elObj.options.length; j++) {
-						optionItem = elObj.options[j];
-						if (optionItem.selected) {
-							paraObj.PARA += (elObj.name + "=" + escape(optionItem.value) + "&");
+					if (elObj.name) {
+						for (j = 0; j < elObj.options.length; j++) {
+							optionItem = elObj.options[j];
+							if (optionItem.selected) {
+								paraObj.PARA += (elObj.name + "=" + escape(optionItem.value) + "&");
+							}
 						}
 					}
 					break;
@@ -265,7 +293,7 @@ OCX.prototype = {
 	},
 	/**
 	 * 打印文档
-	 * @method  printDoc 
+	 * @method  printDoc
 	 */
 	printDoc: function() {
 		try {
@@ -379,9 +407,9 @@ OCX.prototype = {
 		}
 	},
 	/**
-	 * 进入或退出痕迹保留状态
+	 * 打开或者关闭修订模式
 	 * @method  setMarkModify
-	 * @param 	{Boolean} 	bool 
+	 * @param 	{Boolean} 	bool
 	 * @returns {undefined}
 	 */
 	setMarkModify: function(bool) {
@@ -393,7 +421,7 @@ OCX.prototype = {
 	/**
 	 * 显示/不显示修订文字
 	 * @method  showRevisions
-	 * @param 	{Boolean} 	bool 
+	 * @param 	{Boolean} 	bool
 	 * @returns {undefined}
 	 */
 	showRevisions: function(bool) {
@@ -425,11 +453,12 @@ OCX.prototype = {
 	 */
 	addSignFromLocal: function(key) {
 		if (this.settings.docOpen) {
-			if (this.settings.obj.IsNTKOSecSignInstalled()) {
-				this.settings.obj.AddSecSignFromLocal(this.settings.user, "", true, 0, 0, 1);
-			} else {
-				this.settings.obj.AddSignFromLocal(this.settings.user, "", true, 0, 0, key);
-			}
+			// if (this.settings.obj.IsNTKOSecSignInstalled()) {
+			// 	this.settings.obj.AddSecSignFromLocal(this.settings.user, "", true, 0, 0, 1);
+			// } else {
+			// 	this.settings.obj.AddSignFromLocal(this.settings.user, "", true, 0, 0, key);
+			// }
+			this.settings.obj.AddSignFromLocal(this.settings.user, "", true, 0, 0, key);
 		}
 	},
 	/**
@@ -440,11 +469,12 @@ OCX.prototype = {
 	 */
 	handSign: function(key) {
 		if (this.settings.docOpen) {
-			if (this.settings.obj.IsNTKOSecSignInstalled()) {
-				this.settings.obj.AddSecHandSign(this.settings.user, 0, 0, 1);
-			} else {
-				this.settings.obj.DoHandSign(this.settings.user, 0, 0x000000ff, 2, 100, 50, null, key);
-			}
+			// if (this.settings.obj.IsNTKOSecSignInstalled()) {
+			// 	this.settings.obj.AddSecHandSign(this.settings.user, 0, 0, 1);
+			// } else {
+			// 	this.settings.obj.DoHandSign(this.settings.user, 0, 0x000000ff, 2, 100, 50, null, key);
+			// }
+			this.settings.obj.DoHandSign(this.settings.user, 0, 0x000000ff, 2, 100, 50, null, key);
 		}
 	},
 	/**
@@ -455,11 +485,12 @@ OCX.prototype = {
 	 */
 	fullHandSign: function(key) {
 		if (this.settings.docOpen) {
-			if (this.settings.obj.IsNTKOSecSignInstalled()) {
-				this.settings.obj.AddSecHandSign(this.settings.user, 0, 0, 1);
-			} else {
-				this.settings.obj.DoHandSign2(this.settings.user, key, 0, 0, 0, 100);
-			}
+			// if (this.settings.obj.IsNTKOSecSignInstalled()) {
+			// 	this.settings.obj.AddSecHandSign(this.settings.user, 0, 0, 1);
+			// } else {
+			// 	this.settings.obj.DoHandSign2(this.settings.user, key, 0, 0, 0, 100);
+			// }
+			this.settings.obj.DoHandSign2(this.settings.user, key, 0, 0, 0, 100);
 		}
 	},
 	/**

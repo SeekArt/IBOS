@@ -75,6 +75,8 @@ class AnnouncementController extends BaseController {
     }
 
     protected function beforeSave() {
+        $_POST['subject'] = \CHtml::encode( $_POST['subject'] );
+        $_POST['message'] = \CHtml::encode( $_POST['message'] );
         $_POST['starttime'] = strtotime( $_POST['starttime'] );
         $_POST['endtime'] = strtotime( $_POST['endtime'] );
         if ( $_POST['starttime'] > $_POST['endtime'] ) {

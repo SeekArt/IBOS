@@ -45,7 +45,7 @@ class Setting extends CBehavior {
         $this->handleCreditsFormula();
         // verhash
         $this->_setting['verhash'] = String::random( 3 );
-        Syscache::model()->modify( 'setting', $settings );
+        Syscache::model()->modifyCache( 'setting', $settings );
     }
 
     /**

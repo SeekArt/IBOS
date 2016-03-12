@@ -14,7 +14,7 @@ class Log {
      * @param array $msg
      * @param string $level 日志层级  
      * @param string $category
-     * @return void
+     * @return void 
      */
     public static function write( $msg, $level = 'action', $category = 'module' ) {
         $message = CJSON::encode( $msg );

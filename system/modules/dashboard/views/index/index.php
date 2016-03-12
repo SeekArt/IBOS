@@ -6,7 +6,7 @@ use application\core\utils\String;
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/home.css?<?php echo VERHASH; ?>">
 <div class="ct">
     <div class="clearfix">
-        <h1 class="mt"><?php echo $license['fullname']; ?></h1>
+        <h1 class="mt"><?php echo $unit['fullname']; ?></h1>
     </div>
     <div>
         <!-- 系统信息 start -->

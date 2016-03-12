@@ -18,9 +18,14 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
+use application\core\utils\Cache as CacheUtil;
 
 class CreditRule extends Model {
 
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
     }
@@ -29,4 +34,9 @@ class CreditRule extends Model {
         return '{{credit_rule}}';
     }
 
+    public function afterSave() {
+        CacheUtil::update( 'CreditRule' );
+        CacheUtil::load( 'CreditRule' );
+        parent::afterSave();
+    }
 }

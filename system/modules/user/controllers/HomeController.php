@@ -5,6 +5,7 @@ namespace application\modules\user\controllers;
 use application\core\model\Log;
 use application\core\model\Module;
 use application\core\utils as util;
+use application\core\utils\String;
 use application\modules\dashboard\model\CreditLog;
 use application\modules\dashboard\model\CreditRule;
 use application\modules\dashboard\model\CreditRuleLog;
@@ -231,7 +232,7 @@ class HomeController extends HomeBaseController {
 		$aeskey = Yii::app()->setting->get( 'aeskey' );
 		$oaUrl = rtrim( Yii::app()->setting->get( 'siteurl' ), '/' );
 		$signature = $this->getSignature( $aeskey, $oaUrl );
-		$unit = unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 		$param = array(
 			'code' => $unit['corpcode'],
 			'url' => urlencode( $oaUrl ),
@@ -468,7 +469,7 @@ class HomeController extends HomeBaseController {
 	 */
 	protected function getRemind() {
 		$user = $this->getUser();
-		$user['remindsetting'] = !empty( $user['remindsetting'] ) ? unserialize( $user['remindsetting'] ) : array();
+        $user['remindsetting'] = !empty( $user['remindsetting'] ) ? String::utf8Unserialize( $user['remindsetting'] ) : array();
 		$nodeList = Notify::model()->getNodeList();
 		$coBinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
 		foreach ( $nodeList as $id => &$node ) {

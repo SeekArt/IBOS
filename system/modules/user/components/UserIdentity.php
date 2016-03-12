@@ -17,6 +17,9 @@
 
 namespace application\modules\user\components;
 
+use application\core\utils\IBOS;
+use application\modules\role\model\Role;
+use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User as UserModel;
 use CUserIdentity;
 
@@ -72,7 +75,7 @@ class UserIdentity extends CUserIdentity {
 	 * 重写登录验证方法，该方法只返回验证状态码
 	 * @return integer 验证状态码
 	 */
-	public function authenticate( $isAdministrator = false ) {
+    public function authenticate( $isAdminType = false ) {
 		$username = $this->username;
 		$password = $this->password;
 		switch ( $this->loginType ) {
@@ -96,14 +99,27 @@ class UserIdentity extends CUserIdentity {
 		} else if ( $user['status'] == 2 ) {
 			$status = self::USER_DISABLED;
 		} else {
+            $status = $user['uid'];
 			// MD5 加密
 			$passwordMd5 = preg_match( '/^\w{32}$/', $password ) ? $password : md5( md5( $password ) . $user['salt'] );
 			if ( $user['password'] != $passwordMd5 ) {
 			$status = self::USER_PASSWORD_INCORRECT;
-		} else if ( $isAdministrator && $user['isadministrator'] !== '1' ) {
+            } else if ( $isAdminType ) {
+                if ( !$user['isadministrator'] ) {
+                    $uid = $user['uid'];
+                    $roleid = $user['roleid'];
+                    $relatedRoleId = RoleRelated::model()->fetchAllRoleIdByUid( $uid );
+                    $roleIds = array_merge( array( $roleid ), (array) $relatedRoleId );
+                    $allroleidS = implode( ',', array_unique( $roleIds ) );
+                    $roleType = IBOS::app()->db->createCommand()
+                            ->select( 'roletype' )
+                            ->from( Role::model()->tableName() )
+                            ->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )
+                            ->queryScalar();
+                    if ( $roleType === false ) {
 			$status = self::USER_NO_ACCESS;
-		} else {
-			$status = $user['uid'];
+                    }
+                }
 			}
 		}
 		// 登录成功

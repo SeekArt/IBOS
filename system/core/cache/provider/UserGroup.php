@@ -41,7 +41,7 @@ class UserGroup extends CBehavior {
                 $usergroup[$group['gid']] = $group;
             }
         }
-        Syscache::model()->modify( 'usergroup', $usergroup );
+        Syscache::model()->modifyCache( 'usergroup', $usergroup );
     }
 
 }

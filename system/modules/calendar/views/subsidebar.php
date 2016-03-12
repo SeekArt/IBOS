@@ -53,6 +53,14 @@ use application\core\utils\IBOS;
                     </ul>
                 </div>
 			</li>
+			<?php if ( $hasShareUid !== FALSE ): ?>
+				<li>
+					<a href="<?php echo $this->createUrl( 'schedule/shareschedule' ); ?>">
+						<i class="o-cal-shareme"></i>
+						<?php echo IBOS::lang( 'Share' ); ?>
+					</a>
+				</li>
+			<?php endif; ?>
 		</ul>
 	</div>
 </div>

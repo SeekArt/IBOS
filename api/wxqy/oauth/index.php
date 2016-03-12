@@ -42,6 +42,9 @@ if ( !empty( $userId ) ) {
 		} else {
 			Env::iExit( $resArr['msg'] );
 		}
+    } else {
+        file_put_contents( 'wx_userid.txt', var_export( $userId, true ) );
+        Env::iExit( '用户绑定失败' );
 	}
 }
 Env::iExit( '用户验证失败,尝试以下步骤的操作：<br/>'

@@ -343,3 +343,4 @@ INSERT INTO `{{approval}}` (`name`, `level`, `level1`, `level2`, `level3`, `leve
 INSERT INTO `{{approval}}` (`name`, `level`, `level1`, `level2`, `level3`, `level4`, `level5`, `free`, `desc`, `addtime`) VALUES ('二级审核', '2', '1', '1', '', '', '', '', '', '1402631014');
 
 INSERT INTO `{{announcement}}` (`id`, `author`, `subject`, `type`, `sort`, `starttime`, `endtime`, `message`) VALUES (1, '管理员', '<span style=\'color: rgb(226, 111, 80);\'>请使用支持HTML5的浏览器登录！</span>', 0, 0, 1401552000, 1433088000, '');
+INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ('1', 'system', 'dashboard', '自动同步 IBOS 绑定酷办公用户列表', 'CronAutoSync.php', '1457661663', '1457748000', '-1', '-1', '10', '0');

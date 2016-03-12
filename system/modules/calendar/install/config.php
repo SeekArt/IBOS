@@ -36,7 +36,7 @@ return array(
             'name' => '日程',
 			'group' => '日程安排',
             'controllerMap' => array(
-                'schedule' => array( 'index', 'subschedule', 'add', 'edit', 'del' )
+                'schedule' => array( 'index', 'subschedule', 'shareschedule', 'add', 'edit', 'del' )
             )
         ),
 		'task' => array(

@@ -5,7 +5,6 @@
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author gzhzh <gzhzh@ibos.com.cn>
  */
-
 /**
  * 通讯录模块------ 通讯录基类控制器
  * @package application.modules.contact.controllers

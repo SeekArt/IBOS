@@ -131,7 +131,7 @@ class BaseController extends Controller {
             $this->_condition = ReportUtil::joinSearchCondition($search);
         } else if ($type == 'normal_search') {
             //添加对keyword的转义，防止SQL错误
-            $keyword = addslashes($_POST['keyword']);
+            $keyword = \CHtml::encode($_POST['keyword']);
             Main::setCookie('keyword', $keyword, 10 * 60);
             $this->_condition = " ( content LIKE '%$keyword%' OR subject LIKE '%$keyword%' ) ";
         } else {

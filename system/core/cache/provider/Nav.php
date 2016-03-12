@@ -29,7 +29,7 @@ class Nav extends CBehavior {
 
     public function handleNav( $event ) {
         $navs = NavModel::model()->fetchAllByAllPid();
-        Syscache::model()->modify( 'nav', $navs );
+        Syscache::model()->modifyCache( 'nav', $navs );
     }
 
 }

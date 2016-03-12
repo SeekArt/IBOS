@@ -14,7 +14,8 @@ use application\modules\user\utils\User;
 <html lang="en">
 	<![endif]-->
 	<head>
-        <meta http-equiv="X-UA-Compatible" content="edge" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="renderer" content="webkit"/>
         <meta charset=<?php echo CHARSET; ?> />
         <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico?<?php echo VERHASH; ?>">
@@ -132,6 +133,7 @@ use application\modules\user\utils\User;
 								<li rel="unread_comment" ><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/comment/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_message"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/pm/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_atme"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/mention/index' ); ?>" class="anchor">查看消息</a></li>
+                                <li rel="unread_notify"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="user"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=user' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="diary"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=diary' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="report"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/detail&module=report' ); ?>" class="anchor">查看详情</a></li>
@@ -173,10 +175,10 @@ use application\modules\user\utils\User;
 							<div class="progress-bar <?php if ( IBOS::app()->user->upgrade_percent > 90 ): ?>progress-bar-danger<?php else: ?>progress-bar-success<?php endif; ?>" style="width: <?php echo IBOS::app()->user->upgrade_percent; ?>%;"></div>
 						</div>
 						<div class="btn-group btn-group-justified">
-							<a href="<?php echo IBOS::app()->user->space_url; ?>" class="btn"><i class="om-user"></i>个人</a>
-<?php if ( IBOS::app()->user->isadministrator ): ?><a class="btn" target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><i class="om-key"></i><?php echo IBOS::lang( 'Control', 'default' ); ?></a><?php endif; ?>
-							<a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="btn">
-								<i class="om-shutdown"></i><?php echo IBOS::lang( 'Quit', 'default' ); ?>
+                            <a href="<?php echo IBOS::app()->user->space_url; ?>" class="btn"><i class="om-user"></i>个人</a>
+                            <?php if ( IBOS::app()->user->isadministrator || IBOS::app()->user->roleType ): ?><a class="btn" target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><i class="om-key"></i><?php echo IBOS::lang( 'Control', 'default' ); ?></a><?php endif; ?>
+                            <a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="btn">
+                                <i class="om-shutdown"></i><?php echo IBOS::lang( 'Quit', 'default' ); ?>
 							</a>
 						</div>
 					</div>
@@ -246,7 +248,7 @@ use application\modules\user\utils\User;
 					<div class="quick-link">
 						<a target="_blank" href="http://doc.ibos.com.cn/"><?php echo IBOS::lang( 'Ibos help', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a target="_blank" href="http://bbs.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
+						<a target="_blank" href="http://kf.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
 						<span class="ilsep">|</span>
 						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>

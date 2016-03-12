@@ -7,6 +7,7 @@ use application\core\model\Source;
 use application\core\utils as util;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use CHtml;
 
 class Comment extends Model {
 
@@ -207,7 +208,7 @@ class Comment extends Model {
 			$v['isCommentDel'] = $isAdministrator || $uid === $v['uid'];
 			$v['user_info'] = User::model()->fetchByUid( $v['uid'] );
 //			$v['content'] = String::parseHtml( $v['content'] . $v['replyInfo'] );
-			$v['content'] = util\String::parseHtml( $v['content'] );
+            //$v['content'] = util\String::parseHtml( $v['content'] );
 			$v['sourceInfo'] = Source::getCommentSource( $v );
 			if ( !empty( $v['attachmentid'] ) ) {
 				$v['attach'] = util\Attach::getAttach( $v['attachmentid'] );

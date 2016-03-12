@@ -118,7 +118,7 @@ $(function() {
 			$add = $(this);
 			if( $.trim( $add.val() ) !== "" ) {
 				todoList.addItem({
-					text: $add.val()
+					text: U.entity.escape($add.val())
 				});
 			}
 			$add.val("");
@@ -133,6 +133,9 @@ $(function() {
 			if (d.pid == '') {
 				delete d.pid;
 			}
+		});
+		$.map(taskData, function(n){
+			n.text = n.text.replace(/&amp;/g, "&"); 
 		});
 		todoList.set(taskData);
 	} else {

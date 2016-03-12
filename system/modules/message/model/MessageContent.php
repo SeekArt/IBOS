@@ -296,7 +296,7 @@ class MessageContent extends Model {
     /**
      * 验证指定用户是否是指定私信列表的成员
      * @param integer $listId 私信列表ID
-     * @param integer $uid 用户ID 
+     * @param integer $uid 用户ID
      * @param boolean $showDetail 是否显示详细，默认为false
      * @return array 如果是成员返回相关信息，不是则返回空数组
      */
@@ -325,7 +325,7 @@ class MessageContent extends Model {
      */
     private function parseMessageList( &$list ) {
         foreach ( $list as &$v ) {
-            $v['lastmessage'] = unserialize( $v['lastmessage'] );
+            $v['lastmessage'] = String::utf8Unserialize( $v['lastmessage'] );
             $v['lastmessage']['touid'] = $this->parseToUidByMinMax( $v['minmax'], $v['lastmessage']['fromuid'] );
             $v['lastmessage']['user'] = User::model()->fetchByUid( $v['lastmessage']['fromuid'] );
             $v['touserinfo'] = User::model()->fetchAllByUids( $v['lastmessage']['touid'] );

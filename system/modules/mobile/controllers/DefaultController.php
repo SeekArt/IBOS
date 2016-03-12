@@ -75,7 +75,7 @@ class DefaultController extends BaseController {
 		$ip = IBOS::app()->setting->get( 'clientip' );
 
 		$cookieTime = 0;
-		if ( !$passWord || $passWord != addslashes( $passWord ) ) {
+		if ( !$passWord || $passWord != \CHtml::encode( $passWord ) ) {
 			$this->ajaxReturn( array( 'login' => false, 'msg' => IBOS::lang( 'Passwd illegal', 'user.default' ) ), Mobile::dataType() );
 		}
 		// 开始验证

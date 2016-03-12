@@ -45,7 +45,7 @@ require_once ( $yii );
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 $ibos = Yii::createApplication( 'application\core\components\Application', $config );
 $value = Setting::model()->fetchSettingValueByKey( 'im' );
-$im = unserialize( $value );
+$im = String::utf8Unserialize( $value );
 $imCfg = $im['qq'];
 define( 'OAUTH2_TOKEN', 'https://openapi.b.qq.com/oauth2/token' );
 define( 'OPEN_CALLBACKURL', geturl() ); //此URL需要登记到企业QQ

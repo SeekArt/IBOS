@@ -127,7 +127,7 @@ function dologin( $uid, $log = '' ) {
 function LoadSysCache() {
 	$caches = Syscache::model()->fetchAll();
 	foreach ( $caches as $cache ) {
-		$value = $cache['type'] == '1' ? unserialize( $cache['value'] ) : $cache['value'];
+        $value = $cache['type'] == '1' ? String::utf8Unserialize( $cache['value'] ) : $cache['value'];
 		if ( $cache['name'] == 'setting' ) {
 			IBOS::app()->setting->set( 'setting', $value );
 		} else {

@@ -77,6 +77,19 @@ class WebMail {
         $connected = false;
         // 新认证方法，不依赖 imap 扩展
         require PATH_ROOT . '/system/modules/email/extensions/vendor/autoload.php';
+        /**
+         * 'username' => string 'ibos_gzdzl' (length=10)
+          'password' => string '123456gzdzl' (length=11)
+          'address' => string 'ibos_gzdzl@qq.com' (length=17)
+          'type' => string 'pop' (length=3)
+          'server' => string 'pop.qq.com' (length=10)
+          'port' => string '995' (length=3)
+          'ssl' => int 1
+          'smtpserver' => string 'smtp.qq.com' (length=11)
+          'smtpport' => string '25' (length=2)
+          'smtpssl' => int 0
+         */
+        // 协议类型
         if ($conf['type'] == 'pop') {
             $options = new ezcMailPop3TransportOptions ();
             if ($conf['ssl'] == 1) {
@@ -659,7 +672,7 @@ EOT;
             $options->timeout = 30;
             $pop3 = new ezcMailPop3Transport($web['server'], $web['port'], $options);
             try {
-                $pop3->authenticate($web['username'], $pwd);
+                $pop3->authenticate($web['address'], $pwd);
                 // $num 邮件数
                 // $size　总大小
                 $pop3->status($num, $size);
@@ -679,6 +692,10 @@ EOT;
                 $parser = new ezcMailParser ();
                 $mail = $parser->parseMail($set);
                 for ($i = 0; $i < count($mail); $i ++) {
+                    // 是否已经接收过
+                    if ( (!$mail[$i]->timestamp || !$mail[$i]->from->email) || EmailBody::isExist($mail[$i]->timestamp, $mail[$i]->from->email) ) {
+                        continue;
+                    }
                     // 收件人
                     $toemails = array();
                     if ($mail[$i]->to && !empty($mail[$i]->to)) {
@@ -706,7 +723,23 @@ EOT;
                     $data['copytoids'] = serialize($ccmails);
                     $data['subject'] = $mail[$i]->subject;
                     // @todo 这里返回来的邮件内容有时可能是空
-                    $data['content'] = isset($mail[$i]->body->text) ? $mail[$i]->body->text : "(null)";
+                    // Fixed bug:不是返回的邮件内容为空，而是使用的邮件插件只有 ezcMailText 这个类下才有邮件内容 text
+                    // body 为 ezcMailText 类时直接用 ezcMailText->text 拿邮件内容
+                    // body 为 ezcMailMultipartAlternative 类时 需要用 ezcMailMultipartAlternative->getParts()[0] 拿到 part 下的类
+                    // part 为 ezcMailText 类时直接用 ezcMailText->text 拿邮件内容
+                    // part 为 ezcMailMultipartRelated 类时 需要用 ezcMailMultipartRelated->getMainPart() 拿到 part 下的类
+                    // 如果 part 还不是 ezcMailText 类的话，根据实际情况继续，直到拿到 ezcMailText 类为止
+                    $ezcMailText = $mail[$i]->body;
+                    while ( !isset( $ezcMailText->text ) ) {
+                        if ( in_array( 'getParts', get_class_methods( $ezcMailText ) ) ) {
+                            $temp = $ezcMailText->getParts();
+                            $ezcMailText = $temp[0];
+                        }
+                        else if ( in_array( 'getMainPart', get_class_methods( $ezcMailText ) ) ) {
+                            $ezcMailText = $ezcMailText->getMainPart();
+                        }
+                    }
+                    $data['content'] = $ezcMailText->text;
                     $data['size'] = $mail[$i]->size;
                     $data['sendtime'] = $mail[$i]->timestamp;
                     // 发件人
@@ -755,7 +788,7 @@ EOT;
             $options->timeout = 30;
             $imap = new ezcMailImapTransport($web['server'], $web['port'], $options);
             try {
-                $imap->authenticate($web['username'], $pwd);
+                $imap->authenticate($web['address'], $pwd);
                 // IMAP 方式的必须
                 $imap->selectMailbox('Inbox');
                 // $num 邮件数
@@ -777,6 +810,10 @@ EOT;
                 $parser = new ezcMailParser ();
                 $mail = $parser->parseMail($set);
                 for ($i = 0; $i < count($mail); $i ++) {
+                    // 是否已经接收过
+                    if ( (!$mail[$i]->timestamp || !$mail[$i]->from->email) || EmailBody::isExist($mail[$i]->timestamp, $mail[$i]->from->email) ) {
+                        continue;
+                    }
                     // 收件人
                     $toemails = array();
                     if ($mail[$i]->to && !empty($mail[$i]->to)) {
@@ -804,7 +841,23 @@ EOT;
                     $data['copytoids'] = serialize($ccmails);
                     $data['subject'] = $mail[$i]->subject;
                     // @todo 这里返回来的邮件内容有时可能是空
-                    $data['content'] = isset($mail[$i]->body->text) ? $mail[$i]->body->text : "(null)";
+                    // Fixed bug:不是返回的邮件内容为空，而是使用的邮件插件只有 ezcMailText 这个类下才有邮件内容 text
+                    // body 为 ezcMailText 类时直接用 ezcMailText->text 拿邮件内容
+                    // body 为 ezcMailMultipartAlternative 类时 需要用 ezcMailMultipartAlternative->getParts()[0] 拿到 part 下的类
+                    // part 为 ezcMailText 类时直接用 ezcMailText->text 拿邮件内容
+                    // part 为 ezcMailMultipartRelated 类时 需要用 ezcMailMultipartRelated->getMainPart() 拿到 part 下的类
+                    // 如果 part 还不是 ezcMailText 类的话，根据实际情况继续，直到拿到 ezcMailText 类为止
+                    $ezcMailText = $mail[$i]->body;
+                    while ( !isset( $ezcMailText->text ) ) {
+                        if ( in_array( 'getParts', get_class_methods( $ezcMailText ) ) ) {
+                            $temp = $ezcMailText->getParts();
+                            $ezcMailText = $temp[0];
+                        }
+                        else if ( in_array( 'getMainPart', get_class_methods( $ezcMailText ) ) ) {
+                            $ezcMailText = $ezcMailText->getMainPart();
+                        }
+                    }
+                    $data['content'] = $ezcMailText->text;
                     $data['size'] = $mail[$i]->size;
                     $data['sendtime'] = $mail[$i]->timestamp;
                     // 发件人

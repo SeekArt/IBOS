@@ -3,7 +3,7 @@
  * 前台首页
  * IBOS
  * @author		inaki
- * @version		$Id: index.js 5569 2015-09-17 08:12:23Z gzzz $
+ * @version		$Id: index.js 6576 2016-03-11 03:02:38Z gzzz $
  */
 
 /**
@@ -438,7 +438,7 @@ var menuBubble = function($ctx){
 	 */
 	var _set = function(name, count){
 		count = parseInt(count, 10);
-		var ctx = $ctx.find("[data-bubble='" + name + "']");
+		var ctx = $ctx.find("[data-bubble='" + name.split("/")[1] + "']");
 		if(count){
 			ctx.text(count).show();					
 		}else{

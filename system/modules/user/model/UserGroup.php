@@ -18,15 +18,25 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
+use application\core\utils\Cache as CacheUtil;
 
 class UserGroup extends Model {
 
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
     }
 
     public function tableName() {
         return '{{user_group}}';
+    }
+    public function afterSave() {
+        CacheUtil::update( 'UserGroup' );
+        CacheUtil::load( 'UserGroup' );
+        parent::afterSave();
     }
 
     /**

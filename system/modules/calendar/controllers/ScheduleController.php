@@ -110,16 +110,85 @@ Class ScheduleController extends BaseController {
 		}
 	}
 
-	/**
-	 * 添加日程
-	 */
+    /**
+     * 分享给我视图动作
+     * 分两种请求情况：
+     * 1. 获取对应人员的日程列表
+     * 2. 渲染视图
+     */
+    public function actionShareschedule() {
+        $op = Env::getRequest('op');
+        if ($op === 'list') {
+            $this->getShareList();
+        } else {
+            $uid = Env::getRequest('uid');
+            if (!$uid) {
+                $shareUids = CalendarUtil::getShareUidsByUid($this->uid);
+                if ($shareUids !== FALSE) {
+                    $shareUidInfos = UserUtil::getUserInfoByUids($shareUids);
+                    $deptArr = UserUtil::handleUserGroupByDept($shareUidInfos);
+                    // 获取分享人员中第一位的 uid，初次渲染视图默认显示第一位用户的日程数据
+                    $tempOrz1 = current($deptArr);
+                    $tempOrz2 = current($tempOrz1['users']);
+                    $uid = $tempOrz2['uid'];
+                } else {
+                    $this->error(IBOS::lang('You do not share personnel'), $this->createUrl('schedule/index'));
+                }
+            }
+            // 权限判断
+            if (!UserUtil::checkIsSharingToMe(IBOS::app()->user->uid, $uid)) {
+                $this->error(IBOS::lang('No permission to view shareschedule'), $this->createUrl('schedule/index'));
+            }
+            $workTime = CalendarSetup::model()->getWorkTimeByUid($uid);
+            $setting = array(
+                'worktimestart' => $workTime['startTime'],
+                'worktimeend' => $workTime['endTime'],
+            );
+            $data = array(
+                'setting' => $setting,
+                'user' => User::model()->fetchByUid($uid),
+            );
+            $this->setPageTitle(IBOS::lang('Share'));
+            $this->setPageState('breadCrumbs', array(
+                array('name' => IBOS::lang('Personal Office')),
+                array('name' => IBOS::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+                array('name' => IBOS::lang('Share'))
+                    )
+            );
+            $this->render('shareschedule', $data);
+        }
+    }
+
+    /**
+     * 添加日程
+     */
 	public function actionAdd() {
 		if ( !IBOS::app()->request->getIsAjaxRequest() ) {
+            /**
+             * 日志记录
+             */
+            $log = array(
+                'user' => IBOS::app()->user->username,
+                'ip' => IBOS::app()->setting->get('clientip'),
+                'isSuccess' => 0,
+                'msg' => IBOS::lang('Parameters error', 'error')
+            );
+            Log::write($log, 'action', 'module.calendar.schedule.add');
 			$this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
 		}
 		// // 权限判断
-		if ( !$this->checkAddPermission() ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to add schedule' ) ) );
+        if (!$this->checkAddPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid )) {
+            /**
+             * 日志记录
+             */
+            $log = array(
+                'user' => IBOS::app()->user->username,
+                'ip' => IBOS::app()->setting->get('clientip'),
+                'isSuccess' => 0,
+                'msg' => IBOS::lang('No permission to add schedule')
+            );
+            Log::write($log, 'action', 'module.calendar.schedule.add');
+            $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('No permission to add schedule')));
 		}
 		//操作后的某个日程的开始时间
 		$getStartTime = Env::getRequest( 'CalendarStartTime' );
@@ -129,6 +198,7 @@ Class ScheduleController extends BaseController {
 		$eTime = empty( $getEndTime ) ? date( "y-m-d h:i", time() ) : $getEndTime;
 		//日程的主题
 		$getTitle = Env::getRequest( 'CalendarTitle' );
+        //添加getTitle的xss安全过滤
         $title = empty($getTitle) ? '' : htmlspecialchars($getTitle);
 		if ( $this->uid != $this->upuid ) {
 			$title .= ' (' . User::model()->fetchRealnameByUid( $this->upuid ) . ')';
@@ -167,6 +237,13 @@ Class ScheduleController extends BaseController {
 			$ret['isSuccess'] = false;
 			$ret['msg'] = 'fail';
 		}
+        //日志记录
+        $log = array(
+            'user' => IBOS::app()->user->username,
+            'ip' => IBOS::app()->setting->get('clientip'),
+            'isSuccess' => $ret['isSuccess'] ? 1 : 0
+        );
+        Log::write($log, 'action', 'module.calendar.schedule.add');
 		$this->ajaxReturn( $ret );
 	}
 
@@ -178,8 +255,8 @@ Class ScheduleController extends BaseController {
 			$this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
 		}
 		// 权限判断
-		if ( !$this->checkEditPermission() ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to edit schedule' ) ) );
+        if (!$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid )) {
+            $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('No permission to edit schedule')));
 		}
 		$op = Env::getRequest( 'op' );
 		if ( empty( $op ) ) {
@@ -217,8 +294,8 @@ Class ScheduleController extends BaseController {
 			$this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
 		}
 		// 权限判断
-		if ( !$this->checkEditPermission() ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to del schedule' ) ) );
+        if (!$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid )) {
+            $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('No permission to del schedule')));
 		}
 		$getCalendarId = Env::getRequest( 'calendarId' );
 		$calendarId = $this->checkCalendarid( $getCalendarId );
@@ -246,16 +323,21 @@ Class ScheduleController extends BaseController {
 		if ( Env::submitCheck( 'formhash' ) ) {
 			$interval = Env::getRequest( 'interval' );
 			$hiddenDays = Env::getRequest( 'hiddenDays' );
+            // 添加阅读权限、编辑权限数据的获取与更新
+            $viewSharing = Env::getRequest('viewuid');
+            $editSharing = Env::getRequest('edituid');
 			
 			$startTime = isset( $interval[0] ) ? $interval[0] : '8';
 			$endTime = isset( $interval[1] ) ? $interval[1] : '18';
-			CalendarSetup::model()->updataSetup( IBOS::app()->user->uid, $startTime, $endTime, $hiddenDays );
+            CalendarSetup::model()->updataSetup(IBOS::app()->user->uid, $startTime, $endTime, $hiddenDays, $viewSharing, $editSharing);
 			$this->ajaxReturn( array( 'isSuccess' => true ) );
 		} else {
 			$alias = 'application.modules.calendar.views.schedule.setup';
 			$uid = IBOS::app()->user->uid;
 			$data['workTime'] = CalendarSetup::model()->getWorkTimeByUid( $uid );
 			$data['hiddenDays'] = CalendarSetup::model()->getHiddenDaysByUid( $uid );
+            $data['sharingPersonnel'] = CalendarSetup::model()->getSharingPersonnelByUid($uid);
+            $data['lang'] = IBOS::getLangSource('calendar.default');
 			$view = $this->renderPartial( $alias, $data, true );
 			$this->ajaxReturn( array( 'isSuccess' => true, 'view' => $view ) );
 		}
@@ -313,10 +395,24 @@ Class ScheduleController extends BaseController {
 		$this->ajaxReturn( $ret );
 	}
 
-	/**
-	 * 取得异步传递要编辑的数据
-	 * @return array 返回数组数据
-	 */
+    /**
+     * 根据请求的日期、uid 数据，返回 uid 对应的普通日程数据
+     * @return array
+     */
+    protected function getShareList() {
+        $startTime = Env::getRequest('startDate');
+        $endTime = Env::getRequest('endDate');
+        $result = Calendars::model()->getCommonCalendarList(strtotime($startTime), strtotime($endTime), $this->uid);
+        if ($result === FALSE) {
+            $this->error(IBOS::lang('No permission to view shareschedule'), $this->createUrl('schedule/index'));
+        }
+        $this->ajaxReturn($result);
+    }
+
+    /**
+     * 取得异步传递要编辑的数据
+     * @return array 返回数组数据
+     */
 	protected function getEditData() {
 		$getCalendarId = Env::getRequest( 'calendarId' );
 		$getStartTime = Env::getRequest( 'CalendarStartTime' );
@@ -410,7 +506,7 @@ Class ScheduleController extends BaseController {
 			$htmlStr = '<ul class="mng-trd-list">';
 			$num = 0;
 			foreach ( $users as $user ) {
-				if ( $num < $item )
+                if ($num < $item) {
 					$htmlStr.='<li class="mng-item sub">
                                             <a href="' . $this->createUrl('schedule/subSchedule', array('uid' => $user['uid'])) . '">
                                                 <img src="' . $user['avatar_middle'] . '" alt="">
@@ -420,6 +516,7 @@ Class ScheduleController extends BaseController {
                                             </a>
 											
                                         </li>';
+                }
 				$num++;
 			}
 			$subNums = count( $users );

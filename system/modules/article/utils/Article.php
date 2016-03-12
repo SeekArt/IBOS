@@ -111,7 +111,8 @@ class Article {
 		$searchCondition = '';
 
 		$keyword = $search['keyword'];
-		$keyword = addslashes( $search['keyword'] );
+        // 添加对keyword的转义，防止SQL错误
+        $keyword = \CHtml::encode( $search['keyword'] );
 		$starttime = $search['starttime'];
 		$endtime = $search['endtime'];
 

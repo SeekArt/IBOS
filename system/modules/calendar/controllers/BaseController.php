@@ -61,6 +61,7 @@ Class BaseController extends Controller {
         $sidebarAlias = 'application.modules.calendar.views.sidebar';
         $params = array(
             'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid($this->uid),
             'lang' => IBOS::getLangSource( 'calendar.default' ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
@@ -72,9 +73,30 @@ Class BaseController extends Controller {
      * @return string
      */
     protected function getSubSidebar() {
-        $deptArr = UserUtil::getManagerDeptSubUserByUid( IBOS::app()->user->uid );
         $sidebarAlias = 'application.modules.calendar.views.subsidebar';
-        $sidebarView = $this->renderPartial( $sidebarAlias, array( 'deptArr' => $deptArr ), true );
+        $params = array(
+            'deptArr' => UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid($this->uid),
+        );
+        $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
+        return $sidebarView;
+    }
+	
+	/**
+	 * 共享给我侧栏视图
+	 * @return string
+	 */
+	protected function getShareSidebar() {
+        $sidebarAlias = 'application.modules.calendar.views.sharesidebar';
+		// 根据 uid 数组返回用户信息数组
+		$shareUids = CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid );
+		$shareUidInfos = UserUtil::getUserInfoByUids( $shareUids );
+		// 根据用户信息数组按部门进行重新排列形成可用于输出生成侧栏菜单的数组
+        $params = array(
+            'deptArr' => UserUtil::handleUserGroupByDept( $shareUidInfos ),
+            'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
+        );
+		$sidebarView = $this->renderPartial( $sidebarAlias, $params, TRUE );
         return $sidebarView;
     }
 

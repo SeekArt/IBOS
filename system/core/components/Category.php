@@ -3,7 +3,7 @@
 /**
  * 分类树组件类
  * @package application.core.components
- * @version $Id: category.php -1   $
+ * @version $Id: category.php -1   $ 
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

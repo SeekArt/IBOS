@@ -546,14 +546,21 @@
 			var model = this.model,
                 _this = this,
                 officetype = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"],
-                isOffice = $.inArray(model.get("filetype"), officetype) != -1;
+                imgtype = ["jpg", "jpeg", "png", "gif"],
+                txttype = ["txt"],
+                filetype = "";
 
-
+                if( $.inArray(model.get("filetype"), officetype) != -1 ){
+					filetype = "office";
+                }else if($.inArray(model.get("filetype"), imgtype) != -1){
+					filetype = "image";
+                }else if($.inArray(model.get("filetype"), txttype) != -1){
+					filetype = "txt";
+                }
 			this.$el.html(this.template({
 				access: model.get("access"),
 				isAdministrator: Ibos.app.g("isAdministrator") == 1,
-				filetype: model.get("filetype"),
-                isOffice: isOffice
+				filetype: filetype
 			}));
 		},
 
@@ -1086,12 +1093,13 @@
 				filetypes: ["doc", "docx", "xls", "xlsx", "ppt", "pptx"],
 				defaults: ["doc", "docx", "xls", "xlsx", "ppt", "pptx"],
 				handler: function(model){
-					Ui.openFrame(model.get("officereadurl"), {
-						title: false,
-						width: 800,
-						height: 600,
-						lock: true
-					});
+					// Ui.openFrame(model.get("officereadurl"), {
+					// 	title: false,
+					// 	width: 800,
+					// 	height: 600,
+					// 	lock: true
+					// });
+                    window.open(model.get("officereadurl"), "_blank");
 				}
 			},
 			{

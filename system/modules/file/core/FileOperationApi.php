@@ -19,7 +19,7 @@ namespace application\modules\file\core;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File as FileUtil;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\System;
 use application\extensions\Zip;

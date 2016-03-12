@@ -7,7 +7,7 @@ use application\core\utils\IBOS;
 use CException;
 
 /**
- * Xcache缓存驱动
+ * Xcache缓存驱动 
  */
 class Xcache extends Cache {
 

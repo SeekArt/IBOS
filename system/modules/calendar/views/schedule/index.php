@@ -181,7 +181,8 @@ use application\modules\calendar\utils\Calendar;
 			addable: true,	
 			editable: true
 		},
-		FORMHASH: "<?php echo FORMHASH; ?>"
+		FORMHASH: "<?php echo FORMHASH; ?>",
+		curPage: 'Index'
 	});
 </script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>

@@ -42,7 +42,7 @@ class CreditRule extends CBehavior {
                 $rules[$rule['action']] = $rule;
             }
         }
-        Syscache::model()->modify( 'creditrule', $rules );
+        Syscache::model()->modifyCache( 'creditrule', $rules );
     }
 
 }

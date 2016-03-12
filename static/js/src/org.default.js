@@ -17,6 +17,9 @@ var Ibos = Ibos || {};
 			// ],
 			// positioncategory:[
 				{{positioncategory}}
+			// ],
+			// role:[
+				{{role}}
 			// ]
 		];
 

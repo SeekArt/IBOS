@@ -91,7 +91,7 @@ class BaseController extends Controller {
                 $li['fileurl'] = $attachDir . $attach['attachment'];
                 $li['iconbig'] = Attach::attachType( $li['filetype'], 'bigicon' );
                 if ( in_array( Attach::attachType( $li['filetype'], 'id' ), range( 3, 6 ) ) ) {
-                    $li['officereadurl'] = $core->getOfficeReadUrl( $li['fileurl'] );
+                    $li['officereadurl'] = $core->getOfficeReadUrl(Attach::getAttachStr($li['attachmentid']) );
                 }
                 if ( in_array( Attach::attachType( $li['filetype'], 'id' ), range( 3, 5 ) ) ) {
                     $li['officeediturl'] = $core->getOfficeEditUrl(Attach::getAttachStr($li['attachmentid']) );
@@ -118,7 +118,7 @@ class BaseController extends Controller {
                 MainUtil::setCookie( 'condition', $this->condition, 10 * 60 );
             }
             if ( Env::getRequest( 'normal_search' ) == '1' ) {
-                $keyword = addslashes( Env::getRequest( 'keyword' ) );
+                $keyword = \CHtml::encode( Env::getRequest( 'keyword' ) );
                 $this->condition = "f.name LIKE '%{$keyword}%'";
                 MainUtil::setCookie( 'keyword', $keyword, 10 * 60 );
             } else {

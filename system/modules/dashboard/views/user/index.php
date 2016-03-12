@@ -281,6 +281,32 @@ use application\modules\role\utils\Role as RoleUtil;
 		</div>
 	</div>
 </div>
+
+<div id="update_userinfo_dialog" style="display:none;">
+    <div class="user-form-con">
+        <form class="form-horizontal" id="update_userinfo_form">
+        	<div class="dialog-form-header">
+        		<ul>
+        			<li class="active">
+        				<a class="form-head-list" data-type="dept" href="javascript:;">按部门</a>
+        			</li>
+        			<li>
+        				<a class="form-head-list" data-type="pos" href="javascript:;">按岗位</a>
+        			</li>
+        		</ul>
+        	</div>
+        	<div class="dialog-form-content">
+        		<div id="update_user_dept"></div>
+        		<div id="update_user_pos" style="display:none;"></div>
+        		<input type="hidden" name="deptid" value=""/>
+        		<input type="hidden" name="posid" value=""/>
+        		<input type="hidden" name="type" value="dept"/>
+        	</div>
+        </form>
+    </div>
+</div>
+
+<div id="update_userinfo_box"></div>
 <script>
 	Ibos.app.setPageParam({
 		"selectedDeptId": <?php echo $deptId; ?>,

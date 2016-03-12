@@ -20,12 +20,16 @@ namespace application\modules\department\model;
 
 use application\core\model\Model;
 use application\core\utils as util;
+use application\core\utils\Cache as CacheUtil;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\user\model as UserModel;
 
 class Department extends Model {
 
-	protected $allowCache = true;
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 
 	public static function model( $className = __CLASS__ ) {
 		return parent::model( $className );
@@ -34,6 +38,12 @@ class Department extends Model {
 	public function tableName() {
 		return '{{department}}';
 	}
+
+    public function afterSave() {
+        CacheUtil::update( 'Department' );
+        CacheUtil::load( 'Department' );
+        parent::afterSave();
+    }
 
 	/**
 	 * 根据单个或多个部门ID（用英文,号隔开）得到其所有父部门id，包括父部门的父部门

@@ -1052,7 +1052,7 @@ class WorkController extends BaseController {
 				}
 			} else {
 				//如果是自由流程则显示当前是第几步骤
-				$run['stepname'] = IBOS::lang( 'Step', '', array( '{step}' => $run['processid'] ) );
+				$run['stepname'] = IBOS::lang( 'Stepth', '', array( '{step}' => $run['processid'] ) );
 			}
 			if ( $this->type !== 'done' ) {
 				$run['focus'] = String::findIn( $this->uid, $run['focususer'] );

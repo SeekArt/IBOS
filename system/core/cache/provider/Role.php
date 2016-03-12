@@ -30,7 +30,7 @@ class Role extends CBehavior {
 	 */
 	public function handleRole( $event ) {
 		$records = RoleModel::model()->fetchAllSortByPk( 'roleid' );
-		Syscache::model()->modify( 'role', $records );
+        Syscache::model()->modifyCache( 'role', $records );
 	}
 
 }

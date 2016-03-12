@@ -143,7 +143,7 @@ class Message {
      */
     public static function getIsImOpen( $type ) {
         $setting = Setting::model()->fetchSettingValueByKey( 'im' );
-        $arrays = unserialize( $setting );
+        $arrays = String::utf8Unserialize( $setting );
         if ( is_array( $arrays ) && isset( $arrays[$type] ) ) {
             if ( isset( $arrays[$type]['open'] ) && $arrays[$type]['open'] == '1' ) {
                 return true;

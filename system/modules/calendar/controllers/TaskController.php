@@ -18,7 +18,6 @@ namespace application\modules\calendar\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS; 
-use application\core\utils\String;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\model\Tasks;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -26,6 +25,7 @@ use application\modules\main\utils\Main as MainUtil;
 use application\modules\message\model\Notify;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use CHtml;
 
 Class TaskController extends BaseController {
 
@@ -48,7 +48,7 @@ Class TaskController extends BaseController {
         $postComp = Env::getRequest( 'complete' );
         $this->complete = empty( $postComp ) ? 0 : $postComp;
         //是否搜索
-        if ( Env::getRequest( 'param' ) == 'search' ) {
+        if (Env::getRequest('param') == 'search' && IBOS::app()->request->isPostRequest) {
             $this->search();
         }
         $this->_condition = CalendarUtil::joinCondition( $this->_condition, "uid = " . $this->uid );
@@ -97,28 +97,28 @@ Class TaskController extends BaseController {
      * 添加任务
      */
     public function actionAdd() {
-        if ( Env::submitCheck( 'formhash' ) ) {
+        if (Env::submitCheck('formhash')) {
             // 权限判断
-            if ( !$this->checkTaskPermission() ) {
-                $this->error( IBOS::lang( 'No permission to add task' ), $this->createUrl( 'task/index' ) );
+            if (!$this->checkTaskPermission()) {
+                $this->error(IBOS::lang('No permission to add task'), $this->createUrl('task/index'));
             }
-            foreach ( $_POST as $key => $value ) {
-                $_POST[$key] = String::filterCleanHtml( $value );
+            $postData = $_POST;
+            $postData['text'] = CHtml::encode($postData['text']);
+            $postData['upuid'] = $this->upuid;
+            $postData['uid'] = $this->uid;
+            $postData['addtime'] = time();
+            if (!isset($postData['pid'])) {
+                $count = Tasks::model()->count('pid=:pid', array(':pid' => ''));
+                $postData['sort'] = $count + 1;
             }
-            $_POST['upuid'] = $this->upuid;
-            $_POST['uid'] = $this->uid;
-            $_POST['addtime'] = time();
-            if ( !isset( $_POST['pid'] ) ) {
-                $count = Tasks::model()->count( 'pid=:pid', array( ':pid' => '' ) );
-                $_POST['sort'] = $count + 1;
-            }
-            Tasks::model()->add( $_POST, true );
+            Tasks::model()->add($postData, true);
             // 消息提醒(当添加人是上司时)
-            if ( $this->upuid != $this->uid ) {
+            if ($this->upuid != $this->uid) {
+                //添加对$_POST['text']的xss安全过滤
                 $config = array(
-                    '{sender}' => User::model()->fetchRealnameByUid( $this->upuid ),
+                    '{sender}' => User::model()->fetchRealnameByUid($this->upuid),
                     '{subject}' => htmlspecialchars($_POST['text']),
-                    '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/task/index' )
+                    '{url}' => IBOS::app()->urlManager->createUrl('calendar/task/index')
                 );
                 Notify::model()->sendNotify( $this->uid, 'task_message', $config, $this->upuid );
             }
@@ -148,7 +148,8 @@ Class TaskController extends BaseController {
                     Tasks::model()->updateCalendar( $id, $complete );
                     break;
                 case 'save':
-                    $text = String::filterCleanHtml( Env::getRequest( 'text' ) );
+                    $text = Env::getRequest('text');
+                    $text = CHtml::encode($text);
                     Tasks::model()->modify( $id, array( 'text' => $text ) );
                     //若已存在与日程，则改变相应日程的主题
                     $schedule = Calendars::model()->fetchByAttributes( array( 'taskid' => $id ) );
@@ -193,7 +194,7 @@ Class TaskController extends BaseController {
             if ( !$this->checkTaskPermission() ) {
                 $this->error( IBOS::lang( 'No permission to del task' ), $this->createUrl( 'task/index' ) );
             }
-            $id = String::filterCleanHtml( $_POST['id'] );
+            $id = Chtml::encode($_POST['id']);
             Tasks::model()->removeTasksById( $id );
             Calendars::model()->deleteAllByAttributes( array( 'taskid' => $id ) );
             $this->ajaxReturn( array( 'isSuccess' => true ) );
@@ -247,7 +248,7 @@ Class TaskController extends BaseController {
             MainUtil::setCookie( 'condition', $this->_condition, 10 * 60 );
         }
         if ( $type == 'normal_search' ) {
-            $keyword = Env::getRequest( 'keyword' );
+            $keyword = CHtml::encode(Env::getRequest('keyword'));
             MainUtil::setCookie( 'keyword', $keyword, 10 * 60 );
             //第一种先把父任务有关键字的找出来
             $pTasks = Tasks::model()->fetchPTasks( $uid, $complete, $keyword );

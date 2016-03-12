@@ -97,12 +97,13 @@ class WxsyncController extends WxController {
 						//todo::如果选择的部门不是顶级的，就不能设置成1了
 						$pid = $value['pid'] == 0 ? 1 : $related[$value['pid']];
 						$res = WxApi::getInstance()->createDept( $value['deptname'], $pid, $value['sort'], $url );
-						if ( $res['isSuccess'] ) {
+                        $newId = 0;
+                        if ( $res['isSuccess'] && isset( $res['data']['id'] ) ) {
 							$newId = $res['data']['id'];
-						} else {
+                        } else if ( !$res['isSuccess'] ) {
 							$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => '部门同步失败，错误代码：' . $res['data']['errcode'] . '，错误原因：' . Code::getErrmsg( $res['data']['errcode'] ) ) );
 						}
-						if ( $newId > 0 ) {
+                        if ( $newId >= 0 ) {
 							$related[$value['deptid']] = $newId;
 							$count++;
 						}
@@ -190,7 +191,6 @@ class WxsyncController extends WxController {
 				$success = Cache::model()->fetchArrayByPk( 'usersuccess' ); // 成功绑定的用户邮箱，用以发邮件通知
 				if ( empty( $success ) ) {
 					$this->ajaxReturn( array( 'tpl' => 'sending', 'isSuccess' => true, 'msg' => '成功全部完成！' ) );
-					die;
 				}
 				$userid = array_shift( $success );
 				$url = $this->createUrlByType( 'sendInvition' );

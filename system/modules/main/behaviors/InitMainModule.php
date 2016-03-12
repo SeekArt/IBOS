@@ -26,13 +26,14 @@ use application\core\utils\Org;
 use application\core\utils\String;
 use application\core\utils\Upgrade;
 use application\modules\dashboard\model\Syscache;
-use application\modules\main\utils\Main as MainUtil;
 use application\modules\main\model\Setting;
+use application\modules\main\utils\Main as MainUtil;
 use application\modules\user\components\UserIdentity;
 use application\modules\user\model\User;
 use application\modules\user\model\UserStatus;
 use CBehavior;
 use CException;
+use CJSON;
 
 class InitMainModule extends CBehavior {
 
@@ -54,7 +55,9 @@ class InitMainModule extends CBehavior {
 		'mobile/default/logout',
 		'main/default/getCert',
 		'main/default/unsupportedBrowser',
-		'main/default/update'
+        'main/default/update',
+        'assets/mobile/index', // 资产管理移动端盘点
+        'assets/mobile/login', //资产管理移动端登陆
 	);
 
 	/**
@@ -382,11 +385,15 @@ class InitMainModule extends CBehavior {
 			} elseif ( defined( 'IN_SWFHASH' ) && IN_SWFHASH ) {
 				// 如果正在进行swfupload上传验证，也无需作处理
 			} else {
-//				TODO:完善系统关闭后的提示页面
-				Env::iExit( IBOS::lang( 'System closed', 'message' ) );
+                $msg = IBOS::lang('System closed', 'message');
+                if (IBOS::app()->getRequest()->getIsAjaxRequest()) {
+                    Env::iExit(CJSON::encode(array('isSuccess' => false, 'msg' => $msg)));
+                } else {
+                    Env::iExit($msg);
+				}
 			}
 		}
-	}
+    }
 
 	/**
 	 * 设置时区

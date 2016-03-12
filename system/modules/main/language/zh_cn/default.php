@@ -25,7 +25,7 @@ return array(
 	'Original password' => '原密码',
 	'New password' => '新密码',
 	'Confirm password' => '确认新密码',
-	'Next reloading' => '下次再填',
+	'Never reloading' => '不再提示',
 	'Next step' => '下一步',
 	'Pre step' => '上一步',
 	'Profile tip' => '<span class="xcbu fsl">填写真实的个人资料</span><span class="fsl xcm">，让更多同事认识你!</span>',

@@ -162,7 +162,7 @@ class OfficialdocCategory extends Model {
 		$category = IBOS::app()->setting->get( 'officialdoccategory' );
 		$pk = $this->getPrimaryKey();
 		unset( $category[$pk] );
-		Syscache::model()->modify( 'officialdoccategory', $category );
+        Syscache::model()->modifyCache( 'officialdoccategory', $category );
 		Cache::load( 'officialdoccategory', true );
 		parent::afterDelete();
 	}
@@ -173,7 +173,7 @@ class OfficialdocCategory extends Model {
 			$category = IBOS::app()->setting->get( 'officialdoccategory' );
 			$attr = $this->getAttributes();
 			$category[$pk] = $attr;
-			Syscache::model()->modify( 'officialdoccategory', $category );
+            Syscache::model()->modifyCache( 'officialdoccategory', $category );
 			Cache::load( 'officialdoccategory', true );
 		}
 		parent::afterSave();

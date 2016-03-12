@@ -9,7 +9,7 @@
  */
 /**
  * 新浪云平台环境引擎类
- *
+ * 
  * @package application.core.engines
  * @author banyanCheung <banyan@ibos.com.cn>
  * @version $Id: sae.php 1826 2013-12-03 01:38:55Z zhangrong $

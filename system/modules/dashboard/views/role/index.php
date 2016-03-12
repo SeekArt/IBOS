@@ -29,10 +29,10 @@
 											<li>
 												<div class="xac">
 													<span class="user-avatar-wrap">
-														<img src="<?php echo $user['avatar_small'] ?>">
+                                                        <img src="<?php echo isset( $user['avatar_small'] ) ? $user['avatar_small'] : '' ?>">
 													</span>
 													<div class="user-name-wrap">
-														<span class="fss"><?php echo $user['realname'] ?></span>
+                                                        <span class="fss"><?php echo isset( $user['realname'] ) ? $user['realname'] : '' ?></span>
 													</div>
 												</div>
 											</li>

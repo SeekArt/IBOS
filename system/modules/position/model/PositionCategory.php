@@ -18,9 +18,14 @@
 namespace application\modules\position\model;
 
 use application\core\model\Model;
-use application\core\utils\Cache;
+use application\core\utils\Cache as CacheUtil;
 
 class PositionCategory extends Model {
+
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
@@ -31,12 +36,14 @@ class PositionCategory extends Model {
     }
 
     public function afterDelete() {
-        Cache::update( 'PositionCategory' );
+        CacheUtil::update( 'PositionCategory' );
+        CacheUtil::load( 'PositionCategory' );
         parent::afterDelete();
     }
 
     public function afterSave() {
-        Cache::update( 'PositionCategory' );
+        CacheUtil::update( 'PositionCategory' );
+        CacheUtil::load( 'PositionCategory' );
         parent::afterSave();
     }
 

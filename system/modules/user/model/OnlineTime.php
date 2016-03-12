@@ -18,6 +18,7 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
+use application\core\utils\IBOS;
 
 class OnlineTime extends Model {
 
@@ -40,16 +41,22 @@ class OnlineTime extends Model {
      */
     public function updateOnlineTime( $uid, $total, $thisMonth, $lastUpdate ) {
         $record = $this->findByPk( $uid );
-        if ( is_null( $record ) ) {
+        if ( NULL === $record ) {
             return false;
         }
-        $record->total = $record->total + $total;
-        $record->thismonth = $record->thismonth + $thisMonth;
-        $record->lastupdate = $lastUpdate;
-        $result = $record->save();
+        $result = IBOS::app()->db->createCommand()
+                ->update( $this->tableName(), array(
+            'total' => $record->total + $total,
+            'thismonth' => $record->thismonth + $thisMonth,
+            'lastupdate' => $lastUpdate,
+                ), sprintf( " `uid` = '%s'", $uid ) );
         return $result;
     }
 
+    /**
+     * 清空本月在线时间
+     * @return type
+     */
     public function updateThisMonth() {
         return $this->updateAll( array( 'thismonth' => 0 ) );
     }

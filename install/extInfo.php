@@ -14,6 +14,23 @@
     <!--[if lt IE 9]>
         <link rel="stylesheet" href="<?php echo IBOS_STATIC; ?>/css/iefix.css">
     <![endif]-->
+    <script src="<?php echo IBOS_STATIC; ?>js/src/core.js"></script>
+    <script>
+        (function(){
+            var url = [window.location.protocol, "//", window.location.hostname, "/api/authlogin.php"].join(""),
+                authLogin = function(){
+                    $.post(url, {uid: 1}, function(res){
+                        if(res.code){
+                            var iframe = document.getElementById('binding');
+                            iframe.src = "/?r=dashboard/cobinding/index&isInstall=1";
+                        }else{
+                            authLogin();
+                        }
+                    }, 'json');
+                };
+            authLogin();
+        })();
+    </script>
 </head>
 <body>
     <div class="main">
@@ -22,38 +39,40 @@
                 <i class="o-top-bg"></i>
                 <div class="version-info"><?php echo IBOS_VERSION_FULL; ?></div>
             </div>
-            <div class="specific-content">
-				<div class="mlg nht">
-					<div class="dib vam">
-						<i class="o-install-success"></i>
-					</div>
-					<div class="dib vam mls">
-						<p class="mb"><i class="o-success-tip"></i></p>
-					</div>
-				</div>
-				<div class="content-foot clearfix">
-					<a href="../index.php" class="btn btn-large pull-right btn-large btn-warning"><?php echo $lang['Complete']; ?></a>
-				</div>
+            <div>
+                <div class="content-header">
+                    <div class="install-success clearfix">
+                        <i class="o-install-success"></i>
+                        <span class="">恭喜，IBOS安装成功！</span>
+                    </div>
+                    <a class="btn btn-large pull-right install-login" href="/">进入IBOS</a>
+                </div>
+                <div class="binding-mc">
+                    <iframe src="" name="binding" id="binding" width="100%" height="100%" frameborder="0"></iframe>
+                </div>
             </div>
         </div>
     </div>
-    <script src="<?php echo IBOS_STATIC; ?>js/src/core.js"></script>
     <script src="<?php echo IBOS_STATIC; ?>js/src/base.js"></script>
     <script src="<?php echo IBOS_STATIC; ?>js/src/common.js"></script>
-    <script type="text/javascript">
-		var _ib = _ib || [];
-		_ib.push(['authkey', '<?php echo $config['security']['authkey']; ?>']);
-		_ib.push(['domain', '<?php echo $_SERVER['SERVER_NAME']; ?>']);
-		_ib.push(['ip', '<?php echo $_SERVER['REMOTE_ADDR']; ?>']);
-		_ib.push(['type', 'install']);
-		(function() {
-			var ib = document.createElement('script');
-			ib.type = 'text/javascript';
-			ib.async = true;
-			ib.src = 'http://www.ibos.com.cn/Public/static/ib.js';
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(ib, s);
-		})();
+    <script>
+        var _ib = _ib || [];
+        _ib.push(['authkey', '<?php //echo $config['security']['authkey']; ?>']);
+        _ib.push(['domain', '<?php //echo $_SERVER['SERVER_NAME']; ?>']);
+        _ib.push(['ip', '<?php //echo $_SERVER['REMOTE_ADDR']; ?>']);
+        _ib.push(['type', 'install']);
+        (function() {
+            var ib = document.createElement('script');
+            ib.type = 'text/javascript';
+            ib.async = true;
+            ib.src = 'http://www.ibos.com.cn/Public/static/ib.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ib, s);
+        })();
+
+        var SITE_URL = [window.location.protocol, "//", window.location.hostname, "/"].join("");
+        Ibos.app.s("SITE_URL", SITE_URL);
     </script>
+    <script src="static/create_data.js"></script>
 </body>
 </html>

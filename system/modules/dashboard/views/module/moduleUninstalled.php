@@ -1,6 +1,6 @@
 <?php 
 use application\core\utils\IBOS;
-?>
+?> 
 <div class="ct">
 	<div class="clearfix">
 		<h1 class="mt"><?php echo $lang['Module']; ?></h1>

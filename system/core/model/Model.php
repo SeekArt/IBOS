@@ -38,12 +38,28 @@ class Model extends CActiveRecord {
     protected $cacheLife = null;
 
     /**
+     * 模型类缓存机制：
+     * 这个类细分的话使用了三种类型的缓存：
+     * 1、setting类型的缓存
+     * 2、cache类型的缓存
+     * 3、野生的缓存（表吐槽~~），这类缓存的缓存名字根据getCacheKey定义，要开启这个，请在子类定义cacheLife的值不为NULL
+     * 对于1和2，可以在继承此类的子类里面重写afterSave方法调用Cache::update(XXX)启用
+     * Cache::update将更新当前系统设置的缓存类型（默认file）以及syscache表的数据，这里的更新是真实数据更新
+     * 其中XXX对应了core\cache\provider里定义好的缓存类型，setting是这里面单独拿出来的，剩下的都是cache
+     * ps，这个文件夹下的每种缓存值也对应了syscache表的数据
+     * pps，当前系统的缓存类型可以使用Ibos::app()->setting->get( 'setting' )或者里面写cache调用，对应syscache表
+     * ppps，本类中调用afterSave的方法将使用$isAfter控制是否执行afterSave防止多次调用Cache::update，默认是调用，如果有出现多次调用的，请关闭
+     * 野生的缓存需要调用本类里面的方法使用
+     *
+     */
+
+    /**
      * 创建各个model实例后的执行方法，获取缓存设置
      * 如有需要子类可覆盖初始化方法init
      */
     public function init() {
         $cacheLife = $this->cacheLife !== null ? $this->cacheLife : null;
-        if ( $cacheLife && Cache::check() ) {
+        if (NULL !== $cacheLife && Cache::check()) {
             $this->cacheLife = $cacheLife;
             $this->allowCache = true;
         }
@@ -69,9 +85,8 @@ class Model extends CActiveRecord {
      * @return array
      */
     public function fetchByPk( $pk ) {
-        //assert( '!empty($pk)' );
         $record = $this->fetchCache( $pk );
-        if ( $record === false ) {
+        if (false === $record) {
             $object = $this->findByPk( $pk );
             if ( is_object( $object ) ) {
                 $record = $object->attributes;
@@ -234,9 +249,9 @@ class Model extends CActiveRecord {
      * @param array $attributes 更新的值
      * @return boolean 成功与否
      */
-    public function modify( $pk, $attributes ) {
+    public function modify($pk, $attributes, $condition = '', $params = array(), $isAfter = true) {
         if ( $this->beforeSave() ) {
-            $result = $this->updateByPk( $pk, $attributes );
+            $result = $this->updateByPk($pk, $attributes, $condition, $params, $isAfter);
             return $result;
         }
     }
@@ -278,17 +293,19 @@ class Model extends CActiveRecord {
      * 覆盖此方法实现各model的afterSave
      * @see parent::updateByPk
      */
-    public function updateByPk( $pk, $attributes, $condition = '', $params = array() ) {
+    public function updateByPk($pkX, $attributes, $condition = '', $params = array(), $isAfter = true) {
+        $pkA = is_array($pkX) ? $pkX : explode(',', $pkX);
+        $counter = parent::updateByPk($pkA, $attributes, $condition, $params);
+        foreach ($pkA as $id) {
         if ( $this->getIsAllowCache() ) {
-            $pk = is_array( $pk ) ? $pk : explode( ',', $pk );
-            foreach ( $pk as $id ) {
                 $key = $this->getCacheKey( $id );
                 // 删除缓存，在取数据的时候再写入
                 Cache::rm( $key );
             }
         }
-        $counter = parent::updateByPk( $pk, $attributes, $condition, $params );
-        $this->afterSave();
+        if (true === $isAfter) {
+            $this->afterSave();
+        }
         return $counter;
     }
 

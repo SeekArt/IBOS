@@ -1,4 +1,4 @@
 <?php
 
-    define('VERSION', '3.3');
-    define('VERSION_DATE', '5789');
+    define('VERSION', '3.4');
+    define('VERSION_DATE', '6427');

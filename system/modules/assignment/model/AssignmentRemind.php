@@ -55,4 +55,15 @@ class AssignmentRemind extends Model {
 		return Convert::getSubByKey($records, 'calendarid');
 	}
 
+	/**
+	 * 根据 uid 获取用户到点需要进行提醒的未提醒任务提醒
+	 * @param  integer $uid 用户 uid
+	 * @return array      任务提醒列表数组
+	 */
+	public function fetchNeedRemindReminder( $uid ) {
+		$condition = sprintf( "`uid` = :uid AND `remindtime` < %d AND `status` = 0", time() );
+		$params = array( ':uid' => $uid );
+		return $this->findAll( $condition, $params );
+	}
+
 }

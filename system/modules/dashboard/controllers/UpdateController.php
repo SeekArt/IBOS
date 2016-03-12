@@ -30,6 +30,9 @@ class UpdateController extends BaseController {
             if ( $op == 'data' ) {
                 Cache::update();
             }
+            /**
+             * 必须先执行data缓存，否则org缓存更新后的组织架构还是错的
+             */
             if ( $op == 'static' ) {
                 LOCAL && IBOS::app()->assetManager->republicAll();
                 Org::update();

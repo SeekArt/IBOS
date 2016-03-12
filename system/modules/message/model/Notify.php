@@ -3,16 +3,22 @@
 namespace application\modules\message\model;
 
 use application\core\model\Model;
-use application\core\utils\Cache;
+use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Cloud;
 use application\core\utils\IBOS;
 use application\core\utils\Mail;
+use application\core\utils\String;
 use application\modules\main\model\Setting;
 use application\modules\message\utils\Message as MessageUtil;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
 
 class Notify extends Model {
+
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 
 	public static function model( $className = __CLASS__ ) {
 		return parent::model( $className );
@@ -21,6 +27,12 @@ class Notify extends Model {
 	public function tableName() {
 		return '{{notify_node}}';
 	}
+
+    public function afterSave() {
+        CacheUtil::update('NotifyNode');
+        CacheUtil::load('NotifyNode');
+        parent::afterSave();
+    }
 
 	/**
 	 * 全局发送提醒接口
@@ -46,8 +58,6 @@ class Notify extends Model {
 		$this->setImPush( $toIds, $data );
 		$this->setPushByUser( $toIds, $data, $nodeInfo, $pushDatas );
 		if ( !empty( $pushDatas ) ) {
-			//debug: 
-		//	file_put_contents( 't.txt', var_export( $pushDatas, true ) );
 			//推送消息到云服务，然后分发给桌面端、安卓端和IOS端
 			Cloud::getInstance()->fetchPush( array( 'objects' => $pushDatas ) );
 		}
@@ -70,10 +80,10 @@ class Notify extends Model {
 	 */
 	public function getNodeList() {
 		// 缓存处理
-		$list = Cache::get( 'notifyNode' );
+        $list = CacheUtil::get('NotifyNode');
 		if ( !$list ) {
 			$list = $this->fetchAllSortByPk( 'node', array( 'order' => '`module` DESC' ) );
-			Cache::set( 'notifyNode', $list );
+            CacheUtil::set('NotifyNode', $list);
 		}
 		return $list;
 	}
@@ -130,7 +140,7 @@ class Notify extends Model {
 			// 推送系统消息
 			!empty( $node['sendmessage'] ) && NotifyMessage::model()->sendMessage( $data );
 			// 加载个人提醒设置
-			$setting = !empty( $user['remindsetting'] ) ? unserialize( $user['remindsetting'] ) : array();
+            $setting = !empty($user['remindsetting']) ? String::utf8Unserialize($user['remindsetting']) : array();
 			$pushToCO = isset( $setting[$node['node']] ) && isset( $setting[$node['node']]['app'] ) && $setting[$node['node']]['app'] == 1;
 			// 如果存在该节点并且用户允许推送至酷办公，发送之
 			if ( $pushToCO ) {
@@ -262,7 +272,7 @@ class Notify extends Model {
 			'content' => $data['title'],
 		);
 		if ( $isCloud ) {
-			$row['posturl'] = $row['return'] = '';
+            $row['posturl'] = $row['return'] = '1';
 			$pushData[] = array(
 				'type' => 'sms',
 				'to' => $to,

@@ -19,7 +19,6 @@ namespace application\core\utils;
 
 use application\core\utils\IBOS;
 use application\extensions\Tree;
-use application\modules\department\model\DepartmentRelated;
 use application\modules\message\utils\Expression;
 use application\modules\user\model\User;
 
@@ -40,7 +39,7 @@ class String {
 	 * @return boolean
 	 */
 	public static function isMobile( $str ) {
-		return preg_match( "/^1\\d{10}/", $str );
+        return preg_match("/^1\\d{10}$/", $str);
 	}
 
 	/**
@@ -196,7 +195,23 @@ class String {
 		return $string;
 	}
 
-	/**
+    /**
+     * 参数解释见ihtmlSpecialChars
+     * 这个方法的作用跟上面那个一样，但是是通过引用的方式处理数据
+     * 目的是：只对数组中的某些元素处理，如：
+     * $postData = array(
+     *      'subject'=>'js代码',
+     *      'formula'=>'数学表达式:日期>2天（这里有一个特殊字符“>”）'
+     * )
+     * 这个时候就调用ihtmlSpecialCharsUseReference($postData['subject']);
+     * @param mixed $data
+     * @param mixed $flags
+     */
+    public static function ihtmlSpecialCharsUseReference(&$data, $flags = NULL) {
+        $data = self::ihtmlSpecialChars($data, $flags);
+    }
+
+    /**
 	 * 根据中文裁减字符串
 	 * @param string $string - 字符串
 	 * @param integer $length - 长度
@@ -563,23 +578,45 @@ class String {
 	}
 
 	/**
-	 * 根据id标识符查找所包含的uid
+     * 根据id标识符查找所包含的uid
+     * 如getUidByIdentifier( 'u','u_1' );
 	 * @param string $identifier 标识符,eg:u,d,p
 	 * @param string $str 完整id字符串
 	 * @return array 返回uid组成的数组
 	 */
-	public static function getUidByIdentifier( $identifier, $str ) {
+    public static function getUidByIdentifier($identifier, $str, $findC = false) {
 		$id = substr( $str, 2 );
-		if ( strcmp( $identifier, 'u' ) == 0 ) {
+        if (strcmp($identifier, 'u') == 0) :
 			return array( $id );
-		} else if ( strcmp( $identifier, 'd' ) == 0 ) {
-			$main = User::model()->fetchAllUidByDeptid( $id );
-			$auxiliary = DepartmentRelated::model()->fetchAllUidByDeptId( $id );
-			return array_merge( $main, $auxiliary );
-		} else if ( strcmp( $identifier, 'p' ) == 0 ) {
-			return User::model()->fetchUidByPosId( $id );
-		}
-	}
+        elseif (strcmp($identifier, 'd') == 0):
+            return User::model()->fetchAllUidByDeptids($id, false, true);
+        elseif (strcmp($identifier, 'p') == 0):
+            return User::model()->fetchAllUidByPositionIds($id, false, true);
+        elseif (strcmp($identifier, 'r') == 0):
+            return User::model()->fetchAllUidByRoleids($id, false, true);
+        elseif ($findC && strcmp($identifier, 'c') == 0):
+            return User::model()->fetchUidA();
+        endif;
+        return array();
+    }
+
+    /**
+     * 通过'u_1,d_1,p_1'或者array('u_1','d_1','p_1')这样的字符串或者数组获取uid
+     * @param type $udpX
+     * @return array
+     */
+    public static function getUidAByUDPX($udpX, $findC = false) {
+        $udpA = is_array($udpX) ? $udpX : explode(',', $udpX);
+        if ($findC && in_array('c_0', $udpA)) {
+            return User::model()->fetchUidA();
+        }
+        $uidA = array();
+        foreach ($udpA as $row) {
+            $pre = substr($row, 0, 1);
+            $uidA = array_merge($uidA, self::getUidByIdentifier($pre, $row, $findC));
+        }
+        return $uidA;
+    }
 
 	/**
 	 * 封装Intval函数，加上数组支持
@@ -925,5 +962,25 @@ class String {
 		}
 		return implode( ',', $tmp );
 	}
+
+    /**
+     * 解决unserialize的中文编码问题
+     * @param string $str
+     * @return array
+     */
+    public static function utf8Unserialize($str) {
+        if (is_array($str)) {
+            return false;
+        }
+        $arr = @unserialize($str);
+        if (false === $arr) {
+            $after = preg_replace_callback('!s:(\d+):"(.*?)";!s', function($matches) {
+                return 's:' . strlen($matches[2]) . ':"' . $matches[2] . '";';
+            }, $str);
+            return @unserialize($after);
+        } else {
+            return $arr;
+        }
+    }
 
 }

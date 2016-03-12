@@ -41,6 +41,18 @@
 				</label>
 			</div>
 		</div>
+		<div class="control-group" id="share_edit_content">
+			<label><?php echo $lang['Edit permission setting for schedule']; ?><small class="xcr"><?php echo $lang['Editor own permission of read and edit']; ?></small></label>
+			<div class="span12">
+				<input type="text" name="edituid" id="share_edit_limited" value="<?php echo $sharingPersonnel['editSharing']; ?>">
+			</div>
+		</div>
+		<div class="control-group" id="share_view_content">
+			<label><?php echo $lang['Read permission setting for schedule']; ?></label>
+			<div class="span12">
+				<input type="text" name="viewuid" id="share_view_limited" value="<?php echo $sharingPersonnel['viewSharing']; ?>">
+			</div>
+		</div>
 	</form>
 </div>
 <script>
@@ -73,4 +85,20 @@
 		});
 		refreshView(Ibos.app.g("calViewInterval"));
 	})();
+
+	(function() {
+        var $viewShare = $("#share_view_limited"),
+            $editShare = $("#share_edit_limited");
+
+        // 共享人员选人框
+        $viewShare.userSelect({
+            data: Ibos.data.get("user"),
+            type: "user"
+        });
+
+        $editShare.userSelect({
+            data: Ibos.data.get("user"),
+            type: "user",
+        });
+    })();
 </script>

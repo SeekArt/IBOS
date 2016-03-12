@@ -42,7 +42,7 @@ return array(
 	),
 	5 => array(
 		'index' => array(
-			'性能优化' => '?r=dashboard/optimize/cache',
+            '内存优化' => '?r=dashboard/optimize/cache',
 			'全文搜索设置' => '?r=dashboard/optimize/search',
 			'Sphinx设置' => '?r=dashboard/optimize/sphinx',
 		),
@@ -82,8 +82,6 @@ return array(
 	8 => array(
 		'index' => array(
 			'手机短信设置' => '?r=dashboard/sms/manager&type=setup',
-			'短信发送管理' => '?r=dashboard/global/sms&type=manager',
-			'模块使用权限' => '?r=dashboard/global/sms&type=access',
 		),
 		'text' => array(
 			0 => '手机短信设置，允许设置手机短信接口及查看余额',
@@ -108,18 +106,18 @@ return array(
 	11 => array(
 		'index' => array(
 			'邮件设置' => '?r=dashboard/email/setup',
-			'邮件校验' => '?r=dashboard/global/email&op=check',
+            '邮件校验' => '?r=dashboard/email/check',
 		),
 		'text' => array(
 			0 => '邮件设置',
 			1 => '邮件校验',
 		)
 	),
-	11 => array(
+    12 => array(
 		'index' => array(
-			'账户设置' => '?r=dashboard/global/security',
-			'运行日志' => '?r=dashboard/global/security&op=log',
-			'禁止IP' => '?r=dashboard/global/security&op=ip',
+            '账户设置' => '?r=dashboard/security/setup',
+            '运行日志' => '?r=dashboard/security/log',
+            '禁止IP' => '?r=dashboard/security/ip',
 		),
 		'text' => array(
 			0 => '账户设置',
@@ -127,7 +125,7 @@ return array(
 			2 => '禁止IP',
 		)
 	),
-	12 => array(
+    13 => array(
 		'index' => array(
 			'系统图章' => '?r=dashboard/sysstamp/index',
 		),
@@ -135,7 +133,7 @@ return array(
 			0 => '系统图章',
 		)
 	),
-	13 => array(
+    14 => array(
 		'index' => array(
 			'导航设置' => '?r=dashboard/nav/index',
 		),
@@ -143,15 +141,15 @@ return array(
 			0 => '导航设置',
 		)
 	),
-	14 => array(
+    15 => array(
 		'index' => array(
-			'登陆页背景设置' => '?r=dashboard/login/index',
+            '登录页背景设置' => '?r=dashboard/login/index',
 		),
 		'text' => array(
-			0 => '登陆页背景设置',
+            0 => '登录页背景设置',
 		)
 	),
-	15 => array(
+    16 => array(
 		'index' => array(
 			'模块中心' => '?r=dashboard/module/manager',
 			'安装模块' => '?r=dashboard/module/manager&op=installed',
@@ -163,15 +161,15 @@ return array(
 			2 => '未安装模块',
 		)
 	),
-	16 => array(
+    17 => array(
 		'index' => array(
-			'更新缓存' => '?r=dashboard/updatecache/index',
+            '更新缓存' => '?r=dashboard/update/index',
 		),
 		'text' => array(
 			0 => '更新系统缓存',
 		)
 	),
-	17 => array(
+    18 => array(
 		'index' => array(
 			'系统公告' => '?r=dashboard/announcement/setup',
 		),
@@ -179,19 +177,11 @@ return array(
 			0 => '系统公告',
 		)
 	),
-	18 => array(
+    19 => array(
 		'index' => array(
 			'数据库' => '?r=dashboard/database/backup',
-		),
-		'text' => array(
-			0 => '数据库备份与恢复',
-		)
-	),
-	18 => array(
-		'index' => array(
-			'数据库' => '?r=dashboard/manager/database',
-			'数据库恢复' => '?r=dashboard/manager/database&op=restore',
-			'数据库优化' => '?r=dashboard/manager/database&op=optimize',
+            '数据库恢复' => '?r=dashboard/database/restore',
+            '数据库优化' => '?r=dashboard/database/optimize',
 		),
 		'text' => array(
 			0 => '数据库备份',
@@ -199,19 +189,7 @@ return array(
 			2 => '数据库优化',
 		)
 	),
-	19 => array(
-		'index' => array(
-			'分表存档' => '?r=dashboard/manager/split&op=manager',
-			'邮件分表存档' => '?r=dashboard/manager/split&op=manager&mod=email',
-			'日志分表存档' => '?r=dashboard/manager/split&op=manager&mod=diary',
-		),
-		'text' => array(
-			0 => '分表存档',
-			1 => '邮件分表存档',
-			2 => '日志分表存档',
-		)
-	),
-	19 => array(
+    20 => array(
 		'index' => array(
 			'计划任务' => '?r=dashboard/cron/index',
 		),
@@ -219,15 +197,7 @@ return array(
 			0 => '计划任务',
 		)
 	),
-	19 => array(
-		'index' => array(
-			'文件权限检查' => '?r=dashboard/fileperms/index',
-		),
-		'text' => array(
-			0 => '文件权限检查',
-		)
-	),
-	20 => array(
+    21 => array(
 		'index' => array(
 			'在线升级' => '?r=dashboard/upgrade/index',
 		),
@@ -235,7 +205,7 @@ return array(
 			0 => '在线升级',
 		)
 	),
-	20 => array(
+    22 => array(
 		'index' => array(
 			'IBOS商店' => '?r=dashboard/service/index',
 		),

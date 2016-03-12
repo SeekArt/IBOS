@@ -20,7 +20,7 @@ namespace application\modules\file\core;
 
 use application\core\utils\Attach;
 use application\core\utils\File;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 
 class FileLocal extends FileCore {
 
@@ -29,8 +29,10 @@ class FileLocal extends FileCore {
 	 * @param string $attachUrl 附件地址
 	 * @return string
 	 */
-	public function getOfficeReadUrl( $attachUrl ) {
-		return "http://o.ibos.cn/op/view.aspx?src=" . urlencode( $this->getRealUrl( $attachUrl ) );
+	public function getOfficeReadUrl( $idString ) {
+		// return "http://o.ibos.cn/op/view.aspx?src=" . urlencode( $this->getRealUrl( $attachUrl ) );
+        $urlManager = Ibos::app()->urlManager;
+        return $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'read' ) );
 	}
         
         /**

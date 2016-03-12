@@ -18,7 +18,7 @@ use application\core\utils\String;
 				<div class="cmt-body">
 					<p class="mbs xcm">
 						<strong class="xcn"><?php echo $comment['user_info']['realname']; ?>：</strong>
-						<?php echo String::parseHtml( $comment['content'] ); ?>
+        <?php echo $comment['content']; ?>
 					</p>
 					<div class="mbs fss">
 						<span><?php echo Convert::formatDate( $comment['ctime'], 'u' ); ?></span>

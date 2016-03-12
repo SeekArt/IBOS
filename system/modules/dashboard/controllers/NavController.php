@@ -18,10 +18,12 @@ class NavController extends BaseController {
             Nav::model()->deleteAll();
             $navs = $_POST['data'];
             foreach ( $navs as $pnav ) {
+                $pnav['name'] = \CHtml::encode( $pnav['name'] );
                 $pnav['pid'] = 0;
                 $id = $this->runAdd( $pnav );
                 if ( $id && isset( $pnav['child'] ) && !empty( $pnav['child'] ) ) {
                     foreach ( $pnav['child'] as $cnav ) {
+                        $cnav['name'] = \CHtml::encode( $cnav['name'] );
                         $cnav['pid'] = $id;
                         $this->runAdd( $cnav );
                     }

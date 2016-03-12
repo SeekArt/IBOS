@@ -180,17 +180,19 @@ use application\core\utils\Ibos;
 
 <!-- Template: 文件操作菜单 -->
 <script type="text/template" id="tpl_file_menu">
+	<% if( /txt|office|image/.test(filetype) ){ %>
 	<li>
 		<a href="javascript:;" file-act="open">
 			<i class="o-drop-open"></i> 打开
 		</a>
 	</li>
+	<% } %>
 	<li>
 		<a href="javascript:;" file-act="download">
 			<i class="o-drop-down"></i> 下载
 		</a>
 	</li>
-	<li<% if(!isOffice){ %> class="hide" <% } %>>
+	<li<% if(filetype != "office"){ %> class="hide" <% } %>>
 		<a href="javascript:;" file-act="edit">
 			<i class="o-drop-edit"></i> 编辑
 		</a>

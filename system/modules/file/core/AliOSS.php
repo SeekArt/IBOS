@@ -5,7 +5,7 @@ IBOS::import( 'application.modules.file.extensions.alioss.aliyun', true );
 namespace application\modules\file\core;
 
 use Aliyun\OSS\OSSClient;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use CException;
 
 class AliOSS extends CloudOSS {

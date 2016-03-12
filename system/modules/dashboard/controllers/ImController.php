@@ -21,6 +21,7 @@ use application\modules\user\model\UserCount;
 use application\modules\user\model\UserProfile;
 use application\modules\user\model\UserStatus;
 use application\modules\user\utils\User;
+use CJSON;
 
 class ImController extends BaseController {
 
@@ -32,7 +33,7 @@ class ImController extends BaseController {
         }
         $diff = array_diff( $allowType, array( $type ) );
         $value = Setting::model()->fetchSettingValueByKey( 'im' );
-        $im = unserialize( $value );
+        $im = String::utf8Unserialize( $value );
         // 是否提交？
         $formSubmit = Env::submitCheck( 'imSubmit' );
         if ( $formSubmit ) {
@@ -160,7 +161,7 @@ class ImController extends BaseController {
                     }
                     $cache = Cache::model()->fetchByPk( 'deptrelate' );
                     if ( $cache ) {
-                        $cache = unserialize( $cache['cachevalue'] );
+                        $cache = String::utf8Unserialize( $cache['cachevalue'] );
                         $cache = $cache + $deptRelates;
                         Cache::model()->updateByPk( 'deptrelate', array( 'cachevalue' => serialize( $cache ) ) );
                     } else {
@@ -176,7 +177,7 @@ class ImController extends BaseController {
                     $depts = (array) $xml->Database->RTX_Dept;
                     $count = count( $depts['Item'] );
                     $cache = Cache::model()->fetchByPk( 'deptrelate' );
-                    $deptRelates = unserialize( $cache['cachevalue'] );
+                    $deptRelates = String::utf8Unserialize( $cache['cachevalue'] );
                     $datas = array_slice( $depts['Item'], $start, 20 );
                     foreach ( $datas as $dept ) {
                         $dept = (array) $dept;
@@ -195,7 +196,7 @@ class ImController extends BaseController {
                     $xml = simplexml_load_string( $file );
                     $related = (array) $xml->Database->RTX_DeptUser;
                     $rec = Cache::model()->fetchByPk( 'deptrelate' );
-                    $deptRelates = unserialize( $rec['cachevalue'] );
+                    $deptRelates = String::utf8Unserialize( $rec['cachevalue'] );
                     $userRelates = $userDeptRelates = array();
                     $ip = IBOS::app()->setting->get( 'clientip' );
                     foreach ( $related['Item'] as $dr ) {
@@ -220,8 +221,8 @@ class ImController extends BaseController {
                     $rec = Cache::model()->fetchByPk( 'userrelate' );
                     $userDeptRec = Cache::model()->fetchByPk( 'userdeptrelate' );
                     $origpwd = Cache::model()->fetchByPk( 'initpwd' );
-                    $userRelates = unserialize( $rec['cachevalue'] );
-                    $userDeptRelates = unserialize( $userDeptRec['cachevalue'] );
+                    $userRelates = String::utf8Unserialize( $rec['cachevalue'] );
+                    $userDeptRelates = String::utf8Unserialize( $userDeptRec['cachevalue'] );
                     $ip = IBOS::app()->setting->get( 'clientip' );
                     foreach ( $datas as $user ) {
                         $user = (array) $user;
@@ -260,7 +261,7 @@ class ImController extends BaseController {
                     }
                     $cache = Cache::model()->fetchByPk( 'newuser' );
                     if ( $cache ) {
-                        $cache = unserialize( $cache['cachevalue'] );
+                        $cache = String::utf8Unserialize( $cache['cachevalue'] );
                         $cache = $cache + $newUser;
                         Cache::model()->updateByPk( 'newuser', array( 'cachevalue' => serialize( $cache ) ) );
                     } else {
@@ -307,9 +308,9 @@ class ImController extends BaseController {
                 $api = $adapter->getApi();
                 $rs = $api->getUserList( array( 'timestamp' => 0 ) );
                 $bqqUsers = array();
-				if ( !is_array( $rs ) ) {
-					$rsArr = CJSON::decode( $rs, true );
-					if ( isset( $rsArr['ret'] ) && $rsArr['ret'] == '0' ) {
+                if ( !is_array( $rs ) ) {
+                    $rsArr = CJSON::decode( $rs, true );
+                    if ( isset( $rsArr['ret'] ) && $rsArr['ret'] == '0' ) {
                         $bqqUsers = $rsArr['data']['items'];
                     }
                 }

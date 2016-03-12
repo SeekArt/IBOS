@@ -586,7 +586,8 @@ disabled look for already selected choices in the results dropdown
 .select2-results .select2-company,
 .select2-results .select2-department,
 .select2-results .select2-position,
-.select2-results .select2-user{
+.select2-results .select2-user,
+.select2-results .select2-role{
     color: #B2C0D1;
     font-size: 12px;
     font-weight: 700;
@@ -600,6 +601,7 @@ disabled look for already selected choices in the results dropdown
 .select2-results .select2-department,
 .select2-results .select2-position,
 .select2-results .select2-user,
+.select2-results .select2-role,
 .select2-icon-company,
 .select2-icon-department,
 .select2-icon-position,
@@ -611,7 +613,8 @@ disabled look for already selected choices in the results dropdown
 .select2-results .select2-company,
 .select2-results .select2-department,
 .select2-results .select2-position,
-.select2-results .select2-user{
+.select2-results .select2-user,
+.select2-results .select2-role{
     margin: 5px 0;
     padding-left: 20px;
     background-color: #F5F9FB;
@@ -620,6 +623,7 @@ disabled look for already selected choices in the results dropdown
 .select2-results .select2-department{ background-position: 0 -20px;}
 .select2-results .select2-position{ background-position: 0 -40px; }
 .select2-results .select2-user{ background-position: 0 -60px; }
+.select2-results .select2-role{ background-position: 0 -160px; }
 
 .select2-icon-company,
 .select2-icon-department,

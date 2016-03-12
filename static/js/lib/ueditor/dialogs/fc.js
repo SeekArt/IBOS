@@ -80,7 +80,9 @@ Fc.prototype.updateContorl = function(node, data){
 }
 
 Fc.prototype.getControlData = function(node){
-	return $(node).data();
+	var data = $(node).data();
+	data.lvColvalue += ""; 
+	return data;
 }
 
 var fcUtil = {

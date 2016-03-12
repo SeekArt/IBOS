@@ -321,10 +321,10 @@ class Module {
         static $execute = false;
         if ( !$execute ) {
             defined( 'IN_MODULE_ACTION' ) or define( 'IN_MODULE_ACTION', true );
-            $updateList = empty( $module ) ? array() : (is_array( $module ) ? $module : array( $module ));
+            $updateList = empty($module) ? array() : (is_array($module) ? $module : explode(',', $module));
             $modules = array();
+            if (!$updateList) {
             $installedModule = ModuleModel::model()->fetchAllEnabledModule();
-            if ( !$updateList ) {
                 foreach ( $installedModule as $module ) {
                     $modules[] = $module['module'];
                 }
@@ -386,7 +386,7 @@ class Module {
     private static function check( $moduleName ) {
         $error = '';
         // 检查是否已安装
-        $record = ModuleModel::model()->fetchByPk( $moduleName );
+        $record = ModuleModel::model()->findByPk($moduleName);
         if ( !empty( $record ) ) {
             $error = IBOS::lang( 'This module has been installed', 'error' );
             return $error;

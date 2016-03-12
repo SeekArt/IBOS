@@ -21,6 +21,7 @@ use application\core\utils\String;
 use application\modules\assignment\model\AssignmentRemind;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
+use CHtml;
 
 class Assignment {
 
@@ -129,7 +130,7 @@ class Assignment {
         $participantuid = String::getId($post['participantuid']);
         //添加对任务主题的xss安全过滤
         $data = array(
-            'subject' => htmlspecialchars(String::filterStr($post['subject'])), // 任务主题
+            'subject' => CHtml::encode($post['subject']), // 任务主题
             'description' => String::filterStr($post['description']), // 任务描述
             'chargeuid' => implode(',', $chargeuid), // 负责人
             'participantuid' => implode(',', $participantuid), // 参与人

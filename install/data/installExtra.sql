@@ -251,6 +251,9 @@ INSERT INTO `{{department}}` (`deptid`, `deptname`, `pid`, `manager`, `leader`, 
 INSERT INTO `{{department}}` (`deptid`, `deptname`, `pid`, `manager`, `leader`, `subleader`, `tel`, `fax`, `addr`, `func`, `sort`, `isbranch`) VALUES (7, '项目中心', 6, 0, 0, 0, '', '', '', '', 7, 0);
 INSERT INTO `{{department}}` (`deptid`, `deptname`, `pid`, `manager`, `leader`, `subleader`, `tel`, `fax`, `addr`, `func`, `sort`, `isbranch`) VALUES (8, '售前支持部', 6, 0, 0, 0, '', '', '', '', 8, 0);
 INSERT INTO `{{department}}` (`deptid`, `deptname`, `pid`, `manager`, `leader`, `subleader`, `tel`, `fax`, `addr`, `func`, `sort`, `isbranch`) VALUES (9, '市场部', 1, 2, 1, 0, '18265487593', '020-51346852', '广州', '市场销售', 9, 0);
+INSERT INTO `{{department_related}}` (`id`, `deptid`, `uid`) VALUES (1, 9, 2);
+INSERT INTO `{{department_related}}` (`id`, `deptid`, `uid`) VALUES (2, 9, 3);
+INSERT INTO `{{department_related}}` (`id`, `deptid`, `uid`) VALUES (3, 9, 4);
 
 INSERT INTO `{{email}}` (`emailid`, `toid`, `isread`, `isdel`, `fid`, `bodyid`, `isreceipt`, `ismark`, `isweb`) VALUES (2, 1, 0, 0, 1, 2, 0, 0, 0);
 INSERT INTO `{{email}}` (`emailid`, `toid`, `isread`, `isdel`, `fid`, `bodyid`, `isreceipt`, `ismark`, `isweb`) VALUES (3, 2, 0, 0, 1, 2, 0, 0, 0);

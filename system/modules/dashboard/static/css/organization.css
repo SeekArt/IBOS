@@ -573,14 +573,6 @@ a.level2.curSelectedNode a.opt-btn{
 .org-utree.ztree li a.o-org-ztree-del:hover{
 	border: 1px #fff solid;
 }
-.position-ztree.ztree li a.o-org-ztree-edit:hover,
-.org-utree.ztree li a.o-org-ztree-edit:hover{
-	background-position: -38px 0;
-}
-.position-ztree.ztree li a.o-org-ztree-del:hover,
-.org-utree.ztree li a.o-org-ztree-del:hover{
-	background-position: -41px -18px;
-}
 .position-ztree.ztree li a.curSelectedNode a.o-org-ztree-del,
 .position-ztree.ztree li a.curSelectedNode a.o-org-ztree-edit,
 .org-utree.ztree li a.curSelectedNode a.o-org-ztree-del,

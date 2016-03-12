@@ -13,12 +13,12 @@ use application\modules\dashboard\utils\Dashboard as DashboardUtil;
 class CreditController extends BaseController {
 
     const MAX_RULE_ID = 5; // 积分允许的最大规则数
-	const AUTO_INCREMENT_MAX = 5;
-	const AUTO_INCREMENT_MIN = 4;
+    const AUTO_INCREMENT_MAX = 5;
+    const AUTO_INCREMENT_MIN = 4;
 
     /**
      * 积分设置
-     * @return void 
+     * @return void
      */
     public function actionSetup() {
         $operation = Env::getRequest( 'op' );
@@ -35,51 +35,54 @@ class CreditController extends BaseController {
             Setting::model()->updateSettingValueByKey( 'creditremind', $changeRemind );
             // 积分条目
             $credits = $_POST['credit'];
-			//统计积分条目个数
-			$creditamount = count( $credits );
+            //统计积分条目个数
+            $creditamount = count( $credits );
             foreach ( $credits as $cid => $credit ) {
                 if ( isset( $credit['enable'] ) ) {
                     $credit['enable'] = 1;
                 } else {
                     $credit['enable'] = 0;
                 }
-				if ( $credit["name"] == "" ) {
-					unset( $credits[$cid] );
-					continue;
-				}
-				$result = Credit::model()->findAllByPk( $cid );
-				if ( !empty( $result ) ) {
-                Credit::model()->modify( $cid, $credit );
-				} else {
-					Credit::model()->add( $credit );
-				}
-			}
-			$removeId = $_POST["removeId"];
-			if ( !empty( $removeId ) ) {
-				//删除数据
-				Credit::model()->remove( $removeId );
-				/*统计删除积分条目个数 
-				 * 2015-08-17 14:13  sam
-				 */
-				$removeArray = explode( ',', ltrim( $removeId, ',' ) );
-				$count = count( $removeArray );
-				if ( $count == 1 ) {
-					if ( in_array( self::AUTO_INCREMENT_MIN, $removeArray ) && $creditamount == 3 ) {
-						Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MIN );
-					} elseif ( in_array( self::AUTO_INCREMENT_MIN, $removeArray ) && $creditamount == 4 ) {
-						//原来有5条数据，删除id为4那条数据，则修改id为5的那条数据的id值变为4
-						Credit::model()->modify( self::AUTO_INCREMENT_MAX, array( 'cid' => self::AUTO_INCREMENT_MIN ) );
-						//更新主键自增值为5
-						Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MAX );
-					} elseif ( in_array( self::AUTO_INCREMENT_MAX, $removeArray ) ) {
-						//更新主键自增值为5
-						Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MAX );
-					}
-				} elseif ( $count == 2 ) {
-					//删除两条数据更新主键自增值为4
-					Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MIN );
-				}
-			}
+                if ( $credit["name"] == "" ) {
+                    unset( $credits[$cid] );
+                    continue;
+                }
+                else {
+                    $credit['name'] = \CHtml::encode( $credit['name'] );
+                }
+                $result = Credit::model()->findAllByPk( $cid );
+                if ( !empty( $result ) ) {
+                    Credit::model()->modify( $cid, $credit );
+                } else {
+                    Credit::model()->add( $credit );
+                }
+            }
+            $removeId = $_POST["removeId"];
+            if ( !empty( $removeId ) ) {
+                //删除数据
+                Credit::model()->remove( $removeId );
+                /* 统计删除积分条目个数
+                 * 2015-08-17 14:13  sam
+                 */
+                $removeArray = explode( ',', ltrim( $removeId, ',' ) );
+                $count = count( $removeArray );
+                if ( $count == 1 ) {
+                    if ( in_array( self::AUTO_INCREMENT_MIN, $removeArray ) && $creditamount == 3 ) {
+                        Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MIN );
+                    } elseif ( in_array( self::AUTO_INCREMENT_MIN, $removeArray ) && $creditamount == 4 ) {
+                        //原来有5条数据，删除id为4那条数据，则修改id为5的那条数据的id值变为4
+                        Credit::model()->modify( self::AUTO_INCREMENT_MAX, array( 'cid' => self::AUTO_INCREMENT_MIN ) );
+                        //更新主键自增值为5
+                        Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MAX );
+                    } elseif ( in_array( self::AUTO_INCREMENT_MAX, $removeArray ) ) {
+                        //更新主键自增值为5
+                        Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MAX );
+                    }
+                } elseif ( $count == 2 ) {
+                    //删除两条数据更新主键自增值为4
+                    Credit::model()->alterAutoIncrementValue( self::AUTO_INCREMENT_MIN );
+                }
+            }
             Cache::update( array( 'setting' ) );
             $this->success( IBOS::lang( 'Save succeed', 'message' ) );
         } else {
@@ -91,8 +94,8 @@ class CreditController extends BaseController {
                 'curentMaxId' => Credit::model()->getMaxId( 'cid' ),
                 // 允许的积分条目最大数
                 'maxId' => self::MAX_RULE_ID,
-				// 积分变动提示
-				'changeRemind' => IBOS::app()->setting->get( 'setting/creditremind' )
+                // 积分变动提示
+                'changeRemind' => IBOS::app()->setting->get( 'setting/creditremind' )
             );
             $this->render( 'setup', $data );
         }
@@ -114,10 +117,10 @@ class CreditController extends BaseController {
             }
             // 积分表达式
             $formulaExp = $_POST['creditsFormulaExp'];
-			if ( trim( $formulaExp ) == "" ) {
-				$this->success( IBOS::lang( 'Save succeed', 'message' ) );
-				return;
-			}
+            if ( trim( $formulaExp ) == "" ) {
+                $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+                return;
+            }
             Setting::model()->updateSettingValueByKey( 'creditsformulaexp', $formulaExp );
             Cache::update( array( 'setting' ) );
             $this->success( IBOS::lang( 'Save succeed', 'message' ) );
@@ -137,7 +140,7 @@ class CreditController extends BaseController {
 
     /**
      * 积分策略
-     * @return void 
+     * @return void
      */
     public function actionRule() {
         $formSubmit = Env::submitCheck( 'creditRuleSubmit' );
@@ -166,7 +169,6 @@ class CreditController extends BaseController {
             foreach ( $rulesParam as $ruleId => $updateValue ) {
                 CreditRule::model()->modify( $ruleId, $updateValue );
             }
-            Cache::update( array( 'creditRule' ) );
             $this->success( IBOS::lang( 'Save succeed', 'message' ) );
         } else {
             $rules = CreditRule::model()->fetchAll();
@@ -181,7 +183,7 @@ class CreditController extends BaseController {
 
     /**
      * 扩展积分添加
-     * @return void 
+     * @return void
      */
     private function addCredit() {
         if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
@@ -203,14 +205,14 @@ class CreditController extends BaseController {
      * 删除扩展积分
      * @return void
      */
-	private function actiondelCredit() {
+    private function actiondelCredit() {
         if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
             $id = Env::getRequest( 'id' );
             $affected = Credit::model()->deleteByPk( $id );
             if ( $affected ) {
-				$this->ajaxReturn( array( 'IsSuccess' => true, 'msg' => IBOS::lang( 'Delete credit success' ) ) );
-			} else {
-				$this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => IBOS::lang( 'Delete credit failed' ) ) );
+                $this->ajaxReturn( array( 'IsSuccess' => true, 'msg' => IBOS::lang( 'Delete credit success' ) ) );
+            } else {
+                $this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => IBOS::lang( 'Delete credit failed' ) ) );
             }
         }
     }

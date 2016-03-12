@@ -49,7 +49,7 @@ class Ipbanned extends CBehavior {
                     ($banned['ip4'] == '-1' ? '\\d+' : $banned['ip4']);
             $separator = '|';
         }
-        Syscache::model()->modify( 'ipbanned', $data );
+        Syscache::model()->modifyCache( 'ipbanned', $data );
     }
 
 }

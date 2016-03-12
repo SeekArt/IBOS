@@ -3,7 +3,7 @@
 /**
  * ICUpload上传类。
  * @package application.core.components
- * @version $Id: upload.php -1   $
+ * @version $Id: upload.php -1   $ 
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

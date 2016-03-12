@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 5952 2015-12-14 10:04:23Z gzcsh $
+ *	@version $Id: common.css 6467 2016-02-27 01:30:30Z gzcsh $
  *	@modified 2013-03-22  
  */
 
@@ -1674,4 +1674,487 @@ a.progressCancel:hover {
 }
 .rolesuper-add:hover .upload-add-icon{
 	background-position: -96px 0;
+}
+
+
+
+.o-back-arrow,
+.o-binding-success,
+.o-unbinding-success,
+.o-binding-add,
+.o-binding-ibos,
+.o-binding-co,
+.o-unbinding-intro,
+.o-binding-tip,
+.o-binding-new,
+.o-binding-remove,
+.o-binding-forbidden,
+.o-sync-progress,
+.o-sync-success{
+	display: block;
+	background-image: url(../image/binding_guide.png);
+}
+.o-unbinding-intro{
+	width: 432px;
+	height: 152px;
+	margin: 30px auto;
+}
+.o-binding-tip{
+	width: 460px;
+	height: 108px;
+	margin: 35px auto;
+	background-position: 0 -155px;
+}
+.o-binding-ibos,
+.o-binding-co{
+	position: absolute;
+	width:24px;
+	height: 24px;
+	right: 0;
+	bottom: 0;
+	border: 1px solid #F9FBFF;
+	border-radius: 50%;
+}
+.o-binding-ibos{
+	background-position: -484px -192px;
+}
+.o-binding-co{
+	background-position: -508px -192px;
+}
+.o-back-arrow{
+	width: 9px;
+	height: 16px;
+	background-position: -490px -244px;
+}
+.o-binding-add{
+	width: 100px;
+	height: 100px;
+	background-position: -348px -278px;
+}
+.o-binding-success{
+	width: 20px;
+	height: 20px;
+	float: left;
+	background-position: -484px -220px;
+	margin: 10px 10px 10px 25px;
+}
+.o-unbinding-success{
+	width: 17px;
+	height: 17px;
+	float: left;
+	background-position: -523px -220px;
+	margin: 11px 10px 11px 20px;
+}
+.o-binding-new,
+.o-binding-remove,
+.o-binding-forbidden{
+	width: 40px;
+	height: 40px;
+}
+.o-binding-new{
+	background-position: -484px 0;
+}
+.o-binding-remove{
+	background-position: -484px -40px;
+}
+.o-binding-forbidden{
+	background-position: -484px -80px;
+}
+.o-sync-progress{
+	width: 331px;
+	height: 72px;
+	background-position: 0 -278px;
+	margin: 40px auto;
+}
+.o-sync-success{
+	width: 72px;
+	height: 72px;
+	background-position: -484px -120px;
+	margin: 40px auto 20px;
+}
+.ml12{
+	margin-left: 12px;
+}
+.new-binding-wrap .co-banding-wrap{
+	width: 798px;
+}
+.binding-install-wrap .ct{
+	padding: 0;
+}
+.binding-install-wrap .co-banding-wrap{
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	min-height: 350px;
+}
+.binding-title{
+	margin-top: 40px;
+	font-size: 24px;
+	color: #58585C;
+}
+.co-list-wrap{
+	padding: 40px 40px 20px;
+	display: inline-block;
+}
+.co-list-wrap ul{
+	margin-left: 0;
+}
+.co-list-wrap li{
+	list-style: none;
+	float: left;
+	margin-left: 40px;
+	margin-bottom: 10px;
+}
+.co-list-wrap li:nth-child(5n+1){
+	margin-left: 0;
+}
+.co-list-box{
+	width: 100px;
+	height: 130px;
+}
+.co-list-box:hover .o-binding-add{
+	background-position: -450px -278px;
+	cursor: pointer;
+}
+.co-binding-tip{
+	position: relative;
+	margin: 0 30px;
+	border-top: 1px solid #DADFE6;
+}
+.co-binding-tips{
+	position: absolute;
+	top: -15px;
+	left: 50%;
+	margin-left: -48px;
+	padding: 5px 20px;
+	color: #82939E;
+	background: #fff;
+}
+.img-box{
+	position: relative;
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+}
+.img-box img{
+	position: relative;
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border: 2px solid #fff;
+}
+.active-box:hover .co-name{
+	color: #3497db;
+}
+.active-box:hover .img-box img{
+	border: 2px solid #3497db;
+	cursor: pointer;
+}
+.corp-wrap-lock{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .4);
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+}
+.lock-text{
+	line-height: 100px;
+	color: #fff;
+}
+.active-box .corp-wrap-lock{
+	display: none;
+}
+.co-binding-info{
+	width: 100%;
+	padding: 0;
+	text-align: center;
+	margin-bottom: 40px;
+}
+.co-binding-info-box{
+	width: 100%;
+	margin: 20px auto;
+	text-align: center;
+}
+.co-login-back{
+	display: block;
+	margin: 0 30px;
+	padding: 20px 0;
+	border-top: 1px solid #EBEFF6;
+	text-align: left;
+}
+.co-login-back span{
+	position: relative;
+	top: -2px;
+}
+.co-login-back:hover .o-back-arrow{
+	background-position: -510px -244px;
+	cursor: pointer;
+}
+.binding-btn-wrap{
+	padding: 15px 60px;
+}
+.co-binding-content{
+	position: relative;
+	margin: 30px 40px 0;
+}
+.input-group-addon:hover{
+	cursor: pointer;
+}
+.co-info-box{
+	width: 336px;
+	height: 120px;
+	padding: 30px 0;
+	border-radius: 4px;
+}
+.co-info-ibos{
+	border: 1px solid #FFECD1;
+	background-color: #FFFBF4;
+	box-shadow: 0 1px 2px #FFECD1;
+}
+.co-info-co{
+	border: 1px solid #DEECF5;
+	background-color: #F9FBFF;
+	box-shadow: 0 1px 2px #DEECF5;
+}
+.co-binding-logo{
+	position: relative;
+	width: 70px;
+	height: 62px;
+	margin: 0 auto 15px;
+}
+.co-binding-logo img {
+	width: 60px;
+	height: 60px;
+	border: 1px solid #EBEFF6;
+	border-radius: 50%;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+}
+.co-binding-state{
+	position: absolute;
+	top: 70px;
+	left: 50%;
+	margin-left: -60px;
+	width: 120px;
+	height: 40px;
+}
+.co-binding-icon{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 1px solid #DADCE6;
+	border-radius: 20px;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	color: #91CE31;
+	background: #fff;
+}
+.co-unbinding-icon{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 1px solid #E26F50;
+	border-radius: 20px;
+	-moz-border-radius: 20px;
+	-webkit-border-radius: 20px;
+	background: #E26F50;
+	color: #fff;
+	display: none;
+}
+.co-binding-state span{
+	line-height: 40px;
+}
+.co-binding-state:hover .co-unbinding-icon{
+	display: block;
+	cursor: pointer;
+}
+.co-binding-login{
+	position: relative;
+	width: 52%;
+	height: 260px;
+	margin: 40px auto;
+	text-align: center;
+}
+.co-binding-login p{
+	margin-bottom: 30px;
+	font-weight: 700;
+	font-size: 22px;
+}
+.user-reg-info{
+	position: relative;
+	width: 100%;
+}
+.co-sync-box{
+	width: 318px;
+	padding: 0 40px;
+	margin-top: 30px;
+}
+.co-sync-box p{
+	font-size: 16px;
+	font-weight: 700;
+	margin-bottom: 25px;
+}
+.co-sync-box:nth-child(1){
+	border-right: 1px solid #EBEFF6;
+}
+.sync-btn{
+	padding: 12px 0;
+}
+.co-sync-tip{
+	position: relative;
+	height: 40px;
+	margin-bottom: 15px;
+}
+.co-sync-tip i{
+	float: left;
+}
+.co-sync-tip span{
+	font-size: 14px;
+	line-height: 40px;
+}
+.co-sync-tip span:hover{
+	cursor: pointer;
+}
+.sync-tip-detail{
+	display: none;
+}
+.co-sync-active .sync-tip-detail{
+	display: block;
+	color: #3497DB;
+}
+.co-sync-active .o-binding-new{
+	background-position: -524px 0;
+}
+.co-sync-active .o-binding-remove{
+	background-position: -524px -40px;
+}
+.co-sync-active .o-binding-forbidden{
+	background-position: -524px -80px;
+}
+.sync-tip-number{
+	margin: 0 5px;
+}
+.co-sync-active .sync-tip-number{
+	color: #FF9500;
+}
+.co-sync-auto{
+	padding: 15px 40px;
+	margin-top: 60px; 
+	background: #FBFBFB;
+	border: 1px solid #EBEFF6;
+}
+.co-binding-progress{
+	width: 50%;
+	margin: 0 auto 150px;
+	font-size: 16px;
+	text-align: center;
+}
+.co-sync-success{
+	width: 50%;
+	margin: 0 auto;
+}
+.co-sync-success>div{
+	padding: 8px 0;
+	border-bottom: 1px solid #EBEFF6;
+}
+.co-sync-success div:last-child{
+	border: none;
+}
+.ibosco-member-list{
+	margin: 0;
+	padding: 0;
+}
+.ibosco-member-list li{
+	-webkit-box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+    -moz-box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+    box-shadow: 0 0 1px rgba(0, 0, 0, .1);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    float: left;
+    margin-top: 20px;
+    margin-left: 20px;
+    padding: 10px;
+    width: 209px;
+    height: 70px;
+    border: 1px solid #ebeff6;
+    background-color: #fdfdfd;
+    position: relative;
+    list-style: none;
+}
+.ibosco-member-list li:nth-child(3n+1){
+	margin-left: 0;
+}
+.ibosco-avatar-box{
+	display: inline-block;
+    padding: 2px;
+}
+.ibosco-avatar-circle,
+.ibosco-avatar-circle img{
+	width: 54px;
+    height: 54px;
+    border-radius: 50%;
+}
+.ibosco-member-item-body{
+	display: inline-block;
+    padding: 5px;
+    margin-top: 5px;
+    width: 100px;
+    vertical-align: top;
+}
+.progress-striped .progress-bar{
+	transition: width .6s;
+}
+
+/***用户部门岗位设置***/
+.user-form-con{
+	position: relative;
+	width: 496px;
+}
+.form-horizontal .dialog-form-header{
+	position: relative;
+	margin-top: -10px;
+	width: 100%;
+	height: 40px;
+	background: #0b73bb;
+}
+
+.dialog-form-header li{
+	margin-right: 5px;
+	float: left;
+	list-style: none;
+}
+
+.form-head-list{
+	display: block;
+	padding: 0 5px;
+	line-height: 40px;
+	font-size: 16px;
+	color: #fff;
+	height: 36px;
+	border: 2px solid #0b73bb;
+}
+
+.active .form-head-list,
+.form-head-list:hover{
+	color: #fff;
+	font-size: 15px;
+	border-bottom: 2px solid #fff;
+}
+
+.dialog-form-content{
+	position: relative;
+	width: 100%;
+	height: 300px;
 }

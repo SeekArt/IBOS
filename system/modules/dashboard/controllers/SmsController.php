@@ -36,7 +36,7 @@ class SmsController extends BaseController {
             $data = array();
             $smsLeft = 0;
             $arr = Setting::model()->fetchSettingValueByKeys( 'smsenabled,smsinterface,smssetup' );
-            $arr['smssetup'] = unserialize( $arr['smssetup'] );
+            $arr['smssetup'] = String::utf8Unserialize( $arr['smssetup'] );
             if ( is_array( $arr['smssetup'] ) ) {
                 // 接口1：北程科技
                 if ( $arr['smsinterface'] == '1' ) {
@@ -45,15 +45,18 @@ class SmsController extends BaseController {
                     $url = "http://sms.bechtech.cn/Api/getLeft/data/json?accesskey={$accessKey}&secretkey={$secretKey}";
                     $return = File::fileSockOpen( $url );
                     if ( $return ) {
-						$return = CJSON::decode( $return, true );
+                        $return = CJSON::decode( $return, true );
                         if ( isset( $return['result'] ) ) {
                             $smsLeft = $return['result'];
                         }
                     }
                 }
             }
+            /**
+             * todo::下面这个？
+             */
             $temp = Setting::model()->fetchSettingValueByKey( '' );
-            $arr['setup'] = unserialize( $temp );
+            $arr['setup'] = String::utf8Unserialize( $temp );
             $data['setup'] = $arr;
             $data['smsLeft'] = $smsLeft;
             $this->render( 'setup', $data );
@@ -61,7 +64,7 @@ class SmsController extends BaseController {
     }
 
     /**
-     * 
+     *
      */
     public function actionManager() {
         $data = array();
@@ -72,7 +75,7 @@ class SmsController extends BaseController {
             $condition = '1';
             $keyword = Env::getRequest( 'keyword' );
             if ( !empty( $keyword ) ) {
-                $keyword = String::filterCleanHtml( $keyword );
+                $keyword = \CHtml::encode( $keyword );
                 $condition .= " AND content LIKE '%{$keyword}%'";
             }
             // 发送状态
@@ -131,12 +134,12 @@ class SmsController extends BaseController {
                 'content' => $content
             );
         }
-		$data['list'] = NotifySms::model()->fetchAll( array( 
-			'condition' => $condition,
-			'offset' => $pages->getOffset(),
-			'limit' => $pages->getLimit(),
-			'order' => 'ctime DESC'
-			) );
+        $data['list'] = NotifySms::model()->fetchAll( array(
+            'condition' => $condition,
+            'offset' => $pages->getOffset(),
+            'limit' => $pages->getLimit(),
+            'order' => 'ctime DESC'
+                ) );
         $data['count'] = $count;
         $data['pages'] = $pages;
         $data['search'] = $inSearch;
@@ -144,7 +147,7 @@ class SmsController extends BaseController {
     }
 
     /**
-     * 
+     *
      */
     public function actionAccess() {
         // 是否提交？
@@ -164,7 +167,7 @@ class SmsController extends BaseController {
     }
 
     /**
-     * 
+     *
      */
     public function actionDel() {
         $id = Env::getRequest( 'id' );
@@ -174,7 +177,7 @@ class SmsController extends BaseController {
     }
 
     /**
-     * 
+     *
      */
     public function actionExport() {
         $id = Env::getRequest( 'id' );

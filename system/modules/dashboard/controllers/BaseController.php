@@ -9,10 +9,10 @@
  */
 /**
  * 后台模块基础控制器,用以验证操作是否超时。后台所有的控制器都必须继承于此控制器
- * 
+ *
  * @package application.modules.dashboard.componets
  * @author banyan <banyan@ibos.com.cn>
- * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BaseController.php 6398 2016-02-20 06:25:47Z tanghang $
  */
 
 namespace application\modules\dashboard\controllers;
@@ -24,60 +24,61 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\main\utils\Main as MainUtil;
+use application\modules\role\model\Role;
 use application\modules\user\model\User;
 
 class BaseController extends Controller {
 
     /**
-     * @var boolean 
+     * @var boolean
      */
     public $layout = 'application.modules.dashboard.views.layouts.dashboard';
 
     /**
      * 当前登录后台的用户数组
-     * @var array 
+     * @var array
      */
     protected $user = array();
 
     /**
      * 后台用户登录路由
-     * @var string 
+     * @var string
      */
     protected $loginUrl = 'dashboard/default/login';
 
     /**
      * 是否有管理权限标识
-     * @var boolean 
+     * @var boolean
      */
-    private $_isAdministrator = false;
+    private $_adminType = false;
 
     /**
      * session生命周期,默认20分钟
-     * @var integer 
+     * @var integer
      */
     private $_sessionLife = 1200;
 
     /**
      * 当前时间减去声明周期后的偏移值
-     * @var integer 
+     * @var integer
      */
     private $_sessionLimit = 0;
 
     /**
      * cookie生命周期,默认20分钟
-     * @var integer 
+     * @var integer
      */
     private $_cookieLife = 1200;
 
     /**
      * 当前时间减去声明周期后的偏移值
-     * @var integer 
+     * @var integer
      */
     private $_cookieLimit = 0;
 
     /**
      * 权限标识
-     * @var integer 
+     * @var integer
      */
     private $_access = 0;
 
@@ -86,8 +87,8 @@ class BaseController extends Controller {
      * @param string $module
      * @return type
      */
-    public function getAssetUrl( $module = '' ) {
-        return parent::getAssetUrl( 'dashboard' );
+    public function getAssetUrl($module = '') {
+        return parent::getAssetUrl('dashboard');
     }
 
     /**
@@ -95,8 +96,10 @@ class BaseController extends Controller {
      * @return void
      */
     public function init() {
-        $this->user = IBOS::app()->user->isGuest ? array() : User::model()->fetchByUid( IBOS::app()->user->uid );
-        $this->_isAdministrator = $this->checkAdministrator( $this->user );
+        $this->useConfig = true;
+        $this->errorParam = array('autoJump' => false, 'jumpLinksOptions' => array('首页' => $this->createUrl('index/index'),));
+        $this->user = IBOS::app()->user->isGuest ? array() : User::model()->fetchByUid(IBOS::app()->user->uid, true);
+        $this->_adminType = $this->checkAdministrator($this->user);
         $this->_sessionLimit = (int) ( TIMESTAMP - $this->_sessionLife );
         $this->_cookieLimit = (int) ( TIMESTAMP - $this->_cookieLife );
         $this->checkAccess();
@@ -106,19 +109,19 @@ class BaseController extends Controller {
      * 记录后台所有操作日志
      * @return void
      */
-    public function beforeAction( $action ) {
-        if ( !IBOS::app()->user->isGuest ) {
+    public function beforeAction($action) {
+        if (!IBOS::app()->user->isGuest) {
             $param = Convert::implodeArray(
-                            array( 'GET' => $_GET, 'POST' => $_POST ), array( 'username', 'password', 'formhash' )
+                            array('GET' => $_GET, 'POST' => $_POST), array('username', 'password', 'formhash')
             );
             $action = $action->getId();
             $log = array(
                 'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' ),
+                'ip' => IBOS::app()->setting->get('clientip'),
                 'action' => $action,
                 'param' => $param
             );
-            Log::write( $log, 'admincp', sprintf( 'module.dashboard.%s', $action ) );
+            Log::write($log, 'admincp', sprintf('module.dashboard.%s', $action));
         }
         return true;
     }
@@ -129,7 +132,7 @@ class BaseController extends Controller {
      * @return void
      */
     protected function userLogin() {
-        IBOS::app()->user->loginUrl = array( $this->loginUrl );
+        IBOS::app()->user->loginUrl = array($this->loginUrl);
         IBOS::app()->user->loginRequired();
     }
 
@@ -144,17 +147,17 @@ class BaseController extends Controller {
     /**
      * 后台图片上传
      */
-    protected function imgUpload( $fileArea, $inajax = false ) {
-        $_FILES[$fileArea]['name'] = String::iaddSlashes( urldecode( $_FILES[$fileArea]['name'] ) );
+    protected function imgUpload($fileArea, $inajax = false) {
+        $_FILES[$fileArea]['name'] = String::iaddSlashes(urldecode($_FILES[$fileArea]['name']));
         $file = $_FILES[$fileArea];
-        $upload = File::getUpload( $file, 'dashboard' );
-        if ( $upload->save() ) {
+        $upload = File::getUpload($file, 'dashboard');
+        if ($upload->save()) {
             $info = $upload->getAttach();
             $file = File::getAttachUrl() . '/' . $info['type'] . '/' . $info['attachment'];
-            if ( !$inajax ) {
+            if (!$inajax) {
                 return $file;
             } else {
-                $this->ajaxReturn( array( 'url' => $file ) );
+                $this->ajaxReturn(array('url' => $file));
             }
         } else {
             return false;
@@ -162,19 +165,30 @@ class BaseController extends Controller {
     }
 
     /**
-     * 检查是否是管理员
+     * 检查是否是管理员：1是超级管理员，2是普通管理员，0非管理员，-1未登录
      * @param array $user 当前登录用户数组
      * @return boolean
      */
-    private function checkAdministrator( array $user ) {
-        if ( !empty( $user ) ) {
+    private function checkAdministrator(array $user) {
+        if (!empty($user)) {
             $alreadyLogin = ((int) $user['uid'] > 0 );
             $inAdminIdentity = ( $user['isadministrator'] == 1 );
-            if ( $alreadyLogin && $inAdminIdentity ) {
-                return true;
+            if ($alreadyLogin) {
+                if ($inAdminIdentity) {
+                    return 1;
+                } else {
+                    $allroleidS = $user['allroleid'];
+                    $roleid = IBOS::app()->db->createCommand()
+                            ->select('roleid')
+                            ->from(Role::model()->tableName())
+                            ->where(sprintf(" FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE))
+                            ->queryRow();
+                    return !empty($roleid) ? 2 : 0;
+                }
             }
+            return -1;
         }
-        return false;
+        return -1;
     }
 
     /**
@@ -182,31 +196,34 @@ class BaseController extends Controller {
      * @return void
      */
     private function checkAccess() {
-        if ( isset( $this->user['uid'] ) && ($this->user['uid'] == 0 ) ) {
+        if (isset($this->user['uid']) && ($this->user['uid'] == 0 )) {
             // 未登录
             $this->_access = 0;
         } else {
-            if ( $this->_isAdministrator ) {
-                $lastactivity = MainUtil::getCookie( 'lastactivity' );
+            if ($this->_adminType > 0) {
+                $lastactivity = MainUtil::getCookie('lastactivity');
                 // 是否长时间无操作？
-                $frozenTime = intval( TIMESTAMP - $lastactivity );
-                if ( $frozenTime < $this->_cookieLife ) {
+                $frozenTime = intval(TIMESTAMP - $lastactivity);
+                if ($frozenTime < $this->_cookieLife) {
                     $this->_access = 1;
-                    MainUtil::setCookie( 'lastactivity', TIMESTAMP );
+                    MainUtil::setCookie('lastactivity', TIMESTAMP);
                 } else {
                     $this->_access = -1;
+                }
+                if ($this->_adminType == '1') {
+                    $this->isFilterRoute = false;
                 }
             } else {
                 $this->_access = -1;
             }
         }
-        if ( $this->_access == 1 ) {
+        if ($this->_access == 1) {
             IBOS::app()->session->update();
         } else {
             // 获取当前url请求,判断是否在可访问url列表内
             $requestUrl = IBOS::app()->getRequest()->getUrl();
-            $loginUrl = IBOS::app()->getUrlManager()->createUrl( $this->loginUrl );
-            if ( strpos( $requestUrl, $loginUrl ) !== 0 ) {
+            $loginUrl = IBOS::app()->getUrlManager()->createUrl($this->loginUrl);
+            if (strpos($requestUrl, $loginUrl) !== 0) {
                 $this->userLogin();
             }
         }

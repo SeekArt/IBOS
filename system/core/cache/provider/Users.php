@@ -41,7 +41,7 @@ class Users extends CBehavior {
                 $users[$record['uid']] = UserUtil::wrapUserInfo( $record );
             }
         }
-        Syscache::model()->modify( 'users', $users );
+        Syscache::model()->modifyCache( 'users', $users );
     }
 
 }

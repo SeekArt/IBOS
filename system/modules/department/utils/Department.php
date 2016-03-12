@@ -22,6 +22,8 @@ use application\core\utils\IBOS;
 use application\modules\dashboard\model\Cache;
 use application\modules\position\model\NodeRelated;
 use application\modules\user\utils\User;
+use application\modules\department\model as DepartmentModel;
+use application\modules\user\model as UserModel;
 
 class Department {
 
@@ -47,20 +49,6 @@ class Department {
 			return true;
 		}
 		return self::isDeptParent( $_pid, $pid );
-	}
-
-	/**
-	 * 获取指定岗位ID的权限
-	 * @param integer $roleId 角色ID
-	 * @return array 角色权限数组，键是路由 (e.g:module/controller/action),值为>0的升序数值
-	 */
-	public static function getPurv( $roleId ) {
-		$access = Cache::get( 'purv_' . $roleId );
-		if ( !$access ) {
-			$access = IBOS::app()->getAuthManager()->getItemChildren( $roleId );
-			Cache::set( 'purv_' . $roleId, array_flip( array_map( 'strtolower', array_keys( $access ) ) ) );
-		}
-		return $access;
 	}
 
 	/**
@@ -98,5 +86,31 @@ class Department {
 		$data = array( 'datas' => $list, 'group' => $group );
 		return $data;
 	}
+
+    /**
+     * 更新部门用户列表
+     * @param  integer $departmentid 部门 id
+     * @param  array $uids         用户 uid 数组
+     * @return boolen               TRUE | FALSE
+     */
+    public static function updateDepartmentUserList( $departmentid, $uids ) {
+        $rmUids = array();
+        $deptUids = DepartmentModel\DepartmentRelated::model()->fetchAllUidByDeptId( $departmentid );
+        foreach ( $deptUids as $deptUid ) {
+            if ( !in_array( $deptUid, $uids ) ) {
+                $rmUids[] = $deptUid;
+            }
+        }
+        $rmUids = implode( ',', $rmUids );
+        $uids = implode( ',', $uids );
+        $removeRes = UserModel\User::model()->updateAll( array( 'deptid' => 0 ), 'FIND_IN_SET(`uid`, :rmUids)', array( ':rmUids' => $rmUids ) );
+        $addRes = UserModel\User::model()->updateAll( array( 'deptid' => $departmentid ), 'FIND_IN_SET(`uid`, :uids)', array( ':uids' => $uids ) );
+        if ( $removeRes >= 0 && $addRes >= 0 ) {
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
 
 }

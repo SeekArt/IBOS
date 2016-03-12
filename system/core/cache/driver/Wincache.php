@@ -7,7 +7,7 @@ use application\core\utils\IBOS;
 use CException;
 
 /**
- * Wincache缓存驱动
+ * Wincache缓存驱动 
  */
 class Wincache extends Cache {
 

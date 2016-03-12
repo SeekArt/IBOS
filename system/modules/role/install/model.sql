@@ -1,11 +1,3 @@
-DROP TABLE IF EXISTS `{{auth_assignment}}`;
-CREATE TABLE `{{auth_assignment}}` (
-  `itemname` varchar(64) NOT NULL,
-  `userid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
-  `bizrule` text NOT NULL COMMENT '关联到这个项目的业务逻辑',
-  `data` text NOT NULL COMMENT '当执行业务规则的时候所传递的额外的数据',
-  PRIMARY KEY (`itemname`,`userid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{auth_item}}`;
 CREATE TABLE `{{auth_item}}` (
@@ -15,6 +7,15 @@ CREATE TABLE `{{auth_item}}` (
   `bizrule` text NOT NULL COMMENT '关联到这个项目的业务逻辑',
   `data` text NOT NULL COMMENT '当执行业务规则的时候所传递的额外的数据',
   PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `{{auth_assignment}}`;
+CREATE TABLE `{{auth_assignment}}` (
+  `itemname` varchar(64) NOT NULL,
+  `userid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+  `bizrule` text NOT NULL COMMENT '关联到这个项目的业务逻辑',
+  `data` text NOT NULL COMMENT '当执行业务规则的时候所传递的额外的数据',
+  PRIMARY KEY (`itemname`,`userid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `{{auth_item_child}}`;
@@ -54,6 +55,7 @@ DROP TABLE IF EXISTS `{{role}}`;
 CREATE TABLE `{{role}}` (
   `roleid` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '角色id',
   `rolename` char(20) NOT NULL COMMENT '角色名称',
+  `roletype` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '角色类型，默认0，普通角色0，普通管理员1',
   PRIMARY KEY (`roleid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 

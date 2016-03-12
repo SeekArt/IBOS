@@ -61,7 +61,7 @@ class DashboardController extends BaseController {
                 if ( empty( $_POST[$field] ) ) {
                     $data[$field] = 0;
                 } else {
-                    $data[$field] = $_POST[$field];
+                    $data[$field] = intval( $_POST[$field] );
                 }
             } else {
                 $data[$field] = 0;

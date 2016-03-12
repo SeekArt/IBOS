@@ -127,12 +127,7 @@ class Common {
                 $values[$key] = $setting['setting'][$key];
             }
         } else {
-            $values = Setting::model()->fetchSettingValueByKeys( implode( ',', $keys ) );
-            foreach ( $values as $key => &$value ) {
-                if ( in_array( $key, $serializeKeys ) ) {
-                    $value = unserialize( $value );
-                }
-            }
+            $values = Setting::model()->fetchSettingValueByKeys( implode( ',', $keys ), true, $serializeKeys );
         }
         return $values;
     }

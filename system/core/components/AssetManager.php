@@ -9,7 +9,7 @@
  */
 /**
  * IBOS资源管理类
- *
+ * 
  * @package application.core.components
  * @author banyanCheung <banyan@ibos.com.cn>
  * @version $Id: AssetManager.php -1   $

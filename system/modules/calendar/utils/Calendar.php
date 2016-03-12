@@ -17,6 +17,7 @@
 namespace application\modules\calendar\utils;
 
 use application\core\utils\IBOS;
+use application\modules\calendar\model\Calendars as CalendarModel;
 use application\modules\calendar\model\CalendarSetup;
 
 Class Calendar {
@@ -154,5 +155,29 @@ Class Calendar {
         $hiddenDays = CalendarSetup::model()->getHiddenDaysByUid( $uid );
         return implode( ',', $hiddenDays );
     }
+	
+	/**
+	 * 根据用户 uid 获取对应分享日程给我的 uid 数组
+	 * @param integer $uid 用户 uid
+	 */
+	public static function getShareUidsByUid( $uid ) {
+		$shareUids = CalendarSetup::model()->getShareUidsByUid( $uid );
+		return !empty( $shareUids ) ? $shareUids : FALSE;
+	}
 
+    /**
+     * 判断用户是否拥有某个分享给自己的日程的编辑权限
+     * @param  integer  $myUid      当前登录用户 uid
+     * @param  integer  $editUid    被修改的用户 uid
+     * @return boolean  TRUE | FALSE
+     */
+    public static function isShareToMeForEdit( $myUid, $editUid ) {
+        $setupInfo = CalendarSetup::model()->find( array( 'condition' => '`uid` = :uid', 'params' => array( ':uid' => $editUid ) ) );
+        $editsharing = explode( ',', $setupInfo['editsharing'] );
+        if ( in_array( $myUid, $editsharing ) )
+            return TRUE;
+        else
+            return FALSE;
+    }
+	
 }

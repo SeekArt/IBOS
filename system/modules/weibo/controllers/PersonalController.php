@@ -3,6 +3,7 @@
 namespace application\modules\weibo\controllers;
 
 use application\core\utils as util;
+use application\core\utils\String;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
 use application\modules\message\model\UserData;
@@ -163,7 +164,7 @@ class PersonalController extends HomeBaseController {
         }
         // 微博图片
         if ( $feedInfo['type'] === 'postimage' ) {
-            $var = unserialize( $feedInfo['feeddata'] );
+            $var = String::utf8Unserialize( $feedInfo['feeddata'] );
             $feedInfo['image_body'] = $var['body'];
             if ( !empty( $var['attach_id'] ) ) {
                 $attach = util\Attach::getAttachData( $var['attach_id'] );

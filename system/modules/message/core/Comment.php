@@ -184,15 +184,10 @@ class Comment extends CWidget {
         $return = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Post comment fail', 'message' ) );
         // 获取接收数据
         $data = $_POST;
-        // 安全过滤
-        foreach ( $data as $key => $val ) {
-            if ( $key != 'detail' ) { // 详细连接信息不过滤
-                $data[$key] = String::filterCleanHtml( $data[$key] );
-            }
-        }
         $data['uid'] = IBOS::app()->user->uid;
         // 评论所属与评论内容
-        $data['content'] = String::filterDangerTag( $data['content'] );
+        $data['content'] = \CHtml::encode( $data['content'] );
+        $data['detail'] = isset($data['detail']) ? $data['detail'] : '';
         // 判断资源是否被删除
         if ( $data['table'] == 'feed' ) {
             $table = 'application\modules\message\model\Feed';
@@ -273,10 +268,7 @@ class Comment extends CWidget {
         $uid = IBOS::app()->user->uid;
         $isAdministrator = IBOS::app()->user->isadministrator;
         $data ['userInfo'] = User::model()->fetchByUid( $uid );
-        // 获取用户组信息
-        $data['content'] = String::pregHtml( $data['content'] );
-        $data['content'] = String::parseHtml( $data['content'] );
-        $data['lang'] = IBOS::getLangSources( array( 'message.default' ) );
+        $data['lang'] = IBOS::getLangSources(array('message.default'));
         $data['isCommentDel'] = $isAdministrator || $uid === $data['uid'];
         if ( !empty( $data['attachmentid'] ) ) {
             $data['attach'] = Attach::getAttach( $data['attachmentid'] );

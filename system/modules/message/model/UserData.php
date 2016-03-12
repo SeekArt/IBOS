@@ -2,13 +2,14 @@
 
 namespace application\modules\message\model;
 
-use application\core\utils\String;
+use application\core\model\Model;
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
-use application\core\model\Model;
-use application\modules\user\model\User;
-use application\modules\message\model\NotifyMessage;
+use application\core\utils\String;
 use application\modules\message\model\MessageContent;
+use application\modules\message\model\NotifyMessage;
+use application\modules\assignment\model\AssignmentRemind;
+use application\modules\user\model\User;
 
 class UserData extends Model {
 
@@ -33,7 +34,7 @@ class UserData extends Model {
 			'params' => array( ':key' => $key, ':uid' => $uid )
 		);
 		$res = $this->fetch( $criteria );
-		return !empty( $res['value'] ) ? unserialize( $res['value'] ) : array();
+		return !empty( $res['value'] ) ? String::utf8Unserialize( $res['value'] ) : array();
 	}
 
 	/**
@@ -48,7 +49,7 @@ class UserData extends Model {
 			'params' => array( ':uid' => $uid )
 		);
 		$res = $this->fetch( $criteria );
-		return !empty( $res['value'] ) ? unserialize( $res['value'] ) : array();
+		return !empty( $res['value'] ) ? String::utf8Unserialize( $res['value'] ) : array();
 	}
 
 	/**
@@ -153,6 +154,7 @@ class UserData extends Model {
 	 * @return array 指定用户的通知统计数目
 	 */
 	public function getUnreadCount( $uid ) {
+		$this->checkTimingRemind( $uid );
 		$userData = $this->getUserData( $uid );
 		// 指定用户的提醒通知统计数目
 		$count = NotifyMessage::model()->count(" uid = {$uid} and isread = 0 ");
@@ -171,6 +173,39 @@ class UserData extends Model {
 		// 未读标题总通知数目
 		$return['unread_total'] = $count+$return['unread_atme']+$return['unread_comment']+$return['unread_message']+$return['new_folower_count'];
 		return $return;
+	}
+
+	/**
+	 * 检查是否有到点需要进行提醒的任务提醒
+	 * 有的话加入到消息提醒中
+	 * @param  integer $uid 用户 uid
+	 * @return boolen      
+	 */
+	private function checkTimingRemind( $uid ) {
+		$remindList = AssignmentRemind::model()->fetchNeedRemindReminder( $uid );
+		if ( empty( $remindList ) ) {
+			return FALSE;
+		}
+		foreach ( $remindList as $remind ) {
+			$senderName = User::model()->fetchRealnameByUid( $remind['uid'] );
+			$title = IBOS::lang( 'assignment/default/Push assign title', '', array( '{sender}' => $senderName, '{subject}' => $remind['content'] ) );
+			$body = IBOS::lang( 'assignment/default/Push assign content', '', array( '{sender}' => $senderName, '{url}' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ), '{subject}' => $remind['content'] ) );
+			$assignData = array(
+				'uid' => $uid,
+				'node' => 'assignment_push_message',
+				'module' => 'assignment',
+				'title' => $title,
+				'body' => $body,
+				'ctime' => time(),
+				'url' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ),
+			);
+			$addRes = NotifyMessage::model()->add( $assignData );
+			if ( $addRes ) {
+				$remind->status = 1;
+				$remind->update();
+			}
+		}
+		return TRUE;
 	}
 
 	/**

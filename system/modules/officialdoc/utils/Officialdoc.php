@@ -104,7 +104,7 @@ class Officialdoc {
         $searchCondition = '';
 
         //添加对keyword转义，防止SQL错误
-        $keyword = addslashes( $search['keyword'] );
+        $keyword = \CHtml::encode( $search['keyword'] );
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
 

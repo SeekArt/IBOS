@@ -14,6 +14,7 @@ use application\modules\main\utils\Main as MainUtil;
 use application\modules\user\utils\User as UserUtil;
 use application\modules\position\utils\Position as PositionUtil;
 use application\modules\department\utils\Department as DepartmentUtil;
+use application\modules\role\utils\Role as RoleUtil;
 
 class Org {
 
@@ -53,17 +54,19 @@ class Org {
 	 */
 	private static function createStaticJs() {
 		//更新最新缓存到全局
-		Cache::load( array( 'department', 'position' ), true );
+        Cache::load(array('users', 'department', 'position'), true);
 		$unit = IBOS::app()->setting->get( 'setting/unit' );
 		$department = DepartmentUtil::loadDepartment();
 		$users = UserUtil::loadUser();
 		$position = PositionUtil::loadPosition();
 		$positionCategory = PositionUtil::loadPositionCategory();
+        $role = RoleUtil::loadRole();
 		$companyData = self::initCompany( $unit );
 		$deptData = self::initDept( $department );
 		$userData = self::initUser( $users );
 		$posData = self::initPosition( $position );
 		$posCatData = self::initPositionCategory( $positionCategory );
+        $roleData = self::initRole($role);
 		$default = file_get_contents( PATH_ROOT . '/static/js/src/org.default.js' );
 		if ( $default ) {
 			$patterns = array(
@@ -72,13 +75,15 @@ class Org {
 				'/\{\{(position)\}\}/',
 				'/\{\{(users)\}\}/',
 				'/\{\{(positioncategory)\}\}/',
+                '/\{\{(role)\}\}/',
 			);
 			$replacements = array(
 				$companyData,
 				$deptData,
 				$posData,
 				$userData,
-				$posCatData
+                $posCatData,
+                $roleData
 			);
 			$new = preg_replace( $patterns, $replacements, $default );
 			File::createFile( PATH_ROOT . '/data/org.js', $new );
@@ -95,7 +100,13 @@ class Org {
 		$catList = '';
 		if ( !empty( $categorys ) ) {
 			foreach ( $categorys as $catId => $category ) {
-				$catList .= "{id: 'f_{$catId}', text: '{$category['name']}', name: '{$category['name']}', type: 'positioncategory', pId: 'f_{$category['pid']}',open: 1,nocheck:true},\n";
+                $catList .= "{id: 'f_{$catId}',"
+                        . " text: '{$category['name']}',"
+                        . " name: '{$category['name']}',"
+                        . " type: 'positioncategory',"
+                        . " pId: 'f_{$category['pid']}',"
+                        . " open: 1,"
+                        . " nocheck:true},\n";
 			}
 		}
 		return $catList;
@@ -107,7 +118,13 @@ class Org {
 	 * @return string
 	 */
 	private static function initCompany( $unit ) {
-		$comList = "{id: 'c_0', text: '{$unit['fullname']}', name: '{$unit['fullname']}', iconSkin: 'department', type: 'department', enable: 1, type: 0, open: 1},\n";
+        $comList = "{id: 'c_0',"
+                . " text: '{$unit['fullname']}',"
+                . " name: '{$unit['fullname']}',"
+                . " iconSkin: 'department',"
+                . " type: 'department',"
+                . " enable: 1,"
+                . " open: 1},\n";
 		return $comList;
 	}
 
@@ -123,32 +140,21 @@ class Org {
         //判断是否是字符串，是的话反序列化
         if (!is_array($department)) {
             //反序列化失败返回false
-            $department = unserialize($department);
+            $department = String::utf8Unserialize($department);
         }
         if (!empty($department) && is_array($department)) {
             foreach ($department as $deptId => $dept) {
-                $deptList .= "{id: 'd_{$deptId}', text: '{$dept['deptname']}', name: '{$dept['deptname']}', iconSkin: 'department', type: 'department', pId: 'd_{$dept['pid']}', type: 3, enable: 1, open: 1},\n";
+                $deptList .= "{id: 'd_{$deptId}',"
+                        . " text: '{$dept['deptname']}',"
+                        . " name: '{$dept['deptname']}',"
+                        . " iconSkin: 'department',"
+                        . " type: 'department',"
+                        . " pId: 'd_{$dept['pid']}',"
+                        . " enable: 1,"
+                        . " open: 1},\n";
             }
         } else {
-            //debug:这种情况是不正常的情况才会到这里，所以可以暂时留着
-            /*
-             * 
-             * 这里发生错误导致的结果是：在新增用户时无法选择部门
-             * 
-             * 15-7-28 下午7:56
-             * @author gzdzl
-             * 目前发现出现问题出现的情况是：
-             * 1.后台管理清空的数据缓存后再操作新增部门时（清理数量缓存->添加部门）
-             * 
-             * 读取过来的缓存数据有错误，不是得到一个数组
-             * 成立的条件是$department是一个字符串（序列化后的数组），而不是数组
-             * 
-             * 针对情况1的解决办法：
-             * 判断是否是字符串，是的话反序列化
-             * 
-             * 反序列化失败这里也会运行
-             */
-            file_put_contents('dep_' . time() . '.txt', var_export($department, true));
+            //do nothing
 		}
 		return $deptList;
 	}
@@ -160,18 +166,15 @@ class Org {
 	 */
 	private static function initUser( $users ) {
 		$userList = '';
-		if ( !empty( $users ) ) {
-			foreach ( $users as $uid => $user ) {
-                if ($user['status'] == 2)
+        if (!empty($users)) :
+            foreach ($users as $uid => $user) :
+                if ($user['status'] == 2):
                     continue; //过滤掉禁用的用户
-				$deptStr = $posStr = '';
-				if ( !empty( $user['alldeptid'] ) ) {
-					$deptStr = String::wrapId( $user['alldeptid'], 'd' );
-				}
-				if ( !empty( $user['allposid'] ) ) {
-					$posStr = String::wrapId( $user['allposid'], 'p' );
-				}
-				$userList .= "{id: 'u_{$uid}', 
+                endif;
+                $deptStr = !empty($user['alldeptid']) ? String::wrapId($user['alldeptid'], 'd') : '';
+                $posStr = !empty($user['allposid']) ? String::wrapId($user['allposid'], 'p') : '';
+                $roleStr = !empty($user['allroleid']) ? String::wrapId($user['allroleid'], 'r') : '';
+                $userList .= "{id: 'u_{$uid}',
                 text: '{$user['realname']}', 
                 name: '{$user['realname']}', 
                 phone: '{$user['mobile']}', 
@@ -184,9 +187,10 @@ class Org {
                 avatar_big:'{$user['avatar_big']}',
                 spaceurl:'{$user['space_url']}',
                 department:'{$deptStr}',
+                role:'{$roleStr}',
                 position: '{$posStr}'},\n";
-			}
-		}
+            endforeach;
+        endif;
 		return $userList;
 	}
 
@@ -197,22 +201,38 @@ class Org {
 	 */
 	private static function initPosition( $position ) {
 		$posList = '';
-        /**
-         * 15-8-3 下午2:01 gzdzl
-         * 清空缓存的数据后，缓存的数据还没有添加回来之前
-         * 再添加岗位时，这里的position是一个字符串
-         * 需要反序列化回来变成数组
-         * unserialize发生错误返回false，并产生E_NOTICE
-         */
         if (!is_array($position)) {
-            $position = @unserialize($position);
+            $position = String::utf8Unserialize($position);
         }
         if (!empty($position) && is_array($position)) {
-			foreach ( $position as $posId => $position ) {
-				$posList .= "{id: 'p_{$posId}', text: '{$position['posname']}', name: '{$position['posname']}', iconSkin: 'position', type: 'position', pId:'f_{$position['catid']}', enable: 1, open: 0},\n";
+            foreach ($position as $posId => $pos) {
+                $posList .= "{id: 'p_{$posId}',"
+                        . " text: '{$pos['posname']}',"
+                        . " name: '{$pos['posname']}', "
+                        . " iconSkin: 'position', "
+                        . " type: 'position', "
+                        . " pId:'f_{$pos['catid']}', "
+                        . " enable: 1},\n ";
 			}
 		}
 		return $posList;
 	}
 
+    private static function initRole($role) {
+        $roleList = '';
+        $role = !is_array($role) ? String::utf8Unserialize($role) : $role;
+        if (!empty($role) && is_array($role)):
+            foreach ($role as $roleid => $row):
+                $roleList .= "{id: 'r_{$roleid}',"
+                        . " text: '{$row['rolename']}',"
+                        . " name: '{$row['rolename']}', "
+                        . " roletype: '{$row['roletype']}', "
+                        . " iconSkin: 'role', "
+                        . " type: 'role', "
+                        . " enable: 1, "
+                        . " open: 1},\n ";
+            endforeach;
+        endif;
+        return $roleList;
+    }
 }

@@ -41,7 +41,7 @@ class PositionCategory extends CBehavior {
                 $categorys[$cat['catid']] = $cat;
             }
         }
-        Syscache::model()->modify( 'positioncategory', $categorys );
+        Syscache::model()->modifyCache( 'positioncategory', $categorys );
     }
 
 }

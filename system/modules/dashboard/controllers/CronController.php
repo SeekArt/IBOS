@@ -60,7 +60,7 @@ class CronController extends BaseController {
                     if ( isset( $_POST['namenew'] ) && !empty( $_POST['namenew'] ) ) {
                         foreach ( $_POST['namenew'] as $id => $name ) {
                             $newCron = array(
-                                'name' => String::filterCleanHtml( $_POST['namenew'][$id] ),
+                                'name' => \CHtml::encode( $_POST['namenew'][$id] ),
                                 'available' => isset( $_POST['availablenew'][$id] ) ? 1 : 0
                             );
                             if ( isset( $_POST['availablenew'][$id] ) && empty( $_POST['availablenew'][$id] ) ) {

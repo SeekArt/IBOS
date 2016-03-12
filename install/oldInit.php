@@ -12,7 +12,7 @@
         <!-- IE8 fixed -->
         <!-- [if lt IE 9]> -->
 		<link rel="stylesheet" href="<?php echo IBOS_STATIC; ?>/css/iefix.css">
-			<![endif]
+		<!--[endif]-->
     </head>
     <body>
         <div class="main">

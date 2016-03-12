@@ -44,7 +44,7 @@ class Apachenote extends Cache {
             $data .= fread( $this->instance, 4096 );
         }
         $this->close();
-        return $data === '' ? '' : unserialize( $data );
+        return $data === '' ? '' : String::utf8Unserialize( $data );
     }
 
     /**

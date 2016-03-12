@@ -18,15 +18,25 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
+use application\core\utils\Cache as CacheUtil;
 
 class IpBanned extends Model {
 
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
     }
 
     public function tableName() {
         return '{{ipbanned}}';
+    }
+    public function afterSave() {
+        CacheUtil::update( 'Ipbanned' );
+        CacheUtil::load( 'Ipbanned' );
+        parent::afterSave();
     }
 
     public function fetchAllOrderDateline() {

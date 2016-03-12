@@ -9,6 +9,7 @@
  */
  .o-cal-personal,
  .o-cal-underling,
+ .o-cal-shareme,
  .o-cal-calendar,
  .o-cal-todo,
  .o-cal-affairs,
@@ -64,6 +65,8 @@
  .aside-list .active .o-cal-affairs,
  .aside-list li:hover .o-cal-affairs{ background-position: -220px 0; }
 
+ .o-cal-shareme{ background-position: -266px 0; }
+ .active .o-cal-shareme{ background-position: -286px 0; }
 
 /* 日程管理器 */
 .cal-view-type .btn{

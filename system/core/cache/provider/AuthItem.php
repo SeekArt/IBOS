@@ -56,7 +56,7 @@ class AuthItem extends CBehavior {
                 $categorys[$category]['node'][] = $node;
             }
         }
-        Syscache::model()->modify( 'authitem', $categorys );
+        Syscache::model()->modifyCache( 'authitem', $categorys );
     }
 
 }

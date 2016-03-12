@@ -37,7 +37,7 @@
 		</div>
 	</div>
 </form>
-<script src="<?php echo $assetUrl; ?>/js/db_im_qqbinding.js"></script>
+<script src="<?php echo $this->getAssetUrl(); ?>/js/db_im_qqbinding.js"></script>
 <script>
 <?php if ( !empty( $binds ) ): ?>
 		var data = '<?php echo json_encode( $binds ); ?>';

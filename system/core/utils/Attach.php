@@ -259,19 +259,21 @@ class Attach {
 			if ( $val['down'] ) {
 				$val['downurl'] = $urlManager->createUrl( 'main/attach/download', array( 'id' => $idString ) );
 			}
+            //if ( in_array( self::attachType( $val['filetype'], 'id' ), range( 7, 8 ) ) ) {
+            $val['officereadurl'] = File::getAttachUrl() . '/' . $val['attachment'];
+            //}
+
 			$readOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 6 ) );
 			if ( $readOfficeRange && $val['down_office'] ) {
-//				$val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'read' ) ) ) );
-//                          $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( IBOS::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
-                            $val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'read' ) );
+                 // $val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'read' ) ) ) );
+                 // $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( Ibos::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
+                $val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op' => 'read' ) );
 			}
-                        if( in_array( self::attachType( $val['filetype'], 'id' ), range( 7,8 ) ) ){
-                            $val['officereadurl'] = File::getAttachUrl() . '/' . $val['attachment'];
-                        }
+
 			$editOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 5 ) );
 			if ( $editOfficeRange && $val['edit'] ) {
-//                            $val['officeediturl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'edit' ) ) ) );
-                            $val['officeediturl'] =  $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'edit' ) );
+//              $val['officeediturl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'edit' ) ) ) );
+                $val['officeediturl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op' => 'edit' ) );
 			}
 		}
 		return $data;

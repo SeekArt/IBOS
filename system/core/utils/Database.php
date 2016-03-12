@@ -243,7 +243,7 @@ class Database {
             // 如果不是第一次备份，取之前存到数据表里的表记录
             if ( is_null( Env::getRequest( 'dbSubmit' ) ) ) {
                 $tables = Setting::model()->fetchSettingValueByKey( 'custombackup' );
-                $tables = unserialize( $tables );
+                $tables = String::utf8Unserialize( $tables );
             } else {
                 // 如果是第一次备份，取表单里的提交，存到setting表以用来重复调用此方法
                 $customTables = Env::getRequest( 'customtables' );

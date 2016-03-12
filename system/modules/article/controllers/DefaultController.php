@@ -112,7 +112,7 @@ class DefaultController extends BaseController {
 			$this->condition = ArticleUtil::joinSearchCondition( $_POST['search'], $this->condition );
 		} else if ( $type == 'normal_search' ) {
 			$keyword = $_POST['keyword'];
-            $keyword = addslashes($keyword);
+            $keyword = \CHtml::encode( $keyword );
 			$this->condition = " subject LIKE '%$keyword%' ";
 			MainUtil::setCookie( 'keyword', $keyword, 10 * 60 );
 		} else {
@@ -299,11 +299,7 @@ class DefaultController extends BaseController {
 			} else if ( $article['status'] == '2' ) {
 				$this->SendPending( $article, $uid );
 			}
-            /**
-             * 日志记录
-             * 
-             * @TODO 新闻创建统计
-             */
+            //日志记录
             $log = array(
                 'user' => IBOS::app()->user->username,
                 'ip' => IBOS::app()->setting->get('clientip')
@@ -500,7 +496,7 @@ class DefaultController extends BaseController {
 	 *  添加、修改新闻前的判断动作
 	 * @param array $postData 提交的数据
 	 */
-	private function beforeSaveData( $postData ) {
+    private function beforeSaveData(&$postData) {
 		if ( isset( $postData['type'] ) ) {
 			if ( $postData['type'] == parent::ARTICLE_TYPE_PICTURE ) {
 				if ( empty( $postData['picids'] ) ) {
@@ -518,6 +514,7 @@ class DefaultController extends BaseController {
 				}
 			}
 		}
+        String::ihtmlSpecialCharsUseReference($postData['subject']);
 	}
 
 	/**

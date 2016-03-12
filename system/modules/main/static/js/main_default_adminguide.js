@@ -231,10 +231,10 @@ $(function() {
 		$("#initialize_guide").hide();
 		In.startIntro();
 	});
-	// 下次再填，提交给后台保存cookie，本次登陆不再提醒引导
-	$("#later_write_step").on("click", function() {
+	// 不再提醒引导
+	$("#never_write_again").on("click", function() {
 		$.post(Ibos.app.url('main/default/guide'), {
-			op: 'guideNextTime'
+			op: 'neverGuideAgain'
 		});
 	});
 

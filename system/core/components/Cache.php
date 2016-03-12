@@ -5,7 +5,7 @@
  *
  * @package application.core.components
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id$
+ * @version $Id$ 
  */
 
 namespace application\core\components;

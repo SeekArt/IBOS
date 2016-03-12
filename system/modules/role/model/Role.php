@@ -10,9 +10,19 @@
 namespace application\modules\role\model;
 
 use application\core\model\Model;
+use application\core\utils\IBOS;
 use application\modules\user\utils\User;
+use application\core\utils\Cache as CacheUtil;
 
 class Role extends Model {
+
+    const ADMIN_TYPE = '1'; //管理员角色
+    const NORMAL_TYPE = '0';
+
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
@@ -22,12 +32,19 @@ class Role extends Model {
         return '{{role}}';
     }
 
+    public function afterSave() {
+        CacheUtil::update( 'Role' );
+        CacheUtil::load( 'Role' );
+        parent::afterSave();
+    }
+
     /**
      * 查找所有角色，带用户
      * @return array
      */
-    public function fetchRolesWithUser() {
-        $roles = $this->fetchAllSortByPk( 'roleid' );
+    public function fetchRolesWithUser( $roletype = self::NORMAL_TYPE ) {
+        $roles = $this->fetchAllSortByPk( 'roleid', sprintf(
+                        " `roletype` = '%s' ", $roletype ) );
         $relatedUsers = RoleRelated::model()->fecthAllUserGroudByRoleId();
         foreach ( $roles as $k => $role ) {
             $roles[$k]['users'] = isset( $relatedUsers[$role['roleid']] ) ? $relatedUsers[$role['roleid']] : array();
@@ -39,10 +56,24 @@ class Role extends Model {
             if ( isset( $roles[$roleid] ) ) { // 主角色
                 $roles[$roleid]['users'][$uid] = $user;
             } else {
-                
+
             }
         }
         return $roles;
+    }
+
+    /**
+     * 通过roleid获取角色名
+     * @param type $roleid
+     * @return type
+     */
+    public function getRoleNameByRoleid( $roleid ) {
+        $rolename = IBOS::app()->db->createCommand()
+                ->select( 'rolename' )
+                ->from( $this->tableName() )
+                ->where( sprintf( " `roleid` = '%s' ", $roleid ) )
+                ->queryScalar();
+        return $rolename;
     }
 
 }

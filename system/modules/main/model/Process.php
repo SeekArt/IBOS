@@ -23,7 +23,7 @@ class Process extends Model {
     }
 
     public function deleteProcess( $name, $time ) {
-        $name = addslashes( $name );
+        $name = \CHtml::encode( $name );
         return $this->deleteAll( "processid='{$name}' OR expiry<" . intval( $time ) );
     }
 

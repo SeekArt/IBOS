@@ -676,22 +676,22 @@ Email.moveTargetList = {
 
 					Email.op.postAccess(url, postData).done(function(res) {
 						if (res.isSuccess) {
-							$cells.eq(0).html(rowData[0].value);
-							$cells.eq(1).html(rowData[1].value);
+							$cells.eq(0).html(res.sort);
+							$cells.eq(1).html(res.name);
 							$elem.attr('data-click', 'editFolder').html(U.lang("EDIT")).next().attr('data-click', 'deleteFolder').html(U.lang("DELETE"));
 							// 更新侧栏对应文件夹信息
 							Email.folderList.updateItem(param.fid, {
 								fid: param.fid,
-								text: rowData[1].value,
+								text: res.name,
 								url: Ibos.app.url('email/list/index', { op: 'folder', fid: res.fid })
 							});
 							// 更新“移动至”列表
 							Email.moveTargetList.updateItem(param.fid, {
 								fid: param.fid,
-								text: rowData[1].value
+								text: res.name
 							});
 						} else {
-							Ui.tip(res.errorMsg, 'danger');
+							Ui.tip(res.msg, 'danger');
 						}
 					}, "json");
 				}
@@ -746,6 +746,8 @@ Email.moveTargetList = {
 
 					Email.op.postAccess(url, postData).done(function(res) {
 						if (res.isSuccess) {
+                            postData[rowData[0].name] = res.sort;
+                            postData[rowData[1].name] = res.name;
 							// 插入一行
 							$.tmpl("add_folder_tpl", $.extend({
 								fid: res.fid
@@ -757,13 +759,13 @@ Email.moveTargetList = {
 							// 增加侧栏文件夹
 							Email.folderList.addItem({ 
 								fid: res.fid,
-								text: rowData[1].value,
+								text: res.name,
 								url: Ibos.app.url('email/list/index', { op: 'folder', fid: res.fid })
 							});
 							// 增加“移动至”项
 							Email.moveTargetList.addItem({ 
 								fid: res.fid,
-								text: rowData[1].value
+								text: res.name
 							});
 						} else {
 							Ui.tip(res.errorMsg, 'danger');

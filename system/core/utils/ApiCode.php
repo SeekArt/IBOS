@@ -91,6 +91,7 @@ class ApiCode extends System {
 		self::CURL_ERROR => '请求失败',
 		self::CURLE_OK => '请求成功',
 		self::CURLE_OPERATION_TIMEDOUT => '请求超时',
+        self::CURLE_COULDNT_RESOLVE_HOST => '无法解析主机',
 	);
 
 	/**
@@ -109,11 +110,14 @@ class ApiCode extends System {
 	 * @return type
 	 */
 	public function getCurlMsg( $curlNum, $curlMsg, $useLang = true ) {
+        $contentA = explode(':', $curlMsg);
+        array_shift($contentA);
+        $content = !empty($contentA) ? '：' . trim(implode(',', $contentA)) : '';
 		if ( false === $useLang ) {
 			return $curlMsg;
 		} else {
 			if ( isset( $this->curlMsg[$curlNum] ) ) {
-				return $this->curlMsg[$curlNum];
+                return $this->curlMsg[$curlNum] . $content;
 			} else {
 				return $curlMsg;
 			}

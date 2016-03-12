@@ -43,11 +43,11 @@
 							</div>
 						</div>
 					</div>
-					<a class="dib as-previous-step closs-init" href="javascript:;" id="later_write_step">
+					<a class="dib as-previous-step closs-init" href="javascript:;" id="never_write_again">
 						<div class="posr">
 							<div class="ps-bg"></div>
 							<div class="previous-step-content"> <i class="o-next-write"></i>
-								<span><?php echo $lang['Next reloading']; ?></span>
+								<span><?php echo $lang['Never reloading']; ?></span>
 							</div>
 						</div>
 					</a>

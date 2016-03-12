@@ -4,6 +4,7 @@ namespace application\core\cache\driver;
 
 use application\core\components\Cache;
 use application\core\utils\IBOS;
+use application\core\utils\String;
 
 /**
  * 文件类型缓存类
@@ -90,7 +91,7 @@ class File extends Cache {
 				//启用数据压缩
 				$content = gzuncompress( $content );
 			}
-			$content = unserialize( $content );
+            $content = String::utf8Unserialize( $content );
 			return $content;
 		} else {
 			return false;

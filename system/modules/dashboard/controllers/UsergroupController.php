@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\modules\dashboard\utils\Dashboard;
 use application\modules\user\model\UserGroup;
 
@@ -17,14 +17,17 @@ class UsergroupController extends BaseController {
     public function actionIndex() {
         $formSubmit = Env::submitCheck( 'userGroupSubmit' );
         if ( $formSubmit ) {
+            
             $pre = -9999999999;
             foreach ( $_POST['groups'] as $k => $group ) {
                     if ( intval( $group['creditshigher'] ) <= $pre ) {
+                            //TODO 这里修复的应该更加友好的提示
                             die( '错误：' . $group['title'] . '=>' . $group['creditshigher'] );
                     } else {
                             $pre = intval( $group['creditshigher'] );
                     }
             }
+            
             // 更新与添加操作
             $groups = $_POST['groups'];
             $newGroups = isset( $_POST['newgroups'] ) ? $_POST['newgroups'] : array();
@@ -34,6 +37,8 @@ class UsergroupController extends BaseController {
                     unset( $groupNewAdd[$k] );
                 } elseif ( !$v['creditshigher'] ) {
                     $this->error( IBOS::lang( 'Usergroups update creditshigher invalid' ) );
+                } else {
+                    $groupNewAdd[$k]['title'] = \CHtml::encode( $v['title'] );
                 }
             }
             $groupNewKeys = array_keys( $groups );

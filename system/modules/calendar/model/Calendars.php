@@ -19,6 +19,7 @@ namespace application\modules\calendar\model;
 use application\core\model\Model;
 use application\core\utils\IBOS;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
+use application\modules\user\utils as UserUtil;
 use CDbCriteria;
 use CPagination;
 
@@ -31,14 +32,60 @@ class Calendars extends Model {
     public function tableName() {
         return '{{calendars}}';
     }
-	
-    /**
-     * 显示某个日程
-     * @param string $showDate 显示的时间段
-     * @param string $viewType 视图类型(日/周/月)
-     * @param int $uid 用户ID
-     * @return array
-     */
+	/**
+	 * 根据时间段、uid 获取对应用户的普通日程数据
+	 * @param integer $startTime 开始时间
+	 * @param integer $endTime 结束时间
+	 * @param integer $uid 日程拥有者用户 uid
+	 * @return array 日程相关数据数组
+	 */
+	public function getCommonCalendarList( $startTime, $endTime, $uid ) {
+		$condition = '`isalldayevent` = 0 AND `instancetype` != 1 AND uid = :uid AND endtime BETWEEN :starttime AND :endtime AND (endtime-starttime) < 24*60*60';
+		$params = array( ':uid' => $uid, ':starttime' => $startTime, ':endtime' => $endTime );
+		$comCalendar = $this->findAll(
+				array(
+					'condition'	=> $condition,
+					'params'	=> $params,
+					'order' => 'starttime ASC',
+				)
+		);
+		// 判断当前用户对日程用户的日程处理权限 0查看 1编辑 FALSE当前用户没有权限操作该用户的日程
+		$editAble = UserUtil\User::checkUserCalendarPermission( IBOS::app()->user->uid, $uid );
+		if ( $editAble === FALSE ) {
+			return FALSE;
+		}
+		$result['error'] = null;
+		$result['issort'] = TRUE;
+		$result["start"] = "/Date(" . $startTime . "000" . ")/";
+		$result["end"] = "/Date(" . $endTime . "000" . ")/";
+		foreach ( $comCalendar as $calendar ) {
+			$result['events'][] = array(
+				'id' => $calendar['calendarid'], //周期性事务ID做特别标识，方便实例
+				'title' => $calendar['subject'], // 日程内容
+				'start' => CalendarUtil::php2JsTime( $calendar['starttime'] ), // 日程开始时间，格式： /Date("4330003332000")/
+				'end' => CalendarUtil::php2JsTime( $calendar['endtime'] ), // 日程结束时间，格式： /Date("4330003332000")/
+				'allDay' => $calendar['isalldayevent'], //是否全天日程
+				'acrossDay' => 0, //是否跨天日程
+				'type' => $calendar['instancetype'], // 实例类型 0为普通， 1为周期性日程，2为周期性日程的实例
+				'category' => $calendar['category'], // 颜色主题
+				'editable' => $editAble, // 是否可编辑
+				'location' => $calendar['location'], // 地点，暂时无用
+				'attends' => '', //$attends ??
+				'status' => $calendar['status'], // 日程状态，未进行、完成、删除
+				// date( 'Y-m-d', $row['starttime'] ), // 日程开始日期
+				'loopId' => $calendar['masterid'] // 被实例周期性事务的ID
+			);
+		}
+		return $result;
+	}
+
+	/**
+	 * 显示某个日程
+	 * @param string $showDate 显示的时间段
+	 * @param string $viewType 视图类型(日/周/月)
+	 * @param int $uid 用户ID
+	 * @return array
+	 */
     public function listCalendar( $st, $et, $uid ) {
         $curUid = IBOS::app()->user->uid;
         // $result = $this->getCalendarViewFormat( $showDate, $viewType );

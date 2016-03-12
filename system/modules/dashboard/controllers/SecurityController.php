@@ -8,6 +8,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
+use application\core\utils\String;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\IpBanned;
 use application\modules\main\model\Setting;
@@ -28,7 +29,7 @@ class SecurityController extends BaseController {
                 if ( !isset( $_POST[$field] ) ) {
                     $_POST[$field] = 0;
                 }
-                $updateList[$field] = $_POST[$field];
+                $updateList[$field] = intval( $_POST[$field] );
             }
 
             if ( intval( $updateList['timeout'] ) == 0 ) {
@@ -40,7 +41,7 @@ class SecurityController extends BaseController {
         } else {
             $data = array();
             $account = Setting::model()->fetchSettingValueByKey( 'account' );
-            $data['account'] = unserialize( $account );
+            $data['account'] = String::utf8Unserialize( $account );
             $this->render( 'setup', $data );
         }
     }

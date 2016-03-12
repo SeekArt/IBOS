@@ -6,7 +6,7 @@
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author gzwwb <gzwwb@ibos.com.cn>
- */
+ */ 
 /**
  * 核心组件------插件管理器组件类，必须继承CApplicationComponent
  * @package application.core.components

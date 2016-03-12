@@ -36,15 +36,16 @@ class ApiController extends Controller {
         $moduleStr = urldecode( $moduleStr );
         $moduleArr = explode( ',', $moduleStr );
         $data = MainUtil::execLoadSetting( 'loadNew', $moduleArr );
-		$res = array();
-		foreach ($data as $widget => $count){
-			$info = explode( '/', $widget );
-			if ( count( $info ) == 2 ) {
-				$module = $info[0];
-				$res[$module] = $count;
-			}
-		}
-        $this->ajaxReturn( $res );
+        // 似乎重复使用了 explode() 方法导致上面的 LoadModule 动作报错
+		// $res = array();
+		// foreach ($data as $widget => $count){
+		// 	$info = explode( '/', $widget );
+		// 	if ( count( $info ) == 2 ) {
+		// 		$module = $info[0];
+		// 		$res[$module] = $count;
+		// 	}
+		// }
+        $this->ajaxReturn( $data );
     }
 
 }

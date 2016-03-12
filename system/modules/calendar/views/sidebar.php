@@ -38,6 +38,14 @@ use application\core\utils\IBOS;
 					</a>
 				</li>
 			<?php endif; ?>
+			<?php if ( $hasShareUid !== FALSE ): ?>
+				<li>
+					<a href="<?php echo $this->createUrl( 'schedule/shareschedule' ); ?>">
+						<i class="o-cal-shareme"></i>
+						<?php echo $lang['Share']?>
+					</a>
+				</li>
+			<?php endif; ?>
 		</ul>
 	</div>
 </div>

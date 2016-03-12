@@ -8,6 +8,7 @@ use application\modules\user\model\User;
 use application\modules\department\model\Department;
 use application\modules\user\model\UserBinding;
 use application\modules\dashboard\utils\CoSync;
+use application\modules\dashboard\model\Cache as CacheModel;
 
 // 程序根目录路径
 define( 'PATH_ROOT', dirname( __FILE__ ) . '/../../' );
@@ -59,6 +60,9 @@ if ( !empty( $result ) ) {
 			break;
 		case 'creatdepartment':
 			$res = setCreatDapartment( $msg['data'] );
+			break;
+		case 'verifywebsite':
+			$res = verifyWebSite();
 			break;
 		default:
 			$res = array( 'isSuccess' => false, 'msg' => '未知操作' );
@@ -179,6 +183,8 @@ function setUnbind() {
 	UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
 	Setting::model()->updateSettingValueByKey( 'cobinding', '0' );
 	Setting::model()->updateSettingValueByKey( 'coinfo', '' );
+	Setting::model()->updateSettingValueByKey( 'autosync', serialize( array( 'status' => 0, 'lastsynctime' => 0 ) ) );
+	CacheModel::model()->deleteAll( "FIND_IN_SET( cachekey, 'cocreatelist,coremovelist,iboscreatelist,ibosremovelist,successinfo' )" );
 	return array( 'isSuccess' => true );
 }
 
@@ -213,4 +219,18 @@ function setCreatDapartment( $coDepartmentList ) {
 	}
 	//更新部门缓存,避免缓存问题
 	Cache::update( array( 'department' ) );
+}
+
+/**
+ * 验证当前项目环境是否可被外部访问
+ * 告诉外部该接口的调用方式后，让对方调用这个接口
+ * 如果能返回正确的数据则表示当前环境可被对方访问
+ * @return string json 数据
+ */
+function verifyWebSite() {
+	$result = array(
+		'isSuccess'	=> TRUE,
+		'msg'		=> '当前 IBOS 可被正常访问！',
+	);
+	Env::iExit( json_encode( $result ) );
 }

@@ -21,20 +21,48 @@ use CJSON;
 
 class CoApi extends Api {
 
-	const CO_URL = 'http://www.ibos.cn/';
-	const API_CENTER = 'http://api.ibos.cn/';
-	const API_USER_GET_TOKEN = 'http://api.ibos.cn/v1/users/login';
-	const API_USER_GET_INFO = 'http://api.ibos.cn/v1/users/view';
-	const API_CORP_SEARCH = 'http://api.ibos.cn/v1/corp/search';
-	const API_CORP_GET_INFO = 'http://api.ibos.cn/v1/corp/view';
-	const API_CORP_CREATE = 'http://api.ibos.cn/v1/corp/create';
-	const API_CORP_UPDATE_INFO = 'http://api.ibos.cn/v1/corp/update';
-	const API_CORP_QUIT = 'http://api.ibos.cn/v1/corp/quit';
-	const API_USER_REGISTER = 'http://api.ibos.cn/v1/users/register';
-	const API_VERIFYCODE_GET = 'http://api.ibos.cn/v1/users/verify';
-	const API_VERIFYCODE_CHECK = 'http://api.ibos.cn/v1/users/verify';
-	const API_CHECK_MOBILE = 'http://api.ibos.cn/v1/users/checkmobile';
-	const IBOS_KEY = '3569c4ee701cb512fef319fc16ec88af';
+    // 。。。。
+    const IBOS_KEY = '3569c4ee701cb512fef319fc16ec88af';
+    // 酷办公系统地址
+    const CO_URL = 'http://www.kubangong.com/';
+    // API 中心地址
+    const API_CENTER = 'http://api.ibos.cn/';
+    // API 中心用户登录接口链接
+    const API_USER_GET_TOKEN = 'http://api.ibos.cn/v2/users/login';
+    // API 中心获取用户信息接口链接
+    const API_USER_GET_INFO = 'http://api.ibos.cn/v2/users/view';
+    // API 中心查询企业接口链接
+    const API_CORP_SEARCH = 'http://api.ibos.cn/v2/corp/search';
+    // API 中心获取企业信息接口链接
+    const API_CORP_GET_INFO = 'http://api.ibos.cn/v2/corp/view';
+    // API 中心获取企业列表信息接口链接
+    const API_CORP_GET_ALL = 'http://api.ibos.cn/v2/corp/getcorplist';
+    // API 中心创建新企业接口链接
+    const API_CORP_CREATE = 'http://api.ibos.cn/v2/corp/create';
+    // API 中心更新企业数据接口链接
+    const API_CORP_UPDATE_INFO = 'http://api.ibos.cn/v2/corp/update';
+    // API 中心更新酷办公企业代码接口链接
+    const API_CORP_UPDATE_CODE = 'http://api.ibos.cn/v2/corp/updatecorpcode';
+    // API 中心退出企业接口链接
+    const API_CORP_QUIT = 'http://api.ibos.cn/v2/corp/quit';
+    // API 中心用户注册接口链接
+    const API_USER_REGISTER = 'http://api.ibos.cn/v2/users/register';
+    // API 中心手机号获取验证码接口链接
+    const API_VERIFYCODE_GET = 'http://api.ibos.cn/v2/users/sendcode';
+    // API 中心手机验证码验证接口链接
+    const API_CODE_VERIFY = 'http://api.ibos.cn/v2/users/verify';
+    // API 中心根据验证码登录接口链接
+    // const API_CODE_VERIFY = 'http://api.ibos.cn/v2/users/loginbyvcode';
+    // API 中心验证手机号是否已被注册接口链接
+    const API_CHECK_MOBILE = 'http://api.ibos.cn/v2/users/checkmobile';
+    // API 中心同步用户密码接口链接
+    const API_SYNC_PASSWORD = 'http://api.ibos.cn/v2/users/syncpassword';
+    // API 中心邀请用户接口链接
+    const API_USER_INVITE = 'http://api.ibos.cn/v2/users/sendmessage';
+    // API 中心绑定酷办公接口
+    const API_BIND_CO = 'http://api.ibos.cn/v2/corp/bindingco';
+    // API 中心解绑酷办公接口
+    const API_UNBIND_CO = 'http://api.ibos.cn/v2/corp/unbundingoa';
 
 	/**
 	 * 签名的参数名称
@@ -174,7 +202,20 @@ class CoApi extends Api {
 		return $this->returnJsonDecode( $res );
 	}
 
-	/**
+    /**
+     * 根据 accesstoken 获取用户的企业列表信息
+     * @param  string $accesstoken 用户的 accesstoken
+     * @return array              解析后的接口返回 json 数据
+     */
+    public function getCorpListByAccessToken($accesstoken) {
+        $param = array(
+            'accesstoken' => $accesstoken,
+        );
+        $result = $this->fetchResult(self::API_CORP_GET_ALL, $param);
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
 	 * 通过corptoken更新corp信息
 	 * 支持的参数
 	 * "aeskey":"xxx",
@@ -197,12 +238,25 @@ class CoApi extends Api {
 		return $this->returnJsonDecode( $res );
 	}
 
-	/**
-	 * 根据corptoken退出corp
-	 * @param type $corptoken
-	 * @return type
-	 */
-	public function quitCorpByCorpToken( $corptoken ) {
+    /**
+     * 根据 corptoken & corpcode 更新对应酷办公企业的企业代码
+     * 被用于 IBOS 后台绑定酷办公企业出现企业代码不一致时统一企业代码
+     * @param  string $corptoken corptoken
+     * @param  string $corpcode  统一后的企业代码
+     * @return array            解析后的接口返回 json 数据
+     */
+    public function updateCorpCodeByCorpToken($corptoken, $corpcode) {
+        $url = sprintf('%s?corptoken=%s&corpcode=%s', self::API_CORP_UPDATE_CODE, $corptoken, $corpcode);
+        $result = $this->fetchResult($url);
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 根据corptoken退出corp
+     * @param type $corptoken
+     * @return type
+     */
+    public function quitCorpByCorpToken($corptoken) {
 		$param = array(
 			'corptoken' => $corptoken,
 		);
@@ -291,12 +345,25 @@ class CoApi extends Api {
 	public function checkVerifyCode( $post ) {
 		$postData = json_encode( $post );
 		$param = $this->returnSignParam();
-		$url = $this->buildUrl( self::API_VERIFYCODE_CHECK, $param );
+        $url = $this->buildUrl(self::API_CODE_VERIFY, $param);
 		$res = $this->fetchResult( $url, $postData, 'post' );
 		return $this->returnJsonDecode( $res );
 	}
 
-	/**
+    /**
+     * 同步用户密码
+     * @param  string $accesstoken 用户令牌
+     * @param  array $post        需要 post 的参数，[需要同步的密码的密文，盐]
+     * @return array
+     */
+    public function syncPassword($accesstoken, $post) {
+        $postData = json_encode($post);
+        $url = self::API_SYNC_PASSWORD . '?accesstoken=' . $accesstoken;
+        $result = $this->fetchResult($url, $postData, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
 	 * 搜索企业
 	 * @param string $key 搜索关键字
 	 * @param boolean $unique 是否完全匹配
@@ -365,6 +432,84 @@ class CoApi extends Api {
 		}
 	}
 
+    /**
+     * 获取用户列表差异
+     * @param  [type] $post [description]
+     * @return [type]       [description]
+     */
+    public function getDiffUsers($post) {
+        $postJson = json_encode($post);
+        $param = $this->returnSignParam();
+        $url = $this->buildUrl(self::CO_URL . '/api/syncapi/diff', $param);
+        $result = $this->fetchResult($url, $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 根据提供的绑定关系列表，在酷办公创建对应的绑定关系
+     * @param  array $post 需要 POST 的数据
+     * @return array
+     */
+    public function createRelationByList($post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::CO_URL . '/api/syncapi/addbind', $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 根据提供的绑定关系列表，在酷办公删除对应的绑定关系
+     * @param  array $post 需要 POST 的数据
+     * @return array
+     */
+    public function removeRelationByList($post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::CO_URL . '/api/syncapi/deletebind', $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 根据提供的用户数据列表，在酷办公创建对应的用户
+     * @param  array $post 需要 POST 的数据
+     * @return array
+     */
+    public function createCoUserByList($post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::CO_URL . '/api/syncapi/adduser', $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 根据提供的用户数据列表，在酷办公移除对应的用户
+     * @param  array $post 需要 POST 的数据
+     * @return array
+     */
+    public function removeCoUserByList($post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::CO_URL . '/api/syncapi/deleteuser', $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    public function bindingCo($corptoken, $post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::API_BIND_CO . '?corptoken=' . $corptoken, $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 解除绑定
+     * @param array $post 需要 POST 的数据
+     * @return array
+     */
+    public function unbindingCo($corptoken) {
+        $postJson = json_encode(array());
+        $params = array(
+            'corptoken' => $corptoken,
+            'type' => 'ibos',
+        );
+        $url = $this->buildUrl(self::API_UNBIND_CO, $params);
+        $result = $this->fetchResult($url, $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
 //————————————————————
 	/**
 	 * 除去数组中的空值和签名参数

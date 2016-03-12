@@ -357,15 +357,15 @@ class Credit extends System {
 					break;
 				case 1:
 					$info = empty( $ruleLog['info'] ) || $newCycle ? $needle : $ruleLog['info'] . ',' . $needle;
-					$logArr['info'] = addslashes( $info );
+                    $logArr['info'] = \CHtml::encode($info);
 					break;
 				case 2:
 					$user = empty( $ruleLog['user'] ) || $newCycle ? $needle : $ruleLog['user'] . ',' . $needle;
-					$logArr['user'] = addslashes( $user );
+                    $logArr['user'] = \CHtml::encode($user);
 					break;
 				case 3:
 					$app = empty( $ruleLog['app'] ) || $newCycle ? $needle : $ruleLog['app'] . ',' . $needle;
-					$logArr['app'] = addslashes( $app );
+                    $logArr['app'] = \CHtml::encode($app);
 					break;
 			}
 			if ( $ruleLog['isnew'] ) {

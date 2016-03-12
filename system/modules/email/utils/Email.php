@@ -64,7 +64,7 @@ class Email {
 		$condition = "(eb.fromid = {$uid} OR e.toid = {$uid})";
 		// 关键字
                                         // 15-7-22 下午1:57 gzdzl 添加对keyword的转义，防止SQL错误
-		$keyword = addslashes( stripcslashes( $search['keyword'] ) );
+        $keyword = \CHtml::encode(stripcslashes($search['keyword']));
 		// 查询位置
 		$pos = isset( $search['pos'] ) ? $search['pos'] : 'all';
 		// 文件夹
@@ -86,6 +86,8 @@ class Email {
 			$folder = intval( $folder );
 		}
 		if ( !empty( $keyword ) ) {
+            //搜索的时候也应该转义然后搜索，不然找不到
+            String::ihtmlSpecialCharsUseReference($keyword);
 			// 搜索位置条件
 			$allPos = ($pos == 'all');
 			$posWhereJoin = $allPos ? ' OR ' : ' AND ';
@@ -223,7 +225,7 @@ class Email {
 			header( "Cache-control: private" );
 			header( "Content-type: message/rfc822" );
 			header( "Accept-Ranges: bytes" );
-			header( "Content-Disposition: attachment; filename=" . $data['subject'] . "(" . date( "Y-m-d" ) . ").eml" );
+            header("Content-Disposition: attachment; filename=" . String::filterCleanHtml($data['subject']) . "(" . date("Y-m-d") . ").eml");
 			echo $filecontent;
 		}
 	}
@@ -238,7 +240,9 @@ class Email {
 			$users = UserUtil::loadUser();
 			header( "Cache-control: private" );
 			header( "Content-type: application/vnd.ms-excel" );
-			header( "Content-Disposition: attachment; filename=" . Convert::iIconv( $data['subject'], CHARSET, 'GBK' ) . "(" . date( "Y-m-d" ) . ").xls" );
+            //下面的这个标题使用了标签过滤，而不是直接输出，因为我还不知道怎么样才可以直接输出
+            //如果标题带有js代码，那么会有问题，是不是头部不能写特殊字符呢？
+            header("Content-Disposition: attachment; filename=" . Convert::iIconv(String::filterCleanHtml($data['subject']), CHARSET, 'GBK') . "(" . date("Y-m-d") . ").xls");
 			$html = <<<EOT
             <html xmlns:o="urn:schemas-microsoft-com:office:office"
 		xmlns:x="urn:schemas-microsoft-com:office:excel"

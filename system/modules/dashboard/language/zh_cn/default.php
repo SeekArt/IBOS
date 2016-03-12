@@ -109,7 +109,7 @@ return array(
 	'Interface' => '界面',
 	'Navigation setting' => '顶部导航设置',
 	'Quicknav setting' => '快捷导航设置',
-	'Login page setting' => '登陆页背景设置',
+	'Login page setting' => '登录页背景设置',
 	'Single page setting' => '单页图文设置',
 	'Single page content' => '单网页内容',
 	'Quicknav setting' => '快捷导航设置',
@@ -881,5 +881,8 @@ return array(
 	'Error reason' => '错误原因',
 	'Import error record' => '导入用户错误信息',
 	'Leave at least a Category' => '请至少保留一个分类',
-    'update failed, up dept cannot be itself' => '编辑失败，顶级部门不能为自己',
+	//DepartmentController
+	'update failed, up dept cannot be itself' => '编辑失败，顶级部门不能为自己',
+	// 绑定
+	'Success for sync' => '同步成功！',
 );

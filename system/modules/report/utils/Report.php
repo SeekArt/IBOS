@@ -183,7 +183,7 @@ class Report {
     public static function joinSearchCondition($search) {
         $searchCondition = '';
         //添加对keyword的转义，防止SQL错误
-        $keyword = addslashes($search['keyword']);
+        $keyword = \CHtml::encode($search['keyword']);
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
         if (!empty($keyword)) {

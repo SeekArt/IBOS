@@ -68,7 +68,7 @@ class Mail {
         $setting = IBOS::app()->setting->toArray();
         $mail = $setting['setting']['mail'];
         if ( !is_array( $mail ) ) {
-            $mail = unserialize( $mail );
+            $mail = String::utf8Unserialize( $mail );
         }
         $smtpNums = count( $mail['server'] );
         if ( $smtpNums ) {
@@ -76,7 +76,10 @@ class Mail {
             $randId = array_rand( $mail['server'], 1 );
             $server = $mail['server'][$randId];
             // 分隔符
-            $delimiter = $mail['maildelimiter'] == 1 ? "\r\n" : ($mail['maildelimiter'] == 2 ? "\r" : "\n");
+            // 即使是在 Linux 系统下 \r 时也会无法识别邮箱头部信息  
+            // 统一使用 \n
+            // $delimiter = $mail['maildelimiter'] == 1 ? "\r\n" : ($mail['maildelimiter'] == 2 ? "\r" : "\n");
+            $delimiter = "\n";
             // 单位
             $unit = $setting['setting']['unit'];
             // 设置发送者
@@ -93,7 +96,13 @@ class Mail {
             $emailMessage = chunk_split( base64_encode( str_replace( "\n", "\r\n", str_replace( "\r", "\n", str_replace( "\r\n", "\n", str_replace( "\n\r", "\r", $message ) ) ) ) ) );
             $host = $_SERVER['HTTP_HOST'];
             $version = 'IBOS ' . $setting['version'];
-            $headers = "From: {$emailFrom}{$delimiter}X-Priority: 3{$delimiter}X-Mailer: {$host} {$version} {$delimiter}MIME-Version: 1.0{$delimiter}Content-type: text/html; charset=" . CHARSET . "{$delimiter}Content-Transfer-Encoding: base64{$delimiter}";
+            $headers = sprintf( "From: %s%s", $emailFrom, $delimiter );
+            $headers .= sprintf( "X-Priority: 3%s", $delimiter );
+            $headers .= sprintf( "X-Mailer: %s %s%s", $host, $version, $delimiter );
+            $headers .= sprintf( "MIME-Version: 1.0%s", $delimiter );
+            $headers .= sprintf( "Content-type: text/html; charset=%s%s", CHARSET, $delimiter );
+            $headers .= sprintf( "Content-Transfer-Encoding: base64%s", $delimiter );
+            // $headers = "From: {$emailFrom}\r\nX-Priority: 3\r\nX-Mailer: {$host} {$version} \r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=" . CHARSET . "\r\nContent-Transfer-Encoding: base64\r\n";
             // socket方式发送
             if ( $mail['mailsend'] == 1 ) {
                 if ( !$fp = Env::getSocketOpen( $server['server'], $errno, $errstr, $server['port'], 30 ) ) {

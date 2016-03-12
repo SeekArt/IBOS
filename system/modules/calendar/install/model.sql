@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS {{calendar_setup}} (
 	`mintime` char(10) NOT NULL DEFAULT '' COMMENT '日程开始时间（小时）',
 	`maxtime` char(10) NOT NULL DEFAULT '' COMMENT '日程结束时间（小时）',
 	`hiddendays` char(100) NOT NULL DEFAULT '' COMMENT '隐藏日期（星期几）',
+	`viewsharing` varchar(50) NOT NULL DEFAULT '' COMMENT '阅读权限分享人员，（1,2,3...）',
+	`editsharing` varchar(50) NOT NULL DEFAULT '' COMMENT '编辑权限分享人员，（1,2,3...）',
 	PRIMARY KEY (`id`),
 	KEY `uid` (`uid`) USING BTREE 
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;

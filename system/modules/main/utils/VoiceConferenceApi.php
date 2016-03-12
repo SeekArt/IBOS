@@ -3,6 +3,7 @@
 namespace application\modules\main\utils;
 
 use application\core\utils\IBOS;
+use application\modules\main\model\Setting;
 
 class VoiceConferenceApi{
 	
@@ -18,6 +19,15 @@ class VoiceConferenceApi{
         $viewAlias = 'application.modules.main.views.indexapi.voiceConference';
         $return['main/voiceConference'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
         return $return;
+    }
+
+    /**
+     * 是否强制关闭该模块，会议在这里跟云服务相关，所以如果没有开通云服务，会议也不显示
+     * @return type
+     */
+    public function close() {
+        $isOpenCloud = Setting::model()->getIbosCloudIsOpen();
+        return $isOpenCloud ? false : true;
     }
 
     /**

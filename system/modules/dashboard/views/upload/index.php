@@ -1,6 +1,7 @@
 <?php
 
 use application\core\utils\Convert;
+use application\core\utils\String;
 ?>
 <div class="ct">
 	<div class="clearfix">
@@ -139,7 +140,7 @@ use application\core\utils\Convert;
 							</div>
 							<!-- 图片水印 end -->
 							<!-- 文字水印 start -->
-							<?php $waterMark['watermarktext'] = unserialize( $waterMark['watermarktext'] ); ?>
+                            <?php $waterMark['watermarktext'] = String::utf8Unserialize( $waterMark['watermarktext'] ); ?>
 							<div id="watermark_type_text" <?php if ( $waterMark['watermarktype'] !== 'text' ): ?>style="display: none;"<?php endif; ?>>
 								<div class="control-group">
 									<label  class="control-label"><?php echo $lang['Watermark fontpath']; ?></label>

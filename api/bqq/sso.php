@@ -20,7 +20,7 @@ require_once '../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 Yii::createApplication( 'application\core\components\Application', $config );
 $value = Setting::model()->fetchSettingValueByKey( 'im' );
-$im = unserialize( $value );
+$im = String::utf8Unserialize( $value );
 $imCfg = $im['qq'];
 $cid = Env::getRequest( 'company_id' );
 $openId = Env::getRequest( 'open_id' );

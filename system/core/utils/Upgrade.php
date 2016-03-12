@@ -99,6 +99,9 @@ class Upgrade {
      */
     public static function compareBasefile( $upgradeFileList ) {
         $ibosFiles = @file( IBOS::getPathOfAlias( 'application.ibosfiles' ) . '.md5' );
+        /**
+         * 如果没有md5文件也更新，毕竟只是为了显示差异文件
+         */
 //		if ( !$ibosFiles ) {
 //			return array();
 //		}
@@ -275,7 +278,7 @@ class Upgrade {
     public static function recordStep( $step ) {
         $upgradeStep = CacheModel::model()->fetchByPk( 'upgrade_step' );
         if ( !empty( $upgradeStep['cachevalue'] ) && !empty( $upgradeStep['cachevalue']['step'] ) ) {
-            $upgradeStep['cachevalue'] = unserialize( $upgradeStep['cachevalue'] );
+            $upgradeStep['cachevalue'] = String::utf8Unserialize( $upgradeStep['cachevalue'] );
             $upgradeStep['cachevalue']['step'] = $step;
             CacheModel::model()->add( array(
                 'cachekey' => 'upgrade_step',

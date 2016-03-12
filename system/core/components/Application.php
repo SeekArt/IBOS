@@ -18,6 +18,7 @@ namespace application\core\components;
 
 use application\core\model\Module;
 use application\core\utils\IBOS;
+use application\modules\role\model\AuthItem;
 use application\modules\role\utils\Auth;
 use CAction;
 use CController;
@@ -91,8 +92,17 @@ class Application extends CWebApplication {
         // step1
         if ( !$controller->filterNotAuthModule( $module ) ) {
             $routes = strtolower( $controller->getUniqueId() . '/' . $action->getId() );
-            // step2
-            if ( !$controller->filterRoutes( $routes ) ) {
+            if ($controller->isFilterRoute) {
+                $check = false;
+                // step2：是否使用config里的配置路由去验证
+                // 当useConfig被设置成true时，只有在config里设置的才会验证
+                // 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
+                if (!$controller->useConfig) {
+                    $check = !$controller->filterRoutes($routes) ? true : false;
+                } else {
+                    $check = AuthItem::model()->checkIsInByRoute($routes) ? true : false;
+                }
+                if (true === $check) {
                 // step3
                 if ( !IBOS::app()->user->checkAccess( $routes, Auth::getParams( $routes ) ) ) {
                     // 没有权限 抛出错误
@@ -100,7 +110,8 @@ class Application extends CWebApplication {
                         // 定义权限错误页面
                         $controller->redirect( $this->rbacErrorPage );
                     } else {
-						$controller->error( IBOS::lang( 'Valid access', 'error' ), '', array( 'autoJump' => true, 'timeout' => 3 ) );
+                            $controller->error(IBOS::lang('Valid access', 'error'), '', $controller->errorParam);
+                        }
                     }
                 }
             }

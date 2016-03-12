@@ -2008,7 +2008,7 @@
                 }
             });
             data = filtered;
-
+            
             this.selection.find(".select2-search-choice").remove();
             $(data).each(function () {
                 self.addSelectedChoice(this);
@@ -2097,13 +2097,12 @@
             val.push(id);
             this.setVal(val);
         },
-
+        
         // multi
         unselect: function (selected) {
             var val = this.getVal(),
                 data,
                 index;
-
             selected = selected.closest(".select2-search-choice");
 
             if (selected.length === 0) {
@@ -2375,7 +2374,9 @@
         tokenizer: defaultTokenizer,
         escapeMarkup: function (markup) {
             if (markup && typeof(markup) === "string") {
-                return markup.replace(/&/g, "&amp;");
+                return markup.replace(/&/g, "&amp;")
+                             .replace(/<script>/g, "&lt;script&gt;")
+                             .replace(/<\/script>/g, "&lt;/script&gt;");
             }
             return markup;
         },

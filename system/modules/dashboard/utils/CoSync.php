@@ -21,29 +21,29 @@ use application\modules\user\utils\User as UserUtil;
 class CoSync {
 
 	/**
-	 * 创建用户
-	 * @param type $userdata 用户数据
-	 * @param type $success 保存成功信息数组
-	 * @param type $error 保存错误信息数组
-	 * @param type $break 是否需要跳出循环，用户区分是接口请求还是一般操作
-	 * @return type
+	 * 根据酷办公新增的用户列表，创建 IBOS 的用户同步绑定关系
+	 * @param  array $userList 跟绑定表对比，酷办公新增的用户列表
+	 * @return array           
 	 */
-	public static function CreateUser( $userdata, $success = array(), $error = array(), $break = false ) {
-
-		//此处加载缓存以及更新用户缓存必须，要不然会出错或者会产生重复数据。
-		CacheUtil::load( 'usergroup' ); // 要注意小写
-		CacheUtil::update( 'users' ); // 用户缓存依赖usergroup缓存，单独更新
-		foreach ( $userdata as $key => $param ) {
-			$checkIsExist = User::model()->checkIsExistByMobile( $param['mobile'] );
-			//判断手机号不存在,执行创建用户
-			//从酷办公获取用户在本地创建新的用户，暂时是没有部门关联的
-			if ( $checkIsExist === false ) {
-				$param['salt'] = !empty( $param['salt'] ) ? $param['salt'] : String::random( 6 );
-				$param['password'] = !empty( $param['password'] ) ? $param['password'] : md5( md5( $param['mobile'] ) . $param['salt'] );
-				$param['groupid'] = !empty( $param['groupid'] ) ? $param['groupid'] : '2';
-				$param['createtime'] = TIMESTAMP;
-				$param['guid'] = String::createGuid();
-				$data = User::model()->create( $param );
+	public static function createUserAndBindRelation( $userList ) {
+		// 此处加载缓存以及更新用户缓存必须，要不然会出错或者会产生重复数据。
+		// 注意要小写
+		// 用户缓存依赖usergroup缓存，单独更新
+		CacheUtil::load( 'usergroup' );
+		CacheUtil::update( 'users' );
+		$result = array();
+		$userCache = UserUtil::loadUser();
+		foreach ( $userList as $key => $user ) {
+			$checkIsExist = User::model()->checkIsExistByMobile( $user['mobile'] );
+			// 手机号不存在，创建一个新用户并建立绑定关系
+			if ( $checkIsExist === FALSE ) {
+				$user['salt']		= !empty( $user['salt'] ) ? $user['salt'] : String::random( 6 );
+				$user['realname']	= !empty( $user['realname'] ) ? $user['realname'] : '';
+				$user['password']	= !empty( $user['password'] ) ? $user['password'] : md5( md5( $user['mobile'] ) . $user['salt'] );
+				$user['groupid']	= !empty( $user['groupid'] ) ? $user['groupid'] : '2';
+				$user['guid']		= !empty( $user['guid'] ) ? $user['guid'] : String::createGuid();
+				$user['createtime']	= TIMESTAMP;
+				$data = User::model()->create( $user );
 				unset( $data['uid'] );
 				$newId = User::model()->add( $data, true );
 				if ( $newId ) {
@@ -52,31 +52,88 @@ class CoSync {
 					UserStatus::model()->add( array( 'uid' => $newId, 'regip' => $ip, 'lastip' => $ip ) );
 					UserProfile::model()->add( array( 'uid' => $newId ) ); //用户user_profile一定要有相关的用户数据，即使为空，要不然会出错
 					//创建用户绑定
-					$binding = UserBinding::model()->add( array( 'uid' => $newId, 'bindvalue' => $param['guid'], 'app' => 'co' ) );
-					if ( !$binding ) {
-						$error[$key]['uid'] = $param['uid'];
-						$error[$key]['realname'] = $param['realname'];
-						$error[$key]['mobile'] = $param['mobile'];
-						$error[$key]['errormsg'] = '绑定用户出错';
+					$condition 	= "`uid` = :uid AND `bindvalue` = :bindvalue AND `app` = 'co'";
+					$params 	= array( ':uid' => $newId, ':bindvalue' => $user['guid'] );
+					$userBind = UserBinding::model()->fetch( $condition, $params );
+					if ( empty( $userBind ) ) {
+						$binding = UserBinding::model()->add( array( 'uid' => $newId, 'bindvalue' => $user['guid'], 'app' => 'co' ) );
+						if ( $binding ) {
+							$newUser = User::model()->fetchByPk( $newId );
+							$userCache[$newId] = UserUtil::wrapUserInfo( $newUser );
+							$result[] = array( 'uid' => $user['uid'], 'bindvalue' => $newId );
+						}
 					}
-					$success[$param['uid']] = $param['mobile'];
-					$newUser = User::model()->fetchByPk( $newId );
-					$newusers = UserUtil::loadUser();
-					$newusers[$newId] = UserUtil::wrapUserInfo( $newUser );
-					User::model()->makeCache( $newusers );
-				} else {
-					$error[$key]['uid'] = $param['uid'];
-					$error[$key]['realname'] = $param['realname'];
-					$error[$key]['mobile'] = $param['mobile'];
-					$error[$key]['errormsg'] = '创建用户出错';
+					// if ( !$binding ) {
+					// 	$error[$key]['uid']			= $user['uid'];
+					// 	$error[$key]['realname']	= $user['realname'];
+					// 	$error[$key]['mobile']		= $user['mobile'];
+					// 	$error[$key]['errormsg']	= '绑定用户出错';
+					// }
+				}
+				// else {
+				// 	$error[$key]['uid']			= $user['uid'];
+				// 	$error[$key]['realname']	= $user['realname'];
+				// 	$error[$key]['mobile']		= $user['mobile'];
+				// 	$error[$key]['errormsg']	= '创建用户出错';
+				// }
+			}
+			// 酷办公用户手机号已存在 IBOS 
+			// 什么都不管，先把 IBOS 对应的用户设为启用（原来可能启用可能没启用）
+			// 然后添加对应的绑定关系
+			else {
+				$userInfo = User::model()->fetch( '`mobile` = :mobile', array( ':mobile' => $user['mobile'] ) );
+				User::model()->updateByPk( $userInfo['uid'], array( 'status' => 0 ) );
+				$userInfo = User::model()->fetchByPk( $userInfo['uid'] );
+				$userCache[$userInfo['uid']] = UserUtil::wrapUserInfo( $userInfo );
+				//创建用户绑定关系
+				$condition 	= "`uid` = :uid AND `app` = 'co'";
+				$params 	= array( ':uid' => $userInfo['uid'] );
+				$userBind = UserBinding::model()->fetch( $condition, $params );
+				if ( !empty( $userBind ) ) {
+					UserBinding::model()->deleteAll( sprintf( "`uid` = %d AND `app` = 'co'", $userInfo['uid'] ) );
+				}
+				$binding = UserBinding::model()->add( array( 'uid' => $userInfo['uid'], 'bindvalue' => $user['guid'], 'app' => 'co' ) );
+				if ( $binding ) {
+					$result[] = array( 'uid' => $user['uid'], 'bindvalue' => $userInfo['uid'] );
 				}
 			}
-			if ( $break === true ) {
-				unset( $userdata[$key] );
-				break;
+		}
+		User::model()->makeCache( $userCache );
+		return $result;
+	}
+
+	/**
+	 * 根据酷办公移除的用户，删除 IBOS 的用户绑定关系
+	 * @param  array $userList 跟绑定表对比，酷办公移除的用户列表
+	 * @return array           
+	 */
+	public static function removeUserAndBindRelation( $userList ) {
+		//此处加载缓存以及更新用户缓存必须，要不然会出错或者会产生重复数据。
+		CacheUtil::load( 'usergroup' ); // 要注意小写
+		CacheUtil::update( 'users' ); // 用户缓存依赖usergroup缓存，单独更新
+		$result = array();
+		$userCache = UserUtil::loadUser();
+		foreach ( $userList as $user ) {
+			$bindRelation = UserBinding::model()->fetch( "`bindvalue` = :bindvalue AND `app` = 'co'", array( ':bindvalue' => $user['guid'] ) );
+			if ( !empty( $bindRelation ) ) {
+				User::model()->updateByPk( $bindRelation['uid'], array( 'status' => 2 ) );
+				$userInfo = User::model()->fetchByPk( $bindRelation['uid'] );
+				if ( $userInfo ) {
+					$userCache[$bindRelation['uid']] = UserUtil::wrapUserInfo( $userInfo );
+					// 解绑用户
+					$unbinding = UserBinding::model()->deleteAll( sprintf( "`uid` = %d AND `app` = 'co'", $bindRelation['uid'] ) );
+					if ( !$unbinding ) {
+						User::model()->updateByPk( $uid, array( 'status' => 0 ) );
+					}
+					// 解绑 & 禁用 成功后将该绑定关系保存，用于调用酷办公删除对应绑定关系的接口
+					else {
+						$result[] = array( 'uid' => $user['uid'], 'bindvalue' => $bindRelation['uid'] );
+					}
+				}
 			}
 		}
-		return array( 'isSuccess' => true, 'data' => array( 'error' => $error, 'success' => $success, 'users' => $userdata ) );
+		User::model()->makeCache( $userCache );
+		return $result;
 	}
 
 }

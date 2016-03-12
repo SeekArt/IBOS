@@ -30,6 +30,24 @@ class Controller extends CController {
     const DEFAULT_JSONP_HANDLER = 'jsonpReturn';
 
     /**
+     * 是否强制过滤路由，用以设置超级管理员的权限
+     * @var type 
+     */
+    public $isFilterRoute = true;
+
+    /**
+     * true：使用模块里的权限配置去验证权限，不在配置里的不做权限判断
+     * false：使用过滤列表去验证权限，不在过滤列表里的不做权限判断
+     * @var type 
+     */
+    public $useConfig = false;
+
+    /**
+     * 设置错误跳转页面的参数
+     */
+    public $errorParam = array( 'autoJump' => true, 'timeout' => 3 );
+
+    /**
      * 布局类型
      * @var string 
      */
@@ -39,7 +57,7 @@ class Controller extends CController {
      * 默认不进行权限验证的模块
      * @var type 
      */
-    private $_notAuthModule = array( 'main', 'user', 'dashboard', 'message', 'weibo' );
+    private $_notAuthModule = array( 'main', 'user', 'message', 'weibo' );
 
     /**
      * 当前模块可访问的静态资源文件路径

@@ -181,6 +181,12 @@ use application\modules\user\model\User;
 										</li>
 										<?php endif; ?>
 										<li>
+											<a href="#isread" id="isread_tab" data-toggle="tab">
+												<i class="o-art-isread"></i>							
+												<?php echo $lang['Sign isread']; ?>
+											</a>
+										</li>
+										<li>
 											<a href="#issign" id="sign_tab" data-toggle="tab">
 												<i class="o-art-issign"></i>
 												<?php echo $lang['Sign staff']; ?>
@@ -220,6 +226,16 @@ use application\modules\user\model\User;
 												?>
 											</div>
 										<?php endif; ?>
+										<!-- 查阅情况 -->
+										<div id="isread" class="tab-pane">
+											<div class="sign-info-title fill-nn">
+												共<span class="fsl num">0</span> 人已查阅
+											</div>
+											<div>
+												<h5 class="doc-reader-dep">已查阅人员</h5>
+												<ul class="doc-reader-list clearfix"></ul>
+											</div>
+										</div>
 										<!-- 签收人情况 -->
 										<div id="issign" class="tab-pane">
 
@@ -277,7 +293,8 @@ use application\modules\user\model\User;
 		// 后台是否启用评论
 		"commentEnable": <?php echo $dashboardConfig['doccommentenable']; ?>,
 		// 此公文是否允许被评论
-		"commentStatus": <?php echo $data['commentstatus'] ?>
+		"commentStatus": <?php echo $data['commentstatus'] ?>,
+		"readers" : '<?php echo $data['readers']; ?>'
 	});
 </script>
 <script src='<?php echo STATICURL; ?>/js/src/emotion.js?<?php echo VERHASH; ?>'></script>

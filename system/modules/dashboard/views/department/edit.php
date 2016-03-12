@@ -1,13 +1,17 @@
 <?php ?>
 <div class="ct">
 	<div class="clearfix">
-		<h1 class="mt">部门人员管理</h1>
+		<h1 class="mt">部门管理</h1>
 	</div>
 	<div>
 		<!-- 部门信息 start -->
 		<div class="ctb">
 			<h2 class="st">编辑部门</h2>
 			<div class="">
+				<div class="btn-group mb">
+					<a href="javascript:;" class="btn active">部门设置</a>
+					<a href="<?php echo $this->createUrl( 'department/edit', array( 'op' => 'member', 'id' => $id ) ); ?>" class="btn">部门成员管理</a>
+				</div>
 				<form action="<?php echo $this->createUrl( 'department/edit', array( 'updatesubmit' => 1 ) ); ?>" method="post" class="department-info-form form-horizontal" id="add_dept_form">
 					<div class="control-group">
 						<label class="control-label">上级部门</label>

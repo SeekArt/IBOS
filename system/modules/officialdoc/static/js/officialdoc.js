@@ -118,7 +118,7 @@ var Official = {
 			} else {
 				ue.ready(function() {
 					var setTemplate = function() {
-						Official.op.getTemplate(tplId, function(res) {
+						Official.op.getTemplate(tplId).done(function(res){
 							ue.setContent(res.content);
 						});
 					};

@@ -25,6 +25,7 @@ class SysstampController extends BaseController {
                         Stamp::model()->delImg( $id, 'icon' );
                         $stamp['icon'] = Dashboard::moveTempFile( $stamp['icon'], $stampPath );
                     }
+                    $stamp['code'] = \CHtml::encode( $stamp['code'] );
                     Stamp::model()->modify( $id, $stamp );
                 }
             }

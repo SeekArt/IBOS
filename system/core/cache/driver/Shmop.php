@@ -4,6 +4,7 @@ namespace application\core\cache\driver;
 
 use application\core\components\Cache;
 use application\core\utils\IBOS;
+use application\core\utils\String;
 use CException;
 
 /**
@@ -40,7 +41,7 @@ class Shmop extends Cache {
     public function get( $name = false ) {
         $id = shmop_open( $this->instance, 'c', 0600, 0 );
         if ( $id !== false ) {
-            $ret = unserialize( shmop_read( $id, 0, shmop_size( $id ) ) );
+            $ret = String::utf8Unserialize( shmop_read( $id, 0, shmop_size( $id ) ) );
             shmop_close( $id );
 
             if ( $name === false ) {

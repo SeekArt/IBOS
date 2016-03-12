@@ -18,6 +18,8 @@ use application\modules\dashboard\model\LoginTemplate;
         <link rel="stylesheet" type="text/css" rev="stylesheet" href="<?php echo STATICURL; ?>/css/common.css?<?php echo VERHASH; ?>">
         <link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/artDialog/skins/ibos.css?<?php echo VERHASH; ?>" />
         <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/login.css?<?php echo VERHASH; ?>">
+		<?php $skin = Ibos::app()->setting->get( 'setting/skin' ); ?>
+		<?php if ( !empty( $skin ) ): ?><link rel="stylesheet" href="<?php echo STATICURL; ?>/css/skin/<?php echo $skin; ?>.css?<?php echo VERHASH; ?>" /><?php endif; ?>
         <!-- load css end -->
         <!-- IE8 fixed -->
         <!--[if lt IE 9]>
@@ -166,7 +168,7 @@ use application\modules\dashboard\model\LoginTemplate;
                         <span class="ilsep">|</span>
                         <a target="_blank" href="http://bbs.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
                         <span class="ilsep">|</span>
-                        <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><?php echo IBOS::lang( 'Control center', 'default' ); ?></a>
+                        <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/default/index' ); ?>" ><?php echo IBOS::lang( 'Control center', 'default' ); ?></a>
                         <span class="ilsep">|</span>
                         <a href="javascript:;" data-action="showCert"><?php echo IBOS::lang( 'Certificate of authorization', 'default' ); ?></a>
                         <span class="ilsep">|</span>

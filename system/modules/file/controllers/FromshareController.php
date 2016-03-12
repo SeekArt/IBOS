@@ -173,7 +173,7 @@ class FromShareController extends BaseController {
 	protected function getUserSearch() {
 		$con = 1;
 		if ( Env::getRequest( 'search' ) == '1' ) {
-			$keyword = addslashes( Env::getRequest( 'keyword' ) );
+			$keyword = \CHtml::encode( Env::getRequest( 'keyword' ) );
 			$users = User::model()->fetchAll( "`realname` LIKE '%{$keyword}%'" );
 			$uids = implode( ',', Convert::getSubByKey( $users, 'uid' ) );
 			$con = " FIND_IN_SET(fs.fromuid, '{$uids}') ";

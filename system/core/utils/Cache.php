@@ -10,7 +10,7 @@
 /**
  * 缓存工具类，提供IBOS缓存组件的简短写法及系统缓存方法封装
  * @package application.core.utils
- * @see application.core.components.cache
+ * @see application.core.components.cache 
  * @author banyanCheung <banyan@ibos.com.cn>
  * @version $Id: cache.php -1   $
  */

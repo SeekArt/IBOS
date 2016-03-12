@@ -207,7 +207,8 @@ class Email extends Model {
 		$emailIds = is_array( $emailIds ) ? $emailIds : array( $emailIds );
 		$mainTable = sprintf( '{{%s}}', $this->getTableName( $archiveId ) );
 		$bodyTable = sprintf( '{{%s}}', EmailBody::model()->getTableName( $archiveId ) );
-		$bodyIds = IBOS::app()->db->createCommand()
+        $this->setDeleteBodyId($mainTable, $emailIds);
+        $bodyIds = IBOS::app()->db->createCommand()
 				->select( 'bodyid' )
 				->from( $mainTable )
 				->where( "FIND_IN_SET(emailid,'" . implode( ',', $emailIds ) . "')" )
@@ -269,6 +270,9 @@ class Email extends Model {
 				}
 			}
             $this->verifyIsDeleteData($bodyId, $archiveId);
+        }
+        if ($isSuccess > 0) {
+            $this->deleteWebEmail($bodyTable);
 		}
 		return $isSuccess;
 	}
@@ -296,7 +300,7 @@ class Email extends Model {
             $toids = !empty($bodyRow->toids) ? $bodyRow->toids : '';
             $toids .=!empty($bodyRow->copytoids) ? ',' . $bodyRow->copytoids : '';
             $toids .=!empty($bodyRow->secrettoids) ? ',' . $bodyRow->secrettoids : '';
-            $row = Ibos::app()->db->createCommand()
+            $row = IBOS::app()->db->createCommand()
                     ->select('emailid')
                     ->from($mainTable)
                     ->where(array(
@@ -306,7 +310,7 @@ class Email extends Model {
                     ))
                     ->queryRow();
             if (empty($row)) {
-                Ibos::app()->db->createCommand()->delete($bodyTable, sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId));
+                IBOS::app()->db->createCommand()->delete($bodyTable, sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId));
             }
         }
     }
@@ -727,5 +731,57 @@ class Email extends Model {
 				->queryRow();
 		return $siblings ? $siblings : array();
 	}
+
+    /**
+     * 被彻底删除的外部邮件id
+     * @var array
+     */
+    protected $bodyIds = array();
+
+    /**
+     * 保存被彻底删除的外部邮件id
+     * @param string $mainTable
+     * @param array $emailIds
+     */
+    private function setDeleteBodyId($mainTable, $emailIds) {
+        $this->bodyIds = IBOS::app()->db->createCommand()
+                ->select('bodyid')
+                ->from($mainTable)
+                ->where('isweb=1 AND isdel=3')
+                ->andwhere(array('in', 'emailid', $emailIds))
+                ->queryColumn();
+    }
+
+    /**
+     * 彻底删除外部邮件
+     * @param type $mainTable
+     * @param type $bodyTable
+     * @param type $emailIds
+     */
+    private function deleteWebEmail($bodyTable) {
+        if (!empty($this->bodyIds)) {
+            IBOS::app()->db->createCommand()
+                    ->delete($bodyTable, array('in', 'bodyid', $this->bodyIds));
+        }
+    }
+
+    /**
+     * 根据邮件 ID 数组获取对应的邮件体 ID 数组
+     * @param  array $emailIdList 邮件 ID 数组
+     * @return array              邮件体 ID 数组
+     */
+    public function fetchBodyIdListByEmailIdList( $emailIdList ) {
+        $bodyIdList = array();
+        if ( is_array( $emailIdList ) ) {
+            $emailIdList = implode( ',', $emailIdList );
+        }
+        $emailList = $this->findAll( array( 'condition' => 'FIND_IN_SET( `emailid`, :emailIdList )', 'params' => array( ':emailIdList' => $emailIdList ) ) );
+        foreach ( $emailList as $email ) {
+            if ( !in_array( $email['bodyid'], $bodyIdList ) ) {
+                $bodyIdList[] = $email['bodyid'];
+            }
+        }
+        return $bodyIdList;
+    }
 
 }

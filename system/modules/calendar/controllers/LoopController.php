@@ -21,6 +21,7 @@ use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
+use CHtml;
 
 Class LoopController extends BaseController {
 
@@ -163,6 +164,7 @@ Class LoopController extends BaseController {
         $getREnd = Env::getRequest( 'recurringend' );
         $rEnd = empty( $getREnd ) ? 0 : strtotime( $getREnd );
         $rType = Env::getRequest( 'recurringtype' );
+        $subject = CHtml::encode($subject);
         $data = array(
             'uid' => $this->uid,
             'subject' => empty( $subject ) ? '无标题的活动' : $subject, //日程内容

@@ -13,7 +13,7 @@ class EmailController extends BaseController {
 
     public function actionSetup() {
         $mailSetting = Setting::model()->fetchSettingValueByKey( 'mail' );
-        $mail = unserialize( $mailSetting );
+        $mail = String::utf8Unserialize( $mailSetting );
         $formSubmit = Env::submitCheck( 'emailSubmit' );
         if ( $formSubmit ) {
             $serverList = array();

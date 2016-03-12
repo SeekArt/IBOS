@@ -41,7 +41,7 @@ class Department extends CBehavior {
                 $departments[$dept['deptid']] = $dept;
             }
         }
-        Syscache::model()->modify( 'department', $departments );
+        Syscache::model()->modifyCache( 'department', $departments );
     }
 
 }

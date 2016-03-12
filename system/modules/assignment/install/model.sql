@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `{{assignment_remind}}` (
   `remindtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '提醒时间，时间戳',
   `uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '提醒人uid',
   `content` varchar(255) NOT NULL DEFAULT '' COMMENT '提醒内容',
+	`status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态。0 未提醒，1 已提醒',
   PRIMARY KEY  (`id`),
   KEY `A_ID` (`assignmentid`) USING BTREE,
   KEY `C_ID` (`calendarid`) USING BTREE,

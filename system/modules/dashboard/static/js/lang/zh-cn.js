@@ -109,13 +109,20 @@ L.ORG = {
 
 // 绑定酷办公
 L.CO = {
+	"CO_REG_SUCCESS": "酷办公注册成功～",
+	"SET_CO_LOGIN_PWD": "请设置酷办公登录初始密码",
 	"BINDING_USER": "绑定用户",
 	"LOGIN_SUCCESS": "登录成功",
+	"IBOS_ADD_LIST": "IBOS新增成员",
+	"IBOS_DEL_LIST": "IBOS禁用成员",
+	"CO_ADD_LIST": "酷办公加入成员",
+	"CO_DEL_LIST": "酷办公移除成员",
 	"UNBINDING_SUCCESS": "解绑成功",
 	"UNBINDING_IBOSCO_CONFIRM": "确定要解绑吗？解绑后用户绑定也将会被清空。",
-	"SURE_UNBINDING_AND_LINK_NEW_ADRESS": "确定要解绑并关联新地址吗？",
-	"SURE_EXIT_COMPANY": "确定退出“ <%= name %> ”吗？",
-	"CREAT_AND_BINDING_COMPANY": "确定要创建并绑定到“ <%= name %> ”吗？"
+	"SURE_BINDING_COMPANY": "确定要绑定到酷办公企业“<%= corpname %>”吗？",
+	"SURE_UNBINDING_AND_LINK_NEW_ADRESS": "“<%= corpname %>”已绑定过IBOS地址“<%= systemurl %>”。</br>确定要解绑并绑定到当前地址吗？",
+	"SURE_EXIT_COMPANY": "确定退出“ <%= corpname %> ”吗？",
+	"CREATE_AND_BINDING_COMPANY": "创建酷办公并绑定"
 }
 
 // 审批流程

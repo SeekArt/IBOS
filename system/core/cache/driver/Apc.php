@@ -8,6 +8,15 @@ use CException;
 
 /**
  * Apc缓存驱动
+ *
+ * @namespace application\core\cache\driver
+ * @filename Apc.php
+ * @encoding UTF-8
+ * @author mumu <2317216477@qq.com>
+ * @link http://www.ibos.com.cn/
+ * @copyright Copyright &copy; 2012-2015 IBOS Inc
+ * @datetime 2015-12-29 11:45:48
+ * @version $Id$
  */
 class Apc extends Cache {
 

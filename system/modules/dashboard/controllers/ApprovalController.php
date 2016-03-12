@@ -158,7 +158,7 @@ class ApprovalController extends BaseController {
      */
     protected function handleSaveData( $post ) {
         $ret = array(
-            'name' => $post['name'],
+            'name' => \CHtml::encode( $post['name'] ),
             'level' => $post['level'],
             'level1' => implode( ',', String::getId( $post['level1'] ) ),
             'level2' => implode( ',', String::getId( $post['level2'] ) ),
@@ -166,7 +166,7 @@ class ApprovalController extends BaseController {
             'level4' => implode( ',', String::getId( $post['level4'] ) ),
             'level5' => implode( ',', String::getId( $post['level5'] ) ),
             'free' => implode( ',', String::getId( $post['free'] ) ),
-            'desc' => $post['desc']
+            'desc' => \CHtml::encode( $post['desc'] ),
         );
         return $ret;
     }

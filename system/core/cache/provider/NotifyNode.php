@@ -18,6 +18,7 @@
 namespace application\core\cache\provider;
 
 use application\core\utils\Cache;
+use application\modules\dashboard\model\Syscache;
 use application\modules\message\model\Notify;
 use CBehavior;
 
@@ -33,7 +34,8 @@ class NotifyNode extends CBehavior {
      */
     public function handleNode( $event ) {
         Cache::set( 'notifyNode', null );
-        Notify::model()->getNodeList();
+        $notifyNode = Notify::model()->getNodeList();
+        Syscache::model()->modifyCache( 'notifyNode', $notifyNode );
     }
 
 }

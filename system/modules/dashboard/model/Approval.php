@@ -20,6 +20,7 @@ namespace application\modules\dashboard\model;
 use application\core\model\Model;
 use application\modules\article\model\ArticleCategory;
 use application\modules\officialdoc\model\OfficialdocCategory;
+use application\core\utils\module;
 
 class Approval extends Model {
 
@@ -116,7 +117,9 @@ class Approval extends Model {
 		}
 		$ret = $this->deleteByPk( $id );
 		if ( $ret ) {
+			if ( Module::getIsEnabled( 'article' ) ) {
 			ArticleCategory::model()->updateAll( array( 'aid' => 0 ), "aid={$id}" );
+			}
 			OfficialdocCategory::model()->updateAll( array( 'aid' => 0 ), "aid={$id}" );
 		}
 		return $ret;

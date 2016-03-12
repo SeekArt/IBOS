@@ -4,6 +4,7 @@ namespace application\core\cache\driver;
 
 use application\core\components\Cache;
 use application\core\utils\IBOS;
+use application\core\utils\String;
 
 /**
  * 数据库方式缓存驱动
@@ -48,7 +49,7 @@ class Db extends Cache {
                 //启用数据压缩
                 $content = gzuncompress( $result );
             }
-            $content = unserialize( $result );
+            $content = String::utf8Unserialize( $result );
             return $content;
         } else {
             return false;

@@ -144,6 +144,7 @@ $(function(){
 					moment(data.recurringend).toDate() : 
 					null;
 
+			data.subject = U.entity.unescape(data.subject);
 			!U.isUnd(data.subject) && $("#loop_subject").val(data.subject);
 
 			// 初始化开始时间及结束时间， 默认为当前时间至30分钟后

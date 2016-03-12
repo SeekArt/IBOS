@@ -626,10 +626,10 @@ class DefaultController extends BaseController {
 				'condition' => 'diaryid=:diaryid',
 				'params' => array( ':diaryid' => $diaryId )
 					) );
-			$readerUids = $record['readeruid'];
-			$htmlStr = '<table class="pop-table">';
-			if ( !empty( $readerUids ) ) {
-				$htmlStr .= '<div class="da-reviews-avatar">';
+            $htmlStr = '<table class="pop-table">';
+            $htmlStr .= '<div class="da-reviews-avatar">';
+            if ( isset( $record ) && !empty( $record['readeruid'] ) ) {
+                $readerUids = $record['readeruid'];
 				$readerUidArr = explode( ',', trim( $readerUids, ',' ) );
 				$users = User::model()->fetchAllByUids( $readerUidArr );
 				foreach ( $users as $user ) {

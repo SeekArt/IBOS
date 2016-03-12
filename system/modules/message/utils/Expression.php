@@ -36,7 +36,8 @@ class Expression {
             // TODO:：临时，后期是否可改为数据表格式	@banyan
             $typeMap = array(
                 'df' => '默认',
-                'bm' => '暴漫'
+                'bm' => '暴漫',
+                'other' => '其他'
             );
             foreach ( $expression_pkg as $index => $value ) {
                 list ($file) = explode( ".", $value['filename'] );
@@ -45,7 +46,7 @@ class Expression {
                 $temp['phrase'] = '[' . $file . ']';
                 $temp['icon'] = $value['filename'];
                 $temp['type'] = $type;
-                $temp['category'] = $typeMap[$type];
+                $temp['category'] = isset( $typeMap[$type] ) ? $typeMap[$type] : $typeMap['other'];
                 $res[$temp['phrase']] = $temp;
             }
             Cache::set( $cacheId, $res );

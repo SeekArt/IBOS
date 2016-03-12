@@ -99,7 +99,7 @@ $(function(){
 	            var articleid = Ibos.app.g("articleId"),
 	            	param = { articleids: articleid };
 
-	        	App.op.verifyArticle(param).done(function(res){
+	        	Article.op.verifyArticle(param).done(function(res){
 	                if(res.isSuccess){
 	                    Ui.tip("@ART.APPROVAL_SUCCESS");
 	                    window.location.href=document.referrer;
@@ -121,7 +121,7 @@ $(function(){
 						reason = $("#rollback_textarea").val(),
 						param = { articleids: articleid, reason: reason };
 
-					App.op.backArticle(param).done(function(res){
+					Article.op.backArticle(param).done(function(res){
 						if(res.isSuccess){
 							Ui.tip("@OPERATION_SUCCESS");
 							window.location.href = document.referrer;

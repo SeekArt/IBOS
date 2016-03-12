@@ -1,3 +1,6 @@
+<?php
+use application\core\utils\String;
+?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/quicknav.css?<?php echo VERHASH; ?>">
 <div class="ct">
 	<div class="clearfix">
@@ -15,7 +18,7 @@
 					<div class="trick-tip-content">
 						<ul>
 							<li>
-								链接地址使用 <strong>javascript: moduleEntry("workflow", 表单ID, 标题);</strong> 的格式可以快速新建工作流表单
+                                链接地址使用 <strong>javascript: moduleEntry("workflow", 流程ID, 标题);</strong> 的格式可以快速新建工作流表单
 							</li>
 						</ul>
 					</div>
@@ -30,7 +33,7 @@
 					<div class="control-group">
 						<label class="control-label"><?php echo $lang['The link address']; ?></label>
 						<div class="controls">
-							<input type="text" name="url" value="<?php echo $menu['url']; ?>" id="qn_url">
+                            <input type="text" name="url" value="<?php echo String::ihtmlSpecialChars($menu['url']); ?>" id="qn_url">
 						</div>
 					</div>
 					<div class="control-group">

@@ -19,8 +19,11 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils as util;
+use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Env;
+use application\core\utils\IBOS;
 use application\modules\dashboard\model\Syscache;
+use application\modules\department\model\DepartmentRelated;
 use application\modules\position\model\PositionRelated;
 use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User;
@@ -28,6 +31,13 @@ use application\modules\user\utils\User as UserUtil;
 
 class User extends Model {
 
+    const USER_STATUS_ABANDONED = 2;
+    const USER_STATUS_LOCKED = 1;
+    const USER_STATUS_NORMAL = 0;
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 	public static function model( $className = __CLASS__ ) {
 		return parent::model( $className );
 	}
@@ -36,6 +46,11 @@ class User extends Model {
 		return '{{user}}';
 	}
 
+    public function afterSave() {
+        CacheUtil::update('Users');
+        CacheUtil::load('Users');
+        parent::afterSave();
+    }
 	/**
 	 * 检查用户名是否存在
 	 * @param string $name
@@ -160,9 +175,9 @@ class User extends Model {
 	 * @param integer $uid
 	 * @return array
 	 */
-	public function fetchByUid( $uid ) {
+    public function fetchByUid($uid, $force = false) {
 		$users = UserUtil::loadUser();
-		if ( !isset( $users[$uid] ) ) {
+        if ($force || !isset($users[$uid])) {
 			$object = $this->findByPk( $uid );
 			if ( is_object( $object ) ) {
 				$user = $object->attributes;
@@ -175,11 +190,21 @@ class User extends Model {
 		return $users[$uid];
 	}
 
-	public function makeCache( $users ) {
-		//将新数据缓存起来
-		Syscache::model()->modify( 'users', $users );
+    public function makeCache($userArr) {
+        //将新数据缓存起来
+        // 先判断准备缓存的用户是否处于禁用状态
+        // 处于禁用状态的而用户不添加到缓存
+        $users = array();
+        foreach ($userArr as $uid => $user) {
+            if (isset($user['status']) && ($user['status'] == '1' || $user['status'] == '0')) {
+                $users[$uid] = $user;
+            }
+        }
+        if (!empty($users)) {
+            Syscache::model()->modifyCache('users', $users);
 		util\Cache::load( 'users' );
-	}
+        }
+    }
 
 	/**
 	 * 查找部门内符合条件的人
@@ -246,54 +271,110 @@ class User extends Model {
 	 * @author Ring
 	 * @refactor banyan
 	 */
-	public function fetchUidByPosId( $posId, $returnDisabled = true ) {
-		static $posIds = array();
-		if ( !isset( $posIds[$posId] ) ) {
-			$posIds[$posId] = array();
-			$extCondition = $returnDisabled ? 1 : " status != 2 ";
-			$criteria = array( 'select' => 'uid', 'condition' => "`positionid`={$posId} AND {$extCondition}" );
-			$posCriteria = array( 'select' => 'uid', 'condition' => "`positionid`={$posId}" );
-			$main = $this->fetchAll( $criteria );
-			$auxiliary = PositionRelated::model()->fetchAll( $posCriteria );
-			foreach ( array_merge( $main, $auxiliary ) as $uid ) {
-				$posIds[$posId][] = $uid['uid'];
-			}
-		}
-		return isset( $posIds[$posId] ) ? $posIds[$posId] : array();
+    public function fetchUidByPosId($positionid, $returnDisabled = true, $related = false) {
+        static $positionidArray = array();
+        if (!isset($positionidArray[$positionid])) :
+            $condition = " `u`.`positionid`= '{$positionid}' ";
+            $query = IBOS::app()->db->createCommand();
+            if (true === $related):
+                $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
+                        , " `prpr`.`uid` = `u`.`uid` ");
+                $condition = array(
+                    'OR',
+                    $condition,
+                    " `prpr`.`positionid`= '{$positionid}' ",
+                );
+            endif;
+            if (true === $returnDisabled):
+                $condition = array(
+                    'AND',
+                    $condition,
+                    " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+                );
+            endif;
+            $uidArray = $query->selectDistinct('u.uid')
+                    ->from($this->tableName() . ' u')
+                    ->where($condition)
+                    ->queryColumn();
+            $positionidArray[$positionid] = $uidArray;
+        endif;
+        return $positionidArray;
 	}
 
 	/**
 	 * 根据角色id获取所有uid
 	 * @param integer $roleId
 	 * @param boolean $returnDisabled 是否禁用用户一起返回
+     * @param boolean $related 是否返回辅助角色
 	 * @return array
 	 */
-	public function fetchUidByRoleId( $roleId, $returnDisabled = true ) {
-		static $roleIds = array();
-		if ( !isset( $roleIds[$roleId] ) ) {
-			$roleIds[$roleId] = array();
-			$extCondition = $returnDisabled ? 1 : " status != 2 ";
-			$criteria = array( 'select' => 'uid', 'condition' => "`roleid`={$roleId} AND {$extCondition}" );
-			$roleCriteria = array( 'select' => 'uid', 'condition' => "`roleid`={$roleId}" );
-			$main = $this->fetchAll( $criteria );
-			$auxiliary = RoleRelated::model()->fetchAll( $roleCriteria );
-			foreach ( array_merge( $main, $auxiliary ) as $uid ) {
-				$roleIds[$roleId][] = $uid['uid'];
+    public function fetchUidByRoleId($roleid, $returnDisabled = true, $related = false) {
+        if (!isset($RoleidArray[$roleid])) {
+            $condition = " `u`.`roleid` = '{$roleid}'";
+            $query = IBOS::app()->db->createCommand();
+            if (true === $related):
+                $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
+                        , " `rr`.`uid` = `u`.`uid` ");
+                $condition = array(
+                    'OR',
+                    $condition,
+                    " `rr`.`roleid` = '{$roleid}' ",
+                );
+            endif;
+            if (true === $returnDisabled):
+                $condition = array(
+                    'AND',
+                    $condition,
+                    " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+                );
+            endif;
+            $uidArray = $query->selectDistinct('u.uid')
+                    ->from($this->tableName() . ' u')
+                    ->where($condition)
+                    ->queryColumn();
+            $RoleidArray[$roleid] = $uidArray;
 			}
+        return $RoleidArray[$roleid];
 		}
-		return isset( $roleIds[$roleId] ) ? $roleIds[$roleId] : array();
+
+    public function fetchAllUidByRoleids($roleid, $returnDisabled = true, $related = false) {
+        $condition = " FIND_IN_SET( `u`.`roleid`, '{$roleid}' ) ";
+        $query = IBOS::app()->db->createCommand();
+        if (true === $related):
+            $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
+                    , " `rr`.`uid` = `u`.`uid` ");
+            $condition = array(
+                'OR',
+                $condition,
+                " FIND_IN_SET( `rr`.`roleid`, '{$roleid}' ) ",
+            );
+        endif;
+        if (true === $returnDisabled):
+            $condition = array(
+                'AND',
+                $condition,
+                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+            );
+        endif;
+        $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
+        return $uidArray;
 	}
 	/**
 	 * 获取所有的uid（暂时crm用到）
 	 * @param boolean $returnDisabled 是否禁用用户一起返回
 	 * @return array
 	 */
-	public function fetchAllUid( $returnDisabled = true ) {
-		$condition = $returnDisabled ? 1 : " status != 2 ";
-		$criteria = array( 'select' => 'uid', 'condition' => "{$condition}" );
-		$uids = $this->fetchAll( $criteria );
-		$uids = util\Convert::getSubByKey( $uids, 'uid' );
-		return $uids;
+    public function fetchUidA($returnDisabled = true) {
+        $condition = $returnDisabled ? 1 : " `status` != '" . self::USER_STATUS_ABANDONED . "'";
+        $uidA = $this->getDbConnection()->createCommand()
+                ->select('uid')
+                ->from($this->tableName())
+                ->where($condition)
+                ->queryColumn();
+        return $uidA;
 	}
 
 	/**
@@ -302,31 +383,68 @@ class User extends Model {
 	 * @param boolean $returnDisabled 是否禁用用户一起返回
 	 * @return array
 	 */
-	public function fetchAllUidByPositionIds( $positionIds, $returnDisabled = true ) {
-		$ids = is_array( $positionIds ) ? implode( ',', $positionIds ) : $positionIds;
-		$extCondition = $returnDisabled ? 1 : " status != 2 ";
-		$criteria = array( 'select' => 'uid', 'condition' => "FIND_IN_SET(`positionid`, '{$ids}') AND {$extCondition}" );
-		$users = $this->fetchAll( $criteria );
-		$uids = util\Convert::getSubByKey( $users, 'uid' );
-		return $uids;
+    public function fetchAllUidByPositionIds($positionids, $returnDisabled = true, $related = false) {
+        $positionString = is_array($positionids) ? implode(',', $positionids) : $positionids;
+        $condition = " FIND_IN_SET(`u`.`positionid`, '{$positionString}') ";
+        $query = IBOS::app()->db->createCommand();
+        if (true === $related):
+            $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
+                    , " `prpr`.`uid` = `u`.`uid` ");
+            $condition = array(
+                'OR',
+                $condition,
+                " FIND_IN_SET(`prpr`.`positionid`, '{$positionString}') ",
+            );
+        endif;
+        if (true === $returnDisabled):
+            $condition = array(
+                'AND',
+                $condition,
+                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+            );
+        endif;
+        $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
+        return $uidArray;
 	}
 
 	/**
 	 * 根据部门id获取所有uid
 	 * @param integer $deptid
 	 * @param boolean $returnDisabled 是否禁用用户一起返回
+     * @param boolean $related 是否返回辅助部门的用户
 	 * @return array
 	 */
-	public function fetchAllUidByDeptid( $deptId, $returnDisabled = true ) {
-		static $deptIds = array();
-		if ( !isset( $deptIds[$deptId] ) ) {
-			$extCondition = $returnDisabled ? 1 : " status != 2 ";
-			$criteria = array( 'select' => 'uid', 'condition' => "`deptid`={$deptId} AND {$extCondition}" );
-			$uids = $this->fetchAll( $criteria );
-			$uids = util\Convert::getSubByKey( $uids, 'uid' );
-			$deptIds[$deptId] = $uids;
+    public function fetchAllUidByDeptid($deptid, $returnDisabled = true, $related = false) {
+        static $deptidArray = array();
+        if (!isset($deptidArray[$deptid])) {
+            $condition = " `u`.`deptid` = '{$deptid}'";
+            $query = IBOS::app()->db->createCommand();
+            if (true === $related):
+                $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
+                        , " `dr`.`uid` = `u`.`uid` ");
+                $condition = array(
+                    'OR',
+                    $condition,
+                    " `dr`.`deptid` = '{$deptid}'",
+                );
+            endif;
+            if (true === $returnDisabled):
+                $condition = array(
+                    'AND',
+                    $condition,
+                    " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+                );
+            endif;
+            $uidArray = $query->selectDistinct('u.uid')
+                    ->from($this->tableName() . ' u')
+                    ->where($condition)
+                    ->queryColumn();
+            $deptidArray[$deptid] = $uidArray;
 		}
-		return $deptIds[$deptId];
+        return $deptidArray[$deptid];
 	}
 
 	/**
@@ -335,13 +453,31 @@ class User extends Model {
 	 * @param boolean $returnDisabled 是否禁用用户一起返回
 	 * @return array
 	 */
-	public function fetchAllUidByDeptids( $deptIds, $returnDisabled = true ) {
-		$deptIds = is_array( $deptIds ) ? implode( ',', $deptIds ) : $deptIds;
-		$extCondition = $returnDisabled ? 1 : " status != 2 ";
-		$criteria = array( 'select' => 'uid', 'condition' => "FIND_IN_SET(`deptid`, '{$deptIds}') AND {$extCondition}" );
-		$users = $this->fetchAll( $criteria );
-		$uids = util\Convert::getSubByKey( $users, 'uid' );
-		return $uids;
+    public function fetchAllUidByDeptids($deptids, $returnDisabled = true, $related = false) {
+        $deptidString = is_array($deptids) ? implode(',', $deptids) : $deptids;
+        $condition = " FIND_IN_SET(`u`.`deptid`, '{$deptidString}') ";
+        $query = IBOS::app()->db->createCommand();
+        if (true === $related):
+            $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
+                    , " `dr`.`uid` = `u`.`uid` ");
+            $condition = array(
+                'OR',
+                $condition,
+                " FIND_IN_SET(`dr`.`deptid`, '{$deptidString}') ",
+            );
+        endif;
+        if (true === $returnDisabled):
+            $condition = array(
+                'AND',
+                $condition,
+                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+            );
+        endif;
+        $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
+        return $uidArray;
 	}
 
 	/**
@@ -524,6 +660,9 @@ class User extends Model {
 	 */
 	public function fetchAvatarByUid( $uid, $size = 'm' ) {
 		$user = $this->fetchByUid( $uid );
+        if (empty($user)) {
+            return '';
+        }
 		if ( $size == 'b' ) {
 			// 大头像
 			$avatar = $user['avatar_big'];
@@ -604,4 +743,20 @@ class User extends Model {
 		$result = $this->fetch( 'mobile  = :mobile', array( ':mobile' => $mobile ) );
 		return !empty( $result ) ? true : false;
 	}
+
+    /**
+     * 根据用户状态批量获取用户信息
+     * @param  integer|array $status 用户状态 0,1,2 可以是数组也可以是整型
+     * @return array         用户信息数组
+     */
+    public function fetchAllByStatus($status) {
+        if (is_array($status)) {
+            $status = implode(',', $status);
+        }
+        $result = $this->fetchAll(array(
+            'condition' => "FIND_IN_SET( status, ':status' )",
+            'params' => array(':status' => $status),
+        ));
+        return !empty($result) ? TRUE : FALSE;
+    }
 }

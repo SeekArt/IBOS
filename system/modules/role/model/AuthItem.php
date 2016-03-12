@@ -10,6 +10,7 @@
 namespace application\modules\role\model;
 
 use application\core\model\Model;
+use application\core\utils\Ibos;
 
 class AuthItem extends Model {
 
@@ -21,4 +22,13 @@ class AuthItem extends Model {
         return '{{auth_item}}';
     }
 
+    public function checkIsInByRoute( $route ) {
+        $condition = sprintf( " `name` = '%s' ", $route );
+        $row = Ibos::app()->db->createCommand()
+                ->select( 'name' )
+                ->from( $this->tableName() )
+                ->where( $condition )
+                ->queryRow();
+        return !empty( $row );
+    }
 }

@@ -102,7 +102,7 @@ EOT;
 		$return = $this->fetchResult( $url, $post, 'post' );
 		$isSuccess = $this->getSendIsSuccess( $return );
 		$res = CJSON::decode( $return, true );
-		if ( $res['errcode'] == '60008' ) {
+        if ( $res['errcode'] == '60008' || $res['errcode'] == '60004' ) {
 			$isSuccess = true; //部门已经存在的话，也继续同步部门操作
 		}
 		return array(

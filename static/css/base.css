@@ -1,8 +1,8 @@
-/* 
- * IBOS_Revolution  v0.2.1 
- * 2014-12-25 02:50:44 
- * base.css 
-*/ 
+/*
+ * IBOS_Revolution  v0.2.1
+ * 2014-12-25 02:50:44
+ * base.css
+*/
 
 /*!
  * Bootstrap v3.0.0
@@ -183,7 +183,8 @@ table {
 @media print {
   * {
     text-shadow: none !important;
-    color: #000 !important;
+    /*color: #000 !important;*/
+    color: #000;
     background: transparent !important;
     box-shadow: none !important;
   }
@@ -5042,9 +5043,9 @@ a.badge:focus {
 .radio.disabled.checked .icon {
   background-position: -170px -90px;
 }
-/* 
+/*
   component.css
-  一些组件样式或基本组件的样式 
+  一些组件样式或基本组件的样式
 */
 
 /* 此样式用来解决开关在初始化前会出现短时间checkbox状态的问题 */
@@ -5084,11 +5085,11 @@ input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
 .datepicker { position: relative;}
 .datepicker .datepicker-input{ padding-right: 40px; background-color: #FFF; }
 .datepicker .datepicker-btn {
-  border-radius: 4px; 
+  border-radius: 4px;
   position: absolute;
   top: 5px;
   right: 5px;
-  width: 30px; 
+  width: 30px;
   height: 30px;
   background: #EBEDF0 url("../image/component.png") no-repeat 5px -245px;
 }
@@ -5206,7 +5207,7 @@ input[data-toggle="switch"] { opacity: 0; filter: Alpha(opacity=0); }
   width: 280px;
   padding: 0;
   margin-top: 1px;
-  z-index: 3000;
+  z-index: 6000;
   background-color: #FFF;
   border: 0 solid rgba(0, 0, 0, 0);
   overflow: hidden;
@@ -5805,7 +5806,7 @@ div.jGrowl div.jGrowl-notification.primary {
   border-radius: 4px;
   background-color: #fff;
   position: absolute;
-  width: 375px;
+  width: 495px;
 }
 .select-box-header {
   border-top-right-radius: 4px;
@@ -5860,13 +5861,13 @@ div.jGrowl div.jGrowl-notification.primary {
   height: 300px;
   overflow: auto;
   /* for Ie
-    scrollBar-face-color: green; 
-    scrollBar-hightLight-color: red; 
-    scrollBar-3dLight-color: orange; 
-    scrollBar-darkshadow-color:blue; 
-    scrollBar-shadow-color:yellow; 
-    scrollBar-arrow-color:purple; 
-    scrollBar-track-color:black; 
+    scrollBar-face-color: green;
+    scrollBar-hightLight-color: red;
+    scrollBar-3dLight-color: orange;
+    scrollBar-darkshadow-color:blue;
+    scrollBar-shadow-color:yellow;
+    scrollBar-arrow-color:purple;
+    scrollBar-track-color:black;
     scrollBar-base-color:pink;
     */
   /* for webkit
@@ -5927,7 +5928,8 @@ div.jGrowl div.jGrowl-notification.primary {
 }
 .select-box-contact,
 .select-box-department,
-.select-box-position {
+.select-box-position,
+.select-box-role {
   background-image: url('../image/select_box.png');
   background-repeat: no-repeat;
 }
@@ -5936,6 +5938,9 @@ div.jGrowl div.jGrowl-notification.primary {
 }
 .select-box-position {
   background-position: 0 -64px;
+}
+.select-box-role{
+  background-position: 0 -96px;
 }
 .select2-container-multi .select2-choices .select2-operate {
   float: right;
@@ -6273,7 +6278,7 @@ a:hover .o-form-design,
 
 .o-sl16-clock{ background-position: -32px 0; }
 .o-slr16-clock{ background-position: -32px -32px; }
-/* 
+/*
   short.css
   短类
 */
@@ -6434,13 +6439,13 @@ input.xcgn{ color: #7CB81C; } /*Green*/
 
 
 .bdrt,
-.rdt{ 
+.rdt{
   -webkit-border-top-left-radius:  4px;
   -webkit-border-top-right-radius:  4px;
   -moz-border-top-left-radius:  4px;
   -moz-border-top-right-radius: 4px;
   border-top-left-radius:  4px;
-  border-top-right-radius: 4px; 
+  border-top-right-radius: 4px;
 }
 .bdrb,
 .rdb{
@@ -6449,7 +6454,7 @@ input.xcgn{ color: #7CB81C; } /*Green*/
   -moz-border-bottom-left-radius:  4px;
   -moz-border-bottom-right-radius: 4px;
   border-bottom-left-radius:  4px;
-  border-bottom-right-radius: 4px; 
+  border-bottom-right-radius: 4px;
 }
 
 .ellipsis{

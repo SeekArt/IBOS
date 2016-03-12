@@ -46,6 +46,13 @@
 				type: "position"
 			},
 			{
+				// id: "select_box_role",
+				icon: "select-box-role",
+				text: U.lang("US.PER_ROLE"),
+				data: Ibos.data && Ibos.data.get("role") || [],
+				type: "role"
+			},
+			{
 				// id: "select_box_contact",
 				icon: "select-box-contact",
 				text: U.lang("US.CONTACT"),
@@ -54,6 +61,9 @@
 			}
 		],
 		values: [],
+		// 拓展 导航栏
+		noNav: false,
+		showLong: false,
 		// 只可选用户
 		// userOnly: false
 		// maximumSelectionSize: 1, // 最大选项数只能在type 为 "user" 下使用
@@ -155,7 +165,11 @@
 			}else{
 				this.$inner.hide();
 			}
-			this.setNav(0)
+			this.setNav(0);
+			this.options.noNav && this.$header.hide();
+			if(this.options.showLong){
+				$(document).off("mousedown.userselect.hideall", UserSelect.hideAllBox);
+			}
 		},
 
 		_getListItems: function(){
@@ -188,13 +202,11 @@
 					type = $checkbox.attr("data-type"), //此属性用于判断此复选框是否全选
 					isChecked = $checkbox.prop("checked"),
 					val = $checkbox.val();
-				// 当点击了全选框时
 				if (type && type === "checkall") {
 					if (isChecked) {
 						that.checkListCheckbox();
 						$checkbox.label("check");
 					} else {
-						
 						that.uncheckListCheckbox();
 						$checkbox.label("uncheck");
 					}
@@ -207,7 +219,7 @@
 					}
 					results.push(val);
 				}
-				$(that).trigger("slblistchange", { values: results, checked: isChecked })
+				$(that).trigger("slblistchange", { values: results, checked: isChecked });
 				evt.stopPropagation();
 			});
 			return this;
@@ -221,16 +233,14 @@
 		 * @return {Array}      发生改变的复选框值
 		 */
 		_toggleListCheckboxes: function(toCheck) {
-			var that = this;
+			var that = this,
+				getCheckboxValue = function(){
+					return that.$list.find("input[type='checkbox']").map(function(){
+						return this.value;
+					}).get();
+				};
 
-			this.$list.find("input[type='checkbox']").each(function() {
-				var val = this.value;
-				if(toCheck){
-					that.addValue(val);
-				}else{
-					that.removeValue(val)
-				}
-			});
+			toCheck ? that.addValue(getCheckboxValue()): that.removeValue(getCheckboxValue());
 			that.refreshList();
 		},
 		/**
@@ -447,24 +457,27 @@
 			var contact = this.options.contact,
 				data = this.options.data,
 				type = this.currentType,
-				isChild = false;
+				isChild = false
+				docFrag = document.createDocumentFragment();
 			id = id || this.currentId || "";
 			this.clearList();
 			// @Debug: Hack, 列出所有人员，临时使用
 			if(id === "c_0") {
 				for(var i = 0; i < data.length; i++) {
 					if(data[i].type === "user") {
-						this.$list.append(this._createListItem(data[i]));
+						docFrag.appendChild(this._createListItem(data[i])[0]);
 					}
 				}
+				this.$list.append(docFrag);
 				return this;
 			// @Hack: 常用联系人
 			} else if(id === "contact" && contact && contact.length) {
 				for(i = 0; i < data.length; i++) {
 					if($.inArray(data[i].id, contact) !== -1) {
-						this.$list.append(this._createListItem(data[i]));
+						docFrag.appendChild(this._createListItem(data[i])[0]);
 					}
 				}
+				this.$list.append(docFrag);
 				this.currentId = "contact";
 				return this;
 			}
@@ -478,9 +491,10 @@
 				if (isChild) {
 				// if (data[i][type] === id) {
 					var $item = this._createListItem(data[i]);
-					this.$list.append($item);
+					docFrag.appendChild($item[0]);
 				}
 			}
+			this.$list.append(docFrag);
 			return this;
 		},
 		/**
@@ -549,14 +563,14 @@
 			var itemTpl,
 				$item, 
 				$input;
-			itemTpl = '<li class="' + (data.online === '1' ? "online" : "offline") + '">' +
-						'<label class="checkbox ">' +
-							'<input type="checkbox" value="' + data.id + '"/>' +
-							'<img src="' + data.imgUrl + '" />' + 
-							'<span>' + data.text + '</span>' + 
-						'</label>'+
-					'</li>';
-			$item = $(itemTpl);
+			itemTpl = ['<li class="' , (data.online === '1' ? "online" : "offline") , '">' ,
+						'<label class="checkbox ">' ,
+							'<input type="checkbox" value="' , data.id , '"/>' ,
+							'<img src="' , data.imgUrl , '" />' , 
+							'<span>' , data.text , '</span>' , 
+						'</label>',
+					'</li>'];
+			$item = $(itemTpl.join(""));
 			$input = $item.find("input").label();
 			// 已经被选中时
 			if ($.inArray(data.id, this.values) !== -1) {
@@ -599,23 +613,29 @@
 		 */
 		addValue: function(val) {
 			// 若传入数组，则循环迭代
+			var that = this,
+				add_unit = function(value, flag){
+					// 如果 val 还未被增加 且 此前允许增加， 且推入values数组
+					if ($.inArray(value, that.values) === -1) {
+						// 验证是否超过选项最大长度，超过时替代最后一个值
+						if(!that.options.maximumSelectionSize || that.values.length < that.options.maximumSelectionSize){
+							that.values.push(value);
+							that._checkNode(value, true, flag);
+						}else{
+							that.values.splice(that.values.length - 1, 1, value);
+							that._checkNode(value, true, flag);
+							that.refreshList();
+						}
+					}
+				};
+
 			if ($.isArray(val)) {
 				for (var i = 0, len = val.length; i < len; i++) {
-					this.addValue(val[i])
+					add_unit(val[i], true);
 				}
+				$(this).trigger("slbchange", { id: val, checked: true, getAll: true });
 			} else {
-				// 如果 val 还未被增加 且 此前允许增加， 且推入values数组
-				if ($.inArray(val, this.values) === -1) {
-					// 验证是否超过选项最大长度，超过时替代最后一个值
-					if(!this.options.maximumSelectionSize || this.values.length < this.options.maximumSelectionSize){
-						this.values.push(val);
-						this._checkNode(val, true);
-					}else{
-						this.values.splice(this.values.length - 1, 1, val);
-						this._checkNode(val, true);
-						this.refreshList();
-					}
-				}
+				add_unit(val);
 			}
 			return this.values;
 		},
@@ -626,18 +646,24 @@
 		 * @return {Array}     已选中的值
 		 */
 		removeValue: function(val) {
-			var index;
+			var that = this,
+				remove_unit = function(value, flag){
+					var index;
+					index = $.inArray(value, that.values);
+					if (index !== -1) {
+						that.values.splice(index, 1);
+						that._checkNode(value, false, flag);
+					}
+				};
 			// 若传入数组，则循环迭代
 			if ($.isArray(val)) {
 				for (var i = 0, len = val.length; i < len; i++) {
-					this.removeValue(val[i])
+					remove_unit(val[i], true);
 				}
+				that.refreshList();
+				$(this).trigger("slbchange", { id: val, checked: false, getAll: true });
 			} else {
-				index = $.inArray(val, this.values);
-				if (index !== -1) {
-					this.values.splice(index, 1);
-					this._checkNode(val, false);
-				}
+				remove_unit(val);
 			}
 			return this.values;
 		},
@@ -748,7 +774,7 @@
 	UserSelect.hideAllBox = function(){
 		$(".select-box").hide();
 		$(".operate-btn.active .glyphicon-user").parent().removeClass("active");
-	}
+	}//
 
 	UserSelect.prototype = {
 		constructor: UserSelect,
@@ -800,7 +826,7 @@
 				lang = UserSelect.lang,
 				formatResult = function(data, $ct) {
 					var $results = that.$element.data().select2.results,
-						type = data.id.charAt(0), //类别，c => company, u => user, d => department, p => position;
+						type = data.id.charAt(0), //类别，c => company, u => user, d => department, p => position, r => role
 
 						hasBuildTip = $results.find(".select2-tip").length > 0,
 						tipTpl = '<li class="select2-tip">' + U.lang("US.INPUT_TIP") + '</li>',
@@ -815,10 +841,13 @@
 						departmentTpl = '<li class="select2-department">' + L.DEPARTMENT + '</li>',
 
 						hasBuildPosition = $results.find(".select2-position").length > 0,
-						positionTpl = '<li class="select2-position">' + U.lang("POSITION") + '</li>';
+						positionTpl = '<li class="select2-position">' + U.lang("POSITION") + '</li>',
+
+						hasBuildRole = $results.find(".select2-role").length > 0,
+						roleTpl = '<li class="select2-role">' + U.lang("ROLE") + '</li>';
 					// Tips
 					if (!hasBuildTip) {
-						$results.append(tipTpl)
+						$results.append(tipTpl);
 					}
 					// Company
 					if (!hasBuildCompany && type === "c") {
@@ -836,6 +865,10 @@
 					if (!hasBuildPosition && type === "p") {
 						$results.append(positionTpl);
 					}
+					// Role
+					if(!hasBuildRole && type == "r") {
+						$results.append(roleTpl);
+					}
 					return data.text
 				},
 				formatSelection = function(data, $ct) {
@@ -844,7 +877,8 @@
 							c: "company",
 							d: "department",
 							p: "position",
-							u: "user"
+							u: "user",
+							r: "role"
 						}
 					text = '<i class="select2-icon-' + typeMap[type] + '"></i>' + data.text;
 					return text
@@ -856,8 +890,9 @@
 					return U.lang("US.SELECTION_TO_BIG", { limit: limit});
 				},
 				initSelection = function(element, callback) {
-					var data = [];
-					$(element.val().split(",")).each(function() {
+					var data = [],
+						val = (element.val() || element.context.value).split(",");
+					$(val).each(function() {
 						// 将字符串对象转为原始类型
 						var id = this + "",
 							text = that._getText(id);
@@ -928,8 +963,8 @@
 					that.removeValue(evt.removed.id);
 				}
 			});
-			this.select = this.$element.data("select2")
-			this._initSelectOperate()
+			this.select = this.$element.data("select2");
+			this._initSelectOperate();
 		},
 
 		/**
@@ -953,12 +988,24 @@
 
 			$(this.selectBox).on("slbchange", function(evt, data){
 				if(data.checked) {
+					// checkall操作
+					if(data.getAll) {
+						that.values = that.selectBox.values;
+						that.select.val(that._fixEmptyArray(that.values));
+						return false;
+					}
 					that.addValue(data.id);
 				} else {
+					if(data.getAll) {
+						that.values = that.selectBox.values;
+						that.select.val(that._fixEmptyArray(that.values));
+						return false;
+					}
 					that.removeValue(data.id);
 				}
-			})
+			});
 
+			//this.refreshSelectBox();
 			this.selectBox.hide();
 			return this;
 		},
@@ -1066,25 +1113,28 @@
 		 * @return {Object} 当前调用对象
 		 */
 		refreshSelectBox: function(id, toCheck, slient) {
+			var that = this,
+				refresh_unit = function(u_id, u_toCheck, u_slient){
+					that.selectBox.values = that.values;
+					// 传入ID时, 更新左侧对应选择框选中状态
+					if (!u_id) {
+						that.selectBox.refreshCheckbox();
+					} else {
+						that.selectBox._checkNode(u_id, u_toCheck, u_slient);
+					}
+					// 更新右边列表
+					that.selectBox.refreshList();
+				};
+
 			if(this.selectBox){
 				toCheck = typeof toCheck === "undefined" ? true : toCheck;
 				// 若为数组，则迭代
 				if ($.isArray(id)) {
 					for (var i = 0, len = id.length; i < len; i++) {
-						this.refreshSelectBox(id[i], toCheck, slient);
+						refresh_unit(id[i], toCheck, slient);
 					}
 				} else {
-					if (this.selectBox) {
-						this.selectBox.values = this.values;
-						// 传入ID时, 更新左侧对应选择框选中状态
-						if (!id) {
-							this.selectBox.refreshCheckbox();
-						} else {
-							this.selectBox._checkNode(id, toCheck, slient);
-						}
-						// 更新右边列表
-						this.selectBox.refreshList();
-					}
+					refresh_unit(id, toCheck, slient);
 				}
 			}
 		},
@@ -1193,6 +1243,7 @@
 		 * 添加要选中的值
 		 * @method addValue
 		 * @param  {String||Array} val  一个或一组要选中的值
+		 * @param  {Boolean} flag		判断是否checkbox触发，避免二次重绘
 		 * @return {Array}              已选中的值
 		 */
 		addValue: function(val, slient) {
@@ -1201,7 +1252,7 @@
 					val = [val];
 				}
 				this.values = this._mergeArray(this.values, val);
-				this.refreshSelectBox(val, true, true)
+				this.refreshSelectBox(val, true, true);
 				this.select.val(this._fixEmptyArray(this.values));
 				if(!slient){
 					this.$element.trigger("uschange", { added: val, val: this.values })
@@ -1220,8 +1271,8 @@
 				if (!$.isArray(val)) {
 					val = [val];
 				}
-				this._resolveArray(this.values, val)
-				this.refreshSelectBox(val, false, true)
+				this._resolveArray(this.values, val);
+				this.refreshSelectBox(val, false, true);
 				this.select.val(this._fixEmptyArray(this.values));
 				if(!slient) {
 					this.$element.trigger("uschange", { removed: val, val: this.values })
@@ -1295,7 +1346,5 @@
 		clearable: true
 	}
 
-	$(document).on("mousedown.userselect.hideall", function(){
-		UserSelect.hideAllBox();
-	});
+	$(document).on("mousedown.userselect.hideall", UserSelect.hideAllBox);
 })();

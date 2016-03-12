@@ -3,6 +3,9 @@
 namespace application\core\cache\driver;
 
 use application\core\components\Cache;
+use application\core\utils\IBOS;
+use application\core\utils\String;
+use CException;
 
 /**
  * Sqlite缓存驱动
@@ -45,7 +48,7 @@ class Sqlite extends Cache {
                 //启用数据压缩
                 $content = gzuncompress( $content );
             }
-            return unserialize( $content );
+            return String::utf8Unserialize( $content );
         }
         return false;
     }

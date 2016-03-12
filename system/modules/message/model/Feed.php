@@ -7,6 +7,7 @@ use application\core\model\Model;
 use application\core\model\Source;
 use application\core\utils as util;
 use application\core\utils\IBOS;
+use application\core\utils\String;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use application\modules\weibo\core as WbCore;
@@ -414,7 +415,7 @@ class Feed extends Model {
 				->leftJoin( '{{feed_data}} b', 'a.feedid = b.feedid' )
 				->where( 'a.feedid = ' . $id )
 				->queryRow();
-		$fd = unserialize( $data['feeddata'] );
+        $fd = String::utf8Unserialize( $data['feeddata'] );
 
 		$userInfo = User::model()->fetchByUid( $data['uid'] );
 		$data['ctime'] = util\Convert::formatDate( $data['ctime'], 'n月d日H:i' );
@@ -803,7 +804,7 @@ class Feed extends Model {
 		// 获取作者信息
 		$user = User::model()->fetchByUid( $_data['uid'] );
 		// 处理数据
-        $_data['data'] = @unserialize( $_data['feeddata'] );
+        $_data['data'] = String::utf8Unserialize( $_data['feeddata'] );
 		// 模版变量赋值
         $var = isset( $_data['data'] ) ? $_data['data'] : array();
 		if ( !empty( $var['attach_id'] ) ) {
@@ -1008,7 +1009,7 @@ class Feed extends Model {
 		$feedDataInfo = util\Convert::getSubByKey( $feeddata, 'feeddata' );
 		$attachIds = array();
 		foreach ( $feedDataInfo as $value ) {
-			$value = unserialize( $value );
+            $value = String::utf8Unserialize( $value );
 			if ( !empty( $value['attach_id'] ) ) {
 				$aids = is_array( $value['attach_id'] ) ? $value['attach_id'] : explode( ',', $value['attach_id'] );
 				$attachIds = array_merge( $attachIds, $aids );

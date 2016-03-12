@@ -5,6 +5,7 @@ namespace application\modules\email\controllers;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS; 
+use application\core\utils\String;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\utils\Email as EmailUtil;
@@ -63,16 +64,23 @@ class FolderController extends BaseController {
 		$sort = Env::getRequest( 'sort' );
 		$name = Env::getRequest( 'name' );
 		if ( !empty( $name ) ) {
-            $name = htmlspecialchars($name);
+            //添加对文件夹名name的xss安全过滤
+            String::ihtmlSpecialCharsUseReference($name);
 			$data = array(
 				'sort' => intval( $sort ),
 				'name' => $name,
 				'uid' => $this->uid
 			);
 			$newId = EmailFolder::model()->add( $data, true );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'fid' => $newId ) );
+            $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'fid' => $newId,
+                'sort' => intval($sort),
+                'name' => $name,));
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'errorMsg' => IBOS::lang( 'Save failed', 'message' ) ) );
+            $this->ajaxReturn(array(
+                'isSuccess' => false,
+                'msg' => IBOS::lang('Save failed', 'message')));
 		}
 	}
 
@@ -84,10 +92,16 @@ class FolderController extends BaseController {
 		$sort = Env::getRequest( 'sort' );
 		$name = Env::getRequest( 'name' );
 		if ( !empty( $name ) ) {
+            String::ihtmlSpecialCharsUseReference($name);
 			EmailFolder::model()->modify( $fid, array( 'sort' => intval( $sort ), 'name' => $name ) );
-			$this->ajaxReturn( array( 'isSuccess' => true ) );
+            $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'sort' => intval($sort),
+                'name' => $name,));
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'errorMsg' => IBOS::lang( 'Save failed', 'message' ) ) );
+            $this->ajaxReturn(array(
+                'isSuccess' => false,
+                'msg' => IBOS::lang('Save failed', 'message')));
 		}
 	}
 

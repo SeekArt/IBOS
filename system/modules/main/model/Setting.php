@@ -17,9 +17,15 @@
 namespace application\modules\main\model;
 
 use application\core\model\Model;
+use application\core\utils\Cache as CacheUtil;
+use application\core\utils\String;
 
 class Setting extends Model {
 
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 	public static function model( $className = __CLASS__ ) {
 		return parent::model( $className );
 	}
@@ -28,6 +34,11 @@ class Setting extends Model {
 		return '{{setting}}';
 	}
 
+    public function afterSave() {
+        CacheUtil::update('Setting');
+        CacheUtil::load('Setting');
+        parent::afterSave();
+    }
 	/**
 	 * 根据skey获取对应的设置值
 	 * @param string $sKey
@@ -47,14 +58,26 @@ class Setting extends Model {
 	 * @param string $sKeys 逗号分隔的key
 	 * @return array
 	 */
-	public function fetchSettingValueByKeys( $sKeys, $autoUnserialize = false ) {
+    public function fetchSettingValueByKeys($sKeys, $autoUnserialize = false, $scope = array()) {
 		$return = array();
 		$record = $this->fetchAll( "FIND_IN_SET(skey,'{$sKeys}')" );
 		if ( !empty( $record ) ) {
 			foreach ( $record as $value ) {
-				$return[$value['skey']] = $autoUnserialize ? (array) unserialize( $value['svalue'] ) : $value['svalue'];
+                if ($autoUnserialize) {
+                    if (!empty($scope)) {
+                        if (in_array($value['skey'], $scope)) {
+                            $return[$value['skey']] = String::utf8Unserialize($value['svalue']);
+                        } else {
+                            $return[$value['skey']] = $value['svalue'];
 			}
+                    } else {
+                        $return[$value['skey']] = String::utf8Unserialize($value['svalue']);
 		}
+                } else {
+                    $return[$value['skey']] = $value['svalue'];
+                }
+            }
+        }
 		return $return;
 	}
 
@@ -80,8 +103,8 @@ class Setting extends Model {
 		$records = $this->findAll();
 		foreach ( $records as $record ) {
 			$value = $record->attributes;
-			$isSerialized = ($value['svalue'] == serialize( false ) || @unserialize( $value['svalue'] ) !== false);
-			$setting[$value['skey']] = $isSerialized ? unserialize( $value['svalue'] ) : $value['svalue'];
+            $isSerialized = ($value['svalue'] == serialize(false) || String::utf8Unserialize($value['svalue']) !== false);
+            $setting[$value['skey']] = $isSerialized ? String::utf8Unserialize($value['svalue']) : $value['svalue'];
 		}
 		return $setting;
 	}
@@ -91,10 +114,15 @@ class Setting extends Model {
 	 */
 	public function SetIbosCloudIsOpen( $isOpen ) {
 		$ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
-		$ibosCloudArr = unserialize( $ibosCloud );
+        $ibosCloudArr = String::utf8Unserialize($ibosCloud);
 		$ibosCloudArr['isopen'] = $isOpen;
 		$str = serialize( $ibosCloudArr );
 		$this->updateSettingValueByKey( 'iboscloud', $str );
 	}
 
+    public function getIbosCloudIsOpen() {
+        $ibosCloud = $this->fetchSettingValueByKey('iboscloud');
+        $ibosCloudArray = String::utf8Unserialize($ibosCloud);
+        return $ibosCloudArray['isopen'] ? true : false;
+    }
 }

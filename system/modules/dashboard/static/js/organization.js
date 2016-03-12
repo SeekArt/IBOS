@@ -125,11 +125,11 @@ var Organization = {
 (function(){
 
 	var tip = {
-		'0': U.lang("ORG.POWERLESS"),
-		'1': U.lang("ORG.ME"),
-		'2': U.lang("ORG.AND_SUBORDINATE"),
-		'4': U.lang("ORG.CURRENT_BRANCH"),
-		'8': U.lang("ORG.ALL")
+		'0': Ibos.l("ORG.POWERLESS"),
+		'1': Ibos.l("ORG.ME"),
+		'2': Ibos.l("ORG.AND_SUBORDINATE"),
+		'4': Ibos.l("ORG.CURRENT_BRANCH"),
+		'8': Ibos.l("ORG.ALL")
 	}
 	$(function(){
 		$("[data-toggle='privilegeLevel']").each(function(){
@@ -148,7 +148,14 @@ var Organization = {
 				var insTooltip = $.data(this, "tooltip");
 				insTooltip.options.title = tip[$elem.val()];
 				insTooltip.show();
-				$(this).closest("label").find('[data-node="funcCheckbox"]').prop("checked", true).trigger("change");
+				
+				var aInput = $(this).siblings("input"),
+					bChecked = true;
+				if( (aInput[0].value == 0) && (aInput[1].value == 0) ){
+					bChecked = false;
+				}
+				$(this).closest("ul").find('[data-node="funcCheckbox"]:last').prop("checked", bChecked).trigger("change");
+
 			});
 		});
 	});

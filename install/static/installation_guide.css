@@ -64,10 +64,11 @@ body{
 	background-image:url(guide_failure.png);
 }
 .o-install-success{
-	margin:20px 20px 20px 0px;
-	width:300px;
-	height:300px;
-	background-image:url(guide_success.png);
+	position: relative;
+	top: -3px;
+	width: 20px;
+	height: 20px;
+	background-image:url(installation.png);
 }
 .o-warm-tip,
 .o-normal-tip,
@@ -516,4 +517,26 @@ body{
 }
 .relation-code{
 	margin-bottom: 100px;
+}
+
+.content-header{
+	width: 100%;
+	height: 70px;
+	color: #7BBF00;
+	background-color: #FCFFF7;
+	border-bottom: 1px solid #EBEFF6;
+}
+.install-success{
+	height: 20px;
+	margin: 25px 30px;
+	float: left;
+	font-size: 20px;
+}
+.install-login{
+	margin: 10px 30px;
+}
+.binding-mc{
+	width: 100%;
+	height: 660px;
+	overflow: hidden;
 }

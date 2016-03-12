@@ -18,13 +18,16 @@
 namespace application\modules\position\model;
 
 use application\core\model\Model;
-use application\core\utils\Cache;
+use application\core\utils\Cache as CacheUtil;
 use application\core\utils\String;
 use application\modules\position\utils\Position as PositionUtil;
 
 class Position extends Model {
 
-    protected $allowCache = true;
+    public function init() {
+        $this->cacheLife = 0;
+        parent::init();
+    }
 
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
@@ -39,8 +42,8 @@ class Position extends Model {
      * @return void 
      */
     public function afterSave() {
-        Cache::update( 'position' );
-        Cache::load( 'position' );
+        CacheUtil::update( 'position' );
+        CacheUtil::load( 'position' );
         parent::afterSave();
     }
 
@@ -49,8 +52,8 @@ class Position extends Model {
      * @return void 
      */
     public function afterDelete() {
-        Cache::update( 'position' );
-        Cache::load( 'position' );
+        CacheUtil::update( 'position' );
+        CacheUtil::load( 'position' );
         parent::afterDelete();
     }
 
@@ -96,4 +99,17 @@ class Position extends Model {
         return implode( $glue, $name );
     }
 
+    /**
+     * 根据用户 uid 获取对应的职位名称
+     * @param  integer $uid 用户 uid
+     * @return string      职位名，不存在返回空字符串
+     */
+    public function fetchPosNameByUid( $uid ) {
+        $posid = PositionRelated::model()->fetchAllPositionIdByUid( $uid );
+        $position = $this->fetchByPk( $posid );
+        if ( empty( $position ) ) {
+            return '';
+        }
+        return $position['posname'];
+    }
 }

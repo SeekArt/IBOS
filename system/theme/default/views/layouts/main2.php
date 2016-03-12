@@ -14,7 +14,8 @@ use application\modules\user\utils\User;
 <html lang="en">
 <![endif]-->
 	<head>
-        <meta http-equiv="X-UA-Compatible" content="edge" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="renderer" content="webkit"/>
         <meta charset=<?php echo CHARSET; ?> />
         <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico?<?php echo VERHASH; ?>">
@@ -234,7 +235,7 @@ use application\modules\user\utils\User;
 					<div class="quick-link">
 						<a target="_blank" href="http://doc.ibos.com.cn/"><?php echo IBOS::lang( 'Ibos help', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a target="_blank" href="http://bbs.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
+						<a target="_blank" href="http://kf.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
 						<span class="ilsep">|</span>
 						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>

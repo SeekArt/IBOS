@@ -234,7 +234,7 @@ var OfficialIndex = {
 
                 OfficialIndex.op.verifyDoc(param).done(function(res){
                     var hasTrue = res.isSuccess === true;
-		            Ui.tip( res.info, (hasTrue ? "" : "warning") );
+		            Ui.tip( res.msg, (hasTrue ? "" : "warning") );
 		            hasTrue && window.location.reload();
     		    });
     		}else{

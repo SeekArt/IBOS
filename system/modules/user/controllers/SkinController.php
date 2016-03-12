@@ -10,10 +10,11 @@ namespace application\modules\user\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
+use application\core\utils\IBOS;
 use application\core\utils\String;
-use application\modules\user\utils\User as UserUtil;
-use application\modules\user\model\BgTemplate;
 use application\extensions\ThinkImage\ThinkImage;
+use application\modules\user\model\BgTemplate;
+use application\modules\user\utils\User as UserUtil;
 
 class SkinController extends HomeBaseController {
 

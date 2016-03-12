@@ -400,7 +400,7 @@ class UnfinishedController extends BaseController {
 				AssignmentRemind::model()->deleteAll( "assignmentid = {$assignmentId} AND uid = {$uid}" );
 				if ( !empty( $remindTime ) ) {
 					$remindTime = strtotime( $remindTime );
-					$remindContent = Env::getRequest( 'remindContent' );
+					$remindContent = \CHtml::encode( Env::getRequest( 'remindContent' ) );
 					$calendar = array(
 						'subject' => $remindContent,
 						'starttime' => $remindTime,

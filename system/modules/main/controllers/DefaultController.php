@@ -133,7 +133,7 @@ class DefaultController extends Controller {
 
 	public function actionGuide() {
 		$operation = Env::getRequest( 'op' );
-		if ( !in_array( $operation, array( 'guideNextTime', 'checkIsGuided', 'companyInit', 'addUser', 'modifyPassword', 'modifyProfile', 'uploadAvatar' ) ) ) {
+        if ( !in_array( $operation, array( 'neverGuideAgain', 'checkIsGuided', 'companyInit', 'addUser', 'modifyPassword', 'modifyProfile', 'uploadAvatar' ) ) ) {
 			$res['isSuccess'] = false;
 			$res['msg'] = IBOS::lang( 'Parameters error', 'error' );
 			$this->ajaxReturn( $res );
@@ -142,13 +142,13 @@ class DefaultController extends Controller {
 		}
 	}
 
-	/**
-	 * 下次再填，加个cookie
-	 */
-	private function guideNextTime() {
-		$uid = IBOS::app()->user->uid;
-		Main::setCookie( 'guideNextTime', md5( $uid ) );
-	}
+    /**
+     * 不再提醒
+     */
+    private function neverGuideAgain() {
+        $uid = IBOS::app()->user->uid;
+        User::model()->modify( $uid, array( 'newcomer' => 0 ) );
+    }
 
 	/**
 	 * 检查用户是否引导过
@@ -166,7 +166,7 @@ class DefaultController extends Controller {
 				if ( $uid == 1 ) {
 					// 如果是管理员,返回管理员的初始化引导视图
 					$guideAlias = 'application.modules.main.views.default.adminGuide';
-					$unit = unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+                    $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 					$data['fullname'] = $unit['fullname'];
 					$data['shortname'] = $unit['shortname'];
 					$data['pageUrl'] = $this->getPageUrl();
@@ -176,7 +176,7 @@ class DefaultController extends Controller {
 					// 返回一般用户的初始化引导视图
 					$guideAlias = 'application.modules.main.views.default.initGuide';
 				}
-				$account = unserialize( Setting::model()->fetchSettingValueByKey( 'account' ) );
+                $account = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'account' ) );
 				$data['account'] = $account;
 				if ( $account['mixed'] ) {
 					$data['preg'] = "[0-9]+[A-Za-z]+|[A-Za-z]+[0-9]+";
@@ -199,11 +199,11 @@ class DefaultController extends Controller {
 			// 添加公司资料
 			$postData = array();
 			$keys = array(
-				'phone', 'fullname',
+                'logourl', 'phone', 'fullname',
 				'shortname', 'fax', 'zipcode',
 				'address', 'adminemail', 'systemurl', 'corpcode'
 			);
-			$unit = unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+            $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 			foreach ( $keys as $key ) {
 				if ( isset( $_POST[$key] ) ) {
 					$postData[$key] = String::filterCleanHtml( $_POST[$key] );
@@ -268,7 +268,7 @@ class DefaultController extends Controller {
 					$dept['pid'] = 0;
 					$newId = Department::model()->add( $dept, true );
 					if ( $newId ) {
-						Department::model()->modify( $newId, array( 'sort' => $newId ) );
+                        Department::model()->modify( $newId, array( 'sort' => $newId ), '', array(), false );
 					}
 				} else { // 否则有空格，则需要查找刚才添加的父级部门
 					$accordItem = array();
@@ -293,7 +293,7 @@ class DefaultController extends Controller {
 						$dept['pid'] = $upDept['deptid'];
 						$newId = Department::model()->add( $dept, true );
 						if ( $newId ) {
-							Department::model()->modify( $newId, array( 'sort' => $newId ) );
+                            Department::model()->modify( $newId, array( 'sort' => $newId ), '', array(), false );
 						}
 					}
 				}

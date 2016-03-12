@@ -280,12 +280,13 @@ var U = Ibos.Util = (function(){
 	 * @method clearCookie
 	 * @return {[type]} [description]
 	 */
-	U.clearCookie = function(){
+	U.clearCookie = function(path){
+        var str = path ? 'path='+ path + ';' : '';
 		var reg = /[^ =;]+(?=\=)/g,
 			keys = document.cookie.match(reg);
 		if(keys) {
 			for(var i = keys.length; i--;){
-				document.cookie=keys[i]+'=0;expires=' + new Date(0).toUTCString();
+				document.cookie=keys[i]+'=0;' + str + 'expires=' + new Date(0).toUTCString();
 			}
 		}
 	}
@@ -921,10 +922,10 @@ Ibos.Event = function($ctx, type, flag){
 	flag = flag || type;
 
 	$ctx = $ctx && $ctx.length ? $ctx : $(document);
-	$ctx.on(type, "[data-" + flag + "]", function(){
+	$ctx.on(type, "[data-" + flag + "]", function(evt){
 		var evtName = $.attr(this, "data-" + flag),
 			params = Ibos.app.getEvtParams(this);
-		that.fire(evtName, params, $(this));
+		that.fire(evtName, params, $(this), evt);
 	})
 	this._evts = {};
 }
@@ -948,9 +949,9 @@ Ibos.Event.prototype = {
 		delete this._evts[name];
 	},
 
-	fire: function(name, params, $elem){
+	fire: function(name, params, $elem, evt){
 		if(this.has(name)){
-			this._evts[name].call(this._evts.click, params, $elem);
+			this._evts[name].call(this._evts.click, params, $elem, evt);
 		}
 	}
 }
@@ -2770,8 +2771,8 @@ Ibos.core = {
 		 		"blur": function(){
 		 			var val = $(this).val();
 		 			if($.trim(val) === "") {
-		 				toconf = true;
 		 				setTimeout(function(){
+		 					if(onconf){ toconf = true; }
 		 					$cont.removeClass("has-focus");
 		 				}, 200)
 		 			}
@@ -2996,6 +2997,7 @@ $.fn.ajaxPopover = function(url, reload, options){
 		var $current = $(this),
 			defaultContent = "loading...",
 			isLoad = false,
+			// isShow = true,
 			opts = $.extend({
 				content: defaultContent,
 				placement: "bottom",
@@ -3005,6 +3007,7 @@ $.fn.ajaxPopover = function(url, reload, options){
 		$current.popover(opts)
 		.on("show", function(){
 			var popoverData = $current.data("popover");
+			// isShow = true;
 			if(!isLoad){
 				$.when(
 					$.get(url, function(result){
@@ -3023,6 +3026,22 @@ $.fn.ajaxPopover = function(url, reload, options){
 				});
 			}
 		})
+		// .on('hide', function(){
+		// 	isShow = false;
+		// })
+
+		// $(document).on('mousedown.popoverhide', function(){
+		// 	var popoverData = $current.data("popover");
+		// 	if(popoverData && isShow){
+		// 		popoverData.hide();
+		// 		isShow = false;
+		// 	}
+		// });
+
+		// $('[data-node-type]').on('click', function(evt){
+		// 	evt.stopPropagation();
+		// 	evt.preventDefault();
+		// })
 
 	})
 };

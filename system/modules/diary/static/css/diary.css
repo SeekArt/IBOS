@@ -499,8 +499,8 @@
 	color:#82939e;
 }
 /* 列表页评阅人员 */
-.da-reviews-avatar{ width: 600px; margin-top: -10px; margin-left: -10px; }
-.da-reviews-avatar a{ display: inline-block; margin-top: 10px; margin-left: 10px;}
+.da-reviews-avatar{ width: 276px; }
+.da-reviews-avatar a{ display: inline-block; }
 .da-reviews-count{ float: right; margin-top: 15px; color: #82939E; }
 .da-reviews-count strong{ font-size: 24px; font-weight: 400;}
 

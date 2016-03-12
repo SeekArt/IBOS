@@ -98,6 +98,7 @@ return array(
         'basePerPage' => 10,
         // 等待跳转时间
         'timeout' => 3,
+        'incentiveword' => false,
     ),
     'preload' => array(
         'db', 'cache', 'log'

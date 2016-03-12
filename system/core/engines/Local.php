@@ -26,7 +26,7 @@ class Local extends Engine {
 
     /**
      * 本地引擎初始化配置方法
-     * @param array $appConfig 程序配置
+     * @param array $appConfig 程序配置 
      * @param array $mainConfig 安装配置
      * @return array 处理后的配置
      */

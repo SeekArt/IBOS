@@ -2,6 +2,9 @@
 	background: #F6F7F9 url(../../image/bg_white.jpg) fixed repeat-x center 0;
 	padding-top: 60px;
 }
+.logo h1{
+	color: #000;
+}
 .header{
 	background-color: #fff;
 	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);

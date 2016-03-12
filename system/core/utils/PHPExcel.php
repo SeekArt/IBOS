@@ -64,16 +64,18 @@ class PHPExcel {
 	 * @param type $header  是否带有头信息（默认带有头信息）
 	 * @return array
 	 */
-	public static function excelToArray( $filePath, $header = true ) {
+    public static function excelToArray($filePath, $except = array(0)) {
 		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
 		$fileType = \PHPExcel_IOFactory::identify( $filePath ); //文件名自动判断文件类型
 		$objReader = \PHPExcel_IOFactory::createReader( $fileType );
 		$objPHPExcel = $objReader->load( $filePath );
 		$sheet = $objPHPExcel->getActiveSheet(); //活动工作簿
 		$data = $sheet->ToArray(); //直接转换成数组，带有头信息
-		if ( $header === true ) {
-			unset($data[0]); //去掉头信息
-		}
+        if (false !== $except) {
+            foreach ($except as $line) {
+                unset($data[$line]);
+            }
+        }
 		return $data;
 	}
 

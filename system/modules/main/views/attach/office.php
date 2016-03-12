@@ -5,7 +5,7 @@ use application\core\utils\IBOS;
 <html lang="en">
 	<head>
 		<meta charset="<?php echo CHARSET; ?>">
-		<title><?php echo ($param['op'] == 'edit' ? $lang['Online edit'] : $lang['Online read']) . $fileName; ?></title>
+		<title><?php echo ($param['op'] == 'edit' ? $lang['Online edit'] : $lang['Online read']) .'--'. $fileName; ?></title>
 		<link href="<?php echo STATICURL; ?>/css/base.css?<?php echo VERHASH; ?>" type="text/css" rel="stylesheet" />
 		<link href="<?php echo STATICURL; ?>/css/common.css?<?php echo VERHASH; ?>" type="text/css" rel="stylesheet" />
 		<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/artDialog/skins/ibos.css?<?php echo VERHASH; ?>" />
@@ -32,8 +32,8 @@ use application\core\utils\IBOS;
 											<button type="button" data-action="showLog" class="btn fun-small-btn mbs disabled"><?php echo $lang['Operation log']; //操作日志 @banyan 暂时没有做这个功能   ?></button>
 										</div>
 									<?php endif; ?>
-									<?php if ( $typeId !== '5' ): //如果文档类型不为PPT ?>
-										<?php if ( $param['op'] == 'edit' && $typeId !== '4' ): ?>
+									<?php if ( $typeId != '5' ): //如果文档类型不为PPT ?>
+										<?php if ( $param['op'] == 'edit' && $typeId != '4' ): ?>
 											<div class="mb">
 												<div class="mb ovh posr">
 													<span class="fun-title"><?php echo $lang['File edit']; //文件编辑                          ?></span>
@@ -42,7 +42,7 @@ use application\core\utils\IBOS;
 												<div class="clearfix">
 													<div class="pull-right">
 														<label class="checkbox checkbox-inline">
-															<input data-action="setMarkModify" type="checkbox" class="ml">
+															<input data-action="setMarkModify" checked type="checkbox" class="ml">
 														</label>
 													</div>
 													<div class="pull-left choose-tip">
@@ -52,7 +52,7 @@ use application\core\utils\IBOS;
 												<div class="clearfix">
 													<div class="pull-right">
 														<label class="checkbox checkbox-inline">
-															<input data-action="showRevisions" type="checkbox" class="ml">
+															<input data-action="showRevisions" checked type="checkbox" class="ml">
 														</label>
 													</div>
 													<div class="pull-left choose-tip">
@@ -130,12 +130,12 @@ use application\core\utils\IBOS;
 				<input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" />
 			</form>
 		</div>
-		<script src="<?php echo STATICURL; ?>/js/src/core.js?<?php echo VERHASH; ?>"></script>
-		<script src="<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>"></script>
-		<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
-		<script src="<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo STATICURL; ?>/js/src/core.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>"></script>
+<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
+<script src="<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
-		<script src="<?php echo $assetUrl; ?>/js/main_attach_office.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/main_attach_office.js?<?php echo VERHASH; ?>"></script>
 		<script>
 			$(document).ready(function() {
 				var height = $(window).height()-9;
@@ -154,10 +154,7 @@ use application\core\utils\IBOS;
 				staticurl: '<?php echo STATICURL; ?>/office/'
 			};
 			var OCX = new OCX(settings);
-<?php if ( $param['op'] == 'edit' && $typeId == '3' ): ?>
-				OCX.setMarkModify(true);
-				OCX.showRevisions(true);
-<?php endif; ?>
+
 			$(window).on("unload", function() {
 				OCX.settings.obj.setAttribute('IsNoCopy', false);
 				if (OCX.settings.op == 'edit') {

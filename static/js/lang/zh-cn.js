@@ -53,6 +53,7 @@ var L = {
     STAFF: "人员",
     DEPARTMENT: "部门",
     POSITION: "职位",
+    ROLE: "角色",
     COMPANY: "公司",
     SETTING: "设置",
     ADVANCED_SETTING: "高级设置",
@@ -161,7 +162,8 @@ var L = {
         MESSAGE: "条新消息",
         MEETING:"条会议管理消息",
         CAR: "条车辆管理消息",
-        ASSETS:"条资产管理消息"
+        ASSETS:"条资产管理消息",
+        UNREAD_NOTIFY:"条未读通知"
     },
     CNUM: {
         ONE: "一",
@@ -223,6 +225,7 @@ var L = {
         CONTACT: "常用联系人",
         PER_DEPARTMENT: "按部门",
         PER_POSITION: "按岗位",
+        PER_ROLE: "按角色",
         SELECT_ALL: "选择全部",
         INPUT_TIP: "请输入部门或同事的名称或拼音",
         NO_MATCH: "没有查询结果",

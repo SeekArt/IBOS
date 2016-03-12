@@ -14,8 +14,8 @@ class CommentController extends Controller {
 	 */
 	public function actionGetCommentList() {
 		if ( Env::submitCheck( 'formhash' ) ) {
-			$module = String::filterCleanHtml( $_POST['module'] );
-			$table = String::filterCleanHtml( $_POST['table'] );
+			$module = \CHtml::encode( $_POST['module'] );
+			$table = \CHtml::encode( $_POST['table'] );
 			$limit = Env::getRequest( 'limit' ); //每页条数
 			$offset = Env::getRequest( 'offset' ); //偏移
 			$rowid = intval( $_POST['rowid'] );

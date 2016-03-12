@@ -19,7 +19,7 @@
 			<thead>
 				<tr>
 					<th>宏标记</th>
-					<th width="60">编号</th>
+					<th width="60">流程步骤</th>
 					<th width="120">格式</th>
 					<th width="120">类型</th>
 					<th width="60">操作</th>
@@ -67,7 +67,22 @@
 						<input type="text" name="number" class="input-small">
 					</td>
 					<td>
-						<input type="text" name="format" data-toggle="popover" class="input-small" title="格式表达式说明: &#13; {C}：表示意见内容 &#13; {Y}：表示年 &#13; {M}：表示月 &#13; {D}：表示日 &#13; {H}：表示时 &#13; {I}：表示分 &#13; {S}：表示秒 &#13; {U}：表示用户姓名 &#13; {P}：表示角色 &#13; {S}：表示步骤名称 &#13; {SD}：表示短部门 &#13; {LD}：表示长部门 &#13; {SH}：表示手写签章 &#13; 例如：&#13;{C} {U} {Y}{M}{D} 则显示样式为：xxxx 张三 20090202"
+						<input type="text" name="format" data-toggle="popover" class="input-small" title="格式表达式说明: &#13;
+                               {C}：表示意见内容 &#13;
+                               {Y}：表示年 &#13;
+                               {M}：表示月 &#13;
+                               {D}：表示日 &#13;
+                               {H}：表示时 &#13;
+                               {I}：表示分 &#13;
+                               {S}：表示秒 &#13;
+                               {PRCS}:表示步骤号 &#13;
+                               {U}：表示用户姓名 &#13;
+                               {MD}:表示主部门 &#13;
+                               {AD}:表示所有部门，将用逗号分割 &#13;
+                               {P}：表示岗位 &#13;
+                               {R}：表示角色 &#13;
+                               {SH}：表示手写签章 &#13;
+                               例如：&#13;{C} {U} {Y}{M}{D} 则显示样式为：xxxx 张三 20090202"
 						>
 					</td>
 					<td>
@@ -121,7 +136,7 @@
 
 					UE.utils.each(inputs, function(input){
 						data[input.name] = input.value;
-					})
+					});
 
 					return data;
 				},
@@ -133,40 +148,34 @@
 
 					UE.utils.each(inputs, function(input){
 						input.value = "";
-					})
+					});
+				},
+				dataProcess: function( value ){
+					var data = this.getRowData(value);
+					if(!data.number) {
+						alert("步骤编号不能为空");
+						return false;
+					}
+					if(!/^\d{1,}$/.test(data.number)) {
+						alert("步骤编号必须是一个有效的数字");
+						return false;
+					}
+					return data;
 				},
 				getResult: function(value){
+					var _this = this;
 					// 特殊字段集
 					var special = {
 						'macro_sign': function(value){
-							var data = this.getRowData(value);
-							if(data.number && isNaN(Number(data.number))) {
-								alert("步骤编号必须是一个有效的数字");
-								return false;
-							}
-							return data;
+							return _this.dataProcess(value);
 						},
 						'macro_attach': function(value){
-							var data = this.getRowData(value);
-							if(data.number && isNaN(Number(data.number))) {
-								alert("步骤编号必须是一个有效的数字");
-								return false;
-							}
-							return data;
+							return _this.dataProcess(value);
 						},
 						'macro_timeout': function(value){
-							var data = this.getRowData(value);
-							if(!data.number) {
-								alert("步骤编号不能为空");
-								return false;
-							}
-							if(isNaN(Number(data.number))){
-								alert("步骤编号必须是一个有效的数字");
-								return false
-							}
-							return data;
+							return _this.dataProcess(value);
 						}
-					}
+					};
 					var data = {
 						value: value,
 						number: "",
@@ -183,16 +192,16 @@
 						UE.utils.extend(data, res);
 					}
 
-					return "#[" + data.value + data.number + data.type + "]" + (data.format ? "[" + data.format + "]" : "");
+					return "#[" + data.value + data.number + data.type + "]" + (data.format ? "[" + data.format + "]" : "[]");
 				},
 				add: function(value){
 					var res = this.getResult(value);
 					if(res) {
 						editor.execCommand("insertHtml", res);
-						// this.resetRow(value);
+						this.resetRow(value);
 					}
 				}
-			}
+			};
 
 			UE.dom.domUtils.on(marcoTable, "click", function(evt){
 				var target = evt.target,

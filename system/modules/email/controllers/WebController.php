@@ -6,6 +6,7 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
 use application\core\utils\String;
+use application\modules\email\core\WebEmail;
 use application\modules\email\core\WebMailImap;
 use application\modules\email\core\WebMailPop;
 use application\modules\email\model\EmailFolder;
@@ -14,7 +15,6 @@ use application\modules\email\utils\EmailMime;
 use application\modules\email\utils\RyosImap;
 use application\modules\email\utils\WebMail;
 use application\modules\user\model\User;
-use application\modules\email\core\WebEmail;
 
 class WebController extends BaseController {
 
@@ -58,7 +58,7 @@ class WebController extends BaseController {
                 foreach ($emails as $email) {
                     //根据时间戳来判断是那一封邮件的附件
                     if ($query['sendtime'] == strtotime($email['date'])) {
-                        $remote = unserialize($query['remoteattachment']);
+                        $remote = String::utf8Unserialize( $query['remoteattachment'] );
                         if ($remote[$i - 1]['name'] == $email['attachments'][$i - 1]['name']) {
                             //下载
                             $attach = $webEmail->getAttachment($email['uid'], $i - 1);

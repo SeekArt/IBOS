@@ -17,11 +17,11 @@
 namespace application\modules\main\widgets;
 
 use application\core\utils\Attach;
+use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\Xml;
-use application\core\utils\Env;
 use CWidget;
 
 class Office extends CWidget {
@@ -222,7 +222,7 @@ class Office extends CWidget {
             $return['timestamp'] = intval( $param[2] );
         }
         if ( isset( $param[3] ) ) {
-            $ext = unserialize( $param[3] );
+            $ext = String::utf8Unserialize( $param[3] );
             $return = array_merge( $return, $ext );
         }
         if(isset($param['op'])) {

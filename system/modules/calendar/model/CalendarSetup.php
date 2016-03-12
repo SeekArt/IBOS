@@ -18,6 +18,7 @@ namespace application\modules\calendar\model;
 
 use application\core\model\Model;
 use application\core\utils\IBOS;
+use application\core\utils\String;
 
 class CalendarSetup extends Model {
 
@@ -69,10 +70,31 @@ class CalendarSetup extends Model {
         $hiddenDays = array();
         $setupData = $this->fetchSetupByUid( $uid );
         if ( !empty( $setupData ) && !empty( $setupData['hiddendays'] ) ) {
-            $hiddenDays = unserialize( $setupData['hiddendays'] );
+            $hiddenDays = String::utf8Unserialize( $setupData['hiddendays'] );
         }
         return $hiddenDays;
     }
+	
+	/**
+	 * 根据用户 uid 获取日程设置中的分享人员
+	 * 分享人员包括：日程分享查看权限人员(readsharing)、日程分享编辑权限人员(editsharing)
+	 * @param integer $uid
+	 * @return array
+	 */
+	public function getSharingPersonnelByUid( $uid ) {
+		$sharingPersonnel = array(
+			'viewSharing' => '',
+			'editSharing' => '',
+		);
+		$setupData = $this->fetchSetupByUid( $uid );
+		if ( !empty( $setupData ) && !empty( $setupData['viewsharing'] ) ) {
+			$sharingPersonnel['viewSharing'] = String::wrapId( $setupData['viewsharing'] );
+		}
+		if ( !empty( $setupData ) && !empty( $setupData['editsharing'] ) ) {
+			$sharingPersonnel['editSharing'] = String::wrapId( $setupData['editsharing'] );
+		}
+		return $sharingPersonnel;
+	}
 
     /**
      * 修改某个用户的日程设置
@@ -80,14 +102,21 @@ class CalendarSetup extends Model {
      * @param type $minTime
      * @param type $maxTime
      * @param type $hiddenDays
+	 * @param string $viewSharing 日程阅读权限用户 uid 字符串
+	 * @param string $editSharing 日程编辑权限用户 uid 字符串
      * @param return void
      */
-    public function updataSetup( $uid, $minTime, $maxTime, $hiddenDays ) {
+    public function updataSetup( $uid, $minTime, $maxTime, $hiddenDays, $viewSharing, $editSharing ) {
         $hiddenDays = empty( $hiddenDays ) ? '' : serialize( $hiddenDays );
+		// 将形如 u_1,u_2... 的字符串转换成 1,2... 的字符串形式
+		$viewSharing = empty( $viewSharing ) ? '' : implode(',', String::getUidAByUDPX( $viewSharing ));
+		$editSharing = empty( $editSharing ) ? '' : implode(',', String::getUidAByUDPX( $editSharing ));
         $newSetup = array(
             'mintime' => $minTime,
             'maxtime' => $maxTime,
-            'hiddendays' => $hiddenDays
+            'hiddendays' => $hiddenDays,
+			'viewsharing' => $viewSharing,
+			'editsharing' => $editSharing,
         );
         $setupData = $this->fetchSetupByUid( $uid );
         if ( empty( $setupData ) ) { // 没有就插入新设置
@@ -97,5 +126,20 @@ class CalendarSetup extends Model {
             $this->updateAll( $newSetup, "uid=:uid", array( ':uid' => $uid ) );
         }
     }
+	
+	/**
+	 * 根据用户 uid 获取对应分享日程给我的 uid 数组
+	 * @param integer $uid 用户 uid
+	 * @return array 分享给我的用户的 uid 数组
+	 */
+	public function getShareUidsByUid( $uid ) {
+		$condition = 'FIND_IN_SET(:uid, `viewsharing`) OR FIND_IN_SET(:uid, `editsharing`)';
+		$params = array( ':uid' => $uid );
+		$uids = $this->fetchAll( $condition, $params );
+		$uidArr = array_map( function($user) {
+			return $user['uid'];
+		}, $uids );
+		return !empty( $uidArr ) ? $uidArr : array();
+	}
 
 }

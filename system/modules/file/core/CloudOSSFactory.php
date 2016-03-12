@@ -16,7 +16,7 @@
 
 namespace application\modules\file\core;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use CApplicationComponent;
 use CException;
 

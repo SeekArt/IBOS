@@ -206,7 +206,7 @@ class DashboardController extends BaseController {
 			Main::setCookie( 'condition', $this->_condition, 10 * 60 );
 		}
 		if ( Env::getRequest( 'type' ) == 'normal_search' ) {
-			$keyword = addslashes( $_POST['keyword'] );
+			$keyword = \CHtml::encode( $_POST['keyword'] );
 			$users = User::model()->fetchAll( "`realname` LIKE '%{$keyword}%'" );
 			$uids = implode( ',', Convert::getSubByKey( $users, 'uid' ) );
 			$this->_condition = "f.name LIKE '%{$keyword}%' OR FIND_IN_SET(f.uid, '{$uids}')";

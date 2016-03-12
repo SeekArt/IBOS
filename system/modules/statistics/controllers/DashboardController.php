@@ -19,6 +19,7 @@ namespace application\modules\statistics\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Ibos;
+use application\core\utils\String;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 use application\modules\statistics\utils\StatCommon as StatCommonUtil;
@@ -41,7 +42,7 @@ class DashboardController extends BaseController {
 			$this->success( IBOS::lang( 'Operation succeed', 'message' ) );
 		} else {
 			$res = Setting::model()->fetchSettingValueByKey( 'statmodules' );
-			$statModules = $res ? unserialize( $res ) : array();
+            $statModules = $res ? String::utf8Unserialize( $res ) : array();
 			$data = array(
 				'statModules' => $statModules,
 				'enabledModules' => StatCommonUtil::getStatisticsModules()

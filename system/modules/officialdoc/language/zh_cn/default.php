@@ -86,6 +86,7 @@ return array(
     'Next reminder' => '下次提醒',
     'You have to sign this document' => '您已签收',
     'Comment' => '评论',
+    'Sign isread' => '查阅情况',
     'Sign situation' => '签收情况',
     'History version' => '历史版本',
     'Department' => '部门',

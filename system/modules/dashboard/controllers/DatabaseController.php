@@ -14,8 +14,8 @@ class DatabaseController extends BaseController {
      */
     public function init() {
         parent::init();
-        if ( !LOCAL ) {
-            die( IBOS::lang( 'Not compatible service', 'message' ) );
+        if (!LOCAL) {
+            die(IBOS::lang('Not compatible service', 'message'));
         }
     }
 
@@ -23,25 +23,37 @@ class DatabaseController extends BaseController {
      * 备份
      */
     public function actionBackup() {
-        $formSubmit = Env::submitCheck( 'dbSubmit' );
+        $formSubmit = Env::submitCheck('dbSubmit');
         $type = $msg = $url = '';
         $param = array();
-        if ( $formSubmit ) {
+        if ($formSubmit) {
             $status = Database::databaseBackup();
-            extract( $status );
-            $this->$type( $msg, $url, $param );
+            extract($status);
+            $type = '';
+            if ( !empty( $type ) ) {
+                $this->$type($msg, $url, $param);
+            }
+            else {
+                $this->success( empty( $msg ) ? '备份出了点问题，请重试' : $msg, $url, $param );
+            }
         } else {
             $data = array();
-            $tablePrefix = IBOS::app()->setting->get( 'config/db/tableprefix' );
+            $tablePrefix = IBOS::app()->setting->get('config/db/tableprefix');
             // 多卷备份重复执行操作
-            if ( Env::getRequest( 'setup' ) == '1' ) {
+            if (Env::getRequest('setup') == '1') {
                 $status = Database::databaseBackup();
-                extract( $status );
-                $this->$type( $msg, $url, $param );
+                extract($status);
+                $type = '';
+                if ( !empty( $type ) ) {
+                    $this->$type($msg, $url, $param);
+                }
+                else {
+                    $this->success( empty( $msg ) ? '备份出了点问题，请重试' : $msg, $url, $param );
+                }
             }
-            $data['defaultFileName'] = date( 'Y-m-d' ) . '_' . String::random( 8 );
-            $data['tables'] = Database::getTablelist( $tablePrefix );
-            $this->render( 'backup', $data );
+            $data['defaultFileName'] = date('Y-m-d') . '_' . String::random(8);
+            $data['tables'] = Database::getTablelist($tablePrefix);
+            $this->render('backup', $data);
         }
     }
 
@@ -49,20 +61,20 @@ class DatabaseController extends BaseController {
      * 恢复备份
      */
     public function actionRestore() {
-        $formSubmit = Env::submitCheck( 'dbSubmit' );
-        if ( $formSubmit ) {
+        $formSubmit = Env::submitCheck('dbSubmit');
+        if ($formSubmit) {
             $backupDir = Database::getBackupDir();
-            if ( is_array( $_POST['key'] ) ) {
-                foreach ( $_POST['key'] as $fileName ) {
-                    $filePath = $backupDir . '/' . str_replace( array( '/', '\\' ), '', $fileName );
-                    if ( is_file( $filePath ) ) {  // zip
-                        @unlink( $filePath );
+            if (is_array($_POST['key'])) {
+                foreach ($_POST['key'] as $fileName) {
+                    $filePath = $backupDir . '/' . str_replace(array('/', '\\'), '', $fileName);
+                    if (is_file($filePath)) {  // zip
+                        @unlink($filePath);
                     } else { // sql
                         $i = 1;
-                        while ( 1 ) {
-                            $filePath = $backupDir . '/' . str_replace( array( '/', '\\' ), '', $fileName . '-' . $i . '.sql' );
-                            if ( is_file( $filePath ) ) {
-                                @unlink( $filePath );
+                        while (1) {
+                            $filePath = $backupDir . '/' . str_replace(array('/', '\\'), '', $fileName . '-' . $i . '.sql');
+                            if (is_file($filePath)) {
+                                @unlink($filePath);
                                 $i++;
                             } else {
                                 break;
@@ -70,10 +82,10 @@ class DatabaseController extends BaseController {
                         }
                     }
                 }
-                $this->success( IBOS::lang( 'Database file delete succeed' ) );
+                $this->success(IBOS::lang('Database file delete succeed'));
             }
         } else {
-            $this->render( 'restore', array( 'list' => Database::getBackupList() ) );
+            $this->render('restore', array('list' => Database::getBackupList()));
         }
     }
 
@@ -81,22 +93,22 @@ class DatabaseController extends BaseController {
      * 优化数据表
      */
     public function actionOptimize() {
-        $formSubmit = Env::submitCheck( 'dbSubmit' );
-        if ( $formSubmit ) {
+        $formSubmit = Env::submitCheck('dbSubmit');
+        if ($formSubmit) {
             $tables = $_POST['optimizeTables'];
-            if ( !empty( $tables ) ) {
-                Database::optimize( $tables );
+            if (!empty($tables)) {
+                Database::optimize($tables);
             }
-            $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+            $this->success(IBOS::lang('Operation succeed', 'message'));
         } else {
             $list = Database::getOptimizeTable();
             $totalSize = 0;
-            foreach ( $list as $table ) {
+            foreach ($list as $table) {
                 $totalSize += $table['Data_length'] + $table['Index_length'];
             }
             $data['list'] = $list;
             $data['totalSize'] = $totalSize;
-            $this->render( 'optimize', $data );
+            $this->render('optimize', $data);
         }
     }
 

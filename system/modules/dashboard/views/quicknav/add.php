@@ -15,7 +15,7 @@
 					<div class="trick-tip-content">
 						<ul>
 							<li>
-								链接地址使用 <strong>javascript: moduleEntry("workflow", 表单ID, 标题);</strong> 的格式可以快速新建工作流表单
+                                链接地址使用 <strong>javascript: moduleEntry("workflow", 流程ID, 标题);</strong> 的格式可以快速新建工作流表单
 							</li>
 						</ul>
 					</div>
