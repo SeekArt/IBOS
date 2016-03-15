@@ -69,9 +69,6 @@ class DefaultController extends BaseController {
             $result = $identity->authenticate(true);
             if ($result > 0) {
                 IBOS::app()->user->login($identity);
-                if (IBOS::app()->user->uid != 1) {
-                    MainUtil::checkLicenseLimit(true);
-                }
                 if (urldecode($refer) == $this->createUrl('default/index')) {
                     $refer = $this->createUrl('index/index');
                 }

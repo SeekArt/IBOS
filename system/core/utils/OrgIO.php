@@ -184,7 +184,6 @@ class OrgIO {
 		$successCount = 0;
 		if (!empty($data) && is_array($data)) {
 			$count = count($data);
-			Main::checkLicenseLimit(false, $count); //检查授权人数
 			$currentDeptA = self::findDeptAWithFormat();
 			foreach ($data as $k => $row) {
 				$userData = self::formatUserData($row, $config);

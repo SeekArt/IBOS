@@ -183,10 +183,7 @@ class DefaultController extends Controller {
                 MainUtil::setCookie( 'autologin', 1, $cookieTime );
             }
             $user->login( $identity, $cookieTime );
-            // 如果不是超级管理员账号，进行授权人数验证操作
-            if ( $user->isadministrator != '1' ) {
-                MainUtil::checkLicenseLimit( true );
-            }
+
             // ajax登录不进行日志记录及跳转操作
 
             if ( !$inajax ) {

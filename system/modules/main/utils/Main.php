@@ -175,30 +175,6 @@ class Main {
 		return $data;
 	}
 
-    /**
-     * 临时： 检查授权人数,在以后版本中可能废除
-     */
-
-    /**
-     *
-     * @param type $logout
-     * @param type $addNums 如果再添加“addNums”人，会不会超出授权人数
-     */
-    public static function checkLicenseLimit($logout = false, $addNums = 0, $url = 'http://www.ibos.com.cn/') {
-        if (!defined('LICENCE_LIMIT')) {
-            exit('授权信息错误，请联系管理员检查');
-        }
-        $count = intval(User::model()->count("`status` IN (1,0)"));
-        $count = $count + $addNums;
-        if ($count > LICENCE_LIMIT) {
-            $msg = '导入用户数已超授权范围，你的授权只支持' . LICENCE_LIMIT . '用户登录，如需扩展人数请访问IBOS官网联系申请。';
-            if ($logout) {
-                IBOS::app()->user->logout();
-            }
-            IBOS::app()->getController()->error($msg, $url, array('autoJump' => false, 'jumpLinksOptions' => array('官网' => $url)), IBOS::app()->request->getIsAjaxRequest());
-            exit();
-        }
-    }
 
     /**
      * 为JS提供全局的一些模块参数
