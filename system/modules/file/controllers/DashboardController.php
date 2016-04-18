@@ -19,7 +19,8 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Cloud;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\File;
+use application\core\utils\File as FileUtil;
+use application\modules\file\model\File as FileModel;
 use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\file\model\FileCapacity;
@@ -228,7 +229,7 @@ class DashboardController extends BaseController {
 		foreach ( $list as $k => $file ) {
 			$list[$k]['realname'] = User::model()->fetchRealnameByUid( $file['uid'] );
 			if ( $list[$k]['type'] == 1 ) { // 文件夹的话计算出所有子文件大小
-				$list[$k]['size'] = File::model()->countSizeByFid( $file['fid'] );
+				$list[$k]['size'] = FileModel::model()->countSizeByFid( $file['fid'] );
 			}
 			$list[$k]['location'] = $file['belong'] == 0 ? IBOS::lang( 'Personal folder' ) : IBOS::lang( 'Company folder' );
 			$parents = FileOffice::getParentsByIdPath( $file['idpath'] );

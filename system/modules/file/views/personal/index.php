@@ -255,6 +255,7 @@ use application\core\utils\Ibos;
 	Ibos.app.s({
 		"pid": <?php echo $pid; ?>,
 		"cabinetType": "personal",
+        'PHPSESSID': '<?php echo IBOS::app()->session->getSessionID(); ?>',
 		"isAdministrator": <?php echo IBOS::app()->user->isadministrator; ?>
 	})
 </script>

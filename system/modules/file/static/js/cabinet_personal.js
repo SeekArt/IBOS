@@ -69,6 +69,7 @@
  					op: "upload",
  				pid: this.collection.pid || Ibos.app.g("pid") || "0",
  				uid: Ibos.app.g("uid"),
+                		PHPSESSID:Ibos.app.g("PHPSESSID"),
  				hash: Ibos.app.g("upload").hash
  			})
  		},

@@ -327,7 +327,7 @@ class File extends Model {
      * @return array
      */
     public function fetchByNameWidthPid( $name, $pid, $uid ) {
-        return $this->fetchAll( "`name` = '{$name}' AND `pid` = {$pid} AND `uid` = {$uid}" );
+        return $this->fetchAll( "`name` = '{$name}' AND `pid` = {$pid} AND `uid` = {$uid} AND `isdel` = 0" );
     }
 
     /**
