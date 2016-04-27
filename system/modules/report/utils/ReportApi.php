@@ -3,7 +3,7 @@
 namespace application\modules\report\utils;
 
 use application\core\utils\File;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\message\utils\MessageApi;
 use application\modules\report\model\Report;

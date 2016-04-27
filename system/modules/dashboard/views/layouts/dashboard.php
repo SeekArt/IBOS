@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use application\core\utils\IBOS;
 use application\core\utils\File;
@@ -48,7 +48,7 @@ use application\modules\user\utils\User;
 		<script src='<?php echo STATICURL; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
-		<script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all-3.5.min.js?<?php echo VERHASH; ?>'></script>
+		<script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all.min.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/Select2/select2.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo File::fileName( 'data/org.js' ); ?>?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>'></script>

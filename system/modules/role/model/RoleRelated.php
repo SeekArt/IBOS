@@ -11,6 +11,7 @@ namespace application\modules\role\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
+use application\core\utils\IBOS;
 use application\modules\user\model\User;
 
 class RoleRelated extends Model {
@@ -44,19 +45,42 @@ class RoleRelated extends Model {
     public function fetchAllRoleIdByUid( $uid ) {
         static $uids = array();
         if ( !isset( $uids[$uid] ) ) {
-            $roleids = $this->fetchAll( array( 'select' => 'roleid', 'condition' => '`uid` = :uid', 'params' => array( ':uid' => $uid ) ) );
-            $uids[$uid] = Convert::getSubByKey( $roleids, "roleid" );
+            $roleids = IBOS::app()->db->createCommand()
+                    ->select( 'roleid' )
+                    ->from( $this->tableName() )
+                    ->where( " `uid` = '{$uid}' " )
+                    ->queryColumn();
+            $uids[$uid] = $roleids;
         }
         return $uids[$uid];
     }
 
     /**
-     * 
+     *
      * @param type $roleId
      * @return type
      */
     public function countByRoleId( $roleId ) {
         return $this->count( '`roleid` = :roleid', array( ':roleid' => $roleId ) );
+    }
+
+    public function findRoleidIndexByUidX( $uidX = NULL ) {
+        $condition = 1;
+        if ( NULL === $uidX ) {
+            $condition = User::model()->uid_find_in_set( $uidX );
+        }
+        $related = IBOS::app()->db->createCommand()
+                ->select( 'uid,roleid' )
+                ->from( $this->tableName() )
+                ->where( $condition )
+                ->queryAll();
+        $return = array();
+        if ( !empty( $related ) ) {
+            foreach ( $related as $row ) {
+                $return[$row['uid']][] = $row['roleid'];
+            }
+        }
+        return $return;
     }
 
 }

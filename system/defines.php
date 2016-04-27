@@ -7,7 +7,7 @@
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2014 IBOS Inc
  */
-defined( 'DEBUG' ) or define( 'DEBUG', true );
+defined( 'DEBUG' ) or define( 'DEBUG', false );
 
 if ( DEBUG ) {
     error_reporting( E_ALL | E_STRICT );

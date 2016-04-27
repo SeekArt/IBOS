@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <ul class="mng-trd-list">
 	<?php $num = 0; ?>

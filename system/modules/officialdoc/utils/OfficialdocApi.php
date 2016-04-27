@@ -3,7 +3,7 @@
 namespace application\modules\officialdoc\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\message\utils\MessageApi;
 use application\modules\officialdoc\model\Officialdoc;
 use application\modules\officialdoc\model\OfficialdocReader;
@@ -76,7 +76,7 @@ class OfficialdocApi extends MessageApi {
         $signed = array();
         if ( !empty( $docs ) ) {
             foreach ( $docs as &$doc ) {
-                $doc['author'] = User::model()->fetchRealNameByUid( $doc['author'] );
+                $doc['author'] = User::model()->fetchRealnameByUid( $doc['author'] );
                 $doc['sign'] = OfficialdocReader::model()->fetchByAttributes( array( 'docid' => $doc['docid'], 'uid' => $uid ) );
                 $doc['isSign'] = empty( $doc['sign'] ) ? 0 : $doc['sign']['issign'];
                 if ( $doc['isSign'] == 0 ) {

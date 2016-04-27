@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_contact表的数据层操作类，继承ICModel
  * @package application.modules.recruit.model
- * @version $Id: ResumeContact.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ResumeContact.php 6583 2016-03-11 08:24:01Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -57,7 +57,7 @@ class ResumeContact {
         );
         foreach ( $data as $k => $v ) {
             if ( in_array( $k, array_keys( $contactArr ) ) ) {
-                $contactArr[$k] = $v;
+                $contactArr[$k] = $k === 'detail' ? \CHtml::encode( $v ) : $v;
             }
         }
         $input = implode( ',', String::getId( $contactArr['upuid'] ) );

@@ -19,7 +19,7 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\user\model\User;
 use CDbCriteria;
 use CPagination;

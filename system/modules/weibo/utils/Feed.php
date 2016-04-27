@@ -3,6 +3,7 @@
 namespace application\modules\weibo\utils;
 
 use application\core\utils\String;
+use application\modules\department\model\Department;
 use application\modules\message\model\Feed as FeedModel;
 use application\modules\user\model\User;
 use application\modules\weibo\core as WbCore;
@@ -41,7 +42,8 @@ class Feed {
      */
     public static function getViewCondition( $uid, $tableprefix = '' ) {
         $user = User::model()->fetchByUid( $uid );
-        $deptids = String::filterStr( $user['alldeptid'] . ',' . $user['alldowndeptid'] );
+        $alldowndeptid = Department::model()->fetchChildIdByDeptids( $user['alldeptid'] );
+        $deptids = String::filterStr( $user['alldeptid'] . ',' . $alldowndeptid );
         $custom = sprintf( "(FIND_IN_SET('%d',{$tableprefix}userid) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR FIND_IN_SET('%s',{$tableprefix}positionid))", $uid, $user['allposid'] );
         $condition = "({$tableprefix}view = 0 OR ({$tableprefix}view = 1 AND {$tableprefix}uid = {$uid}) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR {$tableprefix}deptid = 'alldept' OR {$custom})";
         return $condition;
@@ -58,8 +60,10 @@ class Feed {
         $feedUser = User::model()->fetchByUid( $feed['uid'] );
         $user = User::model()->fetchByUid( $uid );
         if ( $feed && $feed['view'] !== WbCore\WbConst::SELF_VIEW_SCOPE ) {
-            $fuDeptIds = String::filterStr( $feedUser['alldeptid'] . ',' . $feedUser['alldowndeptid'] );
-            $deptIds = String::filterStr( $user['alldeptid'] . ',' . $user['allupdeptid'] );
+            $alldowndeptid = Department::model()->fetchChildIdByDeptids( $feedUser['alldeptid'] );
+            $allupdeptid = Department::model()->queryDept( $feedUser['alldeptid'] );
+            $fuDeptIds = String::filterStr( $feedUser['alldeptid'] . ',' . $alldowndeptid );
+            $deptIds = String::filterStr( $user['alldeptid'] . ',' . $allupdeptid );
             if ( $feed['view'] == WbCore\WbConst::ALL_VIEW_SCOPE ) {
                 return true;
             } else if ( $feed['view'] == WbCore\WbConst::SELFDEPT_VIEW_SCOPE ) {

@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\user\model\User;
 
@@ -121,7 +121,7 @@ use application\modules\user\model\User;
 								<li>
 									<strong><?php echo $lang['News']; ?></strong>
 									<div class="art-desc-body">
-										<?php echo User::model()->fetchRealNameByUid($data['author']); ?>
+										<?php echo User::model()->fetchRealnameByUid($data['author']); ?>
 										<span class="ilsep"><?php echo $lang['Posted on']; ?></span>
 										<?php echo $data['addtime']; ?>
 										<span class="ilsep">|</span>

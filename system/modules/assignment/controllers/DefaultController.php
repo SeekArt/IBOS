@@ -19,7 +19,7 @@ namespace application\modules\assignment\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\assignment\core\AssignmentOpApi;
 use application\modules\assignment\model\Assignment;
@@ -30,6 +30,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
 use application\modules\calendar\model\Calendars;
+use application\modules\message\model\NotifyMessage;
 use application\core\model\Log;
 use CJSON;
 
@@ -223,6 +224,7 @@ class DefaultController extends BaseController {
                 array('name' => IBOS::lang('Assignment'), 'url' => $this->createUrl('unfinished/index')),
                 array('name' => IBOS::lang('Assignment details'))
             ));
+            NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
             $this->render('show', $params);
         } else {
             $this->$op();

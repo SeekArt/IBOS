@@ -18,7 +18,7 @@ namespace application\modules\assignment\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\main\utils\Main as MainUtil;

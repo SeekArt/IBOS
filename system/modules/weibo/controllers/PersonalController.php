@@ -4,6 +4,7 @@ namespace application\modules\weibo\controllers;
 
 use application\core\utils as util;
 use application\core\utils\String;
+use application\core\utils\IBOS;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
 use application\modules\message\model\UserData;
@@ -11,6 +12,7 @@ use application\modules\user\controllers\HomeBaseController;
 use application\modules\user\model\User;
 use application\modules\weibo\core as WbCore;
 use application\modules\weibo\model\Follow;
+use application\modules\message\model\NotifyMessage;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 
@@ -48,6 +50,7 @@ class PersonalController extends HomeBaseController {
             array( 'name' => $user['realname'] . util\IBOS::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
             array( 'name' => util\IBOS::lang( 'List' ) )
         ) );
+        NotifyMessage::model()->setReadByUrl( IBOS::app()->user->uid, IBOS::app()->getRequest()->getUrl() );
         $this->render( 'index', array_merge( $data, $var, $this->getData( $var ) ), false, array( 'user.default' ) );
     }
 
@@ -227,6 +230,7 @@ class PersonalController extends HomeBaseController {
             array( 'name' => $user['realname'] . util\IBOS::lang( 'sbs fans' ), 'url' => $this->createUrl( 'personal/follower', array( 'uid' => $user['uid'] ) ) ),
             array( 'name' => util\IBOS::lang( 'List' ) )
         ) );
+        NotifyMessage::model()->setReadByUrl( IBOS::app()->user->uid, IBOS::app()->getRequest()->getUrl() );
         $this->render( 'follower', $data, false, array( 'user.default' ) );
     }
 
@@ -279,7 +283,7 @@ class PersonalController extends HomeBaseController {
     }
 
     /**
-     * 获取查看人的人际关系 
+     * 获取查看人的人际关系
      * @param string $type 人事关系类型
      * @param integer $offset 截取条数偏移量
      * @param integer $limit 截取条数
@@ -287,29 +291,55 @@ class PersonalController extends HomeBaseController {
      */
     protected function getRelation( $type, $offset = 0, $limit = 4 ) {
         $data = array();
+        $count = 0;
         switch ( $type ) {
             case 'colleague': // 部门同事
-                $data = $this->getColleagues( $this->getUser(), false );
-                $data = array_merge( $data, array() ); // trick:使之重新按数字排序
+                $user = $this->getUser();
+                $data = $this->getColleagues( $user, false, $offset, $limit );
+                $count = User::model()->count(
+                        array(
+                            'select' => 'uid',
+                            'condition' => "`deptid` = :deptid AND `status` IN (0,1)",
+                            'params' => array( ':deptid' => $user['deptid'] ),
+                        )
+                );
                 break;
             case 'bothfollow': // 互相关注
-                $data = Follow::model()->getBothFollow( $this->getUid(), util\IBOS::app()->user->uid );
+                $uidArray = Follow::model()->getBothFollow( $this->getUid(), util\IBOS::app()->user->uid );
                 if ( !empty( $data ) ) {
-                    $data = User::model()->fetchAllByUids( $data );
+                    $uidString = implode( ',', $uidArray );
+                    $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
+                    $data = User::model()->findAll( array(
+                        'condition' => $condition,
+                        'offset' => $offset,
+                        'limit' => $limit,
+                            ) );
+                    $count = User::model()->count( array(
+                        'condition' => $condition,
+                            ) );
                 }
                 break;
             case 'secondfollow': // 第二关注(我关注的人也关注TA)
-                $data = Follow::model()->getSecondFollow( util\IBOS::app()->user->uid, $this->getUid() );
+                $uidArray = Follow::model()->getSecondFollow( util\IBOS::app()->user->uid, $this->getUid() );
                 if ( !empty( $data ) ) {
-                    $data = User::model()->fetchAllByUids( $data );
+                    $uidString = implode( ',', $uidArray );
+                    $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
+                    $data = User::model()->findAll( array(
+                        'condition' => $condition,
+                        'offset' => $offset,
+                        'limit' => $limit,
+                            ) );
+                    $count = User::model()->count( array(
+                        'condition' => $condition,
+                            ) );
                 }
                 break;
             default :
                 break;
         }
         return array(
-            'count' => count( $data ),
-            'list' => array_slice( $data, $offset, $limit )
+            'count' => $count,
+            'list' => $data
         );
     }
 

@@ -267,7 +267,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</div>
-							<?php endif; ?> 
+							<?php endif; ?>
                         </div>
                     </div>
                     <input type="hidden" name="resumeid" id="fullname" value="<?php echo $resumeDetail['realname']; ?>">
@@ -600,7 +600,7 @@
 				<label for="" class="control-label"><?php echo $lang['Telephone']; ?></label>
 				<div class="controls">
 					<input id="phone" type="text" name="phone" value="" class="span6">
-				</div>	
+				</div>
 			</div>
 			<div class="control-group">
 				<label for="" class="control-label"><?php echo $lang['Office time'] ?></label>
@@ -632,7 +632,7 @@
 			<div class="control-group">
 				<label for="" class="control-label"><?php echo $lang['Details']; ?></label>
 				<div class="controls">
-					<textarea name="bgdetail" id="bgdetail" rows="4" cols="20"></textarea>
+					<textarea name="detail" id="bgdetail" rows="4" cols="20"></textarea>
 				</div>
 			</div>
 		</div>

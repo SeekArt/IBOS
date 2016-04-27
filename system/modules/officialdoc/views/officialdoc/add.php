@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 
 ?>
 <!-- load css -->

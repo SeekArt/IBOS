@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use application\core\utils\String;
 
@@ -24,11 +24,11 @@ use application\core\utils\String;
                             <!-- 上传头像 -->
 							<div class="control-group">
                                 <div class="rsm-avt posr" id="rsm_avt_wrap" style="margin-left: 40px">
-									<img id="pic_frame" height="156" width="108" src="<?php echo $resumeDetail['avatarUrl']; ?>" 
-										 <?php if($resumeDetail['gender'] == '2'): ?> 
-											class="rsm-avt-female" 
-										<?php else: ?> 
-											class="rsm-avt-male" 
+									<img id="pic_frame" height="156" width="108" src="<?php echo $resumeDetail['avatarUrl']; ?>"
+										 <?php if($resumeDetail['gender'] == '2'): ?>
+											class="rsm-avt-female"
+										<?php else: ?>
+											class="rsm-avt-male"
 										<?php endif; ?>
 									/>
                                     <!--<img class="rsm-avt-male" id="pic_frame">-->
@@ -101,7 +101,9 @@ use application\core\utils\String;
 									<option value="5"><?php echo $lang['More than five years']; ?></option>
 									<option value="10"><?php echo $lang['More than a decade']; ?></option>
 								</select>
-								<script>$('#workyears').val('<?php echo $resumeDetail['workyears']; ?>')</script>
+								<script>
+									$("#recruitworkyears option[value='<?php echo $resumeDetail['workyears']; ?>']").attr("selected", true);
+								</script>
 							</div>
 						</div>
 						<!-- 学历 -->
@@ -118,7 +120,9 @@ use application\core\utils\String;
 									<option value="MASTER"><?php echo $lang['Master']; ?></option>
 									<option value="DOCTOR"><?php echo $lang['Doctor']; ?></option>
 								</select>
-								<script>$('#education').val('<?php echo $resumeDetail['education']; ?>');</script>
+								<script>
+									$("#recruiteducation option[value='<?php echo $resumeDetail['education']; ?>']").attr("selected", true);
+								</script>
 							</div>
 						</div>
 						<!-- 简历状态 -->
@@ -131,7 +135,9 @@ use application\core\utils\String;
 									<option value="2"><?php echo $lang['Hire']; ?></option>
 									<option value="5"><?php echo $lang['Eliminate']; ?></option>
 								</select>
-								<script>$('#status').val('<?php echo $resumeDetail['status']; ?>');</script>
+								<script>
+									$("#recruitstatus option[value='<?php echo $resumeDetail['status']; ?>']").attr("selected", true);
+								</script>
 							</div>
 						</div>
 					</div>
@@ -142,7 +148,7 @@ use application\core\utils\String;
                             <label for=""><?php echo $lang['Height']; ?></label>
                             <div class="input-group">
                                 <input id="recruitheight" type="text" name="height" value="<?php echo $resumeDetail['height']; ?>">
-                                <span class="input-group-addon">CM</span>										
+                                <span class="input-group-addon">CM</span>
                             </div>
                         </div>
                         <!-- 体重 -->
@@ -150,7 +156,7 @@ use application\core\utils\String;
                             <label for=""><?php echo $lang['Body weight']; ?></label>
                             <div class="input-group">
                                 <input id="recruitweight" type="text" name="weight" value="<?php echo $resumeDetail['weight']; ?>">
-                                <span class="input-group-addon">KG</span>										
+                                <span class="input-group-addon">KG</span>
                             </div>
                         </div>
                         <!-- 身份证 -->
@@ -178,7 +184,7 @@ use application\core\utils\String;
 									</label>
 								</div>
 							</div>
-						</div>	
+						</div>
 					</div>
 					<!-- Row5 -->
                     <div>
@@ -382,7 +388,9 @@ use application\core\utils\String;
 									<option value="<?php echo $lang['Other']; ?>"><?php echo $lang['Other']; ?></option>
 									<option value="<?php echo $lang['None']; ?>"><?php echo $lang['None']; ?></option>
 								</select>
-								<script>$('#recchannel').val('<?php echo $lang['Alliance']; ?>');</script>
+								<script>
+									$("#recruitrecchannel option[value='<?php echo $resumeDetail['recchannel']; ?>']").attr("selected", true);
+								</script>
 							</div>
 						</div>
 						 <!-- 工作经历 -->
@@ -554,7 +562,7 @@ use application\core\utils\String;
 					<input type="hidden" name="resumeid" value="<?php echo $resumeDetail['resumeid']; ?>">
                     <input type="hidden" name="detailid" value="<?php echo $resumeDetail['detailid']; ?>">
 				</div>
-			</form>	
+			</form>
 		</div>
 	</div>
 </div>
@@ -572,4 +580,3 @@ use application\core\utils\String;
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/recruit.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/recruit_resume_add.js?<?php echo VERHASH; ?>'></script>
-

@@ -2,7 +2,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\report\model\ReportType as MreportType;
 
 class ReportType extends StatReportBase {

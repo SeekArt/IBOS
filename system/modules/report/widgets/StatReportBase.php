@@ -17,7 +17,7 @@
 namespace application\modules\report\widgets;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\user\model\User;
 use CWidget;

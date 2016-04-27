@@ -10,7 +10,7 @@
 /**
  * 招聘模块------背景调查控制器类，RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: BgchecksController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BgchecksController.php 6762 2016-04-06 02:59:13Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -31,7 +31,7 @@ class BgchecksController extends BaseController {
      */
     public function actionIndex() {
         $paginationData = ResumeBgchecks::model()->fetchAllByPage( $this->condition );
-        $resumes = ResumeDetail::model()->fetchAllRealnames();
+        $resumes = ResumeDetail::model()->fetchAllRealnamesAndDetailids();
         $params = array(
             'sidebar' => $this->getSidebar(),
             'resumeBgchecksList' => ICRecruitBgchecks::processListData( $paginationData['data'] ),
@@ -53,9 +53,9 @@ class BgchecksController extends BaseController {
      */
     public function actionAdd() {
         if ( IBOS::app()->request->isAjaxRequest ) {
-            $fullname = Env::getRequest( 'fullname' );
-            //取得该姓名的简历ID
-            $resumeid = ResumeDetail::model()->fetchResumeidByRealname( $fullname );
+            $detailid = Env::getRequest( 'detailid' );
+            // 根据 detailid 获取简历 id
+            $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
                 $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
             }
@@ -67,7 +67,7 @@ class BgchecksController extends BaseController {
                 $bgcheck = ResumeBgchecks::model()->fetchByPk( $bgcheckid );
                 $bgcheck['entrytime'] = $bgcheck['entrytime'] == 0 ? '-' : date( 'Y-m-d', $bgcheck['entrytime'] );
                 $bgcheck['quittime'] = $bgcheck['quittime'] == 0 ? '-' : date( 'Y-m-d', $bgcheck['quittime'] );
-                $bgcheck['fullname'] = $fullname;
+                $bgcheck['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 $this->ajaxReturn( $bgcheck );
             } else {
                 $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Add fail' ) ) );

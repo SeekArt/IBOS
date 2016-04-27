@@ -10,7 +10,7 @@
 /**
  * 招聘模块------ICResumeDetail类
  * @package application.modules.recruit.core
- * @version $Id: ResumeDetail.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ResumeDetail.php 6583 2016-03-11 08:24:01Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -64,9 +64,14 @@ class ResumeDetail {
             'status' => 0,
             'attachmentid' => ''
         );
+        // 需要过滤 XSS 的属性
+        $filterList = array( 'realname', 'birthplace', 'residecity', 'qq', 'msn', 'beginworkday',
+            'expectsalary', 'workplace', 'workexperience', 'projectexperience', 'eduexperience',
+            'langskill', 'computerskill', 'professionskill', 'trainexperience', 'selfevaluation',
+            'relevantcertificates', 'socialpractice' );
         foreach ( $_POST as $key => $value ) {
             if ( in_array( $key, array_keys( $fieldArr ) ) ) {
-                $fieldArr[$key] = $value;
+                $fieldArr[$key] = in_array( $key, $filterList ) ? \CHtml::encode( $value ) : $value;
             }
         }
         $fieldArr['positionid'] = implode( ',', String::getId( $fieldArr['positionid'] ) );

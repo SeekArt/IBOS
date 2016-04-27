@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\File;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\dashboard\model\Stamp;
 ?>

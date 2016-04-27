@@ -16,7 +16,6 @@ use application\core\utils\String;
 use application\modules\role\model\NodeRelated;
 use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User;
-use application\modules\user\utils\User as UserUtil;
 
 class Role {
 
@@ -40,12 +39,12 @@ class Role {
     /**
      * 从岗位维度设置用户的岗位
      * @param integer $roleId 角色id
-     * @param array $users 
+     * @param array $users
      * @return boolean
      */
     public static function setRole( $roleId, $users ) {
         // 该岗位原有的用户
-        $oldUids = User::model()->fetchAllUidByRoleids($roleId, false, true);
+        $oldUids = User::model()->fetchAllUidByRoleids( $roleId, false, true );
         // 这一次提交的用户
         $userId = explode( ',', trim( $users, ',' ) );
         $newUids = String::getUid( $userId );
@@ -56,7 +55,8 @@ class Role {
         if ( !empty( $addDiff ) || !empty( $delDiff ) ) {
             $updateUser = false;
             // 获取所有用户数据
-            $userData = UserUtil::loadUser();
+            User::model()->setSelect( 'uid,roleid' );
+            $userData = User::model()->findUserIndexByUid( array(), true );
             // 给该角色添加人员
             if ( $addDiff ) {
                 foreach ( $addDiff as $newUid ) {
@@ -83,7 +83,6 @@ class Role {
                 }
             }
             // 更新操作
-            $updateUser && Cache::update( 'users' );
             Org::update();
         }
     }
@@ -91,13 +90,14 @@ class Role {
     /**
      * 清除指定角色ID的权限缓存
      * @param integer $roleId 角色ID
-     * @return void 
+     * @return void
      */
     public static function cleanPurvCache( $roleId ) {
         Cache::rm( 'purv_' . $roleId );
     }
 
     /**
+     * todo::我去瞄一眼缓存机制，这里暂时注释掉，因为这个缓存有点问题
      * 获取指定岗位ID的权限
      * @param integer $roleId 角色ID
      * @return array 角色权限数组，键是路由 (e.g:module/controller/action),值为>0的升序数值
@@ -105,8 +105,8 @@ class Role {
     public static function getPurv( $roleId ) {
         //$access = Cache::get( 'purv_' . $roleId );
         //if ( !$access ) {
-            $access = IBOS::app()->getAuthManager()->getItemChildren( $roleId );
-            Cache::set( 'purv_' . $roleId, array_flip( array_map( 'strtolower', array_keys( $access ) ) ) );
+        $access = IBOS::app()->getAuthManager()->getItemChildren( $roleId );
+        Cache::set( 'purv_' . $roleId, array_flip( array_map( 'strtolower', array_keys( $access ) ) ) );
         //}
         return $access;
     }

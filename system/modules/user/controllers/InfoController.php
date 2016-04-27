@@ -66,14 +66,18 @@ class InfoController extends Controller {
             $avatarBig = UserUtil::getAvatar( $params['uid'], 'big' );
             $avatarMiddle = UserUtil::getAvatar( $params['uid'], 'middle' );
             $avatarSmall = UserUtil::getAvatar( $params['uid'], 'small' );
+            $random = rand( 1000, 9999 );
+            IBOS::app()->user->setState( 'avatar_big', $avatarPath . $avatarBig . '?' . $random );
+            IBOS::app()->user->setState( 'avatar_middle', $avatarPath . $avatarMiddle . '?' . $random );
+            IBOS::app()->user->setState( 'avatar_small', $avatarPath . $avatarSmall . '?' . $random );
             // 如果是本地环境，先确定文件路径要存在
             if ( LOCAL ) {
                 File::makeDirs( $avatarPath . dirname( $avatarBig ) );
             }
             // 先创建空白文件
-            File::createFile( 'data/avatar/' . $avatarBig, '' );
-            File::createFile( 'data/avatar/' . $avatarMiddle, '' );
-            File::createFile( 'data/avatar/' . $avatarSmall, '' );
+            File::createFile( $avatarPath . $avatarBig, '' );
+            File::createFile( $avatarPath . $avatarMiddle, '' );
+            File::createFile( $avatarPath . $avatarSmall, '' );
             // 加载类库
             IBOS::import( 'ext.ThinkImage.ThinkImage', true );
             $imgObj = new \application\extensions\ThinkImage\ThinkImage( THINKIMAGE_GD );

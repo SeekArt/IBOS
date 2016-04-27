@@ -18,7 +18,7 @@
 namespace application\modules\file\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\System;
 use application\modules\file\model\File;

@@ -20,26 +20,26 @@ class Comment extends CWidget {
 
     /**
      * 当前评论对象所指向的模块
-     * @var string 
+     * @var string
      */
 
     private $_module;
 
     /**
      * 当前评论对象所指向的表名
-     * @var string 
+     * @var string
      */
     private $_table;
 
     /**
      * 当前评论对象的其他属性
-     * @var array 
+     * @var array
      */
     private $_attributes = array();
 
     /**
      * 解析视图时的默认视图
-     * @var array 
+     * @var array
      */
     private $_views = array(
         'list' => array(
@@ -56,8 +56,8 @@ class Comment extends CWidget {
      * 设置当前评论widget所指向的模块名称
      * @param string $moduleName
      */
-    public function setModule( $moduleName = '' ) {
-        $this->_module = String::filterCleanHtml( $moduleName );
+    public function setModule($moduleName = '') {
+        $this->_module = String::filterCleanHtml($moduleName);
     }
 
     /**
@@ -65,7 +65,7 @@ class Comment extends CWidget {
      * @return string
      */
     public function getModule() {
-        if ( $this->_module !== null ) {
+        if ($this->_module !== null) {
             return $this->_module;
         } else {
             return IBOS::getCurrentModuleName();
@@ -76,8 +76,8 @@ class Comment extends CWidget {
      * 设置当前评论widget所指向的资源表名
      * @param string $tableName
      */
-    public function setTable( $tableName = '' ) {
-        $this->_table = String::filterCleanHtml( $tableName );
+    public function setTable($tableName = '') {
+        $this->_table = String::filterCleanHtml($tableName);
     }
 
     /**
@@ -85,7 +85,7 @@ class Comment extends CWidget {
      * @return string
      */
     public function getTable() {
-        if ( $this->_table !== null ) {
+        if ($this->_table !== null) {
             return $this->_table;
         } else {
             return self::SOURCE_TABLE;
@@ -96,8 +96,8 @@ class Comment extends CWidget {
      * 设置当前的评论widget的其他数据属性，详情请看comment表
      * @param array $attributes 键值对应的数组
      */
-    public function setAttributes( $attributes = array() ) {
-        foreach ( $attributes as $key => $value ) {
+    public function setAttributes($attributes = array()) {
+        foreach ($attributes as $key => $value) {
             $this->_attributes[$key] = $value;
         }
     }
@@ -107,9 +107,9 @@ class Comment extends CWidget {
      * @param mixed 是否有指定详细的其他属性键
      * @return mixed 返回当个指定的键值或整个attributes
      */
-    public function getAttributes( $name = null ) {
-        if ( $name !== null ) {
-            if ( isset( $this->_attributes[$name] ) ) {
+    public function getAttributes($name = null) {
+        if ($name !== null) {
+            if (isset($this->_attributes[$name])) {
                 return $this->_attributes[$name];
             } else {
                 return null;
@@ -122,10 +122,10 @@ class Comment extends CWidget {
      * 设置渲染视图
      * @param string $type 视图类型
      * @param string $view 视图路径 (最好是全称)
-     * @param string $index 视图的索引 
+     * @param string $index 视图的索引
      */
-    public function setParseView( $type = 'comment', $view = self::COMMENT_PARSE_VIEW, $index = 'list' ) {
-        if ( isset( $this->_views[$index] ) && isset( $this->_views[$index][$type] ) ) {
+    public function setParseView($type = 'comment', $view = self::COMMENT_PARSE_VIEW, $index = 'list') {
+        if (isset($this->_views[$index]) && isset($this->_views[$index][$type])) {
             $this->_views[$index][$type] = $view;
         }
     }
@@ -136,19 +136,19 @@ class Comment extends CWidget {
      * @param string $index 视图索引
      * @return string
      */
-    public function getParseView( $type, $index = 'list' ) {
-        if ( isset( $this->_views[$index] ) && isset( $this->_views[$index][$type] ) ) {
+    public function getParseView($type, $index = 'list') {
+        if (isset($this->_views[$index]) && isset($this->_views[$index][$type])) {
             return $this->_views[$index][$type];
         }
     }
 
     /**
-     * 
+     *
      * @return integer
      */
     public function getCommentCount() {
         $map = $this->getCommentMap();
-        return CommentModel::model()->countCommentByMap( $map );
+        return CommentModel::model()->countCommentByMap($map);
     }
 
     /**
@@ -159,16 +159,16 @@ class Comment extends CWidget {
         $map = $this->getCommentMap();
         // 分页形式数据
         $attr = $this->getAttributes();
-        if ( !isset( $attr['limit'] ) ) {
+        if (!isset($attr['limit'])) {
             $attr['limit'] = 10;
         }
-        if ( !isset( $attr['offset'] ) ) {
+        if (!isset($attr['offset'])) {
             $attr['offset'] = 0;
         }
-        if ( !isset( $attr['order'] ) ) {
+        if (!isset($attr['order'])) {
             $attr['order'] = 'cid DESC';
         }
-        $list = CommentModel::model()->getCommentList( $map, $attr['order'], $attr['limit'], $attr['offset'] );
+        $list = CommentModel::model()->getCommentList($map, $attr['order'], $attr['limit'], $attr['offset']);
         return $list;
     }
 
@@ -181,37 +181,37 @@ class Comment extends CWidget {
      */
     public function addComment() {
         // 返回结果集默认值
-        $return = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Post comment fail', 'message' ) );
+        $return = array('isSuccess' => false, 'data' => IBOS::lang('Post comment fail', 'message'));
         // 获取接收数据
         $data = $_POST;
         $data['uid'] = IBOS::app()->user->uid;
         // 评论所属与评论内容
-        $data['content'] = \CHtml::encode( $data['content'] );
+        $data['content'] = String::parseHtml( \CHtml::encode( \CHtml::encode( $data['content'] ) ) );
         $data['detail'] = isset($data['detail']) ? $data['detail'] : '';
         // 判断资源是否被删除
-        if ( $data['table'] == 'feed' ) {
+        if ($data['table'] == 'feed') {
             $table = 'application\modules\message\model\Feed';
         } else {
-            $table = 'application\modules\\' . $data['module'] . '\\model\\' . ucfirst( $data['table'] );
+            $table = 'application\modules\\' . $data['module'] . '\\model\\' . ucfirst($data['table']);
         }
         $pk = $table::model()->getTableSchema()->primaryKey;
-        $sourceInfo = $table::model()->fetch( array( 'condition' => "`{$pk}` = {$data['rowid']}" ) );
-        if ( !$sourceInfo ) {
+        $sourceInfo = $table::model()->fetch(array('condition' => "`{$pk}` = {$data['rowid']}"));
+        if (!$sourceInfo) {
             $return['isSuccess'] = false;
-            $return['data'] = IBOS::lang( 'Comment has been delete', 'message.default' );
-            $this->getOwner()->ajaxReturn( $return );
+            $return['data'] = IBOS::lang('Comment has been delete', 'message.default');
+            $this->getOwner()->ajaxReturn($return);
         }
-        $data['cid'] = CommentModel::model()->addComment( $data );
-        if ( !empty( $data['attachmentid'] ) ) {
-            Attach::updateAttach( $data['attachmentid'] );
+        $data['cid'] = CommentModel::model()->addComment($data);
+        if (!empty($data['attachmentid'])) {
+            Attach::updateAttach($data['attachmentid']);
         }
         $data['ctime'] = TIMESTAMP;
-        if ( $data['cid'] ) {
-            $this->afterAdd( $data, $sourceInfo );
+        if ($data['cid']) {
+            $this->afterAdd($data, $sourceInfo);
             $return['isSuccess'] = true;
-            $return['data'] = $this->parseComment( $data );
+            $return['data'] = $this->parseComment($data);
         }
-        $this->getOwner()->ajaxReturn( $return );
+        $this->getOwner()->ajaxReturn($return);
     }
 
     /**
@@ -219,42 +219,42 @@ class Comment extends CWidget {
      * @return bool true or false
      */
     public function delComment() {
-        $cid = intval( Env::getRequest( 'cid' ) );
-        $comment = CommentModel::model()->getCommentInfo( $cid );
+        $cid = intval(Env::getRequest('cid'));
+        $comment = CommentModel::model()->getCommentInfo($cid);
         // 不存在时
-        if ( !$comment ) {
+        if (!$comment) {
             return false;
         }
         // 非作者时
-        if ( $comment ['uid'] != IBOS::app()->user->uid ) {
+        if ($comment ['uid'] != IBOS::app()->user->uid) {
             // 没有管理权限不可以删除
-            if ( !IBOS::app()->user->isadministrator ) {
-                $this->getOwner()->ajaxReturn( array( 'isSuccess' => false ) );
+            if (!IBOS::app()->user->isadministrator) {
+                $this->getOwner()->ajaxReturn(array('isSuccess' => false));
             }
         }
-        if ( !empty( $cid ) ) {
-            $this->beforeDelComment( $comment, $cid );
-            $res = CommentModel::model()->deleteComment( $cid, IBOS::app()->user->uid );
-            if ( $res ) {
-                $this->getOwner()->ajaxReturn( array( 'isSuccess' => true ) );
+        if (!empty($cid)) {
+            $this->beforeDelComment($comment, $cid);
+            $res = CommentModel::model()->deleteComment($cid, IBOS::app()->user->uid);
+            if ($res) {
+                $this->getOwner()->ajaxReturn(array('isSuccess' => true));
             } else {
-                $msg = CommentModel::model()->getError( 'deletecomment' );
-                $this->getOwner()->ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg ) );
+                $msg = CommentModel::model()->getError('deletecomment');
+                $this->getOwner()->ajaxReturn(array('isSuccess' => false, 'msg' => $msg));
             }
         }
-        $this->getOwner()->ajaxReturn( array( 'isSuccess' => false ) );
+        $this->getOwner()->ajaxReturn(array('isSuccess' => false));
     }
 
     /**
-     * 
+     *
      * @return array
      */
     protected function getCommentMap() {
-        $map = array( 'and' );
-        $rowid = $this->getAttributes( 'rowid' );
-        $map[] = sprintf( "`module` = '%s'", $this->getModule() );
-        $map[] = sprintf( "`table` = '%s'", $this->getTable() );
-        $map[] = '`rowid` = ' . intval( $rowid ); // 必须存在
+        $map = array('and');
+        $rowid = $this->getAttributes('rowid');
+        $map[] = sprintf("`module` = '%s'", $this->getModule());
+        $map[] = sprintf("`table` = '%s'", $this->getTable());
+        $map[] = '`rowid` = ' . intval($rowid); // 必须存在
         $map[] = '`isdel` = 0';
         return $map;
     }
@@ -264,16 +264,16 @@ class Comment extends CWidget {
      * @param array $data
      * @return string
      */
-    protected function parseComment( $data ) {
+    protected function parseComment($data) {
         $uid = IBOS::app()->user->uid;
         $isAdministrator = IBOS::app()->user->isadministrator;
-        $data ['userInfo'] = User::model()->fetchByUid( $uid );
+        $data ['userInfo'] = User::model()->fetchByUid($uid);
         $data['lang'] = IBOS::getLangSources(array('message.default'));
         $data['isCommentDel'] = $isAdministrator || $uid === $data['uid'];
-        if ( !empty( $data['attachmentid'] ) ) {
-            $data['attach'] = Attach::getAttach( $data['attachmentid'] );
+        if (!empty($data['attachmentid'])) {
+            $data['attach'] = Attach::getAttach($data['attachmentid']);
         }
-        return $this->render( $this->getParseView( 'comment', 'parse' ), $data, true );
+        return $this->render($this->getParseView('comment', 'parse'), $data, true);
     }
 
     /**
@@ -281,7 +281,7 @@ class Comment extends CWidget {
      * @param array $data
      * @param array $sourceInfo
      */
-    protected function afterAdd( $data, $sourceInfo ) {
+    protected function afterAdd($data, $sourceInfo) {
         return false;
     }
 
@@ -291,10 +291,10 @@ class Comment extends CWidget {
      * @param integer $cid
      * @return boolean
      */
-    protected function beforeDelComment( $comment, &$cid ) {
-        if ( $comment['table'] == 'comment' ) {
-            $childId = CommentModel::model()->fetchReplyIdByCid( $comment['cid'] );
-            $cid = array_merge( array( $cid ), $childId );
+    protected function beforeDelComment($comment, &$cid) {
+        if ($comment['table'] == 'comment') {
+            $childId = CommentModel::model()->fetchReplyIdByCid($comment['cid']);
+            $cid = array_merge(array($cid), $childId);
         }
     }
 

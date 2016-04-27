@@ -53,11 +53,11 @@
   width: 100%;
   font-size: 1.2em;
   padding: 0;
-  height: 78px;
+  height: 48px;
   font-size: 30px;
   float: none;
   width: 58px;
-  line-height: 78px;
+  line-height: 48px;
   display: inline-block;
 }
 .bootstrap-datetimepicker-widget .timepicker-hour:hover,
@@ -70,7 +70,7 @@
   border-radius: 4px;
   display: inline-block;
   width: 60px;
-  height: 30px;
+  height: 15px;
   background: url('../image/datepicker.png') no-repeat;
 }
 .bootstrap-datetimepicker-widget .timepicker-up:hover,
@@ -82,22 +82,26 @@
   background-color: #EE8C0C;
 }
 .bootstrap-datetimepicker-widget .timepicker-up {
-  background-position: 10px 5px;
+  background-position: 10px -3px;
+  opacity: 0.15;
 }
 .bootstrap-datetimepicker-widget .timepicker-up:hover {
-  background-position: -110px 5px;
+  background-position: -110px -3px;
+  opacity: 1;
 }
 .bootstrap-datetimepicker-widget .timepicker-up:active {
-  background-position: -50px 5px;
+  background-position: -50px -3px;
 }
 .bootstrap-datetimepicker-widget .timepicker-down {
-  background-position: 10px -15px;
+  background-position: 10px -20px;
+  opacity: 0.15;
 }
 .bootstrap-datetimepicker-widget .timepicker-down:hover {
-  background-position: -110px -15px;
+  background-position: -110px -20px;
+  opacity: 1;
 }
 .bootstrap-datetimepicker-widget .timepicker-down:active {
-  background-position: -50px -15px;
+  background-position: -50px -20px;
 }
 .bootstrap-datetimepicker-widget table[data-hour-format="12"] .separator {
   width: 4px;
@@ -123,6 +127,10 @@
 }
 .bootstrap-datetimepicker-widget .timepicker tbody td {
   padding: 5px 0;
+}
+.bootstrap-datetimepicker-widget .timepicker-picker tbody td {
+  padding: 0;
+  line-height: 12px;
 }
 .bootstrap-datetimepicker-widget .datepicker > div {
   display: none;
@@ -251,7 +259,7 @@
 .bootstrap-datetimepicker-widget .datepicker tbody:before {
   content: "";
   display: block;
-  height: 20px;
+  height: 10px;
 }
 .bootstrap-datetimepicker-widget .datepicker-years tbody td,
 .bootstrap-datetimepicker-widget .datepicker-months tbody td {

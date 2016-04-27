@@ -10,7 +10,7 @@
 /**
  * 招聘模块------面试记录控制器，继承RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: InterviewController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: InterviewController.php 6762 2016-04-06 02:59:13Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -33,7 +33,7 @@ class InterviewController extends BaseController {
      */
     public function actionIndex() {
         $paginationData = ResumeInterview::model()->fetchAllByPage( $this->condition );
-		$resumes = ResumeDetail::model()->fetchAllRealnames();
+		$resumes = ResumeDetail::model()->fetchAllRealnamesAndDetailids();
         $params = array(
             'sidebar' => $this->getSidebar(),
             'resumeInterviewList' => ICRecruitInterview::processListData( $paginationData['data'] ),
@@ -55,9 +55,9 @@ class InterviewController extends BaseController {
      */
     public function actionAdd() {
         if ( IBOS::app()->request->isAjaxRequest ) {
-            $fullname = Env::getRequest( 'fullname' );
-            //取得该姓名的简历ID
-            $resumeid = ResumeDetail::model()->fetchResumeidByRealname( $fullname );
+            $detailid = Env::getRequest( 'detailid' );
+            // 根据 detailid 获取简历 id
+            $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
                 $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
             }
@@ -70,7 +70,7 @@ class InterviewController extends BaseController {
                 $interview['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
                 $interview['process'] = String::cutStr( $interview['process'], 12 );
                 $interview['interviewer'] = User::model()->fetchRealnameByUid( $interview['interviewer'] );
-                $interview['fullname'] = $fullname;
+                $interview['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 $this->ajaxReturn( $interview );
             } else {
                 $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Add fail' ) ) );

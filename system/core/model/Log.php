@@ -33,14 +33,17 @@ class Log {
      */
     public static function fetchAllByList( $tableId, $condition = '', $limit = 20, $offset = 0, $order = 'logtime DESC' ) {
         $table = self::getTableName( $tableId );
-        $list = IBOS::app()->db->createCommand()
+        $list = array_map( function( $temp ) {
+            $temp['logtime'] = date( 'Y-m-d H:i:s', $temp['logtime'] );
+            return $temp;
+        }, IBOS::app()->db->createCommand()
                 ->select( '*' )
                 ->from( $table )
                 ->where( $condition )
                 ->order( $order )
                 ->limit( $limit )
                 ->offset( $offset )
-                ->queryAll();
+                ->queryAll() );
         return $list;
     }
 

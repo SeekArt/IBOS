@@ -1836,3 +1836,144 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 
 	.label:after { display: none; }
 }
+
+/* 全局信息导入样式 */
+.mt20{
+	margin-top: 20px;
+}
+.o-import-step1,
+.o-import-step2,
+.o-import-step3{
+	display: inline-block;
+	width: 572px;
+	height: 30px;
+	background-image: url(../image/import_data.png);
+	background-repeat: no-repeat;
+}
+.o-import-step1{
+	background-position: 0 0;
+}
+.o-import-step2{
+	background-position: 0 -40px;
+}
+.o-import-step3{
+	background-position: 0 -80px;
+}
+.o-import-upload{
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: inline-block;
+	width: 100px;
+	height: 40px;
+	vertical-align: middle;
+	background-image: url(../image/import_data.png);
+	background-repeat: no-repeat;
+	background-position: -9px -115px;
+}
+.aui_mask{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .2);
+	z-index: 6000;
+}
+.aui_import{
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 6001;
+}
+.import-upload{
+	position: relative;
+	width: 100px;
+	height: 40px;
+}
+.import-btn{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 6002;
+}
+.import-btn:link,
+.import-btn:visited{
+	color: #fff;
+	text-decoration: none;
+}
+.import-btn:hover{
+	cursor: pointer;
+}
+.import-btn:hover,
+.import-btn:active{
+	color: #fff;
+	text-decoration: none;
+	box-shadow: 0 0 5px #75b8e7;
+}
+.import-btn-tip{
+	position: relative;
+	top: 2px;
+}
+.aui_import .import-item{
+	position: relative;
+	display: block;
+	width: 100%;
+	*zoom: 1;
+	border-bottom: 1px solid #ebeff6; 
+}
+.aui_import .import-item:before,
+.aui_import .import-item:after{
+	content: '';
+	display: block;
+	line-height: 0;
+	clear: both;
+}
+.aui_import .import-item:last-child{
+	border: none;
+}
+.import-file-target{
+	display: block;
+	border-bottom: 1px solid #ebeff6;
+}
+.import-item-mc{
+	display: inline-block;
+	vertical-align: top;
+	width: 290px;
+	height: 263px;
+	border-left: 1px solid #ebeff6;
+}
+.import-content{
+	padding: 20px 15px;
+}
+.import-item-mc:nth-child(2n+1){
+	border-left: none;
+}
+.import-item .import-table{
+	margin: 10px 0;
+}
+.import-item-field{
+	display: table-cell;
+	width: 257px;
+	text-align: left;
+	padding: 0 20px;
+}
+.import-item .import-table:first-child{
+	margin-bottom: 0;
+}
+.import-item .import-table:last-child{
+	margin-bottom: 20px;
+}
+.import-res{
+	width: auto;
+	max-height: 200px;
+	overflow-y: auto;
+	margin: 10px 20px;
+	padding: 0;
+}
+.import-res li{
+	margin: 5px 0;
+	list-style: none;
+	color: #c1cdda;
+}

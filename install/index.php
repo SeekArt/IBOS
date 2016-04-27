@@ -5,7 +5,6 @@ use application\core\utils\Env;
 use application\core\utils\Module;
 use application\core\utils\String;
 use application\modules\dashboard\utils\Wx;
-use application\modules\main\model\Setting;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
 use application\modules\user\model\User;
@@ -351,6 +350,11 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
             include 'errorInfo.php';
             exit();
         }
+        if ( !preg_match( "/^[a-zA-Z0-9]{4,20}/", $corpCode ) ) { // 企业代码
+            $errorMsg = $lang['Invalid corp code'];
+            include 'errorInfo.php';
+            exit();
+        }
         // 检查数据库连接正确性
         $link = @mysql_connect($dbHost, $dbAccount, $dbPassword);
         if (!$link) {
@@ -653,17 +657,12 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
         executeSql($sqlFlowData);
     }
     // 为用户添加GUID
-    $users = User::model()->fetchAll();
-    foreach ($users as $user) {
+    $uidArray = User::model()->fetchUidA();
+    foreach ( $uidArray as $uid ) {
         $guid = String::createGuid();
-        Yii::app()->db->createCommand()->update("{{user}}", array('guid' => $guid), "`uid` = '{$user['uid']}'");
+        Yii::app()->db->createCommand()->update( "{{user}}", array( 'guid' => $guid ), "`uid` = '{$uid}'" );
     }
-    $cacheArr = array('AuthItem', 'CreditRule', 'Department', 'Ipbanned', 'Nav', 'NotifyNode', 'Role', 'Position', 'PositionCategory', 'Setting', 'UserGroup');
-    foreach ($cacheArr as $cache) {
-        Cache::update($cache);
-    }
-    Cache::load('usergroup'); // 要注意小写
-    Cache::update('Users'); // 因为用户缓存要依赖usergroup缓存，所以放在最后单独更新
+    Cache::update();
     $configfile = CONFIG_PATH . 'config.php';
     $config = require $configfile;
     include 'extInfo.php';

@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 
 ?>
 <div style="width:493px; margin:0 auto; text-align:center">

@@ -9,10 +9,10 @@
  */
 /**
  * user模块全局用户组件,提供用户初始化，登陆，退出等操作
- * 
+ *
  * @package application.modules.user.components
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: User.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: User.php 6891 2016-04-19 03:32:11Z tanghang $
  */
 
 namespace application\modules\user\components;
@@ -31,20 +31,20 @@ class User extends CWebUser {
 
     /**
      * 允许自动登录
-     * @var boolean 
+     * @var boolean
      */
     public $allowAutoLogin = true;
 
     /**
      * 账户安全设置
-     * @var array 
+     * @var array
      */
     protected $account = array();
 
     /**
      * 调用全局程序组件基类的初始化方法，取消了父类CWebUser的init方法中关于session的处理
      * 提供基本的cookie验证方法（如果可用），同时更新session
-     * @return void 
+     * @return void
      */
     public function init() {
         $account = util\IBOS::app()->setting->get( 'setting/account' );
@@ -59,7 +59,7 @@ class User extends CWebUser {
     /**
      * 覆盖父类登陆后调用方法，这里更新userstatus表里的最后访问属性
      * @param type $fromCookie 兼容属性
-     * @return void 
+     * @return void
      */
     public function afterLogin( $fromCookie ) {
         $uid = $this->getId();
@@ -161,17 +161,4 @@ class User extends CWebUser {
         return $neededReset;
     }
 
-    public function getRoleType() {
-        $uid = IBOS::app()->user->uid;
-        $roleid = IBOS::app()->user->roleid;
-        $relatedRoleId = RoleRelated::model()->fetchAllRoleIdByUid( $uid );
-        $roleIds = array_merge( array( $roleid ), (array) $relatedRoleId );
-        $allroleidS = implode( ',', array_unique( $roleIds ) );
-        $roleType = IBOS::app()->db->createCommand()
-                ->select( 'roletype' )
-                ->from( Role::model()->tableName() )
-                ->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )
-                ->queryScalar();
-        return $roleType;
-    }
 }

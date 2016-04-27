@@ -9,9 +9,9 @@
  */
 /**
  * 岗位表的数据层操作
- * 
+ *
  * @package application.modules.position.model
- * @version $Id: Position.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Position.php 6759 2016-04-06 02:09:02Z tanghang $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -19,6 +19,7 @@ namespace application\modules\position\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\position\utils\Position as PositionUtil;
 
@@ -39,7 +40,7 @@ class Position extends Model {
 
     /**
      * 新增或保存单条记录后更新缓存
-     * @return void 
+     * @return void
      */
     public function afterSave() {
         CacheUtil::update( 'position' );
@@ -49,7 +50,7 @@ class Position extends Model {
 
     /**
      * 删除后单条记录后更新缓存
-     * @return void 
+     * @return void
      */
     public function afterDelete() {
         CacheUtil::update( 'position' );
@@ -112,4 +113,19 @@ class Position extends Model {
         }
         return $position['posname'];
     }
+
+    public function findPositionNameIndexByPositionid( $positionidX ) {
+        $positionString = is_array( $positionidX ) ? implode( ',', $positionidX ) : $positionidX;
+        $positionArray = IBOS::app()->db->createCommand()
+                ->select( 'positionid,posname' )
+                ->from( $this->tableName() )
+                ->where( " FIND_IN_SET( `positionid`, '{$positionString}')" )
+                ->queryAll();
+        $return = array();
+        foreach ( $positionArray as $position ) {
+            $return[$position['positionid']] = $position['posname'];
+        }
+        return $return;
+    }
+
 }

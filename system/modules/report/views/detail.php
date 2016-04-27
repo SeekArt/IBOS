@@ -1,9 +1,9 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
+use application\core\utils\Org;
 use application\core\utils\String;
 use application\modules\user\model\User;
-
 ?>
 <div class="rp-stamp">
     <span id="preview_stamp_<?php echo $report['repid']; ?>">
@@ -111,7 +111,7 @@ use application\modules\user\model\User;
                                 </div>
                                 <span class="fss">
                                     <a href="<?php echo $attache['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
-                                    <?php if (isset($attache['officereadurl'])): ?>
+                                    <?php if ( isset( $attache['officereadurl'] ) ): ?>
                                         <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $attache['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
                                             <?php echo $lang['View']; ?>
                                         </a>
@@ -181,7 +181,7 @@ use application\modules\user\model\User;
         <div class="rp-reviews-avatar">
             <?php foreach ( $readers as $reader ): ?>
                 <a href="<?php echo IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
-                    <img src="static.php?type=avatar&uid=<?php echo $reader['uid']; ?>&size=small&engine='<?php echo ENGINE; ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
+                    <img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
                 </a>
             <?php endforeach; ?>
         </div>

@@ -28,7 +28,7 @@
 			lock: true,
 			padding: 0,
 			width: 602,
-			height: 632,
+			height: 560,
 			skin: "fc-selector-dialog",
 			content: '<div class="fc-selector"><div id="fc_breadcrumb" class="fc-nav"></div><div class="fc-list-cell"><ul class="list-thumb scroll clearfix" id="fc_select_list"></ul></div></div>',
 			ok: function(){
@@ -230,4 +230,3 @@
 		return dialog;
 	}
 })();
-

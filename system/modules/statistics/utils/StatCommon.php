@@ -19,7 +19,7 @@ namespace application\modules\statistics\utils;
 
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use CJSON;
 
 class StatCommon {

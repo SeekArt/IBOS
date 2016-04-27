@@ -50,7 +50,6 @@
                                 </button>
                             </div>
                             <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>">
-                            <input type="hidden" name="refer" value="<?php echo $refer; ?>">
                         </form>
                     </div>
                 </div>

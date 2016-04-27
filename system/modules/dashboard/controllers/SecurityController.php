@@ -46,70 +46,74 @@ class SecurityController extends BaseController {
         }
     }
 
+    /**
+     * 渲染 log 视图动作
+     */
     public function actionLog() {
-        $formSubmit = Env::submitCheck( 'securitySubmit' );
-        if ( $formSubmit ) {
-            Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
-        } else {
-            $data = array();
-            $levels = array( 'admincp', 'banned', 'illegal', 'login' );
-            $level = Env::getRequest( 'level' );
-            $filterAct = Env::getRequest( 'filteract' );
-            $timeScope = Env::getRequest( 'timescope' );
-            if ( !in_array( $level, $levels ) ) {
-                $level = 'admincp';
-            }
-            $conArr = array(
-                'level' => $level
-            );
-            $condition = "level = '{$level}'";
-            if ( !empty( $filterAct ) ) {
-                $condition .= sprintf( " AND category = 'module.dashboard.%s'", $filterAct );
-                $conArr['filteract'] = $filterAct;
-            } else {
-                $condition .= ' AND 1';
-            }
-            if ( !empty( $timeScope ) ) {
-                $start = Env::getRequest( 'start' );
-                $end = Env::getRequest( 'end' );
-                $tableId = intval( $timeScope );
-                $conArr['timescope'] = $tableId;
-                if ( !empty( $start ) && !empty( $end ) ) {
-                    $conArr['start'] = $start;
-                    $conArr['end'] = $end;
-                    $start = strtotime( $tableId . '-' . $start );
-                    $end = strtotime( $tableId . '-' . $end );
-                    $condition .= sprintf( ' AND `logtime` BETWEEN %d AND %d', $start, $end );
-                } else if ( !empty( $start ) ) {
-                    $conArr['start'] = $start;
-                    $start = strtotime( $tableId . '-' . $start );
-                    $condition .= sprintf( ' AND `logtime` > %d', $start );
-                } else if ( !empty( $end ) ) {
-                    $conArr['end'] = $end;
-                    $end = strtotime( $tableId . '-' . $end );
-                    $condition .= sprintf( ' AND `logtime` < %d', $end );
-                }
-            } else {
-                $tableId = 0;
-                $lastMonth = strtotime( 'last month' );
-                $condition .= sprintf( ' AND `logtime` BETWEEN %d AND %d', $lastMonth, TIMESTAMP );
-            }
-            $count = Log::countByTableId( $tableId, $condition );
-            $pages = Page::create( $count, 20 );
-            $log = Log::fetchAllByList( $tableId, $condition, $pages->getLimit(), $pages->getOffset() );
-            $data['log'] = $log;
-            $data['pages'] = $pages;
-            // 后台记录才有动作描述
-            if ( $level == 'admincp' ) {
-                $data['actions'] = IBOS::getLangSource( 'dashboard.actions' );
-            }
-            $data['filterAct'] = $filterAct;
-            $data['level'] = $level;
-            $data['archive'] = Log::getAllArchiveTableId();
-            $data['con'] = $conArr;
-            $this->render( 'log', $data );
+        $data['actions'] = IBOS::getLangSource( 'dashboard.actions' );
+        $data['archive'] = Log::getAllArchiveTableId();
+        $this->render( 'log', $data );
+    }
+
+    /**
+     * 获取后台访问日志列表数据
+     * @return json 
+     */
+    public function actionGetAdmincpLogList() {
+        $highSearch = Env::getRequest( 'highSearch' );
+        $start      = Env::getRequest( 'start' );
+        $length     = Env::getRequest( 'length' );
+        $draw       = Env::getRequest( 'draw' );
+        $filterAct  = $highSearch['filteract'];
+        $timeScope  = $highSearch['timescope'];
+        $startTime  = $highSearch['starttime'];
+        $endTime    = $highSearch['endtime'];
+        $condition = "`level` = 'admincp'";
+        if ( !empty( $timeScope ) && !empty( $startTime ) && !empty( $endTime ) ) {
+            $startTime  = $timeScope . '-' . $startTime;
+            $endTime    = $timeScope . '-' . $endTime;
+            $condition .= sprintf( " AND `logtime` > %d AND `logtime` < %d", strtotime( $startTime ), strtotime( $endTime ) + 86399 );
         }
+        if ( !empty( $filterAct ) ) {
+            $condition .= sprintf( " AND `category` = 'module.dashboard.%s'", $filterAct );
+        }
+        $this->ajaxReturn( array(
+            'data'              => Log::fetchAllByList( 0, $condition, $length, $start ),
+            'draw'              => $draw,
+            'recordsFiltered'   => Log::countByTableId( 0, $condition ),
+        ) );
+    }
+
+    /**
+     * 获取密码错误日志列表数据
+     * @return json 
+     */
+    public function actionGetIllegalLogList() {
+        $start  = Env::getRequest( 'start' );
+        $length = Env::getRequest( 'length' );
+        $draw   = Env::getRequest( 'draw' );
+        $condition = "`level` = 'illegal'";
+        $this->ajaxReturn( array(
+            'data'              => Log::fetchAllByList( 0, $condition, $length, $start ),
+            'draw'              => $draw,
+            'recordsFiltered'   => Log::countByTableId( 0, $condition ),
+        ) );
+    }
+
+    /**
+     * 获取前台登录日志列表数据
+     * @return json 
+     */
+    public function actionGetLoginLogList() {
+        $start  = Env::getRequest( 'start' );
+        $length = Env::getRequest( 'length' );
+        $draw   = Env::getRequest( 'draw' );
+        $condition = "`level` = 'login'";
+        $this->ajaxReturn( array(
+            'data'              => Log::fetchAllByList( 0, $condition, $length, $start ),
+            'draw'              => $draw,
+            'recordsFiltered'   => Log::countByTableId( 0, $condition ),
+        ) );
     }
 
     public function actionIp() {

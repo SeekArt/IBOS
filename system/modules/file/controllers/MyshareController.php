@@ -18,7 +18,7 @@
 namespace application\modules\file\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDynamic;

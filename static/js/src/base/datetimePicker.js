@@ -673,9 +673,9 @@
         }
       } else {
         var current = 0;
-        for (var i = 0; i < 6; i += 1) {
+        for (var i = 0; i < 3; i += 1) {
           html += '<tr>';
-          for (var j = 0; j < 4; j += 1) {
+          for (var j = 0; j < 8; j += 1) {
              var c = current.toString();
              html += '<td class="hour">' + padLeft(c, 2, '0') + '</td>';
              current++;
@@ -1399,12 +1399,12 @@
                 DPGlobal.template +
               '</div>' +
             '</li>' +
-            '<li class="picker-switch accordion-toggle btn"><a><i class="' + timeIcon + '"></i></a></li>' +
+//            '<li class="picker-switch accordion-toggle btn"><a><i class="' + timeIcon + '"></i></a></li>' +
             '<li' + (collapse ? ' class="collapse"' : '') + '>' +
               '<div class="timepicker">' +
                 TPGlobal.getTemplate(is12Hours, showSeconds) +
               '</div>' +
-              '<div class="picker-switch btn" data-action="saveTime">OK</div>' +
+//              '<div class="picker-switch btn" data-action="saveTime">OK</div>' +
             '</li>' +
           '</ul>' +
         '</div>'
@@ -1415,7 +1415,7 @@
           '<div class="timepicker">' +
             TPGlobal.getTemplate(is12Hours, showSeconds) +
           '</div>' +
-          '<div class="picker-switch btn" data-action="saveTime">OK</div>' +
+//          '<div class="picker-switch btn" data-action="saveTime">OK</div>' +
         '</div>'
       );
     } else {

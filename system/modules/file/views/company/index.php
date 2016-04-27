@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/file_cabinets.css?<?php echo VERHASH; ?>">

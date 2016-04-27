@@ -15,7 +15,8 @@
 namespace application\extensions\ThinkImage\Driver;
 
 use application\core\utils\File;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
+use Exception;
 
 class ImageGd {
 

@@ -9,9 +9,9 @@
  */
 /**
  *  nav表的数据层操作
- * 
+ *
  * @package application.modules.dashboard.model
- * @version $Id: Nav.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Nav.php 6450 2016-02-25 09:15:51Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -27,8 +27,9 @@ class Nav extends Model {
         $this->cacheLife = 0;
         parent::init();
     }
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
     }
 
     public function tableName() {
@@ -40,28 +41,31 @@ class Nav extends Model {
         CacheUtil::load('Nav');
         parent::afterSave();
     }
+
     /**
      * 查找所有的导航设置并以父子形式返回数组
      * @return array
      */
     public function fetchAllByAllPid() {
 
-        $all = Ibos::app()->db->createCommand()
+        $all = IBOS::app()->db->createCommand()
                 ->select('*')
                 ->from($this->tableName())
                 ->order(" pid ASC,sort ASC ")
                 ->queryAll();
         $result = array();
-        foreach ( $all as $v ) {
+        foreach ($all as $v) {
             $result[$v['id']] = $v;
         }
-        foreach ( $result as $key => &$row ) {
-            if ( !isset( $result[$row['pid']] ) ) {
+        foreach ($result as $key => &$row) {
+            //判断父级是否存在，不存在就提出到顶级
+            if (!isset($result[$row['pid']])) {
                 $row['pid'] = 0;
                 $row['child'] = array();
             } else {
+                //存在就移动到子级
                 $result[$row['pid']]['child'][] = $row;
-                unset( $result[$key] );
+                unset($result[$key]);
             }
         }
         return $result;
@@ -72,10 +76,10 @@ class Nav extends Model {
      * @param string $ids
      * @return integer 删除的条数
      */
-    public function deleteById( $ids ) {
-        $id = explode( ',', trim( $ids, ',' ) );
-        $affecteds = $this->deleteByPk( $id, "`system` = '0'" );
-        $affecteds += $this->deleteAll( "FIND_IN_SET(pid,'" . implode( ',', $id ) . "')" );
+    public function deleteById($ids) {
+        $id = explode(',', trim($ids, ','));
+        $affecteds = $this->deleteByPk($id, "`system` = '0'");
+        $affecteds += $this->deleteAll("FIND_IN_SET(pid,'" . implode(',', $id) . "')");
         return $affecteds;
     }
 

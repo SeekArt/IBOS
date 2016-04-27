@@ -57,20 +57,24 @@
             (function() {
                 var installModules = '<?php echo json_encode( $installModules ); ?>',
                         installModulesObj = JSON.parse(installModules),
-                        installUrl = "index.php?op=installing&init=1&installBegin=1";
+                        installUrl = "index.php?op=installing&init=1&installBegin=1",
+                        $progressbar = $("#progressbar"),
+                        $show_process = $("#show_process"),
+                        $mod_name = $("#mod_name"),
+                        $install_info = $("#install_info");
                 // 安装模块方法
                 function install(module) {
                     $.post(installUrl, {installModules: installModules, installingModule: module}, function(res) {
                         if (res.complete) {
-                            $("#progressbar").css("width", res.process);
-                            $("#show_process").text(res.process);
-                            $("#install_info").text("<?php echo $lang['Install complete'] ?>");
+                            $progressbar .css("width", res.process);
+                            $show_process.text(res.process);
+                            $install_info.text("<?php echo $lang['Install complete'] ?>");
                             window.location.href = "index.php?op=installResult&init=1&res=1";
                         } else {
                             if (res.isSuccess) {
-                                $("#progressbar").css("width", res.process);
-                                $("#show_process").text(res.process);
-                                $("#mod_name").text(res.nextModuleName);
+                                $progressbar .css("width", res.process);
+                                $show_process.text(res.process);
+                                $mod_name.text(res.nextModuleName);
                                 install(res.nextModule);
                             } else {
                                 window.location.href = "index.php?op=installResult&init=1&res=0&msg=" + res.msg;
@@ -80,7 +84,7 @@
                 }
                 // 初始化页面开始安装模块
                 var firstModuleName = "<?php echo getModuleName( $installModules['0'] ); ?>";
-                $("#mod_name").text(firstModuleName);
+                $mod_name.text(firstModuleName);
                 install(installModulesObj[0]);
             })();
         </script>

@@ -10,7 +10,7 @@
 /**
  * 招聘模块------联系记录控制器类，RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: ContactController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ContactController.php 6762 2016-04-06 02:59:13Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -35,7 +35,7 @@ class ContactController extends BaseController {
      */
     public function actionIndex() {
         $paginationData = ResumeContact::model()->fetchAllByPage( $this->condition );
-		$resumes = ResumeDetail::model()->fetchAllRealnames();
+		$resumes = ResumeDetail::model()->fetchAllRealnamesAndDetailids();
         $params = array(
             'sidebar' => $this->getSidebar(),
             'resumeContactList' => ICResumeContact::processListData( $paginationData['data'] ),
@@ -58,9 +58,9 @@ class ContactController extends BaseController {
      */
     public function actionAdd() {
         if ( IBOS::app()->request->isAjaxRequest ) {
-            $fullname = Env::getRequest( 'fullname' );
-            //取得该姓名的简历ID
-            $resumeid = ResumeDetail::model()->fetchResumeidByRealname( $fullname );
+            $detailid = Env::getRequest( 'detailid' );
+            // 根据 detailid 获取简历 id
+            $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
                 $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
             }
@@ -72,7 +72,7 @@ class ContactController extends BaseController {
                 $contact = ResumeContact::model()->fetchByPk( $contactid );
                 $contact['inputtime'] = date( 'Y-m-d', $contact['inputtime'] );
                 $contact['input'] = User::model()->fetchRealnameByUid( $contact['input'] );
-                $contact['fullname'] = $fullname;
+                $contact['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 //取得简历状态，如果状态为待安排，改为面试
                 $status = Resume::model()->fetchStatusByResumeid( $resumeid );
                 if ( $status == 4 ) {

@@ -17,7 +17,7 @@
 namespace application\modules\officialdoc\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\dashboard\model\Approval;
 use application\modules\officialdoc\core\OfficialdocCategory as ICOfficialdocCategory;

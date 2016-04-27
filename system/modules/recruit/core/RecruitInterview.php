@@ -39,7 +39,7 @@ class RecruitInterview {
         );
         foreach ( $data as $k => $v ) {
             if ( in_array( $k, array_keys( $inverviewArr ) ) ) {
-                $inverviewArr[$k] = $v;
+                $inverviewArr[$k] = $k === 'process' ? \CHtml::encode( $v ) : $v;
             }
         }
         $interviewer = implode( ',', String::getId( $inverviewArr['interviewer'] ) );

@@ -12,7 +12,9 @@ use application\core\utils\String;
 use application\modules\main\model\Setting;
 use application\modules\message\model\NotifySms;
 use application\modules\message\utils\Message;
+use application\modules\user\model\User;
 use CJSON;
+use CHtml;
 
 class SmsController extends BaseController {
 
@@ -67,83 +69,88 @@ class SmsController extends BaseController {
      *
      */
     public function actionManager() {
-        $data = array();
+        $this->render( 'manager' );
+    }
+
+    /**
+     * 获取手机短信发送管理列表数据方法
+     * @return json
+     */
+    public function actionGetSmsManagerList() {
+        $start = Env::getRequest( 'start' );
+        $length = Env::getRequest( 'length' );
+        $draw = Env::getRequest( 'draw' );
+        $condition = $this->handleGetSmsCondition();
+        $data = array_map( function( $sms ) {
+            return array(
+                'id' => $sms['id'],
+                'fromname' => User::model()->fetchRealnameByUid( $sms['uid'] ),
+                'toname' => User::model()->fetchRealnameByUid( $sms['touid'] ),
+                'content' => $sms['content'],
+                'status' => $sms['return'],
+                'sendtime' => $sms['ctime'],
+            );
+        }, NotifySms::model()->fetchAll( array(
+                    'condition' => $condition,
+                    'limit' => $length,
+                    'offset' => $start,
+                    'order' => 'ctime DESC',
+                ) ) );
+        $this->ajaxReturn( array(
+            'data' => $data,
+            'draw' => $draw,
+            'recordsFiltered' => NotifySms::model()->count( $condition ),
+        ) );
+    }
+
+    /**
+     * 处理 datatable 插件搜索条件并返回对应的 WHERE 语句
+     * 如果手机号格式不正确，将有一个 ajax 错误信息输出
+     * @return string WHERE 语句
+     */
+    private function handleGetSmsCondition() {
+        $condition = '';
         $type = Env::getRequest( 'type' );
-        $inSearch = false;
-        if ( $type == 'search' ) {
-            $inSearch = true;
-            $condition = '1';
-            $keyword = Env::getRequest( 'keyword' );
-            if ( !empty( $keyword ) ) {
-                $keyword = \CHtml::encode( $keyword );
-                $condition .= " AND content LIKE '%{$keyword}%'";
-            }
-            // 发送状态
-            $searchType = Env::getRequest( 'searchtype' );
-            if ( !empty( $searchType ) ) {
-                $returnStatus = array();
-                if ( String::findIn( $searchType, 1 ) ) {
-                    $returnStatus[] = 1;
-                }
-                if ( String::findIn( $searchType, 0 ) ) {
-                    $returnStatus[] = 0;
-                }
-                $condition .= sprintf( " AND return IN ('%s')", implode( ',', $returnStatus ) );
-            }
-            // 时间范围
+        $search = Env::getRequest( 'search' );
+        if ( $type === 'search' ) {
+            $searchType = Env::getRequest( 'searchType' );
             $begin = Env::getRequest( 'begin' );
             $end = Env::getRequest( 'end' );
-            if ( !empty( $begin ) && !empty( $end ) ) {
-                $condition .= sprintf( ' AND ctime BETWEEN %d AND %d', strtotime( $begin ), strtotime( $end ) );
-            } else if ( !empty( $begin ) ) {
-                $condition .= sprintf( ' AND ctime > %d', strtotime( $begin ) );
-            } else if ( !empty( $end ) ) {
-                $condition .= sprintf( ' AND ctime < %d', strtotime( $end ) );
-            }
-            // 发送人
             $sender = Env::getRequest( 'sender' );
-            if ( !empty( $sender ) ) {
-                $realSender = implode( ',', String::getId( $sender ) );
-                $condition .= sprintf( ' AND uid = %d', intval( $realSender ) );
-            }
-            // 接收号码
-            $recNumber = Env::getRequest( 'recnumber' );
-            if ( !empty( $recNumber ) ) {
-                $condition .= sprintf( ' AND mobile = %d', sprintf( '%d', $recNumber ) );
-            }
-            // 内容
+            $recnumber = Env::getRequest( 'recnumber' );
             $content = Env::getRequest( 'content' );
-            if ( !empty( $content ) && empty( $keyword ) ) {
-                $content = String::filterCleanHtml( $content );
-                $condition .= " AND content LIKE '%{$content}%'";
+            if ( !empty( $searchType ) ) {
+                $condition .= sprintf( "`return` = %d", $searchType );
             }
-            $type = 'manager';
-        } else {
-            $condition = '';
+            if ( !empty( $begin ) ) {
+                $and = !empty( $condition ) ? ' AND ' : '';
+                $condition .= sprintf( "%s`ctime` > %d", $and, strtotime( $begin ) );
+            }
+            if ( !empty( $end ) ) {
+                $and = !empty( $condition ) ? ' AND ' : '';
+                $condition .= sprintf( "%s`ctime` < %d", $and, strtotime( $end ) );
+            }
+            if ( !empty( $sender ) ) {
+                $temp = String::getUid( $sender );
+                $sender = $temp[0];
+                $and = !empty( $condition ) ? ' AND ' : '';
+                $condition .= sprintf( "%s`uid` = %d", $and, $sender );
+            }
+            if ( !empty( $recnumber ) ) {
+                // if ( !String::isMobile( $recnumber ) ) {
+                //     $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => '手机号格式不正确' ) );
+                // }
+                $and = !empty( $condition ) ? ' AND ' : '';
+                $condition .= sprintf( "%s`mobile` = %s", $and, $recnumber );
+            }
+            if ( !empty( $content ) ) {
+                $and = !empty( $condition ) ? ' AND ' : '';
+                $condition .= $and . "`content` LIKE '%" . CHtml::encode( $content ) . "%'";
+            }
+        } else if ( !empty( $search['value'] ) ) {
+            $condition .= "`content` LIKE '%" . CHtml::encode( $search['value'] ) . "%'";
         }
-        $count = NotifySms::model()->count( $condition );
-        $pages = Page::create( $count, 20 );
-        if ( $inSearch ) {
-            $pages->params = array(
-                'keyword' => $keyword,
-                'searchtype' => $searchType,
-                'begin' => $begin,
-                'end' => $end,
-                'sender' => $sender,
-                'recnumber' => $recNumber,
-                'content' => $content
-            );
-        }
-        $data['list'] = NotifySms::model()->fetchAll( array(
-            'condition' => $condition,
-            'offset' => $pages->getOffset(),
-            'limit' => $pages->getLimit(),
-            'order' => 'ctime DESC'
-                ) );
-        $data['count'] = $count;
-        $data['pages'] = $pages;
-        $data['search'] = $inSearch;
-        $this->render( 'manager', $data );
+        return $condition;
     }
 
     /**

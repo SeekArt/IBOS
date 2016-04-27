@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_detail数据表操作类
  * @package application.modules.recruit.model
- * @version $Id: ResumeDetail.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: ResumeDetail.php 6762 2016-04-06 02:59:13Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -113,6 +113,20 @@ class ResumeDetail extends Model {
     }
 
     /**
+     * 返回所有的简历 detailid、realname 组成的数组
+     * @return array 
+     */
+    public function fetchAllRealnamesAndDetailids() {
+        $fields = "r.resumeid,rd.detailid,rd.realname,rd.positionid,rd.gender,r.status";
+        $sql = "SELECT $fields FROM {{resume}} r LEFT JOIN {{resume_detail}} rd ON r.resumeid=rd.resumeid ORDER BY r.entrytime DESC";
+        $resumes = $this->getDbConnection()->createCommand( $sql )->queryAll();
+        foreach ( $resumes as $resume ) {
+            $result[] = array( 'realname' => $resume['realname'], 'detailid' => $resume['detailid'] );
+        }
+        return isset( $result ) ? $result : array();
+    }
+
+    /**
      * 通过简历id获取某个字段的一维数组
      * @param mix $resumeids
      * @param string $field
@@ -125,6 +139,35 @@ class ResumeDetail extends Model {
             'condition' => "FIND_IN_SET(`resumeid`, '{$resumeids}')",
         ) );
         return Convert::getSubByKey( $return, $field );
+    }
+
+    /**
+     * 根据 detailid 获取对应的 realname
+     * @param  integer $detailid detail 表主键
+     * @return string            realname
+     */
+    public function fetchRealnameByDetailid( $detailid ) {
+        return $this->fetchFieldByDetailid( $detailid, 'realname' );
+    }
+
+    /**
+     * 根据 detailid 获取对应的 resumeid
+     * @param  integer $detailid detail 表主键
+     * @return string            resumeid
+     */
+    public function fetchResumeidByDetailid( $detailid ) {
+        return $this->fetchFieldByDetailid( $detailid, 'resumeid' );
+    }
+
+    /**
+     * 根据主键 detailid 获取对应的字段数据
+     * @param  integer $detailid 主键 detailid
+     * @param  string $field     需要获取的字段名
+     * @return string            对应需要获取的字段数据
+     */
+    public function fetchFieldByDetailid( $detailid, $field ) {
+        $resume = $this->findBypK( $detailid );
+        return !empty( $resume ) ? $resume[$field] : NULL;
     }
 
 }

@@ -6,7 +6,11 @@
 
 $(function() {
 	//日期选择器
-	$("#date_time").datepicker();
+	$("#date_time")
+		.datepicker()
+        .on("hide", function(){
+            $(this).find("input").trigger("blur");
+        });
 
 	// 根据后台配置的字段规则初始化表单验证
 	var initCustomValidator = function(formId, fieldRule, fieldRuleRegex){

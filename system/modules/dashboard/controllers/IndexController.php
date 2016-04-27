@@ -12,6 +12,7 @@ use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\main\model\Attachment;
 use application\modules\main\model\Setting;
+use CHtml;
 
 /**
  * 后台索引页文件
@@ -26,9 +27,9 @@ use application\modules\main\model\Setting;
  *
  * @package application.modules.dashboard.controllers
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: IndexController.php 6550 2016-03-08 07:59:07Z gzhyj $
+ * @version $Id: IndexController.php 6765 2016-04-06 03:27:45Z tanghang $
  */
-class IndexController extends WxController {
+class IndexController extends BaseController {
 
     const SECURITY_URL = 'http://www.ibos.com.cn/security.php';
 
@@ -104,7 +105,7 @@ class IndexController extends WxController {
      */
     public function actionLicense() {
         if ( Env::submitCheck( 'formhash' ) ) {
-            $licensekey = \CHtml::encode( Env::getRequest( 'licensekey' ) );
+            $licensekey = CHtml::encode( Env::getRequest( 'licensekey' ) );
             $filename = PATH_ROOT . '/data/licence.key';
             @file_put_contents( $filename, $licensekey );
             $license = IBOS::app()->licence;

@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <!-- 任务指派 -->
 <div class="aside" id="aside">

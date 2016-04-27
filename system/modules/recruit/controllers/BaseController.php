@@ -10,7 +10,7 @@
 /**
  * 招聘模块------招聘模块基本控制器类，继承ICController
  * @package application.modules.recruit.components
- * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BaseController.php 6533 2016-03-07 08:18:31Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -40,9 +40,9 @@ class BaseController extends Controller {
     protected function getSidebar() {
         $sidebarAlias = 'application.modules.recruit.views.resume.sidebar';
         $params = array(
-            'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
+            'statModule' => IBOS::app()->setting->get('setting/statmodules'),
         );
-        $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
+        $sidebarView = $this->renderPartial($sidebarAlias, $params, true);
         return $sidebarView;
     }
 
@@ -52,10 +52,10 @@ class BaseController extends Controller {
      */
     public function getDashboardConfig() {
         //取得所有配置
-        $config = IBOS::app()->setting->get( 'setting/recruitconfig' );
+        $config = IBOS::app()->setting->get('setting/recruitconfig');
         $result = array();
-        foreach ( $config as $configName => $configValue ) {
-            list($visi, $fieldRule) = explode( ',', $configValue );
+        foreach ($config as $configName => $configValue) {
+            list($visi, $fieldRule) = explode(',', $configValue);
             $result[$configName]['visi'] = $visi;
             $result[$configName]['fieldrule'] = $fieldRule;
         }
@@ -67,7 +67,7 @@ class BaseController extends Controller {
      * @return boolean
      */
     protected function checkIsInstallEmail() {
-        $isInstallEmail = Module::getIsEnabled( 'email' );
+        $isInstallEmail = Module::getIsEnabled('email');
         return $isInstallEmail;
     }
 
@@ -76,10 +76,10 @@ class BaseController extends Controller {
      * @return void
      */
     public function actionGetRealname() {
-        if ( IBOS::app()->request->isAjaxRequest ) { 
-            $keyword = Env::getRequest( 'keyword' );
-            $records = ResumeDetail::model()->fetchPKAndRealnameByKeyword( $keyword );
-            parent::ajaxReturn( $records );
+        if (IBOS::app()->request->isAjaxRequest) {
+            $keyword = Env::getRequest('keyword');
+            $records = ResumeDetail::model()->fetchPKAndRealnameByKeyword($keyword);
+            parent::ajaxReturn($records);
         }
     }
 
@@ -88,27 +88,29 @@ class BaseController extends Controller {
      * @return void
      */
     public function actionSearch() {
-        $type = Env::getRequest( 'type' );
+        $type = Env::getRequest('type');
 
-        $conditionCookie = Main::getCookie( 'condition' );
-        if ( empty( $conditionCookie ) ) {
-            Main::setCookie( 'condition', $this->condition, 10 * 60 );
+        $conditionCookie = Main::getCookie('condition');
+        if (empty($conditionCookie)) {
+            Main::setCookie('condition', $this->condition, 10 * 60);
         }
 
-        if ( $type == 'advanced_search' ) {
+        if ($type == 'advanced_search') {
             $search = $_POST['search'];
-			@$search['realname'] = addslashes( $search['realname'] );
-            $methodName = 'join' . ucfirst( $this->id ) . 'SearchCondition';
-            $this->condition = RecruitUtil::$methodName( $search, $this->condition );
-        } else if ( $type == 'normal_search' ) {
-			$keyword = addslashes( $_POST['keyword'] );
+            //添加转义
+            @$search['realname'] = \CHtml::encode($search['realname']);
+            $methodName = 'join' . ucfirst($this->id) . 'SearchCondition';
+            $this->condition = RecruitUtil::$methodName($search, $this->condition);
+        } else if ($type == 'normal_search') {
+            //添加单引号转义
+            $keyword = \CHtml::encode($_POST['keyword']);
             $this->condition = " rd.realname LIKE '%$keyword%' ";
         } else {
             $this->condition = $conditionCookie;
         }
         //把搜索条件存进cookie,当搜索出现分页时,搜索条件从cookie取
-        if ( $this->condition != Main::getCookie( 'condition' ) ) {
-            Main::setCookie( 'condition', $this->condition, 10 * 60 );
+        if ($this->condition != Main::getCookie('condition')) {
+            Main::setCookie('condition', $this->condition, 10 * 60);
         }
         $this->actionIndex();
     }
@@ -118,12 +120,12 @@ class BaseController extends Controller {
      * @return json
      */
     public function actionCheckRealname() {
-        $fullname = Env::getRequest( 'fullname' );
-        $fullnameToUnicode = str_replace( '%', '\\', $fullname );
-		$fullnameToUtf8 = CJSON::unicodeToUTF8( $fullnameToUnicode );
+        $fullname = Env::getRequest('fullname');
+        $fullnameToUnicode = str_replace('%', '\\', $fullname);
+        $fullnameToUtf8 = CJSON::unicodeToUTF8($fullnameToUnicode);
         $realnames = ResumeDetail::model()->fetchAllRealnames();
-        $isExist['statu'] = in_array( $fullnameToUtf8, $realnames ) ? true : false;
-        $this->ajaxReturn( $isExist );
+        $isExist['statu'] = in_array($fullnameToUtf8, $realnames) ? true : false;
+        $this->ajaxReturn($isExist);
     }
 
 }

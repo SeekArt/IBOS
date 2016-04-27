@@ -4,6 +4,8 @@ return array(
 	//------------------------------------------------controller-----------------------------------------------
 	'New assign title' => '{sender} 给您发布了一条新的任务 {subject}',
 	'New assign content' => '{sender} 给您发布了一条新的任务 <a href ="{url}">{subject}</a>',
+	'Timing assign title' => '您有新的任务提醒 {subject}：{content}',
+	'Timing assign content' => '您有新的任务提醒 <a href ="{url}">{subject}：{content}</a>',
 	'Push assign title' => '{sender} 给您发了一条任务催办提醒 {subject}',
 	'Push assign content' => '{sender} 给您发了一条任务催办提醒 <a href ="{url}">{subject}</a>',
 	'Finish assign title' => '{sender} 完成了任务 {subject}',

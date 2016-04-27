@@ -118,6 +118,16 @@ class NotifyMessage extends Model {
     }
 
     /**
+     * 根据用户访问的 url 地址修改对应的消息为已读
+     * @param integer $uid 用户 ID
+     * @param string $url 用户访问的 URL
+     * @return mixed 更改失败返回false，更改成功返回影响消息ID
+     */
+    public function setReadByUrl( $uid, $url ) {
+        return $this->updateAll( array( 'isread' => 1 ), "uid = :uid AND FIND_IN_SET(url, :url)", array( ':uid' => intval( $uid ), ':url' => $url ) );
+    }
+
+    /**
      * 发送一条消息提醒
      * @param array $data 发送消息提醒所需数组
      * @return boolean
@@ -134,7 +144,7 @@ class NotifyMessage extends Model {
         $s['body'] = String::filterDangerTag( $data['body'] );
         $s['ctime'] = time();
         $s['url'] = $data['url'];
-        return $this->add( $s, true );
+        return $s;
     }
 
     /**

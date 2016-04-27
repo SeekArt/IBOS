@@ -95,22 +95,22 @@ class Main {
 	 */
 	public static function getIncentiveWord() {
         $useIncentiveword = IBOS::app()->params->incentiveword;
-        if (true === $useIncentiveword):
+        if (true === $useIncentiveword){
 		$words = IBOS::getLangSource( 'incentiveword' );
 		$luckyOne = array_rand( $words );
 		$source = $words[$luckyOne];
 		return IBOS::lang( 'Custom title', 'main.default' ) . $source[array_rand( $source )];
-        else:
+        }else{
             $title = ' ';
             $unit = Setting::model()->fetchSettingValueByKey('unit');
-            if (!empty($unit)):
+            if (!empty($unit)){
                 $unitArray = String::utf8Unserialize($unit);
-                if (isset($unitArray['shortname'])):
+                if (isset($unitArray['shortname'])){
                     $title = $unitArray['shortname'] . '- IBOS协同办公平台';
-                endif;
-            endif;
+                }
+            }
             return $title;
-        endif;
+        }
 	}
 
 	/**

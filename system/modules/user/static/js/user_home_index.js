@@ -23,76 +23,103 @@ $(function() {
 	var seriesData = Ibos.app.g("seriesData");
 	// 如果有人脉信息，则生成人脉图
 	if (seriesData) {
-		Ibos.statics.load(Ibos.app.getStaticUrl("/js/lib/echarts/echarts-plain.js"))
-			.done(function() {
-				echarts.init(contacts).setOption($.extend(true, {
-					tooltip: {
-						trigger: 'item',
-						formatter: '{a} : {b}'
-					},
-					legend: {
-						orient: 'vertical',
-						x: 'right',
-						y: 'bottom',
-						data: [Ibos.l("USER.IMMEDIATE_LEADER"), Ibos.l("USER.COLLEAGUE")]
-					},
-					series: [{
-						type: 'force',
-						categories: [{
-							name: Ibos.l("USER.ONESELF"),
-							itemStyle: {
-								normal: {
-									color: '#82939E'
-								}
-							}
-						}, {
+		var nodes = seriesData[0].nodes,
+			type = {
+				"#82939E": Ibos.l("USER.ONESELF"),
+				"#3497DB": Ibos.l("USER.IMMEDIATE_LEADER"),
+				"#91CE31": Ibos.l("USER.COLLEAGUE")
+			},
+			categories = [
+				{
+					name: Ibos.l("USER.ONESELF"),
+					itemStyle: {
+						normal: {
+							color: '#82939E'
+						}
+					}
+				}, {
+					name: Ibos.l("USER.IMMEDIATE_LEADER"),
+					itemStyle: {
+						normal: {
+							color: '#3497DB'
+						}
+					}
+				}, {
+					name: Ibos.l("USER.COLLEAGUE"),
+					itemStyle: {
+						normal: {
+							color: '#91CE31'
+						}
+					}
+				}
+			],
+			options = {
+				tooltip: {
+					trigger: 'item',
+					formatter: function(params){
+						var data = params.data;
+						if( data === undefined ){
+							return type[params.color] + " : " + params.name;
+						}
+						var source = data.source,
+							target = data.target;
+						return nodes[source].name + " - " + nodes[target].name;
+					}
+				},
+				legend: {
+					orient: 'vertical',
+					x: 'right',
+					y: 'bottom',
+					data: [
+						{
 							name: Ibos.l("USER.IMMEDIATE_LEADER"),
-							itemStyle: {
-								normal: {
-									color: '#3497DB'
-								}
-							}
-						}, {
+							icon: "circle"
+						}, 
+						{
 							name: Ibos.l("USER.COLLEAGUE"),
-							itemStyle: {
-								normal: {
-									color: '#91CE31'
-								}
-							}
-						}],
-						itemStyle: {
-							normal: {
-								label: {
-									show: true,
-									textStyle: {
-										color: '#FFFFFF'
-									}
-								},
-								nodeStyle: {
-									brushType: 'both',
-									strokeColor: 'rgba(130, 147, 158, 0.4)',
-									lineWidth: 10
-								},
-								linkStyle: {
-									strokeColor: '#B2C0D1'
-								}
-							},
-							emphasis: {
-								label: {
-									show: false
-								},
-								nodeStyle: {
-									r: 30,
-									strokeColor: 'rgba(0, 0, 0, .1)'
+							icon: "circle"
+						}
+					]	
+				},
+				series: [
+					{
+						type: 'graph',
+						layout: 'force',
+						animation: true,
+						categories: categories,
+						label: {
+							normal:{
+								show: true,
+								formatter: "{b}",
+								textStyle: {
+									color: '#FFFFFF'
 								}
 							}
 						},
-						minRadius: 20,
-						maxRadius: 30,
-						density: 0.05,
-						attractiveness: 1.2
-					}]
-				}, {
+						itemStyle: {
+							normal: {
+								borderWidth: 10,
+								borderColor: 'rgba(130, 147, 158, 0.4)',
+							},
+							emphasis: {
+								borderColor: 'rgba(0, 0, 0, .1)'
+							}
+						},
+						lineStyle: {
+							normal: {
+								color: '#B2C0D1',
+								width: 1
+							}
+						},
+						force: {
+							repulsion: 1000
+						}
+					}
+				]
+			};
+		Ibos.statics.load(Ibos.app.getStaticUrl("/js/lib/echarts/echarts.min.js"))
+			.done(function() {
+				echarts.init(contacts).setOption($.extend(true, options, {
 					series: seriesData
 				}));
 			});

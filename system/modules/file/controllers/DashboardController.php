@@ -21,7 +21,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File as FileUtil;
 use application\modules\file\model\File as FileModel;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\file\model\FileCapacity;
 use application\modules\file\model\FileCloudSet;

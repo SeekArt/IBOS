@@ -4,7 +4,7 @@ namespace application\modules\report\widgets;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\message\core\Comment as ICComment;
 use application\modules\message\model\Comment;

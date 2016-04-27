@@ -4,7 +4,7 @@
 namespace application\modules\officialdoc\core;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\message\core\Comment as ICComment;
 use application\modules\message\model\Comment;
 

@@ -99,12 +99,12 @@ CREATE TABLE `{{message_content}}` (
 DROP TABLE IF EXISTS `{{message_user}}`;
 CREATE TABLE `{{message_user}}` (
   `listid` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '私信ID',
-  `uid` mediumint(8) unsigned zerofill NOT NULL DEFAULT '0',
+  `uid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `new` smallint(8) NOT NULL DEFAULT '0' COMMENT '未读消息数',
   `messagenum` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '消息总数',
   `ctime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '该参与者最后会话时间',
   `listctime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '私信最后会话时间',
-  `isdel` tinyint(1) unsigned zerofill NOT NULL DEFAULT '0' COMMENT '是否删除（假删）',
+  `isdel` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否删除（假删）',
   PRIMARY KEY (`listid`,`uid`),
   KEY `new` (`new`),
   KEY `ctime` (`ctime`),
@@ -179,7 +179,7 @@ CREATE TABLE `{{feed_data}}` (
 
 DROP TABLE IF EXISTS `{{feed_digg}}`;
 CREATE TABLE `{{feed_digg}}` (
-  `id` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT COMMENT '流水id',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水id',
   `uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
   `feedid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '产生动态的ID',
   `ctime` int(11) DEFAULT NULL DEFAULT '0' COMMENT '赞的时间',

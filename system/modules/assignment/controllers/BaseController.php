@@ -18,7 +18,7 @@
 namespace application\modules\assignment\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;

@@ -18,7 +18,7 @@ namespace application\modules\report\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\report\core\ReportType as ICReportType;
 use application\modules\report\model\Report;
 use application\modules\report\model\ReportRecord;

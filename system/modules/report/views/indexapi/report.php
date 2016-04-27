@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_report.css'; ?>">

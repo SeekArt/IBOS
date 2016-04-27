@@ -9,7 +9,9 @@
 
 namespace application\core\utils;
 
-class IBOS extends \Yii { 
+use Yii;
+
+class IBOS extends Yii {
 
     /**
      * 当前平台引擎

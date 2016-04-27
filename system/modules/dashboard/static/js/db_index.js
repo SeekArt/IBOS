@@ -271,8 +271,10 @@
 					title: U.lang("DB.LICENSE_KEY"),
 					content: document.getElementById("input_auth_code_dialog"),
 					ok: function() {
-						var content = this.DOM.content;
-						if ($.trim($("#license_key").val()) === "") {
+						var content = this.DOM.content,
+							$licenseKey = $("#license_key");
+						$licenseKey.val( $.trim($licenseKey.val()) );
+						if ($licenseKey.val() === "") {
 							alert(U.lang("DB.ENTER_LICENSEKEY"));
 							return false;
 						}

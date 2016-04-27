@@ -5,7 +5,7 @@
  * @package application.modules.main.components
  * @see application.modules.main.behaviors.onInitModuleBehavior
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Cron.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Cron.php 6001 2015-12-21 07:18:15Z tanghang $
  */
 
 namespace application\modules\main\components;
@@ -69,7 +69,7 @@ class Cron extends CApplicationComponent {
         } else {
             $data = TIMESTAMP + 86400 * 365;
         }
-        Syscache::model()->modify( 'cronnextrun', $data );
+        Syscache::model()->modifyCache( 'cronnextrun', $data );
         return true;
     }
 

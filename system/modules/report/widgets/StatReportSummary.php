@@ -16,7 +16,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\report\model\Report;
 use application\modules\report\model\ReportStats;
 use application\modules\statistics\utils\StatCommon;

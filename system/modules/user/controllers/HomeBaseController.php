@@ -5,28 +5,28 @@ namespace application\modules\user\controllers;
 use application\core\controllers\Controller;
 use application\core\utils as util;
 use application\modules\message\model\UserData;
-use application\modules\weibo\model\Follow;
 use application\modules\user\model\User;
 use application\modules\user\model\UserCount;
 use application\modules\user\utils\User as UserUtil;
+use application\modules\weibo\model\Follow;
 
 class HomeBaseController extends Controller {
 
     /**
      * 当前用户ID
-     * @var integer 
+     * @var integer
      */
     private $_uid = 0;
 
     /**
      * 当前用户数组
-     * @var array 
+     * @var array
      */
     private $_user = array();
 
     /**
      * 是否本人标识
-     * @var boolean 
+     * @var boolean
      */
     private $_isMe = false;
 
@@ -135,7 +135,7 @@ class HomeBaseController extends Controller {
      * @param array $user
      * @return array
      */
-    public function getColleagues( $user, $includeMe = true ) {
+    public function getColleagues( $user, $includeMe = true, $offset = 0, $limit = 4 ) {
         $contacts = array();
         if ( !empty( $user['deptid'] ) ) {
             $upId = $user['upuid'];
@@ -143,6 +143,8 @@ class HomeBaseController extends Controller {
                     array(
                         'select' => 'uid',
                         'condition' => "`deptid` = :deptid AND `status` IN (0,1)",
+                        'offset' => $offset,
+                        'limit' => $limit,
                         'params' => array( ':deptid' => $user['deptid'] ),
                     )
             );

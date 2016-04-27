@@ -16,7 +16,7 @@
 
 namespace application\modules\report\utils;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 
 class Report {
 

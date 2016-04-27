@@ -2,7 +2,7 @@
 
 /**
  * main模块的百度编辑器控制器
- * 
+ *
  * @version $Id: EditorController.php 2019 2013-12-28 11:36:58Z gzhzh $
  * @package application.modules.main.controllers
  */
@@ -13,6 +13,7 @@ use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\modules\main\components\EditorUploader;
+use application\modules\main\model\Setting;
 
 Class EditorController extends Controller {
 
@@ -20,11 +21,13 @@ Class EditorController extends Controller {
      * 百度编辑器图片上传
      */
     public function actionImageUp() {
+        $water = Setting::model()->fetchSettingValueByKey( 'watermarkstatus' );
         //上传配置
         $config = array(
-            "savePath" => 'data/editor/image/' . IBOS::app()->user->uid . '/',
+            "savePath" => 'data/editor/image/' . IBOS::app()->user->uid . '/' . ($water ? 'water/' : ''),
             "maxSize" => 2000, //单位KB
-            "allowFiles" => array( ".gif", ".png", ".jpg", ".jpeg", ".bmp" )
+            "allowFiles" => array( ".gif", ".png", ".jpg", ".jpeg", ".bmp" ),
+            'water' => $water,
         );
         // 上传图片框中的描述表单名称，
         $title = htmlspecialchars( Env::getRequest( 'pictitle' ), ENT_QUOTES );

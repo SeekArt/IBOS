@@ -28,6 +28,7 @@ use application\modules\position\model\Position;
 use application\modules\position\model\PositionRelated;
 use application\modules\position\model\PositionResponsibility;
 use application\modules\position\utils\Position as PositionUtil;
+use application\modules\position\model\PositionCategory;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
@@ -44,33 +45,64 @@ class PositionController extends OrganizationBaseController {
      * @return void
      */
     public function actionIndex() {
-        $catId = intval(Env::getRequest('catid'));
-        // 搜索处理
-        if (Env::submitCheck('search')) {
-            $key = \CHtml::encode( $_POST['keyword'] );
-            $list = Position::model()->fetchAll("`posname` LIKE '%{$key}%'");
-        } else {
-            $catContidion = empty($catId) ? '' : "catid = {$catId}";
-            $count = Position::model()->count($catContidion);
-            $pages = Page::create($count);
-            $list = Position::model()->fetchAllByCatId($catId, $pages->getLimit(), $pages->getOffset());
-            $data['pages'] = $pages;
-        }
-        // 岗位人数，不再用数据库的number字段 ////by hzh
-        foreach ($list as $k => $pos) {
-            $list[$k]['num'] = User::model()->countNumsByPositionId($pos['positionid']);
-        }
-        $data['catid'] = $catId;
-        $catData = PositionUtil::loadPositionCategory();
-        $data['catData'] = $catData;
-        $data['list'] = $list;
-        $data['category'] = String::getTree($catData, $this->selectFormat);
+        $category = String::getTree( PositionUtil::loadPositionCategory(), $this->selectFormat );
         $this->setPageTitle(IBOS::lang('Position manager'));
         $this->setPageState('breadCrumbs', array(
             array('name' => IBOS::lang('Organization'), 'url' => $this->createUrl('department/index')),
             array('name' => IBOS::lang('Position manager'))
         ));
-        $this->render('index', $data, false, array('category'));
+        $this->render('index', array( 'category' => $category ), false, array('category'));
+    }
+
+    /**
+     * 获取岗位列表数据方法
+     * @return json
+     */
+    public function actionGetPositionList() {
+        $catid  = Env::getRequest( 'catid' );
+        $search = Env::getRequest( 'search' );
+        $draw   = Env::getRequest( 'draw' );
+        $condition = '';
+        if ( !empty( $search['vlaue'] ) ) {
+            $key = \CHtml::encode( $search['value'] );
+            $condition .= "`posname` LIKE '%{$key}%'";
+        }
+        if ( !is_null( $catid ) ) {
+            $condition = !empty( $condition ) ? $condition . ' AND `catid` = ' . intval( $catid ) : '`catid` = ' . intval( $catid );
+        }
+        $this->ajaxReturn( array(
+            'data'              => $this->handlePositionListDataByCondition( $condition ),
+            'draw'              => $draw,
+            'recordsFiltered'   => Position::model()->count( $condition ),
+        ) );
+    }
+
+    /**
+     * 按处理岗位列表返回数据
+     * @param  string $condition 获取岗位数据的条件查询语句
+     * @return array             处理后的岗位列表数据
+     */
+    private function handlePositionListDataByCondition( $condition ) {
+        $start  = Env::getRequest( 'start' );
+        $length = Env::getRequest( 'length' );
+        $categoryList = PositionUtil::loadPositionCategory();
+        $positionList = Position::model()->fetchAll( array(
+            'condition' => $condition,
+            'limit'     => $length,
+            'offset'    => $start,
+        ) );
+        if ( empty( $positionList ) ) {
+            return array();
+        }
+        foreach ( $positionList as $position ) {
+            $result[] = array(
+                'posid'     => $position['positionid'],
+                'posname'   => $position['posname'],
+                'catname'   => $categoryList[$position['catid']]['name'],
+                'num'       => User::model()->countNumsByPositionId( $position['positionid'] ),
+            );
+        }
+        return $result;
     }
 
     /**
@@ -81,8 +113,8 @@ class PositionController extends OrganizationBaseController {
         if (Env::submitCheck('posSubmit')) {
             // 获取基本数据
             if (isset($_POST['posname'])) {
-                $data["posname"] = \CHtml::encode( $_POST['posname'] );
-                $data["sort"] = intval( $_POST['sort'] );
+                $data["posname"] = \CHtml::encode($_POST['posname']);
+                $data["sort"] = intval($_POST['sort']);
                 $data["catid"] = intval(Env::getRequest('catid'));
                 $data["goal"] = ''; // 岗位说明，已去掉
                 $data["minrequirement"] = ''; // 最低要求，已去掉
@@ -114,8 +146,8 @@ class PositionController extends OrganizationBaseController {
         } else {
             if (Env::submitCheck('posSubmit')) {
                 if (isset($_POST['posname'])) {
-                    $data["posname"] = \CHtml::encode( $_POST['posname'] );
-                    $data["sort"] = intval( $_POST['sort'] );
+                    $data["posname"] = \CHtml::encode($_POST['posname']);
+                    $data["sort"] = intval($_POST['sort']);
                     $data["catid"] = intval(Env::getRequest('catid'));
                     $data["goal"] = ''; // 岗位说明，已去掉
                     $data["minrequirement"] = ''; // 最低要求，已去掉
@@ -158,10 +190,14 @@ class PositionController extends OrganizationBaseController {
                 PositionResponsibility::model()->deleteAll('`positionid` = :positionid', array(':positionid' => $positionId));
                 // 删除辅助岗位关联
                 PositionRelated::model()->deleteAll('positionid = :positionid', array(':positionid' => $positionId));
-                $relatedIds = User::model()->fetchUidByPosId($positionId);
+                $relatedIds = User::model()->fetchUidByPosId($positionId, true, true);
+                $uidArray = array();
+                foreach ($relatedIds as $id) {
+                    $uidArray = array_merge($uidArray, $id);
+                }
                 // 更新用户岗位信息
-                if (!empty($relatedIds)) {
-                    User::model()->updateByUids($relatedIds, array('positionid' => 0));
+                if (!empty($uidArray)) {
+                    User::model()->updateByUids($uidArray, array('positionid' => 0));
                 }
             }
             CacheUtil::update('position');

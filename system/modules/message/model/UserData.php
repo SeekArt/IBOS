@@ -9,6 +9,7 @@ use application\core\utils\String;
 use application\modules\message\model\MessageContent;
 use application\modules\message\model\NotifyMessage;
 use application\modules\assignment\model\AssignmentRemind;
+use application\modules\assignment\model\Assignment;
 use application\modules\user\model\User;
 
 class UserData extends Model {
@@ -22,7 +23,7 @@ class UserData extends Model {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type $uid
 	 * @param type $key
 	 * @return type
@@ -157,7 +158,7 @@ class UserData extends Model {
 		$this->checkTimingRemind( $uid );
 		$userData = $this->getUserData( $uid );
 		// 指定用户的提醒通知统计数目
-		$count = NotifyMessage::model()->count(" uid = {$uid} and isread = 0 ");
+		$count = NotifyMessage::model()->count( " uid = {$uid} and isread = 0 " );
 		// 未读提醒通知数目
 		$return = $this->getNotifyCount( $uid );
 		// 未读总通知数目
@@ -171,7 +172,7 @@ class UserData extends Model {
 		// 新的关注数目
 		$return['new_folower_count'] = isset( $userData['new_folower_count'] ) ? intval( $userData['new_folower_count'] ) : 0;
 		// 未读标题总通知数目
-		$return['unread_total'] = $count+$return['unread_atme']+$return['unread_comment']+$return['unread_message']+$return['new_folower_count'];
+		$return['unread_total'] = $count + $return['unread_atme'] + $return['unread_comment'] + $return['unread_message'] + $return['new_folower_count'];
 		return $return;
 	}
 
@@ -187,9 +188,10 @@ class UserData extends Model {
 			return FALSE;
 		}
 		foreach ( $remindList as $remind ) {
+			$assignment = Assignment::model()->findByPk( $remind['assignmentid'] );
 			$senderName = User::model()->fetchRealnameByUid( $remind['uid'] );
-			$title = IBOS::lang( 'assignment/default/Push assign title', '', array( '{sender}' => $senderName, '{subject}' => $remind['content'] ) );
-			$body = IBOS::lang( 'assignment/default/Push assign content', '', array( '{sender}' => $senderName, '{url}' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ), '{subject}' => $remind['content'] ) );
+			$title = IBOS::lang( 'assignment/default/Timing assign title', '', array( '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
+			$body = IBOS::lang( 'assignment/default/Timing assign content', '', array( '{url}' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ), '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
 			$assignData = array(
 				'uid' => $uid,
 				'node' => 'assignment_push_message',

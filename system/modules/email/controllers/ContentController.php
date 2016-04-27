@@ -21,6 +21,7 @@ use application\modules\officialdoc\model\Officialdoc;
 use application\modules\thread\model\Thread;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use application\modules\message\model\NotifyMessage;
 use CHtml;
 
 class ContentController extends BaseController {
@@ -328,7 +329,7 @@ class ContentController extends BaseController {
                     $tempUid = strpos($uid, '@');
                     if (!$tempUid) {
                         if ($this->uid == $uid) {
-                            $name = IBOS::lang('Self');
+                            $name = IBOS::lang('Me');
                         } else {
                             $name = User::model()->fetchRealnameByUid($uid);
                         }
@@ -374,6 +375,7 @@ class ContentController extends BaseController {
                 array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
                 array('name' => IBOS::lang('Show email'))
             ));
+            NotifyMessage::model()->setReadByUrl( $this->uid, IBOS::app()->getRequest()->getUrl() );
             $this->render('show', $data);
         } else {
             $this->error(IBOS::lang('Parameters error'), $this->createUrl('list/index'));

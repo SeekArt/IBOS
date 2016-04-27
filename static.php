@@ -19,7 +19,8 @@ switch ( $type ) {
             $ext = '.jpg';
         }
         $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : 0;
-        $size = isset( $_GET['size'] ) ? $_GET['size'] : '';
+        $size = isset( $_GET['size'] ) && in_array(
+                        $_GET['size'], array( 'small', 'big', 'middle' ) ) ? $_GET['size'] : 'small';
         $random = isset( $_GET['random'] ) ? $_GET['random'] : '';
         showDataStatic( $uid, $size, $random );
         break;

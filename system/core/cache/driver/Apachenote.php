@@ -3,9 +3,19 @@
 namespace application\core\cache\driver;
 
 use application\core\components\Cache;
+use application\core\utils\String;
 
 /**
  * Apachenote缓存驱动
+ *
+ * @namespace application\core\cache\driver
+ * @filename Apachenote.php
+ * @encoding UTF-8
+ * @author mumu <2317216477@qq.com>
+ * @link http://www.ibos.com.cn/
+ * @copyright Copyright &copy; 2012-2015 IBOS Inc
+ * @datetime 2015-12-29 11:38:04
+ * @version $Id$
  */
 class Apachenote extends Cache {
 
@@ -32,7 +42,7 @@ class Apachenote extends Cache {
     /**
      * 读取缓存
      * @param string $name 缓存变量名
-     * @return mixed
+     * @return mixed 空字符串或者数组
      */
     public function get( $name ) {
         $this->open();
@@ -50,7 +60,7 @@ class Apachenote extends Cache {
     /**
      * 写入缓存
      * @param string $name 缓存变量名
-     * @param mixed $value  存储数据
+     * @param mixed $value  存储数据（即将被序列化）
      * @return boolean
      */
     public function set( $name, $value ) {

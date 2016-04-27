@@ -665,7 +665,7 @@ class CosyncController extends CoController {
      * @param  array $ibosRemoveList 从差异化分析接口返回的酷办公移除用户列表
      * @return array                 过滤后的用户列表
      */
-    protected function removeAdminUidFromIBOSRemoveList($ibosRemoveList) {
+    protected function removeAdminUidFromIbosRemoveList($ibosRemoveList) {
         $bindvalue = UserBinding::model()->fetchBindValue(1, 'co');
         if (!empty($bindvalue)) {
             foreach ($ibosRemoveList as $key => $user) {

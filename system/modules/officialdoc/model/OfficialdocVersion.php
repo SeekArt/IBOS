@@ -7,7 +7,6 @@
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author Ring <Ring@ibos.com.cn>
  */
-
 /**
  * 公文模块------  doc_version表的数据层操作类，继承ICModel
  * @package application.modules.officialDoc.model
@@ -19,7 +18,7 @@ namespace application\modules\officialdoc\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\officialdoc\utils\Officialdoc as OfficialdocUtil;
 
 class OfficialdocVersion extends Model {
@@ -39,18 +38,22 @@ class OfficialdocVersion extends Model {
      */
     public function fetchAllByDocid( $docid ) {
         $versionData = $this->fetchAll( 'docid=:docid ORDER BY version DESC', array( ':docid' => $docid ) );
+
         if ( !empty( $versionData ) ) {
-            $users = IBOS::app()->setting->get( 'cache/users' );
+            $uidArray = array();
+            foreach ( $versionData as $data ) {
+                $uidArray[] = $data['editor'];
+            }
+            $realnameArray = User::model()->findRealnameIndexByUid( $uidArray );
             foreach ( $versionData as $key => $version ) {
                 $versionData[$key]['uptime'] = Convert::formatDate( $version['uptime'], 'u' );
-                $versionData[$key]['editor'] = isset( $users[$version['editor']] ) ? $users[$version['editor']]['realname'] : '--';
+                $versionData[$key]['editor'] = !empty( $realnameArray[$version['editor']] ) ? $realnameArray[$version['editor']] : '--';
                 $versionData[$key]['showVersion'] = OfficialdocUtil::changeVersion( $version['version'] );
             }
         }
         return $versionData;
     }
 
-    
     /**
      * 根据docid插入一个历史版本
      * @param integer $docid 公文id

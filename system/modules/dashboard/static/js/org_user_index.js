@@ -67,7 +67,7 @@ $(document).ready(function() {
                 $("#org_user_table").waiting(false);
                 if (res.isSuccess) {
                     Ui.tip(Ibos.l("OPERATION_SUCCESS"));
-                    window.location.reload();
+                    userTable.draw();
                 } else {
                     Ui.tip(res.msg, "danger");
                 }
@@ -208,10 +208,21 @@ $(document).ready(function() {
                         } else {
                             Ui.tip(res.msg, "warning");
                         }
-                        window.location.reload();
+                        userTable.draw();
                     }, "json");
                 }
             });
+        },
+        "getStatusList": function(param, elem) {
+            var $elem = $(elem),
+                $parent = $elem.parent(),
+                type = $elem.data('type');
+
+            $parent.children().removeClass('active');
+            $elem.addClass('active');
+
+            userTable.user.type = type;
+            userTable.user.search();
         }
     });
 
@@ -281,7 +292,10 @@ $(document).ready(function() {
         },
         "nodeOnClick": function(event, treeId, treeNode) {
             var url = treeNode.url;
-            window.location.href = url;
+
+            userTable.user.deptid = U.getUrlParam(url).deptid;
+            $('#corp_unit').removeClass('curSelectedNode');
+            userTable.user.search();
         },
         "getFontCss": function(treeId, treeNode) {
             return (!!treeNode.highlight) ? { "font-weight": "700" } : { "font-weight": "normal" };
@@ -297,6 +311,140 @@ $(document).ready(function() {
             }
         }
     };
+
+    var userTable = (function() {
+        var table = $('#org_user_table').DataTable($.extend({}, Ibos.settings.dataTable, {
+            deferLoading: 0,
+            ajax: {
+                url: Ibos.app.url('dashboard/user/getuserlist'),
+                type: 'post'
+            },
+            initComplete: function() {
+                $(this).find('[data-name]').label();
+            },
+            rowCallback: function(row, data) {
+                $(row).find("label input[type='checkbox']").label();
+            },
+            order: [],
+            columns: [
+                //复选框
+                {
+                    "data": "",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return (row.uid) !== 1 ? '<label class="checkbox"><input type="checkbox" name="user" value="' + row.uid + '"/></label>' : '';
+                    }
+                },
+                //头像
+                {
+                    "data": "",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return '<div class="avatar-box" data-param="uid=' + row.uid + '">' +
+                            '<span class="avatar-circle">' +
+                            '<img src="' + row.avatar_small + '" title="' + row.realname + '"/>' +
+                            '</span>' +
+                            '</div>';
+                    }
+                },
+                //姓名
+                {
+                    "data": "realname",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        var realname = row.realname,
+                            posname = row.posname ? row.posname : '-';
+                        return '<div class="xcm">' + realname + '</div>' +
+                            '<div class="fss">' + posname + '</div>';
+                    }
+                },
+                //部门
+                {
+                    "data": "deptname",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        var text = row.deptname ? row.deptname : '-';
+                        return '<span class="fss">' + text + '</span>';
+                    }
+                },
+                //角色
+                {
+                    "data": "rolename",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        var i, len,
+                            rolename = row.rolename ? row.rolename : ' ',
+                            text = '<span class="fss xcr">' + rolename + '</span>';
+                        if (len = row.relatedRole.length) { // array
+                            for (i = 0; i < len; i++) {
+                                text += '<span class="fss">' + row.relatedRole[i] + '</span>';
+                            }
+                        }
+                        return text;
+                    }
+                },
+                //手机
+                {
+                    "data": "mobile",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return '<span class="fss">' + (row.mobile) ? row.mobile : ' ' + '</span>';
+                    }
+                },
+                //微信号
+                {
+                    "data": "weixin",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return '<span class="fss">' + (row.weixin) ? row.weixin : ' ' + '</span>';
+                    }
+                },
+                //操作
+                {
+                    "data": "",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return '<a href="' + Ibos.app.url('dashboard/user/edit', { uid: row.uid }) + '" class="cbtn o-edit"></a>';
+                    }
+                }
+            ]
+        }));
+
+        return table;
+    })();
+
+    userTable.draw();
+    userTable.user = {
+        deptid: 0,
+        type: 'enabled',
+        search: function() {
+            var that = this,
+                url = Ibos.app.url('dashboard/user/getuserlist', {
+                    type: that.type,
+                    deptid: that.deptid
+                });
+
+            userTable.ajax.url(url).load();
+        }
+    };
+
+    $('#corp_unit').on('click', function(e) {
+        var $this = $(this),
+            treeObj = $.fn.zTree.getZTreeObj("utree"),
+            checked = treeObj.getSelectedNodes();
+
+        $.each(checked, function(i, e) {
+            treeObj.cancelSelectedNode(e);
+        });
+
+        $this.addClass('curSelectedNode');
+        userTable.user.deptid = 0;
+        userTable.user.search();
+    });
+
+    $('#mn_search').search(function(val) {
+        userTable.search(val).draw();
+    });
 
     // 初始化右栏树
     var settings = {
@@ -324,21 +472,13 @@ $(document).ready(function() {
         },
         $tree = $("#utree");
     $tree.waiting(null, 'mini');
-    $.get(Ibos.app.url('dashboard/user/index', { 'op': 'tree' }), function(data) {
-        var selectedDeptId = Ibos.app.g("selectedDeptId");
+    $.get(Ibos.app.url('dashboard/user/getdepttree'), function(data) {
         $.fn.zTree.init($tree, settings, data);
         $tree.waiting(false);
         var treeObj = $.fn.zTree.getZTreeObj("utree");
 
         var auxiliaryId = Ibos.app.g("auxiliaryId");
         ztreeOpt.selectAuxiliaryNode(auxiliaryId);
-
-        // 有catid才初始化选中
-        if (selectedDeptId && selectedDeptId > 0) {
-            var treeObj = $.fn.zTree.getZTreeObj("utree");
-            var node = treeObj.getNodeByParam("id", selectedDeptId, null);
-            treeObj.selectNode(node);
-        }
     }, 'json');
 
     /**

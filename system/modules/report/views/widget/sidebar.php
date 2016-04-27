@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <li <?php if ( $inPersonal ): ?>class="active"<?php endif; ?>>
     <a href="<?php echo IBOS::app()->createUrl( 'report/stats/personal' ); ?>">

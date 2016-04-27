@@ -1,7 +1,7 @@
 <?php 
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\main\utils\Main;
 ?>
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/daterangepicker/daterangepicker-ibos.css?<?php echo VERHASH; ?>">

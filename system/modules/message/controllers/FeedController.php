@@ -180,7 +180,7 @@ class FeedController extends BaseController {
                     $this->ajaxReturn( $return );
                 }
             }
-            // 执行删除操作		
+            // 执行删除操作
             $return = Feed::model()->doEditFeed( $feedId, 'delFeed', util\IBOS::app()->user->uid );
             // 删除失败或删除成功的消息
             $return['msg'] = ($return['isSuccess']) ? util\IBOS::lang( 'Del succeed', 'message' ) : util\IBOS::lang( 'Del failed', 'message' );
@@ -259,7 +259,8 @@ class FeedController extends BaseController {
             } else {
                 // 仅自己部门可见，取出自己的部门ID
                 if ( $feed['view'] == '2' ) {
-                    $deptIds = util\String::filterStr( util\IBOS::app()->user->alldeptid . ',' . util\IBOS::app()->user->alldowndeptid );
+                    $alldowndeptid = Department::model()->fetchChildIdByDeptids( util\IBOS::app()->user->alldeptid );
+                    $deptIds = util\String::filterStr( util\IBOS::app()->user->alldeptid . ',' . $alldowndeptid );
                 } else {
                     $deptIds = $feed['deptid'];
                 }

@@ -112,31 +112,23 @@ class InitMainModule extends CBehavior {
 		$uid = Env::getRequest( 'uid' );
 		$swfHash = Env::getRequest( 'hash' );
 		if ( $uid && $swfHash ) {
-            defined('IN_SWFHASH') or define('IN_SWFHASH', true);
-			$authKey = IBOS::app()->setting->get( 'config/security/authkey' );
-			if ( (empty( $uid )) || $swfHash != md5( substr( md5( $authKey ), 8 ) . $uid ) ) {
-				exit();
-			}
-			$curUser = User::model()->fetchByUid( $uid );
+//            defined( 'IN_SWFHASH' ) or define( 'IN_SWFHASH', true );
+//            $authKey = Ibos::app()->setting->get( 'config/security/authkey' );
+//            if ( (empty( $uid )) || $swfHash != md5( substr( md5( $authKey ), 8 ) . $uid ) ) {
+//                exit();
+//            }
+//            $curUser = User::model()->fetchByUid( $uid );
 			// 开始登录
-			// 登录类型
-			if ( String::isMobile( $curUser['username'] ) ) {
-				$loginType = 4;
-			} else if ( String::isEmail( $curUser['username'] ) ) {
-				$loginType = 2;
-			} else {
-				$loginType = 1;
-			};
-			$identity = new UserIdentity( $curUser['username'], $curUser['password'], $loginType );
-			$identity->setId( $uid );
-			$identity->setPersistentStates( $curUser );
+//            $identity = new UserIdentity( $curUser['mobile'], $curUser['password'], 4 );
+//            $identity->setId( $uid );
+//            $identity->setPersistentStates( $curUser );
 			// 是否允许多个账户同时登录
-			$account = IBOS::app()->setting->get( 'setting/account' );
-			$user = IBOS::app()->user;
-			if ( $account['allowshare'] != 1 ) {
-				$user->setStateKeyPrefix( IBOS::app()->setting->get( 'sid' ) );
-			}
-			$user->login( $identity );
+//            $account = Ibos::app()->setting->get( 'setting/account' );
+//            $user = Ibos::app()->user;
+//            if ( $account['allowshare'] != 1 ) {
+//                $user->setStateKeyPrefix( Ibos::app()->setting->get( 'sid' ) );
+//            }
+//            $user->login( $identity );
 		} else if ( IBOS::app()->user->isGuest ) {
             defined('IN_SWFHASH') or define('IN_SWFHASH', false);
 			// 未登录即跳转
@@ -314,7 +306,7 @@ class InitMainModule extends CBehavior {
 	public function handleLoadSysCache( $event ) {
 		$caches = Syscache::model()->fetchAll();
 		foreach ( $caches as $cache ) {
-			$value = $cache['type'] == '1' ? unserialize( $cache['value'] ) : $cache['value'];
+            $value = $cache['type'] == '1' ? String::utf8Unserialize( $cache['value'] ) : $cache['value'];
 			if ( $cache['name'] == 'setting' ) {
 				IBOS::app()->setting->set( 'setting', $value );
 			} else {

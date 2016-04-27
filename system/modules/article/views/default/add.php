@@ -121,12 +121,10 @@ use application\modules\vote\components\Vote;
 							<label for="status"><?php echo $lang['Information Status']; ?></label>
 							<div>
 								<div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
-									<?php if($aitVerify == 0): ?>
-									<label class="btn active">
+									<label class="btn active" <?php if($aitVerify != 0): ?>style="display:none"<?php endif; ?>>
 										<input type="radio" name="status" value="2" <?php if($aitVerify == 0): ?>checked<?php endif;?>>
 										<?php echo IBOS::lang( 'Wait verify' ); ?>
 									</label>
-									<?php endif; ?>
 									<label class="btn active" <?php if($aitVerify != 1): ?>style="display:none;"<?php endif; ?>>
 										<input type="radio" name="status" value="1" <?php if($aitVerify == 1): ?>checked<?php endif;?>>
 										<?php echo IBOS::lang( 'Publish' ); ?>
@@ -201,5 +199,3 @@ use application\modules\vote\components\Vote;
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article_default_add.js?<?php echo VERHASH; ?>'></script>
-
-

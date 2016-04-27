@@ -9,9 +9,9 @@
  */
 /**
  *  user_group表的数据层操作
- * 
+ *
  * @package application.modules.user.model
- * @version $Id: UserGroup.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: UserGroup.php 6759 2016-04-06 02:09:02Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -19,6 +19,7 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
+use application\core\utils\IBOS;
 
 class UserGroup extends Model {
 
@@ -26,6 +27,7 @@ class UserGroup extends Model {
         $this->cacheLife = 0;
         parent::init();
     }
+
     public static function model( $className = __CLASS__ ) {
         return parent::model( $className );
     }
@@ -33,6 +35,7 @@ class UserGroup extends Model {
     public function tableName() {
         return '{{user_group}}';
     }
+
     public function afterSave() {
         CacheUtil::update( 'UserGroup' );
         CacheUtil::load( 'UserGroup' );
@@ -83,6 +86,20 @@ class UserGroup extends Model {
     public function deleteById( $ids ) {
         $id = explode( ',', trim( $ids, ',' ) );
         return parent::deleteByPk( $id, "`system` = '0'" );
+    }
+
+    public function findUserGroupIndexByGid() {
+        $return = $userGroupArray = array();
+        $userGroupArray = IBOS::app()->db->createCommand()
+                ->select()
+                ->from( $this->tableName() )
+                ->queryAll();
+        if ( !empty( $userGroupArray ) ) {
+            foreach ( $userGroupArray as $userGroup ) {
+                $return[$userGroup['gid']] = $userGroup;
+            }
+        }
+        return $return;
     }
 
 }

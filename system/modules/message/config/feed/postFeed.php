@@ -9,7 +9,7 @@ use application\core\utils\String;
     <body comment="feed详细内容/引用的内容">
         <![CDATA[
         <?php if ( isset( $title ) ): ?><div class="mbs"><?php echo $title; ?></div><?php endif; ?>
-        <?php echo String::filterCleanHtml( $body ); ?>
+        <?php echo \CHtml::encode( $body ); ?>
         ]]>
     </body>
     <feedAttr comment="true" repost="true" like="true" favor="true" delete="true" />

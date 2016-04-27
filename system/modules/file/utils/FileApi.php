@@ -2,7 +2,7 @@
 
 namespace application\modules\file\utils;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 
 class FileApi{
 	

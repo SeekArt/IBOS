@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 use application\modules\officialdoc\model\RcType;

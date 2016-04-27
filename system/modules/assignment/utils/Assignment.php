@@ -39,16 +39,16 @@ class Assignment {
      * @return array
      */
 
-    public static function handleListData($data, $uid) {
-        $reminds = AssignmentRemind::model()->fetchAllByUid($uid);
-        foreach ($data as $k => $assignment) {
-            $data[$k] = self::handleShowData($assignment);
+    public static function handleListData( $data, $uid ) {
+        $reminds = AssignmentRemind::model()->fetchAllByUid( $uid );
+        foreach ( $data as $k => $assignment ) {
+            $data[$k] = self::handleShowData( $assignment );
             $aid = $assignment['assignmentid'];
-            $data[$k]['remindtime'] = in_array($aid, array_keys($reminds)) ? $reminds[$aid] : 0;
+            $data[$k]['remindtime'] = in_array( $aid, array_keys( $reminds ) ) ? $reminds[$aid] : 0;
             // 图章
-            if ($assignment['stamp'] != 0) {
-                $path = Stamp::model()->fetchIconById($assignment['stamp']);
-                $data[$k]['stampPath'] = File::fileName(Stamp::STAMP_PATH . $path);
+            if ( $assignment['stamp'] != 0 ) {
+                $path = Stamp::model()->fetchIconById( $assignment['stamp'] );
+                $data[$k]['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
             }
         }
         return $data;
@@ -59,16 +59,16 @@ class Assignment {
      * @param array $designeeData
      * @return array
      */
-    public static function handleDesigneeData($designeeData) {
-        if (is_array($designeeData)) {
-            foreach ($designeeData as $k => $des) {
-                if ($des['designeeuid'] == $des['chargeuid']) {
-                    unset($designeeData[$k]);
+    public static function handleDesigneeData( $designeeData ) {
+        if ( is_array( $designeeData ) ) {
+            foreach ( $designeeData as $k => $des ) {
+                if ( $des['designeeuid'] == $des['chargeuid'] ) {
+                    unset( $designeeData[$k] );
                 }
             }
         }
         // 重新生成数组索引，确保前端输出的格式是数组
-        return array_merge($designeeData, array());
+        return array_merge( $designeeData, array() );
     }
 
     /**
@@ -76,11 +76,12 @@ class Assignment {
      * @param array $assignment 单个任务一维数组
      * @return array
      */
-    public static function handleShowData($assignment) {
-        $assignment['designee'] = User::model()->fetchByUid($assignment['designeeuid']); // 发起人
-        $assignment['charge'] = User::model()->fetchByUid($assignment['chargeuid']); // 负责人
-        $assignment['st'] = date('m月d日 H:i', $assignment['starttime']);
-        $assignment['et'] = !$assignment['endtime'] ? '时间待定' : date('m月d日 H:i', $assignment['endtime']);
+    public static function handleShowData( $assignment ) {
+        $userArray = User::model()->fetchAllByUids( $assignment['designeeuid'] . ',' . $assignment['chargeuid'] );
+        $assignment['designee'] = !empty( $userArray[$assignment['designeeuid']] ) ? $userArray[$assignment['designeeuid']] : array(); // 发起人
+        $assignment['charge'] = !empty( $userArray[$assignment['chargeuid']] ) ? $userArray[$assignment['chargeuid']] : array(); // 负责人
+        $assignment['st'] = date( 'm月d日 H:i', $assignment['starttime'] );
+        $assignment['et'] = !$assignment['endtime'] ? '时间待定' : date( 'm月d日 H:i', $assignment['endtime'] );
         return $assignment;
     }
 
@@ -90,8 +91,8 @@ class Assignment {
      * @param string $condition2 条件2
      * @return string
      */
-    public static function joinCondition($condition1, $condition2) {
-        if (empty($condition1)) {
+    public static function joinCondition( $condition1, $condition2 ) {
+        if ( empty( $condition1 ) ) {
             return $condition2;
         } else {
             return $condition1 . ' AND ' . $condition2;
@@ -103,8 +104,8 @@ class Assignment {
      * @param integer $status
      * @return string
      */
-    public static function getCssClassByStatus($status) {
-        switch ($status) {
+    public static function getCssClassByStatus( $status ) {
+        switch ( $status ) {
             case 0:
                 $res = self::CLASS_UNREAD;
                 break;
@@ -125,18 +126,18 @@ class Assignment {
      * 处理添加、修改存入数据库前对数据处理
      * @return array
      */
-    public static function handlePostData($post) {
-        $chargeuid = String::getId($post['chargeuid']);
-        $participantuid = String::getId($post['participantuid']);
+    public static function handlePostData( $post ) {
+        $chargeuid = String::getId( $post['chargeuid'] );
+        $participantuid = String::getId( $post['participantuid'] );
         //添加对任务主题的xss安全过滤
         $data = array(
-            'subject' => CHtml::encode($post['subject']), // 任务主题
-            'description' => String::filterStr($post['description']), // 任务描述
-            'chargeuid' => implode(',', $chargeuid), // 负责人
-            'participantuid' => implode(',', $participantuid), // 参与人
-            'attachmentid' => trim($post['attachmentid'], ','), // 附件
-            'starttime' => empty($post['starttime']) ? TIMESTAMP : strtotime($post['starttime']), // 开始时间
-            'endtime' => strtotime($post['endtime']) // 结束时间
+            'subject' => CHtml::encode( $post['subject'] ), // 任务主题
+            'description' => String::filterStr( $post['description'] ), // 任务描述
+            'chargeuid' => implode( ',', $chargeuid ), // 负责人
+            'participantuid' => implode( ',', $participantuid ), // 参与人
+            'attachmentid' => trim( $post['attachmentid'], ',' ), // 附件
+            'starttime' => empty( $post['starttime'] ) ? TIMESTAMP : strtotime( $post['starttime'] ), // 开始时间
+            'endtime' => strtotime( $post['endtime'] ) // 结束时间
         );
         return $data;
     }

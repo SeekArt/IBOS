@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 6467 2016-02-27 01:30:30Z gzcsh $
+ *	@version $Id: common.css 6868 2016-04-15 08:05:05Z gzcsh $
  *	@modified 2013-03-22  
  */
 
@@ -2120,7 +2120,7 @@ a.progressCancel:hover {
 /***用户部门岗位设置***/
 .user-form-con{
 	position: relative;
-	width: 496px;
+	width: 351px;
 }
 .form-horizontal .dialog-form-header{
 	position: relative;

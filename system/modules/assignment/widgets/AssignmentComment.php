@@ -3,7 +3,7 @@
 namespace application\modules\assignment\widgets;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\assignment\model\Assignment;
 use application\modules\message\core\Comment as IWComment;
 use application\modules\message\model\Comment;

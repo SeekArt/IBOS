@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File as FileUtil;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\file\core\FileAttr;
 use application\modules\file\core\FileCloud;
 use application\modules\file\core\FileLocal;

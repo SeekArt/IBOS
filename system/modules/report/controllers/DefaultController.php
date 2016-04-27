@@ -18,7 +18,7 @@ namespace application\modules\report\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\String;
 use application\modules\calendar\model\Calendars;
@@ -37,6 +37,7 @@ use application\modules\user\utils\User as UserUtil;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 use application\core\model\Log;
+use CHtml;
 
 class DefaultController extends BaseController {
 
@@ -165,7 +166,7 @@ class DefaultController extends BaseController {
             $postData = $_POST;
             $uid = IBOS::app()->user->uid;
             $postData['uid'] = $uid;
-            $postData['subject'] = String::filterCleanHtml($_POST['subject']);
+            $postData['subject'] = CHtml::encode($_POST['subject']);
             $toidArr = String::getId($postData['toid']);
             $postData['toid'] = implode(',', $toidArr);
             $postData['begindate'] = strtotime($postData['begindate']);
@@ -187,7 +188,7 @@ class DefaultController extends BaseController {
                     foreach ($orgPlan as $recordid => $val) {
                         $updateData = array(
                             'process' => intval($val['process']),
-                            'exedetail' => String::filterCleanHtml($val['exedetail'])
+                            'exedetail' => CHtml::encode($val['exedetail'])
                         );
                         if ($updateData['process'] == self::COMPLETE_FALG) {  // 如果进度条=10，改变完成状态
                             $updateData['flag'] = 1;
@@ -361,7 +362,7 @@ class DefaultController extends BaseController {
                 'begindate' => strtotime($_POST['begindate']),
                 'enddate' => strtotime($_POST['enddate']),
                 'typeid' => $typeid,
-                'subject' => String::filterCleanHtml($_POST['subject']),
+                'subject' => CHtml::encode($_POST['subject']),
                 'content' => $_POST['content'],
                 'attachmentid' => $_POST['attachmentid'],
                 'toid' => implode(',', String::getId($_POST['toid']))
@@ -373,7 +374,7 @@ class DefaultController extends BaseController {
                 foreach ($_POST['orgPlan'] as $recordid => $orgPlan) {
                     $updateData = array(
                         'process' => intval($orgPlan['process']),
-                        'exedetail' => String::filterCleanHtml($orgPlan['exedetail'])
+                        'exedetail' => CHtml::encode($orgPlan['exedetail'])
                     );
                     if ($updateData['process'] == self::COMPLETE_FALG) {  // 如果进度条=10，改变完成状态
                         $updateData['flag'] = 1;

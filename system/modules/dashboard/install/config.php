@@ -207,6 +207,14 @@ return array(
                 'login' => array( 'index' ),
             )
         ),
+        'backgrounds' => array(
+            'type' => 'node',
+            'name' => '系统背景设置',
+            'group' => '界面',
+            'controllerMap' => array(
+                'backgroud' => array( 'index' ),
+            )
+        ),
         'modules' => array(
             'type' => 'node',
             'name' => '模块管理',

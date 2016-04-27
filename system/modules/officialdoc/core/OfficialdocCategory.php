@@ -18,7 +18,7 @@
 namespace application\modules\officialdoc\core;
 
 use application\core\components\Category;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\officialdoc\model\Officialdoc as offdoc;
 use application\modules\officialdoc\model\OfficialdocCategory as DocCate;
 

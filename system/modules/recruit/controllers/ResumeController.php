@@ -10,7 +10,7 @@
 /**
  * 招聘模块------招聘默认控制器，继承RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: ResumeController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ResumeController.php 6584 2016-03-11 08:31:13Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -362,7 +362,7 @@ class ResumeController extends BaseController {
             $importContent = iconv( $code, CHARSET, $importContent );
         }
         $config = AnalysisConfig::getAnalconf();
-        $analysis = new ResumeAnalysis( $importContent, $config );
+        $analysis = new ResumeAnalysis( isset( $importContent ) ? $importContent : '', $config );
         $result = $analysis->parse_content();
         $result['gender'] = preg_match( '/女/', $result['gender'] ) ? 2 : 1;
         $result['maritalstatus'] = preg_match( '/是|已/', $result['maritalstatus'] ) ? 1 : 0;

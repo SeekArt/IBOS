@@ -17,7 +17,7 @@
 namespace application\modules\assignment\core;
 
 use application\core\utils\Attach;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\core\utils\System;
 use application\modules\assignment\model\Assignment;
@@ -31,111 +31,111 @@ use application\modules\weibo\utils\Feed as WbfeedUtil;
 
 Class AssignmentOpApi extends System {
 
-	public static function getInstance( $className = __CLASS__ ) {
-		return parent::getInstance( $className );
-	}
+    public static function getInstance($className = __CLASS__) {
+        return parent::getInstance($className);
+    }
 
-	/**
-	 * 添加指派任务
-	 * @param type $post
-	 * @return type
-	 */
-	public function addAssignment( $post ) {
-		$uid = $post['uid'];
-		$assignment = AssignmentUtil::handlePostData( $post );
-		$assignment['designeeuid'] = $uid;
-		$assignment['addtime'] = TIMESTAMP;
-		$assignmentId = Assignment::model()->add( $assignment, true );
-		if ( !empty( $assignment['attachmentid'] ) ) {
-			Attach::updateAttach( $assignment['attachmentid'] );
-		}
-		// 消息提醒
-		$chargeuid = String::getId( $post['chargeuid'] );
-		$participantuid = String::getId( $post['participantuid'] );
-		$uidArr = array_merge( $participantuid, $chargeuid );
-		$this->sendNotify( $uid, $assignmentId, $assignment['subject'], $uidArr, 'assignment_new_message' );
-		// 动态推送
-		$wbconf = WbCommonUtil::getSetting( true );
-		if ( isset( $wbconf['wbmovement']['assignment'] ) && $wbconf['wbmovement']['assignment'] == 1 ) {
-			$data = array(
-				'title' => IBOS::lang( 'Feed title', '', array(
-					'{subject}' => $assignment['subject'],
-					'{url}' => IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $assignmentId ) )
-				) ),
-				'body' => $assignment['subject'],
-				'actdesc' => IBOS::lang( 'Post assignment', 'assignment.default' ),
-				'userid' => implode( ',', $uidArr ),
-				'deptid' => '',
-				'positionid' => '',
-			);
-			WbfeedUtil::pushFeed( $uid, 'assignment', 'assignment', $assignmentId, $data, 'post' );
-		}
-		// 发表一条添加评论
-		$this->addStepComment( $uid, $assignmentId, IBOS::lang( 'Add the assignment', 'assignment.default' ) );
-		// 记录日志
-		AssignmentLog::model()->addLog( $uid, $assignmentId, 'add', IBOS::lang( 'Add the assignment', 'assignment.default' ) );
-		return $assignmentId;
-	}
+    /**
+     * 添加指派任务
+     * @param type $post
+     * @return type
+     */
+    public function addAssignment($post) {
+        $uid = $post['uid'];
+        $assignment = AssignmentUtil::handlePostData($post);
+        $assignment['designeeuid'] = $uid;
+        $assignment['addtime'] = TIMESTAMP;
+        $assignmentId = Assignment::model()->add($assignment, true);
+        if (!empty($assignment['attachmentid'])) {
+            Attach::updateAttach($assignment['attachmentid']);
+        }
+        // 消息提醒
+        $chargeuid = String::getId($post['chargeuid']);
+        $participantuid = String::getId($post['participantuid']);
+        $uidArr = array_merge($participantuid, $chargeuid);
+        $this->sendNotify($uid, $assignmentId, $assignment['subject'], $uidArr, 'assignment_new_message');
+        // 动态推送
+        $wbconf = WbCommonUtil::getSetting(true);
+        if (isset($wbconf['wbmovement']['assignment']) && $wbconf['wbmovement']['assignment'] == 1) {
+            $data = array(
+                'title' => IBOS::lang('Feed title', '', array(
+                    '{subject}' => $assignment['subject'],
+                    '{url}' => IBOS::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId))
+                )),
+                'body' => $assignment['subject'],
+                'actdesc' => IBOS::lang('Post assignment', 'assignment.default'),
+                'userid' => implode(',', $uidArr),
+                'deptid' => '',
+                'positionid' => '',
+            );
+            WbfeedUtil::pushFeed($uid, 'assignment', 'assignment', $assignmentId, $data, 'post');
+        }
+        // 发表一条添加评论
+        $this->addStepComment($uid, $assignmentId, IBOS::lang('Add the assignment', 'assignment.default'));
+        // 记录日志
+        AssignmentLog::model()->addLog($uid, $assignmentId, 'add', IBOS::lang('Add the assignment', 'assignment.default'));
+        return $assignmentId;
+    }
 
-	/**
-	 * 记录步骤，添加评论信息
-	 * @param integer $assignmentId 任务的id
-	 * @param string $content 评论的内容
-	 */
-	public function addStepComment( $uid, $assignmentId, $content ) {
-		$assignment = Assignment::model()->fetchByPk( $assignmentId );
-		// 获取接收数据
-		$data = array(
-			'module' => 'assignment',
-			'table' => 'assignment',
-			'rowid' => $assignmentId,
-			'moduleuid' => $assignment['designeeuid'],
-			'uid' => $uid,
-			'content' => $content,
-			'touid' => 0,
-			'ctime' => TIMESTAMP
-		);
-		Comment::model()->add( $data );
-		Assignment::model()->updateCounters( array( 'commentcount' => 1 ), "`assignmentid` = {$assignmentId}" );
-	}
+    /**
+     * 记录步骤，添加评论信息
+     * @param integer $assignmentId 任务的id
+     * @param string $content 评论的内容
+     */
+    public function addStepComment($uid, $assignmentId, $content) {
+        $assignment = Assignment::model()->fetchByPk($assignmentId);
+        // 获取接收数据
+        $data = array(
+            'module' => 'assignment',
+            'table' => 'assignment',
+            'rowid' => $assignmentId,
+            'moduleuid' => $assignment['designeeuid'],
+            'uid' => $uid,
+            'content' => $content,
+            'touid' => 0,
+            'ctime' => TIMESTAMP
+        );
+        Comment::model()->add($data);
+        Assignment::model()->updateCounters(array('commentcount' => 1), "`assignmentid` = {$assignmentId}");
+    }
 
-	/**
-	 * 任务通用发送提醒消息
-	 * @param integer $assignmentId 任务id
-	 * @param string $subject 消息内容
-	 * @param integer $toUid 发送给谁
-	 * @param string $node 消息节点
-	 * @param string $result 是否是申请结果的提醒(是的话传递“同意“或”拒绝“文字)
-	 */
-	public function sendNotify( $uid, $assignmentId, $subject, $toUid, $node, $result = null ) {
-		$config = array(
-			'{sender}' => User::model()->fetchRealnameByUid( $uid ),
-			'{subject}' => $subject,
-			'{url}' => IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $assignmentId ) ),
-			'id' => $assignmentId,
-		);
-		if ( isset( $result ) ) {
-			$config['{result}'] = $result;
-		}
-		if ( !empty( $toUid ) ) {
-			$toUid = $this->removeSelf( $toUid, $uid );
-			Notify::model()->sendNotify( $toUid, $node, $config, $uid );
-		}
-	}
+    /**
+     * 任务通用发送提醒消息
+     * @param integer $assignmentId 任务id
+     * @param string $subject 消息内容
+     * @param integer $toUid 发送给谁
+     * @param string $node 消息节点
+     * @param string $result 是否是申请结果的提醒(是的话传递“同意“或”拒绝“文字)
+     */
+    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null) {
+        $config = array(
+            '{sender}' => User::model()->fetchRealnameByUid($uid),
+            '{subject}' => $subject,
+            '{url}' => IBOS::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId)),
+            'id' => $assignmentId,
+        );
+        if (isset($result)) {
+            $config['{result}'] = $result;
+        }
+        if (!empty($toUid)) {
+            $toUid = $this->removeSelf($toUid, $uid);
+            Notify::model()->sendNotify($toUid, $node, $config, $uid);
+        }
+    }
 
-	/**
-	 * 处理一个uids数据，去除登陆者uid
-	 * @param mix $uids 用户uids
-	 * @return array
-	 */
-	private function removeSelf( $uids, $curUid ) {
-		$uids = is_array( $uids ) ? $uids : explode( ',', $uids );
-		foreach ( $uids as $k => $uid ) {
-			if ( $uid == $curUid ) {
-				unset( $uids[$k] );
-			}
-		}
-		return $uids;
-	}
+    /**
+     * 处理一个uids数据，去除登陆者uid
+     * @param mix $uids 用户uids
+     * @return array
+     */
+    private function removeSelf($uids, $curUid) {
+        $uids = is_array($uids) ? $uids : explode(',', $uids);
+        foreach ($uids as $k => $uid) {
+            if ($uid == $curUid) {
+                unset($uids[$k]);
+            }
+        }
+        return $uids;
+    }
 
 }

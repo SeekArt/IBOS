@@ -17,7 +17,7 @@ var Nt = {
          * @return {Object}       返回deffered对象
          */
 		markRead : function(param){
-			var url = Ibos.app.url('message/notify/setisread');
+			var url = Ibos.app.url('message/notify/setIsRead');
 			return $.get(url, param, $.noop, "json");
 		},
         /**
@@ -27,7 +27,7 @@ var Nt = {
          * @return {Object}       返回deffered对象
          */
 		markAllRead : function(param){
-			var url = Ibos.app.url('message/notify/setallread');
+			var url = Ibos.app.url('message/notify/setAllRead');
 			return $.get(url, param, $.noop, "json");
 		}
 	},
@@ -65,7 +65,7 @@ var Nt = {
 				});
 				Ui.tip(Ibos.l('OPERATION_SUCCESS'));
 			} else {
-				Ui.tip(Ibos.l('OPERATION_FAILED', 'danger'));
+				Ui.tip(Ibos.l('OPERATION_FAILED'), 'danger');
 			}
 		});
 	}
@@ -84,14 +84,14 @@ $(function(){
 		},
 		
 		"markAllRead": function(param, elem){
-			Nt.op.markRead(null).done(function(res){
+			Nt.op.markAllRead(null).done(function(res){
 				if(res.IsSuccess){
 					$('span.bubble').hide();
 					$(elem).parent().hide();
 					Ibosapp.dropnotify.getCount();
 					Ui.tip(Ibos.l('OPERATION_SUCCESS'), 'success');
 				} else {
-					Ui.tip(Ibos.l('OPERATION_FAILED', 'danger'));
+					Ui.tip(Ibos.l('OPERATION_FAILED'), 'danger');
 				}
 			});
 		},

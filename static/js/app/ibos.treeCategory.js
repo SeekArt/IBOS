@@ -25,6 +25,7 @@ TreeCategory.prototype.add = function(data, setting){
 				pid: data.pid,
 				enable: true
 			}, res)
+			treeNode.name = U.entity.unescape(treeNode.name);
 
 			// 获取父树节点
 			var pTreeNode = _this.tree.getNodeByParam("id", treeNode.pid);
@@ -53,8 +54,8 @@ TreeCategory.prototype.update = function(cid, data, setting){
 			if(res.isSuccess || res.IsSuccess) {
 				// treeNode.pId = data.pid;
 				// 更新树节点数据
-				treeNode.name = data.name;
 				$.extend(treeNode, res);
+				treeNode.name = U.entity.unescape(treeNode.name);
 				_this.tree.updateNode(treeNode);
 				// 若父树节点也发生修改，则对应作出处理
 				if(treeNode.pId != data.pid) {

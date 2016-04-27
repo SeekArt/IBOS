@@ -117,4 +117,5 @@ $lang = array(
 	'New db pre tip' => '请输入新数据表前缀',
 	'Continue' => '继续',
 	'Request tainting' => '非法请求',
+	'Invalid corp code' => '企业代码格式错误，请输入 4-20 位字母或数字',
 );

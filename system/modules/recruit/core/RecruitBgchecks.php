@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_bgchecks表的数据层操作类，继承ICModel
  * @package application.modules.resume.model
- * @version $Id: RecruitBgchecks.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: RecruitBgchecks.php 6583 2016-03-11 08:24:01Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -55,7 +55,7 @@ class RecruitBgchecks {
         );
         foreach ( $data as $k => $v ) {
             if ( in_array( $k, array_keys( $bgcheckArr ) ) ) {
-                $bgcheckArr[$k] = $v;
+                $bgcheckArr[$k] = ( $k === 'detail' || $k === 'contact' ) ? \CHtml::encode( $v ) : $v;
             }
         }
         $bgcheckArr['entrytime'] = strtotime( $bgcheckArr['entrytime'] );

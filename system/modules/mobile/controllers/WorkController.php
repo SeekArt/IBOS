@@ -1778,7 +1778,7 @@ class WorkController extends BaseController {
 			if ( $flow ) {
 				$type = $flow['type'];
 			}
-			if ( $type == 2 ) { //自由流程
+            if ( $type == FlowType::FLOW_TYPE_FREE ) { //自由流程
 				$process['prcs_id_next'] = '';
 			}
 			//获取子流程第一步的信息
@@ -1917,7 +1917,17 @@ class WorkController extends BaseController {
 							$tempArray[$key] = $value;
 						}
 					}
-					foreach ( User::model()->fetchAllByRealnames( $tempArray ) as $k => $v ) {
+                    $uidArray = User::model()->findUidByRealnameX( $tempArray );
+                    $temp = array();
+                    foreach ( $uidArray as $u ) {
+                        $temp[] = array(
+                            'uid' => $u,
+                            'alldeptid' => User::model()->findAllDeptidByUid( $u ),
+                            'allposid' => User::model()->findAllPositionidByUid( $u ),
+                        );
+                    }
+
+                    foreach ( $temp as $k => $v ) {
 						$dept = Department::model()->queryDept( $v['alldeptid'] );
 						if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $v['uid'] ) || String::findIn( $process['deptid'], $dept ) || String::findIn( $process['positionid'], $v["allposid"] ) ) {
 							$prcsUserAuto .= $v["uid"] . ",";
@@ -1930,7 +1940,11 @@ class WorkController extends BaseController {
 			} elseif ( $process['autotype'] == 8 && is_numeric( $process['autouser'] ) ) { //自动选择指定步骤主办人
 				$uid = FlowRunProcess::model()->fetchBaseUid( $runId, $process['autouser'] );
 				if ( $uid ) {
-					$temp = User::model()->fetchByUid( $uid );
+                    $temp = array(
+                        'uid' => $uid,
+                        'alldeptid' => User::model()->findAllDeptidByUid( $uid ),
+                        'allposid' => User::model()->findAllPositionidByUid( $uid ),
+                    );
 					if ( $temp ) {
 						if ( $process['deptid'] == 'alldept' || String::findIn( $process['uid'], $temp['uid'] ) || String::findIn( $process['deptid'], $temp["alldeptid"] ) || String::findIn( $process['positionid'], $temp["allposid"] ) ) {
 							$prcsOpUser = $prcsUserAuto = $temp['uid'];
@@ -2209,9 +2223,11 @@ class WorkController extends BaseController {
 						'processid' => $processId,
 						'flowprocess' => $flowProcess
 					);
+                    $key = Common::param( $param );
 					$config = array(
 						'{runname}' => $run['name'],
-						'{url}' => IBOS::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => Common::param( $param ) ) )
+                        '{url}' => IBOS::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => $key ) ),
+                        'id' => $key,
 					);
 					Notify::model()->sendNotify( $uid, 'workflow_sign_notice', $config );
 				}

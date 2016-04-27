@@ -31,10 +31,10 @@ class FileLocal extends FileCore {
 	 */
 	public function getOfficeReadUrl( $idString ) {
 		// return "http://o.ibos.cn/op/view.aspx?src=" . urlencode( $this->getRealUrl( $attachUrl ) );
-        $urlManager = Ibos::app()->urlManager;
+        $urlManager = IBOS::app()->urlManager;
         return $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'read' ) );
 	}
-        
+
         /**
          * 获取office文件的编辑地址
 	 * @param string $idString 附件id

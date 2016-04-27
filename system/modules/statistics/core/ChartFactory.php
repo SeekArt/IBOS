@@ -19,7 +19,7 @@
 
 namespace application\modules\statistics\core;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use CApplicationComponent;
 use CException;
 use CMap;

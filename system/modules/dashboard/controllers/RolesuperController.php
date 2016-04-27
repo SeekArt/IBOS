@@ -7,7 +7,6 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\user\model\User as UserModel;
-use application\modules\user\utils\User;
 
 class RolesuperController extends BaseController {
 
@@ -19,7 +18,12 @@ class RolesuperController extends BaseController {
         if ( empty( $isadministrator ) ) {
             $this->error( IBOS::lang( 'Valid access', 'error' ), '', $this->errorParam );
         }
-        $this->userA = User::loadUser( '', array( 'isadministrator' => 1 ) );
+        $adminUidArray = IBOS::app()->db->createCommand()
+                ->select( 'uid' )
+                ->from( UserModel::model()->tableName() )
+                ->where( " `isadministrator` = '1' " )
+                ->queryColumn();
+        $this->userA = UserModel::model()->fetchAllByUids( $adminUidArray );
     }
 
     /**
@@ -56,9 +60,6 @@ class RolesuperController extends BaseController {
         $where = sprintf( " FIND_IN_SET( `uid`, '%s' ) ", $uidS );
         UserModel::model()->updateAll( array( 'isadministrator' => 0 ) );
         $counter = UserModel::model()->updateAll( array( 'isadministrator' => 1, ), $where );
-        if ( !empty( $counter ) ) {
-            Cache::update( 'users' );
-        }
         $this->ajaxReturn( array(
             'isSuccess' => !empty( $counter ),
             'msg' => !empty( $counter ) ?

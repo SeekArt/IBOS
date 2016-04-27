@@ -61,8 +61,10 @@ use application\modules\user\utils\User;
 				<div class="wrap">		
 					<div class="logo">
 						<?php $unit = IBOS::app()->setting->get( 'setting/unit' ); ?>
-						<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php if( !empty( $unit['logourl'] ) ): echo $unit['logourl']; 
-						else: ?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
+                        <a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php
+                            if ( !empty( $unit['logourl'] ) ): echo $unit['logourl'];
+                            else:
+                                ?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
 					</div>
 					<!-- Nav -->
 					<?php $navs = IBOS::app()->setting->get( 'cache/nav' ); ?>
@@ -176,7 +178,7 @@ use application\modules\user\utils\User;
 						</div>
 						<div class="btn-group btn-group-justified">
                             <a href="<?php echo IBOS::app()->user->space_url; ?>" class="btn"><i class="om-user"></i>个人</a>
-                            <?php if ( IBOS::app()->user->isadministrator || IBOS::app()->user->roleType ): ?><a class="btn" target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><i class="om-key"></i><?php echo IBOS::lang( 'Control', 'default' ); ?></a><?php endif; ?>
+                            <?php if ( IBOS::app()->user->isadministrator || IBOS::app()->user->roleType ): ?><a class="btn" target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/default/index' ); ?>" ><i class="om-key"></i><?php echo IBOS::lang( 'Control', 'default' ); ?></a><?php endif; ?>
                             <a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="btn">
                                 <i class="om-shutdown"></i><?php echo IBOS::lang( 'Quit', 'default' ); ?>
 							</a>
@@ -221,7 +223,7 @@ use application\modules\user\utils\User;
 				<script src='<?php echo STATICURL; ?>/js/src/base.js?<?php echo VERHASH; ?>'></script>
 				<!-- @Todo: 放到 mainer 加载之后 -->
 				<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
-				<script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all-3.5.min.js?<?php echo VERHASH; ?>'></script>
+                <script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all.min.js?<?php echo VERHASH; ?>'></script>
 				<script src='<?php echo STATICURL; ?>/js/lib/Select2/select2.js?<?php echo VERHASH; ?>'></script>
 				<script src='<?php echo File::fileName( 'data/org.js' ); ?>?<?php echo VERHASH; ?>'></script>
 				<script src='<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>'></script>

@@ -16,7 +16,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\statistics\utils\StatCommon;
 
 class StatReportHeader extends StatReportBase {

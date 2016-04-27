@@ -48,7 +48,7 @@ class Email extends Callback {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function handleByText() {
@@ -56,7 +56,7 @@ class Email extends Callback {
 		if ( count( $parts ) != 3 ) {
 			return $this->resText( '邮件格式错误，请按[姓名/标题/邮件内容]的形式提交。' );
 		}
-		$toUser = User::model()->fetchByRealname( $parts[0] );
+		$toUser = User::model()->findByRealname( $parts[0] );
 		if ( empty( $toUser ) ) {
 			return $this->resText( '无法找到发送的用户:' . $parts[0] );
 		}

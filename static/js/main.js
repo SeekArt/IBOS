@@ -12,7 +12,7 @@ require.config({
 
 		"artDialog": "lib/artDialog/artDialog.min",
 
-		"zTree": "lib/zTree/jquery.ztree.all-3.5.min",
+		"zTree": "lib/zTree/jquery.ztree.all.min",
 
 		"select2": "lib/Select2/select2",
 

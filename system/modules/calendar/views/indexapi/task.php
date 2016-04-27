@@ -6,34 +6,26 @@
 	.in-todo-table tr:hover .o-todo-uncomplete{ visibility: visible; }
 </style>
 
-<table class="table in-todo-table">
-	<tbody>
-		<?php foreach( $taskList as $task ):?>
-		<?php if( empty($task['completetime']) ):?>
-		<tr class="bdbs">
-			<td width="20">
-				<a href="javascript:;" class="o-todo-uncomplete" data-id="<?php echo $task['id']; ?>"></a>
-			</td>
-			<td>
-				<?php echo $task['text'];?>
-			</td>
-		</tr>
-		<?php else:?>
-		<tr class="bdbs in-todo-complete">
-			<td width="20">
-				<a href="javascript:;" class="o-todo-complete"></a>
-			</td>
-			<td>
-				<?php echo $task['text'];?>
-			</td>
-		</tr>
-		<?php endif;?>
-		<?php endforeach;?>
-	</tbody>
+<table class="table in-todo-table" id="calendar_task">
+	<tbody></tbody>
 </table>
 
 <script>
 	(function() {
+		var template = '<tr class="bdbs <% if(complete == 1){ %>in-todo-complete<% } %>">'+
+							'<td width="20">' + 
+								'<a href="javascript:;" class="o-todo-<% if(complete == 1){ %>complete<% }else{ %>uncomplete<% } %>" data-id="<%= id %>"></a>'+
+							'</td>'+
+							'<td><%= text %></td>'+
+						'</tr>',
+			task = <?php echo json_encode($taskList); ?>,
+			html = "";
+		if( task && task.length){
+			for(var i=0; i<task.length; i++){
+				html += $.template(template, task[i]).replace(/&amp;/g, '&');
+			}
+			$("#calendar_task tbody").html(html);
+		}
 		function complete(id, isComplete){
 			var url = Ibos.app.url("calendar/task/edit", { op: "complete" });
 			return $.post(url, {

@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 ?>

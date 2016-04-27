@@ -32,7 +32,7 @@ use application\core\utils\IBOS;
 								<div class="msg-box-body"><?php echo $month; ?><?php echo $lang['Month']; ?></div>
 							</div>
 							<?php foreach ( $msgs as $msg ) : ?>
-								<div class="msg-box" id="timeline_<?php echo $msg['id']; ?>">
+								<div class="msg-box <?php if ( $msg['isread'] === "0" ) : ?>msg-alert<?php endif; ?>" id="timeline_<?php echo $msg['id']; ?>">
 									<i class="o-timeline-subpoint"></i>
 									<span class="msg-box-arrow"><i></i></span>
 									<div class="msg-box-body">
@@ -66,4 +66,3 @@ use application\core\utils\IBOS;
 </div>
 <script src='<?php echo $assetUrl; ?>/js/message.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/message_notify_detail.js?<?php echo VERHASH; ?>'></script>
-

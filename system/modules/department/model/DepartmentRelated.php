@@ -9,7 +9,7 @@
  */
 /**
  * 岗位关联表的数据层操作
- * 
+ *
  * @package application.modules.department.model
  * @version $$
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -19,6 +19,8 @@ namespace application\modules\department\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
+use application\core\utils\IBOS;
+use application\modules\user\model\User;
 
 class DepartmentRelated extends Model {
 
@@ -46,7 +48,7 @@ class DepartmentRelated extends Model {
     }
 
     /**
-     * 
+     *
      * @param type $deptId
      * @return type
      */
@@ -54,6 +56,25 @@ class DepartmentRelated extends Model {
         $criteria = array( 'select' => 'uid', 'condition' => "`deptid`={$deptId}" );
         $auxiliary = Convert::getSubByKey( $this->fetchAll( $criteria ), "uid" );
         return $auxiliary;
+    }
+
+    public function findDeptidIndexByUidX( $uidX = NULL ) {
+        $condition = 1;
+        if ( NULL === $uidX ) {
+            $condition = User::model()->uid_find_in_set( $uidX );
+        }
+        $related = IBOS::app()->db->createCommand()
+                ->select( 'uid,deptid' )
+                ->from( $this->tableName() )
+                ->where( $condition )
+                ->queryAll();
+        $return = array();
+        if ( !empty( $related ) ) {
+            foreach ( $related as $row ) {
+                $return[$row['uid']][] = $row['deptid'];
+            }
+        }
+        return $return;
     }
 
 }

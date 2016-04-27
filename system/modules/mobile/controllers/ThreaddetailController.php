@@ -13,6 +13,7 @@ use application\modules\thread\model\ThreadAttention;
 use application\modules\thread\model\ThreadReader;
 use application\modules\thread\utils\Thread as ThreadUtil;
 
+
 class ThreadDetailController extends DetailController {
 
 	/**
@@ -67,6 +68,7 @@ class ThreadDetailController extends DetailController {
 	protected function feed() {
 		$threadId = $_GET['id'];
 		$thread = Thread::model()->fetchByPk( $threadId );
+
 		$properties = array(
 			'module' => 'thread',
 			'table' => 'thread',
@@ -76,10 +78,14 @@ class ThreadDetailController extends DetailController {
 				'touid' => $thread['designeeuid'],
 				'module_rowid' => $thread['threadid'],
 				'module_table' => 'thread',
+				// 'url' => $sourceUrl,
+				// 'detail' => Ibos::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $thread['subject'], 50 ) ) )
 			)
 		);
+
 		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\thread\widgets\ThreadComment', $properties );
 		$list = $widget->getCommentList();
+
 		$this->ajaxReturn( array( 'datas' => $list ), Mobile::dataType() );
 	}
 
@@ -103,8 +109,10 @@ class ThreadDetailController extends DetailController {
 		$flowsWithKey = $this->mergeFlowKey($flows);
 		$this->ajaxReturn( array( 'datas' => $flowsWithKey ), Mobile::dataType() );
 	}
+
 	private function mergeFlowKey($list) {
 		$flows = array();
+
 		foreach ( $list as $flow ) {
 			$param = array(
 				'runid' => $flow['runid'],
@@ -128,7 +136,7 @@ class ThreadDetailController extends DetailController {
 			$this->selectFile();
 		}
 		$files = $this->getThreadObj( $threadId )->getFile();
-		$this->ajaxReturn( array( 'data' => $files ), Mobile::dataType() );
+		$this->ajaxReturn( array( 'datas' => $files ), Mobile::dataType() );
 	}
 
 	/**
@@ -141,8 +149,8 @@ class ThreadDetailController extends DetailController {
 		$assignments = $this->getThreadObj( $threadId )->getAssignment();
 		$settingObj = new ThreadSetting();
 		$params = array(
-			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, IBOS::app()->user->uid ),
-			// 'editAble' => $settingObj->chkEditAble( $threadId, IBOS::app()->user->uid ),
+			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, Ibos::app()->user->uid ),
+			// 'editAble' => $settingObj->chkEditAble( $threadId, Ibos::app()->user->uid ),
 			'members' => ThreadUtil::getInstance()->handleMembers( $threadId, $members ),
 			'attentions' => ThreadUtil::getInstance()->handleMembers( $threadId, $attentions ),
 			// 'counters' => $this->getCounters(),
@@ -165,4 +173,5 @@ class ThreadDetailController extends DetailController {
 		}
 		return $modules;
 	}
+
 }

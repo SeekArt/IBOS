@@ -1,12 +1,12 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\core\utils\Module;
+use application\core\utils\Org;
 use application\modules\diary\utils\Diary;
 use application\modules\statistics\core\StatConst;
 use application\modules\statistics\utils\StatCommon;
-
 ?>
 <div class="aside" id="aside">
     <div class="sbb sbbl sbbf">
@@ -48,12 +48,12 @@ use application\modules\statistics\utils\StatCommon;
                                 <li>
                                     <div class="mng-item">
                                         <a href="<?php echo $this->createUrl( 'attention/index', array( 'op' => 'personal', 'uid' => $aUser['uid'] ) ); ?>" <?php if ( Env::getRequest( 'uid' ) == $aUser['uid'] ): ?>style="color:#3497DB;"<?php endif; ?>>
-                                            <img src="static.php?type=avatar&uid=<?php echo $aUser['uid']; ?>&size=middle&engine=<?php echo ENGINE; ?>" alt="">
+                                            <img src="<?php echo Org::getDataStatic( $aUser['uid'], 'avatar', 'middle' ) ?>" alt="">
                                             <?php echo $aUser['realname']; ?>
                                         </a>
                                         <!-- if 未关注 -->
                                         <?php if ( Diary::getIsAttention( $aUser['uid'] ) ): ?>
-                                            <a href="javascript:;" data-node-type="udstar" class="o-gudstar pull-right" data-action="toggleAsteriskUnderling" data-param='{"id": "<?php echo $aUser['uid'] ?>"}'></a> 
+                                            <a href="javascript:;" data-node-type="udstar" class="o-gudstar pull-right" data-action="toggleAsteriskUnderling" data-param='{"id": "<?php echo $aUser['uid'] ?>"}'></a>
                                         <?php else: ?>
                                             <a href="javascript:;" data-node-type="udstar" class="o-udstar pull-right" data-action="toggleAsteriskUnderling" data-param='{"id": "<?php echo $aUser['uid'] ?>"}'></a>
                                         <?php endif; ?>

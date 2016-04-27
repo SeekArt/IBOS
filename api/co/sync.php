@@ -28,47 +28,47 @@ $signature = rawurldecode( Env::getRequest( 'signature' ) );
 $timestamp = Env::getRequest( 'timestamp' );
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 if ( strcmp( $signature, sha1( $aeskey . $timestamp ) ) != 0 ) {
-	Env::iExit( 'error:sign error' );
+    Env::iExit( 'error:sign error' );
 }
 
 // 接收信息处理
 $result = trim( file_get_contents( "php://input" ), " \t\n\r" );
 // 解析
 if ( !empty( $result ) ) {
-	$msg = CJSON::decode( $result, true );
-	switch ( $msg['op'] ) {
-		case 'getuser':
-			$res = getUserList();
-			break;
-		case 'getdept':
-			$res = getDepartmentList();
-			break;
-		case 'getuserallinfo':
-			$res = getUserListAllInfo();
-			break;
-		case 'getbinding':
-			$res = getBindingList();
-			break;
-		case 'set':
-			$res = setBinding( $msg['data'] );
-			break;
-		case 'unbind':
-			$res = setUnbind();
-			break;
-		case 'creatuser' :
-			$res = setCreat( $msg['data'] );
-			break;
-		case 'creatdepartment':
-			$res = setCreatDapartment( $msg['data'] );
-			break;
-		case 'verifywebsite':
-			$res = verifyWebSite();
-			break;
-		default:
-			$res = array( 'isSuccess' => false, 'msg' => '未知操作' );
-			break;
-	}
-	Env::iExit( CJSON::encode( $res ) );
+    $msg = CJSON::decode( $result, true );
+    switch ( $msg['op'] ) {
+        case 'getuser':
+            $res = getUserList();
+            break;
+        case 'getdept':
+            $res = getDepartmentList();
+            break;
+        case 'getuserallinfo':
+            $res = getUserListAllInfo();
+            break;
+        case 'getbinding':
+            $res = getBindingList();
+            break;
+        case 'set':
+            $res = setBinding( $msg['data'] );
+            break;
+        case 'unbind':
+            $res = setUnbind();
+            break;
+        case 'creatuser' :
+            $res = setCreat( $msg['data'] );
+            break;
+        case 'creatdepartment':
+            $res = setCreatDapartment( $msg['data'] );
+            break;
+        case 'verifywebsite':
+            $res = verifyWebSite();
+            break;
+        default:
+            $res = array( 'isSuccess' => false, 'msg' => '未知操作' );
+            break;
+    }
+    Env::iExit( CJSON::encode( $res ) );
 }
 
 /**
@@ -76,20 +76,12 @@ if ( !empty( $result ) ) {
  * @return array
  */
 function getUserList() {
-	$users = array();
-	$cache = Syscache::model()->fetchAllCache( 'users' );
-	if ( !empty( $cache['users'] ) ) {
-		foreach ( $cache['users'] as $user ) {
-			$users[] = array(
-				'uid' => $user['uid'],
-				'realname' => $user['realname']
-			);
-		}
-	}
-	return array(
-		'isSuccess' => true,
-		'data' => $users
-	);
+    User::model()->setSelect( 'uid,realname' );
+    $users = User::model()->findUserByUid();
+    return array(
+        'isSuccess' => true,
+        'data' => $users
+    );
 }
 
 /**
@@ -97,15 +89,11 @@ function getUserList() {
  * @return type
  */
 function getUserListAllInfo() {
-	$users = array();
-	$cache = Syscache::model()->fetchAllCache( 'users' );
-	if ( !empty( $cache['users'] ) ) {
-		$users = $cache['users'];
-	}
-	return array(
-		'isSuccess' => true,
-		'data' => $users
-	);
+    $users = User::model()->fetchAllByUids( NULL, false );
+    return array(
+        'isSuccess' => true,
+        'data' => $users
+    );
 }
 
 /**
@@ -113,15 +101,15 @@ function getUserListAllInfo() {
  * @return array
  */
 function getDepartmentList() {
-	$departments = array();
-	$cache = Syscache::model()->fetchAllCache( 'department' );
-	if ( !empty( $cache['department'] ) ) {
-		$departments = $cache['department'];
-	}
-	return array(
-		'isSuccess' => true,
-		'data' => $departments
-	);
+    $departments = array();
+    $cache = Syscache::model()->fetchAllCache( 'department' );
+    if ( !empty( $cache['department'] ) ) {
+        $departments = $cache['department'];
+    }
+    return array(
+        'isSuccess' => true,
+        'data' => $departments
+    );
 }
 
 /**
@@ -129,24 +117,24 @@ function getDepartmentList() {
  * @return array
  */
 function getBindingList() {
-	$bindings = UserBinding::model()->fetchAllByApp( 'co' );
-	$users = array();
-	if ( !empty( $bindings ) ) {
-		foreach ( $bindings as $row ) {
-			$user = User::model()->findByPk( $row['uid'] );
-			if ( !empty( $user ) ) {
-				$users[] = array(
-					'uid' => $row['uid'],
-					'bindvalue' => $row['bindvalue'],
-					'realname' => $user->realname,
-				);
-			}
-		}
-	}
-	return array(
-		'isSuccess' => true,
-		'data' => $users
-	);
+    $bindings = UserBinding::model()->fetchAllByApp( 'co' );
+    $users = array();
+    if ( !empty( $bindings ) ) {
+        foreach ( $bindings as $row ) {
+            $user = User::model()->findByPk( $row['uid'] );
+            if ( !empty( $user ) ) {
+                $users[] = array(
+                    'uid' => $row['uid'],
+                    'bindvalue' => $row['bindvalue'],
+                    'realname' => $user->realname,
+                );
+            }
+        }
+    }
+    return array(
+        'isSuccess' => true,
+        'data' => $users
+    );
 }
 
 /**
@@ -155,37 +143,37 @@ function getBindingList() {
  * @return array
  */
 function setBinding( $list ) {
-	//UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
-	$count = 0;
-	foreach ( $list as $row ) {
-		//判断是否已经绑定,此处做了容错处理
-		$data = array( 'uid' => $row['uid'], 'bindvalue' => $row['guid'], 'app' => 'co' );
-		$checkbinding = UserBinding::model()->find( sprintf( "`uid` = '%s' AND `app` = 'co'", $row['uid'] ) );
-		if ( empty( $checkbinding ) ) {
-			$res = UserBinding::model()->add( $data );
-		} else {
-			$res = UserBinding::model()->modify( $checkbinding['id'], $data );
-		}
-		$res and $count++;
-	}
-	// 设置绑定标识
-	if ( $count > 0 ) {
-		Setting::model()->updateSettingValueByKey( 'cobinding', '1' );
-	}
-	return array( 'isSuccess' => true, 'data' => true );
+    //UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
+    $count = 0;
+    foreach ( $list as $row ) {
+        //判断是否已经绑定,此处做了容错处理
+        $data = array( 'uid' => $row['uid'], 'bindvalue' => $row['guid'], 'app' => 'co' );
+        $checkbinding = UserBinding::model()->find( sprintf( "`uid` = '%s' AND `app` = 'co'", $row['uid'] ) );
+        if ( empty( $checkbinding ) ) {
+            $res = UserBinding::model()->add( $data );
+        } else {
+            $res = UserBinding::model()->modify( $checkbinding['id'], $data );
+        }
+        $res and $count++;
+    }
+    // 设置绑定标识
+    if ( $count > 0 ) {
+        Setting::model()->updateSettingValueByKey( 'cobinding', '1' );
+    }
+    return array( 'isSuccess' => true, 'data' => true );
 }
 
 /**
  * 解除绑定
- * @return 
+ * @return
  */
 function setUnbind() {
-	UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
-	Setting::model()->updateSettingValueByKey( 'cobinding', '0' );
-	Setting::model()->updateSettingValueByKey( 'coinfo', '' );
-	Setting::model()->updateSettingValueByKey( 'autosync', serialize( array( 'status' => 0, 'lastsynctime' => 0 ) ) );
-	CacheModel::model()->deleteAll( "FIND_IN_SET( cachekey, 'cocreatelist,coremovelist,iboscreatelist,ibosremovelist,successinfo' )" );
-	return array( 'isSuccess' => true );
+    UserBinding::model()->deleteAllByAttributes( array( 'app' => 'co' ) );
+    Setting::model()->updateSettingValueByKey( 'cobinding', '0' );
+    Setting::model()->updateSettingValueByKey( 'coinfo', '' );
+    Setting::model()->updateSettingValueByKey( 'autosync', serialize( array( 'status' => 0, 'lastsynctime' => 0 ) ) );
+    CacheModel::model()->deleteAll( "FIND_IN_SET( cachekey, 'cocreatelist,coremovelist,iboscreatelist,ibosremovelist,successinfo' )" );
+    return array( 'isSuccess' => true );
 }
 
 /**
@@ -195,14 +183,14 @@ function setUnbind() {
  * update by Sam 2015-08-24 <gzxgs@ibos.com.cn>
  */
 function setCreat( $data ) {
-	if ( !empty( $data ) ) {
-		CoSync::CreateUser( $data ); //直接调用工具类执行创建用户，暂时不用理会返回信息
-		//以下的那些错误或者成功的用户信息，其实目前并没有用到
-		//Cache::model()->deleteAll( "FIND_IN_SET(cachekey,'cousers,couserfail,cousersuccess')" );
-		//Cache::model()->add( array( 'cachekey' => 'cousers', 'cachevalue' => serialize( $return['data']['users'] ) ) );
-		//Cache::model()->add( array( 'cachekey' => 'couserfail', 'cachevalue' => serialize( $return['data']['error'] ) ) );
-		//Cache::model()->add( array( 'cachekey' => 'cousersuccess', 'cachevalue' => serialize( $return['data']['success'] ) ) ); // 成功同步的用户
-	}
+    if ( !empty( $data ) ) {
+        CoSync::CreateUser( $data ); //直接调用工具类执行创建用户，暂时不用理会返回信息
+        //以下的那些错误或者成功的用户信息，其实目前并没有用到
+        //Cache::model()->deleteAll( "FIND_IN_SET(cachekey,'cousers,couserfail,cousersuccess')" );
+        //Cache::model()->add( array( 'cachekey' => 'cousers', 'cachevalue' => serialize( $return['data']['users'] ) ) );
+        //Cache::model()->add( array( 'cachekey' => 'couserfail', 'cachevalue' => serialize( $return['data']['error'] ) ) );
+        //Cache::model()->add( array( 'cachekey' => 'cousersuccess', 'cachevalue' => serialize( $return['data']['success'] ) ) ); // 成功同步的用户
+    }
 }
 
 /**
@@ -212,13 +200,13 @@ function setCreat( $data ) {
  * @time 2015-08-24 <gzxgs@ibos.com.cn>
  */
 function setCreatDapartment( $coDepartmentList ) {
-	//删除IBOS所有部门,推倒所有部门重新建立
-	Department::model()->deleteAll();
-	foreach ( $coDepartmentList as $department ) {
-		Department::model()->add( $department );
-	}
-	//更新部门缓存,避免缓存问题
-	Cache::update( array( 'department' ) );
+    //删除IBOS所有部门,推倒所有部门重新建立
+    Department::model()->deleteAll();
+    foreach ( $coDepartmentList as $department ) {
+        Department::model()->add( $department );
+    }
+    //更新部门缓存,避免缓存问题
+    Cache::update( array( 'department' ) );
 }
 
 /**
@@ -228,9 +216,9 @@ function setCreatDapartment( $coDepartmentList ) {
  * @return string json 数据
  */
 function verifyWebSite() {
-	$result = array(
-		'isSuccess'	=> TRUE,
-		'msg'		=> '当前 IBOS 可被正常访问！',
-	);
-	Env::iExit( json_encode( $result ) );
+    $result = array(
+        'isSuccess' => TRUE,
+        'msg' => '当前 IBOS 可被正常访问！',
+    );
+    Env::iExit( json_encode( $result ) );
 }

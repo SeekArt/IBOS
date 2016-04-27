@@ -68,7 +68,7 @@ return array(
     'New back title' => ' 您发表的公文“{subject}”被退回 ',
     'New back content' => ' {content}',
     'Sign message title' => '{name} 提醒您签收公文 “{title}”',
-    'Sign message content' => '',
+    'Sign message content' => '{content}',
 	'Do not need approval' => '无需审核，请编辑直接发布',
     //----------------show-------------------
     'Close' => '关闭',

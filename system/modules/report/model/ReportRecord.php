@@ -22,6 +22,7 @@ use application\core\utils\String;
 use application\modules\calendar\model\Calendars;
 use application\modules\report\model\CalendarRepRecord;
 use application\modules\report\model\Report;
+use CHtml;
 
 class ReportRecord extends Model {
 
@@ -62,12 +63,12 @@ class ReportRecord extends Model {
             $remindDate = empty( $plan['reminddate'] ) ? 0 : strtotime( $plan['reminddate'] );
             $record = array(
                 'repid' => $repid,
-                'content' => String::filterCleanHtml( $plan['content'] ),
+                'content' => CHtml::encode( $plan['content'] ),
                 'uid' => $uid,
                 'flag' => (isset( $plan['process'] ) && $plan['process'] == 10) ? 1 : 0,
                 'planflag' => $type,
                 'process' => isset( $plan['process'] ) ? $plan['process'] : 0,
-                'exedetail' => String::filterCleanHtml( $exedetail ),
+                'exedetail' => CHtml::encode( $exedetail ),
                 'begindate' => $begindate,
                 'enddate' => $enddate,
                 'reminddate' => $remindDate

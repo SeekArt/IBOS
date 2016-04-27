@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/file_cabinets.css'; ?>">
 <style>

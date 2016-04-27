@@ -3,6 +3,7 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
+use application\core\utils\IBOS;
 
 class UserProfile extends Model {
 
@@ -14,18 +15,19 @@ class UserProfile extends Model {
         return '{{user_profile}}';
     }
 
-    /**
-     * 根据用户id查找一条用户数据
-     * @param integer $uid
-     * @return array
-     */
-    public function fetchByUid( $uid ) {
-        static $users = array();
-        if ( !isset( $users[$uid] ) ) {
-            $user = $this->fetchByPk( $uid );
-            $users[$uid] = $user;
+    public function findUserProfileIndexByUid( $uidX ) {
+        $return = $userProfileArray = array();
+        $userProfileArray = IBOS::app()->db->createCommand()
+                ->select()
+                ->from( $this->tableName() )
+                ->where( User::model()->uid_find_in_set( $uidX ) )
+                ->queryAll();
+        if ( !empty( $userProfileArray ) ) {
+            foreach ( $userProfileArray as $userProfile ) {
+                $return[$userProfile['uid']] = $userProfile;
+            }
         }
-        return $users[$uid];
+        return $return;
     }
 
 }

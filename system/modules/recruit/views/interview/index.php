@@ -155,9 +155,9 @@
 			<div class="control-group" id="r_fullname">
 				<label class="control-label"><?php echo $lang['Full name']; ?></label>
 				<div class="controls span6">
-					<select name="fullname" id="fullname">
-                        <?php foreach( $resumes as $fullname ): ?>
-                            <option value="<?php echo $fullname; ?>"><?php echo $fullname; ?></option>
+                    <select name="detailid" id="detailid">
+                        <?php foreach( $resumes as $resume ): ?>
+                            <option value="<?php echo $resume['detailid']; ?>"><?php echo $resume['realname']; ?></option>
                         <?php endforeach; ?>
                     </select>
 				</div>
@@ -219,7 +219,7 @@
         </label>
     </td>
     <td>
-        <%=fullname%>
+        <a href="/?r=recruit/resume/show&resumeid=<%=resumeid%>"><%=fullname%></a>
     </td>
     <td>
         <%=interviewtime%>

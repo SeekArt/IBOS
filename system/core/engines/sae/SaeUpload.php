@@ -27,6 +27,7 @@ class SaeUpload extends Upload {
             $attach = $this->getAttach();
             $arr = array( 'type' => $attach['type'] );
             $rs = $storage->uploadFile( $attach['target'], $attach['tmp_name'], $arr );
+            $this->afterSave($attach);
             return $rs;
         } else {
             return false;

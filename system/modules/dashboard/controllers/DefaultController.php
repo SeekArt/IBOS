@@ -38,14 +38,14 @@ class DefaultController extends BaseController {
         if ($access > 0) {
             $this->success(IBOS::lang('Login succeed'), $this->createUrl($defaultUrl));
         }
-        $referStr = Env::getRequest('refer');
-        $referArray = array_filter(explode('&', $referStr));
-        $refer = array_shift($referArray);
+        // $referStr = Env::getRequest('refer');
+        // $referArray = array_filter(explode('&', $referStr));
+        // $refer = array_shift($referArray);
         // 显示登陆页面
         if (!Env::submitCheck('formhash')) {
             $data = array(
                 'userName' => !empty($this->user) ? $this->user['username'] : '',
-                'refer' => urlencode($refer)
+                // 'refer' => urlencode($refer)
             );
             $this->render('login', $data);
         } else {
@@ -69,7 +69,8 @@ class DefaultController extends BaseController {
             $result = $identity->authenticate(true);
             if ($result > 0) {
                 IBOS::app()->user->login($identity);
-                if (urldecode($refer) == $this->createUrl('default/index')) {
+                $refer = IBOS::app()->user->getReturnUrl();
+                if ( $refer == $this->createUrl('default/index') || $refer === '/' ) {
                     $refer = $this->createUrl('index/index');
                 }
                 $redirectUrl = $this->createUrl($defaultUrl, array_filter(array('refer' => urldecode($refer))));

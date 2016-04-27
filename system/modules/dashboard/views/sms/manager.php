@@ -2,6 +2,7 @@
 use application\core\utils\Convert;
 use application\modules\user\model\User;
 ?>
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/dataTable/css/jquery.dataTables_ibos.min.css?<?php echo VERHASH; ?>">
 
 <div class="ct">
 	<div class="clearfix">
@@ -19,7 +20,7 @@ use application\modules\user\model\User;
 		</ul>
 	</div>
 	<div>
-		<form action="<?php echo $this->createUrl( 'sms/manager', array( 'type' => 'search' ) ); ?>" method="post" id="sms_search_form">
+		<form action="javascript:;" method="post" id="sms_search_form">
 			<!-- 短信发送管理 start -->
 			<div class="ctb">
 				<h2 class="st"><?php echo $lang['Sms sent manager']; ?></h2>
@@ -29,14 +30,10 @@ use application\modules\user\model\User;
 							<div class="span9">
 								<button type="button" id="exportsms" class="btn"><?php echo $lang['Export']; ?></button>
 								<button type="button" id="delsms" class="btn"><?php echo $lang['Delete selected sms']; ?></button>
-								<?php if ( $search ): ?>
-									<?php echo $lang['Match conditions']; ?>：<?php echo $count; ?>,<a href="<?php echo $this->createUrl( 'sms/manager' ); ?>"><?php echo $lang['Return list']; ?></a>
-								<?php endif; ?>
 							</div>
 							<div class="span3">
 								<div class="search search-config">
 									<input type="text" name="keyword" placeholder="Search" id="sms_search">
-									<input type="submit" name="submit" class="hide" >
 									<a href="javascript:;">search</a>
 								</div>
 							</div>
@@ -58,34 +55,8 @@ use application\modules\user\model\User;
 									<th width="120"><?php echo $lang['Send time']; ?></th>
 								</tr>
 							</thead>
-							<tbody>
-								<?php foreach ( $list as $data ): ?>
-									<?php
-									$toUser = User::model()->fetchByUid( $data['touid'] );
-									if ( $data['uid'] ) {
-										$user = User::model()->fetchByUid( $data['uid'] );
-										$userName = $user['realname'];
-									} else {
-										$userName = $lang['System'];
-									}
-									?>
-									<tr id="list_tr_<?php echo $data['id']; ?>">
-										<td>
-											<label class="checkbox" for="checkbox_<?php echo $data['id']; ?>"><span class="icon"></span><span class="icon-to-fade"></span>
-												<input type="checkbox" value="<?php echo $data['id']; ?>" id="checkbox_<?php echo $data['id']; ?>" name="sms[]">
-											</label>
-										</td>
-										<td><?php echo $userName; ?></td>
-										<td><?php echo $toUser['realname']; ?></td>
-										<td><?php echo $data['content']; ?></td>
-										<td><?php echo $data['return'] ? $lang['Sent succeed'] : $lang['Sent failure']; ?></td>
-										<td><?php echo Convert::formatDate( $data['ctime'], 'u' ); ?></td>
-									</tr>
-								<?php endforeach; ?>
-							</tbody>
 						</table>
 					</div>
-					<div class="page-list-footer"><?php $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages ) ); ?></div>
 				</div>
 			</div>
 		</form>
@@ -96,7 +67,7 @@ use application\modules\user\model\User;
 		<div class="control-group">
 			<label for="" class="control-label"><?php echo $lang['Message delivery status']; ?></label>
 			<div class="controls">
-				<div id="select_type" class="btn-group btn-group-justified" data-toggle="buttons-checkbox">
+				<div id="select_type" class="btn-group btn-group-justified" data-toggle="buttons-radio">
 					<a href="#" data-id="1" class="btn"><?php echo $lang['Sent succeed'] ?></a>
 					<a href="#" data-id="0" class="btn"><?php echo $lang['Sent failure'] ?></a>
 					<a href="#" data-id="" class="btn"><?php echo $lang['All of it']; ?></a>
@@ -143,4 +114,5 @@ use application\modules\user\model\User;
 		</div>
 	</form>
 </div>
+<script src="<?php echo STATICURL; ?>/js/lib/dataTable/js/jquery.dataTables.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo $assetUrl; ?>/js/db_sms.js"></script>

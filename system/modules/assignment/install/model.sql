@@ -68,6 +68,7 @@ CREATE TABLE IF NOT EXISTS `{{assignment_log}}` (
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_timing_message','任务提醒','assignment','assignment/default/Timing assign title','assignment/default/Timing assign content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_new_message','任务指派新任务提醒','assignment','assignment/default/New assign title','assignment/default/New assign content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_push_message','任务催办提醒','assignment','assignment/default/Push assign title','assignment/default/Push assign content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_finish_message','任务完成消息','assignment','assignment/default/Finish assign title','assignment/default/Finish assign content','1','1','1','2');

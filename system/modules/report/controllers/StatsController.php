@@ -16,7 +16,7 @@
 namespace application\modules\report\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\modules\statistics\utils\StatCommon;
 use application\modules\user\utils\User;

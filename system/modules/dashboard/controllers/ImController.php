@@ -16,11 +16,11 @@ use application\modules\main\model\Setting;
 use application\modules\message\core as MessageCore;
 use application\modules\message\core\IMFactory;
 use application\modules\message\utils\Message;
+use application\modules\user\model\User as UserModel;
 use application\modules\user\model\UserBinding;
 use application\modules\user\model\UserCount;
 use application\modules\user\model\UserProfile;
 use application\modules\user\model\UserStatus;
-use application\modules\user\utils\User;
 use CJSON;
 
 class ImController extends BaseController {
@@ -228,7 +228,7 @@ class ImController extends BaseController {
                         $user = (array) $user;
                         $salt = String::random( 6 );
                         $username = (string) $user['@attributes']['UserName'];
-                        if ( User::model()->userNameExists( $username ) ) {
+                        if ( UserModel::model()->userNameExists( $username ) ) {
                             continue;
                         }
                         $data = array(
@@ -242,7 +242,7 @@ class ImController extends BaseController {
                             'guid' => String::createGuid(),
                             'password' => md5( md5( $origpwd['cachevalue'] ) . $salt ),
                         );
-                        $newId = User::model()->add( $data, true, true );
+                        $newId = UserModel::model()->add( $data, true, true );
                         UserCount::model()->add( array( 'uid' => $newId ) );
                         UserStatus::model()->add(
                                 array(
@@ -270,7 +270,7 @@ class ImController extends BaseController {
                     if ( $end > $count ) {
                         CacheUtil::rm( 'syncoa' );
                         Cache::model()->deleteAll( "FIND_IN_SET(cachekey,'newuser,userrelate,deptrelate,initpwd,userdeptrelate')" );
-                        User::model()->fetchAllByUids( $cache );
+                        UserModel::model()->fetchAllByUids( $cache );
                         CacheUtil::update();
                         Org::update();
                         $this->showMessage( '导入RTX完成,您可以关闭此窗口了', '', array( 'messageType' => 'info', 'timeout' => 1 ), 0 );
@@ -314,8 +314,9 @@ class ImController extends BaseController {
                         $bqqUsers = $rsArr['data']['items'];
                     }
                 }
+                UserModel::model()->setSelect( 'uid,realname' );
                 $data = array(
-                    'ibosUsers' => User::loadUser(),
+                    'ibosUsers' => UserModel::model()->findUserIndexByUid(),
                     'binds' => UserBinding::model()->fetchAllSortByPk( 'uid', "app = 'bqq'" ),
                     'bqqUsers' => $bqqUsers
                 );

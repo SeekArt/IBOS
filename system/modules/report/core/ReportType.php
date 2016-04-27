@@ -16,7 +16,7 @@
 
 namespace application\modules\report\core;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 
 class ReportType {

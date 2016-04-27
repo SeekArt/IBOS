@@ -16,12 +16,15 @@
 
 namespace application\modules\officialdoc\utils;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\core\utils\String;
 use application\modules\department\model\Department;
+use application\modules\department\model\DepartmentRelated;
 use application\modules\officialdoc\model\Officialdoc as OffModel;
 use application\modules\officialdoc\model\OfficialdocReader;
+use application\modules\position\model\PositionRelated;
 use application\modules\user\model\User;
+use CHtml;
 
 class Officialdoc {
 
@@ -47,7 +50,8 @@ class Officialdoc {
         $condition = !empty( $condition ) ? $condition .= " AND " . $typeWhere : $typeWhere;
         $allCcDeptId = IBOS::app()->user->alldeptid . '';
         $allDeptId = IBOS::app()->user->alldeptid . '';
-        $allDeptId .= ',' . IBOS::app()->user->allupdeptid . '';
+        $allupdeptid = Department::model()->queryDept( $allDeptId );
+        $allDeptId .= ',' . $allupdeptid . '';
         $allPosId = IBOS::app()->user->allposid . '';
         $deptCondition = '';
         $deptIdArr = explode( ',', trim( $allDeptId, ',' ) );
@@ -104,7 +108,7 @@ class Officialdoc {
         $searchCondition = '';
 
         //添加对keyword转义，防止SQL错误
-        $keyword = \CHtml::encode( $search['keyword'] );
+        $keyword = CHtml::encode( $search['keyword'] );
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
 
@@ -137,7 +141,7 @@ class Officialdoc {
             return true;
         }
         //如果是审核人
-//		$dashboardConfig = IBOS::app()->setting->get( 'setting/docconfig' );
+//		$dashboardConfig = Ibos::app()->setting->get( 'setting/docconfig' );
 //		$approver = $dashboardConfig['doccommentenable'];
 //		if ( String::findIn( $uid, $approver ) ) {
 //			return true;
@@ -181,36 +185,30 @@ class Officialdoc {
      * @return array
      */
     public static function getScopeUidArr( $data ) {
-        $uidArr = array();
-        if ( $data['deptid'] == 'alldept' ) {
-            $users = IBOS::app()->setting->get( 'cache/users' );
-            foreach ( $users as $value ) {
-                $uidArr[] = $value['uid'];
-            }
-        } else if ( !empty( $data['deptid'] ) ) {
-            foreach ( explode( ',', $data['deptid'] ) as $value ) {
-                $criteria = array( 'select' => 'uid', 'condition' => "`deptid`={$value}" );
-                $records = User::model()->fetchAll( $criteria );
-                foreach ( $records as $record ) {
-                    $uidArr[] = $record['uid'];
+        $string = '';
+        $all = false;
+        if ( !empty( $data['deptid'] ) ) {
+            foreach ( explode( ',', $data['deptid'] ) as $deptid ) {
+                if ( $deptid == 'alldept' ) {
+                    $all = true;
+                    $string = 'c_0';
+                } else {
+                    $string .='d_' . $deptid;
                 }
             }
         }
-        if ( !empty( $data['positionid'] ) ) {
-            foreach ( explode( ',', $data['positionid'] ) as $value ) {
-                $criteria = array( 'select' => 'uid', 'condition' => "`positionid`={$value}" );
-                $records = User::model()->fetchAll( $criteria );
-                foreach ( $records as $record ) {
-                    $uidArr[] = $record['uid'];
-                }
+        if ( false === $all && !empty( $data['positionid'] ) ) {
+            foreach ( explode( ',', $data['positionid'] ) as $positionid ) {
+                $string .= 'p_' . $positionid;
             }
         }
-        if ( !empty( $data['uid'] ) ) {
-            foreach ( explode( ',', $data['uid'] ) as $value ) {
-                $uidArr[] = $value;
+        if ( false === $all && !empty( $data['uid'] ) ) {
+            foreach ( explode( ',', $data['uid'] ) as $uid ) {
+                $string .= 'u_' . $uid;
             }
         }
-        return array_unique( $uidArr );
+        $uidArray = String::getUidAByUDPX( $string, true, false, true );
+        return $uidArray;
     }
 
     /**
@@ -244,7 +242,7 @@ class Officialdoc {
      * )
      * </pre>
      * @param string $data 源数据 格式 d_1,d_23,p_108
-     * 
+     *
      * @return array
      */
     public static function handleSelectBoxData( $data, $flag = true ) {
@@ -284,7 +282,7 @@ class Officialdoc {
      * @param string $deptid 部门id
      * @param string $positionid 岗位Id
      * @param string $uid 用户id
-     * @return type 
+     * @return type
      */
     public static function joinSelectBoxValue( $deptid, $positionid, $uid ) {
         $tmp = array();
@@ -504,6 +502,52 @@ class Officialdoc {
             $length = count( $arr[0] );
         }
         return $length;
+    }
+
+    /**
+     * 根据用户 UID 获取 TA 未签收的公文数量
+     * 用用户所有公文数减去已签收数得到未签收数
+     * @param  integer $uid 用户 UID
+     * @return integer      未签收的公文数量
+     */
+    public static function getNoSignNumByUid( $uid ) {
+        $condition = self::getNoSignDocSqlConditionByUid( $uid );
+        $myNoSignNum = OffModel::model()->count( $condition );
+        return $myNoSignNum;
+    }
+
+    /**
+     * 处理获取未签收公文记录需要的 SQL 查询条件语句
+     * @param  integer $uid        用户 UID
+     * @param  array $deptid     用户部门 ID 数组
+     * @param  array $positionid 用户职位 ID 数组
+     * @return string             SQL WHERE 语句
+     */
+    public static function getNoSignDocSqlConditionByUid( $uid ) {
+        $userInfo = User::model()->findByPk( $uid );
+        $deptidList = explode( ',', Department::model()->queryDept( $userInfo['deptid'] ) );
+        $deptidList = array_merge( $deptidList, DepartmentRelated::model()->fetchAllDeptIdByUid( $uid ) );
+        $positionidList = array_merge( array( $userInfo['positionid'] ), PositionRelated::model()->fetchAllPositionIdByUid( $uid ) );
+        // 发布范围中有我的 WHERE 条件
+        $condition = sprintf( '`deptid` = \'alldept\' OR FIND_IN_SET( \'%s\', `uid` )', $uid );
+        foreach ( $deptidList as $deptid ) {
+            if ( !empty( $deptid ) )
+                $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `deptid` )', $deptid );
+        }
+        foreach ( $positionidList as $positionid ) {
+            if ( !empty( $positionid ) )
+                $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `positionid` )', $positionid );
+        }
+        $condition = '(' . $condition . ') AND `status` = 1';
+        // 组合上去掉已签收公文的 WHERE 条件
+        $hasSignDocList = OfficialdocReader::model()->findAll( sprintf( '`uid` = %d AND `issign` = 1', $uid ) );
+        $hasSignDocIdList = array();
+        foreach ( $hasSignDocList as $hasSignDoc ) {
+            $hasSignDocIdList[] = $hasSignDoc['docid'];
+        }
+        $hasSignDocIdStr = implode( ',', $hasSignDocIdList );
+        $condition .= sprintf( ' AND !FIND_IN_SET( `docid`, \'%s\' )', $hasSignDocIdStr );
+        return $condition;
     }
 
 }

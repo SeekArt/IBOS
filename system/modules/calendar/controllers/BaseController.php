@@ -61,7 +61,7 @@ Class BaseController extends Controller {
         $sidebarAlias = 'application.modules.calendar.views.sidebar';
         $params = array(
             'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
-            'hasShareUid' => CalendarUtil::getShareUidsByUid($this->uid),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid ),
             'lang' => IBOS::getLangSource( 'calendar.default' ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
@@ -75,8 +75,8 @@ Class BaseController extends Controller {
     protected function getSubSidebar() {
         $sidebarAlias = 'application.modules.calendar.views.subsidebar';
         $params = array(
-            'deptArr' => UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
-            'hasShareUid' => CalendarUtil::getShareUidsByUid($this->uid),
+            'deptArr' => UserUtil::getManagerDeptSubUserByUid( IBOS::app()->user->uid ),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
         return $sidebarView;
@@ -97,8 +97,8 @@ Class BaseController extends Controller {
             'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
         );
 		$sidebarView = $this->renderPartial( $sidebarAlias, $params, TRUE );
-        return $sidebarView;
-    }
+		return $sidebarView;
+	}
 
     /**
      * 取得(日/周/月)视图

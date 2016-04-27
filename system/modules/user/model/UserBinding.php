@@ -19,6 +19,7 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
+use application\core\utils\IBOS;
 
 class UserBinding extends Model {
 
@@ -37,25 +38,25 @@ class UserBinding extends Model {
      * @return type
      */
     public function fetchValuesByUids( $uids, $app ) {
-        $rs = $this->fetchAll( array(
-            'select' => 'bindvalue',
-            'condition' => sprintf( "FIND_IN_SET(uid,'%s') AND app = '%s'", implode( ',', $uids ), $app )
-                )
-        );
+        $rs = IBOS::app()->db->createCommand()
+                ->select( 'bindvalue' )
+                ->from( $this->tableName() )
+                ->where( sprintf( "FIND_IN_SET(uid,'%s') AND app = '%s'", implode( ',', $uids ), $app ) )
+                ->queryAll();
         return Convert::getSubByKey( $rs, 'bindvalue' );
     }
 
     /**
-     * 
+     *
      * @param string $app
      * @return array
      */
     public function fetchAllByApp( $app ) {
-        $rs = $this->fetchAll( array(
-            'select' => '*',
-            'condition' => sprintf( "app = '%s'", $app )
-                )
-        );
+        $rs = IBOS::app()->db->createCommand()
+                ->select( '*' )
+                ->from( $this->tableName() )
+                ->where( sprintf( "app = '%s'", $app ) )
+                ->queryAll();
         return $rs;
     }
 

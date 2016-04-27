@@ -48,7 +48,7 @@ class WebController extends BaseController {
             $port = $query['port'];
             $user = $query['address'];
             $ssl = $query['ssl'] == '1' ? true : false;
-            @set_time_limit(0);
+            set_time_limit(0);
             $webEmail = new WebEmail($host, $port, $user, $pwd, $ssl, $prefix);
             if ($webEmail->isConnected()) {
                 //这里效率有点慢，因为需要获取全部的邮件
@@ -58,7 +58,7 @@ class WebController extends BaseController {
                 foreach ($emails as $email) {
                     //根据时间戳来判断是那一封邮件的附件
                     if ($query['sendtime'] == strtotime($email['date'])) {
-                        $remote = String::utf8Unserialize( $query['remoteattachment'] );
+                        $remote = String::utf8Unserialize($query['remoteattachment']);
                         if ($remote[$i - 1]['name'] == $email['attachments'][$i - 1]['name']) {
                             //下载
                             $attach = $webEmail->getAttachment($email['uid'], $i - 1);
@@ -80,24 +80,25 @@ class WebController extends BaseController {
         }
         $this->error('抱歉，读取数据错误', $this->createUrl('web/index'));
     }
+
     /**
      * 外部邮箱索引页
      */
     public function actionIndex() {
-        $count = EmailWeb::model()->countByAttributes( array( 'uid' => $this->uid ) );
-        $pages = Page::create( $count, $this->getListPageSize() );
-        $list = EmailWeb::model()->fetchByList( $this->uid, $pages->getOffset(), $pages->getLimit() );
+        $count = EmailWeb::model()->countByAttributes(array('uid' => $this->uid));
+        $pages = Page::create($count, $this->getListPageSize());
+        $list = EmailWeb::model()->fetchByList($this->uid, $pages->getOffset(), $pages->getLimit());
         $data = array(
             'pages' => $pages,
             'list' => $list
         );
-        $this->setPageTitle( IBOS::lang( 'Web email' ) );
-        $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
-            array( 'name' => IBOS::lang( 'Web email' ) )
-        ) );
-        $this->render( 'index', $data );
+        $this->setPageTitle(IBOS::lang('Web email'));
+        $this->setPageState('breadCrumbs', array(
+            array('name' => IBOS::lang('Personal Office')),
+            array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
+            array('name' => IBOS::lang('Web email'))
+        ));
+        $this->render('index', $data);
     }
 
     /**
@@ -105,62 +106,62 @@ class WebController extends BaseController {
      * @return void
      */
     public function actionAdd() {
-        $inAjax = intval( Env::getRequest( 'inajax' ) );
-        if ( $inAjax ) {
+        $inAjax = intval(Env::getRequest('inajax'));
+        if ($inAjax) {
             return $this->ajaxAdd();
         }
-        if ( Env::submitCheck( 'emailSubmit' ) ) {
-            $this->processAddWebMail( false );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'web/index' ) );
+        if (Env::submitCheck('emailSubmit')) {
+            $this->processAddWebMail(false);
+            $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
-            $this->setPageTitle( IBOS::lang( 'Add web email' ) );
-            $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
-                array( 'name' => IBOS::lang( 'Add web email' ) )
-            ) );
-            $this->render( 'add', array( 'more' => false ) );
+            $this->setPageTitle(IBOS::lang('Add web email'));
+            $this->setPageState('breadCrumbs', array(
+                array('name' => IBOS::lang('Personal Office')),
+                array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                array('name' => IBOS::lang('Add web email'))
+            ));
+            $this->render('add', array('more' => false));
         }
     }
 
     /**
      * 编辑操作
-     * @return void 
+     * @return void
      */
     public function actionEdit() {
         // 设置默认邮箱
-        if ( Env::getRequest( 'op' ) == 'setDefault' ) {
-            $webId = Env::getRequest( 'webid' );
-            return $this->setDefault( $webId );
+        if (Env::getRequest('op') == 'setDefault') {
+            $webId = Env::getRequest('webid');
+            return $this->setDefault($webId);
         }
 
-        $id = Env::getRequest( 'id' );
-        if ( Env::submitCheck( 'emailSubmit' ) ) {
+        $id = Env::getRequest('id');
+        if (Env::submitCheck('emailSubmit')) {
             $data = $_POST['web'];
-            $this->submitCheck( $data, false );
-            $web = $this->beforeSave( $data );
-            $web['ssl'] = isset( $web['ssl'] ) ? 1 : 0;
-            $web['smtpssl'] = isset( $web['smtpssl'] ) ? 1 : 0;
-            EmailWeb::model()->modify( $id, $web );
+            $this->submitCheck($data, false);
+            $web = $this->beforeSave($data);
+            $web['ssl'] = isset($web['ssl']) ? 1 : 0;
+            $web['smtpssl'] = isset($web['smtpssl']) ? 1 : 0;
+            EmailWeb::model()->modify($id, $web);
             // 更新文件夹名称
-            if ( !empty( $web['foldername'] ) ) {
-                EmailFolder::model()->updateAll( array( 'name' => String::filterCleanHtml( $web['foldername'] ) ), 'webid = ' . $id . ' AND uid = ' . $this->uid );
+            if (!empty($web['foldername'])) {
+                EmailFolder::model()->updateAll(array('name' => String::filterCleanHtml($web['foldername'])), 'webid = ' . $id . ' AND uid = ' . $this->uid);
             }
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'web/index' ) );
+            $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
-            $web = EmailWeb::model()->fetch( "webid = {$id} AND uid = " . $this->uid );
-            if ( $web ) {
-                $web['foldername'] = EmailFolder::model()->fetchFolderNameByWebId( $id );
-                $web['password'] = String::authCode( $web['password'], 'DECODE', IBOS::app()->user->salt );
-                $this->setPageTitle( IBOS::lang( 'Edit web email' ) );
-                $this->setPageState( 'breadCrumbs', array(
-                    array( 'name' => IBOS::lang( IBOS::lang( 'Personal Office' ) ) ),
-                    array( 'name' => IBOS::lang( IBOS::lang( 'Email center' ) ), 'url' => $this->createUrl( 'list/index' ) ),
-                    array( 'name' => IBOS::lang( IBOS::lang( 'Edit web email' ) ) )
-                ) );
-                $this->render( 'edit', array( 'web' => $web ) );
+            $web = EmailWeb::model()->fetch("webid = {$id} AND uid = " . $this->uid);
+            if ($web) {
+                $web['foldername'] = EmailFolder::model()->fetchFolderNameByWebId($id);
+                $web['password'] = String::authCode($web['password'], 'DECODE', IBOS::app()->user->salt);
+                $this->setPageTitle(IBOS::lang('Edit web email'));
+                $this->setPageState('breadCrumbs', array(
+                    array('name' => IBOS::lang(IBOS::lang('Personal Office'))),
+                    array('name' => IBOS::lang(IBOS::lang('Email center')), 'url' => $this->createUrl('list/index')),
+                    array('name' => IBOS::lang(IBOS::lang('Edit web email')))
+                ));
+                $this->render('edit', array('web' => $web));
             } else {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'web/index' ) );
+                $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('web/index'));
             }
         }
     }
@@ -169,37 +170,40 @@ class WebController extends BaseController {
      *  收取邮件
      */
     public function actionReceive() {
-        $webId = intval( Env::getRequest( 'webid' ) );
+        $webId = intval(Env::getRequest('webid'));
         $webList = $this->webMails;
-        if ( $webId === 0 ) {
+        if ( empty( $webList ) ) {
+            $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => IBOS::lang( 'Empty web mail box' ) ) );
+        }
+        if ($webId === 0) {
             $web = $webList;
         } else {
-            $web = isset( $webList[$webId] ) ? array( $webList[$webId] ) : array();
+            $web = isset($webList[$webId]) ? array($webList[$webId]) : array();
         }
-        if ( empty( $web ) ) {
+        if (empty($web)) {
             exit();
         }
         $msg = array();
-        foreach ( $web as $webMail ) {
-            WebMail::receiveMail( $webMail );
+        foreach ($web as $webMail) {
+            WebMail::receiveMail($webMail);
         }
-        $this->ajaxReturn( array( 'isSuccess' => true ) );
+        $this->ajaxReturn(array('isSuccess' => true));
     }
 
     /**
      * 删除操作
-     * @return void 
+     * @return void
      */
     public function actionDel() {
-        $id = Env::getRequest( 'webids' );
-        if ( $id ) {
-            $id = String::filterStr( $id );
-            $delStatus = EmailWeb::model()->delClear( $id, $this->uid );
-            if ( $delStatus ) {
-                if ( IBOS::app()->request->getIsAjaxRequest() ) {
-                    $this->ajaxReturn( array( 'isSuccess' => true ) );
+        $id = Env::getRequest('webids');
+        if ($id) {
+            $id = String::filterStr($id);
+            $delStatus = EmailWeb::model()->delClear($id, $this->uid);
+            if ($delStatus) {
+                if (IBOS::app()->request->getIsAjaxRequest()) {
+                    $this->ajaxReturn(array('isSuccess' => true));
                 } else {
-                    $this->success( IBOS::lang( 'Del succeed', 'message' ), $this->createUrl( 'web/index' ) );
+                    $this->success(IBOS::lang('Del succeed', 'message'), $this->createUrl('web/index'));
                 }
             }
         }
@@ -209,43 +213,43 @@ class WebController extends BaseController {
      * 显示外部邮件的部分内容（如附件，图片等）
      */
     public function actionShow() {
-        $webId = intval( Env::getRequest( 'webid' ) );
-        $id = intval( Env::getRequest( 'id' ) );
-        $folder = Env::getRequest( 'folder' );
-        $part = Env::getRequest( 'part' );
-        $cid = Env::getRequest( 'cid' );
-        $web = EmailWeb::model()->fetchByPk( $webId );
-        if ( intval( $web['uid'] ) !== $this->uid ) {
+        $webId = intval(Env::getRequest('webid'));
+        $id = intval(Env::getRequest('id'));
+        $folder = Env::getRequest('folder');
+        $part = Env::getRequest('part');
+        $cid = Env::getRequest('cid');
+        $web = EmailWeb::model()->fetchByPk($webId);
+        if (intval($web['uid']) !== $this->uid) {
             exit();
         }
-        list($prefix,, ) = explode( '.', $web['server'] );
-        $user = User::model()->fetchByUid( $web['uid'] );
-        $pwd = String::authCode( $web['password'], 'DECODE', $user['salt'] ); //解密
+        list($prefix,, ) = explode('.', $web['server']);
+        $user = User::model()->fetchByUid($web['uid']);
+        $pwd = String::authCode($web['password'], 'DECODE', $user['salt']); //解密
         //按类型加载所用的函数库
-        if ( $prefix == 'imap' ) {
+        if ($prefix == 'imap') {
             $obj = new WebMailImap();
         } else {
             $obj = new WebMailPop();
         }
-        $conn = $obj->connect( $web['server'], $web['username'], $pwd, $web['ssl'], $web['port'], 'plain' );
-        if ( !$conn ) {
-            exit( "Login failed" );
+        $conn = $obj->connect($web['server'], $web['username'], $pwd, $web['ssl'], $web['port'], 'plain');
+        if (!$conn) {
+            exit("Login failed");
         } else {
             // Let's look for MSIE as it needs special treatment
-            if ( strpos( getenv( 'HTTP_USER_AGENT' ), "MSIE" ) ) {
+            if (strpos(getenv('HTTP_USER_AGENT'), "MSIE")) {
                 $dispositionMode = "inline";
             } else {
                 $dispositionMode = "attachment";
             }
-            $header = $obj->fetchHeader( $conn, $folder, $id );
-            if ( !$header ) {
+            $header = $obj->fetchHeader($conn, $folder, $id);
+            if (!$header) {
                 exit();
             }
-            $structure_str = $obj->fetchStructureString( $conn, $folder, $id );
-            $structure = EmailMime::getRawStructureArray( $structure_str );
-            //if part id not specified but content-id is, 
+            $structure_str = $obj->fetchStructureString($conn, $folder, $id);
+            $structure = EmailMime::getRawStructureArray($structure_str);
+            //if part id not specified but content-id is,
             //find corresponding part id
-            if ( !$part && $cid ) {
+            if (!$part && $cid) {
 //				if ( !preg_match( "/^</", $cid ) ) {
 //					$cid = "<" . $cid;
 //				}
@@ -253,132 +257,132 @@ class WebController extends BaseController {
 //					$cid.= ">";
 //				}
                 //fetch parts list
-                $parts_list = EmailMime::getPartList( $structure, "" );
+                $parts_list = EmailMime::getPartList($structure, "");
                 //search for cid
-                if ( is_array( $parts_list ) ) {
-                    reset( $parts_list );
-                    while ( list($part_id, $part_a) = each( $parts_list ) ) {
-                        if ( $part_a["id"] == $cid ) {
+                if (is_array($parts_list)) {
+                    reset($parts_list);
+                    while (list($part_id, $part_a) = each($parts_list)) {
+                        if ($part_a["id"] == $cid) {
                             $part = $part_id;
                         }
                     }
                 }
                 //we couldn't find part with cid, die
-                if ( !isset( $part ) ) {
+                if (!isset($part)) {
                     exit();
                 }
             }
             // DEBUG：：以下这些分支判断暂时没有用，因为我们已经把邮件正文收回本地了。并没有如此多的操作，
             // 只有图片与附件没有收回本地
-            if ( isset( $source ) ) {
-                
-            } else if ( isset( $show_header ) ) {
-                
-            } else if ( isset( $printer_friendly ) ) {
-                
-            } else if ( isset( $tneffid ) ) {
-                
+            if (isset($source)) {
+
+            } else if (isset($show_header)) {
+
+            } else if (isset($printer_friendly)) {
+
+            } else if (isset($tneffid)) {
+
             } else {
                 $header_obj = $header;
-                $type = EmailMime::getPartTypeCode( $structure, $part );
-                if ( empty( $part ) || $part == 0 ) {
+                $type = EmailMime::getPartTypeCode($structure, $part);
+                if (empty($part) || $part == 0) {
                     $typestr = $header_obj->ctype;
                 } else {
-                    $typestr = EmailMime::getPartTypeString( $structure, $part );
+                    $typestr = EmailMime::getPartTypeString($structure, $part);
                 }
-                list($majortype, $subtype) = explode( "/", $typestr );
+                list($majortype, $subtype) = explode("/", $typestr);
                 // format and send HTTP header
-                if ( $type == EmailMime::MIME_APPLICATION ) {
-                    $name = str_replace( "/", ".", EmailMime::getPartName( $structure, $part ) );
-                    header( "Content-type: $typestr; name=\"" . $name . "\"" );
-                    header( "Content-Disposition: " . $dispositionMode . "; filename=\"" . $name . "\"" );
-                    header( "Expires: 0" );
-                    header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-                    header( "Pragma: public" );
-                } else if ( $type == EmailMime::MIME_MESSAGE ) {
-                    $name = str_replace( "/", ".", EmailMime::getPartName( $structure, $part ) );
-                    header( "Content-Type: text/plain; name=\"" . $name . "\"" );
-                } else if ( $type != EmailMime::MIME_INVALID ) {
-                    $charset = EmailMime::getPartCharset( $structure, $part );
-                    $name = str_replace( "/", ".", EmailMime::getPartName( $structure, $part ) );
+                if ($type == EmailMime::MIME_APPLICATION) {
+                    $name = str_replace("/", ".", EmailMime::getPartName($structure, $part));
+                    header("Content-type: $typestr; name=\"" . $name . "\"");
+                    header("Content-Disposition: " . $dispositionMode . "; filename=\"" . $name . "\"");
+                    header("Expires: 0");
+                    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                    header("Pragma: public");
+                } else if ($type == EmailMime::MIME_MESSAGE) {
+                    $name = str_replace("/", ".", EmailMime::getPartName($structure, $part));
+                    header("Content-Type: text/plain; name=\"" . $name . "\"");
+                } else if ($type != EmailMime::MIME_INVALID) {
+                    $charset = EmailMime::getPartCharset($structure, $part);
+                    $name = str_replace("/", ".", EmailMime::getPartName($structure, $part));
                     $header = "Content-type: $typestr";
-                    if ( !empty( $charset ) ) {
+                    if (!empty($charset)) {
                         $header.="; charset=\"" . $charset . "\"";
                     }
-                    if ( !empty( $name ) ) {
+                    if (!empty($name)) {
                         $header.="; name=\"" . $name . "\"";
                     }
-                    header( $header );
-                    if ( $type != EmailMime::MIME_TEXT && $type != EmailMime::MIME_IMAGE ) {
-                        header( "Content-Disposition: " . $dispositionMode . "; filename=\"" . $name . "\"" );
-                        header( "Expires: 0" );
-                        header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-                        header( "Pragma: public" );
-                    } else if ( !empty( $name ) ) {
-                        header( "Content-Disposition: inline; filename=\"" . $name . "\"" );
+                    header($header);
+                    if ($type != EmailMime::MIME_TEXT && $type != EmailMime::MIME_IMAGE) {
+                        header("Content-Disposition: " . $dispositionMode . "; filename=\"" . $name . "\"");
+                        header("Expires: 0");
+                        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+                        header("Pragma: public");
+                    } else if (!empty($name)) {
+                        header("Content-Disposition: inline; filename=\"" . $name . "\"");
                     }
                 }
                 //check if text/html
-                if ( $type == EmailMime::MIME_TEXT && strcasecmp( $subtype, "html" ) == 0 ) {
+                if ($type == EmailMime::MIME_TEXT && strcasecmp($subtype, "html") == 0) {
                     $is_html = true;
-                    $img_url = IBOS::app()->urlManager->createUrl( 'email/web/show', array(
+                    $img_url = IBOS::app()->urlManager->createUrl('email/web/show', array(
                         'webid' => $webId,
                         'folder' => $folder,
                         'id' => $id,
-                        'cid' => '' )
+                        'cid' => '')
                     );
                 } else {
                     $is_html = false;
                     $img_url = '';
                 }
                 // send actual output
-                if ( isset( $print ) ) {
+                if (isset($print)) {
                     // straight output, no processing
-                    $obj->printPartBody( $conn, $folder, $id, $part );
+                    $obj->printPartBody($conn, $folder, $id, $part);
                 } else {
                     // process as necessary, based on encoding
-                    $encoding = EmailMime::getPartEncodingCode( $structure, $part );
-                    if ( isset( $raw ) && $raw ) {
-                        $obj->printPartBody( $conn, $folder, $id, $part );
-                    } else if ( $encoding == 3 ) {
+                    $encoding = EmailMime::getPartEncodingCode($structure, $part);
+                    if (isset($raw) && $raw) {
+                        $obj->printPartBody($conn, $folder, $id, $part);
+                    } else if ($encoding == 3) {
                         // base 64
-                        if ( $is_html ) {
-                            $body = $obj->fetchPartBody( $conn, $folder, $id, $part );
-                            $body = preg_replace( "/[^a-zA-Z0-9\/\+]/", "", $body );
-                            $body = base64_decode( $body );
-                            $body = preg_replace( "/src=\"cid:/", "src=\"" . $img_url, $body );
-                            RyosImap::sanitizeHTML( $body );
+                        if ($is_html) {
+                            $body = $obj->fetchPartBody($conn, $folder, $id, $part);
+                            $body = preg_replace("/[^a-zA-Z0-9\/\+]/", "", $body);
+                            $body = base64_decode($body);
+                            $body = preg_replace("/src=\"cid:/", "src=\"" . $img_url, $body);
+                            RyosImap::sanitizeHTML($body);
                             echo $body;
                         } else {
-                            $obj->printBase64Body( $conn, $folder, $id, $part );
+                            $obj->printBase64Body($conn, $folder, $id, $part);
                         }
-                    } else if ( $encoding == 4 ) {
+                    } else if ($encoding == 4) {
                         // quoted printable
-                        $body = $obj->fetchPartBody( $conn, $folder, $id, $part );
-                        $body = quoted_printable_decode( str_replace( "=\r\n", "", $body ) );
+                        $body = $obj->fetchPartBody($conn, $folder, $id, $part);
+                        $body = quoted_printable_decode(str_replace("=\r\n", "", $body));
 //					$charset = EmailMime::getPartCharset( $structure, $part );
 //					if ( strcasecmp( $charset, "utf-8" ) == 0 ) {
 //						include_once("../include/utf8.inc");
 //						$body = utf8ToUnicodeEntities( $body );
 //					}
-                        if ( $is_html ) {
-                            RyosImap::sanitizeHTML( $body );
-                            $body = preg_replace( "/src=\"cid:/", "src=\"" . $img_url, $body );
+                        if ($is_html) {
+                            RyosImap::sanitizeHTML($body);
+                            $body = preg_replace("/src=\"cid:/", "src=\"" . $img_url, $body);
                         }
                         echo $body;
                     } else {
                         // otherwise, just dump it out
-                        if ( $is_html ) {
-                            $body = $obj->fetchPartBody( $conn, $folder, $id, $part );
-                            RyosImap::sanitizeHTML( $body );
-                            $body = preg_replace( "/src=\"cid:/", "src=\"" . $img_url, $body );
+                        if ($is_html) {
+                            $body = $obj->fetchPartBody($conn, $folder, $id, $part);
+                            RyosImap::sanitizeHTML($body);
+                            $body = preg_replace("/src=\"cid:/", "src=\"" . $img_url, $body);
                             echo $body;
                         } else {
-                            $obj->printPartBody( $conn, $folder, $id, $part );
+                            $obj->printPartBody($conn, $folder, $id, $part);
                         }
                     }
                 }
-                $obj->close( $conn );
+                $obj->close($conn);
             }
         }
     }
@@ -388,49 +392,53 @@ class WebController extends BaseController {
      * @param boolean $inAjax
      * @return type
      */
-    protected function processAddWebMail( $inAjax = false ) {
+    protected function processAddWebMail($inAjax = false) {
         $web = $_POST['web'];
         $errMsg = '';
-        $this->submitCheck( $web, $inAjax );
-        if ( isset( $_POST['moreinfo'] ) ) {
+        $this->submitCheck($web, $inAjax);
+        if (isset($_POST['moreinfo'])) {
             // 已经是自定义配置模式，再次检查账户
-            if ( empty( $web['server'] ) ) {
-                $this->error( IBOS::lang( 'Empty server address' ), '', array(), $inAjax );
+            if (empty($web['server'])) {
+                $this->error(IBOS::lang('Empty server address'), '', array(), $inAjax);
             }
-            // 但这一次，优先处理用户提交的服务器配置值 $web
-            $passCheck = WebMail::checkAccount( $web['address'], $web['password'], $web );
-            if ( $passCheck ) {
-                // 如果检查通过，合并提交的值并返回该邮箱的配置值
-                $web = WebMail::mergePostConfig( $web['address'], $web['password'], $web );
+            if ((!empty($web['ssl']) || !empty($web['smtpssl'])) && !extension_loaded('openssl')) {
+                $passCheck = false;
+                $errMsg = IBOS::lang('OpenSSL needed');
             } else {
-                $errMsg = IBOS::lang( 'Error server info' );
+                // 但这一次，优先处理用户提交的服务器配置值 $web
+                $passCheck = WebMail::checkAccount($web['address'], $web['password'], $web);
+                if ($passCheck) {
+                    // 如果检查通过，合并提交的值并返回该邮箱的配置值
+                    $web = WebMail::mergePostConfig($web['address'], $web['password'], $web);
+                } else {
+                    $errMsg = IBOS::lang('Error server info');
+                }
             }
         } else {
             /**
              * 测试时直接跳过这一步
-             * 15-8-24 上午10:50 gzdzl
               // 第一次提交，查看默认配置里有没有适合的服务器配置
               $passCheck = WebMail::checkAccount($web['address'], $web['password']);
               if ( $passCheck ) {
-              	// 如果检查通过，返回该邮件的配置值
-              	$web = WebMail::getEmailConfig($web['address'], $web['password']);
+              // 如果检查通过，返回该邮件的配置值
+              $web = WebMail::getEmailConfig($web['address'], $web['password']);
               } else {
               // 没有的话，需要配置更详细的服务器信息，返回错误提示
-              $errMsg = IBOS::lang('More server info');
+              $errMsg = Ibos::lang('More server info');
               }
              */
             $errMsg = IBOS::lang('More server info');
             $passCheck = false;
         }
-        if ( !$passCheck ) {
-            if ( !$inAjax ) {
-                $this->setPageTitle( IBOS::lang( 'Add web email' ) );
-                $this->setPageState( 'breadCrumbs', array(
-                    array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                    array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
-                    array( 'name' => IBOS::lang( 'Add web email' ) )
-                ) );
-                $this->render( 'add', array( 'more' => true, 'errMsg' => $errMsg, 'web' => $web ) );
+        if (!$passCheck) {
+            if (!$inAjax) {
+                $this->setPageTitle(IBOS::lang('Add web email'));
+                $this->setPageState('breadCrumbs', array(
+                    array('name' => IBOS::lang('Personal Office')),
+                    array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                    array('name' => IBOS::lang('Add web email'))
+                ));
+                $this->render('add', array('more' => true, 'errMsg' => $errMsg, 'web' => $web));
             } else {
                 $data = array(
                     'lang' => IBOS::getLangSources(),
@@ -438,23 +446,23 @@ class WebController extends BaseController {
                     'errMsg' => $errMsg,
                     'web' => $web,
                 );
-                $content = $this->renderPartial( 'ajaxAdd', $data, true );
-                $this->ajaxReturn( array( 'moreinfo' => true, 'content' => $content ) );
+                $content = $this->renderPartial('ajaxAdd', $data, true);
+                $this->ajaxReturn(array('moreinfo' => true, 'content' => $content));
             }
             exit();
         }
         // 如果检查通过，保存邮箱配置
-        $web = $this->beforeSave( $web );
-        $newId = EmailWeb::model()->add( $web, true );
+        $web = $this->beforeSave($web);
+        $newId = EmailWeb::model()->add($web, true);
         // 与文件夹表创建一条关联数据
         $folder = array(
             'sort' => 0,
-            'name' => isset( $_POST['web']['name'] ) ? String::filterCleanHtml( $_POST['web']['name'] ) : $web['address'],
+            'name' => isset($_POST['web']['name']) ? String::filterCleanHtml($_POST['web']['name']) : $web['address'],
             'uid' => $this->uid,
             'webid' => $newId
         );
-        $fid = EmailFolder::model()->add( $folder, true );
-        EmailWeb::model()->modify( $newId, array( 'fid' => $fid ) );
+        $fid = EmailFolder::model()->add($folder, true);
+        EmailWeb::model()->modify($newId, array('fid' => $fid));
         return $newId;
     }
 
@@ -463,15 +471,15 @@ class WebController extends BaseController {
      * @param integer $webId 外部邮箱ID
      * @return void
      */
-    protected function setDefault( $webId ) {
-        if ( $webId ) {
-            EmailWeb::model()->updateAll( array( 'isdefault' => 0 ), 'uid = ' . $this->uid );
-            EmailWeb::model()->modify( $webId, array( 'uid' => $this->uid, 'isdefault' => 1 ) );
+    protected function setDefault($webId) {
+        if ($webId) {
+            EmailWeb::model()->updateAll(array('isdefault' => 0), 'uid = ' . $this->uid);
+            EmailWeb::model()->modify($webId, array('uid' => $this->uid, 'isdefault' => 1));
             $isSuccess = true;
         } else {
             $isSuccess = false;
         }
-        $this->ajaxReturn( array( 'isSuccess' => $isSuccess ) );
+        $this->ajaxReturn(array('isSuccess' => $isSuccess));
     }
 
     /**
@@ -479,15 +487,16 @@ class WebController extends BaseController {
      * @return void
      */
     protected function ajaxAdd() {
-        if ( IBOS::app()->request->getIsPostRequest() ) {
-            $newId = $this->processAddWebMail( true );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), '', array(), array( 'webId' => $newId ) );
+        // if (Ibos::app()->request->getIsPostRequest()) {
+        if ( Env::submitCheck( 'formhash' ) ) {
+            $newId = $this->processAddWebMail(true);
+            $this->success(IBOS::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));
         } else {
             $data = array(
                 'lang' => IBOS::getLangSources(),
                 'more' => false,
             );
-            $this->renderPartial( 'ajaxAdd', $data );
+            $this->renderPartial('ajaxAdd', $data);
         }
     }
 
@@ -496,13 +505,13 @@ class WebController extends BaseController {
      * @param array $web
      * @return array 返回部分处理后的数据
      */
-    private function beforeSave( $web ) {
-        $web['nickname'] = isset( $_POST['web']['nickname'] ) ? trim( htmlspecialchars( $_POST['web']['nickname'] ) ) : ''; //发信昵称
-        if ( empty( $web['nickname'] ) ) {  //如果为空默认设置为真实姓名
+    private function beforeSave($web) {
+        $web['nickname'] = isset($_POST['web']['nickname']) ? trim(htmlspecialchars($_POST['web']['nickname'])) : ''; //发信昵称
+        if (empty($web['nickname'])) {  //如果为空默认设置为真实姓名
             $web['nickname'] = IBOS::app()->user->realname;
         }
         $web['uid'] = $this->uid;
-        $web['password'] = String::authCode( $web['password'], 'ENCODE', IBOS::app()->user->salt );
+        $web['password'] = String::authCode($web['password'], 'ENCODE', IBOS::app()->user->salt);
         return $web;
     }
 
@@ -511,12 +520,12 @@ class WebController extends BaseController {
      * @param array $data
      * @param boolean $inajax
      */
-    private function submitCheck( $data, $inAjax ) {
-        if ( isset( $data['address'] ) && empty( $data['address'] ) ) {
-            $this->error( IBOS::lang( 'Empty email address' ), '', array(), $inAjax );
+    private function submitCheck($data, $inAjax) {
+        if (isset($data['address']) && empty($data['address'])) {
+            $this->error(IBOS::lang('Empty email address'), '', array(), $inAjax);
         }
-        if ( empty( $data['password'] ) ) {
-            $this->error( IBOS::lang( 'Empty email password' ), '', array(), $inAjax );
+        if (empty($data['password'])) {
+            $this->error(IBOS::lang('Empty email password'), '', array(), $inAjax);
         }
     }
 

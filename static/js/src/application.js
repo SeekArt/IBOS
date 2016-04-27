@@ -1012,19 +1012,25 @@
 					Ibos.statics.load({ url: Ibos.app.getAssetUrl("main", "/templates/attach_item.html"), type: "html" }),
 					Ibos.statics.load(Ibos.app.getAssetUrl("file", "/js/cabinet_file_selector.js"))
 				).done(function(a1, a2){
+					var inputVal = $(param.input).val();
 					var addFilesFromFileSelector = function(files) {
 						var aids = "",
 							html = "";
-
 						for(var i = 0; i < files.length; i++) {
-							aids += aids ? "," + files[i].attachmentid : files[i].attachmentid;
-							html += $.template(a1, files[i]);
+							var file = files[i],
+								attachmentid = file.attachmentid;
+							if( ~inputVal.indexOf(attachmentid) ){
+								break;
+							}
+							aids += aids ? "," + attachmentid : attachmentid;
+							html += $.template(a1, file);
 						}
 
 						$(param.target).append(html);
+
 						U.addValue(param.input, aids);
-					}
-					Ibos.openFileSelector(addFilesFromFileSelector);
+					};
+					Ibos.openFileSelector(addFilesFromFileSelector, inputVal);
 				});
 			},
 

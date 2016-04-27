@@ -21,6 +21,7 @@
 /*.o-art-new,*/
 .o-art-normal,
 .o-art-normal-gray,
+.o-art-normal-read,
 .o-art-pic,
 .o-art-pic-gray,
 .o-art-vote,
@@ -53,6 +54,7 @@
 /*.o-art-new,*/
 .o-art-normal,
 .o-art-normal-gray,
+.o-art-normal-read,
 .o-art-pic,
 .o-art-pic-gray,
 .o-art-vote,
@@ -91,7 +93,8 @@
 
 /* @Deprecated: 此样式及其对应图标已废弃 */
 /*.o-art-new{ background-position: 0 -40px;}*/
-.o-art-normal{ background-position: -80px -40px; }
+.o-art-normal{ background-position: -40px -40px; }
+.o-art-normal-read{ background-position: -80px -41px; }
 .o-art-normal-gray{ background-position: -120px -41px; }
 .o-art-pic{ background-position: -160px -40px; }
 .o-art-pic-gray{ background-position: -200px -40px; }

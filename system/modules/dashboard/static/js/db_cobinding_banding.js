@@ -188,7 +188,7 @@ $(function() {
                         var data = res.data;
                         try {
                             var detailflag = /^ibos/.test(listname);
-                            data.forEach(function(item, index) {
+                            $(data).each(function(index, item) {
                                 var detail = detailflag ? (item.deptname + " " + item.posname) : item.mobile,
                                     user = {
                                         uid: item.uid,

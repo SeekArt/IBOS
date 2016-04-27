@@ -326,14 +326,8 @@ INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('attachdir', 'data/attachme
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('attachurl', 'data/attachment');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkstatus', '0');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('thumbquality', '100');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkminwidth', '0');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkminheight', '0');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarktype', 'text');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarktrans', '50');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarktext', 'a:4:{s:4:"text";s:24:"Welcome to use the IBOS!";s:4:"size";i:12;s:5:"color";s:6:"0070c0";s:8:"fontpath";s:21:"FetteSteinschrift.ttf";}');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkquality', '90');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkimg', '');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermarkposition', '9');
+INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('waterconfig', '{"watermarkminwidth":"120","watermarkminheight":"40","watermarktype":"text","watermarktrans":"50","watermarktext":{"text":"Welcome to use the IBOS!","size":"12","color":"0070c0","fontpath":"FetteSteinschrift.ttf"},"watermarkquality":"90","watermarkimg":"static/image/watermark_preview.jpg","watermarkposition":"9"}');
+INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('watermodule', '[]');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('attachsize', '20');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('filetype', 'chm, pdf, zip, rar, tar, gz, bzip2, gif, jpg, jpeg, png, txt, doc, xls, ppt, docx, xlsx, pptx');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('im', 'a:2:{s:3:"rtx";a:8:{s:4:"open";i:0;s:6:"server";s:9:"127.0.0.1";s:7:"appport";i:8006;s:7:"sdkport";i:6000;s:4:"push";a:2:{s:4:"note";i:0;s:3:"msg";i:0;}s:3:"sso";i:0;s:14:"reverselanding";i:0;s:8:"syncuser";i:0;}s:2:"qq";a:10:{s:4:"open";i:0;s:2:"id";s:0:"";s:5:"token";s:0:"";s:5:"appid";s:0:"";s:9:"appsecret";s:0:"";s:3:"sso";i:0;s:4:"push";a:2:{s:4:"note";i:0;s:3:"msg";i:0;}s:8:"syncuser";i:0;s:7:"syncorg";i:0;s:10:"showunread";i:0;}}');

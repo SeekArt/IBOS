@@ -2,6 +2,11 @@
 
 namespace application\modules\main\components;
 
+use application\core\utils\Convert;
+use application\core\utils\Image;
+use application\modules\main\model\Setting as SettingModel;
+use CJSON;
+
 /**
  * UEditor编辑器通用上传类
  */
@@ -86,10 +91,13 @@ class EditorUploader {
             return;
         }
         $this->fullName = $this->getFolder() . '/' . $this->getName();
+        $isSuccess = false;
         if ( $this->stateInfo == $this->stateMap[0] ) {
             if ( !defined( 'SAE_TMP_PATH' ) ) {
                 if ( !move_uploaded_file( $file["tmp_name"], $this->fullName ) ) {
                     $this->stateInfo = $this->getStateInfo( "MOVE" );
+                } else {
+                    $isSuccess = true;
                 }
             } else {
                 // SAE环境中
@@ -99,6 +107,29 @@ class EditorUploader {
                     $this->stateInfo = $this->getStateInfo( "MOVE" );
                 } else {
                     $this->fullName = $url;
+                    $isSuccess = true;
+                }
+            }
+            if ( true === $isSuccess ) {
+                if ( $this->config['water'] ) {
+                    $waterModule = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'watermodule' ) );
+                    if ( in_array( 'baidu', $waterModule ) ) {
+                        $waterConfig = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'waterconfig' ) );
+                        if ( $waterConfig['watermarktype'] == 'text' ) {
+                            $textConfig = $waterConfig['watermarktext'];
+                            $size = ( $textConfig['size'] > 0 && $textConfig['size'] <= 48 ) ? $textConfig['size'] : 16; //文字水印大小限制在1-48
+                            $fontPath = !empty( $textConfig['fontpath'] ) ? $textConfig['fontpath'] : 'msyh.ttf'; //字体默认是微软雅黑
+                            $rgb = Convert::hexColorToRGB( $textConfig['color'] );
+                            Image::waterMarkString( $textConfig['text'], $size, $this->fullName
+                                    , $this->fullName, $waterConfig['watermarkposition'], $waterConfig['watermarkquality']
+                                    , $rgb, $fontPath );
+                        } else {
+                            $pathinfo = pathinfo( $waterConfig['watermarkimg'] );
+                            Image::water( $this->fullName, $pathinfo['dirname'] . '/' . $pathinfo['filename'] . '_water.' . $pathinfo['extension'], $this->fullName
+                                    , $waterConfig['watermarkposition'], $waterConfig['watermarktrans']
+                                    , $waterConfig['watermarkquality'] );
+                        }
+                    }
                 }
             }
         }

@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\main\utils\Main as MainUtil;
 
 ?>

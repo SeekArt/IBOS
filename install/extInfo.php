@@ -17,12 +17,14 @@
     <script src="<?php echo IBOS_STATIC; ?>js/src/core.js"></script>
     <script>
         (function(){
-            var url = [window.location.protocol, "//", window.location.hostname, "/api/authlogin.php"].join(""),
+            var href = location.href,
+                SITE_URL = href.slice(0, href.indexOf("/install"));
+            var url = SITE_URL + "/api/authlogin.php",
                 authLogin = function(){
                     $.post(url, {uid: 1}, function(res){
                         if(res.code){
                             var iframe = document.getElementById('binding');
-                            iframe.src = "/?r=dashboard/cobinding/index&isInstall=1";
+                            iframe.src = SITE_URL + "/?r=dashboard/cobinding/index&isInstall=1";
                         }else{
                             authLogin();
                         }
@@ -45,7 +47,7 @@
                         <i class="o-install-success"></i>
                         <span class="">恭喜，IBOS安装成功！</span>
                     </div>
-                    <a class="btn btn-large pull-right install-login" href="/">进入IBOS</a>
+                    <a class="btn btn-large pull-right install-login" href="javascript:location.href=SITE_URL;">进入IBOS</a>
                 </div>
                 <div class="binding-mc">
                     <iframe src="" name="binding" id="binding" width="100%" height="100%" frameborder="0"></iframe>
@@ -70,7 +72,9 @@
             s.parentNode.insertBefore(ib, s);
         })();
 
-        var SITE_URL = [window.location.protocol, "//", window.location.hostname, "/"].join("");
+        var href = location.href,
+            SITE_URL = href.slice(0, href.indexOf("/install"));
+
         Ibos.app.s("SITE_URL", SITE_URL);
     </script>
     <script src="static/create_data.js"></script>

@@ -10,7 +10,7 @@
 /**
  * email工具类，提供发送邮件，定时发送邮件，发送给用户功能
  * 依赖于后台 -> 全局 -> 邮件设置的设置
- * 
+ *
  * @package application.core.utils
  * @version $Id: mail.php -1   $
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -47,9 +47,9 @@ class Mail {
             )
         );
         $rs = Cloud::getInstance()->fetchPush( $data );
-		if ( !is_array( $rs ) ) {
-			$res = CJSON::decode( $rs, true );
-			if ( $res['code'] == '0' ) {
+        if ( !is_array( $rs ) ) {
+            $res = CJSON::decode( $rs, true );
+            if ( $res['code'] == '0' ) {
                 return true;
             }
         }
@@ -76,10 +76,10 @@ class Mail {
             $randId = array_rand( $mail['server'], 1 );
             $server = $mail['server'][$randId];
             // 分隔符
-            // 即使是在 Linux 系统下 \r 时也会无法识别邮箱头部信息  
+            // 即使是在 Linux 系统下 \r 时也会无法识别邮箱头部信息
             // 统一使用 \n
             // $delimiter = $mail['maildelimiter'] == 1 ? "\r\n" : ($mail['maildelimiter'] == 2 ? "\r" : "\n");
-            $delimiter = "\n";
+            $delimiter = PHP_EOL;
             // 单位
             $unit = $setting['setting']['unit'];
             // 设置发送者
@@ -137,7 +137,10 @@ class Mail {
                         Log::write( array( 'msg' => "({$server['server']}:{$server['port']}) AUTH LOGIN - {$lastMessage}", 'type' => 'SMTP' ), 'action', 'sendMail' );
                         return false;
                     }
-
+                    /*
+                     * 在后台全局->邮箱设置正确的邮箱信息后，校验时运行到这里错误
+                     * 没有检查邮箱是否开启相应的服务（pop/smtp/imap）
+                     */
                     fputs( $fp, base64_encode( $server['username'] ) . "\r\n" );
                     $lastMessage = fgets( $fp, 512 );
                     if ( substr( $lastMessage, 0, 3 ) != 334 ) {

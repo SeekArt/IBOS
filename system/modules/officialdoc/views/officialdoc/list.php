@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Env;
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\main\utils\Main;
 
 ?>
@@ -134,7 +134,7 @@ use application\modules\main\utils\Main;
 										</label>
 									</td>
 									<td>
-										<i class="o-art-normal<?php if ( $officialDoc['signStatus'] == 1 ): ?>-gray<?php endif; ?>"></i>
+										<i class="o-art-normal<?php if ( $officialDoc['signStatus'] == 1 ): ?>-gray<?php else: if( $officialDoc['readStatus'] == 1 ):?>-read<?php endif; endif; ?>"></i>
 									</td>
 									<td>
 										<a href="<?php echo $this->createUrl( 'officialdoc/show', array( 'docid' => $officialDoc['docid'] ) ); ?>" 

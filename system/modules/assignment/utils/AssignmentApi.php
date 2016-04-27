@@ -2,7 +2,7 @@
 
 namespace application\modules\assignment\utils;
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\message\utils\MessageApi;

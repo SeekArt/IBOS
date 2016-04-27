@@ -326,12 +326,23 @@ use application\core\utils\String;
 		seriesData: [{
 			nodes: [
 				<?php foreach ( $contacts as $index => $contact ) : ?>
-				{category: <?php if ( $index <= 2 ): ?><?php echo $index; ?><?php else: ?>2<?php endif; ?>, name: '<?php echo @$contact['realname']; ?>', value: <?php echo rand( 1, 40 ); ?>},
+				{
+					id: <?php echo $index; ?>,
+					category: <?php if ( $index <= 2 ): ?><?php echo $index; ?><?php else: ?>2<?php endif; ?>, 
+					name: '<?php echo @$contact['realname']; ?>', 
+					value: <?php echo rand( 1, 40 ); ?>,
+					draggable: true,
+					symbolSize: <?php echo rand( 40, 50 ); ?>,
+				},
 				<?php endforeach; ?>
 			],
 			links: [
 				<?php foreach ( $contacts as $index => $contact ) : ?>
-				{source: <?php echo $index + 1; ?>, target: 0, weight: <?php echo rand( 1, 3 ); ?>},
+				{
+					id: <?php echo $index; ?>,
+					source: <?php echo $index + 1; ?>, 
+					target: 0
+				},
 				<?php endforeach; ?>
 			]
 		}],
