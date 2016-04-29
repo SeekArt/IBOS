@@ -167,7 +167,6 @@ class OrgIO {
         $newUser = array();
         if ( !empty( $data ) && is_array( $data ) ) {
             $count = count( $data );
-            Main::checkLicenseLimit( false, $count ); //检查授权人数
             $currentDeptA = self::findDeptAWithFormat(); //取出所有的部门
 
             $allUsers = User::model()->fetchAllSortByPk( 'uid' ); // 取出全部用户，包括锁定、禁用等, 等下做判定, 避免放在循环中影响效率, 注意,为了能匹配实时插入的数据,要在循环中增加新插入的用户

@@ -139,7 +139,6 @@ class UserController extends OrganizationBaseController {
      * @return void
      */
     public function actionAdd() {
-        Main::checkLicenseLimit( false, 1 );
         if ( Env::submitCheck( 'userSubmit' ) ) {
             $origPass = filter_input( INPUT_POST, 'password', FILTER_SANITIZE_STRING );
             $_POST['realname'] = \CHtml::encode( $_POST['realname'] );
@@ -237,12 +236,7 @@ class UserController extends OrganizationBaseController {
         $op = Env::getRequest( 'op' );
         if ( $op && in_array( $op, array( 'enabled', 'disabled', 'lock' ) ) ) {
             $ids = Env::getRequest( 'uid' );
-            if ( $op !== 'disabled' ) {
-                Main::checkLicenseLimit();
-            }
             return $this->setStatus( $op, $ids );
-        } else {
-            Main::checkLicenseLimit();
         }
         $uid = Env::getRequest( 'uid' );
         $user = User::model()->fetchByUid( $uid );
@@ -437,7 +431,6 @@ class UserController extends OrganizationBaseController {
 //      if ( isset( $reader->sheets[0]['cells'] ) && is_array( $reader->sheets[0]['cells'] ) ) {
 //          unset( $reader->sheets[0]['cells'][1] ); // 去掉excel头
 //          $count = count( $reader->sheets[0]['cells'] );
-//          Main::checkLicenseLimit( false, $count );
 //          $users = UserUtil::loadUser();
 //          $allUsers = User::model()->fetchAllSortByPk( 'uid' ); // 全部用户，包括锁定、禁用等
 //          $convert = array();
