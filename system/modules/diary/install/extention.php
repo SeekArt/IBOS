@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Model;
 use application\core\utils\Module;
 use application\modules\dashboard\model\CreditRule;
 
@@ -32,7 +32,7 @@ if ( $isInstallCalendar ) {
 			KEY `rid` (`rid`) USING BTREE,
 			KEY `did` (`did`) USING BTREE
 		  ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
-    IBOS::app()->db->createCommand( $sql )->query();
+    Model::executeSqls( $sql );
 }
 
 

@@ -87,4 +87,18 @@ class Model {
         return $notExistArray;
     }
 
+    public static function executeSqls( $sqlString ) {
+        $sqlArray = String::splitSql( $sqlString );
+        $command = IBOS::app()->db->createCommand();
+        if ( is_array( $sqlArray ) ) {
+            foreach ( $sqlArray as $sql ) {
+                if ( trim( $sql ) != '' ) {
+                    $result = $command->setText( $sql )->execute();
+                }
+            }
+        } else {
+            $result = $command->setText( $sqlArray )->execute();
+        }
+        return $result;
+    }
 }

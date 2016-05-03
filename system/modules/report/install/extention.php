@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Model;
 use application\core\utils\Module;
 
 $isInstallCalendar = Module::getIsEnabled( 'calendar' );
@@ -16,5 +16,5 @@ if ( $isInstallCalendar ) {
 			KEY `rid` (`rid`) USING BTREE,
 			KEY `repid` (`repid`) USING BTREE
 		  ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
-    IBOS::app()->db->createCommand( $sql )->query();
+    Model::executeSqls( $sql );
 }
