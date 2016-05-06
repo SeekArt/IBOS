@@ -20,7 +20,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email as EmailModel;
 use application\modules\user\model\User;
 use CHtml;
@@ -86,7 +86,7 @@ class Email {
         }
         if ( !empty( $keyword ) ) {
             //搜索的时候也应该转义然后搜索，不然找不到
-            String::ihtmlSpecialCharsUseReference( $keyword );
+            StringUtil::ihtmlSpecialCharsUseReference( $keyword );
             // 搜索位置条件
             $allPos = ($pos == 'all');
             $posWhereJoin = $allPos ? ' OR ' : ' AND ';
@@ -145,11 +145,11 @@ class Email {
             }
             // 发件人与收件人
             if ( isset( $search['sender'] ) && !empty( $search['sender'] ) ) {
-                $sender = String::getUid( $search['sender'] );
+                $sender = StringUtil::getUid( $search['sender'] );
                 $condition .= " AND eb.fromid = " . implode( ',', $sender );
             }
             if ( isset( $search['recipient'] ) && !empty( $search['recipient'] ) ) {
-                $recipient = String::getUid( $search['recipient'] );
+                $recipient = StringUtil::getUid( $search['recipient'] );
                 $condition .= " AND e.toid = " . implode( ',', $recipient );
             }
             return array( 'condition' => $condition, 'archiveId' => $queryArchiveId );
@@ -226,7 +226,7 @@ class Email {
             header( "Cache-control: private" );
             header( "Content-type: message/rfc822" );
             header( "Accept-Ranges: bytes" );
-            header( "Content-Disposition: attachment; filename=" . String::filterCleanHtml( $data['subject'] ) . "(" . date( "Y-m-d" ) . ").eml" );
+            header( "Content-Disposition: attachment; filename=" . StringUtil::filterCleanHtml( $data['subject'] ) . "(" . date( "Y-m-d" ) . ").eml" );
             echo $filecontent;
         }
     }
@@ -245,7 +245,7 @@ class Email {
             header( "Content-type: application/vnd.ms-excel" );
             //下面的这个标题使用了标签过滤，而不是直接输出，因为我还不知道怎么样才可以直接输出
             //如果标题带有js代码，那么会有问题，是不是头部不能写特殊字符呢？
-            header( "Content-Disposition: attachment; filename=" . Convert::iIconv( String::filterCleanHtml( $data['subject'] ), CHARSET, 'GBK' ) . "(" . date( "Y-m-d" ) . ").xls" );
+            header( "Content-Disposition: attachment; filename=" . Convert::iIconv( StringUtil::filterCleanHtml( $data['subject'] ), CHARSET, 'GBK' ) . "(" . date( "Y-m-d" ) . ").xls" );
             $html = <<<EOT
             <html xmlns:o="urn:schemas-microsoft-com:office:office"
 		xmlns:x="urn:schemas-microsoft-com:office:excel"

@@ -1,7 +1,7 @@
 <?php 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/message.css?<?php echo VERHASH; ?>">
@@ -62,7 +62,7 @@ use application\core\utils\String;
 												<?php echo $comment['content']; ?>
 											</p>
 											<p class="tcm mb">
-												<?php echo String::replaceExpression( !empty($comment['replyInfo']) ? $comment['replyInfo'] : $comment['detail'] ); ?>
+												<?php echo StringUtil::replaceExpression( !empty($comment['replyInfo']) ? $comment['replyInfo'] : $comment['detail'] ); ?>
 											</p>
 											<div>
 												<label class="checkbox checkbox-inline mbz">

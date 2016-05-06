@@ -7,7 +7,7 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module as ModuleUtil;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Menu;
 use application\modules\dashboard\model\Nav;
 
@@ -51,7 +51,7 @@ class ModuleController extends BaseController {
                 $menu = Menu::model()->fetchByModule( $module['module'] );
                 if ( !empty( $menu ) ) {
                     $route = $menu['m'] . '/' . $menu['c'] . '/' . $menu['a'];
-                    $param = String::splitParam( $menu['param'] );
+                    $param = StringUtil::splitParam( $menu['param'] );
                     $module['managerUrl'] = IBOS::app()->urlManager->createUrl( $route, $param );
                 } else {
                     $module['managerUrl'] = '';

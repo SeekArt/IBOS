@@ -79,7 +79,7 @@ class ThreadDetailController extends DetailController {
 				'module_rowid' => $thread['threadid'],
 				'module_table' => 'thread',
 				// 'url' => $sourceUrl,
-				// 'detail' => Ibos::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $thread['subject'], 50 ) ) )
+				// 'detail' => Ibos::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $thread['subject'], 50 ) ) )
 			)
 		);
 

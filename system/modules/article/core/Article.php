@@ -19,7 +19,7 @@ namespace application\modules\article\core;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\model\ArticleApproval;
 use application\modules\article\model\ArticleBack;
 use application\modules\article\model\ArticleCategory;
@@ -100,7 +100,7 @@ class Article {
         // 所有已读新闻id
         $readArtIds = ArticleReader::model()->fetchReadArtIdsByUid( $uid );
         foreach ( $datas as $data ) {
-            $data['subject'] = String::cutStr( $data['subject'], 50 );
+            $data['subject'] = StringUtil::cutStr( $data['subject'], 50 );
             // 1:已读；-1:未读
             $data['readStatus'] = in_array( $data['articleid'], $readArtIds ) ? 1 : -1;
             // 三天内为新文章

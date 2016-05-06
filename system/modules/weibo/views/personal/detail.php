@@ -1,7 +1,7 @@
 <?php 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/user.css?<?php echo VERHASH; ?>">
@@ -114,7 +114,7 @@ use application\core\utils\String;
 									'touid' => $fd['uid'],
 									'showlist' => 1,
 									'url' => $sourceUrl,
-									'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( preg_replace( "/[\s]{2,}/", "", String::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
+									'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
 						) ) );
 							?>
 						<?php endif; ?>

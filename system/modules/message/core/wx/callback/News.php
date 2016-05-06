@@ -18,7 +18,7 @@
 namespace application\modules\message\core\wx\callback;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\model\Article;
 use application\modules\article\utils\Article as ArticleUtil;
 use application\modules\message\core\wx\Callback;
@@ -69,7 +69,7 @@ class News extends Callback {
 				$route = 'http://app.ibos.cn?host=' . urlencode( $hostinfo ) . '/#/news/detail/' . $row['articleid'];
 				$item = array(
 					'title' => $row['subject'],
-					'description' => String::cutStr( strip_tags( $row['content'] ), 30 ),
+					'description' => StringUtil::cutStr( strip_tags( $row['content'] ), 30 ),
 					'picurl' => $picUrl,
 					'url' => WxApi::getInstance()->createOauthUrl( $route, $this->appId ),
 				);

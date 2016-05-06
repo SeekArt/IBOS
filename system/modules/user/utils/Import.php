@@ -3,7 +3,7 @@
 namespace application\modules\user\utils;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\department\model\Department as DepartmentModel;
 use application\modules\department\model\DepartmentRelated as DepartmentRelatedModel;
 use application\modules\main\utils\ImportParent;
@@ -63,11 +63,11 @@ class Import extends ImportParent {
      */
     public function importUserDetail( $i ) {
         $importUserRow = $this->import->importData['{{user}}'];
-        if ( !String::isMobile( $importUserRow['mobile'] ) ) {
+        if ( !StringUtil::isMobile( $importUserRow['mobile'] ) ) {
             $this->error[$i]['status'] = false;
             $this->error[$i]['text'] .= '手机号格式不正确;';
         }
-        if ( !empty( $importUserRow['email'] ) && !String::isEmail( $importUserRow['email'] ) ) {
+        if ( !empty( $importUserRow['email'] ) && !StringUtil::isEmail( $importUserRow['email'] ) ) {
             $this->error[$i]['status'] = false;
             $this->error[$i]['text'] .='邮箱格式不正确;';
         }
@@ -111,10 +111,10 @@ class Import extends ImportParent {
             UserProfileModel::model()->updateAll( $updateUserProfileData, " `uid` = '{$uid}' " );
         } else {//这里是nothing，或者为new和cover时，没有重复字段时的处理
             //user表处理
-            $salt = String::random( 6 );
+            $salt = StringUtil::random( 6 );
             $updateUserData['salt'] = $salt;
             $updateUserData['password'] = md5( md5( $importUserRow['password'] ) . $salt );
-            $updateUserData['guid'] = String::createGuid();
+            $updateUserData['guid'] = StringUtil::createGuid();
             $updateUserData['createtime'] = TIMESTAMP;
             $uid = UserModel::model()->add( $updateUserData, true );
             if ( $way == 'cover' ) {

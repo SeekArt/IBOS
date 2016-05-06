@@ -5,7 +5,7 @@ namespace application\modules\email\controllers;
 use application\core\utils\Env;
 use application\core\utils\IBOS; 
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\utils\Email as EmailUtil;
 use application\modules\user\model\User;
@@ -66,7 +66,7 @@ class ListController extends BaseController {
             $conditionStr = base64_encode( serialize( $condition ) );
         } else {
             $conditionStr = Env::getRequest( 'condition' );
-            $condition = String::utf8Unserialize( base64_decode( $conditionStr ) );
+            $condition = StringUtil::utf8Unserialize( base64_decode( $conditionStr ) );
         }
         if ( empty( $condition ) ) {
             $this->error( IBOS::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );

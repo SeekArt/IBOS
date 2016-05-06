@@ -6,7 +6,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\main\model\Attachment;
@@ -194,7 +194,7 @@ class WorkController extends BaseController {
 			// 公共附件
 			$attachmentID = $_POST['attachmentid'];
 			// 会签意见
-			$content = isset( $_POST['content'] ) ? String::filterCleanHtml( $_POST['content'] ) : '';
+			$content = isset( $_POST['content'] ) ? StringUtil::filterCleanHtml( $_POST['content'] ) : '';
 			// 经办人标记
 			$topflag = $_POST['topflag'];
 			// 检查权限
@@ -499,7 +499,7 @@ class WorkController extends BaseController {
 			// 自由流程不限制
 			$down = true;
 		} else {
-			if ( String::findIn( $process->attachpriv, 4 ) ) {
+			if ( StringUtil::findIn( $process->attachpriv, 4 ) ) {
 				$down = true;
 			}
 		}
@@ -507,20 +507,20 @@ class WorkController extends BaseController {
 			$down = $edit = $del = true;
 		}
 		$isHost = $rp->opflag == '1';
-		$inProcessItem = $flow->isFixed() && String::findIn( $process->processitem, '[A@]' );
+		$inProcessItem = $flow->isFixed() && StringUtil::findIn( $process->processitem, '[A@]' );
 		$enabledInFreeItem = $this->isEnabledInFreeItem( $flow, $rp );
 		if ( $isHost && ($inProcessItem || $enabledInFreeItem) ) {
-			if ( String::findIn( $process->attachpriv, 2 ) ) {
+			if ( StringUtil::findIn( $process->attachpriv, 2 ) ) {
 				$edit = true;
 			}
-			if ( String::findIn( $process->attachpriv, 3 ) ) {
+			if ( StringUtil::findIn( $process->attachpriv, 3 ) ) {
 				$del = true;
 			}
 			if ( $flow->isFixed() ) {
 				$edit = $del = true;
 			}
 		}
-		if ( $flow->isFixed() && String::findIn( $process->processitem, 5 ) ) {
+		if ( $flow->isFixed() && StringUtil::findIn( $process->processitem, 5 ) ) {
 			$print = true;
 		}
 		return array(
@@ -604,7 +604,7 @@ class WorkController extends BaseController {
 			$alreadyHaveAttach = $run->attachmentid !== '';
 			$enabledInFreeItem = $this->isEnabledInFreeItem( $flow, $rp );
 			$isHost = $rp->opflag == '1';
-			$inProcessItem = $flow->isFixed() && String::findIn( $process->processitem, '[A@]' );
+			$inProcessItem = $flow->isFixed() && StringUtil::findIn( $process->processitem, '[A@]' );
 			if ( $alreadyHaveAttach || $enabledInFreeItem || ($inProcessItem && $isHost) ) {
 				$enabled = true;
 			}
@@ -619,7 +619,7 @@ class WorkController extends BaseController {
 	 * @return boolean
 	 */
 	protected function isEnabledInFreeItem( ICFlowType $flow, ICFlowRunProcess $rp ) {
-		return $flow->isFree() && $rp->freeitem == '' || String::findIn( $rp->freeitem, '[A@]' );
+		return $flow->isFree() && $rp->freeitem == '' || StringUtil::findIn( $rp->freeitem, '[A@]' );
 	}
 
 	/**
@@ -782,7 +782,7 @@ class WorkController extends BaseController {
 		if ( isset( $data['suffix'] ) ) {
 			$name = $name . $data['suffix'];
 		}
-		$runName = String::filterCleanHtml( $name );
+		$runName = StringUtil::filterCleanHtml( $name );
 		// 检查流程运行实例名称是否存在
 		$runNameExists = FlowRun::model()->checkExistRunName( $type->getID(), $runName );
 		if ( $runNameExists ) {
@@ -966,7 +966,7 @@ class WorkController extends BaseController {
 		if ( $this->flowid !== '' ) {
 			$condition[] = 'fr.flowid = ' . $this->flowid;
 		}
-		$key = String::filterCleanHtml( Env::getRequest( 'keyword' ) );
+		$key = StringUtil::filterCleanHtml( Env::getRequest( 'keyword' ) );
 		if ( $key ) {
 			$condition[] = array( 'or', "fr.runid LIKE '%{$key}%'", "fr.name LIKE '%{$key}%'", );
 		}
@@ -1055,7 +1055,7 @@ class WorkController extends BaseController {
 				$run['stepname'] = IBOS::lang( 'Stepth', '', array( '{step}' => $run['processid'] ) );
 			}
 			if ( $this->type !== 'done' ) {
-				$run['focus'] = String::findIn( $this->uid, $run['focususer'] );
+				$run['focus'] = StringUtil::findIn( $this->uid, $run['focususer'] );
 			} else {
 				if ( !empty( $run['endtime'] ) ) {
 					$usedTime = $run['endtime'] - $run['begintime'];
@@ -1183,9 +1183,9 @@ class WorkController extends BaseController {
 		$processId = $param['processid'];
 		$flowProcess = $param['flowprocess'];
 		$runId = $param['runid'];
-		$msg = String::filterCleanHtml( Env::getRequest( 'remind' ) );
+		$msg = StringUtil::filterCleanHtml( Env::getRequest( 'remind' ) );
 		$per = WfCommonUtil::getRunPermission( $runId, $this->uid, $processId );
-		if ( !String::findIn( $per, 1 ) && !String::findIn( $per, 2 ) && !String::findIn( $per, 3 ) ) {
+		if ( !StringUtil::findIn( $per, 1 ) && !StringUtil::findIn( $per, 2 ) && !StringUtil::findIn( $per, 3 ) ) {
 			$this->ajaxReturn( array( 'isSuccess' => false ), Mobile::dataType() );
 		}
 		$process = new ICFlowProcess( $flowId, $flowProcess );
@@ -1312,7 +1312,7 @@ class WorkController extends BaseController {
 		if ( isset( $remind[2] ) ) {
 			$beginuser = FlowRunProcess::model()->fetchAllOPUid( $runId, 1, true );
 			if ( $beginuser ) {
-				$beginUserId = String::wrapId( $beginuser[0]['uid'] );
+				$beginUserId = StringUtil::wrapId( $beginuser[0]['uid'] );
 			}
 		}
 		//所有经办人
@@ -1330,7 +1330,7 @@ class WorkController extends BaseController {
 			}
 		}
 		$idstr = $nextId . ',' . $beginUserId . ',' . $toallId;
-		$toId = String::filterStr( $idstr );
+		$toId = StringUtil::filterStr( $idstr );
 		if ( $toId ) {
 			Notify::model()->sendNotify( $toId, 'workflow_turn_notice', $ext );
 		}
@@ -1628,7 +1628,7 @@ class WorkController extends BaseController {
 			if ( $process->gathernode == self::FORCE ) {
 				foreach ( FlowProcess::model()->fetchAllGatherNode( $flowId, $flowProcess ) as $fp ) {
 					$isUntrans = FlowRunProcess::model()->getIsUntrans( $runId, $fp['processid'] );
-					if ( !String::findIn( $fp['processid'], $parent ) ) {
+					if ( !StringUtil::findIn( $fp['processid'], $parent ) ) {
 						if ( $isUntrans ) {
 							//此步骤为强制合并步骤，尚有步骤未转交至此步骤，不能继续转交下一步
 							Env::iExit( IBOS::lang( 'Gathernode trans error' ) );
@@ -1788,7 +1788,7 @@ class WorkController extends BaseController {
 			} else {
 				$prcsuser = '';
 			}
-			// $prcsuser = sprintf( '[%s]', !empty( $prcsuser ) ? String::iImplode( $prcsuser ) : ''  );
+			// $prcsuser = sprintf( '[%s]', !empty( $prcsuser ) ? StringUtil::iImplode( $prcsuser ) : ''  );
 			if ( empty( $subfp['uid'] ) && empty( $subfp['deptid'] ) && empty( $subfp['positionid'] ) ) {
 				$nopriv = $lang['Not set step permissions']; //没有经办权限
 			}
@@ -1809,8 +1809,8 @@ class WorkController extends BaseController {
 				$uid = FlowRun::model()->fetchBeginUserByRunId( $runId );
 				$prcsuser = User::model()->fetchByUid( $uid );
 				//检查该发起人是否有经办权限
-				if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $prcsuser['uid'] ) ||
-						String::findIn( $process['deptid'], $prcsuser['alldeptid'] ) || String::findIn( $process['positionid'], $prcsuser['allposid'] ) ) {
+				if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $prcsuser['uid'] ) ||
+						StringUtil::findIn( $process['deptid'], $prcsuser['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $prcsuser['allposid'] ) ) {
 					$prcsOpUser = $prcsuser['uid'];
 					$prcsUserAuto = $prcsuser['uid'] . ",";
 				}
@@ -1857,7 +1857,7 @@ class WorkController extends BaseController {
 					if ( !empty( $manager ) ) {
 						$muser = User::model()->fetchByUid( $manager );
 						if ( !empty( $muser ) ) {
-							if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $muser['uid'] ) || String::findIn( $process['deptid'], $muser['alldeptid'] ) || String::findIn( $process['positionid'], $muser['allposid'] ) ) {
+							if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $muser['uid'] ) || StringUtil::findIn( $process['deptid'], $muser['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $muser['allposid'] ) ) {
 								$prcsUserAuto = $muser['uid'] . ",";
 							}
 							if ( $prcsUserAuto != "" ) {
@@ -1870,8 +1870,8 @@ class WorkController extends BaseController {
 							$user = User::model()->fetchByUid( $user['uid'] );
 							$uid = $user['uid'];
 							$position = $user['allposid'];
-							if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $uid ) ||
-									String::findIn( $process['deptid'], $user['alldeptid'] ) || String::findIn( $process['positionid'], $position ) ) {
+							if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $uid ) ||
+									StringUtil::findIn( $process['deptid'], $user['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $position ) ) {
 								if ( $userPerMax == "" ) {
 									$prcsOpUser = $uid;
 									$prcsUserAuto .= $uid . ",";
@@ -1887,14 +1887,14 @@ class WorkController extends BaseController {
 				//默认主办人
 				$autouserop = User::model()->fetchByUid( $process['autouserop'] );
 				if ( !empty( $autouserop ) ) {
-					if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $autouserop['uid'] ) || String::findIn( $process['deptid'], $autouserop['alldeptid'] ) || String::findIn( $process['positionid'], $autouserop['allposid'] ) ) {
+					if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $autouserop['uid'] ) || StringUtil::findIn( $process['deptid'], $autouserop['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $autouserop['allposid'] ) ) {
 						$prcsOpUser = $autouserop['uid'];
 					}
 				}
 				//默认经办人
 				if ( !empty( $process['autouser'] ) ) {
 					foreach ( User::model()->fetchAllByUids( explode( ',', trim( $process['autouser'], ',' ) ) ) as $user ) {
-						if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $user['uid'] ) || String::findIn( $process['deptid'], $user['alldeptid'] ) || String::findIn( $process['positionid'], $user['allposid'] ) ) {
+						if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $user['uid'] ) || StringUtil::findIn( $process['deptid'], $user['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $user['allposid'] ) ) {
 							$prcsUserAuto .= $user['uid'] . ',';
 						}
 					}
@@ -1929,7 +1929,7 @@ class WorkController extends BaseController {
 
                     foreach ( $temp as $k => $v ) {
 						$dept = Department::model()->queryDept( $v['alldeptid'] );
-						if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $v['uid'] ) || String::findIn( $process['deptid'], $dept ) || String::findIn( $process['positionid'], $v["allposid"] ) ) {
+						if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $v['uid'] ) || StringUtil::findIn( $process['deptid'], $dept ) || StringUtil::findIn( $process['positionid'], $v["allposid"] ) ) {
 							$prcsUserAuto .= $v["uid"] . ",";
 						}
 					}
@@ -1946,7 +1946,7 @@ class WorkController extends BaseController {
                         'allposid' => User::model()->findAllPositionidByUid( $uid ),
                     );
 					if ( $temp ) {
-						if ( $process['deptid'] == 'alldept' || String::findIn( $process['uid'], $temp['uid'] ) || String::findIn( $process['deptid'], $temp["alldeptid"] ) || String::findIn( $process['positionid'], $temp["allposid"] ) ) {
+						if ( $process['deptid'] == 'alldept' || StringUtil::findIn( $process['uid'], $temp['uid'] ) || StringUtil::findIn( $process['deptid'], $temp["alldeptid"] ) || StringUtil::findIn( $process['positionid'], $temp["allposid"] ) ) {
 							$prcsOpUser = $prcsUserAuto = $temp['uid'];
 							$prcsUserAuto .= ",";
 						}
@@ -1955,7 +1955,7 @@ class WorkController extends BaseController {
 			} elseif ( $process['autotype'] == 9 ) { //自动选择本部门内符合条件所有人员
 				$main = IBOS::app()->user->deptid;
 				foreach ( User::model()->fetchAllFitDeptUser( $main ) as $k => $v ) {
-					if ( $process['deptid'] == 'alldept' || String::findIn( $process['uid'], $v['uid'] ) || String::findIn( $process['deptid'], $v['alldeptid'] ) || String::findIn( $process['positionid'], $v['allposid'] ) ) {
+					if ( $process['deptid'] == 'alldept' || StringUtil::findIn( $process['uid'], $v['uid'] ) || StringUtil::findIn( $process['deptid'], $v['alldeptid'] ) || StringUtil::findIn( $process['positionid'], $v['allposid'] ) ) {
 						$prcsUserAuto .= $v['uid'] . ",";
 					}
 				}
@@ -1974,7 +1974,7 @@ class WorkController extends BaseController {
 					$tmpdept = $main;
 				}
 				foreach ( User::model()->fetchAllFitDeptUser( $tmpdept ) as $k => $v ) {
-					if ( $process['deptid'] == "alldept" || String::findIn( $process['uid'], $v['uid'] ) || String::findIn( $process['deptid'], $v["alldeptid"] ) || String::findIn( $process['positionid'], $v["allposid"] ) ) {
+					if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $v['uid'] ) || StringUtil::findIn( $process['deptid'], $v["alldeptid"] ) || StringUtil::findIn( $process['positionid'], $v["allposid"] ) ) {
 						$prcsUserAuto .= $v['uid'] . ",";
 					}
 				}
@@ -1990,7 +1990,7 @@ class WorkController extends BaseController {
 				}
 			}
 			$prcsuser = WfHandleUtil::getPrcsUser( $flowId, $process['processid'] );
-			// $prcsuser = sprintf( '[%s]', !empty( $prcsuser ) ? String::iImplode( $prcsuser ) : ''  );
+			// $prcsuser = sprintf( '[%s]', !empty( $prcsuser ) ? StringUtil::iImplode( $prcsuser ) : ''  );
 
 			$userSelect = array(
 				'topdefault' => $process['topdefault'],
@@ -2014,12 +2014,12 @@ class WorkController extends BaseController {
 		$per = WfCommonUtil::getRunPermission( $runId, $this->uid, $processId );
 		if ( $topflag != 2 ) {
 			// 如果不是系统管理员，主办人，管理与监控人，退出
-			if ( !String::findIn( $per, 1 ) && !String::findIn( $per, 2 ) && !String::findIn( $per, 3 ) ) {
+			if ( !StringUtil::findIn( $per, 1 ) && !StringUtil::findIn( $per, 2 ) && !StringUtil::findIn( $per, 3 ) ) {
 				Env::iExit( '必须是系统管理员，主办人，管理或监控人才能进行操作' );
 			}
 		} else {
 			//如果不是经办人
-			if ( !String::findIn( $per, 4 ) ) {
+			if ( !StringUtil::findIn( $per, 4 ) ) {
 				Env::iExit( '您不是经办人，没有权限进行操作。' );
 			}
 		}
@@ -2287,7 +2287,7 @@ class WorkController extends BaseController {
 	public function actionDel() {
 		if ( IBOS::app()->request->getIsPostRequest() ) {
 			$id = Env::getRequest( 'id' );
-			$runId = String::filterStr( String::filterCleanHtml( $id ) );
+			$runId = StringUtil::filterStr( StringUtil::filterCleanHtml( $id ) );
 			Handle::destroy( $runId );
 			$this->ajaxReturn( array( 'isSuccess' => true ) );
 		}

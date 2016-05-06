@@ -115,7 +115,7 @@ class Attach {
      */
     public static function getTableId( $relatedId ) {
         $id = (string) $relatedId;
-        $tableId = String::iIntval( $id{strlen( $id ) - 1} );
+        $tableId = StringUtil::iIntval( $id{strlen( $id ) - 1} );
         return $tableId;
     }
 
@@ -197,7 +197,7 @@ class Attach {
         if ( !empty( $param ) ) {
             $str .= '|' . serialize( $param );
         }
-        $encode = rawurlencode( base64_encode( String::authCode( $str, 'ENCODE', IBOS::app()->user->salt ) ) );
+        $encode = rawurlencode( base64_encode( StringUtil::authCode( $str, 'ENCODE', IBOS::app()->user->salt ) ) );
         return $encode;
     }
 
@@ -240,7 +240,7 @@ class Attach {
         $urlManager = IBOS::app()->urlManager;
         foreach ( $data as $id => &$val ) {
             $val['date'] = Convert::formatDate( $val['dateline'], 'u' );
-            $val['filetype'] = String::getFileExt( $val['filename'] );
+            $val['filetype'] = StringUtil::getFileExt( $val['filename'] );
             $val['origsize'] = $val['filesize'];
             $val['filesize'] = Convert::sizeCount( $val['filesize'] );
 //			if ( $getRealAddress ) {

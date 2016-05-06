@@ -4,7 +4,7 @@ namespace application\modules\message\model;
 
 use application\core\model\Model;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class NotifyMessage extends Model {
 
@@ -137,11 +137,11 @@ class NotifyMessage extends Model {
             return false;
         }
         $s['uid'] = intval( $data['uid'] );
-        $s['node'] = String::filterCleanHtml( $data['node'] );
-        $s['module'] = String::filterCleanHtml( $data['module'] );
+        $s['node'] = StringUtil::filterCleanHtml( $data['node'] );
+        $s['module'] = StringUtil::filterCleanHtml( $data['module'] );
         $s['isread'] = 0;
-        $s['title'] = String::filterCleanHtml( $data['title'] );
-        $s['body'] = String::filterDangerTag( $data['body'] );
+        $s['title'] = StringUtil::filterCleanHtml( $data['title'] );
+        $s['body'] = StringUtil::filterDangerTag( $data['body'] );
         $s['ctime'] = time();
         $s['url'] = $data['url'];
         return $s;

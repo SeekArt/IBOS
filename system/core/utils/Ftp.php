@@ -96,7 +96,7 @@ class Ftp {
                 $this->_config['ssl'] = intval( $this->_config['ssl'] );
                 $this->_config['host'] = $this->clear( $this->_config['host'] );
                 $autoKey = md5( IBOS::app()->setting->get( 'config/security/authkey' ) );
-                $this->_config['password'] = String::authCode( $this->_config['password'], 'DECODE', $autoKey );
+                $this->_config['password'] = StringUtil::authCode( $this->_config['password'], 'DECODE', $autoKey );
                 $this->_config['timeout'] = intval( $this->_config['timeout'] );
                 $this->_enabled = true;
             }

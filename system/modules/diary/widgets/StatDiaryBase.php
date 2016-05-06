@@ -19,7 +19,7 @@ namespace application\modules\diary\widgets;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS; 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use CWidget;
 
@@ -65,7 +65,7 @@ class StatDiaryBase extends CWidget {
 			$uid = array( IBOS::app()->user->uid );
 		} else {
 			$id = Env::getRequest( 'uid' );
-			$uids = String::filterCleanHtml( String::filterStr( $id ) );
+			$uids = StringUtil::filterCleanHtml( StringUtil::filterStr( $id ) );
 			if ( empty( $uids ) ) {
 				$uid = User::model()->fetchSubUidByUid( IBOS::app()->user->uid );
 				if ( empty( $uid ) ) {

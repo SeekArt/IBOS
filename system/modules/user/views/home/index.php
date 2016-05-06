@@ -2,7 +2,7 @@
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <!-- Mainer -->
@@ -294,7 +294,7 @@ use application\core\utils\String;
 										<td>
 											<?php echo Convert::formatDate( $log['logtime'], 'u' ); ?></td>
 										<td>
-											<?php echo String::cutStr( !empty( $row['address'] ) ? $row['address'] : Convert::convertIp( $row['ip'] ), 7 ); ?></td>
+											<?php echo StringUtil::cutStr( !empty( $row['address'] ) ? $row['address'] : Convert::convertIp( $row['ip'] ), 7 ); ?></td>
 										<td>
 											<?php echo $row['ip']; ?></td>
 										<td>

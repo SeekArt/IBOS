@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <!-- private css -->
@@ -37,10 +37,10 @@ use application\core\utils\String;
 										<span class="msg-box-arrow"><i></i></span>
 										<div class="msg-box-body">
 											<p class="xcm mbm">
-												<?php echo String::parseHtml( $at['source_content'] ); ?>
+												<?php echo StringUtil::parseHtml( $at['source_content'] ); ?>
 											</p>
 											<p class="tcm mb">
-												<?php echo String::replaceExpression( $at['detail'] ); ?>
+												<?php echo StringUtil::replaceExpression( $at['detail'] ); ?>
 											</p>
 											<div>
 												<span class="tcm fss"><?php if($at['source_table'] == 'comment' ): ?><?php echo date('n月j日H:i',$at['ctime']); ?><?php else: ?><?php echo $at['ctime']; ?><?php endif; ?></span>

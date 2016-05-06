@@ -32,7 +32,7 @@ class CommonAttach extends Attach {
         $aid = MainModel\Attachment::model()->add( array( 'uid' => $uid, 'tableid' => 127 ), true );
         $data['aid'] = $aid;
         MainModel\AttachmentUnused::model()->add( $data );
-        $file['icon'] = util\Attach::attachType( util\String::getFileExt( $attach['name'] ) );
+        $file['icon'] = util\Attach::attachType( util\StringUtil::getFileExt( $attach['name'] ) );
         $file['aid'] = $aid;
         $file['name'] = $attach['name'];
 //		$file['url'] = $attachment;

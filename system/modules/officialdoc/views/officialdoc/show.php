@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 
 ?>
@@ -221,7 +221,7 @@ use application\modules\user\model\User;
 														'module_rowid' => $data['docid'],
 														'module_table' => 'officialdoc',
 														'url' => $sourceUrl,
-														'detail' => IBOS::lang( 'Comment my doc', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $data['subject'], 50 ) ) )
+														'detail' => IBOS::lang( 'Comment my doc', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
 													) ) );
 												?>
 											</div>

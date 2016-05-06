@@ -95,7 +95,7 @@ class AttachController extends Controller {
 		}
 		// 解码
 		$salt = util\IBOS::app()->user->salt;
-		$decodeString = util\String::authCode( $aidString, 'DECODE', $salt );
+		$decodeString = util\StringUtil::authCode( $aidString, 'DECODE', $salt );
 		$decodeArr = explode( '|', $decodeString );
 		$count = count( $decodeArr );
 		if ( $count < 3 ) {

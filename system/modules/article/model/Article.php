@@ -20,7 +20,7 @@ namespace application\modules\article\model;
 use application\core\model\Model;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\utils\Article as ArticleUtil;
 use CDbCriteria;
 use CPagination;

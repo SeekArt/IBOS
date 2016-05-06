@@ -6,7 +6,7 @@ use application\core\model\Model;
 use application\core\model\Source;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
@@ -117,9 +117,9 @@ class FeedDigg extends Model {
             Feed::model()->cleanCache( $feedId );
             $user = User::model()->fetchByUid( $uid );
             $config['{user}'] = $user['realname'];
-            $config['{sourceContent}'] = String::filterCleanHtml( $feed['source_body'] );
+            $config['{sourceContent}'] = StringUtil::filterCleanHtml( $feed['source_body'] );
             $config['{sourceContent}'] = str_replace( '◆', '', $config['{sourceContent}'] );
-            $config['{sourceContent}'] = String::cutStr( $config ['{sourceContent}'], 34 );
+            $config['{sourceContent}'] = StringUtil::cutStr( $config ['{sourceContent}'], 34 );
             $config['{url}'] = $feed['source_url'];
             $config['{content}'] = IBOS::app()->getController()->renderPartial( 'application.modules.message.views.remindcontent', array(
                 'recentFeeds' => Feed::model()->getRecentFeeds(),

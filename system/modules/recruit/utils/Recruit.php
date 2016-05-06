@@ -16,7 +16,7 @@
 
 namespace application\modules\recruit\utils;
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class Recruit {
 
@@ -51,7 +51,7 @@ class Recruit {
         $searchCondition = '';
 
         $realname = $search['realname'];
-        $positionid = implode( ',', String::getId( $search['positionid'] ) );
+        $positionid = implode( ',', StringUtil::getId( $search['positionid'] ) );
         $gender = $search['gender'];
         $ageRange = $search['ageRange'];
         $education = $search['education'];
@@ -92,7 +92,7 @@ class Recruit {
         $searchCondition = '';
 
         $realname = $search['realname'];
-        $input = implode( ',', String::getId( $search['input'] ) );
+        $input = implode( ',', StringUtil::getId( $search['input'] ) );
         $inputtime = $search['inputtime'];
         $contact = $search['contact'];
         $purpose = $search['purpose'];
@@ -129,7 +129,7 @@ class Recruit {
 
         $realname = $search['realname'];
         $interviewtime = $search['interviewtime'];
-        $interviewer = implode( ',', String::getId( $search['interviewer'] ) );
+        $interviewer = implode( ',', StringUtil::getId( $search['interviewer'] ) );
         $type = $search['type'];
 
         if ( !empty( $realname ) ) {

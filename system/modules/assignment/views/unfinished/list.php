@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/assignment.css?<?php echo VERHASH; ?>">
@@ -34,7 +34,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                             <input type="text" id="am_publish_input" class="am-publish-input" name="subject">
                             <div class="amp-bar">
                                 <div class="amp-bar-charge">
-                                    <input type="text" id="am_bar_charge" value="<?php echo String::wrapId( IBOS::app()->user->uid ); ?>">
+                                    <input type="text" id="am_bar_charge" value="<?php echo StringUtil::wrapId( IBOS::app()->user->uid ); ?>">
                                 </div>
                                 <div class="amp-bar-endtime">
                                     <div class="input-group datepicker" id="am_bar_endtime">
@@ -52,7 +52,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                     <div class="am-publish-dt">
                         <div class="row mb">
                             <div class="span4">
-                                <input type="text" name="chargeuid" id="am_charge" value="<?php echo String::wrapId( IBOS::app()->user->uid ); ?>">
+                                <input type="text" name="chargeuid" id="am_charge" value="<?php echo StringUtil::wrapId( IBOS::app()->user->uid ); ?>">
                             </div>
                             <div class="span4">
                                 <div class="input-group datepicker pull-left" id="am_starttime">

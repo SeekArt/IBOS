@@ -4,7 +4,7 @@ namespace application\modules\weibo\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class FeedTopic extends Model {
 
@@ -45,7 +45,7 @@ class FeedTopic extends Model {
      * @return type
      */
     private function addKey( $key, $feedId, $type ) {
-        $map['topicname'] = trim( preg_replace( "/#/", '', String::filterCleanHtml( $key ) ) );
+        $map['topicname'] = trim( preg_replace( "/#/", '', StringUtil::filterCleanHtml( $key ) ) );
         $topic = $this->fetchByAttributes( $map );
         if ( $topic ) {
             $this->updateCounters( array( 'count' => 1 ), sprintf( "topicname = '%s'", $map['topicname'] ) );

@@ -2,7 +2,7 @@
 
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/email.css?<?php echo VERHASH; ?>">
@@ -107,7 +107,7 @@ use application\core\utils\String;
                         </h1>
                         <p id="mal_info_brief">
                             <?php echo $email['fromName']; ?> <?php echo $lang['At']; ?> <?php echo $email['dateTime'] ?> ( <?php echo $lang['Week'] . $weekDay; ?> ) <?php echo $lang['Send to']; ?> <?php
-                            echo String::cutStr( implode( '、', $allUsers ), 45 );
+                            echo StringUtil::cutStr( implode( '、', $allUsers ), 45 );
                             ?> <?php if ( count( $allUsers ) > 1 ): ?><?php echo $lang['Such as']; ?><?php echo count( $allUsers ); ?><?php echo $lang['People']; ?><?php endif; ?>。
                         </p>
                         <div id="mal_info_detail" style="display:none;">

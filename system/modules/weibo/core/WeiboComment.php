@@ -6,7 +6,7 @@ use application\core\model\Source;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\core\Comment as IWComment;
 use application\modules\message\model\Comment;
 use application\modules\message\model\Feed;
@@ -33,13 +33,13 @@ class WeiboComment extends IWComment {
             $attr['moduleuid'] = intval( $_POST['moduleuid'] );
             $attr['rowid'] = intval( $_POST['rowid'] );
             $attr['module_rowid'] = intval( $_POST['module_rowid'] );
-            $attr['module_table'] = String::filterCleanHtml( $_POST['module_table'] );
+            $attr['module_table'] = StringUtil::filterCleanHtml( $_POST['module_table'] );
             $attr['inAjax'] = intval( $_POST['inAjax'] );
             $attr['showlist'] = intval( $_POST['showlist'] );
             $attr['cancomment'] = intval( $_POST['cancomment'] );
             $attr['cancomment_old'] = intval( $_POST['cancomment_old'] );
-            $attr['module'] = String::filterCleanHtml( $_POST['module'] );
-            $attr['table'] = String::filterCleanHtml( $_POST['table'] );
+            $attr['module'] = StringUtil::filterCleanHtml( $_POST['module'] );
+            $attr['table'] = StringUtil::filterCleanHtml( $_POST['table'] );
             $attr['canrepost'] = intval( $_POST['canrepost'] );
         }
         is_array( $attr ) && $var = array_merge( $var, $attr );

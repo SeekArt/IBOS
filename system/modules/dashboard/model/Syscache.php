@@ -20,7 +20,7 @@ namespace application\modules\dashboard\model;
 use application\core\model\Model;
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class Syscache extends Model {
 
@@ -78,8 +78,8 @@ class Syscache extends Model {
         //如果缓存中存在数据
         if ( empty( $newArray ) ) {
             foreach ( $data as &$cache ) {
-                $isSerialized = String::utf8Unserialize( $cache ) !== false;
-                $cache = $isSerialized ? String::utf8Unserialize( $cache ) : $cache;
+                $isSerialized = StringUtil::utf8Unserialize( $cache ) !== false;
+                $cache = $isSerialized ? StringUtil::utf8Unserialize( $cache ) : $cache;
             }
             //返回数据
             return $data;
@@ -88,7 +88,7 @@ class Syscache extends Model {
         $caches = $this->fetchAll( sprintf( "FIND_IN_SET(name,'%s')", implode( ',', $newArray ) ) );
         if ( $caches ) {
             foreach ( $caches as $sysCache ) {
-                $data[$sysCache['name']] = $sysCache['type'] ? String::utf8Unserialize( $sysCache['value'] ) : $sysCache['value'];
+                $data[$sysCache['name']] = $sysCache['type'] ? StringUtil::utf8Unserialize( $sysCache['value'] ) : $sysCache['value'];
                 //把数据写到缓存中
                 Cache::set( $sysCache['name'], $data[$sysCache['name']] );
             }

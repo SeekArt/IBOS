@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\weibo\core\WbConst;
 ?>
 <!-- private css -->
@@ -57,7 +57,7 @@ use application\modules\weibo\core\WbConst;
 										<strong><?php echo $followState['user']['realname']; ?></strong><?php if ( !empty( $followState['user']['posname'] ) ): ?><span>&nbsp;·&nbsp;</span><span><?php echo $followState['user']['posname']; ?></span><?php endif; ?>
 									</div>
 									<div class="wb-fans-from">
-										<span title="<?php echo $followState['user']['bio']; ?>"><?php if ( !empty( $followState['user']['bio'] ) ): ?><?php echo String::cutStr( $followState['user']['bio'], 18 ); ?><?php else: ?>这家伙很懒,什么都没有写<?php endif; ?></span>
+										<span title="<?php echo $followState['user']['bio']; ?>"><?php if ( !empty( $followState['user']['bio'] ) ): ?><?php echo StringUtil::cutStr( $followState['user']['bio'], 18 ); ?><?php else: ?>这家伙很懒,什么都没有写<?php endif; ?></span>
 									</div>
 								</div>
 								<div class="rdb wbc-box2">

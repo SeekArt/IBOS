@@ -17,7 +17,7 @@
 
 namespace application\core\cache\provider;
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Credit;
 use application\modules\dashboard\model\Syscache;
 use application\modules\dashboard\utils\Dashboard;
@@ -44,7 +44,7 @@ class Setting extends CBehavior {
         // 积分公式转换
         $this->handleCreditsFormula();
         // verhash
-        $this->_setting['verhash'] = String::random( 3 );
+        $this->_setting['verhash'] = StringUtil::random( 3 );
         Syscache::model()->modifyCache( 'setting', $settings );
     }
 
@@ -72,7 +72,7 @@ class Setting extends CBehavior {
             $index = 1;
             foreach ( $record as $credit ) {
                 $this->_setting['extcredits'][$index] = $credit;
-                $this->_setting['creditremind'] && $this->_setting['creditnames'][] = str_replace( "'", "\'", String::ihtmlSpecialChars( $credit['cid'] . '|' . $credit['name'] ) );
+                $this->_setting['creditremind'] && $this->_setting['creditnames'][] = str_replace( "'", "\'", StringUtil::ihtmlSpecialChars( $credit['cid'] . '|' . $credit['name'] ) );
                 $index++;
             }
         }

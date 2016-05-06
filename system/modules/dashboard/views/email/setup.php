@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <div class="ct">
@@ -71,7 +71,7 @@ use application\core\utils\String;
 													<input type="text" name='socket[<?php echo $key; ?>][username]' class="input-small" value='<?php echo $value['username']; ?>' />
 												</td>
 												<td>
-													<input type="text" name='socket[<?php echo $key; ?>][password]' class="input-small" value='<?php echo String::passwordMask( $value['password'] ); ?>' />
+													<input type="text" name='socket[<?php echo $key; ?>][password]' class="input-small" value='<?php echo StringUtil::passwordMask( $value['password'] ); ?>' />
 												</td>
 												<td>
 													<a href="javascript:;" title="<?php echo $lang['Del']; ?>" class="cbtn o-trash"></a>

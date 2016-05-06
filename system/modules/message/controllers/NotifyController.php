@@ -19,7 +19,7 @@ namespace application\modules\message\controllers;
 use application\core\utils\IBOS;
 use application\core\utils\Env;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\NotifyMessage;
 
 class NotifyController extends BaseController {
@@ -114,7 +114,7 @@ class NotifyController extends BaseController {
      * @return void
      */
     public function actionSetIsRead() {
-        $module = String::filterCleanHtml( Env::getRequest( 'module' ) );
+        $module = StringUtil::filterCleanHtml( Env::getRequest( 'module' ) );
         $res = NotifyMessage::model()->setReadByModule( IBOS::app()->user->uid, $module );
         $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
     }

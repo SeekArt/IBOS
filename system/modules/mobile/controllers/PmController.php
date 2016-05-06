@@ -21,7 +21,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\message\model\MessageContent;
 use application\modules\mobile\utils\Mobile;
@@ -66,7 +66,7 @@ class PmController extends BaseController {
     }
 
     public function actionSend() {
-        $content = String::filterCleanHtml( $_GET['content'] );
+        $content = StringUtil::filterCleanHtml( $_GET['content'] );
         $id = intval( isset( $_GET['id'] ) ? $_GET['id'] : 0  );
         $touid = intval( isset( $_GET['touid'] ) ? $_GET['touid'] : 0  );
 

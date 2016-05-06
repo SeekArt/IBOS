@@ -1,4 +1,4 @@
- <?php  use application\core\utils\String; ?> 
+ <?php  use application\core\utils\StringUtil; ?>
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/dataTable/css/jquery.dataTables_ibos.min.css?<?php echo VERHASH; ?>">
 <div class="ct">
     <div class="clearfix">

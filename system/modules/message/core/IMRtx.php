@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core;
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
 use application\modules\user\model\User;
@@ -63,7 +63,7 @@ class IMRtx extends IM {
      * @param type $flag
      */
     public function setPwd( $pwd ) {
-        $this->pwd = String::filterCleanHtml( $pwd );
+        $this->pwd = StringUtil::filterCleanHtml( $pwd );
     }
 
     /**

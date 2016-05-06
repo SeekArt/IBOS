@@ -1,12 +1,12 @@
 <?php
 
 use application\core\utils\Cache;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core\IMFactory;
 
 $value = Setting::model()->fetchSettingValueByKey( 'im' );
-$im = String::utf8Unserialize( $value );
+$im = StringUtil::utf8Unserialize( $value );
 $neededUpgrade = false;
 if ( isset( $im['qq'] ) ) {
     $cfg = $im['qq'];

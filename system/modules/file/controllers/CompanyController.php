@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\file\core\FileOperationApi;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDirAccess;
@@ -153,7 +153,7 @@ class CompanyController extends BaseController {
 	 */
 	public function actionDel() {
 		if ( IBOS::app()->request->getIsAjaxRequest() ) {
-			$fids = String::filterStr( Env::getRequest( 'fids' ) );
+			$fids = StringUtil::filterStr( Env::getRequest( 'fids' ) );
 			$files = File::model()->fetchAllByFids( $fids );
 			foreach ( $files as $f ) {
 				$access = FileDirAccess::model()->fetchByAttributes( array( 'fid' => $f['fid'] ) );

@@ -2,7 +2,7 @@
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/message.css?<?php echo VERHASH; ?>">
@@ -52,7 +52,7 @@ use application\core\utils\String;
 											<strong><?php echo $row['lastmessage']['user']['realname']; ?></strong> <?php echo $lang['To'],$lang['Me'],$lang['Say']; ?>
 											<?php } ?>
 											<!-- 单行，过长时截断字符 -->
-											<a href="<?php echo $this->createUrl( 'pm/detail', array( 'id' => $row['listid'], 'type' => $row['type'] ) ) ?>" class="xcm"><?php echo String::parseHtml( String::cutStr( $row['lastmessage']['content'], 100 ) ); ?></a>
+											<a href="<?php echo $this->createUrl( 'pm/detail', array( 'id' => $row['listid'], 'type' => $row['type'] ) ) ?>" class="xcm"><?php echo StringUtil::parseHtml( StringUtil::cutStr( $row['lastmessage']['content'], 100 ) ); ?></a>
 										</p>
 										<div>
 											<div class="pull-left">
@@ -105,7 +105,7 @@ use application\core\utils\String;
 </div>
 <script>
 	Ibos.app.setPageParam({
-		'dataUid': '<?php echo String::wrapId( IBOS::app()->user->uid ) ?>'
+		'dataUid': '<?php echo StringUtil::wrapId( IBOS::app()->user->uid ) ?>'
 	})
 	
 </script>

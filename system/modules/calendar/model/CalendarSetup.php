@@ -18,7 +18,7 @@ namespace application\modules\calendar\model;
 
 use application\core\model\Model;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class CalendarSetup extends Model {
 
@@ -70,7 +70,7 @@ class CalendarSetup extends Model {
         $hiddenDays = array();
         $setupData = $this->fetchSetupByUid( $uid );
         if ( !empty( $setupData ) && !empty( $setupData['hiddendays'] ) ) {
-            $hiddenDays = String::utf8Unserialize( $setupData['hiddendays'] );
+            $hiddenDays = StringUtil::utf8Unserialize( $setupData['hiddendays'] );
         }
         return $hiddenDays;
     }
@@ -88,10 +88,10 @@ class CalendarSetup extends Model {
 		);
 		$setupData = $this->fetchSetupByUid( $uid );
 		if ( !empty( $setupData ) && !empty( $setupData['viewsharing'] ) ) {
-			$sharingPersonnel['viewSharing'] = String::wrapId( $setupData['viewsharing'] );
+			$sharingPersonnel['viewSharing'] = StringUtil::wrapId( $setupData['viewsharing'] );
 		}
 		if ( !empty( $setupData ) && !empty( $setupData['editsharing'] ) ) {
-			$sharingPersonnel['editSharing'] = String::wrapId( $setupData['editsharing'] );
+			$sharingPersonnel['editSharing'] = StringUtil::wrapId( $setupData['editsharing'] );
 		}
 		return $sharingPersonnel;
 	}
@@ -109,8 +109,8 @@ class CalendarSetup extends Model {
     public function updataSetup( $uid, $minTime, $maxTime, $hiddenDays, $viewSharing, $editSharing ) {
         $hiddenDays = empty( $hiddenDays ) ? '' : serialize( $hiddenDays );
 		// 将形如 u_1,u_2... 的字符串转换成 1,2... 的字符串形式
-		$viewSharing = empty( $viewSharing ) ? '' : implode(',', String::getUidAByUDPX( $viewSharing ));
-		$editSharing = empty( $editSharing ) ? '' : implode(',', String::getUidAByUDPX( $editSharing ));
+		$viewSharing = empty( $viewSharing ) ? '' : implode(',', StringUtil::getUidAByUDPX( $viewSharing ));
+		$editSharing = empty( $editSharing ) ? '' : implode(',', StringUtil::getUidAByUDPX( $editSharing ));
         $newSetup = array(
             'mintime' => $minTime,
             'maxtime' => $maxTime,

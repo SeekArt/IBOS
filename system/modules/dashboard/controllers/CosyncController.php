@@ -12,7 +12,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\dashboard\utils\CoSync;
 use application\modules\department\model\Department as DepartmentModel;
@@ -42,7 +42,7 @@ class CosyncController extends CoController {
 
     public function init() {
         parent::init();
-        $coinfo = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+        $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
         $this->coBindType = 'ibos';
         if (isset($coinfo['corpid'])):
             $this->corpid = $coinfo['corpid'];
@@ -77,7 +77,7 @@ class CosyncController extends CoController {
             $data['pageInit'] = 'index';
         }
         // 是否开启了自动同步
-        $autoSync = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
+        $autoSync = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
         $data['autoSync'] = $autoSync['status'];
         $this->render('index', $data);
     }
@@ -197,7 +197,7 @@ class CosyncController extends CoController {
                 // 统计同步结果，并返回
                 $relationCount = UserBinding::model()->count("`app` = 'co'");
                 $successInfo['syncCountNum'] = $relationCount;
-                $autosync = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
+                $autosync = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
                 $autosync['lastsynctime'] = time();
                 Setting::model()->updateSettingValueByKey('autosync', serialize($autosync));
                 $this->ajaxReturn(array(
@@ -229,8 +229,8 @@ class CosyncController extends CoController {
         Cache::model()->updateByPk('ibosremovelist', array('cachevalue' => serialize($syncList['third']['delete'])));
         Cache::model()->updateByPk('cocreatelist', array('cachevalue' => serialize($syncList['co']['add'])));
         Cache::model()->updateByPk('coremovelist', array('cachevalue' => serialize($syncList['co']['delete'])));
-        $unit = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
-        $coinfo = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+        $unit = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
+        $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
         $data = array(
             'co' => array(
                 'coAddNum' => count($syncList['third']['add']),
@@ -312,7 +312,7 @@ class CosyncController extends CoController {
         if (Setting::model()->fetchSettingValueByKey('autosync') === NULL) {
             Setting::model()->add(array('skey' => 'autosync', 'svalue' => serialize(array('status' => 1, 'lastsynctime' => time()))));
         }
-        $autosync = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
+        $autosync = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
         // 开启了自动同步 && 上一次同步时间小于今天 0 点
         if ($autosync['status'] == 1 && $autosync['lastsynctime'] < strtotime(date('Y-m-d', time()))) {
             return TRUE;
@@ -326,7 +326,7 @@ class CosyncController extends CoController {
      */
     public function actionAutoSync() {
         $status = Env::getRequest('autoSync');
-        $autosync = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
+        $autosync = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
         $autosync['status'] = intval($status);
         if (Setting::model()->updateSettingValueByKey('autosync', serialize($autosync))) {
             $this->ajaxReturn(array(
@@ -616,8 +616,8 @@ class CosyncController extends CoController {
     protected function verifyIsInstall() {
         $isInstance = Env::getRequest('isInstance');
         if ($isInstance === NULL) {
-            $coinfo = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
-            $unit = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
+            $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+            $unit = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
             $result['ibos'] = array(
                 'corplogo' => $unit['logourl'],
                 'corpshortname' => $unit['shortname'],
@@ -650,7 +650,7 @@ class CosyncController extends CoController {
     // 		'mobile' => $mobileList,
     // 		'type' => 'invite',
     // 	);
-    // 	$coinfo = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+    // 	$coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
     // 	$sendInviteRes = CoApi::getInstance()->sendInvite($coinfo['accesstoken'], $post);
     // 	if ($sendInviteRes['code'] != CodeApi::SUCCESS) {
     // 		$this->ajaxReturn(array(

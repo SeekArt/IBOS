@@ -17,7 +17,7 @@
 namespace application\modules\assignment\utils;
 
 use application\core\utils\File;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\assignment\model\AssignmentRemind;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
@@ -127,12 +127,12 @@ class Assignment {
      * @return array
      */
     public static function handlePostData( $post ) {
-        $chargeuid = String::getId( $post['chargeuid'] );
-        $participantuid = String::getId( $post['participantuid'] );
+        $chargeuid = StringUtil::getId( $post['chargeuid'] );
+        $participantuid = StringUtil::getId( $post['participantuid'] );
         //添加对任务主题的xss安全过滤
         $data = array(
             'subject' => CHtml::encode( $post['subject'] ), // 任务主题
-            'description' => String::filterStr( $post['description'] ), // 任务描述
+            'description' => StringUtil::filterStr( $post['description'] ), // 任务描述
             'chargeuid' => implode( ',', $chargeuid ), // 负责人
             'participantuid' => implode( ',', $participantuid ), // 参与人
             'attachmentid' => trim( $post['attachmentid'], ',' ), // 附件

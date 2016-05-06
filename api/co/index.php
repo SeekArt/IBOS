@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\user\model\User;
 
@@ -64,9 +64,9 @@ if (!empty($result)) {
  * @return array
  */
 function doverify($userName, $password) {
-    if (String::isMobile($userName)) {
+    if (StringUtil::isMobile($userName)) {
         $loginField = 'mobile';
-    } else if (String::isEmail($userName)) {
+    } else if (StringUtil::isEmail($userName)) {
         $loginField = 'email';
     } else {
         $loginField = 'username';

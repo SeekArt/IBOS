@@ -243,7 +243,7 @@ class Database {
             // 如果不是第一次备份，取之前存到数据表里的表记录
             if ( is_null( Env::getRequest( 'dbSubmit' ) ) ) {
                 $tables = Setting::model()->fetchSettingValueByKey( 'custombackup' );
-                $tables = String::utf8Unserialize( $tables );
+                $tables = StringUtil::utf8Unserialize( $tables );
             } else {
                 // 如果是第一次备份，取表单里的提交，存到setting表以用来重复调用此方法
                 $customTables = Env::getRequest( 'customtables' );
@@ -508,7 +508,7 @@ class Database {
                         $comma = $t = '';
                         $index = 0;
                         foreach ( $row as $value ) {
-                            $t .= $comma . ($useHex && !empty( $value ) && ( String::strExists( $tableFields[$index]['Type'], 'char' ) || String::strExists( $tableFields[$index]['Type'], 'text' )) ? '0x' . bin2hex( $value ) : '\'' . addslashes( $value ) . '\'' );
+                            $t .= $comma . ($useHex && !empty( $value ) && ( StringUtil::strExists( $tableFields[$index]['Type'], 'char' ) || StringUtil::strExists( $tableFields[$index]['Type'], 'text' )) ? '0x' . bin2hex( $value ) : '\'' . addslashes( $value ) . '\'' );
                             $comma = ',';
                             $index++;
                         }
@@ -541,7 +541,7 @@ class Database {
                             $t2 = $comma2 = '';
                             $index = 0;
                             foreach ( $row as $value ) {
-                                $t2 .= $comma2 . ($useHex && !empty( $value ) && ( String::strExists( $tableFields[$index]['Type'], 'char' ) || String::strExists( $tableFields[$index]['Type'], 'text' )) ? '0x' . bin2hex( $value ) : '\'' . addslashes( $value ) . '\'');
+                                $t2 .= $comma2 . ($useHex && !empty( $value ) && ( StringUtil::strExists( $tableFields[$index]['Type'], 'char' ) || StringUtil::strExists( $tableFields[$index]['Type'], 'text' )) ? '0x' . bin2hex( $value ) : '\'' . addslashes( $value ) . '\'');
                                 $comma2 = ',';
                                 $index++;
                             }

@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/quicknav.css?<?php echo VERHASH; ?>">
 <div class="ct">
@@ -33,7 +33,7 @@ use application\core\utils\String;
 					<div class="control-group">
 						<label class="control-label"><?php echo $lang['The link address']; ?></label>
 						<div class="controls">
-                            <input type="text" name="url" value="<?php echo String::ihtmlSpecialChars($menu['url']); ?>" id="qn_url">
+                            <input type="text" name="url" value="<?php echo StringUtil::ihtmlSpecialChars($menu['url']); ?>" id="qn_url">
 						</div>
 					</div>
 					<div class="control-group">

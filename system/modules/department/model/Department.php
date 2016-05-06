@@ -47,13 +47,13 @@ class Department extends Model {
      * @return string
      */
     public function queryDept( $deptid, $connect = false ) {
-        $deptid = util\String::filterStr( $deptid );
+        $deptid = util\StringUtil::filterStr( $deptid );
         $splitArray = explode( ',', $deptid );
         $deptidStr = '';
         foreach ( $splitArray as $data ) {
             $deptidStr .= $this->getDeptParent( $data );
         }
-        $result = util\String::filterStr( $deptidStr . ( $connect ? ',' . $deptid : '') );
+        $result = util\StringUtil::filterStr( $deptidStr . ( $connect ? ',' . $deptid : '') );
         return $result;
     }
 
@@ -100,7 +100,7 @@ class Department extends Model {
         if ( $connect ) {
             $childDeptIds = $deptids . ',' . $childDeptIds;
         }
-        return util\String::filterStr( $childDeptIds );
+        return util\StringUtil::filterStr( $childDeptIds );
     }
 
     /**
@@ -146,7 +146,7 @@ class Department extends Model {
      */
     public function fetchDeptNameByDeptId( $id, $glue = ',', $returnFirst = false ) {
         $deptArr = DepartmentUtil::loadDepartment();
-        $deptIds = is_array( $id ) ? $id : explode( ',', util\String::filterStr( $id ) );
+        $deptIds = is_array( $id ) ? $id : explode( ',', util\StringUtil::filterStr( $id ) );
         $name = array();
         if ( $returnFirst ) {
             if ( isset( $deptArr[$deptIds[0]] ) ) {

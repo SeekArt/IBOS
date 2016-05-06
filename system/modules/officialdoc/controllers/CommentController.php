@@ -6,7 +6,7 @@ namespace application\modules\officialdoc\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class CommentController extends Controller {
 
@@ -15,8 +15,8 @@ class CommentController extends Controller {
 	 */
 	public function actionGetCommentList() {
 		if ( Env::submitCheck( 'formhash' ) ) {
-			$module = String::filterCleanHtml( $_POST['module'] );
-			$table = String::filterCleanHtml( $_POST['table'] );
+			$module = StringUtil::filterCleanHtml( $_POST['module'] );
+			$table = StringUtil::filterCleanHtml( $_POST['table'] );
 			$limit = Env::getRequest( 'limit' ); //每页条数
 			$offset = Env::getRequest( 'offset' ); //偏移
 			$rowid = intval( $_POST['rowid'] );

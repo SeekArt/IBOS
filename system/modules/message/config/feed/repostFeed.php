@@ -2,7 +2,7 @@
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <feed app='public' type='repost' info='转发微博'>
@@ -33,7 +33,7 @@ use application\core\utils\String;
                         <?php endforeach; ?>
                     <?php endif; ?>
                     <p>
-                        <?php echo String::filterCleanHtml( $sourceInfo['source_content'] ); ?>
+                        <?php echo StringUtil::filterCleanHtml( $sourceInfo['source_content'] ); ?>
                     </p>
                 </div>
                 <div class="wb-info-ads clearfix">

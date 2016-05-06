@@ -2,7 +2,7 @@
 
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 ?>
 <div class="rp-stamp">
@@ -161,7 +161,7 @@ use application\modules\user\model\User;
                 'allowComment' => $allowComment,
                 'showStamp' => $fromController == 'review' && $this->issetStamp(),
                 'url' => $sourceUrl,
-                'detail' => IBOS::lang( 'Comment my report', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $report['subject'], 50 ) ) )
+                'detail' => IBOS::lang( 'Comment my report', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $report['subject'], 50 ) ) )
     ) ) );
         ?>
     </div>

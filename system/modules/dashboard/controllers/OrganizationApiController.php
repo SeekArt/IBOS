@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\core\IMFactory;
 use application\modules\message\utils\Message;
 
@@ -16,7 +16,7 @@ class OrganizationApiController extends OrganizationBaseController {
 
     public function actionSyncUser() {
         $type = Env::getRequest( 'type' );
-        $uid = String::filterStr( Env::getRequest( 'uid' ) );
+        $uid = StringUtil::filterStr( Env::getRequest( 'uid' ) );
         $flag = intval( Env::getRequest( 'flag' ) );
         $pwd = Env::getRequest( 'pwd' );
         if ( Message::getIsImOpen( $type ) ) {

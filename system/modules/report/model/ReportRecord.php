@@ -18,7 +18,7 @@ namespace application\modules\report\model;
 
 use application\core\model\Model;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\report\model\CalendarRepRecord;
 use application\modules\report\model\Report;

@@ -20,7 +20,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\dashboard\model\Stamp;
 use application\modules\department\model\Department;
@@ -140,7 +140,7 @@ class DefaultController extends BaseController {
                 'intervals' => $reportType['intervals'],
                 'intervaltype' => $reportType['intervaltype'],
                 'subject' => $subject,
-                'upUid' => String::wrapId($upUid),
+                'upUid' => StringUtil::wrapId($upUid),
                 'uploadConfig' => Attach::getUploadConfig(),
                 'orgPlanList' => $orgPlanList,
                 'isInstallCalendar' => Module::getIsEnabled('calendar')
@@ -167,7 +167,7 @@ class DefaultController extends BaseController {
             $uid = IBOS::app()->user->uid;
             $postData['uid'] = $uid;
             $postData['subject'] = CHtml::encode($_POST['subject']);
-            $toidArr = String::getId($postData['toid']);
+            $toidArr = StringUtil::getId($postData['toid']);
             $postData['toid'] = implode(',', $toidArr);
             $postData['begindate'] = strtotime($postData['begindate']);
             $postData['enddate'] = strtotime($postData['enddate']);
@@ -230,7 +230,7 @@ class DefaultController extends BaseController {
                             '{url}' => IBOS::app()->urlManager->createUrl('report/review/show',
                                     array('repid' => $repid))
                         )),
-                        'body' => String::cutStr($_POST['content'], 140),
+                        'body' => StringUtil::cutStr($_POST['content'], 140),
                         'actdesc' => IBOS::lang('Post report'),
                         'userid' => trim($userid, ','),
                         'deptid' => '',
@@ -365,7 +365,7 @@ class DefaultController extends BaseController {
                 'subject' => CHtml::encode($_POST['subject']),
                 'content' => $_POST['content'],
                 'attachmentid' => $_POST['attachmentid'],
-                'toid' => implode(',', String::getId($_POST['toid']))
+                'toid' => implode(',', StringUtil::getId($_POST['toid']))
             );
             // 修改总结计划
             Report::model()->modify($repid, $editRepData);

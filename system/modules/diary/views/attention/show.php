@@ -3,7 +3,7 @@
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\utils\User;
 ?>
@@ -214,7 +214,7 @@ use application\modules\user\utils\User;
                                 'allowComment' => $allowComment,
                                 'showStamp' => 0,
                                 'url' => $sourceUrl,
-                                'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( String::filterCleanHtml( $diary['content'] ), 50 ) ) )
+                                'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
                     ) ) );
                         ?>
                     </div>

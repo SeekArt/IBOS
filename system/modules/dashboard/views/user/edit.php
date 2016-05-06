@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <div class="ct">
 	<div class="clearfix">
@@ -86,7 +86,7 @@ use application\core\utils\String;
 						<div class="controls">
 							<div class="clearfix">
 								<div class="pull-left info-list-wrap">
-									<input type="text" name="upuid" placeholder="选择一个直属领导" id="user_supervisor" value="<?php echo String::wrapId( $user['upuid'] ); ?>">
+									<input type="text" name="upuid" placeholder="选择一个直属领导" id="user_supervisor" value="<?php echo StringUtil::wrapId( $user['upuid'] ); ?>">
 								</div>
 								<div class="pull-left mls">
 									<a href="javascript:;" class="btn toggle-btn" data-target="#sub_subordinate_wrap">直属下属</a>
@@ -97,7 +97,7 @@ use application\core\utils\String;
 					<div class="control-group" style="display:none;" id="sub_subordinate_wrap">
 						<label for="" class="control-label">直属下属</label>
 						<div class="controls">
-							<input type="text" name="subordinate" placeholder="可以选择多个下属人员" id="sub_subordinate" value="<?php echo String::wrapId( $user["subordinate"], 'u' ); ?>">
+							<input type="text" name="subordinate" placeholder="可以选择多个下属人员" id="sub_subordinate" value="<?php echo StringUtil::wrapId( $user["subordinate"], 'u' ); ?>">
 						</div>
 					</div>
 					<div class="control-group">
@@ -105,7 +105,7 @@ use application\core\utils\String;
 						<div class="controls">
 							<div class="clearfix">
 								<div class="pull-left info-list-wrap">
-									<input type="text" name="deptid" placeholder="选择一个主要部门" id="user_department" value="<?php echo $user['deptid'] == 0 ? 'c_0' : String::wrapId( $user['deptid'], 'd' ); ?>">
+									<input type="text" name="deptid" placeholder="选择一个主要部门" id="user_department" value="<?php echo $user['deptid'] == 0 ? 'c_0' : StringUtil::wrapId( $user['deptid'], 'd' ); ?>">
 								</div>
 								<div class="pull-left mls">
 									<a href="javascript:;" class="btn toggle-btn" data-target="#auxiliary_department_wrap">辅助部门</a>
@@ -116,7 +116,7 @@ use application\core\utils\String;
 					<div class="control-group" <?php if(empty($user['auxiliarydept'])): ?>style="display:none;"<?php endif;?> id="auxiliary_department_wrap">
 						<label for="" class="control-label"><?php echo $lang['Ancillary department']; ?></label>
 						<div class="controls">
-							<input type="text" name="auxiliarydept" placeholder="可以选择多个辅助部门" id="auxiliary_department" value="<?php echo String::wrapId( $user["auxiliarydept"], 'd' ); ?>">
+							<input type="text" name="auxiliarydept" placeholder="可以选择多个辅助部门" id="auxiliary_department" value="<?php echo StringUtil::wrapId( $user["auxiliarydept"], 'd' ); ?>">
 						</div>
 					</div>
 					<div class="control-group">
@@ -124,7 +124,7 @@ use application\core\utils\String;
 						<div class="controls">
 							<div class="clearfix">
 								<div class="pull-left info-list-wrap">
-									<input type="text" name="positionid" placeholder="选择一个担任岗位" id="user_position" value="<?php echo String::wrapId( $user['positionid'], 'p' ); ?>">
+									<input type="text" name="positionid" placeholder="选择一个担任岗位" id="user_position" value="<?php echo StringUtil::wrapId( $user['positionid'], 'p' ); ?>">
 								</div>
 								<div class="pull-left mls">
 									<a href="javascript:;" class="btn toggle-btn" data-target="#auxiliary_position_wrap">辅助岗位</a>
@@ -135,7 +135,7 @@ use application\core\utils\String;
 					<div class="control-group" <?php if(empty($user['auxiliarypos'])): ?>style="display:none;"<?php endif;?> id="auxiliary_position_wrap">
 						<label for="" class="control-label"><?php echo $lang['Ancillary position']; ?></label>
 						<div class="controls">
-							<input type="text" name="auxiliarypos" placeholder="可以选择多个辅助岗位" id="auxiliary_position" value="<?php echo String::wrapId( $user['auxiliarypos'], 'p' ); ?>">
+							<input type="text" name="auxiliarypos" placeholder="可以选择多个辅助岗位" id="auxiliary_position" value="<?php echo StringUtil::wrapId( $user['auxiliarypos'], 'p' ); ?>">
 						</div>
 					</div>
 					<div class="control-group">

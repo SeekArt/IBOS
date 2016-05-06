@@ -19,7 +19,7 @@ namespace application\modules\main\model;
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class Setting extends Model {
 
@@ -59,12 +59,12 @@ class Setting extends Model {
                 if ( $autoUnserialize ) {
                     if ( !empty( $scope ) ) {
                         if ( in_array( $value['skey'], $scope ) ) {
-                            $return[$value['skey']] = String::utf8Unserialize( $value['svalue'] );
+                            $return[$value['skey']] = StringUtil::utf8Unserialize( $value['svalue'] );
                         } else {
                             $return[$value['skey']] = $value['svalue'];
                         }
                     } else {
-                        $return[$value['skey']] = String::utf8Unserialize( $value['svalue'] );
+                        $return[$value['skey']] = StringUtil::utf8Unserialize( $value['svalue'] );
                     }
                 } else {
                     $return[$value['skey']] = $value['svalue'];
@@ -98,8 +98,8 @@ class Setting extends Model {
                 ->from( $this->tableName() )
                 ->queryAll();
         foreach ( $records as $record ) {
-            $isSerialized = ($record['svalue'] == serialize( false ) || String::utf8Unserialize( $record['svalue'] ) !== false);
-            $setting[$record['skey']] = $isSerialized ? String::utf8Unserialize( $record['svalue'] ) : $record['svalue'];
+            $isSerialized = ($record['svalue'] == serialize( false ) || StringUtil::utf8Unserialize( $record['svalue'] ) !== false);
+            $setting[$record['skey']] = $isSerialized ? StringUtil::utf8Unserialize( $record['svalue'] ) : $record['svalue'];
         }
         return $setting;
     }
@@ -110,7 +110,7 @@ class Setting extends Model {
      */
     public function SetIbosCloudIsOpen( $isOpen ) {
         $ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
-        $ibosCloudArr = String::utf8Unserialize( $ibosCloud );
+        $ibosCloudArr = StringUtil::utf8Unserialize( $ibosCloud );
         $ibosCloudArr['isopen'] = $isOpen;
         $str = serialize( $ibosCloudArr );
         $this->updateSettingValueByKey( 'iboscloud', $str );
@@ -118,7 +118,7 @@ class Setting extends Model {
 
     public function getIbosCloudIsOpen() {
         $ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
-        $ibosCloudArray = String::utf8Unserialize( $ibosCloud );
+        $ibosCloudArray = StringUtil::utf8Unserialize( $ibosCloud );
         return $ibosCloudArray['isopen'] ? true : false;
     }
 

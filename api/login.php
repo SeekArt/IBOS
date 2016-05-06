@@ -3,7 +3,7 @@
 use application\core\model\Log;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\utils\Main;
 use application\modules\user\components\UserIdentity;
@@ -33,7 +33,7 @@ function dologin( $uid, $log = '' ) {
 
 			$saltkey = Main::getCookie( 'saltkey' );
 			if ( empty( $saltkey ) ) {
-				$saltkey = String::random( 8 );
+				$saltkey = StringUtil::random( 8 );
 				Main::setCookie( 'saltkey', $saltkey, 86400 * 30, 1, 1 );
 			}
 			$curUser = User::model()->fetchByUid( $uid );
@@ -105,7 +105,7 @@ function dologin( $uid, $log = '' ) {
 					FailedIp::model()->insertIp( $newIp );
 					$log = array(
 						'user' => $curUser['username'],
-						'password' => String::passwordMask( $curUser['password'] ),
+						'password' => StringUtil::passwordMask( $curUser['password'] ),
 						'ip' => $ip
 					);
 					Log::write( $log, 'illegal', 'module.user.login' );
@@ -127,7 +127,7 @@ function dologin( $uid, $log = '' ) {
 function LoadSysCache() {
 	$caches = Syscache::model()->fetchAll();
 	foreach ( $caches as $cache ) {
-        $value = $cache['type'] == '1' ? String::utf8Unserialize( $cache['value'] ) : $cache['value'];
+        $value = $cache['type'] == '1' ? StringUtil::utf8Unserialize( $cache['value'] ) : $cache['value'];
 		if ( $cache['name'] == 'setting' ) {
 			IBOS::app()->setting->set( 'setting', $value );
 		} else {

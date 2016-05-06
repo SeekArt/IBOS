@@ -2,7 +2,7 @@
 
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 
 function getScriptUrl() {
@@ -28,7 +28,7 @@ function getScriptUrl() {
 function geturl() {
 	$phpself = getScriptUrl();
 	$isHTTPS = (isset( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) != 'off') ? true : false;
-	$url = String::ihtmlSpecialChars( 'http' . ($isHTTPS ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $phpself );
+	$url = StringUtil::ihtmlSpecialChars( 'http' . ($isHTTPS ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . $phpself );
 	return $url;
 }
 
@@ -45,7 +45,7 @@ require_once ( $yii );
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 $ibos = Yii::createApplication( 'application\core\components\Application', $config );
 $value = Setting::model()->fetchSettingValueByKey( 'im' );
-$im = String::utf8Unserialize( $value );
+$im = StringUtil::utf8Unserialize( $value );
 $imCfg = $im['qq'];
 define( 'OAUTH2_TOKEN', 'https://openapi.b.qq.com/oauth2/token' );
 define( 'OPEN_CALLBACKURL', geturl() ); //此URL需要登记到企业QQ

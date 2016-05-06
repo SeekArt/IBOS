@@ -20,7 +20,7 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\mobile\utils\Mobile;
 use application\modules\officialdoc\core\Officialdoc as ICOfficialdoc;
@@ -97,7 +97,7 @@ class DocsController extends BaseController {
 		$tmp = array( array() );
 		$data = array_merge( $tmp, $category );
 		unset( $data[0] );
-		$params = String::getTree( $data, "<li class='\$selected'><a href='#docs' onclick='docs.loadList(\$catid)'>\$spacer<i class='ao-file'></i>\$name</a></li>" );
+		$params = StringUtil::getTree( $data, "<li class='\$selected'><a href='#docs' onclick='docs.loadList(\$catid)'>\$spacer<i class='ao-file'></i>\$name</a></li>" );
 		$this->ajaxReturn( $params, Mobile::dataType() );
 	}
 

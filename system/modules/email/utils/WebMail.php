@@ -6,7 +6,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Xml;
 use application\modules\email\extensions\mailer\EMailer;
 use application\modules\email\model\Email as Email2;
@@ -241,7 +241,7 @@ class WebMail {
                 $name = EmailMime::getPartName($structure, $code);
                 if (is_string($name) && !empty($name)) {
                     $name = htmlspecialchars(EmailLang::langDecodeSubject($name, CHARSET));
-                    $fileExt = String::getFileExt($name);
+                    $fileExt = StringUtil::getFileExt($name);
                     $fileType = Attach::attachType($fileExt);
                 } else {
                     $fileType = Attach::attachType(1);
@@ -403,7 +403,7 @@ class WebMail {
             $bytes = EmailMime::getPartSize($structure, $part);
             $disposition = EmailMime::getPartDisposition($structure, $part);
             $name = EmailLang::langDecodeSubject($partName, CHARSET);
-            $fileExt = String::getFileExt($name);
+            $fileExt = StringUtil::getFileExt($name);
             $fileType = Attach::attachType($fileExt);
             $size = Convert::sizeCount($bytes);
             $href = IBOS::app()->urlManager->createUrl('email/web/show', array(
@@ -658,7 +658,7 @@ EOT;
         //ignore_user_abort(true);
         list($prefix,, ) = explode('.', $web['server']);
         $user = User::model()->fetchByUid($web['uid']);
-        $pwd = String::authCode($web['password'], 'DECODE', $user['salt']); //解密
+        $pwd = StringUtil::authCode($web['password'], 'DECODE', $user['salt']); //解密
         /*
          * email 接收邮件新实现，不依赖 imap 扩展
          */
@@ -1047,7 +1047,7 @@ EOT;
      */
     public static function sendWebMail($toUser, $body, $web) {
         $user = User::model()->fetchByUid($web['uid']);
-        $password = String::authCode($web['password'], 'DECODE', $user['salt']);
+        $password = StringUtil::authCode($web['password'], 'DECODE', $user['salt']);
 
         $mailer = IBOS::createComponent('application\modules\email\extensions\mailer\EMailer');
         $mailer = new EMailer();

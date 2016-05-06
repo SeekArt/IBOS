@@ -92,7 +92,7 @@ class Comment extends Model {
                 $config['{name}'] = $author['realname'];
                 $sourceInfo = Source::getCommentSource($add, $forApi);
                 $config['{url}'] = $sourceInfo['source_url'];
-                $config['{sourceContent}'] = util\String::parseHtml($sourceInfo['source_content']);
+                $config['{sourceContent}'] = util\StringUtil::parseHtml($sourceInfo['source_content']);
                 if (!empty($add['touid'])) {
                     // 回复
                     $config['{commentType}'] = '回复了我的评论:';
@@ -200,16 +200,16 @@ class Comment extends Model {
                             '{space_url}' => $replyInfo['user_info']['space_url'],
                             '{realname}' => $replyInfo['user_info']['realname'],
                             '{url}' => $v['url'],
-                            '{detail}' => util\String::cutStr($replyInfo['content'], 50)
+                            '{detail}' => util\StringUtil::cutStr($replyInfo['content'], 50)
                 ));
             } else {
                 $v['replyInfo'] = '';
             }
             $v['isCommentDel'] = $isAdministrator || $uid === $v['uid'];
             $v['user_info'] = User::model()->fetchByUid($v['uid']);
-//			$v['content'] = String::parseHtml( $v['content'] . $v['replyInfo'] );
+//			$v['content'] = StringUtil::parseHtml( $v['content'] . $v['replyInfo'] );
 //			//改成添加的时候转义，输出的时候按需要让前端转义
-            //$v['content'] = util\String::parseHtml( $v['content'] );
+            //$v['content'] = util\StringUtil::parseHtml( $v['content'] );
             $v['sourceInfo'] = Source::getCommentSource($v);
             if (!empty($v['attachmentid'])) {
                 $v['attach'] = util\Attach::getAttach($v['attachmentid']);

@@ -7,7 +7,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Database;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\utils\Email as EmailUtil;
 
 class EmailBody extends Model {
@@ -54,7 +54,7 @@ class EmailBody extends Model {
                 ->where("FIND_IN_SET(bodyid,'{$bodyIds}')")
                 ->queryAll();
         $attachIds = Convert::getSubByKey($bodys, 'attachmentid');
-        $attachId = String::filterStr(implode(',', $attachIds));
+        $attachId = StringUtil::filterStr(implode(',', $attachIds));
         if (!empty($attachId)) {
             Attach::delAttach($attachId);
         }
@@ -67,15 +67,15 @@ class EmailBody extends Model {
      * @return array 处理之后的邮件主体数据
      */
     public function handleEmailBody($data) {
-        $data['toids'] = implode(',', String::getId($data['toids']));
+        $data['toids'] = implode(',', StringUtil::getId($data['toids']));
         $data['sendtime'] = TIMESTAMP;
         $data['isneedreceipt'] = isset($data['isneedreceipt']) ? 1 : 0;
         // 是否有抄送/密送
         if (empty($data['isOtherRec'])) {
             $data['copytoids'] = $data['secrettoids'] = '';
         } else {
-            $data['copytoids'] = implode(',', String::getId($data['copytoids']));
-            $data['secrettoids'] = implode(',', String::getId($data['secrettoids']));
+            $data['copytoids'] = implode(',', StringUtil::getId($data['copytoids']));
+            $data['secrettoids'] = implode(',', StringUtil::getId($data['secrettoids']));
         }
         // 是否包括外部收件人
         if (empty($data['isWebRec'])) {
@@ -85,7 +85,7 @@ class EmailBody extends Model {
             $data['fromwebmail'] = '';
         }
 //		isset( $data['isremind'] ) && $data['isremind'] = 1;
-        !empty($data['attachmentid']) && $data['attachmentid'] = String::filterStr($data['attachmentid']);
+        !empty($data['attachmentid']) && $data['attachmentid'] = StringUtil::filterStr($data['attachmentid']);
         // 邮件与附件大小
         $data['size'] = EmailUtil::getEmailSize($data['content'], $data['attachmentid']);
         return $data;

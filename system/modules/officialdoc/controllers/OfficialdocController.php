@@ -20,7 +20,7 @@ use application\core\model\Log;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\message\model\Notify;
@@ -274,12 +274,12 @@ class OfficialdocController extends BaseController {
         $data['subject'] = CHtml::encode( $data['subject'] );
         $data['docNo'] = CHtml::encode( $data['docNo'] );
         //发布范围
-        $publicScope = OfficialdocUtil::handleSelectBoxData( String::getId( $data['publishScope'], true ) );
+        $publicScope = OfficialdocUtil::handleSelectBoxData( StringUtil::getId( $data['publishScope'], true ) );
         $data['uid'] = $publicScope['uid'];
         $data['positionid'] = $publicScope['positionid'];
         $data['deptid'] = $publicScope['deptid'];
         //抄送
-        $ccScope = OfficialdocUtil::handleSelectBoxData( String::getId( $data['ccScope'], true ), false );
+        $ccScope = OfficialdocUtil::handleSelectBoxData( StringUtil::getId( $data['ccScope'], true ), false );
         $data['ccuid'] = $ccScope['uid'];
         $data['ccpositionid'] = $ccScope['positionid'];
         $data['ccdeptid'] = $ccScope['deptid'];
@@ -408,13 +408,13 @@ class OfficialdocController extends BaseController {
             $data['subject'] = CHtml::encode( $data['subject'] );
             $data['docNo'] = CHtml::encode( $data['docNo'] );
             //发布范围
-            $publicScope = OfficialdocUtil::handleSelectBoxData( String::getId( $data['publishScope'], true ) );
+            $publicScope = OfficialdocUtil::handleSelectBoxData( StringUtil::getId( $data['publishScope'], true ) );
             $data['uid'] = $publicScope['uid'];
             $data['positionid'] = $publicScope['positionid'];
             $data['deptid'] = $publicScope['deptid'];
 
             //抄送
-            $ccScope = OfficialdocUtil::handleSelectBoxData( String::getId( $data['ccScope'], true ), false );
+            $ccScope = OfficialdocUtil::handleSelectBoxData( StringUtil::getId( $data['ccScope'], true ), false );
             $data['ccuid'] = $ccScope['uid'];
             $data['ccpositionid'] = $ccScope['positionid'];
             $data['ccdeptid'] = $ccScope['deptid'];
@@ -811,7 +811,7 @@ class OfficialdocController extends BaseController {
     private function back() {
         $uid = IBOS::app()->user->uid;
         $docIds = trim( Env::getRequest( 'docids' ), ',' );
-        $reason = String::filterCleanHtml( Env::getRequest( 'reason' ) );
+        $reason = StringUtil::filterCleanHtml( Env::getRequest( 'reason' ) );
         $ids = explode( ',', $docIds );
         if ( empty( $ids ) ) {
             $this->ajaxReturn( array( 'isSuccess' => false,

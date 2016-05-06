@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\weibo\utils\Common;
 ?>
 <feed module='weibo' type='postimage' info='发图片微博'>
@@ -26,7 +26,7 @@ use application\modules\weibo\utils\Common;
             <?php endif; ?>
             <?php if ( isset( $title ) ): ?><div class="mbs"><?php echo $title; ?></div><?php endif; ?>
             <p>
-                <?php echo String::filterCleanHtml( $body ); ?>
+                <?php echo StringUtil::filterCleanHtml( $body ); ?>
             </p>
         </div>
         ]]>

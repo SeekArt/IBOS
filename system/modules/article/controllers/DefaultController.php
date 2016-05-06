@@ -18,7 +18,7 @@ namespace application\modules\article\controllers;
 
 use application\core\utils as util;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\core\Article as ICArticle;
 use application\modules\article\model as model;
 use application\modules\article\utils\Article as ArticleUtil;
@@ -266,7 +266,7 @@ class DefaultController extends BaseController {
                         'article' => $article,
                         'author' => $user['realname'],
                             ), true),
-                    '{orgContent}' => String::filterCleanHtml($article['content']),
+                    '{orgContent}' => StringUtil::filterCleanHtml($article['content']),
                     '{url}' => util\IBOS::app()->urlManager->createUrl('article/default/index', array('op' => 'show', 'articleid' => $articleId)),
                     'id' => $articleId,
                 );
@@ -518,7 +518,7 @@ class DefaultController extends BaseController {
                 }
             }
         }
-        String::ihtmlSpecialCharsUseReference($postData['subject']);
+        StringUtil::ihtmlSpecialCharsUseReference($postData['subject']);
     }
 
     /**
@@ -533,7 +533,7 @@ class DefaultController extends BaseController {
         $attributes['approver'] = $uid;
         $attributes['author'] = $uid;
         //取得发布权限
-        $publishScope = util\String::getId($data['publishScope'], true);
+        $publishScope = util\StringUtil::getId($data['publishScope'], true);
         $publishScope = ArticleUtil::handleSelectBoxData($publishScope);
 
         $attributes['deptid'] = $publishScope['deptid'];
@@ -572,10 +572,10 @@ class DefaultController extends BaseController {
                 'aid' => $value['aid'],
                 'sort' => $sort,
                 'addtime' => TIMESTAMP,
-                'postip' => util\String::getSubIp(),
+                'postip' => util\StringUtil::getSubIp(),
                 'filename' => $value['filename'],
                 'title' => '',
-                'type' => util\String::getFileExt($value['filename']),
+                'type' => util\StringUtil::getFileExt($value['filename']),
                 'size' => $value['filesize'],
                 'filepath' => $attachUrl . $value['attachment']
             );
@@ -861,7 +861,7 @@ class DefaultController extends BaseController {
     private function back() {
         $uid = util\IBOS::app()->user->uid;
         $artIds = trim(util\Env::getRequest('articleids'), ',');
-        $reason = util\String::filterCleanHtml(util\Env::getRequest('reason'));
+        $reason = util\StringUtil::filterCleanHtml(util\Env::getRequest('reason'));
         $ids = explode(',', $artIds);
         if (empty($ids)) {
             $this->ajaxReturn(array('isSuccess' => false, 'msg' => util\IBOS::lang('Parameters error', 'error')));

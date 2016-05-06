@@ -19,7 +19,7 @@ use application\core\utils\Attach;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Image;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use CJSON;
 
@@ -82,7 +82,7 @@ class Common {
     public static function makeThumb( $attach, $width, $height ) {
         $attachUrl = File::getAttachUrl();
         $file = sprintf( '%s/%s', $attachUrl, $attach['attachment'] );
-        $fileext = String::getFileExt( $file );
+        $fileext = StringUtil::getFileExt( $file );
         $thumbName = self::getThumbName( $attach, $width, $height );
         if ( LOCAL ) {
             $res = Image::thumb2( $file, $thumbName, '', $width, $height );

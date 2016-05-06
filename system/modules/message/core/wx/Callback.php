@@ -18,7 +18,7 @@
 
 namespace application\modules\message\core\wx;
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use CApplicationComponent;
 
 abstract class Callback extends CApplicationComponent {
@@ -116,7 +116,7 @@ abstract class Callback extends CApplicationComponent {
 	 * @param string $message
 	 */
 	public function setMessage( $message ) {
-		$this->message = String::filterCleanHtml( $message );
+		$this->message = StringUtil::filterCleanHtml( $message );
 	}
 
 	/**

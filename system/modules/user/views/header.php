@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\BgTemplate;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/user.css?<?php echo VERHASH; ?>">
@@ -26,7 +26,7 @@ use application\modules\user\model\BgTemplate;
         </span>
     <?php endif; ?>
     <?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
-        <a href="javascript:Ibos.showPmDialog('<?php echo String::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="private-letter" title="<?php echo $lang['Send message']; ?>">
+        <a href="javascript:Ibos.showPmDialog('<?php echo StringUtil::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="private-letter" title="<?php echo $lang['Send message']; ?>">
             <i class="o-private-letter <?php echo $onlineIcon; ?>"></i>
         </a>
     <?php endif; ?>

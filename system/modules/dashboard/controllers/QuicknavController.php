@@ -6,7 +6,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Image;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\MenuCommon;
@@ -92,14 +92,14 @@ class QuicknavController extends BaseController {
      * @return array
      */
     protected function beforeSave() {
-        $name = String::filterStr(Env::getRequest('name'));
-        $url = String::filterStr(Env::getRequest('url'));
-        $icon = String::filterStr(Env::getRequest('quicknavimg'));
+        $name = StringUtil::filterStr(Env::getRequest('name'));
+        $url = StringUtil::filterStr(Env::getRequest('url'));
+        $icon = StringUtil::filterStr(Env::getRequest('quicknavimg'));
         // 生成文件夹
         if (LOCAL) {
             File::makeDirs($this->_iconPath);
         }
-        $saveName = String::random(16) . '.png'; // 生成的图片名
+        $saveName = StringUtil::random(16) . '.png'; // 生成的图片名
         if (!empty($icon)) {
             // 有传递图片
             $this->createImgIcon($icon, $saveName);
@@ -124,15 +124,15 @@ class QuicknavController extends BaseController {
     public function actionEdit() {
         if (Env::getRequest('formhash')) {
             $id = intval(Env::getRequest('id'));
-            $name = String::filterStr(Env::getRequest('name'));
-            $url = String::filterStr(Env::getRequest('url'));
-            $icon = String::filterStr(Env::getRequest('quicknavimg'));
+            $name = StringUtil::filterStr(Env::getRequest('name'));
+            $url = StringUtil::filterStr(Env::getRequest('url'));
+            $icon = StringUtil::filterStr(Env::getRequest('quicknavimg'));
             if (!empty($icon)) {
                 File::copyToDir($icon, $this->_iconPath);
                 $info = pathinfo($icon);
                 $saveName = $info['basename'];
             } else {
-                $saveName = String::random(16) . '.png';
+                $saveName = StringUtil::random(16) . '.png';
                 $val = Env::getRequest('fontvalue');  // 写入图片文字
                 $this->createColorImg($saveName, $val);
             }
@@ -221,7 +221,7 @@ class QuicknavController extends BaseController {
      */
     private function changeEnabled() {
         $id = intval(Env::getRequest('id'));
-        $type = String::filterStr(Env::getRequest('type'));
+        $type = StringUtil::filterStr(Env::getRequest('type'));
         if ($type == 'disabled') {
             $disabled = 1;
         } else {
@@ -236,7 +236,7 @@ class QuicknavController extends BaseController {
      */
     private function changeOpenWay() {
         $id = intval(Env::getRequest('id'));
-        $type = String::filterStr(Env::getRequest('type'));
+        $type = StringUtil::filterStr(Env::getRequest('type'));
         if ($type == 'disabled') {
             $openway = 1;
         } else {

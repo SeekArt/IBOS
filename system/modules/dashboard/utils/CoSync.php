@@ -9,7 +9,7 @@
 namespace application\modules\dashboard\utils;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
 use application\modules\user\model\UserCount;
@@ -29,11 +29,11 @@ class CoSync {
             $checkIsExist = User::model()->checkIsExistByMobile( $user['mobile'] );
             // 手机号不存在，创建一个新用户并建立绑定关系
             if ( $checkIsExist === FALSE ) {
-                $user['salt'] = !empty( $user['salt'] ) ? $user['salt'] : String::random( 6 );
+                $user['salt'] = !empty( $user['salt'] ) ? $user['salt'] : StringUtil::random( 6 );
                 $user['realname'] = !empty( $user['realname'] ) ? $user['realname'] : '';
                 $user['password'] = !empty( $user['password'] ) ? $user['password'] : md5( md5( $user['mobile'] ) . $user['salt'] );
                 $user['groupid'] = !empty( $user['groupid'] ) ? $user['groupid'] : '2';
-                $user['guid'] = !empty( $user['guid'] ) ? $user['guid'] : String::createGuid();
+                $user['guid'] = !empty( $user['guid'] ) ? $user['guid'] : StringUtil::createGuid();
                 $user['createtime'] = TIMESTAMP;
                 $data = User::model()->create( $user );
                 unset( $data['uid'] );

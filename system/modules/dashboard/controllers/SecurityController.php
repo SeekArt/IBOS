@@ -8,7 +8,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\IpBanned;
 use application\modules\main\model\Setting;
@@ -41,7 +41,7 @@ class SecurityController extends BaseController {
         } else {
             $data = array();
             $account = Setting::model()->fetchSettingValueByKey( 'account' );
-            $data['account'] = String::utf8Unserialize( $account );
+            $data['account'] = StringUtil::utf8Unserialize( $account );
             $this->render( 'setup', $data );
         }
     }

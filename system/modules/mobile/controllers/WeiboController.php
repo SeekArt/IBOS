@@ -8,7 +8,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\Comment;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
@@ -24,9 +24,9 @@ class WeiboController extends BaseController {
      * 微博首页
      */
     public function actionIndex() {
-        $var['type'] = isset( $_GET['type'] ) ? String::filterCleanHtml( $_GET['type'] ) : 'all';
-        $var['feedtype'] = isset( $_GET['feedtype'] ) ? String::filterCleanHtml( $_GET['feedtype'] ) : 'all';
-        $var['feedkey'] = isset( $_GET['feedkey'] ) ? String::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
+        $var['type'] = isset( $_GET['type'] ) ? StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
+        $var['feedtype'] = isset( $_GET['feedtype'] ) ? StringUtil::filterCleanHtml( $_GET['feedtype'] ) : 'all';
+        $var['feedkey'] = isset( $_GET['feedkey'] ) ? StringUtil::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
         $var['loadNew'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadMore'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadId'] = isset( $_GET['loadid'] ) ? $_GET['loadid'] : 0;
@@ -46,20 +46,20 @@ class WeiboController extends BaseController {
         // 返回数据格式
         $return = array( 'isSuccess' => true, 'data' => '' );
         // 用户发送内容
-        $d['content'] = isset( $_GET['content'] ) ? String::filterDangerTag( $_GET['content'] ) : '';
+        $d['content'] = isset( $_GET['content'] ) ? StringUtil::filterDangerTag( $_GET['content'] ) : '';
         // 原始数据内容
         $d['body'] = Env::getRequest( 'body' );
         $d['rowid'] = isset( $_GET['rowid'] ) ? intval( $_GET['rowid'] ) : 0;
         $d['from'] = Env::getRequest( 'from' );
         // 安全过滤
         foreach ( $_GET as $key => $val ) {
-            $_GET[$key] = String::filterCleanHtml( $_GET[$key] );
+            $_GET[$key] = StringUtil::filterCleanHtml( $_GET[$key] );
         }
         // 可见 ,手机端不设可见范围
         if ( isset( $_GET['view'] ) ) {
 //			$_GET['view'] = $d['view'] = intval( $_GET['view'] );
 //			if ( $_GET['view'] == WbConst::CUSTOM_VIEW_SCOPE ) {
-//				$scope = String::getId( $_GET['viewid'], true );
+//				$scope = StringUtil::getId( $_GET['viewid'], true );
 //				if ( isset( $scope['u'] ) ) {
 //					$d['userid'] = implode( ',', $scope['u'] );
 //				}
@@ -77,17 +77,17 @@ class WeiboController extends BaseController {
         $d['body'] = preg_replace( "/#[\s]*([^#^\s][^#]*[^#^\s])[\s]*#/is", '#' . trim( "\${1}" ) . '#', $d['body'] );
         // 附件ID
         if ( isset( $_GET['attachid'] ) ) {
-            $d['attach_id'] = trim( String::filterCleanHtml( $_GET['attachid'] ) );
+            $d['attach_id'] = trim( StringUtil::filterCleanHtml( $_GET['attachid'] ) );
             if ( !empty( $d['attach_id'] ) ) {
                 $d['attach_id'] = explode( ',', $d['attach_id'] );
                 array_map( 'intval', $d['attach_id'] );
             }
         }
         // 发送动态的类型
-        $type = String::filterCleanHtml( Env::getRequest( 'type' ) );
-        $table = isset( $_GET['table'] ) ? String::filterCleanHtml( $_GET['table'] ) : 'feed';
+        $type = StringUtil::filterCleanHtml( Env::getRequest( 'type' ) );
+        $table = isset( $_GET['table'] ) ? StringUtil::filterCleanHtml( $_GET['table'] ) : 'feed';
         // 所属模块名称
-        $module = isset( $_GET['module'] ) ? String::filterCleanHtml( $_GET['module'] ) : 'weibo';   // 当前动态产生所属的应用
+        $module = isset( $_GET['module'] ) ? StringUtil::filterCleanHtml( $_GET['module'] ) : 'weibo';   // 当前动态产生所属的应用
         $data = Feed::model()->put( IBOS::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
         if ( !$data ) {
             $return['isSuccess'] = false;
@@ -189,8 +189,8 @@ class WeiboController extends BaseController {
      * 获取评论列表
      */
     public function actionGetCommentList() {
-        $module = String::filterCleanHtml( $_REQUEST['module'] );
-        $table = String::filterCleanHtml( $_REQUEST['table'] );
+        $module = StringUtil::filterCleanHtml( $_REQUEST['module'] );
+        $table = StringUtil::filterCleanHtml( $_REQUEST['table'] );
         $rowid = intval( $_REQUEST['feedid'] );
         $moduleuid = intval( $_REQUEST['moduleuid'] );
         $properties = array(
@@ -358,7 +358,7 @@ class WeiboController extends BaseController {
 					}
 					// 动态类型
 					if (!empty($var['feedtype']) && $var['feedtype'] !== 'all') {
-						$where .=" AND type = '" . String::filterCleanHtml($var['feedtype']) . "'";
+						$where .=" AND type = '" . StringUtil::filterCleanHtml($var['feedtype']) . "'";
 					}
 					$list = Feed::model()->getList($where, $var['nums'], $pages->getOffset());
 				}
@@ -374,7 +374,7 @@ class WeiboController extends BaseController {
                     }
                     // 动态类型
                     if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND module = '" . String::filterCleanHtml( $var['feedtype'] ) . "'";
+                        $where .=" AND module = '" . StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
                     } else {
                         $where .=" AND module != 'weibo'";
                     }
@@ -476,11 +476,11 @@ class WeiboController extends BaseController {
         $data = $_GET;
         // 安全过滤
         foreach ( $data as $key => $val ) {
-            $data[$key] = String::filterCleanHtml( $data[$key] );
+            $data[$key] = StringUtil::filterCleanHtml( $data[$key] );
         }
         $data['uid'] = IBOS::app()->user->uid;
         // 评论所属与评论内容
-        $data['content'] = String::filterDangerTag( $data['content'] );
+        $data['content'] = StringUtil::filterDangerTag( $data['content'] );
         // 判断资源是否被删除
         if ( $data['table'] == 'feed' ) {
             $table = 'application\modules\message\model\Feed';

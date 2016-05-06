@@ -3,7 +3,7 @@
 namespace application\modules\message\utils;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 
 class MessageApi {
@@ -14,7 +14,7 @@ class MessageApi {
             '{sourceUser}' => $sourceUser,
             '{sourceType}' => $sourceType,
             '{user}' => $user['realname'],
-            '{commentContent}' => String::cutStr( $data['sourceContent'], 30 ),
+            '{commentContent}' => StringUtil::cutStr( $data['sourceContent'], 30 ),
             '{sourceUrl}' => $sourceUrl
         );
         return IBOS::lang( 'Comment source desc', 'message.default', $params );

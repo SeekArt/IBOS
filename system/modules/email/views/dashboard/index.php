@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <div class="ct">
@@ -53,7 +53,7 @@ use application\core\utils\String;
 							<?php if ( !empty( $setting['emailroleallocation'] ) ): ?>
 								<?php foreach ( $setting['emailroleallocation'] as $key => $value ): ?>
 									<div class="mbs">
-										<input type="text" name="role[<?php echo $key; ?>][positionid]" data-id="<?php echo $key; ?>" id="roleallocation_<?php echo $key; ?>" value="<?php echo String::wrapId( $key, 'p' ); ?>">
+										<input type="text" name="role[<?php echo $key; ?>][positionid]" data-id="<?php echo $key; ?>" id="roleallocation_<?php echo $key; ?>" value="<?php echo StringUtil::wrapId( $key, 'p' ); ?>">
 										<div id="roleallocation_<?php echo $key; ?>_box"></div>
 									</div>
 									<div class="input-group mbs">

@@ -97,7 +97,7 @@ class Session extends CHttpSession {
     public function create( $ip, $uid ) {
         $this->isNew = true;
         $this->var = $this->newGuest;
-        $this->setKey( 'sid', util\String::random( 6 ) );
+        $this->setKey( 'sid', util\StringUtil::random( 6 ) );
         $this->setKey( 'uid', $uid );
         $this->setKey( 'ip', $ip );
         // 如果是已登录用户，查找其是否可见状态
@@ -153,10 +153,10 @@ class Session extends CHttpSession {
             // 设置最后活动时间
             if ( !util\IBOS::app()->user->isGuest ) {
                 if ( isset( $global['cookie']['ulastactivity'] ) ) {
-                    $userLastActivity = util\String::authCode( $global['cookie']['ulastactivity'], 'DECODE' );
+                    $userLastActivity = util\StringUtil::authCode( $global['cookie']['ulastactivity'], 'DECODE' );
                 } else {
                     $userLastActivity = UserUtil::getUserProfile( 'lastactivity' );
-                    MainUtil::setCookie( 'ulastactivity', util\String::authCode( $userLastActivity, 'ENCODE' ), 31536000 );
+                    MainUtil::setCookie( 'ulastactivity', util\StringUtil::authCode( $userLastActivity, 'ENCODE' ), 31536000 );
                 }
             }
             //统计每个用户总共和当月的在线时间，本设置用以设定更新用户在线时间的时间频率。
@@ -197,7 +197,7 @@ class Session extends CHttpSession {
                         $onlineTime = UserModel\OnlineTime::model()->fetchByPk( util\IBOS::app()->user->uid );
                         UserModel\UserCount::model()->updateByPk( util\IBOS::app()->user->uid, array( 'oltime' => round( intval( $onlineTime['total'] ) / 60 ) ) );
                     }
-                    MainUtil::setCookie( 'ulastactivity', util\String::authCode( TIMESTAMP, 'ENCODE' ), 31536000 );
+                    MainUtil::setCookie( 'ulastactivity', util\StringUtil::authCode( TIMESTAMP, 'ENCODE' ), 31536000 );
                     UserModel\UserStatus::model()->updateByPk( util\IBOS::app()->user->uid, $updateStatusField );
                 }
             }

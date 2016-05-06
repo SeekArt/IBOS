@@ -2,7 +2,7 @@
 
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Url;
 use application\modules\user\utils\User;
 ?>
@@ -118,7 +118,7 @@ use application\modules\user\utils\User;
 					<div class="usi">
 						<div class="btn-group">
 							<a href="javascript:;" data-toggle="dropdown" id="user_login_ctrl">
-								<?php echo String::cutStr(IBOS::app()->user->realname, 6); ?>
+								<?php echo StringUtil::cutStr(IBOS::app()->user->realname, 6); ?>
 								<i class="caret caret-small"></i>
 							</a>
 						</div>

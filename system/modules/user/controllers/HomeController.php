@@ -5,7 +5,7 @@ namespace application\modules\user\controllers;
 use application\core\model\Log;
 use application\core\model\Module;
 use application\core\utils as util;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\CreditLog;
 use application\modules\dashboard\model\CreditRule;
 use application\modules\dashboard\model\CreditRuleLog;
@@ -64,9 +64,9 @@ class HomeController extends HomeBaseController {
 						if ( $key == 'birthday' ) {
 							$value = !empty( $value ) ? strtotime( $value ) : 0;
 						}
-						$model['application\modules\user\model\UserProfile'][$key] = util\String::filterCleanHtml( $value );
+						$model['application\modules\user\model\UserProfile'][$key] = util\StringUtil::filterCleanHtml( $value );
 					} else if ( in_array( $key, $userField ) ) {
-						$model['application\modules\user\model\User'][$key] = util\String::filterCleanHtml( $value );
+						$model['application\modules\user\model\User'][$key] = util\StringUtil::filterCleanHtml( $value );
 					}
 				}
 				//简单检查一下手机、邮箱、电话和QQ格式
@@ -232,7 +232,7 @@ class HomeController extends HomeBaseController {
 		$aeskey = Yii::app()->setting->get( 'aeskey' );
 		$oaUrl = rtrim( Yii::app()->setting->get( 'siteurl' ), '/' );
 		$signature = $this->getSignature( $aeskey, $oaUrl );
-        $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 		$param = array(
 			'code' => $unit['corpcode'],
 			'url' => urlencode( $oaUrl ),
@@ -338,9 +338,9 @@ class HomeController extends HomeBaseController {
 		$session = new CHttpSession;
 		$session->open();
 		if ( $operation == 'email' ) {
-			$val = util\String::random( 8 );
+			$val = util\StringUtil::random( 8 );
 		} else if ( $operation == 'mobile' ) {
-			$val = util\String::random( 5, 1 );
+			$val = util\StringUtil::random( 5, 1 );
 		}
 		$verifyVal = md5( $val );
 		$verifyName = $operation;
@@ -469,7 +469,7 @@ class HomeController extends HomeBaseController {
 	 */
 	protected function getRemind() {
 		$user = $this->getUser();
-        $user['remindsetting'] = !empty( $user['remindsetting'] ) ? String::utf8Unserialize( $user['remindsetting'] ) : array();
+        $user['remindsetting'] = !empty( $user['remindsetting'] ) ? StringUtil::utf8Unserialize( $user['remindsetting'] ) : array();
 		$nodeList = Notify::model()->getNodeList();
 		$coBinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
 		foreach ( $nodeList as $id => &$node ) {

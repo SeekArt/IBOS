@@ -3,7 +3,7 @@
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\utils\Wx;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
@@ -18,7 +18,6 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 date_default_timezone_set('PRC');
 @set_time_limit(1000);
 ini_set('memory_limit', '100M');
-@set_magic_quotes_runtime(0);
 define('PATH_ROOT', dirname(__FILE__) . '/../');  //ibos根目录
 require PATH_ROOT . './system/version.php';
 require './include/installLang.php';
@@ -309,7 +308,7 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
         $adminAccount = $_POST['adminAccount'];
         $adminPassword = $_POST['adminPassword'];
         //酷办公相关
-        $extraData = String::utf8Unserialize($_POST['extraData'] ? $_POST['extraData'] : array() );
+        $extraData = StringUtil::utf8Unserialize($_POST['extraData'] ? $_POST['extraData'] : array() );
         $adminUsername = empty($extraData['username']) ? 'admin' : $extraData['username'];
         $adminEmail = $extraData['email'];
         $adminRealname = empty($extraData['realname']) ? 'admin' : $extraData['realname'];
@@ -356,10 +355,10 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
             exit();
         }
         // 检查数据库连接正确性
-        $link = @mysql_connect($dbHost, $dbAccount, $dbPassword);
+        $link = @mysqli_connect($dbHost, $dbAccount, $dbPassword);
         if (!$link) {
-            $errno = mysql_errno();
-            $error = mysql_error();
+            $errno = mysqli_errno($link);
+            $error = mysqli_error($link);
             if ($errno == 1045) {
                 $errnoMsg = $lang['Database errno 1045'];
             } elseif ($errno == 2003) {
@@ -372,20 +371,17 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
             exit();
         }
         // 判断数据库能否创建
-        if (mysql_get_server_info() > '4.1') {
-            mysql_query("CREATE DATABASE IF NOT EXISTS `$dbName` DEFAULT CHARACTER SET " . DBCHARSET, $link);
-        } else {
-            mysql_query("CREATE DATABASE IF NOT EXISTS `$dbName`", $link);
-        }
-        @mysql_select_db($dbName, $link);
+        mysqli_query($link, "CREATE DATABASE IF NOT EXISTS `$dbName` DEFAULT CHARACTER SET " . DBCHARSET);
+
+        @mysqli_select_db($link, $dbName);
         $moduleSql = str_replace('{dbpre}', $dbPre, $moduleSql);
-        mysql_query($moduleSql);  // 提前创建module表，否则后续步骤不能初始化ibos
-        if (mysql_errno()) {
-            $errorMsg = $lang['Database errno ' . mysql_errno()];
+        mysqli_query($link, $moduleSql);  // 提前创建module表，否则后续步骤不能初始化ibos
+        if (mysqli_errno( $link )) {
+            $errorMsg = $lang['Database errno ' . mysqli_errno($link)];
             include 'errorInfo.php';
             exit();
         }
-        mysql_close($link);
+        mysqli_close($link);
 
         // 获得用户输入的数据库配置数据，替换掉configDefault文件里的配置，用以生成config文件
         $configDefault = file_get_contents($defaultConfigfile);
@@ -525,7 +521,7 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
         $systemurl = substr(Env::getSiteUrl(), 0, -9);
         $coip = Env::getClientIp();
         //更新本地的Setting.unit
-        $unit = String::utf8Unserialize(
+        $unit = StringUtil::utf8Unserialize(
                         Yii::app()->db->createCommand()
                                 ->select('svalue')
                                 ->from('{{setting}}')
@@ -552,7 +548,7 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
         //只有登录才会进行下面的，登录了accesstoken才不会是空的
         if (!empty($adminco['accesstoken'])) {
             //更新本地的coinfo和是否创建企业
-            $coinfo = String::utf8Unserialize(
+            $coinfo = StringUtil::utf8Unserialize(
                             Yii::app()->db->createCommand()
                                     ->select('svalue')
                                     ->from('{{setting}}')
@@ -659,7 +655,7 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
     // 为用户添加GUID
     $uidArray = User::model()->fetchUidA();
     foreach ( $uidArray as $uid ) {
-        $guid = String::createGuid();
+        $guid = StringUtil::createGuid();
         Yii::app()->db->createCommand()->update( "{{user}}", array( 'guid' => $guid ), "`uid` = '{$uid}'" );
     }
     Cache::update();
@@ -673,16 +669,16 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
     $dbPassword = $_POST['dbPassword'];
     $dbName = $_POST['dbName'];
     $tablePre = $_POST['tablePre'];
-    if (!function_exists('mysql_connect')) {
+    if (!function_exists('mysqli_connect')) {
         $ret['isSuccess'] = false;
-        $ret['msg'] = 'mysql_connect' . $lang['func not exist'];
+        $ret['msg'] = 'mysqli_connect' . $lang['func not exist'];
         echo json_encode($ret);
         exit();
     }
-    $link = @mysql_connect($dbHost, $dbAccount, $dbPassword);
+    $link = @mysqli_connect($dbHost, $dbAccount, $dbPassword);
     if (!$link) {
-        $errno = mysql_errno();
-        $error = mysql_error();
+        $errno = mysqli_errno($link);
+        $error = mysqli_error($link);
         if ($errno == 1045) {
             $errnoMsg = $lang['Database errno 1045'];
         } elseif ($errno == 2003) {
@@ -695,8 +691,8 @@ if ($option == 'envCheck' or $option == 'dbInit') { // 检测环境
         echo json_encode($ret);
         exit();
     } else {
-        if ($query = @mysql_query("SHOW TABLES FROM $dbName")) {
-            while ($row = mysql_fetch_row($query)) {
+        if ($query = @mysqli_query($link, "SHOW TABLES FROM $dbName")) {
+            while ($row = mysqli_fetch_row($query)) {
                 if (preg_match("/^$tablePre/", $row[0])) {
                     $ret['isSuccess'] = false;
                     $ret['tableExist'] = true;

@@ -25,7 +25,7 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
@@ -140,7 +140,7 @@ class DefaultController extends BaseController {
             if ( $dashboardConfig['sharepersonnel'] ) {
                 $data = DiaryShare::model()->fetchShareInfoByUid( $uid );
                 $params['defaultShareList'] = $data['shareInfo'];
-                $params['deftoid'] = String::wrapId( $data['deftoid'] );
+                $params['deftoid'] = StringUtil::wrapId( $data['deftoid'] );
             }
             $this->setPageTitle( IBOS::lang( 'Add Diary' ) );
             $this->setPageState( 'breadCrumbs', array(
@@ -180,7 +180,7 @@ class DefaultController extends BaseController {
             }
             $date = $_POST['todayDate'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['todayDate'] ) );
             //保存最新计划
-            $shareUidArr = isset( $_POST['shareuid'] ) ? String::getId( $_POST['shareuid'] ) : array();
+            $shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
             $diary = array(
                 'uid' => $uid,
                 'diarytime' => strtotime( $_POST['todayDate'] ),
@@ -213,7 +213,7 @@ class DefaultController extends BaseController {
                             '{subject}' => $realname . ' ' . $date . ' ' . IBOS::lang( 'Work diary' ),
                             '{url}' => IBOS::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) )
                         ) ),
-                        'body' => String::cutStr( $diary['content'], 140 ),
+                        'body' => StringUtil::cutStr( $diary['content'], 140 ),
                         'actdesc' => IBOS::lang( 'Post diary' ),
                         'userid' => $supUid,
                         'deptid' => '',
@@ -236,7 +236,7 @@ class DefaultController extends BaseController {
                         'lang' => IBOS::getLangSources(),
                         'originalPlan' => array_values( $originalPlanContent ),
                         'planOutside' => array_values( $planOutside ),
-                        'content' => String::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
+                        'content' => StringUtil::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
                         'plantime' => $_POST['plantime'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
                         'plan' => array_values( $plan )
                             ), true ),
@@ -274,7 +274,7 @@ class DefaultController extends BaseController {
             if ( empty( $postDeftoid ) ) {
                 DiaryShare::model()->delDeftoidByUid( $uid );
             } else {
-                $deftoid = String::getId( $postDeftoid );
+                $deftoid = StringUtil::getId( $postDeftoid );
                 DiaryShare::model()->addOrUpdateDeftoidByUid( $uid, $deftoid );
             }
             $result['isSuccess'] = true;
@@ -456,7 +456,7 @@ class DefaultController extends BaseController {
         //保存最新计划
         $attributes = array( 'content' => $_POST['diaryContent'] );
         if ( array_key_exists( 'shareuid', $_POST ) ) {
-            $shareUidArr = String::getId( $_POST['shareuid'] );
+            $shareUidArr = StringUtil::getId( $_POST['shareuid'] );
             $attributes['shareuid'] = implode( ',', $shareUidArr );
         }
         Diary::model()->modify( $diaryId, $attributes );
@@ -490,7 +490,7 @@ class DefaultController extends BaseController {
                     'realname' => $realname,
                     'date' => $date,
                     'lang' => IBOS::getLangSources(),
-                    'content' => String::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
+                    'content' => StringUtil::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
                     'plantime' => $_POST['plantime'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
                     'plan' => array_values( $plan )
                         ), true ),
@@ -663,7 +663,7 @@ class DefaultController extends BaseController {
             if ( !empty( $records ) ) {
                 foreach ( $records as $record ) {
                     $record['realname'] = User::model()->fetchRealnameByUid( $record['uid'] );
-                    $content = String::parseHtml( String::cutStr( $record['content'], 45 ) );
+                    $content = StringUtil::parseHtml( StringUtil::cutStr( $record['content'], 45 ) );
                     $htmlStr.= '<li class="media">
 									<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
 										<img src="' . Org::getDataStatic( $record['uid'], 'avatar', 'small' ) . '" title="' . $record['realname'] . '" class="img-rounded"/>

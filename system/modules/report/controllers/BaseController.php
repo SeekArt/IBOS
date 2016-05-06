@@ -9,7 +9,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
 use application\modules\message\model\Comment;
@@ -280,7 +280,7 @@ class BaseController extends Controller {
             if ( !empty( $records ) ) {
                 foreach ( $records as $record ) {
                     $record['realname'] = User::model()->fetchRealnameByUid( $record['uid'] );
-                    $content = String::cutStr( $record['content'], 45 );
+                    $content = StringUtil::cutStr( $record['content'], 45 );
                     $htmlStr.= '<li class="media">
 									<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
 										<img src="' . Org::getDataStatic( $record['uid'], 'avatar', 'small' ) . '" title="' . $record['realname'] . '" class="img-rounded"/>

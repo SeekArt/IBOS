@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <div class="aside" id="aside">
 	<div class="sbb sbbl sbbf">
@@ -32,7 +32,7 @@ use application\core\utils\String;
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \$spacer<a href='" . $this->createUrl( "default/index&op={$op}&deptid=" ) . "\$deptid' class='org-dep-name'><i class='os-department'></i>\$deptname</a>
 							</td>
 						</tr>";
-							$categorys = String::getTree( $dept, $str );
+							$categorys = StringUtil::getTree( $dept, $str );
 							echo $categorys;
 							?>
 						</tbody>

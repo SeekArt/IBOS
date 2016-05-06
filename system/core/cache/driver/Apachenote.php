@@ -3,7 +3,7 @@
 namespace application\core\cache\driver;
 
 use application\core\components\Cache;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 /**
  * Apachenote缓存驱动
@@ -54,7 +54,7 @@ class Apachenote extends Cache {
             $data .= fread( $this->instance, 4096 );
         }
         $this->close();
-        return $data === '' ? '' : String::utf8Unserialize( $data );
+        return $data === '' ? '' : StringUtil::utf8Unserialize( $data );
     }
 
     /**

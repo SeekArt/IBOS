@@ -23,7 +23,7 @@ use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\Page;
 use application\core\utils\Convert;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\model\DepartmentRelated;
 use application\modules\department\utils\Department as DepartmentUtil;
@@ -55,7 +55,7 @@ class DepartmentController extends OrganizationBaseController {
         } else {
             $dept = DepartmentUtil::loadDepartment();
             $param = array(
-                'tree' => String::getTree($dept, $this->selectFormat),
+                'tree' => StringUtil::getTree($dept, $this->selectFormat),
             );
             $this->render('add', $param);
         }
@@ -133,7 +133,7 @@ class DepartmentController extends OrganizationBaseController {
         } else {
             if (Env::submitCheck('postsubmit')) {
                 $member = Env::getRequest('member');
-                $uids = String::getUidAByUDPX($member);
+                $uids = StringUtil::getUidAByUDPX($member);
                 $batchSetRes = DepartmentUtil::updateDepartmentUserList($id, $uids);
                 if ($batchSetRes) {
                     Org::update();
@@ -184,14 +184,14 @@ class DepartmentController extends OrganizationBaseController {
             $this->render('editHeadDept');
         } else {
             $result = Department::model()->fetchByPk($id);
-            $result['manager'] = String::wrapId(array($result['manager']));
-            $result['leader'] = String::wrapId(array($result['leader']));
-            $result['subleader'] = String::wrapId(array($result['subleader']));
+            $result['manager'] = StringUtil::wrapId(array($result['manager']));
+            $result['leader'] = StringUtil::wrapId(array($result['leader']));
+            $result['subleader'] = StringUtil::wrapId(array($result['subleader']));
             $depts = DepartmentUtil::loadDepartment();
             $param = array(
                 'id' => $id,
                 'department' => $result,
-                'tree' => String::getTree($depts, $this->selectFormat, $result['pid']),
+                'tree' => StringUtil::getTree($depts, $this->selectFormat, $result['pid']),
             );
             $this->render('edit', $param);
         }
@@ -245,9 +245,9 @@ class DepartmentController extends OrganizationBaseController {
         $_POST['fax'] = \CHtml::encode( $_POST['fax'] );
         $_POST['addr'] = \CHtml::encode( $_POST['addr'] );
         $_POST['func'] = \CHtml::encode( $_POST['func'] );
-        $_POST['manager'] = implode(',', String::getUid($_POST['manager']));
-        $_POST['leader'] = implode(',', String::getUid($_POST['leader']));
-        $_POST['subleader'] = implode(',', String::getUid($_POST['subleader']));
+        $_POST['manager'] = implode(',', StringUtil::getUid($_POST['manager']));
+        $_POST['leader'] = implode(',', StringUtil::getUid($_POST['leader']));
+        $_POST['subleader'] = implode(',', StringUtil::getUid($_POST['subleader']));
     }
 
     /**
@@ -257,7 +257,7 @@ class DepartmentController extends OrganizationBaseController {
     public function actionBatchAlterUserDept() {
         $department = explode('_', Env::getRequest('id'));
         $member = Env::getRequest('member');
-        $uids = String::getUidAByUDPX($member);
+        $uids = StringUtil::getUidAByUDPX($member);
         $batchSetRes = UserUtil::batchSetUserDepartment($department[1], $uids);
         if ($batchSetRes) {
             Org::update();

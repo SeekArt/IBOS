@@ -108,10 +108,10 @@ class Env {
     public static function checkInMobile() {
         $userAgent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
         // 先检查是否Pad
-        if ( String::istrpos( $userAgent, self::$padList ) ) {
+        if ( StringUtil::istrpos( $userAgent, self::$padList ) ) {
             return false;
         }
-        $value = String::istrpos( $userAgent, self::$mobileBrowserList, true );
+        $value = StringUtil::istrpos( $userAgent, self::$mobileBrowserList, true );
         if ( $value ) {
             IBOS::app()->setting->set( 'mobile', $value );
             return true;
@@ -168,7 +168,7 @@ class Env {
             $referer = $default;
         }
         // 安全过滤
-        $referer = String::ihtmlSpecialChars( $referer, ENT_QUOTES );
+        $referer = StringUtil::ihtmlSpecialChars( $referer, ENT_QUOTES );
         $referer = strip_tags( str_replace( '&amp;', '&', $referer ) );
         // 写入全局组件
         IBOS::app()->setting->set( 'referer', $referer );
@@ -384,7 +384,7 @@ class Env {
             $phpself = self::getScriptUrl();
             $sitePath = substr( $phpself, 0, strrpos( $phpself, '/' ) );
         }
-        return String::ihtmlSpecialChars( 'http' . ($isHttps ? 's' : '') . '://' . (isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '') . $sitePath . '/' );
+        return StringUtil::ihtmlSpecialChars( 'http' . ($isHttps ? 's' : '') . '://' . (isset( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '') . $sitePath . '/' );
     }
 
     /**

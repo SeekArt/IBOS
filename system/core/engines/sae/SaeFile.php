@@ -18,7 +18,7 @@
 namespace application\core\engines\sae;
 
 use application\core\utils\File;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Attachment;
 
 class SaeFile {
@@ -585,7 +585,7 @@ class SaeFile {
      */
     public function imageSize( $image ) {
         if ( !is_readable( $image ) ) {
-            $sufffix = String::getFileExt( $image );
+            $sufffix = StringUtil::getFileExt( $image );
             $image = $this->fetchTemp( $image, $sufffix );
         }
         return getimagesize( $image );

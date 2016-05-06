@@ -2,7 +2,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_email.css' ?>" />
@@ -19,7 +19,7 @@ use application\core\utils\String;
 						<?php if ( !empty( $email['attachmentid'] ) ): ?><i class="o-mal-attach"></i><?php endif; ?>
 					</td>
 					<td>
-						<a title="<?php echo $email['subject']; ?>" href="<?php echo IBOS::app()->urlManager->createUrl( 'email/content/show', array('id' => $email['emailid']) ); ?>" <?php if ( !$email['isread'] ): ?>class="xwb"<?php endif; ?>><?php echo String::cutStr( $email['subject'], 25 ); ?></a>
+						<a title="<?php echo $email['subject']; ?>" href="<?php echo IBOS::app()->urlManager->createUrl( 'email/content/show', array('id' => $email['emailid']) ); ?>" <?php if ( !$email['isread'] ): ?>class="xwb"<?php endif; ?>><?php echo StringUtil::cutStr( $email['subject'], 25 ); ?></a>
 					</td>
 					<td width="80">
 						<span class="<?php if ( !$email['isread'] ): ?>xwb<?php endif; ?> fss"><?php echo $email['realname']; ?></span>

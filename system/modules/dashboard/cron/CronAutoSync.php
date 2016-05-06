@@ -3,7 +3,7 @@
  * 自动同步计划任务
  */
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\dashboard\utils\CoSync;
 use application\modules\main\model\Setting;
@@ -13,7 +13,7 @@ use application\modules\user\model\UserBinding;
 use application\modules\user\model\User;
 
 set_time_limit(120);
-$coinfo = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+$coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
 if ( !isset( $coinfo['corpid'] ) ) {
     Setting::model()->updateSettingValueByKey('cobinding', 0);
 }

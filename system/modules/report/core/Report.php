@@ -18,7 +18,7 @@ namespace application\modules\report\core;
 
 use application\core\utils\Convert;
 use application\core\utils\File;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
@@ -33,12 +33,12 @@ class Report {
     public static function handelListData( $reports ) {
         $return = array();
         foreach ( $reports as $report ) {
-            $report['cutSubject'] = String::cutStr( strip_tags( $report['subject'] ), 60 );
+            $report['cutSubject'] = StringUtil::cutStr( strip_tags( $report['subject'] ), 60 );
             $report['user'] = User::model()->fetchByUid( $report['uid'] );
             // 阅读次数
             $readeruid = $report['readeruid'];
             $report['readercount'] = empty( $readeruid ) ? 0 : count( explode( ',', trim( $readeruid, ',' ) ) );
-            $report['content'] = String::cutStr( strip_tags( $report['content'] ), 255 );
+            $report['content'] = StringUtil::cutStr( strip_tags( $report['content'] ), 255 );
             $report['addtime'] = Convert::formatDate( $report['addtime'], 'u' );
             // 图章
             if ( $report['stamp'] != 0 ) {

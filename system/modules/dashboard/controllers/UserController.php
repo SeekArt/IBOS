@@ -27,7 +27,7 @@ use application\core\utils\Org;
 use application\core\utils\OrgIO;
 use application\core\utils\Page;
 use application\core\utils\PHPExcel;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\department\components\DepartmentCategory as ICDepartmentCategory;
 use application\modules\department\model\Department;
@@ -144,10 +144,10 @@ class UserController extends OrganizationBaseController {
             $_POST['realname'] = \CHtml::encode( $_POST['realname'] );
             $_POST['weixin'] = \CHtml::encode( $_POST['weixin'] );
             $_POST['jobnumber'] = \CHtml::encode( $_POST['jobnumber'] );
-            $_POST['salt'] = String::random( 6 );
+            $_POST['salt'] = StringUtil::random( 6 );
             $_POST['password'] = !empty( $origPass ) ? md5( md5( $origPass ) . $_POST['salt'] ) : '';
             $_POST['createtime'] = TIMESTAMP;
-            $_POST['guid'] = String::createGuid();
+            $_POST['guid'] = StringUtil::createGuid();
             $this->dealWithSpecialParams();
             $data = User::model()->create();
             User::model()->checkUnique( $data );
@@ -165,12 +165,12 @@ class UserController extends OrganizationBaseController {
                 UserProfile::model()->add( array( 'uid' => $newId ) );
                 // 辅助部门
                 if ( !empty( $_POST['auxiliarydept'] ) ) {
-                    $deptIds = String::getId( $_POST['auxiliarydept'] );
+                    $deptIds = StringUtil::getId( $_POST['auxiliarydept'] );
                     $this->handleAuxiliaryDept( $newId, $deptIds, $_POST['deptid'] );
                 }
                 // 辅助岗位
                 if ( !empty( $_POST['auxiliarypos'] ) ) {
-                    $posIds = String::getId( $_POST['auxiliarypos'] );
+                    $posIds = StringUtil::getId( $_POST['auxiliarypos'] );
                     $this->handleAuxiliaryPosition( $newId, $posIds, $_POST['positionid'] );
                 }
                 // 辅助角色
@@ -179,7 +179,7 @@ class UserController extends OrganizationBaseController {
                     $this->handleAuxiliaryRole( $newId, $roleIds, $_POST['roleid'] );
                 }
                 // 直属下属
-                $subUids = String::getId( $_POST['subordinate'] );
+                $subUids = StringUtil::getId( $_POST['subordinate'] );
                 User::model()->updateAll( array( 'upuid' => $newId ), sprintf( "FIND_IN_SET(`uid`,'%s')", implode( ',', $subUids ) ) );
                 // 重建缓存，给新加的用户生成缓存
                 $newUser = User::model()->fetchByPk( $newId );
@@ -205,8 +205,8 @@ class UserController extends OrganizationBaseController {
                 $preg = "^[A-Za-z0-9\!\@\#\$\%\^\&\*\.\~]{" . $account['minlength'] . ",32}$";
             }
             if ( $deptid = Env::getRequest( 'deptid' ) ) {
-                $deptid = String::wrapId( Env::getRequest( 'deptid' ), 'd' );
-                $manager = String::wrapId( Department::model()->fetchManagerByDeptid( Env::getRequest( 'deptid' ) ), 'u' );
+                $deptid = StringUtil::wrapId( Env::getRequest( 'deptid' ), 'd' );
+                $manager = StringUtil::wrapId( Department::model()->fetchManagerByDeptid( Env::getRequest( 'deptid' ) ), 'u' );
             }
             $this->render( 'add', array(
                 'deptid' => $deptid,
@@ -254,12 +254,12 @@ class UserController extends OrganizationBaseController {
             }
             // 辅助部门
             if ( isset( $_POST['auxiliarydept'] ) ) {
-                $deptIds = String::getId( $_POST['auxiliarydept'] );
+                $deptIds = StringUtil::getId( $_POST['auxiliarydept'] );
                 $this->handleAuxiliaryDept( $uid, $deptIds, $_POST['deptid'] );
             }
             // 辅助岗位
             if ( isset( $_POST['auxiliarypos'] ) ) {
-                $posIds = String::getId( $_POST['auxiliarypos'] );
+                $posIds = StringUtil::getId( $_POST['auxiliarypos'] );
                 $this->handleAuxiliaryPosition( $uid, $posIds, $_POST['positionid'] );
             }
             // 辅助角色
@@ -276,7 +276,7 @@ class UserController extends OrganizationBaseController {
             User::model()->updateByUid( $uid, $data );
             // 直属下属
             User::model()->updateAll( array( 'upuid' => 0 ), "`upuid`={$uid}" ); // 先把旧的下属upuid清0
-            $subUids = String::getId( $_POST['subordinate'] );
+            $subUids = StringUtil::getId( $_POST['subordinate'] );
             User::model()->updateAll( array( 'upuid' => $uid ), sprintf( "FIND_IN_SET(`uid`,'%s')", implode( ',', $subUids ) ) );
             if ( $data['status'] != 2 ) {
                 // 更新组织架构js调用接口
@@ -445,7 +445,7 @@ class UserController extends OrganizationBaseController {
 //          $ip = Ibos::app()->setting->get( 'clientip' );
 //          foreach ( $reader->sheets[0]['cells'] as $k => $row ) {
 //              //以下数组下标跟导入表的每一列位置对应，如导入出现问题，请检查位置与格式！
-//              $salt = String::random( 6 );
+//              $salt = StringUtil::random( 6 );
 //              $origPass = isset( $row[2] ) ? $row[2] : '';
 //              $data = array(
 //                  'salt' => $salt,
@@ -665,9 +665,9 @@ class UserController extends OrganizationBaseController {
      * 特别参数再处理
      */
     protected function dealWithSpecialParams() {
-        $_POST['upuid'] = implode( ',', String::getUid( $_POST['upuid'] ) );
-        $_POST['deptid'] = implode( ',', String::getId( $_POST['deptid'] ) );
-        $_POST['positionid'] = implode( ',', String::getId( $_POST['positionid'] ) );
+        $_POST['upuid'] = implode( ',', StringUtil::getUid( $_POST['upuid'] ) );
+        $_POST['deptid'] = implode( ',', StringUtil::getId( $_POST['deptid'] ) );
+        $_POST['positionid'] = implode( ',', StringUtil::getId( $_POST['positionid'] ) );
     }
 
     /**

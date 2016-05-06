@@ -19,7 +19,7 @@ namespace application\modules\file\utils;
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\file\model\File;
 use application\modules\file\model\FileCapacity;
@@ -109,7 +109,7 @@ class FileData extends System {
 	 * @return array
 	 */
 	public static function handleSelectBoxData( $scope ) {
-		$data = String::getId( $scope, true );
+		$data = StringUtil::getId( $scope, true );
 		$result = array(
 			'deptid' => '',
 			'positionid' => '',
@@ -156,13 +156,13 @@ class FileData extends System {
 			if ( $deptid == 'alldept' ) {
 				return 'c_0';
 			}
-			$tmp[] = String::wrapId( $deptid, 'd' );
+			$tmp[] = StringUtil::wrapId( $deptid, 'd' );
 		}
 		if ( !empty( $positionid ) ) {
-			$tmp[] = String::wrapId( $positionid, 'p' );
+			$tmp[] = StringUtil::wrapId( $positionid, 'p' );
 		}
 		if ( !empty( $uid ) ) {
-			$tmp[] = String::wrapId( $uid, 'u' );
+			$tmp[] = StringUtil::wrapId( $uid, 'u' );
 		}
 		return implode( ',', $tmp );
 	}

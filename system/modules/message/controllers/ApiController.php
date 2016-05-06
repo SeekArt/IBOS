@@ -3,7 +3,7 @@
 namespace application\modules\message\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
 use application\modules\message\model\UserData;
@@ -52,7 +52,7 @@ class ApiController extends BaseController {
     public function actionDoFollow() {
         if ( Env::submitCheck( 'formhash' ) ) {
             // 安全过滤
-            $fid = String::filterCleanHtml( $_POST['fid'] );
+            $fid = StringUtil::filterCleanHtml( $_POST['fid'] );
             $res = Follow::model()->doFollow( IBOS::app()->user->uid, intval( $fid ) );
             // 是否互相关注
             $isFriend = $res['following'] && $res['follower'];
@@ -66,7 +66,7 @@ class ApiController extends BaseController {
     public function actionUnFollow() {
         if ( Env::submitCheck( 'formhash' ) ) {
             // 安全过滤
-            $fid = String::filterCleanHtml( $_POST['fid'] );
+            $fid = StringUtil::filterCleanHtml( $_POST['fid'] );
             $res = Follow::model()->unFollow( IBOS::app()->user->uid, intval( $fid ) );
             $this->ajaxReturn( array( 'isSuccess' => !!$res, 'msg' => Follow::model()->getError( 'unFollow' ) ) );
         }

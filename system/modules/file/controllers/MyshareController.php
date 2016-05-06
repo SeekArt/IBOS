@@ -19,7 +19,7 @@ namespace application\modules\file\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDynamic;
 use application\modules\file\model\FileShare;
@@ -83,7 +83,7 @@ class MyShareController extends BaseController {
 	 * 共享
 	 */
 	protected function share() {
-		$fids = String::filterStr( Env::getRequest( 'fids' ) );
+		$fids = StringUtil::filterStr( Env::getRequest( 'fids' ) );
 		$shares = FileData::handleSelectBoxData( Env::getRequest( 'shares' ) );
 		$shareFids = FileShare::model()->fetchFidsByCondition( "FIND_IN_SET(fs.`fid`, '{$fids}')" ); // 已共享的fid
 		$fidArr = explode( ',', $fids );
@@ -107,7 +107,7 @@ class MyShareController extends BaseController {
 				}
 				$content = IBOS::lang( 'Feed content', '', array(
 							'{filename}' => $file['name'],
-							'{shortname}' => String::cutStr( $file['name'], 20 ),
+							'{shortname}' => StringUtil::cutStr( $file['name'], 20 ),
 							'{placeUrl}' => IBOS::app()->urlManager->createUrl( 'file/fromshare/index#from/' . $this->uid ),
 							'{downloadUrl}' => IBOS::app()->urlManager->createUrl( 'file/personal/ajaxEnt', array( 'op' => 'download', 'fids' => $fid ) ),
 				) );

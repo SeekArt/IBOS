@@ -5,7 +5,7 @@ namespace application\modules\assignment\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class CommentController extends Controller {
 
