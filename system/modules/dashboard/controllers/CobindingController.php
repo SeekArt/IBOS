@@ -20,7 +20,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\model\Log;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
@@ -68,7 +68,7 @@ class CobindingController extends CoController {
         }
         // 登录成功
         else {
-            $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
             $param['data'] = $loginRes['data'];
             $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
             // 如果本地已经绑定了酷办公
@@ -77,7 +77,7 @@ class CobindingController extends CoController {
             }
             // IBOS 与酷办公未绑定,转到企业列表选择视图
             else {
-                // $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+                // $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
                 // 根据用户的 accesstoken 获取对应用户所加入的企业列表信息
                 $corpListRes = $this->getCorpListByAccessToken( $this->_coUser['accesstoken'] );
                 $corpListRes['isInstall'] = $this->_isInstall;
@@ -106,7 +106,7 @@ class CobindingController extends CoController {
         }
         // 已绑定的使用数据库保存的 accesstoken 进行登录
         else if ( $cobinding == 1 && $this->_coUser === NULL ) {
-            $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
             $accesstoken = isset( $coinfo['accesstoken'] ) ? $coinfo['accesstoken'] : '';
         }
         // 用 accesstoken 尝试自动登录
@@ -124,8 +124,8 @@ class CobindingController extends CoController {
             // 已绑定 && accesstoken 无效
             // 使用已有手机号、密码进行登录，且手机号使用已绑定的手机号
             if ( $this->isBinding ) {
-                $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-                $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+                $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+                $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
                 $result['data'] = array(
                     'ibos' => array(
                         'corplogo' => $unit['logourl'],
@@ -163,8 +163,8 @@ class CobindingController extends CoController {
             $op = 'noBinding';
         }
         if ( $op === 'isBinding' ) {
-            $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-            $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+            $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
             $data = array(
                 'ibos' => array(
                     'corplogo' => $unit['logourl'],
@@ -232,7 +232,7 @@ class CobindingController extends CoController {
             $result['corpList'] = array();
         }
         // 如果用户选择新建企业，使用当前 IBOS 的数据作为新企业的默认数据
-        $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
         $result['createCorpInfo']['corpname'] = $unit['fullname'];
         $result['createCorpInfo']['corpshortname'] = $unit['shortname'];
         return $result;
@@ -367,7 +367,7 @@ class CobindingController extends CoController {
     // 	);
     // 	$verifyLoginRes = CoApi::getInstance()->checkVerifyCode( $post );
     // 	if ( $verifyLoginRes['code'] == CodeApi::SUCCESS ) {
-    // 		$coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+    // 		$coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
     // 		$coinfo['accesstoken'] = $verifyLoginRes['data']['accesstoken'];
     // 		$coinfo['guid'] = $verifyLoginRes['data']['guid'];
     // 		$coinfo['mobile'] = $mobile;
@@ -429,7 +429,7 @@ class CobindingController extends CoController {
         $password = Env::getRequest( 'password' );
         // 这里的验证作用是保证登录酷办公用户的一定是绑定的那个
         if ( $this->isBinding ) {
-            $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
             if ( !empty( $coinfo['mobile'] ) && $coinfo['mobile'] != $mobile ) {
                 $this->ajaxReturn( array(
                     'isSuccess' => FALSE,
@@ -475,7 +475,7 @@ class CobindingController extends CoController {
      */
     // public function actionAlterCorpBindToMe() {
     // 	$corptoken = Env::getRequest( 'corptoken' );
-    // 	$coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+    // 	$coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
     // 	// 开始绑定
     // 	$res = $this->corpBinding( $corptoken );
     // 	// 绑定成功
@@ -510,7 +510,7 @@ class CobindingController extends CoController {
      * 这是 IBOS 与酷办公互相绑定的情况下接触双方绑定关系的解绑操作
      */
     public function actionUnbinding() {
-        $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+        $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
         $unbindingRes = CoApi::getInstance()->unbindingCo( $coinfo['corptoken'] );
         if ( $unbindingRes['code'] == CodeApi::SUCCESS ) {
             $this->ajaxReturn( array(
@@ -545,7 +545,7 @@ class CobindingController extends CoController {
      * @return boolen             TRUE | FALSE
      */
     private function updateCorptoken( &$corptoken ) {
-        $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+        $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
         $updateCorpTokenRes = CoApi::getInstance()->getCorpListByAccessToken( $coinfo['accesstoken'] );
         if ( $updateCorpTokenRes['code'] == CodeApi::SUCCESS ) {
             foreach ( $updateCorpTokenRes['data'] as $corpinfo ) {
@@ -593,7 +593,7 @@ class CobindingController extends CoController {
      * @return ajax
      */
     // protected function removeCoRelation( $relationList ) {
-    // 	$coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+    // 	$coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
     // 	$post = array(
     // 		'type'		=> 'ibos',
     // 		'corpid'	=> $coinfo['corpid'],
@@ -614,9 +614,9 @@ class CobindingController extends CoController {
     public function actionCreateAndBinding() {
         $corpshortname = Env::getRequest( 'corpshortname' );
         $corpname = Env::getRequest( 'corpname' );
-        // $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        // $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
         $coinfo = $this->_coUser;
-        // $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+        // $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
         $accesstoken = $coinfo['accesstoken'];
         $post = array(
             'shortname' => $corpshortname,
@@ -695,7 +695,7 @@ class CobindingController extends CoController {
             ) );
         } else {
             Setting::model()->updateSettingValueByKey( 'cobinding', 1 );
-            $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
             $coinfo = array(
                 'accesstoken' => $this->_coUser['accesstoken'],
                 'guid' => $this->_coUser['guid'],
@@ -720,7 +720,7 @@ class CobindingController extends CoController {
      * @return array            返回的数据
      */
     protected function corpBinding( $corptoken ) {
-        $coinfo = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+        $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
         // 避免多人同时登录了酷办公账号然后先后进行绑定操作
         if ( isset( $coinfo['accesstoken'] ) && $coinfo['accesstoken'] != $this->_coUser['accesstoken'] ) {
             return array(
@@ -729,7 +729,7 @@ class CobindingController extends CoController {
             );
         }
         $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-        $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
         if ( substr( $unit['systemurl'], -1 ) == '/' ) {
             $unit['systemurl'] = substr( $unit['systemurl'], 0, -1 );
         }

@@ -22,7 +22,7 @@ use application\core\utils\Convert;
 use application\core\utils\File as FileUtil;
 use application\core\utils\IBOS;
 use application\core\utils\Image;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use CDbCriteria;
 use CPagination;
 
@@ -156,8 +156,8 @@ class File extends Model {
      */
     public function createThumb( $attach, $thumbWidth = 96, $thumbHeight = 96 ) {
         $imagePath = FileUtil::getAttachUrl() . '/' . $attach['attachment'];
-        $imageType = String::getFileExt( $attach['filename'] );
-        $thumbName = 'thumb_' . date( 'His' ) . strtolower( String::random( 16 ) ) . '.' . $imageType;
+        $imageType = StringUtil::getFileExt( $attach['filename'] );
+        $thumbName = 'thumb_' . date( 'His' ) . strtolower( StringUtil::random( 16 ) ) . '.' . $imageType;
         $sourceFileName = explode( '/', $imagePath );
         $sourceFileName[count( $sourceFileName ) - 1] = $thumbName;
         $thumb = implode( '/', $sourceFileName );
@@ -203,7 +203,7 @@ class File extends Model {
                 }
             }
             $fid = $this->add( $data, true );
-			$fileType = String::getFileExt( $attach['filename'] );
+			$fileType = StringUtil::getFileExt( $attach['filename'] );
 			if ( $fid && in_array( $fileType, array( 'jpg', 'png', ) ) ) { // 生成缩略图
                 $thumb = $this->createThumb( $attach );
             }
@@ -256,7 +256,7 @@ class File extends Model {
         $detail = array(
             'fid' => $fid,
             'attachmentid' => isset( $sourceFile['attachmentid'] ) ? $sourceFile['attachmentid'] : 0,
-            'filetype' => String::getFileExt( $sourceFile['name'] ),
+            'filetype' => StringUtil::getFileExt( $sourceFile['name'] ),
             'mark' => 0,
             'thumb' => isset( $thumb ) ? $thumb : ''
         );

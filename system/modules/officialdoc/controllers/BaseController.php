@@ -18,7 +18,7 @@ namespace application\modules\officialdoc\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\officialdoc\core\OfficialdocCategory as ICOfficialdocCategory;
 use application\modules\officialdoc\model\Officialdoc;
@@ -68,7 +68,7 @@ class BaseController extends Controller {
     protected function getCategoryOption() {
         $category = new ICOfficialdocCategory( 'application\modules\officialdoc\model\OfficialdocCategory' );
         $categoryData = $category->getAjaxCategory( $category->getData( array( 'order' => 'sort ASC' ) ) );
-        return String::getTree( $categoryData, "<option value='\$catid' \$selected>\$spacer\$name</option>" );
+        return StringUtil::getTree( $categoryData, "<option value='\$catid' \$selected>\$spacer\$name</option>" );
     }
 
     /**

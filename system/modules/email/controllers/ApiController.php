@@ -4,7 +4,7 @@ namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
 use application\modules\message\model\Notify;
@@ -58,7 +58,7 @@ class ApiController extends BaseController {
      */
     public function actionRecall() {
         $ids = Env::getRequest('emailids');
-        $id = String::filterStr($ids);
+        $id = StringUtil::filterStr($ids);
         $status = false;
         if (!empty($id)) {
             $status = Email::model()->recall($id, $this->uid);
@@ -73,7 +73,7 @@ class ApiController extends BaseController {
      */
     public function actionDelDraft() {
         $ids = Env::getRequest('emailids');
-        $id = String::filterStr($ids);
+        $id = StringUtil::filterStr($ids);
         $status = false;
         if (!empty($id)) {
             $status = EmailBody::model()->delBody($id, $this->archiveId);
@@ -88,7 +88,7 @@ class ApiController extends BaseController {
      */
     public function actionCpDel() {
         $ids = Env::getRequest('emailids');
-        $id = String::filterStr($ids);
+        $id = StringUtil::filterStr($ids);
         $status = false;
         if (!empty($id)) {
             $status = Email::model()->completelyDelete(explode(',', $id), $this->uid, $this->archiveId);
@@ -111,7 +111,7 @@ class ApiController extends BaseController {
             exit();
         }
         $ids = Env::getRequest('emailids');
-        $id = String::filterStr($ids);
+        $id = StringUtil::filterStr($ids);
         $extends = array();
         $condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
         // 采用表驱动法，优化switch条件语法

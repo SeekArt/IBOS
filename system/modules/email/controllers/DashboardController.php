@@ -5,7 +5,7 @@ namespace application\modules\email\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -44,7 +44,7 @@ class DashboardController extends BaseController {
 			if ( isset( $_POST['role'] ) ) {
 				foreach ( $_POST['role'] as $role ) {
 					if ( !empty( $role['positionid'] ) && !empty( $role['size'] ) ) {
-						$positionId = String::getId( $role['positionid'] );
+						$positionId = StringUtil::getId( $role['positionid'] );
 						$roles[implode( ',', $positionId )] = intval( $role['size'] );
 					}
 				}

@@ -22,7 +22,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Database;
 use application\core\utils\IBOS; 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\controllers\BaseController;
 use application\modules\main\model\Attachment;
 use application\modules\message\model\Notify;
@@ -145,7 +145,7 @@ class Email extends Model {
 	public function send( $bodyId, $bodyData, $inboxId = BaseController::INBOX_ID, $threadId = 0 ) {
 		// 所有用户ID集合
 		$toids = $bodyData['toids'] . ',' . $bodyData['copytoids'] . ',' . $bodyData['secrettoids'];
-		$toid = String::filterStr( $toids );
+		$toid = StringUtil::filterStr( $toids );
 		foreach ( explode( ',', $toid ) as $uid ) {
 			$email = array(
 				'toid' => $uid,
@@ -166,7 +166,7 @@ class Email extends Model {
 				'{subject}' => $bodyData['subject'],
 				'{url}' => IBOS::app()->urlManager->createUrl( 'email/content/show', array( 'id' => $newId ) ),
 				'{content}' => $content,
-				'{orgContent}' => String::filterCleanHtml( $bodyData['content'] ),
+				'{orgContent}' => StringUtil::filterCleanHtml( $bodyData['content'] ),
 				'id' => $newId,
 			);
 			Notify::model()->sendNotify( $uid, 'email_message', $config );

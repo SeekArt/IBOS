@@ -7,7 +7,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\utils\ArchiveSplit;
 use application\modules\main\model\Setting;
 
@@ -114,7 +114,7 @@ class SplitController extends BaseController {
                 $readyToMove = intval( Env::getRequest( 'readytomve' ) );
                 $bodyIdArr = !empty( $_POST['bodyidarray'] ) ? $_POST['bodyidarray'] : array();
                 if ( empty( $bodyIdArr ) && !$detail && !empty( $_POST['conditions'] ) ) {
-                    $conditions = String::utf8Unserialize( $_POST['conditions'] );
+                    $conditions = StringUtil::utf8Unserialize( $_POST['conditions'] );
                     $maxMove = intval( $_POST['pertime'] ) ? intval( $_POST['pertime'] ) : self::DEFAULT_ARCHIVE_MOVE;
                     $list = ArchiveSplit::search( $conditions, $tableDriver, false, $maxMove );
                     $bodyIdArr = Convert::getSubByKey( $list, $tableDriver['bodyIdField'] );
@@ -140,7 +140,7 @@ class SplitController extends BaseController {
                             $cronArchiveSetting[$mod] = array(
                                 'sourcetableid' => $tableSource,
                                 'targettableid' => $tableTarget,
-                                'conditions' => String::utf8Unserialize( $_POST['conditions'] )
+                                'conditions' => StringUtil::utf8Unserialize( $_POST['conditions'] )
                             );
                         } else {
                             unset( $cronArchiveSetting[$mod] );

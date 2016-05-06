@@ -3,7 +3,7 @@
 namespace application\modules\recruit\core;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\recruit\model\ResumeDetail as RDModel;
 use application\modules\user\model\User;
 
@@ -18,7 +18,7 @@ class RecruitInterview {
         foreach ( $interviewList as $k => $interview ) {
             $interviewList[$k]['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
             $interviewList[$k]['interviewer'] = User::model()->fetchRealnameByUid( $interview['interviewer'] );
-            $interviewList[$k]['process'] = String::cutStr( $interview['process'], 12 );
+            $interviewList[$k]['process'] = StringUtil::cutStr( $interview['process'], 12 );
             $interviewList[$k]['realname'] = RDModel::model()->fetchRealnameByResumeId( $interview['resumeid'] );
         }
         return $interviewList;
@@ -42,7 +42,7 @@ class RecruitInterview {
                 $inverviewArr[$k] = $k === 'process' ? \CHtml::encode( $v ) : $v;
             }
         }
-        $interviewer = implode( ',', String::getId( $inverviewArr['interviewer'] ) );
+        $interviewer = implode( ',', StringUtil::getId( $inverviewArr['interviewer'] ) );
         $inverviewArr['interviewer'] = empty( $interviewer ) ? IBOS::app()->user->uid : $interviewer;
         if ( $inverviewArr['interviewtime'] != 0 ) {
             $inverviewArr['interviewtime'] = strtotime( $inverviewArr['interviewtime'] );

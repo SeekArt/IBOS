@@ -5,7 +5,7 @@ namespace application\modules\message\model;
 use application\core\model\Model;
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\MessageContent;
 use application\modules\message\model\NotifyMessage;
 use application\modules\assignment\model\AssignmentRemind;
@@ -35,7 +35,7 @@ class UserData extends Model {
 			'params' => array( ':key' => $key, ':uid' => $uid )
 		);
 		$res = $this->fetch( $criteria );
-		return !empty( $res['value'] ) ? String::utf8Unserialize( $res['value'] ) : array();
+		return !empty( $res['value'] ) ? StringUtil::utf8Unserialize( $res['value'] ) : array();
 	}
 
 	/**
@@ -50,7 +50,7 @@ class UserData extends Model {
 			'params' => array( ':uid' => $uid )
 		);
 		$res = $this->fetch( $criteria );
-		return !empty( $res['value'] ) ? String::utf8Unserialize( $res['value'] ) : array();
+		return !empty( $res['value'] ) ? StringUtil::utf8Unserialize( $res['value'] ) : array();
 	}
 
 	/**
@@ -104,7 +104,7 @@ class UserData extends Model {
 		}
 		// 若更新数目小于0，则默认为减少数目
 		$nums < 0 && $add = false;
-		$key = String::filterCleanHtml( $key );
+		$key = StringUtil::filterCleanHtml( $key );
 		// 获取当前设置用户的统计数目
 		$data = $this->getUserData( $uid );
 		if ( empty( $data ) || !$data ) {

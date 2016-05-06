@@ -68,7 +68,7 @@ class Mail {
         $setting = IBOS::app()->setting->toArray();
         $mail = $setting['setting']['mail'];
         if ( !is_array( $mail ) ) {
-            $mail = String::utf8Unserialize( $mail );
+            $mail = StringUtil::utf8Unserialize( $mail );
         }
         $smtpNums = count( $mail['server'] );
         if ( $smtpNums ) {

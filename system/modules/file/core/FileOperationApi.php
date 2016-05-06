@@ -20,7 +20,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File as FileUtil;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\extensions\Zip;
 use application\modules\file\model\File;
@@ -81,7 +81,7 @@ Class FileOperationApi extends System {
 		$moduleDir = $moduleName . '/';
 		$ymDir = date( 'Ym' ) . '/';
 		$dDir = date( 'd' ) . '/';
-		$random = date( 'His' ) . strtolower( String::random( 16 ) );
+		$random = date( 'His' ) . strtolower( StringUtil::random( 16 ) );
 		$saveName = $random . '.' . $type;
 		$attachment = $moduleDir . $ymDir . $dDir . $saveName;
 		$dir = $attachDir . $moduleDir . $ymDir . $dDir;

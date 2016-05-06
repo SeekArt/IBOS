@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Org;
 use application\modules\user\utils\User;
 ?>
@@ -12,7 +12,7 @@ use application\modules\user\utils\User;
                     <span class="avatar-circle">
                         <img src="<?php echo Org::getDataStatic( $user['uid'], 'avatar', 'middle' ) ?>" alt="<?php echo $user['realname']; ?>" />
                     </span>
-                    <p><?php echo String::cutStr( $user['realname'], 10 ) ?></p>
+                    <p><?php echo StringUtil::cutStr( $user['realname'], 10 ) ?></p>
                 </a>
             </li>
         <?php endforeach; ?>

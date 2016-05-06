@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\main\model\Cron;
 use application\modules\message\model\Notify;
@@ -27,7 +27,7 @@ foreach ( $clist['events'] as $calendar ) {
         if ( time() > $remind_time_min && time() < $remind_time_max ) {
             $stime = date( 'm-d', $calendar['starttime'] );
             $title = $stime . '全天日程';
-            $subject = String::cutStr( $calendar['subject'], 20 );
+            $subject = StringUtil::cutStr( $calendar['subject'], 20 );
             $config = array(
                 '{subject}' => $subject,
                 '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/schedule/index' )
@@ -40,7 +40,7 @@ foreach ( $clist['events'] as $calendar ) {
             $stime = date( 'm-d H:i', $calendar['starttime'] );
             $etime = date( 'm-d H:i', $calendar['endtime'] );
             $title = $stime . ' 至 ' . $etime . '日程';
-            $subject = String::cutStr( $calendar['subject'], 20 );
+            $subject = StringUtil::cutStr( $calendar['subject'], 20 );
             $config = array(
                 '{subject}' => $subject,
                 '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/schedule/index' )

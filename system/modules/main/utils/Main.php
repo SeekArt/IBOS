@@ -18,7 +18,7 @@ namespace application\modules\main\utils;
 
 use application\core\model\Module;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\user\model\User;
 
@@ -104,7 +104,7 @@ class Main {
             $title = ' ';
             $unit = Setting::model()->fetchSettingValueByKey('unit');
             if (!empty($unit)){
-                $unitArray = String::utf8Unserialize($unit);
+                $unitArray = StringUtil::utf8Unserialize($unit);
                 if (isset($unitArray['shortname'])){
                     $title = $unitArray['shortname'] . '- IBOS协同办公平台';
                 }

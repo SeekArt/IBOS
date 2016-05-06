@@ -418,7 +418,7 @@ class Module {
      * @param string $sql sql语句
      */
     public static function executeSql($sql) {
-        $sqls = String::splitSql($sql);
+        $sqls = StringUtil::splitSql($sql);
         $command = IBOS::app()->db->createCommand();
         if (is_array($sqls)) {
             foreach ($sqls as $sql) {

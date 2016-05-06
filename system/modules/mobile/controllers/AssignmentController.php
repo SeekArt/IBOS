@@ -7,7 +7,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\assignment\core\AssignmentOpApi;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\model\AssignmentApply;
@@ -66,8 +66,8 @@ class AssignmentController extends DefaultController {
     			Attach::updateAttach( $data['attachmentid'] );
     			// 如果修改了负责人，发送消息提醒
     			if ( $data['chargeuid'] != $assignment['chargeuid'] ) {
-    				$chargeuid = String::getId( $_POST['chargeuid'] );
-    				$participantuid = String::getId( $_POST['participantuid'] );
+    				$chargeuid = StringUtil::getId( $_POST['chargeuid'] );
+    				$participantuid = StringUtil::getId( $_POST['participantuid'] );
     				$uidArr = array_merge( $participantuid, $chargeuid );
     				$opApi->sendNotify( $uid, $assignmentId, $data['subject'], $uidArr, 'assignment_new_message' );
     			}
@@ -96,8 +96,8 @@ class AssignmentController extends DefaultController {
 			}
 			$assignment['starttime'] = empty( $assignment['starttime'] ) ? '' : date( 'Y-m-d H:i', $assignment['starttime'] );
 			$assignment['endtime'] = empty( $assignment['endtime'] ) ? '' : date( 'Y-m-d H:i', $assignment['endtime'] );
-			$assignment['chargeuid'] = String::wrapId( $assignment['chargeuid'] );
-			$assignment['participantuid'] = String::wrapId( $assignment['participantuid'] );
+			$assignment['chargeuid'] = StringUtil::wrapId( $assignment['chargeuid'] );
+			$assignment['participantuid'] = StringUtil::wrapId( $assignment['participantuid'] );
 			$assignment['lang'] = IBOS::getLangSource( 'assignment.default' );
 			$assignment['assetUrl'] = IBOS::app()->assetManager->getAssetsUrl( 'assignment' );
 			// $editAlias = 'application.modules.assignment.views.default.edit';

@@ -22,7 +22,7 @@ use application\core\model\Log;
 use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\role\model\Role;
 use application\modules\user\model\User;
@@ -148,7 +148,7 @@ class BaseController extends Controller {
      * 后台图片上传
      */
     protected function imgUpload($fileArea, $inajax = false) {
-        $_FILES[$fileArea]['name'] = String::iaddSlashes(urldecode($_FILES[$fileArea]['name']));
+        $_FILES[$fileArea]['name'] = StringUtil::iaddSlashes(urldecode($_FILES[$fileArea]['name']));
         $file = $_FILES[$fileArea];
         $upload = File::getUpload($file, 'dashboard');
         if ($upload->save()) {

@@ -88,7 +88,7 @@ class Model {
     }
 
     public static function executeSqls( $sqlString ) {
-        $sqlArray = String::splitSql( $sqlString );
+        $sqlArray = StringUtil::splitSql( $sqlString );
         $command = IBOS::app()->db->createCommand();
         if ( is_array( $sqlArray ) ) {
             foreach ( $sqlArray as $sql ) {

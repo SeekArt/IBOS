@@ -22,7 +22,7 @@ use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
@@ -325,7 +325,7 @@ class DiaryController extends BaseController {
 			$post = $_POST;
 			// 安全过滤
 			foreach ( $post as $key => $val ) {
-				$post[$key] = String::filterCleanHtml( $post[$key] );
+				$post[$key] = StringUtil::filterCleanHtml( $post[$key] );
 			}
 			// 判断资源是否被删除
 			$sourceInfo = Diary::model()->fetchByPk( $post['diaryid'] );
@@ -333,7 +333,7 @@ class DiaryController extends BaseController {
 				$return['isSuccess'] = false;
 				$this->ajaxReturn( $return, Mobile::dataType() );
 			}
-			$content = String::filterDangerTag( $post['content'] );
+			$content = StringUtil::filterDangerTag( $post['content'] );
 			$sourceUrl = IBOS::app()->urlManager->createUrl( 'mobile/diary/show', array( 'id' => $post['diaryid'] ) );
 			$data = array_merge( $post, array(
 				'module' => 'diary',
@@ -345,7 +345,7 @@ class DiaryController extends BaseController {
 				'ctime' => TIMESTAMP,
 				'isdel' => 0,
 				'url' => $sourceUrl,
-				'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( String::filterCleanHtml( $content ), 50 ) ), 'diary.default' ),
+				'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $content ), 50 ) ), 'diary.default' ),
 				'uid' => Env::getRequest( 'uid' ),
 				'tocid' => Env::getRequest( 'tocid' ),
 				'touid' => Env::getRequest( 'touid' ),
@@ -453,7 +453,7 @@ class DiaryController extends BaseController {
 			}
 		}
 		//保存最新计划
-		$shareUidArr = isset( $_POST['shareuid'] ) ? String::getId( $_POST['shareuid'] ) : array();
+		$shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
 		$diary = array(
 			'uid' => $uid,
 			'diarytime' => strtotime( $_POST['todayDate'] ),
@@ -484,7 +484,7 @@ class DiaryController extends BaseController {
 	 */
 	function actionEdit() {
 		$uid = IBOS::app()->user->uid;
-		$shareUidArr = isset( $_POST['shareuid'] ) ? String::getId( $_POST['shareuid'] ) : array();
+		$shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
 		$diaryId = Env::getRequest( 'id' );
 		$diary = array(
 			'uid' => $uid,

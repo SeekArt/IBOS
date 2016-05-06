@@ -19,7 +19,7 @@ namespace application\modules\recruit\controllers;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\recruit\core\ResumeContact as ICResumeContact;
 use application\modules\recruit\model\Resume;
 use application\modules\recruit\model\ResumeContact;
@@ -135,7 +135,7 @@ class ContactController extends BaseController {
                 $contact['inputtime'] = date( 'Y-m-d', $contact['inputtime'] );
                 $contact['input'] = User::model()->fetchRealnameByUid( $contact['input'] );
                 $contact['fullname'] = ResumeDetail::model()->fetchRealnameByResumeid( $contact['resumeid'] );
-                $contact['detail'] = String::cutStr( $contact['detail'], 12 );
+                $contact['detail'] = StringUtil::cutStr( $contact['detail'], 12 );
                 $this->ajaxReturn( $contact );
             } else {
                 $this->ajaxReturn( array( 'isSuccess' => 0 ) );
@@ -151,7 +151,7 @@ class ContactController extends BaseController {
             $contactid = Env::getRequest( 'contactid' );
             $contact = ResumeContact::model()->fetchByPk( $contactid );
             $contact['inputtime'] = date( 'Y-m-d', $contact['inputtime'] );
-            $contact['upuid'] = String::wrapId( $contact['input'] );
+            $contact['upuid'] = StringUtil::wrapId( $contact['input'] );
             $this->ajaxReturn( $contact );
         }
     }

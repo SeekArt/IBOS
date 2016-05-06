@@ -6,7 +6,7 @@ namespace application\modules\article\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\core\ArticleCategory;
 use application\modules\dashboard\model\Approval;
 
@@ -91,7 +91,7 @@ class BaseController extends Controller {
     protected function getCategoryOption() {
         $category = new ArticleCategory( 'application\modules\article\model\ArticleCategory' );
         $categoryData = $category->getAjaxCategory( $category->getData( array( 'order' => 'sort ASC' ) ) );
-        return String::getTree( $categoryData, "<option value='\$catid' \$selected>\$spacer\$name</option>" );
+        return StringUtil::getTree( $categoryData, "<option value='\$catid' \$selected>\$spacer\$name</option>" );
     }
 
     /**

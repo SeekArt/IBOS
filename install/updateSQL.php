@@ -7,7 +7,6 @@ session_start();
 error_reporting( E_ERROR | E_WARNING | E_PARSE );
 @set_time_limit( 1000 );
 ini_set( 'memory_limit', '100M' );
-@set_magic_quotes_runtime( 0 );
 
 define( 'PATH_ROOT', dirname( __FILE__ ) . '/../' );  //ibos2根目录
 define( 'CONFIG_PATH', PATH_ROOT . 'system/config/' ); // ibos2配置文件目录
@@ -101,19 +100,19 @@ if ( $step == 'prepare' ) {
 	$dbPassword = $_POST['dbPassword'];
 	$dbName = $_POST['dbName'];
 	$tablePre = $_POST['tablePre'];
-	if ( !function_exists( 'mysql_connect' ) ) {
+	if ( !function_exists( 'mysqli_connect' ) ) {
 		$ret['isSuccess'] = false;
-		$ret['msg'] = 'mysql_connect' . $lang['func not exist'];
+		$ret['msg'] = 'mysqli_connect' . $lang['func not exist'];
 		echo json_encode( $ret );
 		exit();
 	}
 
-	$link = @mysql_connect( $dbHost, $dbAccount, $dbPassword );
-	$selectDb = @mysql_select_db( $dbName, $link );
+	$link = @mysqli_connect( $dbHost, $dbAccount, $dbPassword );
+	$selectDb = @mysqli_select_db($link, $dbName);
 
 	if ( !$link || !$selectDb ) {
-		$errno = mysql_errno();
-		$error = mysql_error();
+		$errno = mysqli_errno($link);
+		$error = mysqli_error($link);
 		if ( $errno == 1045 ) {
 			$errnoMsg = $lang['Database errno 1045'];
 		} elseif ( $errno == 2003 ) {
@@ -131,15 +130,15 @@ if ( $step == 'prepare' ) {
 		$oldTablePre = $_config['db']['1']['tablepre'];
 		$oldPreLength = strlen( $oldTablePre );
 		$tables = array();
-		$query = @mysql_query( "SHOW TABLES FROM $dbName" );
-		while ( $row = mysql_fetch_row( $query ) ) {
+		$query = @mysqli_query($link,  "SHOW TABLES FROM $dbName" );
+		while ( $row = mysqli_fetch_row( $query ) ) {
 			$tables[] = $row[0];
 		}
 		foreach ( $tables as $k => $tableName ) {
 			$unPreName = substr( $tableName, $oldPreLength );
 			$newTableName = $editPre . $unPreName;
 			$sql = 'RENAME TABLE `' . $tableName . '` TO `' . $newTableName . '`';
-			if ( !mysql_query( $sql ) ) {
+			if ( !mysqli_query($link,  $sql ) ) {
 				$ret['isSuccess'] = false;
 				$ret['msg'] = '数据表' . $tableName . '重命名失败，请重试或手动修改数据表名称';
 			}
@@ -157,8 +156,8 @@ if ( $step == 'prepare' ) {
 		'dbName' => $ibos2ConfigFile['db']['dbname'],
 		'dbPre' => $ibos2ConfigFile['db']['tableprefix']
 	);
-	$link = @mysql_connect( $ibos2Config['dbHost'], $ibos2Config['dbAccount'], $ibos2Config['dbPassword'] );
-	$selectDb = @mysql_select_db( $ibos2Config['dbName'], $link );
+	$link = @mysqli_connect( $ibos2Config['dbHost'], $ibos2Config['dbAccount'], $ibos2Config['dbPassword'] );
+	$selectDb = @mysqli_select_db($link,  $ibos2Config['dbName'] );
 	$allowOptions = array(
 		'convertUser', 'convertDept', 'convertPosition', 'convertMail', 'convertDiary',
 		'convertAtt', 'convertCal', 'convertNews'
@@ -192,8 +191,9 @@ function switchop( $op ) {
 }
 
 function showlog( $str ) {
-	if ( mysql_errno() ) {
-		$msg = mysql_errno() . ": " . mysql_error();
+	global $link;
+	if ( mysqli_errno($link) ) {
+		$msg = mysqli_errno($link) . ": " . mysqli_error($link);
 		header( "Location: index.php?op=installResult&res=0&msg=" . $msg );
 	}
 //	ob_flush();
@@ -201,7 +201,7 @@ function showlog( $str ) {
 }
 
 function convertUser() {
-	global $ibos2Config, $editPre;
+	global $ibos2Config, $editPre,$link;
 
 	$sql = "
 REPLACE INTO {$ibos2Config['dbPre']}user 
@@ -255,7 +255,7 @@ LEFT JOIN {$editPre}ic_members im
 ON m.uid=im.uid
 ";
 
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "用户表转换完成" );
 	$sql = "
 	REPLACE INTO {$ibos2Config['dbPre']}user_profile 
@@ -265,7 +265,7 @@ ON m.uid=im.uid
 	SELECT 
 	`uid`, `birthday`, `mobile`, `qq` 
 	FROM " . "{$editPre}common_member_profile";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "用户扩展转换完成" );
 
 
@@ -291,7 +291,7 @@ ON m.uid=im.uid
 `attachsize`,
 `oltime`
 	FROM " . "{$editPre}common_member_count";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link, $sql );
 	showlog( "用户统计表转换完成" );
 	
 		$sql = "
@@ -312,12 +312,12 @@ ON m.uid=im.uid
 `lastactivity`,
 `invisible`
 	FROM " . "{$editPre}common_member_status";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "用户状态表转换完成" );
 }
 
 function convertDept() {
-	global $ibos2Config, $editPre;
+	global $ibos2Config, $editPre,$link;
 
 	$sql = "
 REPLACE INTO {$ibos2Config['dbPre']}department
@@ -328,27 +328,27 @@ SELECT
 `deptid`,`deptname`,`upid`,`manager`,`leader`,`subleader`,`tel`,`fax`,`addr`,`func`,`sort` 
 FROM {$editPre}ic_department
 ";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 
 	showlog( "部门转换完成" );
 }
 
 function convertPosition() {
-	global $ibos2Config, $editPre;
+	global $ibos2Config, $editPre,$link;
 
 	//岗位分类表
 	$sql = "REPLACE INTO {$ibos2Config['dbPre']}position_category (`catid`,`pid`,`name`,`sort`) SELECT `catid`,`pid`,`name`,`sort` FROM {$editPre}common_position_category";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	//岗位表
 	$sql = "REPLACE INTO {$ibos2Config['dbPre']}position(`positionid`,`catid`,`posname`,`sort`,`goal`,`minrequirement`) SELECT `positionid`,`catid`,`posname`,`possort`,`goal`,`minrequirement` FROM {$editPre}common_position";
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 
 	showlog( "岗位转换完成" );
 }
 
 function convertDiary() {
 	if ( ModuleUtil::getIsEnabled( 'diary' ) ) {
-		global $ibos2Config, $editPre;
+		global $ibos2Config, $editPre,$link;
 
 		$sql = "REPLACE INTO 
 {$ibos2Config['dbPre']}diary (
@@ -356,7 +356,7 @@ function convertDiary() {
 ) SELECT 
 `diaid`,`uid`,`diadate`, 0 as `nextdiarytime`,`diatime`,`content`,`attachmentid`,`toid`,`readers`,`remark`,`stamp`,1 as `isreview`
 FROM {$editPre}diary";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "日志转换完成" );
 		// @todo:: 需要更新nextdiarytime
 
@@ -368,28 +368,28 @@ FROM {$editPre}diary";
 `recordid`,`diaid`,`content`,`uid`, 0 as `flag`, ABS((`flag`)/2-1) as `planflag`, `process`/10 , `dateline`
 
 FROM {$editPre}diary_record";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "日志记录转换完成" );
 
 		$sql = "UPDATE  
 {$ibos2Config['dbPre']}diary d,{$ibos2Config['dbPre']}diary_record dr  SET d.`nextdiarytime` = dr.plantime where d.`diaryid` = dr.`diaryid` AND planflag=1";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "日志更新完成" );
 
 
 		$sql = "REPLACE INTO {$ibos2Config['dbPre']}diary_share SELECT * FROM {$editPre}diary_default_share";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "日志默认共享转换完成" );
 	}
 }
 
 function convertNews() {
 	if ( ModuleUtil::getIsEnabled( 'article' ) ) {
-		global $ibos2Config, $editPre;
+		global $ibos2Config, $editPre,$link;
 
 		//新闻分类表
 		$sql = "REPLACE INTO {$ibos2Config['dbPre']}article_category (`catid`,`pid`,`name`,`sort`) SELECT `catid`,`pid`,`name`,`sort` FROM {$editPre}articles_category";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "新闻分类转换完成" );
 		//新闻表
 		$sql = "REPLACE INTO 
@@ -400,13 +400,13 @@ function convertNews() {
 `articleid`,`subject`,`content`,`type`,`author`,`auditor`,`addtime`,`uptime`,`clickcount`,`attachmentid`,`commentstatus`,`url`,`catid`,`status`,`deptid`,`positionid`,`uid`,`istop`,`topdays`,`topstackdate`,`ishighlight`,`highlightstyle`,`highlightstackdate`
 
 FROM {$editPre}articles";
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "新闻转换完成" );
 
 		// @todo:: 需要一个转换已读未读人员的内容
 		$query = "SELECT `articleid`,`readers`,`uptime` FROM {$editPre}articles";
-		$data = mysql_query( $query );
-		while ( $row = mysql_fetch_array( $data ) ) {
+		$data = mysqli_query($link,  $query );
+		while ( $row = mysqli_fetch_array( $data ) ) {
 			$strArr = explode( ",", trim( $row["readers"], ',' ) );
 			$str = array_filter( $strArr, create_function( '$v', 'return !empty($v);' ) );
 			foreach ( $str as $v ) {
@@ -416,11 +416,11 @@ FROM {$editPre}articles";
 			`addtime`
 			) VALUE ('" . $row["articleid"] . "','" . $v . " ','" . $row["uptime"] . "')
 			";
-				$do = mysql_query( $sql );
+				$do = mysqli_query($link,  $sql );
 			}
 		}
-		if ( mysql_errno() ) {
-			$errorMsg = mysql_errno() . ": " . mysql_error();
+		if ( mysqli_errno($link) ) {
+			$errorMsg = mysqli_errno($link) . ": " . mysqli_error($link);
 			include 'errorInfo.php';
 			exit();
 		}
@@ -429,7 +429,7 @@ FROM {$editPre}articles";
 
 function convertMail() {
 	if ( ModuleUtil::getIsEnabled( 'email' ) ) {
-		global $ibos2Config, $editPre;
+		global $ibos2Config, $editPre,$link;
 
 		$sql = "REPLACE INTO 
 {$ibos2Config['dbPre']}email(
@@ -440,7 +440,7 @@ function convertMail() {
 
 FROM {$editPre}email";
 
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "邮件转换完成" );
 
 		$sql = "REPLACE INTO 
@@ -452,7 +452,7 @@ FROM {$editPre}email";
 
 FROM {$editPre}email_body";
 
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "邮件内容转换完成" );
 
 		$sql = "REPLACE INTO 
@@ -464,13 +464,13 @@ FROM {$editPre}email_body";
 
 FROM {$editPre}email_box where boxid>4";
 
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "邮件文件夹转换完成" );
 	}
 }
 
 function convertAtt() {
-	global $ibos2Config, $editPre;
+	global $ibos2Config, $editPre,$link;
 
 	$sql = "REPLACE INTO 
 {$ibos2Config['dbPre']}attachment(
@@ -485,14 +485,14 @@ function convertAtt() {
 `downloads` 
 FROM {$editPre}attachment";
 
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "附件主表转换完成" );
 
 	$sql = "REPLACE INTO 
 {$ibos2Config['dbPre']}attachment_edit SELECT *
 FROM {$editPre}attachment_edit";
 
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "附件主表转换完成" );
 
 	for ( $i = 0; $i < 10; $i++ ) {
@@ -517,7 +517,7 @@ FROM {$editPre}attachment_edit";
 	`isimage`
 	FROM {$editPre}attachment_" . $i . "";
 
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "附件表" . $i . "转换完成" );
 	}
 
@@ -525,13 +525,13 @@ FROM {$editPre}attachment_edit";
 {$ibos2Config['dbPre']}attachment_unused SELECT *
 FROM {$editPre}attachment_unused";
 
-	$do = mysql_query( $sql );
+	$do = mysqli_query($link,  $sql );
 	showlog( "附件主表转换完成" );
 }
 
 function convertCal() {
 	if ( ModuleUtil::getIsEnabled( 'calendar' ) ) {
-		global $ibos2Config, $editPre;
+		global $ibos2Config, $editPre,$link;
 
 		$sql = "REPLACE INTO 
 {$ibos2Config['dbPre']}calendars(
@@ -590,7 +590,7 @@ function convertCal() {
 `uid`
 FROM {$editPre}calendars";
 
-		$do = mysql_query( $sql );
+		$do = mysqli_query($link,  $sql );
 		showlog( "日程表转换完成" );
 	}
 }

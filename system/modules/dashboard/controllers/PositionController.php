@@ -23,7 +23,7 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\position\model\Position;
 use application\modules\position\model\PositionRelated;
 use application\modules\position\model\PositionResponsibility;
@@ -45,7 +45,7 @@ class PositionController extends OrganizationBaseController {
      * @return void
      */
     public function actionIndex() {
-        $category = String::getTree( PositionUtil::loadPositionCategory(), $this->selectFormat );
+        $category = StringUtil::getTree( PositionUtil::loadPositionCategory(), $this->selectFormat );
         $this->setPageTitle(IBOS::lang('Position manager'));
         $this->setPageState('breadCrumbs', array(
             array('name' => IBOS::lang('Organization'), 'url' => $this->createUrl('department/index')),
@@ -130,7 +130,7 @@ class PositionController extends OrganizationBaseController {
             $catid = intval(Env::getRequest('catid'));
             // 岗位分类缓存
             $catData = PositionUtil::loadPositionCategory();
-            $data['category'] = String::getTree($catData, $this->selectFormat, $catid);
+            $data['category'] = StringUtil::getTree($catData, $this->selectFormat, $catid);
             $this->render('add', $data);
         }
     }
@@ -166,7 +166,7 @@ class PositionController extends OrganizationBaseController {
                 $data['pos'] = $pos;
                 // 岗位分类缓存
                 $catData = PositionUtil::loadPositionCategory();
-                $data['category'] = String::getTree($catData, $this->selectFormat, $pos['catid']);
+                $data['category'] = StringUtil::getTree($catData, $this->selectFormat, $pos['catid']);
 
                 $this->render('edit', $data);
             }
@@ -259,7 +259,7 @@ class PositionController extends OrganizationBaseController {
     public function actionBatchAlterUserPos() {
         $position = explode('_', Env::getRequest('id'));
         $member = Env::getRequest('member');
-        $uids = String::getUidAByUDPX($member);
+        $uids = StringUtil::getUidAByUDPX($member);
         $batchSetRes = UserUtil::batchSetUserPosition($position[1], $uids);
         if ($batchSetRes) {
             Org::update();

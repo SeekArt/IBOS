@@ -5,7 +5,7 @@ namespace application\modules\message\core;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\Comment as CommentModel;
 use application\modules\user\model\User;
 use CWidget;
@@ -57,7 +57,7 @@ class Comment extends CWidget {
      * @param string $moduleName
      */
     public function setModule($moduleName = '') {
-        $this->_module = String::filterCleanHtml($moduleName);
+        $this->_module = StringUtil::filterCleanHtml($moduleName);
     }
 
     /**
@@ -77,7 +77,7 @@ class Comment extends CWidget {
      * @param string $tableName
      */
     public function setTable($tableName = '') {
-        $this->_table = String::filterCleanHtml($tableName);
+        $this->_table = StringUtil::filterCleanHtml($tableName);
     }
 
     /**
@@ -186,7 +186,7 @@ class Comment extends CWidget {
         $data = $_POST;
         $data['uid'] = IBOS::app()->user->uid;
         // 评论所属与评论内容
-        $data['content'] = String::parseHtml( \CHtml::encode( \CHtml::encode( $data['content'] ) ) );
+        $data['content'] = StringUtil::parseHtml( \CHtml::encode( \CHtml::encode( $data['content'] ) ) );
         $data['detail'] = isset($data['detail']) ? $data['detail'] : '';
         // 判断资源是否被删除
         if ($data['table'] == 'feed') {

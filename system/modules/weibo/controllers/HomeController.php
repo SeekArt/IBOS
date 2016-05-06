@@ -46,9 +46,9 @@ class HomeController extends BaseController {
             array( 'name' => util\IBOS::lang( 'Index' ), 'url' => $this->createUrl( 'home/index' ) ),
             array( 'name' => util\IBOS::lang( 'List' ) )
         ) );
-        $var['type'] = isset( $_GET['type'] ) ? util\String::filterCleanHtml( $_GET['type'] ) : 'all';
-        $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\String::filterCleanHtml( $_GET['feedtype'] ) : 'all';
-        $var['feedkey'] = isset( $_GET['feedkey'] ) ? util\String::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
+        $var['type'] = isset( $_GET['type'] ) ? util\StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
+        $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\StringUtil::filterCleanHtml( $_GET['feedtype'] ) : 'all';
+        $var['feedkey'] = isset( $_GET['feedkey'] ) ? util\StringUtil::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
         $var['loadNew'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadMore'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadId'] = 0;
@@ -149,7 +149,7 @@ class HomeController extends BaseController {
                     }
                     // 动态类型
                     if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND type = '" . util\String::filterCleanHtml( $var['feedtype'] ) . "'";
+                        $where .=" AND type = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
                     }
                     $list = Feed::model()->getList( $where, $var['nums'], $pages->getOffset() );
                     $count = Feed::model()->count( $where );
@@ -168,7 +168,7 @@ class HomeController extends BaseController {
                     }
                     // 动态类型
                     if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND module = '" . util\String::filterCleanHtml( $var['feedtype'] ) . "'";
+                        $where .=" AND module = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
                     } else {
                         $where .=" AND module != 'weibo'";
                     }

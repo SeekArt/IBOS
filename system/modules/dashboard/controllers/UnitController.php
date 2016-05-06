@@ -6,7 +6,7 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 
 class UnitController extends BaseController {
@@ -68,7 +68,7 @@ class UnitController extends BaseController {
             $this->success(IBOS::lang('Save succeed', 'message'));
         } else {
 
-            $unit = String::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
+            $unit = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
             foreach ($keys as $key) {
                 if (!isset($unit[$key])) {
                     $unit[$key] = '';

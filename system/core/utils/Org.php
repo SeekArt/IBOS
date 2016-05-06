@@ -138,7 +138,7 @@ class Org {
         //判断是否是字符串，是的话反序列化
         if ( !is_array( $department ) ) {
             //反序列化失败返回false
-            $department = String::utf8Unserialize( $department );
+            $department = StringUtil::utf8Unserialize( $department );
         }
         if ( !empty( $department ) && is_array( $department ) ) {
             foreach ( $department as $deptId => $dept ) {
@@ -169,13 +169,13 @@ class Org {
             foreach ( $userArray['userArray'] as $user ) :
                 $deptRelated = !empty( $userArray['deptRelated'][$user['uid']] ) ? $userArray['deptRelated'][$user['uid']] : array();
                 $deptArray = array_merge( $deptRelated, array( $user['deptid'] ) );
-                $deptStr = String::wrapId( $deptArray, 'd' );
+                $deptStr = StringUtil::wrapId( $deptArray, 'd' );
                 $positionRelated = !empty( $userArray['positionRelated'][$user['uid']] ) ? $userArray['positionRelated'][$user['uid']] : array();
                 $positionArray = array_merge( $positionRelated, array( $user['positionid'] ) );
-                $positionStr = String::wrapId( $positionArray, 'p' );
+                $positionStr = StringUtil::wrapId( $positionArray, 'p' );
                 $roleRelated = !empty( $userArray['roleRelated'][$user['uid']] ) ? $userArray['roleRelated'][$user['uid']] : array();
                 $roleArray = array_merge( $roleRelated, array( $user['roleid'] ) );
-                $roleStr = String::wrapId( $roleArray, 'r' );
+                $roleStr = StringUtil::wrapId( $roleArray, 'r' );
                 $space_url = "?r=user/home/index&uid=" . $user['uid'];
                 // 头像
                 $avatarArray = Org::getDataStatic( $user['uid'], 'avatar', 'small', true );
@@ -243,7 +243,7 @@ class Org {
     private static function initPosition( $position ) {
         $posList = '';
         if ( !is_array( $position ) ) {
-            $position = String::utf8Unserialize( $position );
+            $position = StringUtil::utf8Unserialize( $position );
         }
         if ( !empty( $position ) && is_array( $position ) ) {
             foreach ( $position as $posId => $pos ) {
@@ -261,7 +261,7 @@ class Org {
 
     private static function initRole( $role ) {
         $roleList = '';
-        $role = !is_array( $role ) ? String::utf8Unserialize( $role ) : $role;
+        $role = !is_array( $role ) ? StringUtil::utf8Unserialize( $role ) : $role;
         if ( !empty( $role ) && is_array( $role ) ):
             foreach ( $role as $roleid => $row ):
                 $roleList .= "{id: 'r_{$roleid}',"

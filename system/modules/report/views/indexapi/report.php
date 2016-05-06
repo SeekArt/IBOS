@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_report.css'; ?>">
 <!-- IE 8 Hack 加入空script标签延迟html加载，为了让空值图片能正常显示 -->
@@ -18,7 +18,7 @@ use application\core\utils\String;
 							<div>
 								<a title="<?php echo $report['subject']; ?>" 
 								   href="<?php echo IBOS::app()->urlManager->createUrl( 'report/default/show', array('repid' => $report['repid']) ); ?>" 
-									><?php echo String::cutStr( $report['subject'], 40 ); ?></a>
+									><?php echo StringUtil::cutStr( $report['subject'], 40 ); ?></a>
 							</div>
 						</td>
 						<td width="20" style="text-align:right;">
@@ -61,7 +61,7 @@ use application\core\utils\String;
 							<div>
 								<a title="<?php echo $subReport['subject']; ?>" 
 								   href="<?php echo IBOS::app()->urlManager->createUrl( 'report/review/show', array('repid' => $subReport['repid']) ); ?>" 
-									><?php echo $subReport['userInfo']['realname'].' &nbsp; ' . String::cutStr( $subReport['subject'], 40 ); ?></a>
+									><?php echo $subReport['userInfo']['realname'].' &nbsp; ' . StringUtil::cutStr( $subReport['subject'], 40 ); ?></a>
 							</div>
 						</td>
 						<td width="60" style="text-align:right;">

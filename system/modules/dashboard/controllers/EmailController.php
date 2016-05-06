@@ -6,14 +6,14 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Mail;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 
 class EmailController extends BaseController {
 
     public function actionSetup() {
         $mailSetting = Setting::model()->fetchSettingValueByKey( 'mail' );
-        $mail = String::utf8Unserialize( $mailSetting );
+        $mail = StringUtil::utf8Unserialize( $mailSetting );
         $formSubmit = Env::submitCheck( 'emailSubmit' );
         if ( $formSubmit ) {
             $serverList = array();
@@ -33,7 +33,7 @@ class EmailController extends BaseController {
             if ( $filterCheck ) {
                 foreach ( $serverList as $index => $server ) {
                     if ( isset( $mail['server'][$index] ) ) {
-                        $passwordmask = String::passwordMask( $mail['server'][$index]['password'] );
+                        $passwordmask = StringUtil::passwordMask( $mail['server'][$index]['password'] );
                         $serverList[$index]['password'] = $server['password'] == $passwordmask ? $mail['server'][$index]['password'] : $server['password'];
                     }
                     if ( !isset( $server['auth'] ) ) {

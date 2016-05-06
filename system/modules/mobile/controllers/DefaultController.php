@@ -22,7 +22,7 @@ use application\core\utils\Cloud;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\WebSite;
 use application\modules\department\utils\Department as DeptUtils;
 use application\modules\main\utils\Main;
@@ -80,9 +80,9 @@ class DefaultController extends BaseController {
 		}
 		// 开始验证
 		// 登录类型
-		if ( String::isMobile( $userName ) ) {
+		if ( StringUtil::isMobile( $userName ) ) {
 			$loginType = 4;
-		} else if ( String::isEmail( $userName ) ) {
+		} else if ( StringUtil::isEmail( $userName ) ) {
 			$loginType = 2;
 		} else {
 			$loginType = 1;
@@ -102,7 +102,7 @@ class DefaultController extends BaseController {
 			$urlForward = Env::referer();
 			$log = array(
 				'terminal' => 'app',
-				'password' => String::passwordMask( $passWord ),
+				'password' => StringUtil::passwordMask( $passWord ),
 				'ip' => $ip,
 				'user' => $userName,
 				'loginType' => "username",
@@ -145,7 +145,7 @@ class DefaultController extends BaseController {
 			} else if ( $result === -3 ) {
 				$log = array(
 					'user' => $userName,
-					'password' => String::passwordMask( $passWord ),
+					'password' => StringUtil::passwordMask( $passWord ),
 					'ip' => $ip
 				);
 				Log::write( $log, 'illegal', 'module.user.login' );

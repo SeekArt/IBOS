@@ -5,7 +5,7 @@ namespace application\modules\email\controllers;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS; 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\utils\Email as EmailUtil;
@@ -65,7 +65,7 @@ class FolderController extends BaseController {
 		$name = Env::getRequest( 'name' );
 		if ( !empty( $name ) ) {
             //添加对文件夹名name的xss安全过滤
-            String::ihtmlSpecialCharsUseReference($name);
+            StringUtil::ihtmlSpecialCharsUseReference($name);
 			$data = array(
 				'sort' => intval( $sort ),
 				'name' => $name,
@@ -92,7 +92,7 @@ class FolderController extends BaseController {
 		$sort = Env::getRequest( 'sort' );
 		$name = Env::getRequest( 'name' );
 		if ( !empty( $name ) ) {
-            String::ihtmlSpecialCharsUseReference($name);
+            StringUtil::ihtmlSpecialCharsUseReference($name);
 			EmailFolder::model()->modify( $fid, array( 'sort' => intval( $sort ), 'name' => $name ) );
             $this->ajaxReturn(array(
                 'isSuccess' => true,

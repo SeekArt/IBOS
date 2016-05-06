@@ -4,7 +4,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS; 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Tasks;
 use application\modules\file\core\FileCloud;
 use application\modules\message\core\wx\WxApi;
@@ -92,7 +92,7 @@ function completeTodo( $id ) {
 function doquicklogin( $code ) {
 	$file = PATH_ROOT . './data/temp/login_' . $code . '.txt';
 	$uid = IBOS::app()->user->uid;
-	file_put_contents( $file, String::authCode( $uid, 'ENCODE', $code ) );
+	file_put_contents( $file, StringUtil::authCode( $uid, 'ENCODE', $code ) );
 	return close( '登录成功，请关闭窗口' );
 }
 

@@ -19,7 +19,7 @@
 namespace application\modules\message\core\wx;
 
 use application\core\utils\File;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use CApplicationComponent;
 
 class Push extends CApplicationComponent {

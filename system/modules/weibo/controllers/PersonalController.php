@@ -3,7 +3,7 @@
 namespace application\modules\weibo\controllers;
 
 use application\core\utils as util;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\IBOS;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
@@ -37,9 +37,9 @@ class PersonalController extends HomeBaseController {
         $var['movements'] = util\IBOS::app()->setting->get( 'setting/wbmovement' );
         // 可用的动态模块列表
         $var['enableMovementModule'] = WbCommonUtil::getMovementModules();
-        $var['type'] = isset( $_GET['type'] ) ? util\String::filterCleanHtml( $_GET['type'] ) : 'all';
-        $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\String::filterCleanHtml( $_GET['feedtype'] ) : 'all';
-        $var['feedkey'] = isset( $_GET['feedkey'] ) ? util\String::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
+        $var['type'] = isset( $_GET['type'] ) ? util\StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
+        $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\StringUtil::filterCleanHtml( $_GET['feedtype'] ) : 'all';
+        $var['feedkey'] = isset( $_GET['feedkey'] ) ? util\StringUtil::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
         $var['loadNew'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadMore'] = isset( $_GET['page'] ) ? 0 : 1;
         $var['loadId'] = 0;
@@ -167,7 +167,7 @@ class PersonalController extends HomeBaseController {
         }
         // 微博图片
         if ( $feedInfo['type'] === 'postimage' ) {
-            $var = String::utf8Unserialize( $feedInfo['feeddata'] );
+            $var = StringUtil::utf8Unserialize( $feedInfo['feeddata'] );
             $feedInfo['image_body'] = $var['body'];
             if ( !empty( $var['attach_id'] ) ) {
                 $attach = util\Attach::getAttachData( $var['attach_id'] );
@@ -177,7 +177,7 @@ class PersonalController extends HomeBaseController {
                         'attach_id' => $av['aid'],
                         'attach_name' => $av['filename'],
                         'attach_url' => util\File::fileName( $attachUrl . '/' . $av['attachment'] ),
-                        'extension' => util\String::getFileExt( $av['filename'] ),
+                        'extension' => util\StringUtil::getFileExt( $av['filename'] ),
                         'size' => $av['filesize']
                     );
                     $_attach['attach_small'] = WbCommonUtil::getThumbImageUrl( $av, WbCore\WbConst::ALBUM_DISPLAY_WIDTH, WbCore\WbConst::ALBUM_DISPLAY_HEIGHT );
@@ -365,7 +365,7 @@ class PersonalController extends HomeBaseController {
                     }
                     // 动态类型
                     if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND type = '" . util\String::filterCleanHtml( $var['feedtype'] ) . "'";
+                        $where .=" AND type = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
                     }
                     $list = Feed::model()->getList( $where, $var['nums'], $pages->getOffset() );
                     $count = Feed::model()->count( $where );
@@ -383,7 +383,7 @@ class PersonalController extends HomeBaseController {
                     }
                     // 动态类型
                     if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND module = '" . util\String::filterCleanHtml( $var['feedtype'] ) . "'";
+                        $where .=" AND module = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
                     } else {
                         $where .=" AND module != 'weibo'";
                     }

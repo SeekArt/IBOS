@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\model;
 use application\core\model\Model;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\officialdoc\utils\Officialdoc as OfficialdocUtil;
 use application\modules\user\model\User;

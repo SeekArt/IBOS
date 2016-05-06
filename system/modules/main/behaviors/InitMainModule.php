@@ -23,7 +23,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Upgrade;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\model\Setting;
@@ -227,10 +227,10 @@ class InitMainModule extends CBehavior {
 		}
 		// 初始化session id
 		$global['sid'] = $global['cookie']['sid'] = isset( $global['cookie']['sid'] ) ?
-				String::ihtmlSpecialChars( $global['cookie']['sid'] ) : '';
+				StringUtil::ihtmlSpecialChars( $global['cookie']['sid'] ) : '';
 
 		if ( empty( $global['cookie']['saltkey'] ) ) {
-			$global['cookie']['saltkey'] = String::random( 8 );
+			$global['cookie']['saltkey'] = StringUtil::random( 8 );
 			MainUtil::setCookie( 'saltkey', $global['cookie']['saltkey'], 86400 * 30, 1, 1 );
 		}
 		// 生成身份验证码
@@ -306,7 +306,7 @@ class InitMainModule extends CBehavior {
 	public function handleLoadSysCache( $event ) {
 		$caches = Syscache::model()->fetchAll();
 		foreach ( $caches as $cache ) {
-            $value = $cache['type'] == '1' ? String::utf8Unserialize( $cache['value'] ) : $cache['value'];
+            $value = $cache['type'] == '1' ? StringUtil::utf8Unserialize( $cache['value'] ) : $cache['value'];
 			if ( $cache['name'] == 'setting' ) {
 				IBOS::app()->setting->set( 'setting', $value );
 			} else {

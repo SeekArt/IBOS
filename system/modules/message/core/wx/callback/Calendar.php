@@ -18,7 +18,7 @@
 namespace application\modules\message\core\wx\callback;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Tasks;
 use application\modules\message\core\wx\Callback;
 use application\modules\message\core\wx\Code;
@@ -56,7 +56,7 @@ class Calendar extends Callback {
 				->from( '{{tasks}}' )
 				->where( 'uid=' . $uid )
 				->queryScalar();
-		$id = TIMESTAMP . String::random( 3 );
+		$id = TIMESTAMP . StringUtil::random( 3 );
 		$data = array(
 			'id' => $id,
 			'text' => $this->getMessage(),

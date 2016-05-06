@@ -244,7 +244,7 @@ class Upgrade {
         } elseif ( $type == 'ftp' ) {
             $ftpConf = Env::getRequest( 'ftp' );
             $ftpConf['on'] = 1;
-            $ftpConf['password'] = String::authcode( $ftpConf['password'], 'ENCODE', md5( IBOS::app()->setting->get( 'config/security/authkey' ) ) );
+            $ftpConf['password'] = StringUtil::authcode( $ftpConf['password'], 'ENCODE', md5( IBOS::app()->setting->get( 'config/security/authkey' ) ) );
             $ftp = Ftp::getInstance( $ftpConf );
             $ftp->connect();
             $ftp->upload( $srcFile, $desFile );
@@ -278,7 +278,7 @@ class Upgrade {
     public static function recordStep( $step ) {
         $upgradeStep = CacheModel::model()->fetchByPk( 'upgrade_step' );
         if ( !empty( $upgradeStep['cachevalue'] ) && !empty( $upgradeStep['cachevalue']['step'] ) ) {
-            $upgradeStep['cachevalue'] = String::utf8Unserialize( $upgradeStep['cachevalue'] );
+            $upgradeStep['cachevalue'] = StringUtil::utf8Unserialize( $upgradeStep['cachevalue'] );
             $upgradeStep['cachevalue']['step'] = $step;
             CacheModel::model()->add( array(
                 'cachekey' => 'upgrade_step',

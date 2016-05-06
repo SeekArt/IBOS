@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -65,7 +65,7 @@ class OptimizeController extends BaseController {
                 );
                 // 更新相应的$operation选项
                 foreach ( $sphinx as $sKey => $sValue ) {
-                    $value = String::utf8Unserialize( $sValue );
+                    $value = StringUtil::utf8Unserialize( $sValue );
                     $value[$operation] = $data[$sKey];
                     Setting::model()->updateSettingValueByKey( $sKey, $value );
                 }
@@ -80,7 +80,7 @@ class OptimizeController extends BaseController {
                 $data['operation'] = $operation;
                 $data['moduleList'] = $moduleList;
                 foreach ( $sphinx as $sKey => $sValue ) {
-                    $data[$sKey] = String::utf8Unserialize( $sValue );
+                    $data[$sKey] = StringUtil::utf8Unserialize( $sValue );
                 }
                 $this->render( 'search', $data );
             }

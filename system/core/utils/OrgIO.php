@@ -66,7 +66,7 @@ class OrgIO {
         $wechat = $row[$config['wechat']];
         $jobnumer = $row[$config['jobnumer']];
         $username = $row[$config['username']];
-        $salt = String::random( 6 );
+        $salt = StringUtil::random( 6 );
         $origPass = !empty( $password ) ? $password : '123456'; //默认密码为123456
         $data = array(
             'salt' => $salt,
@@ -145,7 +145,7 @@ class OrgIO {
             $err = $data['email'] . '邮箱已存在';
         } else if ( !empty( $data['jobnumber'] ) && in_array( $data['jobnumber'], $convert['jobnumber'] ) ) {
             $err = $data['jobnumber'] . '工号已存在';
-        } else if ( !empty( $data['email'] ) && !String::isEmail( $data['email'] ) ) {
+        } else if ( !empty( $data['email'] ) && !StringUtil::isEmail( $data['email'] ) ) {
             $err = $data['email'] . '邮件格式错误';
         }
         return $err;

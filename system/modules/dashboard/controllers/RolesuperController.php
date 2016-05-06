@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User as UserModel;
 
 class RolesuperController extends BaseController {
@@ -44,7 +44,7 @@ class RolesuperController extends BaseController {
      */
     public function actionEdit() {
         $u = Env::getRequest( 'uid' );
-        $uidATemp = String::getUidAByUDPX( $u );
+        $uidATemp = StringUtil::getUidAByUDPX( $u );
         $uidA = array_unique( $uidATemp );
         if ( count( $uidA ) > '3' ) {
             $this->error( IBOS::lang( 'superadmin cannot beyond 3' ) );

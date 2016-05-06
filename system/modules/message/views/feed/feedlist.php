@@ -2,7 +2,7 @@
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <?php $viewDesc = array( 1 => '仅自己可见', 2 => '所在部门可见', 3 => '指定人可见' ); ?>
 <?php foreach ( $list as $fd ): ?>
@@ -111,7 +111,7 @@ use application\core\utils\String;
                     'tocid' => 0,
                     'touid' => $fd['uid'],
                     'url' => $sourceUrl,
-                    'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( preg_replace( "/[\s]{2,}/", "", String::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
+                    'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
         ) ) );
             ?>
         <?php endif; ?>

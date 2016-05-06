@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core\BQQApi;
 use application\modules\user\model\UserBinding;
@@ -20,7 +20,7 @@ require_once '../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 Yii::createApplication( 'application\core\components\Application', $config );
 $value = Setting::model()->fetchSettingValueByKey( 'im' );
-$im = String::utf8Unserialize( $value );
+$im = StringUtil::utf8Unserialize( $value );
 $imCfg = $im['qq'];
 $cid = Env::getRequest( 'company_id' );
 $openId = Env::getRequest( 'open_id' );
@@ -32,7 +32,7 @@ if ( empty( $openId ) || empty( $hashskey ) || empty( $cid ) ) {
     exit( '参数错误' );
 }
 
-$uid = UserBinding::model()->fetchUidByValue( String::filterCleanHtml( $openId ), 'bqq' );
+$uid = UserBinding::model()->fetchUidByValue( StringUtil::filterCleanHtml( $openId ), 'bqq' );
 if ( $uid ) {
     $properties = array(
         'company_id' => $cid,

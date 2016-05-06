@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <!-- private css -->
@@ -20,7 +20,7 @@ use application\core\utils\String;
 						</div>
 						<div>
 							<label><?php echo $lang['Reporting to']; ?></label>
-							<input type="text" name="toid" id="rp_to" value="<?php echo String::wrapId( $report['toid'] ); ?>">
+							<input type="text" name="toid" id="rp_to" value="<?php echo StringUtil::wrapId( $report['toid'] ); ?>">
 							<div id="rp_to_box"></div>
 						</div>
 					</div>

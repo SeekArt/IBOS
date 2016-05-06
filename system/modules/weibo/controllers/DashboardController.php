@@ -19,7 +19,7 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 use application\modules\message\model\Comment;
@@ -104,7 +104,7 @@ class DashboardController extends BaseController {
                 $map = 'isdel = 1';
             }
             if ( Env::getRequest( 'search' ) ) {
-                $key = String::filterCleanHtml( Env::getRequest( 'search' ) );
+                $key = StringUtil::filterCleanHtml( Env::getRequest( 'search' ) );
                 $count = Feed::model()->countSearchFeeds( $key );
                 $inSearch = true;
             } else {
@@ -152,7 +152,7 @@ class DashboardController extends BaseController {
                 $map = 'isdel = 1';
             }
             if ( Env::getRequest( 'search' ) ) {
-                $key = String::filterCleanHtml( Env::getRequest( 'search' ) );
+                $key = StringUtil::filterCleanHtml( Env::getRequest( 'search' ) );
                 $map .= " AND content LIKE '%{$key}%'";
             }
             $count = Comment::model()->count( $map );

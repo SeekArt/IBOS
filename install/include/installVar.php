@@ -16,7 +16,7 @@ $sysDependModule = array( 'weibo' );
 $sysModules = array( 'main', 'dashboard', 'message', 'user', 'department', 'position', 'weibo', 'role' );
 // 要检测的函数
 $funcItems = array(
-	'mysql_connect' => array( 'status' => 1 ),
+	'mysqli_connect' => array( 'status' => 1 ),
 	'gethostbyname' => array( 'status' => 1 ),
 	'file_get_contents' => array( 'status' => 1 ),
 	'scandir' => array( 'status' => 1 ),
@@ -32,7 +32,7 @@ $filesockItems = array(
 );
 // 要检测的扩展
 $extLoadedItems = array(
-	'mysql' => array( 'status' => 1 ),
+	'mysqli' => array( 'status' => 1 ),
 	'pdo_mysql' => array( 'status' => 1 ),
 	'mbstring' => array( 'status' => 1 ),
 );

@@ -25,13 +25,13 @@ class FeedController extends BaseController {
             // 返回数据格式
             $return = array( 'isSuccess' => true, 'data' => '' );
             // 用户发送内容
-            $d['content'] = isset( $_POST['content'] ) ? util\String::filterDangerTag( $_POST['content'] ) : '';
+            $d['content'] = isset( $_POST['content'] ) ? util\StringUtil::filterDangerTag( $_POST['content'] ) : '';
             // 原始数据内容
             $d['body'] = $_POST['body'];
             $d['rowid'] = isset( $_POST['rowid'] ) ? intval( $_POST['rowid'] ) : 0;
             // 安全过滤
             foreach ( $_POST as $key => $val ) {
-                $_POST[$key] = util\String::filterCleanHtml( $_POST[$key] );
+                $_POST[$key] = util\StringUtil::filterCleanHtml( $_POST[$key] );
             }
             $uid = util\IBOS::app()->user->uid;
             $user = User::model()->fetchByUid( $uid );
@@ -42,7 +42,7 @@ class FeedController extends BaseController {
                     $d['deptid'] = $user['deptid'];
                 }
                 if ( $_POST['view'] == WbCore\WbConst::CUSTOM_VIEW_SCOPE ) {
-                    $scope = util\String::getId( $_POST['viewid'], true );
+                    $scope = util\StringUtil::getId( $_POST['viewid'], true );
                     if ( isset( $scope['u'] ) ) {
                         $d['userid'] = implode( ',', $scope['u'] );
                     }
@@ -60,17 +60,17 @@ class FeedController extends BaseController {
             $d['body'] = preg_replace( "/#[\s]*([^#^\s][^#]*[^#^\s])[\s]*#/is", '#' . trim( "\${1}" ) . '#', $d['body'] );
             // 附件ID
             if ( isset( $_POST['attachid'] ) ) {
-                $d['attach_id'] = trim( util\String::filterCleanHtml( $_POST['attachid'] ) );
+                $d['attach_id'] = trim( util\StringUtil::filterCleanHtml( $_POST['attachid'] ) );
                 if ( !empty( $d['attach_id'] ) ) {
                     $d['attach_id'] = explode( ',', $d['attach_id'] );
                     array_map( 'intval', $d['attach_id'] );
                 }
             }
             // 发送动态的类型
-            $type = util\String::filterCleanHtml( $_POST['type'] );
-            $table = isset( $_POST['table'] ) ? util\String::filterCleanHtml( $_POST['table'] ) : 'feed';
+            $type = util\StringUtil::filterCleanHtml( $_POST['type'] );
+            $table = isset( $_POST['table'] ) ? util\StringUtil::filterCleanHtml( $_POST['table'] ) : 'feed';
             // 所属模块名称
-            $module = isset( $_POST['module'] ) ? util\String::filterCleanHtml( $_POST['module'] ) : 'weibo';   // 当前动态产生所属的应用
+            $module = isset( $_POST['module'] ) ? util\StringUtil::filterCleanHtml( $_POST['module'] ) : 'weibo';   // 当前动态产生所属的应用
             $data = Feed::model()->put( util\IBOS::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
             if ( !$data ) {
                 $return['isSuccess'] = false;
@@ -198,7 +198,7 @@ class FeedController extends BaseController {
             $post = $_POST;
             // 安全过滤
             foreach ( $post as $key => $val ) {
-                $post[$key] = util\String::filterCleanHtml( $post[$key] );
+                $post[$key] = util\StringUtil::filterCleanHtml( $post[$key] );
             }
             // 判断资源是否删除
             if ( empty( $post['curid'] ) ) {
@@ -260,7 +260,7 @@ class FeedController extends BaseController {
                 // 仅自己部门可见，取出自己的部门ID
                 if ( $feed['view'] == '2' ) {
                     $alldowndeptid = Department::model()->fetchChildIdByDeptids( util\IBOS::app()->user->alldeptid );
-                    $deptIds = util\String::filterStr( util\IBOS::app()->user->alldeptid . ',' . $alldowndeptid );
+                    $deptIds = util\StringUtil::filterStr( util\IBOS::app()->user->alldeptid . ',' . $alldowndeptid );
                 } else {
                     $deptIds = $feed['deptid'];
                 }

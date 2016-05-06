@@ -8,7 +8,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\department\model\Department;
 use application\modules\department\model\DepartmentRelated;
@@ -33,7 +33,7 @@ class ImController extends BaseController {
         }
         $diff = array_diff( $allowType, array( $type ) );
         $value = Setting::model()->fetchSettingValueByKey( 'im' );
-        $im = String::utf8Unserialize( $value );
+        $im = StringUtil::utf8Unserialize( $value );
         // 是否提交？
         $formSubmit = Env::submitCheck( 'imSubmit' );
         if ( $formSubmit ) {
@@ -161,7 +161,7 @@ class ImController extends BaseController {
                     }
                     $cache = Cache::model()->fetchByPk( 'deptrelate' );
                     if ( $cache ) {
-                        $cache = String::utf8Unserialize( $cache['cachevalue'] );
+                        $cache = StringUtil::utf8Unserialize( $cache['cachevalue'] );
                         $cache = $cache + $deptRelates;
                         Cache::model()->updateByPk( 'deptrelate', array( 'cachevalue' => serialize( $cache ) ) );
                     } else {
@@ -177,7 +177,7 @@ class ImController extends BaseController {
                     $depts = (array) $xml->Database->RTX_Dept;
                     $count = count( $depts['Item'] );
                     $cache = Cache::model()->fetchByPk( 'deptrelate' );
-                    $deptRelates = String::utf8Unserialize( $cache['cachevalue'] );
+                    $deptRelates = StringUtil::utf8Unserialize( $cache['cachevalue'] );
                     $datas = array_slice( $depts['Item'], $start, 20 );
                     foreach ( $datas as $dept ) {
                         $dept = (array) $dept;
@@ -196,7 +196,7 @@ class ImController extends BaseController {
                     $xml = simplexml_load_string( $file );
                     $related = (array) $xml->Database->RTX_DeptUser;
                     $rec = Cache::model()->fetchByPk( 'deptrelate' );
-                    $deptRelates = String::utf8Unserialize( $rec['cachevalue'] );
+                    $deptRelates = StringUtil::utf8Unserialize( $rec['cachevalue'] );
                     $userRelates = $userDeptRelates = array();
                     $ip = IBOS::app()->setting->get( 'clientip' );
                     foreach ( $related['Item'] as $dr ) {
@@ -221,12 +221,12 @@ class ImController extends BaseController {
                     $rec = Cache::model()->fetchByPk( 'userrelate' );
                     $userDeptRec = Cache::model()->fetchByPk( 'userdeptrelate' );
                     $origpwd = Cache::model()->fetchByPk( 'initpwd' );
-                    $userRelates = String::utf8Unserialize( $rec['cachevalue'] );
-                    $userDeptRelates = String::utf8Unserialize( $userDeptRec['cachevalue'] );
+                    $userRelates = StringUtil::utf8Unserialize( $rec['cachevalue'] );
+                    $userDeptRelates = StringUtil::utf8Unserialize( $userDeptRec['cachevalue'] );
                     $ip = IBOS::app()->setting->get( 'clientip' );
                     foreach ( $datas as $user ) {
                         $user = (array) $user;
-                        $salt = String::random( 6 );
+                        $salt = StringUtil::random( 6 );
                         $username = (string) $user['@attributes']['UserName'];
                         if ( UserModel::model()->userNameExists( $username ) ) {
                             continue;
@@ -234,12 +234,12 @@ class ImController extends BaseController {
                         $data = array(
                             'username' => $username,
                             'email' => (string) $user['@attributes']['Email'],
-                            'mobile' => String::cutStr( (string) $user['@attributes']['Mobile'], 11, '' ),
+                            'mobile' => StringUtil::cutStr( (string) $user['@attributes']['Mobile'], 11, '' ),
                             'realname' => (string) $user['@attributes']['Name'],
                             'deptid' => $userRelates[$user['@attributes']['ID']],
                             'salt' => $salt,
                             'createtime' => TIMESTAMP,
-                            'guid' => String::createGuid(),
+                            'guid' => StringUtil::createGuid(),
                             'password' => md5( md5( $origpwd['cachevalue'] ) . $salt ),
                         );
                         $newId = UserModel::model()->add( $data, true, true );
@@ -261,7 +261,7 @@ class ImController extends BaseController {
                     }
                     $cache = Cache::model()->fetchByPk( 'newuser' );
                     if ( $cache ) {
-                        $cache = String::utf8Unserialize( $cache['cachevalue'] );
+                        $cache = StringUtil::utf8Unserialize( $cache['cachevalue'] );
                         $cache = $cache + $newUser;
                         Cache::model()->updateByPk( 'newuser', array( 'cachevalue' => serialize( $cache ) ) );
                     } else {

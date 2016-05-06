@@ -12,7 +12,7 @@ use application\core\controllers\Controller;
 use application\core\model\Log;
 use application\core\utils as util;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Announcement;
 use application\modules\dashboard\model\LoginTemplate;
 use application\modules\message\core\co\CoApi;
@@ -61,9 +61,9 @@ class DefaultController extends Controller {
             // 用户名
             $userName = util\Env::getRequest( 'username' );
             // 登录类型
-            if ( String::isMobile( $userName ) ) {
+            if ( StringUtil::isMobile( $userName ) ) {
                 $loginType = 4;
-            } else if ( String::isEmail( $userName ) ) {
+            } else if ( StringUtil::isEmail( $userName ) ) {
                 $loginType = 2;
             } else {
                 $loginType = 1;
@@ -120,9 +120,9 @@ class DefaultController extends Controller {
             }
 
             // 登录类型
-            if ( String::isMobile( $userName ) ) {
+            if ( StringUtil::isMobile( $userName ) ) {
                 $loginType = 4;
-            } else if ( String::isEmail( $userName ) ) {
+            } else if ( StringUtil::isEmail( $userName ) ) {
                 $loginType = 2;
             } else {
                 $loginType = 1;
@@ -165,9 +165,9 @@ class DefaultController extends Controller {
         $ip = util\IBOS::app()->setting->get( 'clientip' );
         // 开始验证
         // 登录类型
-        if ( String::isMobile( $userName ) ) {
+        if ( StringUtil::isMobile( $userName ) ) {
             $loginType = 4;
-        } else if ( String::isEmail( $userName ) ) {
+        } else if ( StringUtil::isEmail( $userName ) ) {
             $loginType = 2;
         } else {
             $loginType = 1;
@@ -191,7 +191,7 @@ class DefaultController extends Controller {
                 $urlForward = empty( $refer ) ? util\Env::referer() : $refer;
                 $log = array(
                     'terminal' => 'web',
-                    'password' => util\String::passwordMask( $passWord ),
+                    'password' => util\StringUtil::passwordMask( $passWord ),
                     'ip' => $ip,
                     'user' => $userName,
                     'loginType' => $loginType,
@@ -223,7 +223,7 @@ class DefaultController extends Controller {
                 FailedIp::model()->insertIp( $newIp );
                 $log = array(
                     'user' => $userName,
-                    'password' => util\String::passwordMask( $passWord ),
+                    'password' => util\StringUtil::passwordMask( $passWord ),
                     'ip' => $ip
                 );
                 Log::write( $log, 'illegal', 'module.user.login' );
@@ -283,7 +283,7 @@ class DefaultController extends Controller {
         $data = array(
             'assetUrl' => $this->getAssetUrl( 'user' ),
             'wxbinding' => !empty( $corpid ),
-            'randomcode' => util\String::random( 11 ),
+            'randomcode' => util\StringUtil::random( 11 ),
         );
         $this->renderPartial( 'wxcode', $data );
     }

@@ -19,7 +19,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
@@ -108,9 +108,9 @@ class SettingController extends BaseController {
                 if ( $key == 'birthday' && !empty( $value ) ) {
                     $value = strtotime( $value );
                 }
-                $model['UserProfile'][$key] = String::filterCleanHtml( $value );
+                $model['UserProfile'][$key] = StringUtil::filterCleanHtml( $value );
             } else if ( in_array( $key, $userField ) ) {
-                $model['User'][$key] = String::filterCleanHtml( $value );
+                $model['User'][$key] = StringUtil::filterCleanHtml( $value );
             }
         }
         // 更新操作

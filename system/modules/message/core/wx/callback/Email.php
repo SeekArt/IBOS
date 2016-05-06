@@ -18,7 +18,7 @@
 namespace application\modules\message\core\wx\callback;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email as EM;
 use application\modules\email\model\EmailBody;
 use application\modules\message\core\wx\Callback;
@@ -70,7 +70,7 @@ class Email extends Callback {
 		$uid = IBOS::app()->user->uid;
 		$data = array(
 			'fromid' => $uid,
-			'toids' => String::wrapId( $toUser['uid'] ),
+			'toids' => StringUtil::wrapId( $toUser['uid'] ),
 			'subject' => $parts[1],
 			'content' => $parts[2],
 			'sendtime' => TIMESTAMP,

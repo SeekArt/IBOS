@@ -18,7 +18,7 @@ namespace application\modules\assignment\core;
 
 use application\core\utils\Attach;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\model\AssignmentLog;
@@ -50,8 +50,8 @@ Class AssignmentOpApi extends System {
             Attach::updateAttach($assignment['attachmentid']);
         }
         // 消息提醒
-        $chargeuid = String::getId($post['chargeuid']);
-        $participantuid = String::getId($post['participantuid']);
+        $chargeuid = StringUtil::getId($post['chargeuid']);
+        $participantuid = StringUtil::getId($post['participantuid']);
         $uidArr = array_merge($participantuid, $chargeuid);
         $this->sendNotify($uid, $assignmentId, $assignment['subject'], $uidArr, 'assignment_new_message');
         // 动态推送

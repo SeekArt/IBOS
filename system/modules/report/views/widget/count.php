@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <div class="statistics-box">
@@ -107,7 +107,7 @@ use application\core\utils\String;
                                 position: 'inside'
                             }
                         },
-                        data:[<?php echo String::iImplode( $count); ?>]
+                        data:[<?php echo StringUtil::iImplode( $count); ?>]
                     },
                     {
                         name:'<?php echo $series['name']; ?>',

@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\vote\components\VotePlugManager;
 use application\modules\vote\model\Vote as VoteModel;
 use application\modules\vote\model\VoteItem;
@@ -128,7 +128,7 @@ abstract class Vote {
                 //取得当前投票状态
                 $mothedName = 'get' . ucfirst( $relatedModule ) . 'Vote';
                 $voteStatus = VotePlugManager::$mothedName()->getStatus( $relatedModule, $relatedId, $votes['vote'] );
-                $votes['vote']['subject'] = String::cutStr( $votes['vote']['subject'], 60 );
+                $votes['vote']['subject'] = StringUtil::cutStr( $votes['vote']['subject'], 60 );
                 $data = array(
                     'voteData' => $votes,
                     'votePeopleNumber' => $votePeopleNumber,

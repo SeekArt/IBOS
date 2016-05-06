@@ -17,7 +17,7 @@
 namespace application\modules\recruit\core;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\recruit\model\ResumeDetail as RDModel;
 use application\modules\user\model\User;
 
@@ -32,7 +32,7 @@ class ResumeContact {
         foreach ( $contactList as $k => $contact ) {
             $contactList[$k]['realname'] = RDModel::model()->fetchRealnameByResumeid( $contact['resumeid'] );
             $contactList[$k]['inputtime'] = date( 'Y-m-d', $contact['inputtime'] );
-            $contactList[$k]['detail'] = String::cutStr( $contact['detail'], 12 );
+            $contactList[$k]['detail'] = StringUtil::cutStr( $contact['detail'], 12 );
             if ( $contactList[$k]['input'] ) {
                 $contactList[$k]['input'] = User::model()->fetchRealnameByUid( $contact['input'] );
             } else {
@@ -60,7 +60,7 @@ class ResumeContact {
                 $contactArr[$k] = $k === 'detail' ? \CHtml::encode( $v ) : $v;
             }
         }
-        $input = implode( ',', String::getId( $contactArr['upuid'] ) );
+        $input = implode( ',', StringUtil::getId( $contactArr['upuid'] ) );
         $contactArr['input'] = empty( $input ) ? IBOS::app()->user->uid : $input;
         if ( $contactArr['inputtime'] != 0 ) {
             $contactArr['inputtime'] = strtotime( $contactArr['inputtime'] );

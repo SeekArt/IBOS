@@ -17,7 +17,7 @@
 namespace application\modules\report\core;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class ReportType {
 
@@ -29,7 +29,7 @@ class ReportType {
     public static function handleSaveData( $data ) {
         $type = array(
             'sort' => intval( $data['sort'] ),
-            'typename' => String::filterCleanHtml( $data['typename'] ),
+            'typename' => StringUtil::filterCleanHtml( $data['typename'] ),
             'uid' => IBOS::app()->user->uid,
             'intervaltype' => intval( $data['intervaltype'] ),
             'intervals' => intval( $data['intervals'] ),

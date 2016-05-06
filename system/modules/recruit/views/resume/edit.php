@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <!-- load css -->
@@ -331,7 +331,7 @@ use application\core\utils\String;
 						<div class="span4" data-expand-target="recruittargetposition" <?php if( !$dashboardConfig['recruittargetposition']['visi'] ): ?>style="display: none;"<?php endif; ?>>
 							<div class="control-group">
 								<label for=""><?php echo $lang['Job candidates']; ?></label>
-								<input type="text" name="positionid" id="recruittargetposition" value="<?php echo String::wrapId( $resumeDetail['positionid'], 'p' ); ?>">
+								<input type="text" name="positionid" id="recruittargetposition" value="<?php echo StringUtil::wrapId( $resumeDetail['positionid'], 'p' ); ?>">
 							</div>
 						</div>
 						<!-- 期望月薪 -->

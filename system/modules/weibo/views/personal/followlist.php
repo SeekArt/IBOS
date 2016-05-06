@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <?php if ( !empty( $list ) ): ?>
     <?php foreach ( $list as $uid => $followState ) : ?>
@@ -15,7 +15,7 @@ use application\core\utils\String;
                         <strong><?php echo $followState['user']['realname']; ?></strong><?php if ( !empty( $followState['user']['posname'] ) ): ?><span>&nbsp;·&nbsp;</span><span><?php echo $followState['user']['posname']; ?></span><?php endif; ?>
                     </div>
                     <div class="wb-fans-from">
-                        <?php if ( !empty( $followState['user']['bio'] ) ): ?><?php echo String::cutStr( $followState['user']['bio'], 20 ); ?><?php else: ?>TA什么都没有写<?php endif; ?>
+                        <?php if ( !empty( $followState['user']['bio'] ) ): ?><?php echo StringUtil::cutStr( $followState['user']['bio'], 20 ); ?><?php else: ?>TA什么都没有写<?php endif; ?>
                     </div>
                 </div>
                 <div class="rdb wbc-box2">

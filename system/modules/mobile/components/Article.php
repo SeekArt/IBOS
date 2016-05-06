@@ -19,7 +19,7 @@ namespace application\modules\mobile\components;
 
 use application\core\components\Category;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\core\Article as ICArticle;
 use application\modules\article\model\Article as ArticleModel;
 use application\modules\article\model\ArticleCategory;
@@ -75,7 +75,7 @@ class Article {
 		);
 
 		foreach ($articleList as $key => $value) {
-			$value['content'] = String::cutStr(strip_tags($value['content']), 30);
+			$value['content'] = StringUtil::cutStr(strip_tags($value['content']), 30);
 			$articleList[$key] = array_filter($value); //清空空字段			
 			$articleList[$key]['readstatus'] = ($articleList[$key]['readStatus']==1);
 		}
@@ -92,7 +92,7 @@ class Article {
         $category = new Category( 'application\modules\article\model\ArticleCategory' );
         $data = $category->getData();
         $format = "<li> <a href='#news' onclick='news.loadList(\$catid)'>\$spacer<i class='ao-file'></i>\$name</a> </li>";
-        $return = String::getTree( $data, $format, 0, '&nbsp;&nbsp;&nbsp;&nbsp;', array( '', '', '' ) );
+        $return = StringUtil::getTree( $data, $format, 0, '&nbsp;&nbsp;&nbsp;&nbsp;', array( '', '', '' ) );
         return $return;
     }
 

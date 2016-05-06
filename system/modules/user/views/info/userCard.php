@@ -2,7 +2,7 @@
 
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <!--微博个人资料卡 S-->
 <div class="uic-banner rdt">
@@ -17,7 +17,7 @@ use application\core\utils\String;
 		<?php endif; ?>
 		<?php if ( Module::getIsEnabled( 'email' ) ): ?><a target="_blank" href="<?php echo IBOS::app()->createUrl( 'email/content/add', array( 'toid' => $user['uid'] ) ); ?>" title="<?php echo $lang['Send email']; ?>" class="co-temail"></a><?php endif; ?>
 		<?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
-			<a title="<?php echo $lang['Send message']; ?>" href="javascript:Ibos.showPmDialog('<?php echo String::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="co-tpm">
+			<a title="<?php echo $lang['Send message']; ?>" href="javascript:Ibos.showPmDialog('<?php echo StringUtil::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="co-tpm">
 				<i class="<?php echo $status; ?>"></i>
 			</a>
 		<?php endif; ?>

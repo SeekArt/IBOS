@@ -17,7 +17,7 @@
 namespace application\modules\recruit\core;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\position\utils\Position;
 use application\modules\recruit\model\Resume;
 
@@ -74,7 +74,7 @@ class ResumeDetail {
                 $fieldArr[$key] = in_array( $key, $filterList ) ? \CHtml::encode( $value ) : $value;
             }
         }
-        $fieldArr['positionid'] = implode( ',', String::getId( $fieldArr['positionid'] ) );
+        $fieldArr['positionid'] = implode( ',', StringUtil::getId( $fieldArr['positionid'] ) );
         return $fieldArr;
     }
 

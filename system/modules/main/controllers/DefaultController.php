@@ -18,7 +18,7 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Module as ModuleUtil;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\department\model\Department;
 use application\modules\main\model\MenuCommon;
@@ -166,7 +166,7 @@ class DefaultController extends Controller {
                 if ( $uid == 1 ) {
                     // 如果是管理员,返回管理员的初始化引导视图
                     $guideAlias = 'application.modules.main.views.default.adminGuide';
-                    $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+                    $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
                     $data['fullname'] = $unit['fullname'];
                     $data['shortname'] = $unit['shortname'];
                     $data['pageUrl'] = $this->getPageUrl();
@@ -176,7 +176,7 @@ class DefaultController extends Controller {
                     // 返回一般用户的初始化引导视图
                     $guideAlias = 'application.modules.main.views.default.initGuide';
                 }
-                $account = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'account' ) );
+                $account = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'account' ) );
                 $data['account'] = $account;
                 if ( $account['mixed'] ) {
                     $data['preg'] = "[0-9]+[A-Za-z]+|[A-Za-z]+[0-9]+";
@@ -203,10 +203,10 @@ class DefaultController extends Controller {
                 'shortname', 'fax', 'zipcode',
                 'address', 'adminemail', 'systemurl', 'corpcode'
             );
-            $unit = String::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+            $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
             foreach ( $keys as $key ) {
                 if ( isset( $_POST[$key] ) ) {
-                    $postData[$key] = String::filterCleanHtml( $_POST[$key] );
+                    $postData[$key] = StringUtil::filterCleanHtml( $_POST[$key] );
                 } else {
                     $postData[$key] = '';
                 }
@@ -227,7 +227,7 @@ class DefaultController extends Controller {
                 $posCache = IBOS::app()->setting->get( 'cache/position' );
                 $selectFormat = "<option value='\$deptid' \$selected>\$spacer\$deptname</option>";
                 $res['isSuccess'] = true;
-                $res['depts'] = String::getTree( $deptCache, $selectFormat );
+                $res['depts'] = StringUtil::getTree( $deptCache, $selectFormat );
                 $res['positions'] = $posCache;
             } else {
                 $res['isSuccess'] = false;
@@ -242,7 +242,7 @@ class DefaultController extends Controller {
      * @param string $depts 用户输入的部门字符串
      */
     private function handleDept( $depts ) {
-        $depts = trim( String::filterCleanHtml( $depts ) ); // 安全过滤
+        $depts = trim( StringUtil::filterCleanHtml( $depts ) ); // 安全过滤
         $deptArr = preg_split( "/\n/", $depts ); // 换行符分割部门字符串
         if ( !empty( $deptArr ) ) {
             // 组合带有空格数的部门数组
@@ -315,10 +315,10 @@ class DefaultController extends Controller {
             }
             foreach ( $fields as $field ) {
                 if ( isset( $_POST[$field] ) && !empty( $_POST[$field] ) ) {
-                    $_POST[$field] = String::filterDangerTag( $_POST[$field] ); // 安全过滤
+                    $_POST[$field] = StringUtil::filterDangerTag( $_POST[$field] ); // 安全过滤
                 }
             }
-            $salt = String::random( 6 );
+            $salt = StringUtil::random( 6 );
             $userData = array(
                 'salt' => $salt,
                 'username' => $_POST['username'],
@@ -450,10 +450,10 @@ class DefaultController extends Controller {
                     // 生日字段的转换处理
                     if ( $key == 'birthday' ) {
                         $value = strtotime( $value );
-                        $model['application\modules\user\model\UserProfile'][$key] = String::filterCleanHtml( $value );
+                        $model['application\modules\user\model\UserProfile'][$key] = StringUtil::filterCleanHtml( $value );
                     }
                 } else if ( in_array( $key, $userField ) ) {
-                    $model['application\modules\user\model\User'][$key] = String::filterCleanHtml( $value );
+                    $model['application\modules\user\model\User'][$key] = StringUtil::filterCleanHtml( $value );
                 }
             }
             // 更新操作
@@ -524,7 +524,7 @@ class DefaultController extends Controller {
      */
     public function actionModuleGuide() {
         $uid = IBOS::app()->user->uid;
-        $id = String::filterCleanHtml( Env::getRequest( 'id' ) );
+        $id = StringUtil::filterCleanHtml( Env::getRequest( 'id' ) );
         $op = Env::getRequest( 'op' );
         if ( $op == 'checkHasGuide' ) {
             // 返回用户是否已经引导过

@@ -17,7 +17,7 @@
 namespace application\core\controllers;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
 use CController;
 use CJSON;

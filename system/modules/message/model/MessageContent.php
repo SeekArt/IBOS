@@ -4,7 +4,7 @@ namespace application\modules\message\model;
 
 use application\core\model\Model;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\utils\Message as MessageUtil;
 use application\modules\user\model\User;
 
@@ -262,7 +262,7 @@ class MessageContent extends Model {
         if ( !$newMessageId ) {
             return false;
         } else {
-            $listData['lastmessage'] = serialize( array( 'fromuid' => $fromUid, 'content' => String::filterCleanHtml( $content ) ) );
+            $listData['lastmessage'] = serialize( array( 'fromuid' => $fromUid, 'content' => StringUtil::filterCleanHtml( $content ) ) );
             if ( 1 == $listInfo['type'] ) {
                 // 一对一
                 $listData['usernum'] = 2;
@@ -325,7 +325,7 @@ class MessageContent extends Model {
      */
     private function parseMessageList( &$list ) {
         foreach ( $list as &$v ) {
-            $v['lastmessage'] = String::utf8Unserialize( $v['lastmessage'] );
+            $v['lastmessage'] = StringUtil::utf8Unserialize( $v['lastmessage'] );
             $v['lastmessage']['touid'] = $this->parseToUidByMinMax( $v['minmax'], $v['lastmessage']['fromuid'] );
             $v['lastmessage']['user'] = User::model()->fetchByUid( $v['lastmessage']['fromuid'] );
             $v['touserinfo'] = User::model()->fetchAllByUids( $v['lastmessage']['touid'] );
@@ -355,14 +355,14 @@ class MessageContent extends Model {
             return false;
         }
         $list['fromuid'] = $fromUid;
-        $list['title'] = isset( $data['title'] ) ? String::filterCleanHtml( $data['title'] ) : String::filterCleanHtml( String::cutStr( $data['content'], 20 ) );
+        $list['title'] = isset( $data['title'] ) ? StringUtil::filterCleanHtml( $data['title'] ) : StringUtil::filterCleanHtml( StringUtil::cutStr( $data['content'], 20 ) );
         $list['usernum'] = count( $data['users'] );
         $list['type'] = is_numeric( $data['type'] ) ? $data['type'] : (2 == $list['usernum'] ? 1 : 2);
         $list['minmax'] = $this->getUidMinMax( $data['users'] );
         $list['mtime'] = $data['mtime'];
         $list['lastmessage'] = serialize( array(
             'fromuid' => $fromUid,
-            'content' => String::filterDangerTag( $data['content'] )
+            'content' => StringUtil::filterDangerTag( $data['content'] )
                 ) );
 
         $listRec = MessageList::model()->findByAttributes( array( 'type' => $list['type'], 'minmax' => $list['minmax'] ) );

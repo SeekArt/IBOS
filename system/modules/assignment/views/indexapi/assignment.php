@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/assignment.css?<?php echo VERHASH; ?>">
@@ -18,7 +18,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                     </td>
                     <td>
                         <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $charge['assignmentid'] ) ); ?>" class="xcm">
-                            <?php echo String::cutStr( $charge['subject'], 40 ); ?>
+                            <?php echo StringUtil::cutStr( $charge['subject'], 40 ); ?>
                         </a>
                         <div class="fss">
                             <?php echo $charge['designee']['realname']; ?>
@@ -68,7 +68,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                     </td>
                     <td>
                         <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $designee['assignmentid'] ) ); ?>" class="xcm">
-                            <?php echo String::cutStr( $designee['subject'], 40 ); ?>
+                            <?php echo StringUtil::cutStr( $designee['subject'], 40 ); ?>
                         </a>
                         <div class="fss">
                             <?php echo $designee['charge']['realname']; ?>

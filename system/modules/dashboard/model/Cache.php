@@ -18,7 +18,7 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class Cache extends Model {
 
@@ -37,7 +37,7 @@ class Cache extends Model {
      */
     public function fetchArrayByPk( $pk ) {
         $array = $this->fetchByPk( $pk );
-        return String::utf8Unserialize( $array['cachevalue'] );
+        return StringUtil::utf8Unserialize( $array['cachevalue'] );
     }
 
 }

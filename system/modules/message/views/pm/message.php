@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Convert;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <?php foreach ( $message['data'] as $row ): ?>
@@ -15,7 +15,7 @@ use application\core\utils\String;
 			<div class="msg-box <?php if ( $row['fromuid'] == $uid ): ?>msg-box-inverse bglb<?php else: ?><?php endif; ?>">
 				<span class="msg-box-arrow"> <i></i></span>
 				<div class="msg-box-body">
-					<p class="xcm mb"><?php echo String::parseHtml( $row['content'] ); ?></p>
+					<p class="xcm mb"><?php echo StringUtil::parseHtml( $row['content'] ); ?></p>
 					<div>
 						<span class="tcm fss"><?php echo Convert::formatDate( $row['mtime'], 'u' ); ?></span>
 						<div class="pull-right">

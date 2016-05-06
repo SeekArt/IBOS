@@ -19,7 +19,7 @@ namespace application\modules\recruit\controllers;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\recruit\core\RecruitInterview as ICRecruitInterview;
 use application\modules\recruit\model\ResumeDetail;
 use application\modules\recruit\model\ResumeInterview;
@@ -68,7 +68,7 @@ class InterviewController extends BaseController {
                 // 返回刚添加的面试记录
                 $interview = ResumeInterview::model()->fetchByPk( $interviewid );
                 $interview['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
-                $interview['process'] = String::cutStr( $interview['process'], 12 );
+                $interview['process'] = StringUtil::cutStr( $interview['process'], 12 );
                 $interview['interviewer'] = User::model()->fetchRealnameByUid( $interview['interviewer'] );
                 $interview['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 $this->ajaxReturn( $interview );
@@ -99,7 +99,7 @@ class InterviewController extends BaseController {
             $interviewid = Env::getRequest( 'interviewid' );
             $interview = ResumeInterview::model()->fetchByPk( $interviewid );
             $interview['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
-            $interview['interviewer'] = String::wrapId( $interview['interviewer'] );
+            $interview['interviewer'] = StringUtil::wrapId( $interview['interviewer'] );
             $this->ajaxReturn( $interview );
         }
     }
@@ -117,7 +117,7 @@ class InterviewController extends BaseController {
                 $interview['fullname'] = ResumeDetail::model()->fetchRealnameByResumeid( $interview['resumeid'] );
                 $interview['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
                 $interview['interviewer'] = User::model()->fetchRealnameByUid( $interview['interviewer'] );
-                $interview['process'] = String::cutStr( $interview['process'], 12 );
+                $interview['process'] = StringUtil::cutStr( $interview['process'], 12 );
                 $this->ajaxReturn( $interview );
             } else {
                 $this->ajaxReturn( array( 'isSuccess' => 0 ) );

@@ -10,7 +10,7 @@
 namespace application\modules\main\model;
 
 use application\core\model\Model;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class Session extends Model {
 
@@ -64,7 +64,7 @@ class Session extends Model {
 	 */
 	public function deleteBySession( $session ) {
 		if ( !empty( $session ) && is_array( $session ) ) {
-			$session = String::iaddSlashes( $session );
+			$session = StringUtil::iaddSlashes( $session );
 			$condition = "sid='{$session['sid']}'";
 			$this->deleteAll( $condition );
 		}

@@ -5,7 +5,7 @@ namespace application\modules\email\controllers;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\core\WebEmail;
 use application\modules\email\core\WebMailImap;
 use application\modules\email\core\WebMailPop;
@@ -42,7 +42,7 @@ class WebController extends BaseController {
         if ($query && !empty($query)) {
             //根据邮箱获取邮件
             $user = User::model()->fetchByUid($query['uid']);
-            $pwd = String::authCode($query['password'], 'DECODE', $user['salt']);
+            $pwd = StringUtil::authCode($query['password'], 'DECODE', $user['salt']);
             list($prefix,, ) = explode('.', $query['server']);
             $host = $query['server'];
             $port = $query['port'];
@@ -58,7 +58,7 @@ class WebController extends BaseController {
                 foreach ($emails as $email) {
                     //根据时间戳来判断是那一封邮件的附件
                     if ($query['sendtime'] == strtotime($email['date'])) {
-                        $remote = String::utf8Unserialize($query['remoteattachment']);
+                        $remote = StringUtil::utf8Unserialize($query['remoteattachment']);
                         if ($remote[$i - 1]['name'] == $email['attachments'][$i - 1]['name']) {
                             //下载
                             $attach = $webEmail->getAttachment($email['uid'], $i - 1);
@@ -145,14 +145,14 @@ class WebController extends BaseController {
             EmailWeb::model()->modify($id, $web);
             // 更新文件夹名称
             if (!empty($web['foldername'])) {
-                EmailFolder::model()->updateAll(array('name' => String::filterCleanHtml($web['foldername'])), 'webid = ' . $id . ' AND uid = ' . $this->uid);
+                EmailFolder::model()->updateAll(array('name' => StringUtil::filterCleanHtml($web['foldername'])), 'webid = ' . $id . ' AND uid = ' . $this->uid);
             }
             $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
             $web = EmailWeb::model()->fetch("webid = {$id} AND uid = " . $this->uid);
             if ($web) {
                 $web['foldername'] = EmailFolder::model()->fetchFolderNameByWebId($id);
-                $web['password'] = String::authCode($web['password'], 'DECODE', IBOS::app()->user->salt);
+                $web['password'] = StringUtil::authCode($web['password'], 'DECODE', IBOS::app()->user->salt);
                 $this->setPageTitle(IBOS::lang('Edit web email'));
                 $this->setPageState('breadCrumbs', array(
                     array('name' => IBOS::lang(IBOS::lang('Personal Office'))),
@@ -197,7 +197,7 @@ class WebController extends BaseController {
     public function actionDel() {
         $id = Env::getRequest('webids');
         if ($id) {
-            $id = String::filterStr($id);
+            $id = StringUtil::filterStr($id);
             $delStatus = EmailWeb::model()->delClear($id, $this->uid);
             if ($delStatus) {
                 if (IBOS::app()->request->getIsAjaxRequest()) {
@@ -224,7 +224,7 @@ class WebController extends BaseController {
         }
         list($prefix,, ) = explode('.', $web['server']);
         $user = User::model()->fetchByUid($web['uid']);
-        $pwd = String::authCode($web['password'], 'DECODE', $user['salt']); //解密
+        $pwd = StringUtil::authCode($web['password'], 'DECODE', $user['salt']); //解密
         //按类型加载所用的函数库
         if ($prefix == 'imap') {
             $obj = new WebMailImap();
@@ -457,7 +457,7 @@ class WebController extends BaseController {
         // 与文件夹表创建一条关联数据
         $folder = array(
             'sort' => 0,
-            'name' => isset($_POST['web']['name']) ? String::filterCleanHtml($_POST['web']['name']) : $web['address'],
+            'name' => isset($_POST['web']['name']) ? StringUtil::filterCleanHtml($_POST['web']['name']) : $web['address'],
             'uid' => $this->uid,
             'webid' => $newId
         );
@@ -511,7 +511,7 @@ class WebController extends BaseController {
             $web['nickname'] = IBOS::app()->user->realname;
         }
         $web['uid'] = $this->uid;
-        $web['password'] = String::authCode($web['password'], 'ENCODE', IBOS::app()->user->salt);
+        $web['password'] = StringUtil::authCode($web['password'], 'ENCODE', IBOS::app()->user->salt);
         return $web;
     }
 

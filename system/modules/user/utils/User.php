@@ -17,7 +17,7 @@ use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\PHPExcel;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model as CalendarModel;
 use application\modules\contact\model\Contact;
 use application\modules\dashboard\model\CreditLog;
@@ -269,7 +269,7 @@ class User {
         $oldUids = UserModel\User::model()->fetchAllUidByPositionIds( $positionId, false, true );
         // 这一次提交的用户
         $userId = explode( ',', trim( $users, ',' ) );
-        $newUids = String::getUid( $userId );
+        $newUids = StringUtil::getUid( $userId );
         // 找出两种差别
         $delDiff = array_diff( $oldUids, $newUids );
         $addDiff = array_diff( $newUids, $oldUids );
@@ -894,7 +894,7 @@ class User {
     public static function getJsConstantUids( $uid ) {
         $inEnabledContact = Module::getIsEnabled( 'contact' );
         $cUids = $inEnabledContact ? Contact::model()->fetchAllConstantByUid( $uid ) : array();
-        $cUidStr = empty( $cUids ) ? '' : String::wrapId( $cUids );
+        $cUidStr = empty( $cUids ) ? '' : StringUtil::wrapId( $cUids );
         return empty( $cUidStr ) ? '' : CJSON::encode( explode( ',', $cUidStr ) );
     }
 
@@ -903,7 +903,7 @@ class User {
      * @return array
      */
     public static function getAccountSetting() {
-        $account = String::utf8Unserialize( MainModel\Setting::model()->fetchSettingValueByKey( 'account' ) );
+        $account = StringUtil::utf8Unserialize( MainModel\Setting::model()->fetchSettingValueByKey( 'account' ) );
         if ( $account['mixed'] ) {
             $preg = "[0-9]+[A-Za-z]+|[A-Za-z]+[0-9]+";
         } else {

@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailFolder;
@@ -218,7 +218,7 @@ class MailController extends BaseController {
 
 	public function actionDel() {
 		$ids = Env::getRequest( 'emailid' );
-		$id = String::filterStr( $ids );
+		$id = StringUtil::filterStr( $ids );
 		$status = false;
 		if ( !empty( $id ) ) {
 			$condition = 'toid = ' . intval( IBOS::app()->user->uid ) . ' AND FIND_IN_SET(emailid,"' . $id . '")';
@@ -244,7 +244,7 @@ class MailController extends BaseController {
 	// 彻底删除邮件
 	public function actionDelete() {
 		$ids = Env::getRequest( 'emailid' );
-		$id = String::filterStr( $ids );
+		$id = StringUtil::filterStr( $ids );
 		$status = false;
 		if ( !empty( $id ) ) {
 			$status = Email::model()->completelyDelete( explode( ',', $id ), IBOS::app()->user->uid );
@@ -255,7 +255,7 @@ class MailController extends BaseController {
 	// 恢复邮件
 	public function actionRecovery() {
 		$ids = Env::getRequest( 'emailid' );
-		$id = String::filterStr( $ids );
+		$id = StringUtil::filterStr( $ids );
 		$status = false;
 		if ( !empty( $id ) ) {
 			$condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';

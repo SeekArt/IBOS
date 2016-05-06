@@ -18,7 +18,7 @@
 namespace application\modules\file\utils;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDirAccess;
@@ -212,7 +212,7 @@ class FileCheck extends System {
 	 * @return boolean
 	 */
 	protected function findIn( $strId, $id ) {
-		return String::findIn( $strId, $id );
+		return StringUtil::findIn( $strId, $id );
 	}
 
 }

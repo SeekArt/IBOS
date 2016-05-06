@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\core;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
@@ -210,7 +210,7 @@ class Officialdoc {
         $readDocIds = OfficialdocReader::model()->fetchReadArtIdsByUid( $uid );
         $signedDocIds = OfficialdocReader::model()->fetchSignArtIdsByUid( $uid );
         foreach ( $datas as $data ) {
-            $data['subject'] = String::cutStr( $data['subject'], 50 );
+            $data['subject'] = StringUtil::cutStr( $data['subject'], 50 );
             // 1:已读；-1:未读
             $data['readStatus'] = in_array( $data['docid'], $readDocIds ) ? 1 : -1;
             // 三天内为新文章

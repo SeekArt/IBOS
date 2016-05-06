@@ -17,7 +17,7 @@
 namespace application\modules\officialdoc\utils;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\model\DepartmentRelated;
 use application\modules\officialdoc\model\Officialdoc as OffModel;
@@ -143,7 +143,7 @@ class Officialdoc {
         //如果是审核人
 //		$dashboardConfig = Ibos::app()->setting->get( 'setting/docconfig' );
 //		$approver = $dashboardConfig['doccommentenable'];
-//		if ( String::findIn( $uid, $approver ) ) {
+//		if ( StringUtil::findIn( $uid, $approver ) ) {
 //			return true;
 //		}
         //如果都为空，返回true
@@ -154,26 +154,26 @@ class Officialdoc {
         $user = User::model()->fetch( array( 'select' => array( 'deptid', 'positionid' ), 'condition' => 'uid=:uid', 'params' => array( ':uid' => $uid ) ) );
         //取得文章部门范围id以及他的子id
         $childDeptid = Department::model()->fetchChildIdByDeptids( $data['deptid'] );
-        if ( String::findIn( $user['deptid'], $childDeptid . ',' . $data['deptid'] ) ) {
+        if ( StringUtil::findIn( $user['deptid'], $childDeptid . ',' . $data['deptid'] ) ) {
             return true;
         }
         //取得文章抄送部门范围id以及他的子id
         $childCcDeptid = Department::model()->fetchChildIdByDeptids( $data['ccdeptid'] );
-        if ( String::findIn( $user['deptid'], $childCcDeptid . ',' . $data['ccdeptid'] ) ) {
+        if ( StringUtil::findIn( $user['deptid'], $childCcDeptid . ',' . $data['ccdeptid'] ) ) {
             return true;
         }
         //取得文章岗位范围Id与用户岗位相比较
-        if ( String::findIn( $data['positionid'], $user['positionid'] ) ) {
+        if ( StringUtil::findIn( $data['positionid'], $user['positionid'] ) ) {
             return true;
         }
-        if ( String::findIn( $data['uid'], $uid ) ) {
+        if ( StringUtil::findIn( $data['uid'], $uid ) ) {
             return true;
         }
         //取得文章抄送岗位范围Id与用户抄送岗位相比较
-        if ( String::findIn( $data['ccpositionid'], $user['positionid'] ) ) {
+        if ( StringUtil::findIn( $data['ccpositionid'], $user['positionid'] ) ) {
             return true;
         }
-        if ( String::findIn( $data['ccuid'], $uid ) ) {
+        if ( StringUtil::findIn( $data['ccuid'], $uid ) ) {
             return true;
         }
         return false;
@@ -207,7 +207,7 @@ class Officialdoc {
                 $string .= 'u_' . $uid;
             }
         }
-        $uidArray = String::getUidAByUDPX( $string, true, false, true );
+        $uidArray = StringUtil::getUidAByUDPX( $string, true, false, true );
         return $uidArray;
     }
 
@@ -290,13 +290,13 @@ class Officialdoc {
             if ( $deptid == 'alldept' ) {
                 return 'c_0';
             }
-            $tmp[] = String::wrapId( $deptid, 'd' );
+            $tmp[] = StringUtil::wrapId( $deptid, 'd' );
         }
         if ( !empty( $positionid ) ) {
-            $tmp[] = String::wrapId( $positionid, 'p' );
+            $tmp[] = StringUtil::wrapId( $positionid, 'p' );
         }
         if ( !empty( $uid ) ) {
-            $tmp[] = String::wrapId( $uid, 'u' );
+            $tmp[] = StringUtil::wrapId( $uid, 'u' );
         }
         return implode( ',', $tmp );
     }

@@ -21,7 +21,7 @@ use application\core\utils\Api;
 use application\core\utils\Attach;
 use application\core\utils\File as FileUtil;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\file\core\FileCloud;
 use application\modules\message\core\wx\Callback;
 use application\modules\message\core\wx\Code;
@@ -83,7 +83,7 @@ class File extends Callback {
 			'url' => ''
 		);
 		foreach ( $lists as $row ) {
-			$fileType = String::getFileExt( $row['name'] );
+			$fileType = StringUtil::getFileExt( $row['name'] );
 			$icon = Attach::attachType( $fileType, 'bigicon' );
 			if ( $row['cloudid'] > 0 ) {
 				$param = array( 'param' => 'cloud/' . $row['cloudid'] . '-' . $row['attachmentid'] );

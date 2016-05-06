@@ -18,7 +18,7 @@ namespace application\modules\mobile\utils;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\Notify;
 use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
@@ -145,9 +145,9 @@ class FreeNext extends Base {
 		$topflag = $this->getTopflag();
 		// $topflagOld = filter_input( INPUT_POST, 'topflagOld', FILTER_SANITIZE_NUMBER_INT );
 		$topflagOld = Env::getRequest( 'topflagOld' );
-		$prcsUserOpNext = implode( ',', String::getId( filter_input( INPUT_POST, 'prcsUserOp', FILTER_SANITIZE_STRING ) ) );
+		$prcsUserOpNext = implode( ',', StringUtil::getId( filter_input( INPUT_POST, 'prcsUserOp', FILTER_SANITIZE_STRING ) ) );
 		$op = $this->getOp();
-		$prcsUserNext = String::getId( filter_input( INPUT_POST, 'prcsUser', FILTER_SANITIZE_STRING ) );
+		$prcsUserNext = StringUtil::getId( filter_input( INPUT_POST, 'prcsUser', FILTER_SANITIZE_STRING ) );
 		array_push( $prcsUserNext, $prcsUserOpNext );
 		$prcsUserNext = implode( ',', array_unique( $prcsUserNext ) );
 		//------------end------------
@@ -162,14 +162,14 @@ class FreeNext extends Base {
 				$tmp = $i == 0 ? '' : $i;
 				//主办人
 				$str = "prcsUserOp" . $tmp;
-				$prcsUserOp = implode( ',', String::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ) );
+				$prcsUserOp = implode( ',', StringUtil::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ) );
 				$prcsUserOpOld = $prcsUserOp;
 				if ( $freeOther == 2 ) {
 					$prcsUserOp = Handle::turnOther( $prcsUserOp, $var['flowid'], $var['runid'], $var['processid'], $var['flowprocess'] );
 				}
 				//经办人
 				$str = "prcsUser" . $tmp;
-				$prcsUser = String::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ); //把主办人添加到经办人中，省去前台判断
+				$prcsUser = StringUtil::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ); //把主办人添加到经办人中，省去前台判断
 				array_push( $prcsUser, $prcsUserOp );
 				$prcsUser = implode( ',', array_unique( $prcsUser ) );
 				if ( $freeOther == 2 ) {
@@ -273,9 +273,9 @@ class FreeNext extends Base {
 //        $var = $this->_var;
 //        $topflag = $this->getTopflag();
 //        $topflagOld = filter_input( INPUT_POST, 'topflagOld', FILTER_SANITIZE_NUMBER_INT );
-//        $prcsUserOpNext = implode( ',', String::getId( filter_input( INPUT_POST, 'prcsUserOp', FILTER_SANITIZE_STRING ) ) );
+//        $prcsUserOpNext = implode( ',', StringUtil::getId( filter_input( INPUT_POST, 'prcsUserOp', FILTER_SANITIZE_STRING ) ) );
 //        $op = $this->getOp();
-//        $prcsUserNext = String::getId( filter_input( INPUT_POST, 'prcsUser', FILTER_SANITIZE_STRING ) );
+//        $prcsUserNext = StringUtil::getId( filter_input( INPUT_POST, 'prcsUser', FILTER_SANITIZE_STRING ) );
 //        array_push( $prcsUserNext, $prcsUserOpNext );
 //        $prcsUserNext = implode( ',', array_unique( $prcsUserNext ) );
 //        //------------end------------
@@ -290,14 +290,14 @@ class FreeNext extends Base {
 //                $tmp = $i == 0 ? '' : $i;
 //                //主办人
 //                $str = "prcsUserOp" . $tmp;
-//                $prcsUserOp = implode( ',', String::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ) );
+//                $prcsUserOp = implode( ',', StringUtil::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ) );
 //                $prcsUserOpOld = $prcsUserOp;
 //                if ( $freeOther == 2 ) {
 //                    $prcsUserOp = Handle::turnOther( $prcsUserOp, $var['flowid'], $var['runid'], $var['processid'], $var['flowprocess'] );
 //                }
 //                //经办人
 //                $str = "prcsUser" . $tmp;
-//                $prcsUser = String::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ); //把主办人添加到经办人中，省去前台判断
+//                $prcsUser = StringUtil::getId( filter_input( INPUT_POST, $str, FILTER_SANITIZE_STRING ) ); //把主办人添加到经办人中，省去前台判断
 //                array_push( $prcsUser, $prcsUserOp );
 //                $prcsUser = implode( ',', array_unique( $prcsUser ) );
 //                if ( $freeOther == 2 ) {
@@ -387,7 +387,7 @@ class FreeNext extends Base {
      * @param string $op
      */
     public function setOp( $op ) {
-        $this->_op = String::filterCleanHtml( $op );
+        $this->_op = StringUtil::filterCleanHtml( $op );
     }
 
     /**
@@ -459,7 +459,7 @@ class FreeNext extends Base {
             if ( $isCurStep && $isDone && $isMe && $notInManageMode ) {
                 Env::iExit( $var['lang']['Already trans'] ); //已经转交，不能重复转交
             }
-            $userNamestr = String::filterStr( $userNamestr );
+            $userNamestr = StringUtil::filterStr( $userNamestr );
         }
     }
 

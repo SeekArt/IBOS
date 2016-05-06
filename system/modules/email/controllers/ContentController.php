@@ -9,7 +9,7 @@ use application\core\utils\DateTime;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\model\Article;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
@@ -104,7 +104,7 @@ class ContentController extends BaseController {
                 $toid = Env::getRequest('toid');
                 $toWebid = Env::getRequest('webid');
                 if ($toid) {
-                    $in[] = String::wrapId($toid);
+                    $in[] = StringUtil::wrapId($toid);
                 }
                 if ($toWebid) {
                     $web = $toWebid;
@@ -127,16 +127,16 @@ class ContentController extends BaseController {
                                     if (empty($bodyData['fromid']) && !empty($bodyData['fromwebmail'])) {
                                         $web[] = $bodyData['fromwebmail'];
                                     } else {
-                                        $in[] = String::wrapId($bodyData['fromid']);
+                                        $in[] = StringUtil::wrapId($bodyData['fromid']);
                                     }
                                 } else {
                                     if (empty($bodyData['fromid'])) {
-                                        $allIds = String::filterStr($bodyData['toids'] . ',' . $bodyData['copytoids']);
+                                        $allIds = StringUtil::filterStr($bodyData['toids'] . ',' . $bodyData['copytoids']);
                                         foreach (explode(',', $allIds) as $key => $uid) {
                                             if (!empty($uid)) {
                                                 $tempUid = strpos($uid, '@');
                                                 if (!$tempUid) {
-                                                    $in[$key] = String::wrapId($uid);
+                                                    $in[$key] = StringUtil::wrapId($uid);
                                                 } else {
                                                     $web[$key] = $uid;
                                                 }
@@ -151,7 +151,7 @@ class ContentController extends BaseController {
 
                                         $uid = IBOS::app()->user->uid;
                                         if ($uid != $bodyData['fromid']) {
-                                            $in[] = String::wrapId($bodyData['fromid']);
+                                            $in[] = StringUtil::wrapId($bodyData['fromid']);
                                         }
 
                                         // 回复全部中，如果收件人和抄送人有自己的，去除掉。
@@ -160,7 +160,7 @@ class ContentController extends BaseController {
                                             unset($toidAll[$selfInitTOid]);
                                         }
                                         if (!empty($toidAll)) {
-                                            $in[] = String::wrapId($toidAll);
+                                            $in[] = StringUtil::wrapId($toidAll);
                                         }
                                     }
                                 }
@@ -231,9 +231,9 @@ class ContentController extends BaseController {
             $this->save($id, $bodyData);
         } else {
             // 处理用户ID
-            $emailBody['toids'] = String::wrapId($emailBody['toids']);
-            $emailBody['copytoids'] = String::wrapId($emailBody['copytoids']);
-            $emailBody['secrettoids'] = String::wrapId($emailBody['secrettoids']);
+            $emailBody['toids'] = StringUtil::wrapId($emailBody['toids']);
+            $emailBody['copytoids'] = StringUtil::wrapId($emailBody['copytoids']);
+            $emailBody['secrettoids'] = StringUtil::wrapId($emailBody['secrettoids']);
             // 附件生成信息
             if (!empty($emailBody['attachmentid'])) {
                 $emailBody['attach'] = Attach::getAttach($emailBody['attachmentid']);
@@ -279,8 +279,8 @@ class ContentController extends BaseController {
             // 阅读权限判定
             $isReceiver = $email['toid'] == $this->uid ||
                     $email['fromid'] == $this->uid ||
-                    String::findIn($email['copytoids'], $this->uid) ||
-                    String::findIn($email['toids'], $this->uid);
+                    StringUtil::findIn($email['copytoids'], $this->uid) ||
+                    StringUtil::findIn($email['toids'], $this->uid);
             if (!$isReceiver) {
                 $this->error(IBOS::lang('View access invalid'), $this->createUrl('list/index'));
             }
@@ -290,7 +290,7 @@ class ContentController extends BaseController {
                 exit();
             }
             // 阅读状态更改权限判定
-            if (($email['toid'] == $this->uid || String::findIn($email['toids'], $this->uid)) && $email['isread'] == 0) {
+            if (($email['toid'] == $this->uid || StringUtil::findIn($email['toids'], $this->uid)) && $email['isread'] == 0) {
                 Email::model()->setRead($id, $this->uid);
             }
             $email['dateTime'] = Convert::formatDate($email['sendtime']);
@@ -306,7 +306,7 @@ class ContentController extends BaseController {
             }
             //外部邮箱的
             if (!empty($email['toids']) && !is_numeric($email['toids'][0])) {//内部邮件toids第一个字符一定是数字
-                $ids = String::utf8Unserialize($email['toids']);
+                $ids = StringUtil::utf8Unserialize($email['toids']);
                 if ($ids) {
                     //去掉第一个收件人，会和下面的towebmail重复
                     $email['toids'] = array_pop($ids);
@@ -315,11 +315,11 @@ class ContentController extends BaseController {
             }
             //外部邮箱的
             if (isset($email['copytoids'][0]) && !is_numeric($email['copytoids'][0])) {
-                $copys = String::utf8Unserialize($email['copytoids']);
+                $copys = StringUtil::utf8Unserialize($email['copytoids']);
                 if ($copys)
                     $email['copytoids'] = implode(',', $copys);
             }
-            $allIds = String::filterStr($email['toids'] . ',' . $email['copytoids']);
+            $allIds = StringUtil::filterStr($email['toids'] . ',' . $email['copytoids']);
             $copyToId = explode(',', $email['copytoids']);
             $toId = explode(',', $email['toids']);
             $allUsers = $copyToUsers = $toUsers = array();
@@ -357,10 +357,10 @@ class ContentController extends BaseController {
             $data['toUsers'] = $toUsers;
             $data['copyToUsers'] = $copyToUsers;
             // 是否密送者，密送者在回复全部的时候会有提示
-            $data['isSecretUser'] = String::findIn($this->uid, $email['secrettoids']);
+            $data['isSecretUser'] = StringUtil::findIn($this->uid, $email['secrettoids']);
             //外部邮件的
             if (!empty($email['remoteattachment'])) {
-                $data['atts'] = String::utf8Unserialize($email['remoteattachment']);
+                $data['atts'] = StringUtil::utf8Unserialize($email['remoteattachment']);
                 $data['webid'] = $email['bodyid'];
             }
             !empty($email['attachmentid']) && $data['attach'] = Attach::getAttach($email['attachmentid']);
@@ -443,7 +443,7 @@ class ContentController extends BaseController {
             Email::model()->send($bodyId, $bodyData, self::INBOX_ID, $threadId);
             // 外部邮件处理
             if (!empty($bodyData['towebmail'])) {
-                $toUsers = String::filterStr($bodyData['towebmail'], ';');
+                $toUsers = StringUtil::filterStr($bodyData['towebmail'], ';');
                 if (!empty($toUsers)) {
                     $webBox = EmailWeb::model()->fetchByPk($bodyData['fromwebid']);
                     WebMailUtil::sendWebMail($toUsers, $bodyData, $webBox);

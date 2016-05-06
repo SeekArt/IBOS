@@ -13,7 +13,7 @@ use application\core\components\Attach;
 use application\core\utils\Attach as AttachUtil;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Attachment;
 use application\modules\main\model\AttachmentUnused;
 use CJSON;
@@ -36,7 +36,7 @@ class RecruitAttach extends Attach {
         $aid = Attachment::model()->add( array( 'uid' => $uid, 'tableid' => 127 ), true );
         $data['aid'] = $aid;
         AttachmentUnused::model()->add( $data );
-		$file['icon'] = AttachUtil::attachType( String::getFileExt( $attach['name'] ) );
+		$file['icon'] = AttachUtil::attachType( StringUtil::getFileExt( $attach['name'] ) );
         $file['aid'] = $aid;
         $file['name'] = $attach['name'];
         //获取兼容云平台的附件地址

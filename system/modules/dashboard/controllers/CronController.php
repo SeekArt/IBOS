@@ -6,7 +6,7 @@ use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Cron;
 
 class CronController extends BaseController {
@@ -52,7 +52,7 @@ class CronController extends BaseController {
             } else {
                 if ( $op == 'delete' ) {
                     if ( !empty( $_POST['delete'] ) ) {
-                        $ids = String::iImplode( $_POST['delete'] );
+                        $ids = StringUtil::iImplode( $_POST['delete'] );
                         Cron::model()->deleteAll( sprintf( "cronid IN (%s) AND type='user'", $ids ) );
                     }
                 } else {
@@ -71,7 +71,7 @@ class CronController extends BaseController {
                     }
                     if ( !empty( $_POST['newname'] ) ) {
                         $data = array(
-                            'name' => String::ihtmlSpecialChars( $_POST['newname'] ),
+                            'name' => StringUtil::ihtmlSpecialChars( $_POST['newname'] ),
                             'type' => 'user',
                             'available' => '0',
                             'weekday' => '-1',

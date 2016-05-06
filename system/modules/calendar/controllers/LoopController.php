@@ -18,7 +18,7 @@ namespace application\modules\calendar\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
 use CHtml;
@@ -62,7 +62,7 @@ Class LoopController extends BaseController {
     private function handleLoops( $loops ) {
         if ( !empty( $loops ) ) {
             foreach ( $loops as $k => $v ) {
-                $loops[$k]['subject'] = String::cutStr( $v['subject'], 12 );
+                $loops[$k]['subject'] = StringUtil::cutStr( $v['subject'], 12 );
                 $loops[$k]['uptime'] = date( 'Y-m-d H:i', $v['uptime'] );
                 $time = date( 'H:i', $v['starttime'] ) . '至' . date( 'H:i', $v['endtime'] );
                 switch ( $v['recurringtype'] ) {

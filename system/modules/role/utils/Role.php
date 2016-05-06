@@ -12,7 +12,7 @@ namespace application\modules\role\utils;
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\role\model\NodeRelated;
 use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User;
@@ -47,7 +47,7 @@ class Role {
         $oldUids = User::model()->fetchAllUidByRoleids( $roleId, false, true );
         // 这一次提交的用户
         $userId = explode( ',', trim( $users, ',' ) );
-        $newUids = String::getUid( $userId );
+        $newUids = StringUtil::getUid( $userId );
         // 找出两种差别
         $delDiff = array_diff( $oldUids, $newUids );
         $addDiff = array_diff( $newUids, $oldUids );

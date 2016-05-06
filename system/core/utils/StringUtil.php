@@ -22,7 +22,7 @@ use application\extensions\Tree;
 use application\modules\message\utils\Expression;
 use application\modules\user\model\User;
 
-class String {
+class StringUtil {
 
     /**
      * 检测一个字符串是否email格式
@@ -412,7 +412,7 @@ class String {
      * 分割参数字符串返回数组。方便url组件创建URL
      * <code>
      * 		$param = 'a=3&b=4';
-     * 		$splitParam = String::splitParam($param);
+     * 		$splitParam = StringUtil::splitParam($param);
      * </code>
      * @param string $param
      * @return array
@@ -459,7 +459,7 @@ class String {
      * 把密码字符串转换为可显示的形式
      * <code>
      * $password = '19881014';
-     * echo String::passwordMask($password);
+     * echo StringUtil::passwordMask($password);
      * // returns '1********14';
      * </code>
      * @param string $password
@@ -493,7 +493,7 @@ class String {
      * <code>
      * 	$format = "<option value='\$catid' \$selected>\$spacer\$name</option>";
      *  $data = Ibos:app()->setting->get('cache/positioncategory');
-     *  $trees = String::getTree($data,$format);
+     *  $trees = StringUtil::getTree($data,$format);
      * </code>
      * @param array $data 树数据
      * @param string $format 生成的格式字符串
@@ -557,7 +557,7 @@ class String {
      * 封装id加上前缀
      * <code>
      * $id = array(23,24,25,26);
-     * print_r(String::wrapId($id));
+     * print_r(StringUtil::wrapId($id));
      * return 'u_23,u_24,u_25,u_26';
      * </code>
      * @param array $ids id数组\

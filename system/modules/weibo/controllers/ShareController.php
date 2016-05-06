@@ -3,18 +3,18 @@
 namespace application\modules\weibo\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\model\Source;
 
 class ShareController extends BaseController {
 
     public function actionIndex() {
         $shareInfo['sid'] = intval( Env::getRequest( 'sid' ) );
-        $shareInfo['stable'] = String::filterCleanHtml( Env::getRequest( 'stable' ) );
-        $shareInfo['initHTML'] = String::filterDangerTag( Env::getRequest( 'initHTML' ) );
-        $shareInfo['curid'] = String::filterCleanHtml( Env::getRequest( 'curid' ) );
-        $shareInfo['curtable'] = String::filterCleanHtml( Env::getRequest( 'curtable' ) );
-        $shareInfo['module'] = String::filterCleanHtml( Env::getRequest( 'module' ) );
+        $shareInfo['stable'] = StringUtil::filterCleanHtml( Env::getRequest( 'stable' ) );
+        $shareInfo['initHTML'] = StringUtil::filterDangerTag( Env::getRequest( 'initHTML' ) );
+        $shareInfo['curid'] = StringUtil::filterCleanHtml( Env::getRequest( 'curid' ) );
+        $shareInfo['curtable'] = StringUtil::filterCleanHtml( Env::getRequest( 'curtable' ) );
+        $shareInfo['module'] = StringUtil::filterCleanHtml( Env::getRequest( 'module' ) );
         $shareInfo['isrepost'] = intval( Env::getRequest( 'isrepost' ) );
         if ( empty( $shareInfo['stable'] ) || empty( $shareInfo['sid'] ) ) {
             echo '类型和资源ID不能为空';

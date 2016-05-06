@@ -5,7 +5,7 @@ namespace application\modules\message\controllers;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\message\model\MessageContent;
 use application\modules\message\model\MessageUser;
 use application\modules\user\model\User;
@@ -43,12 +43,12 @@ class PmController extends BaseController {
      */
     public function actionDetail() {
         $uid = IBOS::app()->user->uid;
-        $message = MessageContent::model()->isInList( String::filterCleanHtml( Env::getRequest( 'id' ) ), $uid, true );
+        $message = MessageContent::model()->isInList( StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ), $uid, true );
         // 验证数据
         if ( empty( $message ) ) {
             $this->error( IBOS::lang( 'Private message not exists' ) );
         }
-        $message['user'] = MessageUser::model()->getMessageUsers( String::filterCleanHtml( Env::getRequest( 'id' ) ), 'uid' );
+        $message['user'] = MessageUser::model()->getMessageUsers( StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ), 'uid' );
         $message['to'] = array();
         // 添加发送用户ID
         foreach ( $message['user'] as $v ) {
@@ -90,7 +90,7 @@ class PmController extends BaseController {
      * @return void
      */
     public function actionReply() {
-        $_POST['replycontent'] = String::filterCleanHtml( $_POST['replycontent'] );
+        $_POST['replycontent'] = StringUtil::filterCleanHtml( $_POST['replycontent'] );
         $_POST['id'] = intval( $_POST['id'] );
 
         if ( !$_POST['id'] || empty( $_POST['replycontent'] ) ) {
@@ -117,20 +117,20 @@ class PmController extends BaseController {
                 $return['IsSuccess'] = false;
                 $this->ajaxReturn( $return );
             }
-            if ( trim( String::filterCleanHtml( $_POST['content'] ) ) == '' ) {
+            if ( trim( StringUtil::filterCleanHtml( $_POST['content'] ) ) == '' ) {
                 $return['data'] = IBOS::lang( 'Message content cannot be empty' );
                 $return['IsSuccess'] = false;
                 $this->ajaxReturn( $return );
             }
             // --------------
-            $_POST['touid'] = implode( ',', String::getUid( $_POST['touid'] ) );
+            $_POST['touid'] = implode( ',', StringUtil::getUid( $_POST['touid'] ) );
             // Todo::发信人数检查?
             if ( isset( $_POST['type'] ) ) {
                 !in_array( $_POST['type'], array( MessageContent::ONE_ON_ONE_CHAT, MessageContent::MULTIPLAYER_CHAT ) ) && $_POST['type'] = null;
             } else {
                 $_POST['type'] = null;
             }
-            $_POST['content'] = String::filterDangerTag( $_POST['content'] );
+            $_POST['content'] = StringUtil::filterDangerTag( $_POST['content'] );
             $res = MessageContent::model()->postMessage( $_POST, IBOS::app()->user->uid );
             if ( $res ) {
                 $this->ajaxReturn( $return );
@@ -169,7 +169,7 @@ class PmController extends BaseController {
      * @return void
      */
     public function actionDelete() {
-        $res = MessageUser::model()->deleteMessageByListId( IBOS::app()->user->uid, String::filterCleanHtml( Env::getRequest( 'id' ) ) );
+        $res = MessageUser::model()->deleteMessageByListId( IBOS::app()->user->uid, StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ) );
         $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
     }
 

@@ -3,7 +3,7 @@
 namespace application\modules\weibo\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\IBOS;
 
 class CommentController extends BaseController {
@@ -13,8 +13,8 @@ class CommentController extends BaseController {
      */
     public function actionGetCommentList() {
         if ( Env::submitCheck( 'formhash' ) ) {
-            $module = String::filterCleanHtml( $_POST['module'] );
-            $table = String::filterCleanHtml( $_POST['table'] );
+            $module = StringUtil::filterCleanHtml( $_POST['module'] );
+            $table = StringUtil::filterCleanHtml( $_POST['table'] );
             $rowid = intval( $_POST['rowid'] );
             $moduleuid = intval( $_POST['moduleuid'] );
             $properties = array(

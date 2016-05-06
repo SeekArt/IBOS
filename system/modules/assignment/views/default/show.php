@@ -2,7 +2,7 @@
 
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/assignment.css?<?php echo VERHASH; ?>">
@@ -141,7 +141,7 @@ use application\modules\dashboard\model\Stamp;
 							'allowComment' => 1,
 							'showStamp' => 1,
 							'url' => $sourceUrl,
-							'detail' => IBOS::lang( 'Comment my assignment', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $assignment['subject'], 50 ) ) )
+							'detail' => IBOS::lang( 'Comment my assignment', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $assignment['subject'], 50 ) ) )
 				) ) );
 					?>
 				</div>

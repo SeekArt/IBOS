@@ -11,7 +11,7 @@ namespace application\modules\user\controllers;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\user\model\BgTemplate;
 use application\modules\user\utils\User as UserUtil;
@@ -103,7 +103,7 @@ class SkinController extends HomeBaseController {
         // 存放路径
         $bgPath = 'data/home/';
         // 三种尺寸的地址
-        $random = String::random( 16 );
+        $random = StringUtil::random( 16 );
         $bgBig = $random . '_big.jpg';
         $bgMiddle = $random . '_middle.jpg';
         $bgSmall = $random . '_small.jpg';

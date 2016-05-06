@@ -20,7 +20,7 @@ namespace application\core\engines\local;
 use application\core\utils\Attach;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Attachment;
 
 class LocalFile {
@@ -182,7 +182,7 @@ class LocalFile {
 				'11' => "application/octet-stream",
 				'18' => "application/x-shockwave-flash"
 			);
-			$attachType = Attach::Attachtype( String::getFileExt( $attach['filename'] ), 'id' );
+			$attachType = Attach::Attachtype( StringUtil::getFileExt( $attach['filename'] ), 'id' );
 			$content = false;
 			// 额外参数处理
 			if ( isset( $downloadInfo['directView'] ) ) {

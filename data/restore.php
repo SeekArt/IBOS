@@ -3,7 +3,7 @@
 use application\core\utils\Database;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\SimpleUnzip;
 
 /**
@@ -160,7 +160,7 @@ function restore( $id ) {
 	$command = IBOS::app()->db->createCommand();
 	// 分卷导入
 	if ( $dumpInfo['method'] == 'multivol' ) {
-		$sqlQuery = String::splitSql( $sqlDump );
+		$sqlQuery = StringUtil::splitSql( $sqlDump );
 		unset( $sqlDump );
 		$dbCharset = IBOS::app()->db->charset;
 		$dbVersion = IBOS::app()->db->getServerVersion();

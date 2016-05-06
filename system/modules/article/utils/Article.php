@@ -16,7 +16,7 @@
 
 namespace application\modules\article\utils;
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\article\model\Article as ArticleModel;
 use application\modules\article\model\ArticleReader;
 use application\modules\department\model\Department;
@@ -154,14 +154,14 @@ class Article {
         $departRelated = DeptRelated::model()->fetchAllDeptIdByUid( $uid );
         //取得文章部门范围id以及他的子id
         $childDeptid = Department::model()->fetchChildIdByDeptids( $data['deptid'] );
-        if ( String::findIn( $user['deptid'] . ',' . implode( ',', $departRelated ), $childDeptid . ',' . $data['deptid'] ) ) {
+        if ( StringUtil::findIn( $user['deptid'] . ',' . implode( ',', $departRelated ), $childDeptid . ',' . $data['deptid'] ) ) {
             return true;
         }
         //取得文章岗位范围Id与用户岗位相比较
-        if ( String::findIn( $data['positionid'], $user['positionid'] ) ) {
+        if ( StringUtil::findIn( $data['positionid'], $user['positionid'] ) ) {
             return true;
         }
-        if ( String::findIn( $data['uid'], $uid ) ) {
+        if ( StringUtil::findIn( $data['uid'], $uid ) ) {
             return true;
         }
         return false;
@@ -195,7 +195,7 @@ class Article {
                 $string .= 'u_' . $uid;
             }
         }
-        $uidArray = String::getUidAByUDPX( $string, true, false, true );
+        $uidArray = StringUtil::getUidAByUDPX( $string, true, false, true );
         return $uidArray;
     }
 
@@ -233,13 +233,13 @@ class Article {
             if ( $deptid == 'alldept' ) {
                 return 'c_0';
             }
-            $tmp[] = String::wrapId( $deptid, 'd' );
+            $tmp[] = StringUtil::wrapId( $deptid, 'd' );
         }
         if ( !empty( $positionid ) ) {
-            $tmp[] = String::wrapId( $positionid, 'p' );
+            $tmp[] = StringUtil::wrapId( $positionid, 'p' );
         }
         if ( !empty( $uid ) ) {
-            $tmp[] = String::wrapId( $uid, 'u' );
+            $tmp[] = StringUtil::wrapId( $uid, 'u' );
         }
         return implode( ',', $tmp );
     }

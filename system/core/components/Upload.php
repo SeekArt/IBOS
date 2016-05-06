@@ -13,7 +13,7 @@ use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Image;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\main\model\Setting;
 use CJSON;
@@ -48,10 +48,10 @@ class Upload {
             $attach['size'] = intval( $attach['size'] );
             $attach['name'] = trim( $attach['name'] );
             $attach['thumb'] = '';
-            $attach['ext'] = String::getFileExt( $attach['name'] );
-            $attach['name'] = String::ihtmlSpecialChars( $attach['name'], ENT_QUOTES );
+            $attach['ext'] = StringUtil::getFileExt( $attach['name'] );
+            $attach['name'] = StringUtil::ihtmlSpecialChars( $attach['name'], ENT_QUOTES );
             if ( strlen( $attach['name'] ) > 90 ) {
-                $attach['name'] = String::cutStr( $attach['name'], 80, '' ) . '.' . $attach['ext'];
+                $attach['name'] = StringUtil::cutStr( $attach['name'], 80, '' ) . '.' . $attach['ext'];
             }
             $attach['isimage'] = $this->isImageExt( $attach['ext'] );
             $attach['attachdir'] = $this->getTargetDir( $attach['type'] );
@@ -226,7 +226,7 @@ class Upload {
      * @return string
      */
     protected function getTargetFileName() {
-        return date( 'His' ) . strtolower( String::random( 16 ) );
+        return date( 'His' ) . strtolower( StringUtil::random( 16 ) );
     }
 
 }

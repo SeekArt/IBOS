@@ -8,7 +8,7 @@ use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Upgrade;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\Cache;
@@ -36,7 +36,7 @@ class UpgradeController extends BaseController {
 			switch ( $operation ) {
 				case 'checking': // 第一步：检查更新
 					$upgradeStep = Cache::model()->fetchByPk( 'upgrade_step' );
-                    $upgradeStep['cachevalue'] = String::utf8Unserialize( $upgradeStep['cachevalue'] );
+                    $upgradeStep['cachevalue'] = StringUtil::utf8Unserialize( $upgradeStep['cachevalue'] );
 					$isExistStep = !empty( $upgradeStep['cachevalue'] ) && !empty( $upgradeStep['cachevalue']['step'] );
 					// 查找步骤缓存
 					if ( !Env::getRequest( 'rechecking' ) && $isExistStep ) {
@@ -78,7 +78,7 @@ class UpgradeController extends BaseController {
 					$charset = trim( $_GET['charset'] );
 					$upgradeInfo = $upgradeStep = array();
 					$upgradeStepRecord = Cache::model()->fetchByPk( 'upgrade_step' );
-                    $upgradeStep = String::utf8Unserialize( $upgradeStepRecord['cachevalue'] );
+                    $upgradeStep = StringUtil::utf8Unserialize( $upgradeStepRecord['cachevalue'] );
 
 					// 初始化更新步骤
 					$upgradeStep['step'] = isset( $upgradeStep['step'] ) ? intval( $upgradeStep['step'] ) : $step;
@@ -105,7 +105,7 @@ class UpgradeController extends BaseController {
 						Cache::model()->add( $data, false, true );
 						$upgradeRun = $upgrade;
 					} else {
-                        $upgradeRun = String::utf8Unserialize( $upgradeRun['cachevalue'] );
+                        $upgradeRun = StringUtil::utf8Unserialize( $upgradeRun['cachevalue'] );
 					}
 					// 下一步所需URL参数
 					$param = array(
@@ -593,7 +593,7 @@ class UpgradeController extends BaseController {
 		Cache::model()->deleteByPk( 'upgrade_step' );
 		Cache::model()->deleteByPk( 'upgrade_run' );
 		Setting::model()->updateSettingValueByKey( 'upgrade', '' );
-		$randomStr = String::random( 6 );
+		$randomStr = StringUtil::random( 6 );
 		$oldUpdateDir = '/data/update/';
 		$newUpdateDir = '/data/update-' . $randomStr . '/';
 		$oldBackDir = '/data/back/';

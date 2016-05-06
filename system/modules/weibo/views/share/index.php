@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <!-- 转发框 -->
@@ -19,7 +19,7 @@ use application\core\utils\String;
 					<?php if ( !empty( $shareInfo['shareHtml'] ) ): ?>
 						<?php echo $shareInfo['shareHtml']; ?>
 					<?php else: ?>
-						<?php echo String::parseHtml( $sourceInfo['source_content'] ); ?>
+						<?php echo StringUtil::parseHtml( $sourceInfo['source_content'] ); ?>
 					<?php endif; ?>
 				</p>
 			</div>

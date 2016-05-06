@@ -3,7 +3,7 @@
 namespace application\modules\diary\components;
 
 use application\core\utils\Convert;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\statistics\core\Chart as ICChart;
 use application\modules\user\model\User;
 
@@ -24,11 +24,11 @@ class Chart extends ICChart {
 	 */
 	public function getUserName() {
 		$users = User::model()->fetchAllByUids( $this->getCounter()->getUid() );
-		return String::iImplode( Convert::getSubByKey( $users, 'realname' ) );
+		return StringUtil::iImplode( Convert::getSubByKey( $users, 'realname' ) );
 	}
 
 	public function getStampName() {
-		$name = String::iImplode( $this->getCounter()->getStampName() );
+		$name = StringUtil::iImplode( $this->getCounter()->getStampName() );
 		return $name;
 	}
 

@@ -2,7 +2,7 @@
 
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 ?>
 <div class="da-stamp">
@@ -165,7 +165,7 @@ use application\modules\user\model\User;
                 'allowComment' => $allowComment,
                 'showStamp' => $fromController == 'review' && $this->issetStamp(),
                 'url' => $sourceUrl,
-                'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( String::filterCleanHtml( $diary['content'] ), 50 ) ) )
+                'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
     ) ) );
         ?>
     </div>

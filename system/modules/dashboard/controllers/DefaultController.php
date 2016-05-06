@@ -20,7 +20,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\model\Log;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Menu;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\user\components\UserIdentity;
@@ -56,9 +56,9 @@ class DefaultController extends BaseController {
             }
             // 开始验证
             // 登录类型
-            if (String::isMobile($userName)) {
+            if (StringUtil::isMobile($userName)) {
                 $loginType = 4;
-            } else if (String::isEmail($userName)) {
+            } else if (StringUtil::isEmail($userName)) {
                 $loginType = 2;
             } else {
                 $loginType = 1;

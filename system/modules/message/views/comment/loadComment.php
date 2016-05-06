@@ -1,7 +1,7 @@
 <?php 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <?php if ( !$loadmore ): ?>
 	<!-- Comment start -->

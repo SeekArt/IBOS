@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\diary\utils\Diary;
 
 ?>
@@ -168,7 +168,7 @@ use application\modules\diary\utils\Diary;
                                 position: 'inside'
                             }
                         },
-                        data:[<?php echo String::iImplode( $count); ?>]
+                        data:[<?php echo StringUtil::iImplode( $count); ?>]
                     },
                     {
                         name:'<?php echo $series['name']; ?>',

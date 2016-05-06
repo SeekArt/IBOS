@@ -18,7 +18,7 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\IBOS;
 
 class UserCount extends Model {
@@ -38,7 +38,7 @@ class UserCount extends Model {
      * @return integer
      */
     public function increase( $uids, $creditArr ) {
-        $uids = String::iIntval( (array) $uids, true );
+        $uids = StringUtil::iIntval( (array) $uids, true );
         $sql = array();
         $allowKey = array(
             'extcredits1', 'extcredits2', 'extcredits3', 'extcredits4', 'extcredits5',
@@ -52,7 +52,7 @@ class UserCount extends Model {
         if ( !empty( $sql ) ) {
             $sqlText = 'UPDATE %s SET %s WHERE uid IN (%s)';
             return IBOS::app()->db->createCommand()
-                            ->setText( sprintf( $sqlText, $this->tableName(), implode( ',', $sql ), String::iImplode( $uids ) ) )
+                            ->setText( sprintf( $sqlText, $this->tableName(), implode( ',', $sql ), StringUtil::iImplode( $uids ) ) )
                             ->execute();
         }
     }

@@ -2,7 +2,7 @@
 
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\vote\components\Vote;
 ?>
@@ -200,7 +200,7 @@ use application\modules\vote\components\Vote;
                                                 'module_rowid' => $data['articleid'],
                                                 'module_table' => 'article',
                                                 'url' => $sourceUrl,
-                                                'detail' => IBOS::lang( 'Comment my article', '', array( '{url}' => $sourceUrl, '{title}' => String::cutStr( $data['subject'], 50 ) ) )
+                                                'detail' => IBOS::lang( 'Comment my article', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
                                     ) ) );
                                         ?>
                                     </div>

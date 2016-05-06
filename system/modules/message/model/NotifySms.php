@@ -3,7 +3,7 @@
 namespace application\modules\message\model;
 
 use application\core\model\Model;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 class NotifySms extends Model {
 
@@ -23,12 +23,12 @@ class NotifySms extends Model {
     public function sendSms( $data ) {
         $s['uid'] = intval( $data['uid'] );
         $s['touid'] = intval( $data['touid'] );
-        $s['mobile'] = String::filterCleanHtml( $data['mobile'] );
-        $s['posturl'] = String::filterCleanHtml( $data['posturl'] );
-        $s['node'] = String::filterCleanHtml( $data['node'] );
-        $s['module'] = String::filterCleanHtml( $data['module'] );
-        $s['return'] = String::filterCleanHtml( $data['return'] );
-        $s['content'] = String::filterDangerTag( $data['content'] );
+        $s['mobile'] = StringUtil::filterCleanHtml( $data['mobile'] );
+        $s['posturl'] = StringUtil::filterCleanHtml( $data['posturl'] );
+        $s['node'] = StringUtil::filterCleanHtml( $data['node'] );
+        $s['module'] = StringUtil::filterCleanHtml( $data['module'] );
+        $s['return'] = StringUtil::filterCleanHtml( $data['return'] );
+        $s['content'] = StringUtil::filterDangerTag( $data['content'] );
         $s['ctime'] = time();
         return $this->add( $s, true );
     }

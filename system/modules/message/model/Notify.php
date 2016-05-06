@@ -7,7 +7,7 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Cloud;
 use application\core\utils\IBOS;
 use application\core\utils\Mail;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\utils\Message as MessageUtil;
 use application\modules\user\model\User;
@@ -154,7 +154,7 @@ class Notify extends Model {
                     $sendArray[] = NotifyMessage::model()->sendMessage( $data );
                 }
                 // 加载个人提醒设置
-                $setting = !empty( $user['remindsetting'] ) ? String::utf8Unserialize( $user['remindsetting'] ) : array();
+                $setting = !empty( $user['remindsetting'] ) ? StringUtil::utf8Unserialize( $user['remindsetting'] ) : array();
                 $pushToCO[$user['uid']] = isset( $setting[$node['node']] ) && isset( $setting[$node['node']]['app'] ) && $setting[$node['node']]['app'] == 1;
 
                 if ( !empty( $node['sendemail'] ) ) {

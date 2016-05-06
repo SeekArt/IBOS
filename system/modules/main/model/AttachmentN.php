@@ -3,7 +3,7 @@
 namespace application\modules\main\model;
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use CException;
 
 class AttachmentN {
@@ -35,7 +35,7 @@ class AttachmentN {
         if ( !is_numeric( $tableId ) ) {
             list($idType, $id) = explode( ':', $tableId );
             if ( $idType == 'aid' ) {
-                $aid = String::iIntval( $id );
+                $aid = StringUtil::iIntval( $id );
                 $tableId = IBOS::app()->db->createCommand()
                         ->select( 'tableid' )
                         ->from( '{{attachment}}' )
@@ -43,7 +43,7 @@ class AttachmentN {
                         ->queryScalar();
             } elseif ( $idType == 'rid' ) {
                 $rid = (string) $id;
-                $tableId = String::iIntval( $rid{strlen( $rid ) - 1} );
+                $tableId = StringUtil::iIntval( $rid{strlen( $rid ) - 1} );
             }
         }
         if ( $tableId >= 0 && $tableId < 10 ) {

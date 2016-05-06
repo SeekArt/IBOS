@@ -9,7 +9,7 @@ use application\core\utils\Database;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Attachment;
 use application\modules\main\model\Setting;
 use CHtml;
@@ -62,7 +62,7 @@ class IndexController extends BaseController {
             $attachSize = '';
         }
         $data = array(
-            'unit' => String::utf8Unserialize( $unit ),
+            'unit' => StringUtil::utf8Unserialize( $unit ),
             'sys' => $systemInfo,
             'dataSize' => $dataSize,
             'dataUnit' => $dataUnit,

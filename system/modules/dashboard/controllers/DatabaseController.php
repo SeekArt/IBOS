@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\IBOS;
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Database;
 
 class DatabaseController extends BaseController {
@@ -51,7 +51,7 @@ class DatabaseController extends BaseController {
                     $this->success( empty( $msg ) ? '备份出了点问题，请重试' : $msg, $url, $param );
                 }
             }
-            $data['defaultFileName'] = date('Y-m-d') . '_' . String::random(8);
+            $data['defaultFileName'] = date('Y-m-d') . '_' . StringUtil::random(8);
             $data['tables'] = Database::getTablelist($tablePrefix);
             $this->render('backup', $data);
         }

@@ -8,7 +8,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Page;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\model\NotifySms;
 use application\modules\message\utils\Message;
@@ -38,7 +38,7 @@ class SmsController extends BaseController {
             $data = array();
             $smsLeft = 0;
             $arr = Setting::model()->fetchSettingValueByKeys( 'smsenabled,smsinterface,smssetup' );
-            $arr['smssetup'] = String::utf8Unserialize( $arr['smssetup'] );
+            $arr['smssetup'] = StringUtil::utf8Unserialize( $arr['smssetup'] );
             if ( is_array( $arr['smssetup'] ) ) {
                 // 接口1：北程科技
                 if ( $arr['smsinterface'] == '1' ) {
@@ -58,7 +58,7 @@ class SmsController extends BaseController {
              * todo::下面这个？
              */
             $temp = Setting::model()->fetchSettingValueByKey( '' );
-            $arr['setup'] = String::utf8Unserialize( $temp );
+            $arr['setup'] = StringUtil::utf8Unserialize( $temp );
             $data['setup'] = $arr;
             $data['smsLeft'] = $smsLeft;
             $this->render( 'setup', $data );
@@ -131,13 +131,13 @@ class SmsController extends BaseController {
                 $condition .= sprintf( "%s`ctime` < %d", $and, strtotime( $end ) );
             }
             if ( !empty( $sender ) ) {
-                $temp = String::getUid( $sender );
+                $temp = StringUtil::getUid( $sender );
                 $sender = $temp[0];
                 $and = !empty( $condition ) ? ' AND ' : '';
                 $condition .= sprintf( "%s`uid` = %d", $and, $sender );
             }
             if ( !empty( $recnumber ) ) {
-                // if ( !String::isMobile( $recnumber ) ) {
+                // if ( !StringUtil::isMobile( $recnumber ) ) {
                 //     $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => '手机号格式不正确' ) );
                 // }
                 $and = !empty( $condition ) ? ' AND ' : '';
@@ -178,7 +178,7 @@ class SmsController extends BaseController {
      */
     public function actionDel() {
         $id = Env::getRequest( 'id' );
-        $id = String::filterStr( $id );
+        $id = StringUtil::filterStr( $id );
         NotifySms::model()->deleteAll( "FIND_IN_SET(id,'{$id}')" );
         $this->ajaxReturn( array( 'isSuccess' => true ) );
     }
@@ -188,7 +188,7 @@ class SmsController extends BaseController {
      */
     public function actionExport() {
         $id = Env::getRequest( 'id' );
-        $id = String::filterStr( $id );
+        $id = StringUtil::filterStr( $id );
         Message::exportSms( $id );
     }
 

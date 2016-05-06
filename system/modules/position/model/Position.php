@@ -20,7 +20,7 @@ namespace application\modules\position\model;
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\position\utils\Position as PositionUtil;
 
 class Position extends Model {
@@ -86,7 +86,7 @@ class Position extends Model {
      */
     public function fetchPosNameByPosId( $id, $glue = ',', $returnFirst = false ) {
         $posArr = PositionUtil::loadPosition();
-        $posIds = is_array( $id ) ? $id : explode( ',', String::filterStr( $id ) );
+        $posIds = is_array( $id ) ? $id : explode( ',', StringUtil::filterStr( $id ) );
         $name = array();
         if ( $returnFirst ) {
             if ( isset( $posArr[$posIds[0]] ) ) {

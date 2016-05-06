@@ -2,7 +2,7 @@
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 
 ?>
 <div class="ct">
@@ -64,7 +64,7 @@ use application\core\utils\String;
 							<?php foreach ( $list['exportLog'] as $key => $value ) : ?>
 								<?php
 								$info = $value[1];
-								$random = String::random( 5 );
+								$random = StringUtil::random( 5 );
 								$info['method'] = $info['type'] != 'zip' ? ($info['method'] == 'multivol' ? $lang['DBMultivol'] : $lang['DBShell']) : '';
 								$info['volume'] = count( $value );
 								?>

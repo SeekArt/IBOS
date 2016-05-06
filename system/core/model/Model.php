@@ -19,7 +19,7 @@ namespace application\core\model;
 
 use application\core\utils\Cache;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use CActiveRecord;
 use CException;
 

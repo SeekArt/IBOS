@@ -19,7 +19,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\IBOS;
 use application\core\utils\Env;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\dashboard\model\Approval;
 
@@ -64,12 +64,12 @@ class ApprovalController extends BaseController {
         } else {
             $id = Env::getRequest( 'id' );
             $approval = Approval::model()->fetchByPk( $id );
-            $approval['level1'] = String::wrapId( $approval['level1'] );
-            $approval['level2'] = String::wrapId( $approval['level2'] );
-            $approval['level3'] = String::wrapId( $approval['level3'] );
-            $approval['level4'] = String::wrapId( $approval['level4'] );
-            $approval['level5'] = String::wrapId( $approval['level5'] );
-            $approval['free'] = String::wrapId( $approval['free'] );
+            $approval['level1'] = StringUtil::wrapId( $approval['level1'] );
+            $approval['level2'] = StringUtil::wrapId( $approval['level2'] );
+            $approval['level3'] = StringUtil::wrapId( $approval['level3'] );
+            $approval['level4'] = StringUtil::wrapId( $approval['level4'] );
+            $approval['level5'] = StringUtil::wrapId( $approval['level5'] );
+            $approval['free'] = StringUtil::wrapId( $approval['free'] );
             $params = array(
                 'approval' => $approval
             );
@@ -123,7 +123,7 @@ class ApprovalController extends BaseController {
         $names = User::model()->fetchRealnamesByUids( $uids );
         $nums = count( $uids );
         if ( $nums >= 4 ) {
-            $show = String::cutStr( $names, 30 ) . " 等{$nums}人";
+            $show = StringUtil::cutStr( $names, 30 ) . " 等{$nums}人";
         } else {
             $show = $names;
         }
@@ -160,12 +160,12 @@ class ApprovalController extends BaseController {
         $ret = array(
             'name' => \CHtml::encode( $post['name'] ),
             'level' => $post['level'],
-            'level1' => implode( ',', String::getId( $post['level1'] ) ),
-            'level2' => implode( ',', String::getId( $post['level2'] ) ),
-            'level3' => implode( ',', String::getId( $post['level3'] ) ),
-            'level4' => implode( ',', String::getId( $post['level4'] ) ),
-            'level5' => implode( ',', String::getId( $post['level5'] ) ),
-            'free' => implode( ',', String::getId( $post['free'] ) ),
+            'level1' => implode( ',', StringUtil::getId( $post['level1'] ) ),
+            'level2' => implode( ',', StringUtil::getId( $post['level2'] ) ),
+            'level3' => implode( ',', StringUtil::getId( $post['level3'] ) ),
+            'level4' => implode( ',', StringUtil::getId( $post['level4'] ) ),
+            'level5' => implode( ',', StringUtil::getId( $post['level5'] ) ),
+            'free' => implode( ',', StringUtil::getId( $post['free'] ) ),
             'desc' => \CHtml::encode( $post['desc'] ),
         );
         return $ret;

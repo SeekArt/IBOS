@@ -19,7 +19,7 @@ namespace application\modules\diary\components;
 
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\File;
 use application\modules\dashboard\model\Stamp;
 use application\modules\department\model\Department;
@@ -56,7 +56,7 @@ class Diary {
 				$value['editIsLock'] = 0;
 			}
 			//取得点评数量
-			$value['content'] = String::cutStr( strip_tags( $value['content'] ), 255 );
+			$value['content'] = StringUtil::cutStr( strip_tags( $value['content'] ), 255 );
 			$value['diarytime'] = DiaryUtil::getDateAndWeekDay( date( 'Y-m-d', $value['diarytime'] ) );
 			$value['addtime'] = Convert::formatDate( $value['addtime'], 'u' );
 			//图章
@@ -92,7 +92,7 @@ class Diary {
 		$diary['nextDiarytime'] = DiaryUtil::getDateAndWeekDay( date( 'Y-m-d', $diary['nextdiarytime'] ) );
 		$diary['realname'] = User::model()->fetchRealnameByUid( $diary['uid'] );
 		$diary['departmentName'] = Department::model()->fetchDeptNameByUid( $diary['uid'] );
-		$diary['shareuid'] = String::wrapId( $diary['shareuid'] );
+		$diary['shareuid'] = StringUtil::wrapId( $diary['shareuid'] );
 		return $diary;
 	}
 
@@ -107,7 +107,7 @@ class Diary {
 		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
 		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
 		foreach ( $data as $diary ) {
-			$diary['content'] = String::cutStr( strip_tags( $diary['content'] ), 255 );
+			$diary['content'] = StringUtil::cutStr( strip_tags( $diary['content'] ), 255 );
 			$diary['realname'] = User::model()->fetchRealnameByUid( $diary['uid'] );
 			$diary['addtime'] = Convert::formatDate( $diary['addtime'], 'u' );
 			$isattention = in_array( $diary['uid'], $auidArr );
@@ -132,7 +132,7 @@ class Diary {
 		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
 		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
 		foreach ( $data as $diary ) {
-			$diary['content'] = String::cutStr( strip_tags( $diary['content'] ), 255 );
+			$diary['content'] = StringUtil::cutStr( strip_tags( $diary['content'] ), 255 );
 			$diary['realname'] = User::model()->fetchRealnameByUid( $diary['uid'] );
 			$diary['addtime'] = Convert::formatDate( $diary['addtime'], 'u' );
 			$isattention = in_array( $diary['uid'], $auidArr );

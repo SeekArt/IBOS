@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 <feed module='message' type='post' info='原创微博'>
     <title comment="feed标题"> 

@@ -19,7 +19,7 @@ namespace application\modules\message\utils;
 use application\core\utils\Cloud;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core as MessageCore;
 use application\modules\message\model\NotifySms;
@@ -38,7 +38,7 @@ class Message {
      * @return boolean 发送成功与否
      */
     public static function sendSms( $mobile, $content = '', $module = '', $touid = 0, $uid = 0 ) {
-        $content = String::filterCleanHtml( $content );
+        $content = StringUtil::filterCleanHtml( $content );
         $data = array(
             'uid' => $uid,
             'touid' => $touid,
@@ -143,7 +143,7 @@ class Message {
      */
     public static function getIsImOpen( $type ) {
         $setting = Setting::model()->fetchSettingValueByKey( 'im' );
-        $arrays = String::utf8Unserialize( $setting );
+        $arrays = StringUtil::utf8Unserialize( $setting );
         if ( is_array( $arrays ) && isset( $arrays[$type] ) ) {
             if ( isset( $arrays[$type]['open'] ) && $arrays[$type]['open'] == '1' ) {
                 return true;

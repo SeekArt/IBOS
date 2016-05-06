@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 ?>
 
 <div class="ct">
@@ -61,7 +61,7 @@ use application\core\utils\String;
                                         <td><input class="input-small" name="sort[<?php echo $value['id']; ?>]" type="text" value="<?php echo $value['sort']; ?>" /></td>
                                         <td><?php echo $value['author']; ?></td>
                                         <td><?php echo $value['subject']; ?></td>
-                                        <td><?php echo String::cutStr( $value['message'], 50 ); ?></td>
+                                        <td><?php echo StringUtil::cutStr( $value['message'], 50 ); ?></td>
                                         <td><?php echo $typeDesc[$value['type']]; ?></td>
                                         <td><?php echo date( 'Y-m-d H:i', $value['starttime'] ); ?></td>
                                         <td><?php echo date( 'Y-m-d H:i', $value['endtime'] ); ?></td>

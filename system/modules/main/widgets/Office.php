@@ -20,7 +20,7 @@ use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\core\utils\Xml;
 use CWidget;
 
@@ -198,7 +198,7 @@ class Office extends CWidget {
             return $map[$typeId];
         } else {
             return array(
-                'typeId' => Attach::attachType( String::getFileExt( $var['attach']['attachment'] ), 'id' ),
+                'typeId' => Attach::attachType( StringUtil::getFileExt( $var['attach']['attachment'] ), 'id' ),
                 'fileName' => $var['attach']['filename'],
                 'fileUrl' => File::fileName( File::getAttachUrl() . '/' . $var['attach']['attachment'] )
             );
@@ -222,7 +222,7 @@ class Office extends CWidget {
             $return['timestamp'] = intval( $param[2] );
         }
         if ( isset( $param[3] ) ) {
-            $ext = String::utf8Unserialize( $param[3] );
+            $ext = StringUtil::utf8Unserialize( $param[3] );
             $return = array_merge( $return, $ext );
         }
         if(isset($param['op'])) {

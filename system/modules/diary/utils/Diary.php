@@ -18,7 +18,7 @@ namespace application\modules\diary\utils;
 
 use application\core\utils\IBOS; 
 use application\core\utils\Module;
-use application\core\utils\String;
+use application\core\utils\StringUtil;
 use application\modules\diary\model\DiaryAttention;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
@@ -155,7 +155,7 @@ class Diary {
             return true;
         }
         $subUidArr = UserUtil::getAllSubs( $uid, '', true );
-        if ( String::findIn( $author, implode( ',', $subUidArr ) ) ) {
+        if ( StringUtil::findIn( $author, implode( ',', $subUidArr ) ) ) {
             $flag = true;
         }
         return $flag;
