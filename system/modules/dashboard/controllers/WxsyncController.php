@@ -155,6 +155,11 @@ class WxsyncController extends WxController {
                         exit();
                     }
                 }
+                $uidArray = array();
+                foreach ( $users as $user ) {
+                    $uidArray[] = $user['uid'];
+                }
+                $users = $users = User::model()->fetchAllByUids( $uidArray );
                 foreach ( $users as $user ) {
                     $deptIds = array();
                     foreach ( explode( ',', $user['alldeptid'] ) as $deptId ) {
