@@ -70,6 +70,7 @@ class CEmailValidator extends CValidator
 		$value=$object->$attribute;
 		if($this->allowEmpty && $this->isEmpty($value))
 			return;
+
 		if(!$this->validateValue($value))
 		{
 			$message=$this->message!==null?$this->message:Yii::t('yii','{attribute} is not a valid email address.');
@@ -79,11 +80,14 @@ class CEmailValidator extends CValidator
 
 	/**
 	 * Validates a static value to see if it is a valid email.
-	 * Note that this method does not respect {@link allowEmpty} property.
 	 * This method is provided so that you can call it directly without going through the model validation rule mechanism.
+	 *
+	 * Note that this method does not respect the {@link allowEmpty} property.
+	 *
 	 * @param mixed $value the value to be validated
 	 * @return boolean whether the value is a valid email
 	 * @since 1.1.1
+	 * @see https://github.com/yiisoft/yii/issues/3764#issuecomment-75457805
 	 */
 	public function validateValue($value)
 	{
@@ -175,9 +179,7 @@ if(".($this->allowEmpty ? "jQuery.trim(value)!='' && " : '').$condition.") {
 	 */
 	protected function mxSort($a, $b)
 	{
-		if($a['pri']==$b['pri'])
-			return 0;
-		return ($a['pri']<$b['pri'])?-1:1;
+		return $a['pri']-$b['pri'];
 	}
 
 	/**

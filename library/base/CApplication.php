@@ -42,7 +42,7 @@
  * CApplication will undergo the following lifecycles when processing a user request:
  * <ol>
  * <li>load application configuration;</li>
- * <li>set up class autoloader and error handling;</li>
+ * <li>set up error handling;</li>
  * <li>load static application components;</li>
  * <li>{@link onBeginRequest}: preprocess the user request;</li>
  * <li>{@link processRequest}: process the user request;</li>
@@ -73,6 +73,7 @@
  * @property CPhpMessageSource $coreMessages The core message translations.
  * @property CMessageSource $messages The application message translations.
  * @property CHttpRequest $request The request component.
+ * @property CFormatter $format The formatter component.
  * @property CUrlManager $urlManager The URL manager component.
  * @property CController $controller The currently active controller. Null is returned in this base class.
  * @property string $baseUrl The relative URL for the application.
@@ -97,6 +98,10 @@ abstract class CApplication extends CModule
 	 * the language that the messages and view files are in. Defaults to 'en_us' (US English).
 	 */
 	public $sourceLanguage='en_us';
+	/**
+	 * @var string the class used to get locale data. Defaults to 'CLocale'.
+	 */
+	public $localeClass='CLocale';
 
 	private $_id;
 	private $_basePath;
@@ -395,11 +400,11 @@ abstract class CApplication extends CModule
 	/**
 	 * Returns the locale instance.
 	 * @param string $localeID the locale ID (e.g. en_US). If null, the {@link getLanguage application language ID} will be used.
-	 * @return CLocale the locale instance
+	 * @return an instance of CLocale
 	 */
 	public function getLocale($localeID=null)
 	{
-		return CLocale::getInstance($localeID===null?$this->getLanguage():$localeID);
+		return call_user_func_array(array($this->localeClass, 'getInstance'),array($localeID===null?$this->getLanguage():$localeID));
 	}
 
 	/**
@@ -409,7 +414,10 @@ abstract class CApplication extends CModule
 	 */
 	public function getLocaleDataPath()
 	{
-		return CLocale::$dataPath===null ? Yii::getPathOfAlias('system.i18n.data') : CLocale::$dataPath;
+		$vars=get_class_vars($this->localeClass);
+		if(empty($vars['dataPath']))
+			return Yii::getPathOfAlias('system.i18n.data');
+		return $vars['dataPath'];
 	}
 
 	/**
@@ -419,7 +427,8 @@ abstract class CApplication extends CModule
 	 */
 	public function setLocaleDataPath($value)
 	{
-		CLocale::$dataPath=$value;
+		$property=new ReflectionProperty($this->localeClass,'dataPath');
+		$property->setValue($value);
 	}
 
 	/**
@@ -520,6 +529,15 @@ abstract class CApplication extends CModule
 	public function getUrlManager()
 	{
 		return $this->getComponent('urlManager');
+	}
+
+	/**
+	 * Returns the formatter component.
+	 * @return CFormatter the formatter component
+	 */
+	public function getFormat()
+	{
+		return $this->getComponent('format');
 	}
 
 	/**
@@ -937,7 +955,7 @@ abstract class CApplication extends CModule
 	}
 
 	/**
-	 * Initializes the class autoloader and error handlers.
+	 * Initializes the error handlers.
 	 */
 	protected function initSystemHandlers()
 	{

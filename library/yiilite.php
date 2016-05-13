@@ -40,7 +40,7 @@ class YiiBase
 	private static $_logger;
 	public static function getVersion()
 	{
-		return '1.1.14';
+		return '1.1.17';
 	}
 	public static function createWebApplication($config=null)
 	{
@@ -145,7 +145,8 @@ class YiiBase
 		}
 		if(($pos=strrpos($alias,'.'))===false)  // a simple class name
 		{
-			if($forceInclude && self::autoload($alias))
+			// try to autoload the class with an autoloader if $forceInclude is true
+			if($forceInclude && (Yii::autoload($alias,true) || class_exists($alias,true)))
 				self::$_imports[$alias]=$alias;
 			return $alias;
 		}
@@ -211,13 +212,15 @@ class YiiBase
 		else
 			self::$_aliases[$alias]=rtrim($path,'\\/');
 	}
-	public static function autoload($className)
+	public static function autoload($className,$classMapOnly=false)
 	{
 		// use include so that the error PHP file may appear
 		if(isset(self::$classMap[$className]))
 			include(self::$classMap[$className]);
 		elseif(isset(self::$_coreClasses[$className]))
 			include(YII_PATH.self::$_coreClasses[$className]);
+		elseif($classMapOnly)
+			return false;
 		else
 		{
 			// include class file relying on include_path
@@ -246,7 +249,7 @@ class YiiBase
 			else  // class name with namespace in PHP 5.3
 			{
 				$namespace=str_replace('\\','.',ltrim($className,'\\'));
-				if(($path=self::getPathOfAlias($namespace))!==false)
+				if(($path=self::getPathOfAlias($namespace))!==false && is_file($path.'.php'))
 					include($path.'.php');
 				else
 					return false;
@@ -358,6 +361,7 @@ class YiiBase
 		'CApplicationComponent' => '/base/CApplicationComponent.php',
 		'CBehavior' => '/base/CBehavior.php',
 		'CComponent' => '/base/CComponent.php',
+		'CDbStatePersister' => '/base/CDbStatePersister.php',
 		'CErrorEvent' => '/base/CErrorEvent.php',
 		'CErrorHandler' => '/base/CErrorHandler.php',
 		'CException' => '/base/CException.php',
@@ -420,6 +424,9 @@ class YiiBase
 		'CDbExpression' => '/db/schema/CDbExpression.php',
 		'CDbSchema' => '/db/schema/CDbSchema.php',
 		'CDbTableSchema' => '/db/schema/CDbTableSchema.php',
+		'CCubridColumnSchema' => '/db/schema/cubrid/CCubridColumnSchema.php',
+		'CCubridSchema' => '/db/schema/cubrid/CCubridSchema.php',
+		'CCubridTableSchema' => '/db/schema/cubrid/CCubridTableSchema.php',
 		'CMssqlColumnSchema' => '/db/schema/mssql/CMssqlColumnSchema.php',
 		'CMssqlCommandBuilder' => '/db/schema/mssql/CMssqlCommandBuilder.php',
 		'CMssqlPdoAdapter' => '/db/schema/mssql/CMssqlPdoAdapter.php',
@@ -461,6 +468,7 @@ class YiiBase
 		'CLogRouter' => '/logging/CLogRouter.php',
 		'CLogger' => '/logging/CLogger.php',
 		'CProfileLogRoute' => '/logging/CProfileLogRoute.php',
+		'CSysLogRoute' => '/logging/CSysLogRoute.php',
 		'CWebLogRoute' => '/logging/CWebLogRoute.php',
 		'CDateTimeParser' => '/utils/CDateTimeParser.php',
 		'CFileHelper' => '/utils/CFileHelper.php',
@@ -577,6 +585,8 @@ class YiiBase
 	);
 }
 spl_autoload_register(array('YiiBase','autoload'));
+if(!class_exists('YiiBase', false))
+	require(dirname(__FILE__).'/YiiBase.php');
 class Yii extends YiiBase
 {
 }
@@ -699,7 +709,7 @@ class CComponent
 					return call_user_func_array(array($object,$name),$parameters);
 			}
 		}
-		if(class_exists('Closure', false) && $this->canGetProperty($name) && $this->$name instanceof Closure)
+		if(class_exists('Closure', false) && ($this->canGetProperty($name) || property_exists($this, $name)) && $this->$name instanceof Closure)
 			return call_user_func_array($this->$name, $parameters);
 		throw new CException(Yii::t('yii','{class} and its behaviors do not have a method or closure named "{name}".',
 			array('{class}'=>get_class($this), '{name}'=>$name)));
@@ -1022,7 +1032,7 @@ abstract class CModule extends CComponent
 	{
 		return $this->_moduleConfig;
 	}
-	public function setModules($modules)
+	public function setModules($modules,$merge=true)
 	{
 		foreach($modules as $id=>$module)
 		{
@@ -1031,15 +1041,18 @@ abstract class CModule extends CComponent
 				$id=$module;
 				$module=array();
 			}
-			if(!isset($module['class']))
-			{
-				Yii::setPathOfAlias($id,$this->getModulePath().DIRECTORY_SEPARATOR.$id);
-				$module['class']=$id.'.'.ucfirst($id).'Module';
-			}
-			if(isset($this->_moduleConfig[$id]))
+			if(isset($this->_moduleConfig[$id]) && $merge)
 				$this->_moduleConfig[$id]=CMap::mergeArray($this->_moduleConfig[$id],$module);
 			else
+			{
+				if(!isset($module['class']))
+				{
+					if (Yii::getPathOfAlias($id)===false)
+						Yii::setPathOfAlias($id,$this->getModulePath().DIRECTORY_SEPARATOR.$id);
+					$module['class']=$id.'.'.ucfirst($id).'Module';
+				}
 				$this->_moduleConfig[$id]=$module;
+			}
 		}
 	}
 	public function hasComponent($id)
@@ -1138,6 +1151,7 @@ abstract class CApplication extends CModule
 	public $name='My Application';
 	public $charset='UTF-8';
 	public $sourceLanguage='en_us';
+	public $localeClass='CLocale';
 	private $_id;
 	private $_basePath;
 	private $_runtimePath;
@@ -1289,15 +1303,19 @@ abstract class CApplication extends CModule
 	}
 	public function getLocale($localeID=null)
 	{
-		return CLocale::getInstance($localeID===null?$this->getLanguage():$localeID);
+		return call_user_func_array(array($this->localeClass, 'getInstance'),array($localeID===null?$this->getLanguage():$localeID));
 	}
 	public function getLocaleDataPath()
 	{
-		return CLocale::$dataPath===null ? Yii::getPathOfAlias('system.i18n.data') : CLocale::$dataPath;
+		$vars=get_class_vars($this->localeClass);
+		if(empty($vars['dataPath']))
+			return Yii::getPathOfAlias('system.i18n.data');
+		return $vars['dataPath'];
 	}
 	public function setLocaleDataPath($value)
 	{
-		CLocale::$dataPath=$value;
+		$property=new ReflectionProperty($this->localeClass,'dataPath');
+		$property->setValue($value);
 	}
 	public function getNumberFormatter()
 	{
@@ -1342,6 +1360,10 @@ abstract class CApplication extends CModule
 	public function getUrlManager()
 	{
 		return $this->getComponent('urlManager');
+	}
+	public function getFormat()
+	{
+		return $this->getComponent('format');
 	}
 	public function getController()
 	{
@@ -1754,7 +1776,7 @@ class CWebApplication extends CApplication
 	{
 		if($owner===null)
 			$owner=$this;
-		if(($route=trim($route,'/'))==='')
+		if((array)$route===$route || ($route=trim($route,'/'))==='')
 			$route=$owner->defaultController;
 		$caseSensitive=$this->getUrlManager()->caseSensitive;
 		$route.='/';
@@ -1785,7 +1807,7 @@ class CWebApplication extends CApplication
 			$className=ucfirst($id).'Controller';
 			$classFile=$basePath.DIRECTORY_SEPARATOR.$className.'.php';
 			if($owner->controllerNamespace!==null)
-				$className=$owner->controllerNamespace.'\\'.$className;
+				$className=$owner->controllerNamespace.'\\'.str_replace('/','\\',$controllerID).$className;
 			if(is_file($classFile))
 			{
 				if(!class_exists($className,false))
@@ -2247,6 +2269,7 @@ abstract class CApplicationComponent extends CComponent implements IApplicationC
 }
 class CHttpRequest extends CApplicationComponent
 {
+	public $jsonAsArray = true;
 	public $enableCookieValidation=false;
 	public $enableCsrfValidation=false;
 	public $csrfTokenName='YII_CSRF_TOKEN';
@@ -2262,6 +2285,7 @@ class CHttpRequest extends CApplicationComponent
 	private $_preferredLanguages;
 	private $_csrfToken;
 	private $_restParams;
+	private $_httpVersion;
 	public function init()
 	{
 		parent::init();
@@ -2333,12 +2357,26 @@ class CHttpRequest extends CApplicationComponent
 		else
 			return $defaultValue;
 	}
+	public function getPatch($name,$defaultValue=null)
+	{
+		if($this->getIsPatchViaPostRequest())
+			return $this->getPost($name, $defaultValue);
+		if($this->getIsPatchRequest())
+		{
+			$restParams=$this->getRestParams();
+			return isset($restParams[$name]) ? $restParams[$name] : $defaultValue;
+		}
+		else
+			return $defaultValue;
+	}
 	public function getRestParams()
 	{
 		if($this->_restParams===null)
 		{
 			$result=array();
-			if(function_exists('mb_parse_str'))
+			if (strncmp($this->getContentType(), 'application/json', 16) === 0)
+				$result = CJSON::decode($this->getRawBody(), $this->jsonAsArray);
+			elseif(function_exists('mb_parse_str'))
 				mb_parse_str($this->getRawBody(), $result);
 			else
 				parse_str($this->getRawBody(), $result);
@@ -2447,7 +2485,13 @@ class CHttpRequest extends CApplicationComponent
 				$pathInfo=substr($_SERVER['PHP_SELF'],strlen($scriptUrl));
 			else
 				throw new CException(Yii::t('yii','CHttpRequest is unable to determine the path info of the request.'));
-			$this->_pathInfo=trim($pathInfo,'/');
+			if($pathInfo==='/' || $pathInfo===false)
+				$pathInfo='';
+			elseif($pathInfo!=='' && $pathInfo[0]==='/')
+				$pathInfo=substr($pathInfo,1);
+			if(($posEnd=strlen($pathInfo)-1)>0 && $pathInfo[$posEnd]==='/')
+				$pathInfo=substr($pathInfo,0,$posEnd);
+			$this->_pathInfo=$pathInfo;
 		}
 		return $this->_pathInfo;
 	}
@@ -2508,13 +2552,15 @@ class CHttpRequest extends CApplicationComponent
 	}
 	public function getIsSecureConnection()
 	{
-		return isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS']=='on' || $_SERVER['HTTPS']==1)
-			|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']=='https';
+		return isset($_SERVER['HTTPS']) && (strcasecmp($_SERVER['HTTPS'],'on')===0 || $_SERVER['HTTPS']==1)
+			|| isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strcasecmp($_SERVER['HTTP_X_FORWARDED_PROTO'],'https')===0;
 	}
 	public function getRequestType()
 	{
 		if(isset($_POST['_method']))
 			return strtoupper($_POST['_method']);
+		elseif(isset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']))
+			return strtoupper($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
 		return strtoupper(isset($_SERVER['REQUEST_METHOD'])?$_SERVER['REQUEST_METHOD']:'GET');
 	}
 	public function getIsPostRequest()
@@ -2536,6 +2582,14 @@ class CHttpRequest extends CApplicationComponent
 	protected function getIsPutViaPostRequest()
 	{
 		return isset($_POST['_method']) && !strcasecmp($_POST['_method'],'PUT');
+	}
+	public function getIsPatchRequest()
+	{
+		return (isset($_SERVER['REQUEST_METHOD']) && !strcasecmp($_SERVER['REQUEST_METHOD'],'PATCH')) || $this->getIsPatchViaPostRequest();
+	}
+	protected function getIsPatchViaPostRequest()
+	{
+		return isset($_POST['_method']) && !strcasecmp($_POST['_method'],'PATCH');
 	}
 	public function getIsAjaxRequest()
 	{
@@ -2583,6 +2637,16 @@ class CHttpRequest extends CApplicationComponent
 	public function getAcceptTypes()
 	{
 		return isset($_SERVER['HTTP_ACCEPT'])?$_SERVER['HTTP_ACCEPT']:null;
+	}
+	public function getContentType()
+	{
+		if (isset($_SERVER["CONTENT_TYPE"])) {
+			return $_SERVER["CONTENT_TYPE"];
+		} elseif (isset($_SERVER["HTTP_CONTENT_TYPE"])) {
+			//fix bug https://bugs.php.net/bug.php?id=66606
+			return $_SERVER["HTTP_CONTENT_TYPE"];
+		}
+		return null;
 	}
 	private $_port;
 	public function getPort()
@@ -2736,10 +2800,23 @@ class CHttpRequest extends CApplicationComponent
 		}
 		return $this->_preferredLanguages;
 	}
-	public function getPreferredLanguage()
+	public function getPreferredLanguage($languages=array())
 	{
 		$preferredLanguages=$this->getPreferredLanguages();
-		return !empty($preferredLanguages) ? CLocale::getCanonicalID($preferredLanguages[0]) : false;
+		if(empty($languages)) {
+			return !empty($preferredLanguages) ? CLocale::getCanonicalID($preferredLanguages[0]) : false;
+		}
+		foreach ($preferredLanguages as $preferredLanguage) {
+			$preferredLanguage=CLocale::getCanonicalID($preferredLanguage);
+			foreach ($languages as $language) {
+				$language=CLocale::getCanonicalID($language);
+				// en_us==en_us, en==en_us, en_us==en
+				if($language===$preferredLanguage || strpos($preferredLanguage,$language.'_')===0 || strpos($language,$preferredLanguage.'_')===0) {
+					return $language;
+				}
+			}
+		}
+		return reset($languages);
 	}
 	public function sendFile($fileName,$content,$mimeType=null,$terminate=true)
 	{
@@ -2751,6 +2828,7 @@ class CHttpRequest extends CApplicationComponent
 		$fileSize=(function_exists('mb_strlen') ? mb_strlen($content,'8bit') : strlen($content));
 		$contentStart=0;
 		$contentEnd=$fileSize-1;
+		$httpVersion=$this->getHttpVersion();
 		if(isset($_SERVER['HTTP_RANGE']))
 		{
 			header('Accept-Ranges: bytes');
@@ -2784,11 +2862,11 @@ class CHttpRequest extends CApplicationComponent
 				header("Content-Range: bytes $contentStart-$contentEnd/$fileSize");
 				throw new CHttpException(416,'Requested Range Not Satisfiable');
 			}
-			header('HTTP/1.1 206 Partial Content');
+			header("HTTP/$httpVersion 206 Partial Content");
 			header("Content-Range: bytes $contentStart-$contentEnd/$fileSize");
 		}
 		else
-			header('HTTP/1.1 200 OK');
+			header("HTTP/$httpVersion 200 OK");
 		$length=$contentEnd-$contentStart+1; // Calculate new content length
 		header('Pragma: public');
 		header('Expires: 0');
@@ -2797,7 +2875,7 @@ class CHttpRequest extends CApplicationComponent
 		header('Content-Length: '.$length);
 		header("Content-Disposition: attachment; filename=\"$fileName\"");
 		header('Content-Transfer-Encoding: binary');
-		$content=function_exists('mb_substr') ? mb_substr($content,$contentStart,$length) : substr($content,$contentStart,$length);
+		$content=function_exists('mb_substr') ? mb_substr($content,$contentStart,$length,'8bit') : substr($content,$contentStart,$length);
 		if($terminate)
 		{
 			// clean up the application first because the file downloading could take long time
@@ -2866,6 +2944,7 @@ class CHttpRequest extends CApplicationComponent
 	{
 		if ($this->getIsPostRequest() ||
 			$this->getIsPutRequest() ||
+			$this->getIsPatchRequest() ||
 			$this->getIsDeleteRequest())
 		{
 			$cookies=$this->getCookies();
@@ -2877,6 +2956,9 @@ class CHttpRequest extends CApplicationComponent
 				break;
 				case 'PUT':
 					$userToken=$this->getPut($this->csrfTokenName);
+				break;
+				case 'PATCH':
+					$userToken=$this->getPatch($this->csrfTokenName);
 				break;
 				case 'DELETE':
 					$userToken=$this->getDelete($this->csrfTokenName);
@@ -2891,6 +2973,17 @@ class CHttpRequest extends CApplicationComponent
 			if (!$valid)
 				throw new CHttpException(400,Yii::t('yii','The CSRF token could not be verified.'));
 		}
+	}
+	public function getHttpVersion()
+	{
+		if($this->_httpVersion===null)
+		{
+			if(isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL']==='HTTP/1.0')
+				$this->_httpVersion='1.0';
+			else
+				$this->_httpVersion='1.1';
+		}
+		return $this->_httpVersion;
 	}
 }
 class CCookieCollection extends CMap
@@ -3222,6 +3315,10 @@ class CUrlRule extends CBaseUrlRule
 	public $params=array();
 	public $append;
 	public $hasHostInfo;
+	protected function escapeRegexpSpecialChars($matches)
+	{
+		return preg_quote($matches[0]);
+	}
 	public function __construct($route,$pattern)
 	{
 		if(is_array($route))
@@ -3263,7 +3360,10 @@ class CUrlRule extends CBaseUrlRule
 		$this->append=$p!==$pattern;
 		$p=trim($p,'/');
 		$this->template=preg_replace('/<(\w+):?.*?>/','<$1>',$p);
-		$this->pattern='/^'.strtr($this->template,$tr).'\/';
+		$p=$this->template;
+		if(!$this->parsingOnly)
+			$p=preg_replace_callback('/(?<=^|>)[^<]+(?=<|$)/',array($this,'escapeRegexpSpecialChars'),$p);
+		$this->pattern='/^'.strtr($p,$tr).'\/';
 		if($this->append)
 			$this->pattern.='/u';
 		else
@@ -3434,8 +3534,16 @@ abstract class CBaseController extends CComponent
 		{
 			ob_start();
 			ob_implicit_flush(false);
-			$widget=$this->createWidget($className,$properties);
-			$widget->run();
+			try
+			{
+				$widget=$this->createWidget($className,$properties);
+				$widget->run();
+			}
+			catch(Exception $e)
+			{
+				ob_end_clean();
+				throw $e;
+			}
 			return ob_get_clean();
 		}
 		else
@@ -4013,8 +4121,8 @@ abstract class CAction extends CComponent implements IAction
 		$method=new ReflectionMethod($this, 'run');
 		if($method->getNumberOfParameters()>0)
 			return $this->runWithParamsInternal($this, $method, $params);
-		else
-			return $this->run();
+		$this->run();
+		return true;
 	}
 	protected function runWithParamsInternal($object, $method, $params)
 	{
@@ -4054,8 +4162,8 @@ class CInlineAction extends CAction
 		$method=new ReflectionMethod($controller, $methodName);
 		if($method->getNumberOfParameters()>0)
 			return $this->runWithParamsInternal($controller, $method, $params);
-		else
-			return $controller->$methodName();
+		$controller->$methodName();
+		return true;
 	}
 }
 class CWebUser extends CApplicationComponent implements IWebUser
@@ -4502,7 +4610,8 @@ class CHttpSession extends CApplicationComponent implements IteratorAggregate,Ar
 	}
 	public function regenerateID($deleteOldSession=false)
 	{
-		session_regenerate_id($deleteOldSession);
+		if($this->getIsStarted())
+			session_regenerate_id($deleteOldSession);
 	}
 	public function getSessionName()
 	{
@@ -4813,6 +4922,13 @@ class CHtml
 	public static function beginForm($action='',$method='post',$htmlOptions=array())
 	{
 		$htmlOptions['action']=$url=self::normalizeUrl($action);
+		if(strcasecmp($method,'get')!==0 && strcasecmp($method,'post')!==0)
+		{
+			$customMethod=$method;
+			$method='post';
+		}
+		else
+			$customMethod=false;
 		$htmlOptions['method']=$method;
 		$form=self::tag('form',$htmlOptions,false,false);
 		$hiddens=array();
@@ -4829,8 +4945,10 @@ class CHtml
 		$request=Yii::app()->request;
 		if($request->enableCsrfValidation && !strcasecmp($method,'post'))
 			$hiddens[]=self::hiddenField($request->csrfTokenName,$request->getCsrfToken(),array('id'=>false));
+		if($customMethod!==false)
+			$hiddens[]=self::hiddenField('_method',$customMethod);
 		if($hiddens!==array())
-			$form.="\n".self::tag('div',array('style'=>'display:none'),implode("\n",$hiddens));
+			$form.="\n".implode("\n",$hiddens);
 		return $form;
 	}
 	public static function endForm()
@@ -4930,10 +5048,20 @@ class CHtml
 		}
 		return self::tag('label',$htmlOptions,$label);
 	}
+	public static function colorField($name,$value='',$htmlOptions=array())
+	{
+		self::clientChange('change',$htmlOptions);
+		return self::inputField('color',$name,$value,$htmlOptions);
+	}
 	public static function textField($name,$value='',$htmlOptions=array())
 	{
 		self::clientChange('change',$htmlOptions);
 		return self::inputField('text',$name,$value,$htmlOptions);
+	}
+	public static function searchField($name,$value='',$htmlOptions=array())
+	{
+		self::clientChange('change',$htmlOptions);
+		return self::inputField('search',$name,$value,$htmlOptions);
 	}
 	public static function numberField($name,$value='',$htmlOptions=array())
 	{
@@ -4954,6 +5082,21 @@ class CHtml
 	{
 		self::clientChange('change',$htmlOptions);
 		return self::inputField('time',$name,$value,$htmlOptions);
+	}
+	public static function dateTimeField($name,$value='',$htmlOptions=array())
+	{
+		self::clientChange('change',$htmlOptions);
+		return self::inputField('datetime',$name,$value,$htmlOptions);
+	}
+	public static function dateTimeLocalField($name,$value='',$htmlOptions=array())
+	{
+		self::clientChange('change',$htmlOptions);
+		return self::inputField('datetime-local',$name,$value,$htmlOptions);
+	}
+	public static function weekField($name,$value='',$htmlOptions=array())
+	{
+		self::clientChange('change',$htmlOptions);
+		return self::inputField('week',$name,$value,$htmlOptions);
 	}
 	public static function emailField($name,$value='',$htmlOptions=array())
 	{
@@ -5089,7 +5232,7 @@ class CHtml
 	public static function checkBoxList($name,$select,$data,$htmlOptions=array())
 	{
 		$template=isset($htmlOptions['template'])?$htmlOptions['template']:'{input} {label}';
-		$separator=isset($htmlOptions['separator'])?$htmlOptions['separator']:"<br/>\n";
+		$separator=isset($htmlOptions['separator'])?$htmlOptions['separator']:self::tag('br');
 		$container=isset($htmlOptions['container'])?$htmlOptions['container']:'span';
 		unset($htmlOptions['template'],$htmlOptions['separator'],$htmlOptions['container']);
 		if(substr($name,-2)!=='[]')
@@ -5166,7 +5309,7 @@ EOD;
 	public static function radioButtonList($name,$select,$data,$htmlOptions=array())
 	{
 		$template=isset($htmlOptions['template'])?$htmlOptions['template']:'{input} {label}';
-		$separator=isset($htmlOptions['separator'])?$htmlOptions['separator']:"<br/>\n";
+		$separator=isset($htmlOptions['separator'])?$htmlOptions['separator']:self::tag('br');
 		$container=isset($htmlOptions['container'])?$htmlOptions['container']:'span';
 		unset($htmlOptions['template'],$htmlOptions['separator'],$htmlOptions['container']);
 		$labelOptions=isset($htmlOptions['labelOptions'])?$htmlOptions['labelOptions']:array();
@@ -5175,7 +5318,7 @@ EOD;
 		{
 			if(!is_array($htmlOptions['empty']))
 				$htmlOptions['empty']=array(''=>$htmlOptions['empty']);
-			$data=array_merge($htmlOptions['empty'],$data);
+			$data=CMap::mergeArray($htmlOptions['empty'],$data);
 			unset($htmlOptions['empty']);
 		}
 		$items=array();
@@ -5312,7 +5455,8 @@ EOD;
 	{
 		$realAttribute=$attribute;
 		self::resolveName($model,$attribute); // strip off square brackets if any
-		$htmlOptions['required']=$model->isAttributeRequired($attribute);
+		if (!isset($htmlOptions['required']))
+			$htmlOptions['required']=$model->isAttributeRequired($attribute);
 		return self::activeLabel($model,$realAttribute,$htmlOptions);
 	}
 	public static function activeTextField($model,$attribute,$htmlOptions=array())
@@ -5362,6 +5506,30 @@ EOD;
 		self::resolveNameID($model,$attribute,$htmlOptions);
 		self::clientChange('change',$htmlOptions);
 		return self::activeInputField('time',$model,$attribute,$htmlOptions);
+	}
+	public static function activeDateTimeField($model,$attribute,$htmlOptions=array())
+	{
+		self::resolveNameID($model,$attribute,$htmlOptions);
+		self::clientChange('change',$htmlOptions);
+		return self::activeInputField('datetime',$model,$attribute,$htmlOptions);
+	}
+	public static function activeDateTimeLocalField($model,$attribute,$htmlOptions=array())
+	{
+		self::resolveNameID($model,$attribute,$htmlOptions);
+		self::clientChange('change',$htmlOptions);
+		return self::activeInputField('datetime-local',$model,$attribute,$htmlOptions);
+	}
+	public static function activeWeekField($model,$attribute,$htmlOptions=array())
+	{
+		self::resolveNameID($model,$attribute,$htmlOptions);
+		self::clientChange('change',$htmlOptions);
+		return self::activeInputField('week',$model,$attribute,$htmlOptions);
+	}
+	public static function activeColorField($model,$attribute,$htmlOptions=array())
+	{
+		self::resolveNameID($model,$attribute,$htmlOptions);
+		self::clientChange('change',$htmlOptions);
+		return self::activeInputField('color',$model,$attribute,$htmlOptions);
 	}
 	public static function activeTelField($model,$attribute,$htmlOptions=array())
 	{
@@ -5633,7 +5801,9 @@ EOD;
 	protected static function activeInputField($type,$model,$attribute,$htmlOptions)
 	{
 		$htmlOptions['type']=$type;
-		if($type==='text' || $type==='password')
+		if($type==='text'||$type==='password'||$type==='color'||$type==='date'||$type==='datetime'||
+			$type==='datetime-local'||$type==='email'||$type==='month'||$type==='number'||$type==='range'||
+			$type==='search'||$type==='tel'||$type==='time'||$type==='url'||$type==='week')
 		{
 			if(!isset($htmlOptions['maxlength']))
 			{
@@ -5844,9 +6014,9 @@ EOD;
 	public static function renderAttributes($htmlOptions)
 	{
 		static $specialAttributes=array(
-			'async'=>1,
 			'autofocus'=>1,
 			'autoplay'=>1,
+			'async'=>1,
 			'checked'=>1,
 			'controls'=>1,
 			'declare'=>1,
@@ -5856,6 +6026,7 @@ EOD;
 			'formnovalidate'=>1,
 			'hidden'=>1,
 			'ismap'=>1,
+			'itemscope'=>1,
 			'loop'=>1,
 			'multiple'=>1,
 			'muted'=>1,
@@ -5885,7 +6056,10 @@ EOD;
 		{
 			if(isset($specialAttributes[$name]))
 			{
-				if($value)
+				if($value===false && $name==='async') {
+					$html .= ' ' . $name.'="false"';
+				}
+				elseif($value)
 				{
 					$html .= ' ' . $name;
 					if(self::$renderSpecialAttributesValue)
@@ -6184,13 +6358,14 @@ class CClientScript extends CApplicationComponent
 				$scriptContent = $scriptValue['content'];
 				unset($scriptValue['content']);
 				$scriptHtmlOptions = $scriptValue;
+				ksort($scriptHtmlOptions);
 			}
 			else
 			{
 				$scriptContent = $scriptValue;
 				$scriptHtmlOptions = array();
 			}
-			$key=serialize(ksort($scriptHtmlOptions));
+			$key=serialize($scriptHtmlOptions);
 			$scriptBatches[$key]['htmlOptions']=$scriptHtmlOptions;
 			$scriptBatches[$key]['scripts'][]=$scriptContent;
 		}
@@ -6395,6 +6570,10 @@ class CClientScript extends CApplicationComponent
 			$params=func_get_args();
 			$this->recordCachingAction('clientScript','registerCoreScript',$params);
 		}
+		elseif(YII_DEBUG)
+			throw new CException('There is no CClientScript package: '.$name);
+		else
+			Yii::log('There is no CClientScript package: '.$name,CLogger::LEVEL_WARNING,'system.web.CClientScript');
 		return $this;
 	}
 	public function registerCssFile($url,$media='')
@@ -7401,7 +7580,10 @@ abstract class CActiveRecord extends CModel
 	}
 	public function tableName()
 	{
-		return get_class($this);
+		$tableName = get_class($this);
+		if(($pos=strrpos($tableName,'\\')) !== false)
+			return substr($tableName,$pos+1);
+		return $tableName;
 	}
 	public function primaryKey()
 	{
@@ -7641,7 +7823,7 @@ abstract class CActiveRecord extends CModel
 		if($this->beforeSave())
 		{
 			$builder=$this->getCommandBuilder();
-			$table=$this->getMetaData()->tableSchema;
+			$table=$this->getTableSchema();
 			$command=$builder->createInsertCommand($table,$this->getAttributes($attributes));
 			if($command->execute())
 			{
@@ -7767,7 +7949,7 @@ abstract class CActiveRecord extends CModel
 	}
 	public function getPrimaryKey()
 	{
-		$table=$this->getMetaData()->tableSchema;
+		$table=$this->getTableSchema();
 		if(is_string($table->primaryKey))
 			return $this->{$table->primaryKey};
 		elseif(is_array($table->primaryKey))
@@ -7783,7 +7965,7 @@ abstract class CActiveRecord extends CModel
 	public function setPrimaryKey($value)
 	{
 		$this->_pk=$this->getPrimaryKey();
-		$table=$this->getMetaData()->tableSchema;
+		$table=$this->getTableSchema();
 		if(is_string($table->primaryKey))
 			$this->{$table->primaryKey}=$value;
 		elseif(is_array($table->primaryKey))
@@ -7808,7 +7990,7 @@ abstract class CActiveRecord extends CModel
 		{
 			if(!$all)
 				$criteria->limit=1;
-			$command=$this->getCommandBuilder()->createFindCommand($this->getTableSchema(),$criteria,$this->getTableAlias());
+			$command=$this->getCommandBuilder()->createFindCommand($this->getTableSchema(),$criteria);
 			return $all ? $this->populateRecords($command->queryAll(), true, $criteria->index) : $this->populateRecord($command->queryRow());
 		}
 		else
@@ -7936,8 +8118,8 @@ abstract class CActiveRecord extends CModel
 	}
 	public function count($condition='',$params=array())
 	{
-		$builder=$this->getCommandBuilder();
 		$this->beforeCount();
+		$builder=$this->getCommandBuilder();
 		$criteria=$builder->createCriteria($condition,$params);
 		$this->applyScopes($criteria);
 		if(empty($criteria->with))
@@ -8106,6 +8288,7 @@ class CBaseActiveRelation extends CComponent
 	public $params=array();
 	public $group='';
 	public $join='';
+	public $joinOptions='';
 	public $having='';
 	public $order='';
 	public function __construct($name,$className,$foreignKey,$options=array())
@@ -8122,8 +8305,10 @@ class CBaseActiveRelation extends CComponent
 			$criteria=$criteria->toArray();
 		if(isset($criteria['select']) && $this->select!==$criteria['select'])
 		{
-			if($this->select==='*')
+			if($this->select==='*'||$this->select===false)
 				$this->select=$criteria['select'];
+			elseif($criteria['select']===false)
+				$this->select=false;
 			elseif($criteria['select']!=='*')
 			{
 				$select1=is_string($this->select)?preg_split('/\s*,\s*/',trim($this->select),-1,PREG_SPLIT_NO_EMPTY):$this->select;
@@ -8174,6 +8359,7 @@ class CStatRelation extends CBaseActiveRelation
 {
 	public $select='COUNT(*)';
 	public $defaultValue=0;
+	public $scopes;
 	public function mergeWith($criteria,$fromScope=false)
 	{
 		if($criteria instanceof CDbCriteria)
@@ -8288,9 +8474,9 @@ class CActiveRecordMetaData
 		if(($table=$model->getDbConnection()->getSchema()->getTable($tableName))===null)
 			throw new CDbException(Yii::t('yii','The table "{table}" for active record class "{class}" cannot be found in the database.',
 				array('{class}'=>$this->_modelClassName,'{table}'=>$tableName)));
-		if($table->primaryKey===null)
+		if(($modelPk=$model->primaryKey())!==null || $table->primaryKey===null)
 		{
-			$table->primaryKey=$model->primaryKey();
+			$table->primaryKey=$modelPk;
 			if(is_string($table->primaryKey) && isset($table->columns[$table->primaryKey]))
 				$table->columns[$table->primaryKey]->isPrimaryKey=true;
 			elseif(is_array($table->primaryKey))
@@ -8350,9 +8536,10 @@ class CDbConnection extends CApplicationComponent
 	public $tablePrefix;
 	public $initSQLs;
 	public $driverMap=array(
+		'cubrid'=>'CCubridSchema',  // CUBRID
 		'pgsql'=>'CPgsqlSchema',    // PostgreSQL
 		'mysqli'=>'CMysqlSchema',   // MySQL
-		'mysql'=>'CMysqlSchema',    // MySQL
+		'mysql'=>'CMysqlSchema',    // MySQL,MariaDB
 		'sqlite'=>'CSqliteSchema',  // sqlite 3
 		'sqlite2'=>'CSqliteSchema', // sqlite 2
 		'mssql'=>'CMssqlSchema',    // Mssql driver on windows hosts
@@ -8361,6 +8548,7 @@ class CDbConnection extends CApplicationComponent
 		'oci'=>'COciSchema',        // Oracle driver
 	);
 	public $pdoClass = 'PDO';
+	private $_driverName;
 	private $_attributes=array();
 	private $_active=false;
 	private $_pdo;
@@ -8444,9 +8632,8 @@ class CDbConnection extends CApplicationComponent
 	protected function createPdoInstance()
 	{
 		$pdoClass=$this->pdoClass;
-		if(($pos=strpos($this->connectionString,':'))!==false)
+		if(($driver=$this->getDriverName())!==null)
 		{
-			$driver=strtolower(substr($this->connectionString,0,$pos));
 			if($driver==='mssql' || $driver==='dblib')
 				$pdoClass='CMssqlPdoAdapter';
 			elseif($driver==='sqlsrv')
@@ -8588,9 +8775,15 @@ class CDbConnection extends CApplicationComponent
 	}
 	public function getDriverName()
 	{
-		if(($pos=strpos($this->connectionString, ':'))!==false)
-			return strtolower(substr($this->connectionString, 0, $pos));
-		// return $this->getAttribute(PDO::ATTR_DRIVER_NAME);
+		if($this->_driverName!==null)
+			return $this->_driverName;
+		elseif(($pos=strpos($this->connectionString,':'))!==false)
+			return $this->_driverName=strtolower(substr($this->connectionString,0,$pos));
+		//return $this->getAttribute(PDO::ATTR_DRIVER_NAME);
+	}
+	public function setDriverName($driverName)
+	{
+		$this->_driverName=strtolower($driverName);
 	}
 	public function getClientVersion()
 	{
@@ -8815,7 +9008,7 @@ abstract class CDbSchema extends CComponent
 		else
 			return $type;
 	}
-	public function createTable($table, $columns, $options=null)
+	public function createTable($table,$columns,$options=null)
 	{
 		$cols=array();
 		foreach($columns as $name=>$type)
@@ -8828,7 +9021,7 @@ abstract class CDbSchema extends CComponent
 		$sql="CREATE TABLE ".$this->quoteTableName($table)." (\n".implode(",\n",$cols)."\n)";
 		return $options===null ? $sql : $sql.' '.$options;
 	}
-	public function renameTable($table, $newName)
+	public function renameTable($table,$newName)
 	{
 		return 'RENAME TABLE ' . $this->quoteTableName($table) . ' TO ' . $this->quoteTableName($newName);
 	}
@@ -8840,58 +9033,61 @@ abstract class CDbSchema extends CComponent
 	{
 		return "TRUNCATE TABLE ".$this->quoteTableName($table);
 	}
-	public function addColumn($table, $column, $type)
+	public function addColumn($table,$column,$type)
 	{
 		return 'ALTER TABLE ' . $this->quoteTableName($table)
 			. ' ADD ' . $this->quoteColumnName($column) . ' '
 			. $this->getColumnType($type);
 	}
-	public function dropColumn($table, $column)
+	public function dropColumn($table,$column)
 	{
 		return "ALTER TABLE ".$this->quoteTableName($table)
 			." DROP COLUMN ".$this->quoteColumnName($column);
 	}
-	public function renameColumn($table, $name, $newName)
+	public function renameColumn($table,$name,$newName)
 	{
 		return "ALTER TABLE ".$this->quoteTableName($table)
 			. " RENAME COLUMN ".$this->quoteColumnName($name)
 			. " TO ".$this->quoteColumnName($newName);
 	}
-	public function alterColumn($table, $column, $type)
+	public function alterColumn($table,$column,$type)
 	{
 		return 'ALTER TABLE ' . $this->quoteTableName($table) . ' CHANGE '
 			. $this->quoteColumnName($column) . ' '
 			. $this->quoteColumnName($column) . ' '
 			. $this->getColumnType($type);
 	}
-	public function addForeignKey($name, $table, $columns, $refTable, $refColumns, $delete=null, $update=null)
+	public function addForeignKey($name,$table,$columns,$refTable,$refColumns,$delete=null,$update=null)
 	{
-		$columns=preg_split('/\s*,\s*/',$columns,-1,PREG_SPLIT_NO_EMPTY);
+		if(is_string($columns))
+			$columns=preg_split('/\s*,\s*/',$columns,-1,PREG_SPLIT_NO_EMPTY);
 		foreach($columns as $i=>$col)
 			$columns[$i]=$this->quoteColumnName($col);
-		$refColumns=preg_split('/\s*,\s*/',$refColumns,-1,PREG_SPLIT_NO_EMPTY);
+		if(is_string($refColumns))
+			$refColumns=preg_split('/\s*,\s*/',$refColumns,-1,PREG_SPLIT_NO_EMPTY);
 		foreach($refColumns as $i=>$col)
 			$refColumns[$i]=$this->quoteColumnName($col);
 		$sql='ALTER TABLE '.$this->quoteTableName($table)
 			.' ADD CONSTRAINT '.$this->quoteColumnName($name)
-			.' FOREIGN KEY ('.implode(', ', $columns).')'
+			.' FOREIGN KEY ('.implode(', ',$columns).')'
 			.' REFERENCES '.$this->quoteTableName($refTable)
-			.' ('.implode(', ', $refColumns).')';
+			.' ('.implode(', ',$refColumns).')';
 		if($delete!==null)
 			$sql.=' ON DELETE '.$delete;
 		if($update!==null)
 			$sql.=' ON UPDATE '.$update;
 		return $sql;
 	}
-	public function dropForeignKey($name, $table)
+	public function dropForeignKey($name,$table)
 	{
 		return 'ALTER TABLE '.$this->quoteTableName($table)
 			.' DROP CONSTRAINT '.$this->quoteColumnName($name);
 	}
-	public function createIndex($name, $table, $column, $unique=false)
+	public function createIndex($name,$table,$columns,$unique=false)
 	{
 		$cols=array();
-		$columns=preg_split('/\s*,\s*/',$column,-1,PREG_SPLIT_NO_EMPTY);
+		if(is_string($columns))
+			$columns=preg_split('/\s*,\s*/',$columns,-1,PREG_SPLIT_NO_EMPTY);
 		foreach($columns as $col)
 		{
 			if(strpos($col,'(')!==false)
@@ -8903,7 +9099,7 @@ abstract class CDbSchema extends CComponent
 			. $this->quoteTableName($name).' ON '
 			. $this->quoteTableName($table).' ('.implode(', ',$cols).')';
 	}
-	public function dropIndex($name, $table)
+	public function dropIndex($name,$table)
 	{
 		return 'DROP INDEX '.$this->quoteTableName($name).' ON '.$this->quoteTableName($table);
 	}
@@ -8915,7 +9111,7 @@ abstract class CDbSchema extends CComponent
 			$columns[$i]=$this->quoteColumnName($col);
 		return 'ALTER TABLE ' . $this->quoteTableName($table) . ' ADD CONSTRAINT '
 			. $this->quoteColumnName($name) . '  PRIMARY KEY ('
-			. implode(', ', $columns). ' )';
+			. implode(', ',$columns). ' )';
 	}
 	public function dropPrimaryKey($name,$table)
 	{
@@ -8925,19 +9121,21 @@ abstract class CDbSchema extends CComponent
 }
 class CSqliteSchema extends CDbSchema
 {
-    public $columnTypes=array(
-        'pk' => 'integer PRIMARY KEY AUTOINCREMENT NOT NULL',
-        'string' => 'varchar(255)',
-        'text' => 'text',
-        'integer' => 'integer',
-        'float' => 'float',
-        'decimal' => 'decimal',
-        'datetime' => 'datetime',
-        'timestamp' => 'timestamp',
-        'time' => 'time',
-        'date' => 'date',
-        'binary' => 'blob',
-        'boolean' => 'tinyint(1)',
+	public $columnTypes=array(
+		'pk' => 'integer PRIMARY KEY AUTOINCREMENT NOT NULL',
+		'bigpk' => 'integer PRIMARY KEY AUTOINCREMENT NOT NULL',
+		'string' => 'varchar(255)',
+		'text' => 'text',
+		'integer' => 'integer',
+		'bigint' => 'integer',
+		'float' => 'float',
+		'decimal' => 'decimal',
+		'datetime' => 'datetime',
+		'timestamp' => 'timestamp',
+		'time' => 'time',
+		'date' => 'date',
+		'binary' => 'blob',
+		'boolean' => 'tinyint(1)',
 		'money' => 'decimal(19,4)',
 	);
 	public function resetSequence($table,$value=null)
@@ -9297,7 +9495,7 @@ class CDbCommand extends CComponent
 				&& ($cache=Yii::app()->getComponent($this->_connection->queryCacheID))!==null)
 		{
 			$this->_connection->queryCachingCount--;
-			$cacheKey='yii:dbquery'.$this->_connection->connectionString.':'.$this->_connection->username;
+			$cacheKey='yii:dbquery'.':'.$method.':'.$this->_connection->connectionString.':'.$this->_connection->username;
 			$cacheKey.=':'.$this->getText().':'.serialize(array_merge($this->_paramLog,$params));
 			if(($result=$cache->get($cacheKey))!==false)
 			{
@@ -9348,8 +9546,6 @@ class CDbCommand extends CComponent
 		$sql.=' '.(!empty($query['select']) ? $query['select'] : '*');
 		if(!empty($query['from']))
 			$sql.="\nFROM ".$query['from'];
-		else
-			throw new CDbException(Yii::t('yii','The DB query must contain the "from" portion.'));
 		if(!empty($query['join']))
 			$sql.="\n".(is_array($query['join']) ? implode("\n",$query['join']) : $query['join']);
 		if(!empty($query['where']))
@@ -9427,7 +9623,7 @@ class CDbCommand extends CComponent
 			{
 				if(strpos($table,'(')===false)
 				{
-					if(preg_match('/^(.*?)(?i:\s+as\s+|\s+)(.*)$/',$table,$matches))  // with alias
+					if(preg_match('/^(.*?)(?i:\s+as|)\s+([^ ]+)$/',$table,$matches))  // with alias
 						$tables[$i]=$this->_connection->quoteTableName($matches[1]).' '.$this->_connection->quoteTableName($matches[2]);
 					else
 						$tables[$i]=$this->_connection->quoteTableName($table);
@@ -9507,6 +9703,14 @@ class CDbCommand extends CComponent
 	public function naturalJoin($table)
 	{
 		return $this->joinInternal('natural join', $table);
+	}
+	public function naturalLeftJoin($table)
+	{
+		return $this->joinInternal('natural left join', $table);
+	}
+	public function naturalRightJoin($table)
+	{
+		return $this->joinInternal('natural right join', $table);
 	}
 	public function group($columns)
 	{
@@ -9723,9 +9927,9 @@ class CDbCommand extends CComponent
 	{
 		return $this->setText($this->getConnection()->getSchema()->dropForeignKey($name, $table))->execute();
 	}
-	public function createIndex($name, $table, $column, $unique=false)
+	public function createIndex($name, $table, $columns, $unique=false)
 	{
-		return $this->setText($this->getConnection()->getSchema()->createIndex($name, $table, $column, $unique))->execute();
+		return $this->setText($this->getConnection()->getSchema()->createIndex($name, $table, $columns, $unique))->execute();
 	}
 	public function dropIndex($name, $table)
 	{
@@ -9793,7 +9997,7 @@ class CDbCommand extends CComponent
 	{
 		if(strpos($table,'(')===false)
 		{
-			if(preg_match('/^(.*?)(?i:\s+as\s+|\s+)(.*)$/',$table,$matches))  // with alias
+			if(preg_match('/^(.*?)(?i:\s+as|)\s+([^ ]+)$/',$table,$matches))  // with alias
 				$table=$this->_connection->quoteTableName($matches[1]).' '.$this->_connection->quoteTableName($matches[2]);
 			else
 				$table=$this->_connection->quoteTableName($table);
@@ -9927,7 +10131,7 @@ abstract class CValidator extends CComponent
 	public static function createValidator($name,$object,$attributes,$params=array())
 	{
 		if(is_string($attributes))
-			$attributes=preg_split('/[\s,]+/',$attributes,-1,PREG_SPLIT_NO_EMPTY);
+			$attributes=preg_split('/\s*,\s*/',trim($attributes, " \t\n\r\0\x0B,"),-1,PREG_SPLIT_NO_EMPTY);
 		if(isset($params['on']))
 		{
 			if(is_array($params['on']))
@@ -10269,12 +10473,10 @@ class CListIterator implements Iterator
 {
 	private $_d;
 	private $_i;
-	private $_c;
 	public function __construct(&$data)
 	{
 		$this->_d=&$data;
 		$this->_i=0;
-		$this->_c=count($this->_d);
 	}
 	public function rewind()
 	{
@@ -10294,7 +10496,7 @@ class CListIterator implements Iterator
 	}
 	public function valid()
 	{
-		return $this->_i<$this->_c;
+		return $this->_i<count($this->_d);
 	}
 }
 interface IApplicationComponent
