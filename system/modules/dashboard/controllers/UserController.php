@@ -222,7 +222,7 @@ class UserController extends OrganizationBaseController {
      *
      */
     public function actionGetavailable() {
-        $limit = LICENCE_LIMIT;
+        $limit = defined("LICENCE_LIMIT")?LICENCE_LIMIT:999999;
         $uidArray = User::model()->fetchUidA( false );
         $count = count( $uidArray );
         $this->ajaxReturn( array( 'isSuccess' => true, 'current' => $count, 'remain' => $limit - $uidArray ) );
