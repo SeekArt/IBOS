@@ -54,7 +54,7 @@ website:	http://code.google.com/p/jquerytree/
 .ztree li span.button.chk.radio_true_part {background-position:-42px -28px}
 .ztree li span.button.chk.radio_true_part_focus {background-position:-42px -42px}
 .ztree li span.button.chk.radio_true_disable {background-position:-42px -56px}*/
-.ztree li span.button.chk { float: right; position: relative; z-index: 10; width:20px; height:20px; margin: 5px 3px 0 0; cursor: auto; background-image: url("../../../../../image/component.png");}
+.ztree li span.button.chk { float: right; position: relative; z-index: 10; width:20px; height:20px; margin: 3px 3px 0 0; cursor: auto; background-image: url("../../../../../image/component.png");}
 .ztree li span.button.chk.checkbox_false_full,
 .ztree li span.button.chk.checkbox_false_part { background-position: -50px -130px;}
 .ztree li span.button.chk.checkbox_false_full_focus,

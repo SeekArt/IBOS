@@ -171,12 +171,12 @@
     };
 
     Button.prototype.init = function() {
-        var btn = document.createElement('button'),
-            t = document.createTextNode(this.text),
+        var btn = document.createElement('input'),
             clsn = ["btn"],
             that = this;
 
-        btn.appendChild(t);
+        btn.type = 'button';
+        btn.value = this.text;
         this.type === 'primary' ? clsn.push("btn-primary") : this.type === 'warning' ? clsn.push('btn-warning') : '';
         btn.className = clsn.join(' ');
 
@@ -246,21 +246,25 @@
     }
 
     var importDialog = function(options) {
-        var defaults = importDialog.defaults;
         if (!(this instanceof importDialog)) {
             return new importDialog(options);
         }
 
+        options = $.extend({}, importDialog.defaults, options);
         this.stateIndex = 0;
         this.closefn = options.closefn || '';
         this.tpl = options.tpl;
-        this.module = options.module || 'user';
-        this.lock = options.lock || defaults.lock;
-        this.per = options.per || defaults.per;
+        this.module = options.module;
+        if (!this.module || !this.tpl) {
+            console.error('配置模块为必填参数项');
+            return false;
+        }
+        this.lock = options.lock;
+        this.per = options.per;
         // css
-        this.top = options.top || defaults.top;
-        this.left = options.left || defaults.left;
-        this.zIndex = options.zIndex || defaults.zIndex;
+        this.top = options.top;
+        this.left = options.left;
+        this.zIndex = options.zIndex;
 
         this.init();
         return this;
@@ -287,7 +291,7 @@
             this.$box = $('<div class="import_dialog"></div>');
             // 锁定模板
             if (this.lock) {
-                this.$mask = $('<div class="d-mask"></div>');
+                this.$mask = $('<div class="aui_mask"></div>');
                 this.$mask.css('zIndex', this.zIndex++);
                 this.$box.append(this.$mask);
             }
@@ -303,13 +307,19 @@
                     that.closed(that.closefn);
                 }, // this -> Tmpl
                 step: 'step1',
-                btns: {
+                btns: [{
                     'text': '取消',
                     'type': 'normal',
                     'fn': function() {
                         that.closed(that.closefn) // this -> Button
                     }
-                }
+                }, {
+                    'text': '下载模板',
+                    'type': 'normal',
+                    'fn': function() {
+                        window.location.href = Ibos.app.url('main/import/downloadTpl', { tpl: that.tpl, module: that.module });
+                    }
+                }]
             }), new Tmpl({
                 title: '数据选控',
                 closefn: function() {
@@ -617,7 +627,8 @@
             return true;
         },
         exportErr: function() {
-            window.location.href = Ibos.app.url('main/import/exportError');
+            var that = this;
+            window.location.href = Ibos.app.url('main/import/exportError', { tpl: that.tpl, module: that.module });
         },
         // 销毁实例
         destory: function() {

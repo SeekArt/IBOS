@@ -174,7 +174,7 @@ SideTreeCategory.prototype._createCateOptions = function(selected, excludeCatid)
 		for(var i = 0; i < nodes.length; i++) {
 			if(!excludeCatid || excludeCatid != nodes[i].id) {
 				tpl += '<option value="' + nodes[i].id + '"' + (nodes[i].id == selected ? "selected" : "") +'>' + 
-					_createSpace(nodes[i].level) + nodes[i].name + 
+					_createSpace(nodes[i].level) + U.entity.escape(nodes[i].name) + 
 					'</option>';
 				if(nodes[i].children && nodes[i].children.length) {
 					tpl = _join(nodes[i].children, tpl);

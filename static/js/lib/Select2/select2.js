@@ -2264,15 +2264,16 @@
 
         // multi
         setVal: function(val) {
-            var unique;
+            var unique, i, len, temp;
             if (this.select) {
                 this.select.val(val);
             } else {
                 unique = [];
                 // filter out duplicates
-                $(val).each(function() {
-                    if ($.inArray(this, unique) < 0) unique.push(this);
-                });
+                for(i = 0, len = val.length; i < len; i++){
+                    temp = val[i];
+                    if ($.inArray(temp, unique) < 0) unique.push(temp);
+                }
                 this.opts.element.val(unique.length === 0 ? "" : unique.join(this.opts.separator));
             }
         },

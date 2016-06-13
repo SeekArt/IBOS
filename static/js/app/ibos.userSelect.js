@@ -16,6 +16,7 @@
             if (!Ibos || !Ibos.data) {
                 $.error("(SelectBox): 未定义数据Ibos.data");
             }
+            var _this = this;
             this.$element = $element;
             this.options = $.extend(true, {}, SelectBox.defaults, options);
 
@@ -23,8 +24,15 @@
             this.currentType = "";
             this.currentId = "";
             this.values = this.options.values;
+            this.options.type = (function(){
+                                    var types = _this.options.type;
+                                    if( $.isArray(types) ){
+                                        return types;
+                                    }
+                                    return types.split(",");
+                                })();
             this._init();
-        }
+        };
         /**
          * SelectBox默认配置
          * @property defaults 
@@ -67,7 +75,7 @@
             // userOnly: false
             // maximumSelectionSize: 1, // 最大选项数只能在type 为 "user" 下使用
             type: "all" //"user" "position" "department"
-        }
+        };
         /**
          * SelectBox语言包
          * @property lang
@@ -141,9 +149,9 @@
         _initSelectBox: function() {
             // @Todo: 让其可配置
             var settings = this.options.navSettings,
-                type = this.options.type,
+                types = this.options.type,
                 // 有右侧栏
-                userSelectable = (type === "all" || type === "user");
+                userSelectable = ~types.indexOf('all') || ~types.indexOf("user");
 
             this.$header = this.$element.find(".select-box-header");
             this.$nav = this.$header.find(".select-box-nav");
@@ -151,18 +159,27 @@
             this.$aside = this.$mainer.find(".select-box-mainer-aside");
             this.$inner = this.$mainer.find(".select-box-mainer-inner");
             this.$checkbox = this.$inner.find(".select-box-area-header input").label();
-            this.$list = this.$inner.find(".select-box-list")
+            this.$list = this.$inner.find(".select-box-list");
 
             for (var i = 0, len = settings.length; i < len; i++) {
                 var setting = settings[i];
                 // 只输出对应选择方式的导航
-                if (userSelectable || type === setting.type) {
+                if( userSelectable ){
                     this._createNavItem(setting);
                     this._createTree(setting.type, setting.data);
+                }else{
+                    for(var j=0, typesLen=types.length; j < typesLen; j++){
+                        var type = types[j];
+                        if (type === setting.type) {
+                            this._createNavItem(setting);
+                            this._createTree(setting.type, setting.data);
+                        }
+                    }
                 }
+                
             }
             // 当可选择用户时，需要绑定导航切换事件及列表刷新事件
-            if (userSelectable) {
+            if (types[0]) {
                 this._bindChangeEvent();
                 this._bindNavEvent();
                 // 否则，隐藏右侧栏
@@ -218,6 +235,7 @@
                     results = that._getListItems();
                 } else {
                     if (isChecked) {
+                        // 超过最大人数时不能选择
                         if (!that.addValue(val)) {
                             $checkbox.label("uncheck");
                         }
@@ -346,7 +364,7 @@
                 lastChecked = null,
                 treeClick = function(evt, treeid, node) {
                     var type = that.options.type,
-                        userSelectable = (type === "user" || type === "all");
+                        userSelectable = (~type.indexOf("user") || ~type.indexOf("all"));
                     // 当用户可选择时，点击树项为刷新右侧列表
                     if (userSelectable) {
                         that.currentId = node.id;
@@ -416,8 +434,9 @@
                         selectedMulti: false
                     }
                 },
-                $tree = $('<ul id="' + treeidPrefix + '_' + type + '_tree" class="ztree user-ztree"></ul>');
-            if (this.options.type === "user") {
+                $tree = $('<ul id="' + treeidPrefix + '_' + type + '_tree" class="ztree user-ztree"></ul>'),
+                types = this.options.type;
+            if (types[0] === "user" && types.length === 1) {
                 treeSetting.check.enable = false;
             }
             this.$aside.append($tree);
@@ -551,8 +570,8 @@
             var values = this.values,
                 treeObj = this._getCurrentTree(type);
             treeObj.checkAllNodes(false)
-            for (var len = values.length - 1; len >= 0; len--) {
-                this._checkNode(values[len], true);
+            for (var i = 0, len = values.length; i < len; i++) {
+                this._checkNode(values[i], true);
             }
             return this;
         },
@@ -569,15 +588,15 @@
                 values = this.values,
                 max = this.options.maximumSelectionSize,
                 listTpl = [],
-                data, len;
+                data, len, i;
 
             // 判断初始化传入的值是否超过最大值
             if (max && values.length > max) {
                 values.splice(max);
             }
 
-            for (len = datas.length - 1; len >= 0; len--) {
-                data = datas[len];
+            for (i = 0, len = datas.length; i < len; i++) {
+                data = datas[i];
                 // matcher 匹配条件，筛选data
                 if (!data) continue;
                 if (matcher && !matcher(data)) continue;
@@ -654,9 +673,10 @@
                 };
 
             if ($.isArray(val)) {
-                for (var len = val.length - 1; len >= 0; len--) {
-                    if (!add_unit(val[len], true)) return false;
+                for (var i = 0, len = val.length; i < len; i++) {
+                    if (!add_unit(val[i], true)) return false;
                 }
+                // 为全选事件统一触发更改
                 $(this).trigger("slbchange", { id: res, checked: true });
             } else {
                 if (!add_unit(val)) return false;
@@ -681,8 +701,8 @@
                 };
             // 若传入数组，则循环迭代
             if ($.isArray(val)) {
-                for (var len = val.length - 1; len >= 0; len--) {
-                    remove_unit(val[len], true);
+                for (var i = 0, len = val.length; i < len; i++) {
+                    remove_unit(val[i], true);
                 }
                 $(this).trigger("slbchange", { id: val, checked: false });
             } else {
@@ -780,7 +800,7 @@
                 this.values = initialValue.split(",");
                 values = this.values;
                 // 防止后端输出未名数据
-                for (i = 0; i < values.length; i++) {
+                for (var i = 0; i < values.length; i++) {
                     if (!this._getText(values[i])) {
                         values.splice(i--, 1);
                     }
@@ -840,9 +860,9 @@
             if (!data || !data.length) {
                 return ret;
             } else {
-                for (var len = data.length - 1; len >= 0; len--) {
-                    if (data[len] != null) {
-                        ret.push(data[len]);
+                for (var i = 0, len = data.length; i < len; i++) {
+                    if (data[i] != null) {
+                        ret.push(data[i]);
                     }
                 }
             }
@@ -966,8 +986,30 @@
                     query.callback(data);
                 },
                 getPlaceholder = function(type) {
-                    type = type || "all";
-                    return U.lang("US.PLACEHOLDER_" + (type ? type.toUpperCase() : ""));
+                    var types = (function(){
+                            var types = type || "";
+                            if( $.isArray(types) ){
+                                return types;
+                            }
+                            return types.split(",");
+                        })(),
+                        lang = U.lang,
+                        str = lang("US.PLACEHOLDER");
+
+                    type = types[0] ? (~types.indexOf("all") ? ["all"] : types) : ["all"];
+
+                    if( type[0] === "all" ){
+                        str = lang("US.PLACEHOLDER_ALL");
+                    }else{
+                        for(var i=0, len=type.length; i < len; i++){
+                            str += lang("US." + type[i].toUpperCase() );
+                            if( i != len-1 ){
+                                str += "、";
+                            }
+                        }
+                    }
+
+                    return str;
                 },
                 select2Defaults = {
                     width: "100%",
@@ -1030,11 +1072,13 @@
             var that = this,
                 options = this.options,
                 $operateWrap = this._createSelectOperate(),
-                setPosition = function($el) {
+                setPosition = function($el, $target) {
                     var select2Obj = that.select,
                         select2Container = select2Obj.container,
                         // 当定义relative属性且指一个JQ对象时，则相对该JQ对象定位，否则相对select2Container;
                         relative = (options.relative && options.relative.length) ? options.relative : select2Container;
+                        // 如果有额外绑定显示位置，则显示在该位置上
+                        if($target) relative = $target;
                     $el.position($.extend({
                         of: relative
                     }, options.position));
@@ -1049,7 +1093,7 @@
                         } else {
                             UserSelect.hideAllBox();
                             that.selectBox && that.selectBox.show(function($el) {
-                                setPosition($el);
+                                setPosition($el, $btn);
                             });
                             $btn.addClass("active")
                         }
@@ -1134,8 +1178,8 @@
                 toCheck = typeof toCheck === "undefined" ? true : toCheck;
                 // 若为数组，则迭代
                 if ($.isArray(id) && id.length > 0) {
-                    for (var len = id.length - 1; len >= 0; len--) {
-                        id[len] && refresh_unit(id[len], toCheck, slient);
+                    for (var i = 0, len = id.length; i < len; i++) {
+                        id[len] && refresh_unit(id[i], toCheck, slient);
                     }
                 } else if (id) {
                     refresh_unit(id, toCheck, slient);
@@ -1155,9 +1199,9 @@
          */
         _getText: function(id) {
             var data = this.data;
-            for (var len = data.length - 1; len >= 0; len--) {
-                if (data[len].id === id) {
-                    return data[len].text;
+            for (var i = 0, len = data.length; i < len; i++) {
+                if (data[i].id === id) {
+                    return data[i].text;
                 }
             }
         },
@@ -1199,13 +1243,23 @@
         getValue: function() {
             return this.values;
         },
+        getUnique: function(arr) {
+            var unique = [],
+                i, len, temp;
+            if (!Array.isArray(arr)) return unique;
+            for(i = 0, len = arr.length; i < len; i++){
+                temp = arr[i];
+                $.inArray(temp, unique) < 0 && unique.push(temp);
+            }
+            return unique;
+        },
         /* 合并数组 */
         _mergeArray: function(source, val) {
             var that = this;
             if (!$.isArray(source)) {
                 source = [];
             }
-            return $.unique(source.concat(val));
+            return that.getUnique(source.concat(val));
         },
 
         /**

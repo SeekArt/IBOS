@@ -2422,6 +2422,11 @@ fieldset[disabled] .btn-link:focus {
 .open > .dropdown-menu {
   display: block;
 }
+.dropup-toggle .dropdown-menu {
+  top: -10%;
+  left: 0;
+  transform: translateY(-100%);
+}
 .pull-right > .dropdown-menu {
   right: 0;
   left: auto;
@@ -5925,6 +5930,7 @@ div.jGrowl div.jGrowl-notification.primary {
 .select-box-list li .checkbox .icon-to-fade {
   left: auto;
   right: 4px;
+  margin-top: 2px;
 }
 .select-box-list li img {
   width: 24px;

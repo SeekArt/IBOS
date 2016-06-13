@@ -1977,3 +1977,11 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 	list-style: none;
 	color: #c1cdda;
 }
+/* 百度编辑器保存后所需样式 */
+.editor-content{
+	color: #333;
+}
+.editor-content table td{
+	color: #333;
+	border: 1px solid #ddd;
+}

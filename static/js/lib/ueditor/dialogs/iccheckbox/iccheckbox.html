@@ -33,7 +33,7 @@
 		<script>
 			var G = parent.G;
 			(function() {
-				var tpl = '<ic data-id="<%=id%>" data-type="checkbox" data-title="<%=title%>" data-checkbox-checked="<%=checked%>" contenteditable="false" ><input type="checkbox" name="data_<%=id%>" title="<%=title%>" <% if(checked == "1") { %>checked="true" <% } %>/></ic>',
+				var tpl = '<ic data-id="<%=id%>" data-type="checkbox" data-title="<%=title%>" data-checkbox-checked="<%=checked%>" contenteditable="false" ><input type="checkbox" name="data_<%=id%>" title="<%=title%>" <% if(checked == "1") { %>checked="true" <% } %>/><span class="mlm mrm"><%=title%></span></ic>',
 						fc = new Fc(editor, tpl),
 						editing = UE.plugins['formcontrols'].editing,
 						oldData;

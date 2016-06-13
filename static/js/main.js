@@ -33,7 +33,7 @@ require.config({
 
 		"datatables": "lib/dataTable/js/jquery.dataTables",
 
-		"echarts": "lib/echarts/echarts-plain",
+		"echarts": "lib/echarts/echarts.min",
 
 		"emotion": "src/emotion",
 
