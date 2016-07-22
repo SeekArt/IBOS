@@ -1,0 +1,2 @@
+var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};
+Ibos.data.user = {"u_1":{"id":"u_1","text":"admin","phone":"13800138000","avatar":".\/data\/avatar\/noavatar_small.jpg","department":"","position":"","role":"","spaceurl":"?r=user\/home\/index&uid=1"}};

@@ -314,8 +314,9 @@ $(function(){
 					if($.trim(reason) === ""){
 						Ui.tip(U.lang("ASM.INPUT_TASK_CANCEL_REASON"),"warning");
 					} else {
-						var param = { cancelReason: reason };
-						Assignment.op.applyCancelTask(param.id, param).done(function(res){
+						Assignment.op.applyCancelTask(Ibos.app.g('taskId'), { 
+							cancelReason: reason 
+						}).done(function(res){
 							if(res.isSuccess){
 								dialog.close();
 								window.location.reload();

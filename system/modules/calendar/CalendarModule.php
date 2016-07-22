@@ -13,6 +13,5 @@ namespace application\modules\calendar;
 use application\core\modules\Module;
 
 class CalendarModule extends Module {
-	public $__CODE__ = '35eb7GL7OG+jSYTvhRo8UEpkd6gqMy9mgLRv0wUtMBjiDa7s7Q5g';
     
 }

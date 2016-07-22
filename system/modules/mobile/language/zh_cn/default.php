@@ -4,7 +4,7 @@
  * 用户模块默认语言包
  * @package application.modules.user.language.zh_cn
  * @link http://www.ibos.com.cn/
- * @version $Id: default.php 4789 2015-01-06 11:06:17Z gzpjh $
+ * @version $Id: default.php 7519 2016-07-12 08:08:36Z php_lxy $
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author Ring <Ring@ibos.com.cn>
  */
@@ -72,7 +72,10 @@ return array(
 	'Transactor' => '原办理人',
 	'To the steps' => '转交至步骤',
 	'Default step' => '预设步骤',
-	
+
+	'Set succeed' => '设置成功',
+	'Attention succeed' => '关注成功',
+	'Unattention succeed' => '成功取消关注',
 	//------------------------------------------------thread-----------------------------------------------
 	'Thread empty' => '抱歉，该主线不存在或已被删除',
 	'No permission to delete' => '抱歉，您没有权限删除该主线',

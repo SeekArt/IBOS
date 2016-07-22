@@ -915,7 +915,7 @@
 				arr = uid.split(",");
 			var data = $.map(arr, function(uid){
 				 	var data = Ibos.data.getUser(uid);
-				  	return { uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone }
+				  	return { uid: uid.slice(2), name: data.text, avatar: data.avatar, phone: data.phone }
 				});
 			return data;
 		}
@@ -938,7 +938,7 @@
 			var data = $.map(arry, function(id){
 				 	var uid = "u_" + id,
 				 		data = Ibos.data.getUser(uid);
-				  	return { uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone }
+				  	return { uid: uid.slice(2), name: data.text, avatar: data.avatar, phone: data.phone }
 				});
 			return data;
 		}
@@ -955,15 +955,17 @@
 		Ibos.evt.add({
 			// 使用外部文档阅读器
 			"viewOfficeFile": function(param, elem, evt){
-				var suffix = param.href.substr( param.href.lastIndexOf('.')+1 );
-				if( suffix == 'txt'){
+				var filetype = param.href.match(/\.(\w+)/);
+				filetype = filetype ? filetype[1] : 'office';
+				
+				if( filetype == 'txt'){
 					Ui.openFrame(param.href, {
 						title: false,
 						id: "d_office_file",
 						width: 800,
 						height: 600
 					});
-				}else if( $.inArray(suffix, ["jpg", "jpeg", "png", "gif"]) > -1 ){
+				}else if( $.inArray(filetype, ["jpg", "jpeg", "png", "gif"]) > -1 ){
 					// 读取初始化需要的文件
 					var _loadFiles = function(callback){
 						if(typeof FullGallery !== "undefined") {
@@ -1036,15 +1038,26 @@
 
 			// 前台查看证书
 			"showCert": function(){
-				Ui.ajaxDialog(Ibos.app.url('main/default/getCert'), {
-					id: "d_cert",
-					title: false,
-					ok: false,
-					width: 661,
-					height: 471,
-					padding: 0
-					// cancel: false
-				})
+				var hasLicence = Ibos.app.g('LICENCE_VER'),
+					dialogConfig = {
+						ok: false,
+						width: 661
+					};
+
+				if(hasLicence){
+					Ui.ajaxDialog(Ibos.app.url('main/default/getCert'), $.extend({}, dialogConfig, {
+						id: "d_cert",
+						title: false,
+						height: 471,
+						padding: 0
+						// cancel: false
+					}))
+				} else {
+					Ui.ajaxDialog(Ibos.app.url('main/default/unauthorized'), $.extend({}, dialogConfig, {
+						id: 'd_cert',
+						title: '不好意思，您还未获得授权！'
+					}))
+				}
 			},
 
 			// 微博关注
@@ -1133,7 +1146,7 @@
 				return $.artDialog.open(Ibos.app.g("followWxUrl"), {
 					id: "d_follow_wx",
 					title: false,
-					width: 880,
+					width: 900,
 					skin: "art-autoheight art-ifame-top",
 					height: 613,
 					lock: true,

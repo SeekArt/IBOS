@@ -27,7 +27,7 @@
                                 <th rowspan="<?php echo count( $data['originalPlanList'] )+1; ?>" width="68" class="sep"><?php echo $lang['Original plan']; ?></th>
 							 </tr>
                             <?php foreach ( $data['originalPlanList'] as $key => $diaryRecord ): ?>
-                                <tr class="da-detail-row">										
+                                <tr class="da-detail-row">
                                     <td class="sep" width="3"></td>
                                     <td>
                                         <div class="fill" data-node-type="oldPlan">
@@ -48,7 +48,7 @@
                         <?php if ( count( $data['outsidePlanList'] ) > 0 ): ?>
 							<tr>
                                 <th id="schedule_plan" class="sep" width="68" rowspan="<?php echo count( $data['outsidePlanList'] ) + 2; ?>"><?php echo $lang['Unplanned']; ?></th>
-							</tr>					
+							</tr>
                         <?php else: ?>
 							<tr>
 								<th id="schedule_plan" class="sep" width="68" rowspan="3"><?php echo $lang['Unplanned']; ?></th>
@@ -97,9 +97,9 @@
                                                 <div class="attl-item" data-node-type="attachItem">
                                                     <a href="javascript:;" title="删除附件" class="cbtn o-trash" data-id="<?php echo $value['aid']; ?>" data-node-type="attachRemoveBtn"></a>
                                                     <i class="atti"><img width="44" height="44" src="<?php echo $value['iconsmall']; ?>" alt="<?php echo $value['filename']; ?>" title="<?php echo $value['filename']; ?>"></i>
-                                                    <div class="attc"><?php echo $value['filename']; ?></div> 
+                                                    <div class="attc"><?php echo $value['filename']; ?></div>
                     								<span class="fss mlm">
-                    									<a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+                    									<a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>
                     									<?php if (isset($value['officereadurl'])): ?>
                     										<a href="javascript:;" class="mlm" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
                     											<?php echo $lang['Read']; ?>

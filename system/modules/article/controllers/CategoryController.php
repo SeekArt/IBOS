@@ -1,13 +1,5 @@
 <?php
 
-namespace application\modules\article\controllers;
-
-use application\core\utils\IBOS;
-use application\core\utils\Env;
-use application\modules\article\core\ArticleCategory;
-use application\modules\article\model\ArticleCategory as CateModel;
-use application\modules\dashboard\model\Approval;
-
 /**
  * 信息中心模块------ 分类控制器文件
  *
@@ -19,10 +11,18 @@ use application\modules\dashboard\model\Approval;
 /**
  * 信息中心模块------  分类控制器类，继承ArticleBaseController
  * @package application.modules.comment.controllers
- * @version $Id: CategoryController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: CategoryController.php 6968 2016-04-28 06:01:34Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
+namespace application\modules\article\controllers;
+
+use application\core\utils\IBOS;
+use application\core\utils\Env;
+use application\modules\article\core\ArticleCategory;
+use application\modules\article\model\ArticleCategory as CateModel;
+use application\modules\dashboard\model\Approval;
+use CHtml;
 class CategoryController extends BaseController {
 
 	/**
@@ -57,7 +57,7 @@ class CategoryController extends BaseController {
 	 */
 	public function actionAdd() {
 		$pid = Env::getRequest( 'pid' );
-		$name = trim( Env::getRequest( 'name' ) );
+		$name = CHtml::encode( trim( Env::getRequest( 'name' ) ) );
 		$aid = intval( Env::getRequest( 'aid' ) );
 		// 查询出最大的sort
 		$cond = array( 'select' => 'sort', 'order' => "`sort` DESC" );
@@ -76,8 +76,7 @@ class CategoryController extends BaseController {
 			'name' => $name,
 			'aid' => $aid
 				), true );
-		$url = $this->createUrl( 'default/index&catid=' . $ret );
-		$this->ajaxReturn( array( 'IsSuccess' => !!$ret, 'id' => $ret, 'url' => $url, 'aid' => $aid ), 'json' );
+		$this->ajaxReturn( array( 'isSuccess' => !!$ret, 'id' => $ret, 'url' => 'javascript:;', 'aid' => $aid, 'catid' => $ret ), 'json' );
 	}
 
 	/**
@@ -88,7 +87,7 @@ class CategoryController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		if ( $option == 'default' ) {
 			$pid = intval( Env::getRequest( 'pid' ) );
-			$name = trim( Env::getRequest( 'name' ) );
+			$name = CHtml::encode( trim( Env::getRequest( 'name' ) ) );
 			$catid = intval( Env::getRequest( 'catid' ) );
 			$aid = intval( Env::getRequest( 'aid' ) );
 			if ( $pid == $catid ) {

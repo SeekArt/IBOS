@@ -26,8 +26,13 @@ use application\modules\department\model\Department;
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="javascript:;" data-action="educeCont" data-uids="<?php echo $uids; ?>"><?php echo $lang['Export contacts']; ?></a></li>
-                                <li><a href="javascript:;" data-action="printCont" data-uids="<?php echo $uids; ?>"><?php echo $lang['Pring contacts']; ?></a></li>
+                                <li>
+                                    <a href="javascript:;" data-action="educeCont"><?php echo $lang['Export contacts']; ?></a>
+                                    <form action="<?php echo $this->createUrl( 'default/export' ); ?>" method="post" id="export_contact" name="export_contact">
+                                        <input type="hidden" value="" name="uids">
+                                    </form>
+                                </li>
+                                <li><a href="javascript:;" data-action="printCont"><?php echo $lang['Pring contacts']; ?></a></li>
                             </ul>
                         </div>
                         <div class="btn-group mlm cl-btn-group">
@@ -41,72 +46,19 @@ use application\modules\department\model\Department;
                 <div class="cl-rolling-sidebar" id="cl_rolling_sidebar">
                     <div class="personal-info" id="personal_info" style="width:520px; height:100%;"></div>
                 </div>
-                <?php if ( count( $datas ) > 0 ): ?>
-                    <div class="exist-data">
-                        <?php foreach ( $datas as $deptid => $dept ): ?>
-                            <div class="group-item">
-                                <?php if ( empty( $dept['pDeptids'] ) ): ?>
-                                    <div class="cl-type-title"><?php echo $dept['deptname']; ?></div>
-                                <?php else: ?>
-                                    <div class="cl-info-brc clearfix">
-                                        <?php foreach ( $dept['pDeptids'] as $pDeptid ): ?>
-                                            <a href="javascript:;" class="xgh"><?php echo Department::model()->fetchDeptNameByDeptId( $pDeptid ); ?></a>
-                                        <?php endforeach; ?>
-                                        <a href="javascript:;" class="xwb"><?php echo $dept['deptname']; ?></a>
-                                    </div>
-                                <?php endif; ?>
-                                <table class="table table-hover cl-info-table contact-list" id="contact_list">
-                                    <tbody>
-                                        <?php foreach ( $dept['users'] as $uid => $user ): ?>
-                                            <tr id="cl_tr_<?php echo $user['uid']; ?>" data-id="<?php echo $user['uid']; ?>" class="contact-list-item" data-preg="<?php echo $user['realname'] . Convert::getPY( $user['realname'] ) . Convert::getPY( $user['realname'], true ); ?>">
-                                                <td width="50">
-                                                    <div class="avatar-box">
-                                                        <span class="avatar-circle">
-                                                            <img src="<?php echo $user['avatar_middle'] ?>">
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                                <td width="90">
-                                                    <span class="xcm pc-name"><?php echo $user['realname']; ?></span>
-                                                </td>
-                                                <td width="123">
-                                                    <span class="fss"><?php echo $user['posname']; ?></span>
-                                                </td>
-                                                <td width="130">
-                                                    <span class="fss"><?php echo isset( $user['telephone'] ) ? $user['telephone'] : ''; ?></span>
-                                                </td>
-                                                <td width="143">
-                                                    <span class="fss"><?php echo $user['mobile']; ?></span>
-                                                </td>
-                                                <td width="143">
-                                                    <div class="w120">
-                                                        <span class="fss"><?php echo $user['email']; ?></span>
-                                                    </div>
-                                                </td>
-                                                <td width="30">
-                                                    <i class="<?php if ( in_array( $user['uid'], $cuids ) ): ?>o-mark<?php else: ?>o-nomark<?php endif; ?>"
-                                                       title="<?php if ( in_array( $user['uid'], $cuids ) ): ?>取消常用联系人<?php else: ?>添加常用联系人<?php endif; ?>" data-id="<?php echo $user['uid']; ?>"></i>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="inexist-data">
-                        <div class="no-data-tip"></div>
-                    </div>
-                <?php else: ?>
+                <div class="exist-data" id="user_datalist"></div>
+                <div class="pull-left contact-table" id="user_searchlist"></div>
+                <div class="inexist-data">
                     <div class="no-data-tip"></div>
-                <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
     Ibos.app.setPageParam({
-        "deptid": "<?php echo intval( Env::getRequest( 'deptid' ) ); ?>"
+        "op": "<?php echo Env::getRequest( 'op' ); ?>",
+        "deptid": "<?php echo Env::getRequest( 'deptid' ); ?>"
     });
 <?php if ( Cloud::getInstance()->isOpen( ) ): ?>
        $('#cl_rolling_sidebar').delegate("#call_land",'click', function() {
@@ -121,6 +73,104 @@ use application\modules\department\model\Department;
             }
         })
 <?php endif; ?>
+</script>
+<script type="text/template" id="tpl_contact_table">
+    <% var UIDS = []; %>
+    <% for (var deptid in datas) { %>
+    <% var dept = datas[deptid]; %>
+    <% var users = dept['users']; %>
+    <div class="group-item">
+    <% if (dept['pDeptids'].length === 1) { %>
+    <div class="cl-type-title"><%= dept['pDeptids'][0] %></div>
+    <% } else { %>
+    <div class="cl-info-brc clearfix">
+    <% for (var i = 0, plen = dept['pDeptids'].length - 1; i < plen; i++) { %>
+    <a href="javascript:;" class="xgh"><%= dept['pDeptids'][i] %></a>
+    <% } %>
+    <a href="javascript:;" class="xwb"><%= dept['pDeptids'][plen] %></a>
+    </div>
+    <% } %>
+    <table class="table table-hover cl-info-table contact-list">
+    <tbody>
+    <% for (var j = 0, ulen = users.length; j < ulen; j++) { %>
+    <% var user = users[j], uid = user['id'].slice(2); %>
+    <% UIDS.push(user['id']); %>
+    <tr id="cl_tr_<%= uid %>" data-id="<%= uid %>" class="contact-list-item" data-preg="<%= user['preg'] %>" data-action="getUserInfo">
+    <td width="60">
+    <div class="avatar-box">
+    <span class="avatar-circle">
+    <img src="<%= user['avatar'] %>">
+    </span>
+    </div>
+    </td>
+    <td width="90">
+    <span class="xcm pc-name"><%= user['text'] %></span>
+    </td>
+    <td width="133">
+    <span class="fss"><%= user['position'] %></span>
+    </td>
+    <td width="130">
+    <span class="fss"><%= user['telephone'] ? user['telephone'] : '' %></span>
+    </td>
+    <td width="143">
+    <span class="fss"><%= user['phone'] %></span>
+    </td>
+    <td width="153">
+    <div class="w120">
+    <span class="fss"><%= user['email'] %></span>
+    </div>
+    </td>
+    </tr>
+    <% } %>
+    </tbody>
+    </table>
+    </div>
+    <% } %>
+    <% Ibos.app.s('uids', UIDS.join(',')); %>
+</script>
+<script type="text/template" id="tpl_search_table">
+    <div class="cl-letter-title fsst" style="width: 750px;">搜索结果</div>
+    <% var UIDS = []; %>
+    <% for (var letter in datas ) { %>
+    <% var users = datas[letter]; %>
+    <div class="group-item">
+    <table class="table table-hover cl-info-table contact-list">
+    <tbody>
+    <% for (var i = 0, len = users.length; i < len; i++) { %>
+    <% var user = users[i], uid = user['id'].slice(2); %>
+    <% UIDS.push(user['id']); %>
+    <tr id="cl_tr_<%= uid %>" data-id="<%= uid %>" class="contact-list-item" data-preg="<%= user['preg'] %>" data-action="getUserInfo">
+    <td width="60">
+    <div class="avatar-box">
+    <span class="avatar-circle">
+    <img src="<%= user['avatar'] %>">
+    </span>
+    </div>
+    </td>
+    <td width="90">
+    <span class="xcm pc-name"><%= user['text'] %></span>
+    </td>
+    <td width="123">
+    <span class="fss"><%= user['position'] %></span>
+    </td>
+    <td width="120">
+    <span class="fss"><%= user['telephone'] ? user['telephone'] : '' %></span>
+    </td>
+    <td width="133">
+    <span class="fss"><%= user['phone'] %></span>
+    </td>
+    <td width="133">
+    <div class="w120 ellipsis" title="<%= user['email'] %>">
+    <span class="fss"><%= user['email'] %></span>
+    </div>
+    </td>
+    </tr>
+    <% } %>
+    </tbody>
+    </table>
+    </div>
+    <% } %>
+    <% Ibos.app.s('uids', UIDS.join(',')); %>
 </script>
 <script type="text/template" id="tpl_rolling_sidebar">
    <div class="personal-info" id="personal_info">
@@ -142,7 +192,6 @@ use application\modules\department\model\Department;
                     <i class="o-pm-offline"></i>
                 </a>
             </div>
-            <a href="javascript:;" class="o-si-nomark" data-id="<%= user.uid %>" id="card_mark"></a>
             <div class="cl-pc-name"> 
                 <i class=<%= user.gender == '1' ? "om-male" : "om-female" %> id="card_gender"></i> 
                 <strong id="card_realname" class="fsst"><%= user.realname %></strong>

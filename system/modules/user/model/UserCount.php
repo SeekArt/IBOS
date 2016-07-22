@@ -11,7 +11,7 @@
  * user模块 用户统计model
  * 
  * @package application.modules.user.model
- * @version $Id: UserCount.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: UserCount.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

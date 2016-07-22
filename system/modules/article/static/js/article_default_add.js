@@ -262,9 +262,13 @@ var ArticleAdd = {
 				param = {catid: catid, uid: uid};
 
 			Article.op.addArticleCategory(param).done(function(res){
-				var label = $("#article_status label");
-				label.eq(0).toggle(res.checkIsPublish);
-				label.eq(1).toggle(res.isSuccess);
+				var label = $("#article_status label"),
+					check = label.eq(0),
+					publish = label.eq(1);
+				check.toggle(res.checkIsPublish);
+				res.checkIsPublish ? check.find('input').prop('checked', true) : check.find('input').prop('checked', false);
+				publish.toggle(res.isSuccess);
+				res.isSuccess ? publish.find('input').prop('checked', true) : publish.find('input').prop('checked', false);
 			});
 		});
 		

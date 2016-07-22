@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use application\core\utils\IBOS;
 ?>
@@ -240,7 +240,7 @@ use application\core\utils\IBOS;
 <div id="ava_progress" class="hide"></div>
 <script>
 	Ibos.app.s({
-		avatarUploadUrl: "<?php echo IBOS::app()->urlManager->createUrl( 'main/default/guide', array( 'op'=>'uploadAvatar', 'uid' => $uid, 'hash' => $swfConfig['hash'] ) ); ?>",
+		avatarUploadUrl: "<?php echo IBOS::app()->urlManager->createUrl( 'user/info/uploadAvatar', array( 'uid' => $uid, 'hash' => $swfConfig['hash'] ) ); ?>",
 		passwordMinLength: '<?php echo $account['minlength']; ?>',
 		passwordMaxLength: 32,
 		passwordMixed: "<?php echo $account['mixed']; ?>",

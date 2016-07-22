@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: DiaryController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DiaryController.php 7519 2016-07-12 08:08:36Z php_lxy $
  */
 
 namespace application\modules\mobile\controllers;
@@ -23,11 +23,13 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
+use application\modules\calendar\model\Calendars;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
 use application\modules\diary\model\DiaryAttention;
 use application\modules\diary\model\DiaryRecord;
+use application\modules\diary\model\DiaryShare;
 use application\modules\diary\model\DiaryStats;
 use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\message\model\Comment;
@@ -35,6 +37,7 @@ use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use CPagination;
+use application\modules\main\model\Setting;
 
 class DiaryController extends BaseController {
 
@@ -54,6 +57,17 @@ class DiaryController extends BaseController {
 		if ( isset( $datas["data"] ) ) {
 			foreach ( $datas["data"] as $k => $v ) {
 				$datas["data"][$k]["content"] = strip_tags( $v["content"] );
+				// 阅读人数
+				if ( empty( $v['readeruid'] ) ) {
+					$datas["data"][$k]['readercount'] = 0;
+				} else {
+					$datas["data"][$k]['readercount'] = count( explode( ',', trim( $v['readeruid'], ',' ) ) );
+				}
+				// 图章
+				if ( $v['stamp'] != 0 ) {
+					$path = Stamp::model()->fetchIconById( $v['stamp'] );
+					$datas["data"][$k]['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+				}
 			}
 		}
 		$return = array();
@@ -66,7 +80,7 @@ class DiaryController extends BaseController {
 		$this->ajaxReturn( $return, Mobile::dataType() );
 	}
 
-	public function actionReview() {
+	/*public function actionReview() {
 		$op = Env::getRequest( 'op' );
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'show', 'showdiary', 'getsubordinates', 'personal', 'getStampIcon' );
@@ -155,64 +169,64 @@ class DiaryController extends BaseController {
 			'nextTime' => strtotime( $date ) + 24 * 60 * 60
 		);
 		$this->ajaxReturn( $params, Mobile::dataType() );
-	}
+	}*/
 
-	/**
-	 * 列表页显示
-	 * @return void
-	 */
-	public function actionAttention() {
-		//取得shareuid字段中包含作者的数据
-		$date = 'yesterday';
-		if ( array_key_exists( 'date', $_GET ) ) {
-			$date = $_GET['date'];
-		}
-		if ( $date == 'today' ) {
-			$time = strtotime( date( 'Y-m-d' ) );
-			$date = date( 'Y-m-d' );
-		} else if ( $date == 'yesterday' ) {
-			$time = strtotime( date( 'Y-m-d' ) ) - 24 * 60 * 60;
-			$date = date( 'Y-m-d', $time );
-		} else {
-			$time = strtotime( $date );
-			$date = date( 'Y-m-d', $time );
-		}
+	// /**
+	//  * 列表页显示
+	//  * @return void
+	//  */
+	// public function actionAttention() {
+	// 	//取得shareuid字段中包含作者的数据
+	// 	$date = 'yesterday';
+	// 	if ( array_key_exists( 'date', $_GET ) ) {
+	// 		$date = $_GET['date'];
+	// 	}
+	// 	if ( $date == 'today' ) {
+	// 		$time = strtotime( date( 'Y-m-d' ) );
+	// 		$date = date( 'Y-m-d' );
+	// 	} else if ( $date == 'yesterday' ) {
+	// 		$time = strtotime( date( 'Y-m-d' ) ) - 24 * 60 * 60;
+	// 		$date = date( 'Y-m-d', $time );
+	// 	} else {
+	// 		$time = strtotime( $date );
+	// 		$date = date( 'Y-m-d', $time );
+	// 	}
 
-		$uid = IBOS::app()->user->uid;
-		//关注了哪些人
-		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
-		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
-		$hanAuidArr = $this->handleAuid( $uid, $auidArr );
-		$subUidStr = implode( ',', $hanAuidArr['subUid'] );
-		$auidStr = implode( ',', $hanAuidArr['aUid'] );
-		// 下属日志的条件和非下属日志条件
-		$condition = "(FIND_IN_SET(uid, '{$subUidStr}') OR (FIND_IN_SET('{$uid}', shareuid) AND FIND_IN_SET(uid, '{$auidStr}') ) ) AND diarytime=$time";
-		$paginationData = Diary::model()->fetchAllByPage( $condition, 100 );
-		$params = array(
-			'dateWeekDay' => DiaryUtil::getDateAndWeekDay( date( 'Y-m-d', strtotime( $date ) ) ),
-			'pagination' => $paginationData['pagination'],
-			'pages' => array(
-				'pageCount' => $paginationData['pagination']->getPageCount(),
-				'page' => $paginationData['pagination']->getCurrentPage(),
-				'pageSize' => $paginationData['pagination']->getPageSize()
-			),
-			'data' => ICDiary::processShareListData( $uid, $paginationData['data'] ),
-			'shareCommentSwitch' => 0,
-			'attentionSwitch' => 1
-		);
+	// 	$uid = IBOS::app()->user->uid;
+	// 	//关注了哪些人
+	// 	$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
+	// 	$auidArr = Convert::getSubByKey( $attentions, 'auid' );
+	// 	$hanAuidArr = $this->handleAuid( $uid, $auidArr );
+	// 	$subUidStr = implode( ',', $hanAuidArr['subUid'] );
+	// 	$auidStr = implode( ',', $hanAuidArr['aUid'] );
+	// 	// 下属日志的条件和非下属日志条件
+	// 	$condition = "(FIND_IN_SET(uid, '{$subUidStr}') OR (FIND_IN_SET('{$uid}', shareuid) AND FIND_IN_SET(uid, '{$auidStr}') ) ) AND diarytime=$time";
+	// 	$paginationData = Diary::model()->fetchAllByPage( $condition, 100 );
+	// 	$params = array(
+	// 		'dateWeekDay' => DiaryUtil::getDateAndWeekDay( date( 'Y-m-d', strtotime( $date ) ) ),
+	// 		'pagination' => $paginationData['pagination'],
+	// 		'pages' => array(
+	// 			'pageCount' => $paginationData['pagination']->getPageCount(),
+	// 			'page' => $paginationData['pagination']->getCurrentPage(),
+	// 			'pageSize' => $paginationData['pagination']->getPageSize()
+	// 		),
+	// 		'data' => ICDiary::processShareListData( $uid, $paginationData['data'] ),
+	// 		'shareCommentSwitch' => 0,
+	// 		'attentionSwitch' => 1
+	// 	);
 
-		// 与个人日志列表统一数据格式
-		$params['datas'] = $params['data'];
+	// 	// 与个人日志列表统一数据格式
+	// 	$params['datas'] = $params['data'];
 
-		//上一天和下一天
-		$params['prevAndNextDate'] = array(
-			'prev' => date( 'Y-m-d', (strtotime( $date ) - 24 * 60 * 60 ) ),
-			'next' => date( 'Y-m-d', (strtotime( $date ) + 24 * 60 * 60 ) ),
-			'prevTime' => strtotime( $date ) - 24 * 60 * 60,
-			'nextTime' => strtotime( $date ) + 24 * 60 * 60,
-		);
-		$this->ajaxReturn( $params, Mobile::dataType() );
-	}
+	// 	//上一天和下一天
+	// 	$params['prevAndNextDate'] = array(
+	// 		'prev' => date( 'Y-m-d', (strtotime( $date ) - 24 * 60 * 60 ) ),
+	// 		'next' => date( 'Y-m-d', (strtotime( $date ) + 24 * 60 * 60 ) ),
+	// 		'prevTime' => strtotime( $date ) - 24 * 60 * 60,
+	// 		'nextTime' => strtotime( $date ) + 24 * 60 * 60,
+	// 	);
+	// 	$this->ajaxReturn( $params, Mobile::dataType() );
+	// }
 
 	/**
 	 * 处理关注的uid中，下属uid和非下属uid分离开
@@ -241,6 +255,10 @@ class DiaryController extends BaseController {
 		$this->ajaxReturn( array(), Mobile::dataType() );
 	}
 
+	/**
+     * 显示工作日志
+     * @return array
+     */
 	public function actionShow() {
 		$diaryid = Env::getRequest( 'id' );
 		$diaryDate = Env::getRequest( 'diarydate' );
@@ -314,6 +332,7 @@ class DiaryController extends BaseController {
 		$list = $widget->getCommentList();
 		return $list;
 	}
+
 	/**
 	 * 增加一条评论
 	 * @return type
@@ -354,6 +373,7 @@ class DiaryController extends BaseController {
 				'stamp' => Env::getRequest( 'stamp', 'P', 0 ),
 					) );
 			$data['cid'] = Comment::model()->addComment( $data );
+			// 图章
 			$diaryid = $sourceInfo['diaryid'];
 			$allStamp = Stamp::model()->fetchAll( array( 'select' => 'id' ) );
 			$stampArr = Convert::getSubByKey( $allStamp, 'id' );
@@ -430,6 +450,12 @@ class DiaryController extends BaseController {
 //			'isInstallCalendar' => $isInstallCalendar,
 //			'workStart' => $workStart
 		);
+		//取得默认共享人员
+        if ( $dashboardConfig['sharepersonnel'] ) {
+            $data = DiaryShare::model()->fetchShareInfoByUid( $uid );
+            $params['defaultShareList'] = $data['shareInfo'];
+            $params['deftoid'] = StringUtil::wrapId( $data['deftoid'] );
+        }
 		$this->ajaxReturn( $params, Mobile::dataType() );
 	}
 
@@ -465,6 +491,11 @@ class DiaryController extends BaseController {
 			'remark' => '',
 			'attention' => ''
 		);
+		// 上传文件
+		if ( !empty( $_POST['attachmentid'] ) ) {
+            Attach::updateAttach( $_POST['attachmentid'] );
+        }
+        $diary['attachmentid'] = $_POST['attachmentid'];
 		$diaryId = Diary::model()->add( $diary, true );
 		//如果存在计划外，增加到该天的计划记录中
 		if ( !empty( $planOutside ) ) {
@@ -478,11 +509,12 @@ class DiaryController extends BaseController {
 		$this->ajaxReturn( $diaryId, Mobile::dataType() );
 	}
 
+
 	/**
-	 * 修改工作日志
+	 * 修改工作日志 
 	 * @return void
 	 */
-	function actionEdit() {
+	public function actionUpdate() {
 		$uid = IBOS::app()->user->uid;
 		$shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
 		$diaryId = Env::getRequest( 'id' );
@@ -498,7 +530,11 @@ class DiaryController extends BaseController {
 			'attention' => ''
 		);
 		$isDiary = Diary::model()->modify( $diaryId, $diary );
-		
+		 //更新附件
+        $attachmentid = trim( $_POST['attachmentid'], ',' );
+        Attach::updateAttach( $attachmentid );
+        Diary::model()->modify( $diaryId, array( 'attachmentid' => $attachmentid ) );
+
 		$originalPlan = $planOutside = '';
 		if ( array_key_exists( 'originalPlan', $_POST ) ) {
 			$originalPlan = $_POST['originalPlan'];
@@ -516,10 +552,10 @@ class DiaryController extends BaseController {
 			DiaryRecord::model()->addRecord( $planOutside, $diaryId, strtotime( $_POST['todayDate'] ), $uid, 'outside' );
 		}
 		$plan = array_filter( $_POST['plan'], create_function( '$v', 'return !empty($v["content"]);' ) );
-		if( !empty( $plan )){
+		if ( !empty( $plan ) ) {
 			$isDiaryRecord = DiaryRecord::model()->addRecord( $plan, $diaryId, strtotime( $_POST['plantime'] ), $uid, 'new' );
 		}
-		if ( $isDiary && $isDiaryRecord) {
+		if ( $isDiary && $isDiaryRecord ) {
 			$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Edit success' ) );
 		} else {
 			$message = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Edit fail' ) );
@@ -535,7 +571,7 @@ class DiaryController extends BaseController {
 		$diaryId = Env::getRequest( 'id' );
 		$diary = Diary::model()->deleteAll( "diaryid = {$diaryId}" );
 		$diaryRecord = DiaryRecord::model()->deleteAll( "diaryid = {$diaryId}" );
-		if ( $diary > 0 && $diaryRecord > 0) {
+		if ( $diary > 0 && $diaryRecord > 0 ) {
 			$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Del success' ) );
 		} else {
 			$message = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Del fail' ) );
@@ -543,4 +579,254 @@ class DiaryController extends BaseController {
 		$this->ajaxReturn( $message, Mobile::dataType() );
 	}
 
+	/**
+    * 获取某个下属的日志列表
+    */
+    public function actionPersonal() {
+    	$params = [];
+       	$uid = IBOS::app()->user->uid;
+		$getUid = intval( Env::getRequest( 'uid' ) );
+		$diary = Diary::model()->fetchAllByAttributes( array("uid" => $getUid) );
+		$supUid = UserUtil::getSupUid( $getUid ); //获取上司uid
+        // 是否关注
+        $attention = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid, 'auid' => $getUid ) );
+        $isattention = empty( $attention ) ? 0 : 1;
+        $params = array(
+        	'diary' => $diary,
+        	'isattention' => $isattention
+    	);
+		$this->ajaxReturn( $params, Mobile::dataType() );
+    }
+
+    /**
+    * 获取所有下属的日志列表
+    */
+    public function actionAllSubs() {
+    	$diary = $attentionList = [];
+        $uid = IBOS::app()->user->uid;
+        $subUidArr = User::model()->fetchSubUidByUid( $uid );
+        // $subUids = implode( ',', $subUidArr );
+
+        // 是否设置了只看直属下属
+    	$switch = Setting::model()->fetchSettingValueByKey( 'switch' );
+		if ( !$switch ) {
+    		$data = array('skey'=>'switch','svalue' => 'on' );
+    		Setting::model()->add( $data );
+    		$switch = Setting::model()->fetchSettingValueByKey( 'switch' );
+    	}
+    	if ($switch == 'off') {
+    		foreach ($subUidArr as $subUid ) {
+	            $_subUidArr = User::model()->fetchSubUidByUid( $subUid );
+	            if( isset($_subUidArr['0']) ){
+	                $subUidArr[] = $_subUidArr['0'];
+	            }
+	            // 是否关注
+	            $attention = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid, 'auid' => $subUid ) );
+	            if ( !empty( $attention ) ) {
+	                $attentionList[] = $subUid;
+	            }
+	        }
+    	}else {
+    		foreach ($subUidArr as $subUid ) {
+	            // 是否关注
+	            $attention = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid, 'auid' => $subUid ) );
+	            if ( !empty( $attention ) ) {
+	                $attentionList[] = $subUid;
+	            }
+	        }
+    	}
+
+    	if ( count( $subUidArr ) > 0 ) {
+            $subUids = implode( ',', $subUidArr );
+            $condition = "uid IN($subUids)";
+            $diary = Diary::model()->fetchAll(array("condition" => $condition, "order" => "diarytime DESC"));
+        }
+        $params = array(
+        	'diary' => $diary,
+        	'attentionList' => $attentionList
+    	);
+        $this->ajaxReturn( $params, Mobile::dataType() );
+    }
+
+    /**
+    * 获取共享和关注的日志列表
+    */
+    public function actionOther() {
+    	$params = [];
+       	$uid = IBOS::app()->user->uid;
+		//关注了哪些人
+		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
+		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
+		$auidStr = implode( ',', $auidArr );
+		$condition = "(FIND_IN_SET(uid, '{$auidStr}') OR (FIND_IN_SET('{$uid}', shareuid)))";
+		$datas = Diary::model()->fetchAll(array("condition" => $condition, "order" => "diarytime DESC"));
+		foreach ( $datas as &$data ) {
+			// 阅读人数
+			if ( empty( $data['readeruid'] ) ) {
+				$data['readercount'] = 0;
+			} else {
+				$data['readercount'] = count( explode( ',', trim( $data['readeruid'], ',' ) ) );
+			}
+			// 图章
+			if ( $data['stamp'] != 0 ) {
+				$path = Stamp::model()->fetchIconById( $data['stamp'] );
+				$data['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+			}
+		}
+		$this->ajaxReturn( $params, Mobile::dataType() );
+    }
+
+    /**
+    * 设置共享人员
+    */
+    public function actionSetShare() {
+    	$postDeftoid = $_POST['deftoid'];
+    	// $postDeftoid = 'u_4,u_3,u_2';
+        $uid = IBOS::app()->user->uid;
+        if ( empty( $postDeftoid ) ) {
+            DiaryShare::model()->delDeftoidByUid( $uid );
+        } else {
+            $deftoid = StringUtil::getId( $postDeftoid );
+            DiaryShare::model()->addOrUpdateDeftoidByUid( $uid, $deftoid );
+        }
+    	$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Set succeed' ) );
+		$this->ajaxReturn( $message, Mobile::dataType() );
+    }
+
+    /**
+	 * 设置关注工作日志
+	 * @return void
+	 */
+	public function actionAttention() {
+		$auid = Env::getRequest( 'auid' );
+		$uid = IBOS::app()->user->uid;
+		DiaryAttention::model()->addAttention( $uid, $auid );
+		$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Attention succeed' ));
+		$this->ajaxReturn( $message, Mobile::dataType() );		
+			}
+
+	/**
+	 * 取消关注工作日志
+	 * @return void
+	 */
+	public function actionUnattention() {
+		$auid = Env::getRequest( 'auid' );
+		$uid = IBOS::app()->user->uid;
+		DiaryAttention::model()->removeAttention( $uid, $auid );
+		$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Unattention succeed' ));
+		$this->ajaxReturn( $message, Mobile::dataType() );
+	}
+
+	/**
+    * 设置关注人员
+    */
+    public function actionSetAttention() {
+    	$postAuid = $_POST['auid'];
+    	// $postAuid = 'u_4,u_3,u_2';
+        $uid = IBOS::app()->user->uid;
+        if ( empty( $postAuid ) ) {
+            DiaryAttention::model()->delAttentionByUid( $uid );
+        } else {
+        	DiaryAttention::model()->delAttentionByUid( $uid );
+        	$postAuid = StringUtil::getId( $postAuid );
+            DiaryAttention::model()->addAttentionByUid( $uid, $postAuid );
+        }
+    	$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Set succeed' ) );
+		$this->ajaxReturn( $message, Mobile::dataType() );
+    }
+
+    /**
+    * 设置是否只看直属下属 $switch 开关
+    */
+    public function actionReadDirect() {
+    	$getSwitch = Env::getRequest( 'switch' );
+    	$switch = Setting::model()->fetchSettingValueByKey( 'switch' );
+    	if ( !$switch ) {
+    		$data = array('skey'=>'switch','svalue' => $getSwitch );
+    		Setting::model()->add( $data );
+    	}else {
+    		Setting::model()->updateSettingValueByKey( 'switch', $getSwitch );
+    	}
+    	$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Set succeed' ) );
+		$this->ajaxReturn( $message, Mobile::dataType() );
+    }
+
+     /**
+    * 设置页
+    */
+    public function actionSet() {
+    	$params = [];
+       	$uid = IBOS::app()->user->uid;
+		//关注了哪些人
+		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
+		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
+		$auidStr = implode( ',', $auidArr );
+		// 是否设置只看直属下属，没有就默认设置了
+		$switch = Setting::model()->fetchSettingValueByKey( 'switch' );
+		if ( !$switch ) {
+    		$data = array('skey'=>'switch','svalue' => 'on' );
+    		Setting::model()->add( $data );
+    		$switch = Setting::model()->fetchSettingValueByKey( 'switch' );
+    	}
+    	$shareData = DiaryShare::model()->fetchByAttributes( array('uid' => $uid) );
+        // $params['defaultShareList'] = $shareData['shareInfo'];
+    	// 共享给哪些人
+        $params = array(
+        	'attentionList' => $auidStr,
+        	'switch' => $switch,
+        	'defaultShareList' => $shareData['deftoid']
+        );
+		$this->ajaxReturn( $params, Mobile::dataType() );
+    }
+
+     /**
+    * 编辑日志页
+    */
+    public function actionEdit() {
+    	$diaryid = intval( Env::getRequest( 'diaryid' ) );
+    	$diary = Diary::model()->fetchByPk( $diaryid );
+	 	//取得原计划和计划外内容,下一次计划内容
+        $data = Diary::model()->fetchDiaryRecord( $diary );
+        $dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+
+     	$params = array(
+            'diary' => ICDiary::processDefaultShowData( $diary, $data ),
+            'prevAndNextPK' => Diary::model()->fetchPrevAndNextPKByPK( $diaryid ),
+            'data' => $data,
+            'dashboardConfig' => $dashboardConfig,
+            // 'uploadConfig' => Attach::getUploadConfig(),
+            // 'isInstallCalendar' => $isInstallCalendar,
+            // 'workTime' => $workTime
+        );
+    	//取得附件
+        if ( !empty( $diary['attachmentid'] ) ) {
+            $params['attach'] = Attach::getAttach( $diary['attachmentid'] );
+        }
+        //取得默认共享人员
+        if ( $dashboardConfig['sharepersonnel'] ) {
+            $shareData = DiaryShare::model()->fetchShareInfoByUid( IBOS::app()->user->uid );
+            $params['defaultShareList'] = $shareData['shareInfo'];
+        }
+        $this->ajaxReturn( $params, Mobile::dataType() );
+    }
+
+    /**
+    * 从日程中读取数据作为这天的原计划
+    */
+    public function actionPlanFromSchedule() {
+        $uid = IBOS::app()->user->uid;
+        $todayDate = $_GET['todayDate'];
+        // $todayDate = '2016-07-12';
+        $st = intval( strtotime( $todayDate ) );
+        $et = $st + 24 * 60 * 60 - 1;
+        $calendars = Calendars::model()->listCalendarByRange( $st, $et, $uid );
+        $plans = $calendars['events'];
+        foreach ( $plans as $k => $v ) {  //处理完成度输出数据
+            $plans[$k]['schedule'] = $v['status'] ? self::COMPLETE_FALG : 0;
+            if ( $v['isfromdiary'] ) {
+                unset( $plans[$k] );
+            }
+        }
+        $this->ajaxReturn( array_values( $plans ), Mobile::dataType() );
+    }
 }

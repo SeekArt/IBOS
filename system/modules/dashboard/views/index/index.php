@@ -44,6 +44,7 @@ use application\core\utils\StringUtil;
                 </div>
             </div>
         </div>
+		<?php if ( LOCAL ): ?>
         <!-- 服务器 start -->
         <div class="ctb ctbp">
             <h2 class="st"><?php echo $lang['Server']; ?></h2>
@@ -107,6 +108,7 @@ use application\core\utils\StringUtil;
                 </ul>
             </div>
         </div>
+		<?php endif; ?>
         <!-- 容量大小 start -->
         <div class="ctb ctbp">
             <h2 class="st"><?php echo $lang['Size']; ?></h2>
@@ -145,14 +147,17 @@ use application\core\utils\StringUtil;
     </div>
 </div>
 
+
 <script>
     var _ib = _ib || [];
     _ib.push(['authkey', '<?php echo IBOS::app()->setting->get( 'config/security/authkey' ); ?>']);
     _ib.push(['datasize', '<?php echo $dataSize . $dataUnit; ?>']);
     _ib.push(['system', '<?php echo $sys['operating_system']; ?>']);
+<?php if ( LOCAL ): ?>
     _ib.push(['server', '<?php echo $server; ?>']);
+<?php endif; ?>
     _ib.push(['type', 'dashboardlogin']);
-    (function () {
+    (function() {
         var ib = document.createElement('script');
         ib.type = 'text/javascript';
         ib.async = true;

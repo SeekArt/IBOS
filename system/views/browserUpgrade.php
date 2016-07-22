@@ -51,6 +51,15 @@
 		.browser-list li a:hover { border: 1px solid #77D8EE; }
 		.browser-list li a:hover p { color: #77D8EE; }
 	</style>
+	<script type="text/javascript">
+		(function(){
+			var ua = navigator.userAgent.toLowerCase(),
+				sys = ua.match(/msie ([\d.]+)/);
+			if( !window.ActiveXObject && !sys || (sys && parseFloat(sys[1]) >= 8)){
+				window.location.href = location.origin + location.pathname;
+			}
+		})();
+	</script>
 </head>
 <body>
 	<div class="container">
@@ -110,14 +119,5 @@
 			</ul>
 		</div>
 	</div>
-	<script type="text/javascript">
-		(function(){
-			var ua = navigator.userAgent.toLowerCase(),
-				sys = ua.match(/msie ([\d.]+)/)[1];
-			if( window.ActiveXObject && sys && parseFloat(sys) >= 8){
-				window.location.href="/";
-			}
-		})();
-	</script>
 </body>
 </html>

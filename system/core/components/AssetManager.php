@@ -109,7 +109,7 @@ class AssetManager extends CAssetManager {
             $assetUrl = $this->publish( $path );
         } else {
             // 云平台，返回物理路径直接访问。
-            $assetUrl = str_replace( '\\', '/', stristr( $path, 'system' ) );
+            $assetUrl = '/' . str_replace( '\\', '/', stristr( $path, 'system' ) );
         }
         return $assetUrl;
     }

@@ -34,9 +34,11 @@ class CoSync {
                 $user['password'] = !empty( $user['password'] ) ? $user['password'] : md5( md5( $user['mobile'] ) . $user['salt'] );
                 $user['groupid'] = !empty( $user['groupid'] ) ? $user['groupid'] : '2';
                 $user['guid'] = !empty( $user['guid'] ) ? $user['guid'] : StringUtil::createGuid();
+                $user['deptid'] = !empty( $user['deptid'] ) ? $user['deptid'] : '';
                 $user['createtime'] = TIMESTAMP;
                 $data = User::model()->create( $user );
                 unset( $data['uid'] );
+                $data['roleid'] = 3;
                 $newId = User::model()->add( $data, true );
                 if ( $newId ) {
                     UserCount::model()->add( array( 'uid' => $newId ) );

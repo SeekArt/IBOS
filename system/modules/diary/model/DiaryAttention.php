@@ -62,4 +62,31 @@ class DiaryAttention extends Model {
 		return $aUids;
 	}
 
+	/**
+ 	* 通过uid删除关注者
+ 	* @param integer $uid 
+ 	*/
+	public function delAttentionByUid( $uid ) {
+		$record = $this->fetch( 'uid=:uid', array( ':uid' => $uid ) );
+		if ( $record ) {
+			$this->deleteAllByAttributes( array( 'uid' => $uid ) );
+		}
+	}
+
+	/**
+	 * 通过uid增加或者修改关注者
+	 * @param integer $uid
+	 * @param array $value
+	 * @return array 添加成功后的用户ID
+	 */
+	public function addAttentionByUid( $uid, $value ) {
+		foreach ($value as $v) {
+			$data = array(
+				'uid' => $uid,
+				'auid' => $v
+			); 
+			$this->add( $data );
+		}
+	}
+
 }

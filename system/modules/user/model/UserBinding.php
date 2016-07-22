@@ -17,6 +17,7 @@
 
 namespace application\modules\user\model;
 
+use application\core\utils as util;
 use application\core\model\Model;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
@@ -47,13 +48,27 @@ class UserBinding extends Model {
     }
 
     /**
-     *
+     *获取指定app的所有信息
      * @param string $app
      * @return array
      */
     public function fetchAllByApp( $app ) {
         $rs = IBOS::app()->db->createCommand()
                 ->select( '*' )
+                ->from( $this->tableName() )
+                ->where( sprintf( "app = '%s'", $app ) )
+                ->queryAll();
+        return $rs;
+    }
+
+    /**
+     * 获取指定app的绑定用户uid
+     * @param string $app
+     * @return array
+     */
+    public function fetchUidByApp( $app ) {
+        $rs = IBOS::app()->db->createCommand()
+                ->select( 'uid' )
                 ->from( $this->tableName() )
                 ->where( sprintf( "app = '%s'", $app ) )
                 ->queryAll();

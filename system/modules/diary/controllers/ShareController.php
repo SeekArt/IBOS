@@ -11,7 +11,7 @@
 /**
  * 工作日志模块------共享日志控制器，继承DiaryBaseController
  * @package application.modules.diary.components
- * @version $Id: ShareController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ShareController.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -83,7 +83,7 @@ class ShareController extends BaseController {
                 $date = date( 'Y-m-d', $time );
             }
             // 取得shareuid字段中包含作者的数据
-            $uid = IBOS::app()->user->uid; 
+            $uid = IBOS::app()->user->uid;
             $condition = "FIND_IN_SET('$uid',shareuid) AND uid NOT IN($uid) AND diarytime=$time";
             $paginationData = Diary::model()->fetchAllByPage( $condition );
             $params = array(

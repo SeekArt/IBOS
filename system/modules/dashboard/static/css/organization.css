@@ -550,6 +550,9 @@ a.level2.curSelectedNode a.opt-btn{
 .org-utree.ztree li a{
 	padding-left: 0;
 	position: relative;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .position-ztree.ztree li a{
 	position: relative;
@@ -742,8 +745,10 @@ ul.relation-ztree.zTreeDragUL{
 }
 .ztree-wrap{
 	padding-left: 12px;
+	max-height: 695px;
+	overflow-y: auto;
+	overflow-x: hidden; 
 }
-
 .content-left:link .scroll::-webkit-scrollbar-thumb,
 .content-left:link .scroll::-webkit-scrollbar-track,
 .content-left:link .scroll::-webkit-scrollbar-button,

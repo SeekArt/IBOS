@@ -6,7 +6,7 @@ use application\core\utils\Url;
 use application\modules\user\utils\User as UserUtil;
 
 ?>
-<!doctype <html>
+<!doctype html>
 </html>
 <html lang="en">
 	<head>
@@ -23,7 +23,7 @@ use application\modules\user\utils\User as UserUtil;
 				window.location.href = "<?php echo IBOS::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
 			</script>
 		<![endif]-->
-		
+
 	</head>
 	<body class="ibbody">
 		<div class="ibcontainer">
@@ -84,7 +84,9 @@ use application\modules\user\utils\User as UserUtil;
 								<i class="caret caret-small"></i>
 							</a>
 						</div>
-						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message"><?php echo IBOS::lang( 'Message', 'default' ); ?></a>
+						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message">
+							<?php echo IBOS::lang( 'Message', 'default' ); ?>
+						</a>
 					</div>
 					<div class="posr">
 						<div id="message_container" class="reminder" style="display: none;">
@@ -103,7 +105,7 @@ use application\modules\user\utils\User as UserUtil;
 								<li rel="officialdoc"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="email"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
-								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
+								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="car"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 								<li rel="assets"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 							</ul>
@@ -152,7 +154,7 @@ use application\modules\user\utils\User as UserUtil;
 				<!-- Mainer -->
 				<!-- 这里就是内容模板 -->
 				<div class="mpc clearfix" id="page_content">
-					
+
 				</div>
 				<!-- 这里就是内容模板 -->
 
@@ -185,7 +187,7 @@ use application\modules\user\utils\User as UserUtil;
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>
 						Processed in <code><?php echo IBOS::app()->performance->endClockAndGet(); ?></code> second(s).
-						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries. 
+						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries.
 					<?php endif; ?>
 				</div>
 			</div>

@@ -136,7 +136,7 @@ class Feed extends Model {
 		$feedIds = array_filter( array_unique( $feedIds ) );
 		// 获取数据
 		if ( count( $feedIds ) > 0 ) {
-			$cacheList = util\Cache::get( $feedIds, 'feed_' );
+			$cacheList = util\Cache::mget( $feedIds, 'feed_' );
 		} else {
 			return false;
 		}
@@ -242,7 +242,7 @@ class Feed extends Model {
 			}
 			// 发送@消息
 			$url = isset( $data['url'] ) ? $data['url'] : util\IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $feedId ) );
-			$detail = isset( $data['detail'] ) ? $data['detail'] : util\IBOS::lang( 'Published weibo', 'weibo.default', array( '{url}' => $url, '{title}' => util\StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", util\StringUtil::filterCleanHtml( $data['body'] ) ), 50 ) ) );
+            $detail = isset( $data['detail'] ) ? $data['detail'] : util\IBOS::lang( 'Published weibo', 'weibo.default', array( '{url}' => $url, '{title}' => util\StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", util\StringUtil::filterCleanHtml( $data['body'] ) ), 50 ) ) );
 			Atme::model()->addAtme( 'weibo', 'feed', $content, $feedId, $extUid, $lessUids, $url, $detail );
 
 			$data['clientip'] = util\Env::getClientIp();
@@ -274,9 +274,9 @@ class Feed extends Model {
 	 */
 	public function formatFeedContent( $content, $weiboNums = 0 ) {
 		// 拼装数据，如果是评论再转发、回复评论等情况，需要额外叠加对话数据
-		$content = str_replace( util\IBOS::app()->setting->get( 'siteurl' ), '[SITE_URL]', util\StringUtil::pregHtml( $content ) );
+        $content = str_replace( util\IBOS::app()->setting->get( 'siteurl' ), '[SITE_URL]', util\StringUtil::pregHtml( $content ) );
 		// 格式化微博信息 - URL
-		$content = preg_replace_callback( '/((?:https?|mailto|ftp):\/\/([^\x{2e80}-\x{9fff}\s<\'\"“”‘’，。}]*)?)/u', 'application\core\utils\StringUtil::formatFeedContentUrlLength', $content );
+        $content = preg_replace_callback( '/((?:https?|mailto|ftp):\/\/([^\x{2e80}-\x{9fff}\s<\'\"“”‘’，。}]*)?)/u', 'application\core\utils\StringUtil::formatFeedContentUrlLength', $content );
 		if ( isset( $GLOBALS['replaceHash'] ) ) {
 			$replaceHash = $GLOBALS['replaceHash'];
 			unset( $GLOBALS['replaceHash'] );
@@ -299,7 +299,7 @@ class Feed extends Model {
 		foreach ( $scream as $value ) {
 			$tbody[] = $value;
 			$bodyStr = implode( '//', $tbody );
-			if ( util\StringUtil::getStrLength( ltrim( $bodyStr ) ) > $feedNums ) {
+            if ( util\StringUtil::getStrLength( ltrim( $bodyStr ) ) > $feedNums ) {
 				break;
 			}
 			$body[] = str_replace( $patterns, $replacements, $value );
@@ -419,7 +419,7 @@ class Feed extends Model {
 
 		$userInfo = User::model()->fetchByUid( $data['uid'] );
 		$data['ctime'] = util\Convert::formatDate( $data['ctime'], 'n月d日H:i' );
-		$data['content'] = $forApi ? util\StringUtil::parseForApi( $fd['body'] ) : $fd['body'];
+        $data['content'] = $forApi ? util\StringUtil::parseForApi( $fd['body'] ) : $fd['body'];
 		$data['realname'] = $userInfo['realname'];
 		// Todo::微博用户组信息
 		$data['avatar_big'] = $userInfo['avatar_big'];
@@ -441,8 +441,8 @@ class Feed extends Model {
 				$_attach = array(
 					'attach_id' => $av['aid'],
 					'attach_name' => $av['filename'],
-					'attach_url' => util\File::fileName( $attachUrl . '/' . $av['attachment'] ),
-					'extension' => util\StringUtil::getFileExt( $av['filename'] ),
+					'attach_url' => util\File::imageName( $attachUrl . '/' . $av['attachment'] ),
+                    'extension' => util\StringUtil::getFileExt( $av['filename'] ),
 					'size' => $av['filesize']
 				);
 				if ( $data['type'] == 'postimage' ) {
@@ -462,7 +462,7 @@ class Feed extends Model {
 		//一分钟缓存
 		util\Cache::set( 'feed_info_' . $id, $data, 60 );
 		if ( $forApi ) {
-			$data['content'] = util\StringUtil::realStripTags( $data['content'] );
+            $data['content'] = util\StringUtil::realStripTags( $data['content'] );
 			unset( $data['isdel'], $data['fromdata'], $data['table'], $data['rowid'] );
 			unset( $data['source_body'] );
 		}
@@ -523,7 +523,7 @@ class Feed extends Model {
 		$me = intval( util\IBOS::app()->user->uid );
 		$where = !empty( $loadId ) ? " a.isdel = 0 AND a.feedid <'{$loadId}'" : "a.isdel = 0";
 		$where .= " AND (a.uid = '{$me}' OR b.uid = '{$me}' ) AND " . WbfeedUtil::getViewCondition( $me, 'a.' );
-		$where .= " AND c.feedcontent LIKE '%" . util\StringUtil::filterCleanHtml( $key ) . "%'";
+        $where .= " AND c.feedcontent LIKE '%" . util\StringUtil::filterCleanHtml( $key ) . "%'";
 		return $where;
 	}
 
@@ -563,7 +563,7 @@ class Feed extends Model {
 			$map[] = 'a.isdel = 0 AND uid = ' . $uid . ($me == $uid ? '' : ' AND ' . WbfeedUtil::getViewCondition( $me ));
 		}
 		!empty( $loadId ) && $map[] = 'a.feedid < ' . intval( $loadId );
-		$map[] = array( 'LIKE', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
+        $map[] = array( 'LIKE', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
 		if ( $feedtype ) {
 			if ( $feedtype == 'post' ) {
 				$map[] = 'a.isrepost = 0';
@@ -609,7 +609,7 @@ class Feed extends Model {
 			$map[] = 'a.isdel = 0 AND uid = ' . $uid . ($me == $uid ? '' : ' AND ' . WbfeedUtil::getViewCondition( $me ));
 		}
 		!empty( $loadId ) && $map[] = 'a.feedid < ' . intval( $loadId );
-		$map[] = array( 'LIKE', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
+        $map[] = array( 'LIKE', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
 		if ( $feedtype ) {
 			$map[] = 'a.module = ' . $feedtype;
 		} else {
@@ -731,7 +731,7 @@ class Feed extends Model {
 	private function mergeSearchCondition( $key, $feedType = null, $sTime = 0, $eTime = 0 ) {
 		$map[] = 'and';
 		$map[] = 'a.isdel = 0';
-		$map[] = array( 'like', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
+        $map[] = array( 'like', 'b.feedcontent', '%' . util\StringUtil::filterCleanHtml( $key ) . '%' );
 		if ( $feedType ) {
 			$map[] = 'a.type = ' . $feedType;
 			if ( $feedType == 'post' ) {
@@ -811,10 +811,11 @@ class Feed extends Model {
 			$var['attachInfo'] = util\Attach::getAttach( $var['attach_id'] );
 			$attachUrl = util\File::getAttachUrl();
 			foreach ( $var['attachInfo'] as $ak => $av ) {
+				$attach_url = util\File::imageName( $attachUrl . '/' . $av['attachment'] );
 				$_attach = array(
 					'attach_id' => $av['aid'],
 					'attach_name' => $av['filename'],
-					'attach_url' => util\File::fileName( $attachUrl . '/' . $av['attachment'] ),
+					'attach_url' => $attach_url,
 					'extension' => util\StringUtil::getFileExt( $av['filename'] ),
 					'size' => $av['filesize']
 				);
@@ -855,10 +856,10 @@ class Feed extends Model {
         if ( !$s ) {
             return false;
         }
-		$result = $s->xpath( "//feed[@type='" . util\StringUtil::filterCleanHtml( $_data['type'] ) . "']" );
+        $result = $s->xpath( "//feed[@type='" . util\StringUtil::filterCleanHtml( $_data['type'] ) . "']" );
 		$actions = (array) $result[0]->feedAttr;
 		//输出模版解析后信息
-		$return['content'] = $var['content'];
+		$return['content'] = util\StringUtil::parseHtml($var['content']);
 		if ( isset( $var["attach_id"] ) ) {
 			$return['attach_id'] = $var['attach_id'];
 		}
@@ -866,7 +867,6 @@ class Feed extends Model {
 		$return['title'] = trim( (string) $result[0]->title );
 		$return['body'] = trim( (string) $result[0]->body );
 		$return['info'] = trim( (string) $result[0]['info'] );
-		$return['body'] = util\StringUtil::parseHtml( $return['body'] );
 		$return['api_source'] = $var['sourceInfo'];
 		$return['actions'] = $actions['@attributes'];
 		// 验证转发的原信息是否存在
@@ -899,7 +899,7 @@ class Feed extends Model {
 			return $return;
 		}
 		// 如果TABLE不存在，则 type是资源所在的表名 fix::
-		$type = util\StringUtil::filterCleanHtml( $data['type'] );
+        $type = util\StringUtil::filterCleanHtml( $data['type'] );
 		$table = isset( $data['table'] ) ? $data['table'] : $type;
 
 		// 当前产生微博所属的应用
@@ -947,7 +947,7 @@ class Feed extends Model {
 				$notCount = $from == "share" ? ($data['comment'] == 1 ? false : true) : false;
 				Comment::model()->addComment( $c, false, $notCount, $lessUids );
 			}
-			//添加话题 
+			//添加话题
 			FeedTopic::model()->addTopic( html_entity_decode( $d['body'], ENT_QUOTES ), $res['feedid'], $feedType );
 			// 渲染数据
 			$rdata = $res;   // 渲染完后的结果

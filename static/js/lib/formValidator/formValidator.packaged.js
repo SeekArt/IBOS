@@ -54,7 +54,7 @@ $.formValidator =
 		var jsName = scriptSrcArray[scriptSrcArray.length-1];
     	var themedir = fv_scriptSrc.replace(jsName,'');
 		$.ajax({async:false,type: "GET",url: themedir + "themes/"+settings.theme+"/js/theme.js",dataType: "script",
-			error :function(){alert('当前皮肤加载出错，请确认皮肤【'+settings.theme+'】是否存在')}
+			error :function(){console.error('当前皮肤加载出错，请确认皮肤【'+settings.theme+'】是否存在')}
 		});
 		//读取主题对应的样式
 		// if($.browser.msie)
@@ -474,7 +474,7 @@ $.formValidator =
 			if (thefirstid && initConfig.errorFocus) {$("#" + thefirstid).focus()};
 		}
 		initConfig.status="init";
-		if(isValid && initConfig.debug){alert("现在正处于调试模式(debug:true)，不能提交");}
+		if(isValid && initConfig.debug){console.error("现在正处于调试模式(debug:true)，不能提交");}
 		return !initConfig.debug && isValid;
 	},
 
@@ -487,7 +487,7 @@ $.formValidator =
 		var initConfig = $("body").data(validatorGroup);
 		if(formid==undefined){
 			formid = initConfig.formID;
-			if(formid==""){alert('表单ID未传入');return false;};
+			if(formid==""){console.error('表单ID未传入');return false;};
 		};
 		if(!$.formValidator.pageIsValid(validatorGroup)){return false};
 		var ls_url = setting.url;
@@ -1134,7 +1134,7 @@ $.fn.formValidator = function(cs)
 						$("#"+setting.pwdTipID).html(passwordStrengthStatusHtml[level]);
 					}catch(e)
 					{
-						alert("密码强度校验失败,错误原因:变量passwordStrengthStatusHtml语法错误或者为设置)");
+						console.error("密码强度校验失败,错误原因:变量passwordStrengthStatusHtml语法错误或者为设置)");
 					}
 	            }
 		    });
@@ -1353,7 +1353,7 @@ var initConfig_setting =
 	inIframe:false,
 	onSuccess: function() {return true},		//提交成功后的回调函数
 	onError: $.noop,						//提交失败的回调函数度
-	onAlert: function() {alert(arguments[0])},
+	onAlert: function() {console.error(arguments[0])},
 	status:"",					//提交的状态：submited、sumbiting、sumbitingWithAjax
 	ajaxPrompt : "当前有数据正在进行服务器端校验，请稍候",	//控件失去焦点后，触发ajax校验，没有返回结果前的错误提示
 	validCount:0,			//含ajaxValidator的控件个数

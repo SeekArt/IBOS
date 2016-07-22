@@ -107,7 +107,7 @@ class Controller extends CController {
         $this->setPageState( 'breadCrumbs', null );
         !isset( $data['assetUrl'] ) && $data['assetUrl'] = $this->getAssetUrl();
         $data['lang'] = IBOS::getLangSources( $langSources );
-		$data['language'] = IBOS::app()->getLanguage();
+        $data['language'] = IBOS::app()->getLanguage();
         return parent::render( $view, $data, $return );
     }
 
@@ -121,7 +121,7 @@ class Controller extends CController {
         if ( empty( $type ) ) {
             $type = 'json';
         }
-        
+
         switch ( strtoupper( $type ) ) {
             case 'JSON' :
                 // 返回JSON数据格式到客户端 包含状态信息
@@ -226,7 +226,7 @@ class Controller extends CController {
      * @return void 
      */
     public function showMessage( $message, $jumpUrl = '', $params = array(), $status = 1, $ajax = false ) {
-		
+
         // AJAX提交方式的处理
         if ( $ajax === true || IBOS::app()->request->getIsAjaxRequest() ) {
             $data = is_array( $ajax ) ? $ajax : array();
@@ -274,20 +274,16 @@ class Controller extends CController {
         if ( !isset( $params['messageType'] ) ) {
             $params['messageType'] = $status ? 'success' : 'error';
         }
-		
         if ( $status ) {
-            MainUtil::setCookie( 'globalRemind', urlencode( $params['message'] ), 30);
-            MainUtil::setCookie( 'globalRemindType', $params['messageType'], 30);
-//			var_dump( urldecode( MainUtil::getCookie( 'globalRemind')) );
-//			var_dump( MainUtil::getCookie( 'globalRemindType'));die;
+            MainUtil::setCookie( 'globalRemind', urlencode( $params['message'] ), 30 );
+            MainUtil::setCookie( 'globalRemindType', $params['messageType'], 30 );
             $this->redirect( $params['jumpUrl'] );
         } else {
-            //15-7-27 下午1:51 gzdzl
             //判断jumpUrl是否为空，如果是空的话在错误提示页面会不停地重复跳转
             //默认跳转回到网站首页
             if ( empty( $params['jumpUrl'] ) ) {
                 $params['jumpUrl'] = '/';
-            }//15-7-27 下午1:51 gzdzl
+            }
             // 渲染视图
             $viewPath = $basePath = IBOS::app()->getViewPath();
             $viewFile = $this->resolveViewFile( 'showMessage', $viewPath, $basePath );

@@ -6,7 +6,7 @@ return array(
         'name' => '用户模块',
         'description' => '核心模块。提供用户管理，登录验证等功能',
         'author' => 'banyanCheung @ IBOS Team Inc',
-        'version' => '1.0'
+        'version' => '1.0',
     ),
     'config' => array(
         'modules' => array(

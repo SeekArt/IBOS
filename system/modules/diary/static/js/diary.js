@@ -296,6 +296,10 @@ $(function(){
         $(this).ajaxPopover(Ibos.app.url("diary/default/index", { op: "getcommentlist", diaryid: $.attr(this, "data-id")}));
     });
 
+    $(document).on("shown", '[data-original-title]', function(){
+        var aPopover = $('[data-original-title]');
+        aPopover.not(this).popover('hide');
+    });
 
     Ibos.evt.add({
         // 删除一篇日志

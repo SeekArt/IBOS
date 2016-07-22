@@ -45,7 +45,7 @@ class Wx extends System {
 	 * aeskey设置
 	 */
 	public function __construct() {
-		$this->_aeskey = Yii::app()->setting->get( 'aeskey' );
+		$this->_aeskey = Yii::app()->setting->get( 'setting/aeskey' );
 		$this->_websiteUid = Yii::app()->setting->get( 'setting/websiteuid' );
 	}
 

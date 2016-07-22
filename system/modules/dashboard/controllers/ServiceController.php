@@ -12,7 +12,7 @@
  * 
  * @package application.modules.dashboard.controllers
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: ServiceController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ServiceController.php 5475 2015-08-24 11:03:19Z tanghang $
  */
 
 namespace application\modules\dashboard\controllers;
@@ -45,6 +45,10 @@ class ServiceController extends BaseController {
 			$this->render( 'guide', $data );
 		} else {
 			$isOpen = Api::getInstance()->fetchResult( WebSite::SITE_URL . 'product/open', Cloud::getInstance()->getCloudAuthParam() );
+			/**
+			 * curl请求规则变了，不过当请求成功的时候结果没有改变，这里没有对失败的情况作处理
+			 * todo：如果需要对失败的情况作处理……
+			 */
 			if ( !empty( $isOpen ) ) {
 				Setting::model()->SetIbosCloudIsOpen( $isOpen );
 			}

@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: MailController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: MailController.php 7023 2016-05-10 08:01:05Z Aeolus $
  */
 
 namespace application\modules\mobile\controllers;

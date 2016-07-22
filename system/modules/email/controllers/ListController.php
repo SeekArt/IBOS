@@ -3,12 +3,13 @@
 namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\utils\Email as EmailUtil;
 use application\modules\user\model\User;
+use application\modules\email\model\EmailBody;
 
 class ListController extends BaseController {
 
@@ -30,7 +31,7 @@ class ListController extends BaseController {
 
     /**
      * 列表页
-     * @return void 
+     * @return void
      */
     public function actionIndex() {
         $op = Env::getRequest( 'op' );
@@ -46,7 +47,7 @@ class ListController extends BaseController {
             $op = 'inbox';
         }
         $data = $this->getListData( $op );
- 
+        //文件夹名和邮件主题存在xss漏洞
         $this->setPageTitle( IBOS::lang( 'Email center' ) );
         $this->setPageState( 'breadCrumbs', array(
             array( 'name' => IBOS::lang( 'Personal Office' ) ),
@@ -59,19 +60,31 @@ class ListController extends BaseController {
      * 查询
      */
     public function actionSearch() {
-        $condition = array();
-        if ( IBOS::app()->request->getIsPostRequest() ) {
-            $search = $_POST['search'];
-            $condition = EmailUtil::mergeSearchCondition( $search, $this->uid );
-            $conditionStr = base64_encode( serialize( $condition ) );
-        } else {
-            $conditionStr = Env::getRequest( 'condition' );
-            $condition = StringUtil::utf8Unserialize( base64_decode( $conditionStr ) );
+        // 参数处理
+        $uid = (int)IBOS::app()->user->uid;
+        $op = Env::getRequest('op');
+        $search = Env::getRequest('search');
+        $type = Env::getRequest('type');
+
+        $opArr = array(
+            "draft",
+            "send",
+            "inbox",
+            "todo",
+            "del",
+        );
+        if (!in_array($op, $opArr)) {
+            $op = "inbox";
         }
-        if ( empty( $condition ) ) {
-            $this->error( IBOS::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );
+        if (!isset($search["keyword"])) {
+            $search["keyword"] = "";
         }
-        $emailData = Email::model()->fetchAllByArchiveIds( '*', $condition['condition'], $condition['archiveId'], array( 'e', 'eb' ), null, null, SORT_DESC, 'emailid' );
+
+        // 搜索
+        list($command, $conditionStr) = Email::model()->normalSearch($uid, $op, $search["keyword"]);
+        $emailData = $command->where($conditionStr)->queryAll();
+        $emailData = Email::model()->handleSearchData($emailData);
+
         $count = count( $emailData );
         $pages = Page::create( $count, $this->getListPageSize(), false );
         $pages->params = array( 'condition' => $conditionStr );
@@ -80,6 +93,7 @@ class ListController extends BaseController {
             $mail['fromuser'] = $mail['fromid'] ? User::model()->fetchRealnameByUid( $mail['fromid'] ) : "";
         }
         $data = array(
+            'op' => Env::getRequest( 'op' ),
             'list' => $list,
             'pages' => $pages,
             'condition' => $conditionStr,

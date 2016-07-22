@@ -28,7 +28,7 @@ table.d-border, table.d-border {-webkit-border-radius: 4px; -moz-border-radius: 
 .d-content::-webkit-scrollbar-thumb { border-radius: 5px; border: 2px solid #b2c0d1; background-color: #f5f5f5;}
 .d-content::-webkit-scrollbar-thumb:hover { background-color: #fff;}
 .d-content::-webkit-scrollbar-button { width: 10px; height: 10px; background-color: transparent;}
-.d-content.d-state-full { display:inline-block; width:100%; margin:0; padding:0!important; height:100%; }
+.d-content.d-state-full { display:inline-block; width:100%; margin:0; padding:0!important; height:100%; overflow: hidden;}
 .d-loading { margin: auto; width:96px; height:32px; text-align:left; text-indent:-999em; overflow:hidden; background:url(icons/loading.gif) no-repeat center center; }
 .d-icon { vertical-align: middle; }
 .d-icon div { width:48px; height:48px; margin:10px 0 10px 10px; background-position: center center; background-repeat:no-repeat; }

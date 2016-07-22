@@ -144,7 +144,7 @@ use application\modules\dashboard\model\Stamp;
                                                 <?php echo $value['filename']; ?><span class="tcm">(<?php echo $value['filesize']; ?>)</span>
                                             </div>
                                             <span class="fss">
-                                                <a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+                                                <a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
                                                 <?php if ( isset( $value['officereadurl'] ) ): ?>
                                                     <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
                                                         <?php echo $lang['Read']; ?>

@@ -11,7 +11,7 @@
  * setting表的数据层操作类。
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.main.model
- * @version $Id: Setting.php 6882 2016-04-18 06:39:04Z tanghang $
+ * @version $Id: Setting.php 7465 2016-06-29 08:52:17Z Aeolus $
  */
 
 namespace application\modules\main\model;
@@ -119,7 +119,7 @@ class Setting extends Model {
     public function getIbosCloudIsOpen() {
         $ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
         $ibosCloudArray = StringUtil::utf8Unserialize( $ibosCloud );
-        return $ibosCloudArray['isopen'] ? true : false;
+        return !empty($ibosCloudArray['isopen']) ;
     }
 
     /**

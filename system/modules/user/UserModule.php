@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 用户模块索引文件
  *
@@ -10,14 +11,14 @@
  * 用户模块索引文件类
  * 
  * @author banyan <banyan@ibos.com.cn>
- * @version $Id: UserModule.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: UserModule.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @package application.modules.user
  */
+
 namespace application\modules\user;
 
 use application\core\modules\Module;
 
 class UserModule extends Module {
-	public $__DRM__ = '';
-	public $__CODE__ = 'a85facYMAdHTVBI8VnvYNDsl9x7YXpJl96nGljq2wstere2iR2lG';
+    
 }

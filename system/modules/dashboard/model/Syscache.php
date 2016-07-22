@@ -9,10 +9,10 @@
  */
 /**
  * syscache表的数据层操作
- * 
+ *
  * @package application.modules.main.model
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Syscache.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Syscache.php 7478 2016-07-02 08:26:28Z Aeolus $
  */
 
 namespace application\modules\dashboard\model;
@@ -51,7 +51,7 @@ class Syscache extends Model {
     }
 
     /**
-     * 重写父类增加方法实现syscache自身业务需求:实现更新与保存操作
+     * 实现更新与保存操作
      * @param array $attributes 要插入的数据
      * @param boolean $returnNewId 是否返回插入的ID
      * @return mixed
@@ -70,7 +70,7 @@ class Syscache extends Model {
     public function fetchAllCache( $cacheNames ) {
         $cacheNames = is_array( $cacheNames ) ? $cacheNames : array( $cacheNames );
         // 从内存中读取缓存
-        $data = Cache::get( $cacheNames );
+        $data = Cache::mget( $cacheNames );
         if ( is_array( $data ) && in_array( false, $data, true ) || !$data ) {
             $data = array();
         }
@@ -92,7 +92,7 @@ class Syscache extends Model {
                 //把数据写到缓存中
                 Cache::set( $sysCache['name'], $data[$sysCache['name']] );
             }
-                }
+        }
         return $data;
     }
 

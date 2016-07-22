@@ -9,9 +9,9 @@
  */
 /**
  * user模块 在线时间model
- * 
+ *
  * @package application.app.user.model
- * @version $Id: OnlineTime.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: OnlineTime.php 6001 2015-12-21 07:18:15Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -32,7 +32,7 @@ class OnlineTime extends Model {
 
     /**
      * 更新在线时间
-     * 
+     *
      * @param integer $uid
      * @param integer $total 总在线时间
      * @param integer $thisMonth 当月在线时间

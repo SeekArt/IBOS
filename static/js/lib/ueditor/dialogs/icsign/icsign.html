@@ -28,6 +28,26 @@
 					</div>
 				</div>
 				<div class="control-group">
+					<label for="sign_origin">签章来源</label>
+					<div>
+						<select id="sign_origin">
+							<option value="0">本地</option>
+							<option value="1">服务器</option>
+							<option value="2">EKEY</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group dn" id="sign_usage_wrap">
+					<label for="sign_usage">使用人</label>
+					<div>
+						<select id="sign_usage">
+							<option value="0">本地</option>
+							<option value="1">服务器</option>
+							<option value="2">EKEY</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
 					<label for="sign_color"><var id="lang_color"></var></label>
 					<a href="javascript:;" id="sign_color_btn"></a>
 					<input type="hidden" id="sign_color">
@@ -48,7 +68,7 @@
 		<script>
 			var G = parent.G;
 			(function() {
-				var tpl = '<ic data-id="<%=id%>" data-type="sign" data-title="<%=title%>" data-sign-color="<%=signColor%>" data-sign-type="<%=signType%>" data-sign-field="<%=signField%>" contenteditable="false">' +
+				var tpl = '<ic data-id="<%=id%>" data-type="sign" data-title="<%=title%>" data-sign-color="<%=signColor%>" data-sign-type="<%=signType%>" data-sign-origin="<%=signOrigin%>" data-sign-usage="<%=signUsage%>" data-sign-field="<%=signField%>" contenteditable="false">' +
 						'<% if(stamp) { %><button type="button" class="btn" style="margin-right: 5px">签章</button><% }%>' + 
 						'<% if(write) { %><button type="button" class="btn">手写</button><% }%>' +
 						'</ic>',
@@ -73,6 +93,10 @@
 
 					return { set: set, get: get};
 				})();
+
+				$("#sign_origin").on("change", function(){
+					$("#sign_usage_wrap").toggle( this.value == 1 ? true : false );
+				});
 				
 
 				if (editing) {
@@ -108,7 +132,9 @@
 						write: write,
 						signType: +stamp + "," + +write,
 						signColor: signColorPicker.get(),
-						signField: fcUtil.joinVal($G('sign_field').value)
+						signField: fcUtil.joinVal($G('sign_field').value),
+						signOrigin: $G('sign_origin').value,
+						signUsage: $G('sign_usage').value,
 					};
 					// 标签名不能为空且不能重复，提示或自动改名
 					if (editing) {

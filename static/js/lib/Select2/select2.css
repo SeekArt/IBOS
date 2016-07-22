@@ -605,6 +605,7 @@ disabled look for already selected choices in the results dropdown
 .select2-icon-company,
 .select2-icon-department,
 .select2-icon-position,
+.select2-icon-role,
 .select2-icon-user{
   background-image: url(../../../image/user_select.png);
   background-repeat: no-repeat;
@@ -623,11 +624,12 @@ disabled look for already selected choices in the results dropdown
 .select2-results .select2-department{ background-position: 0 -20px;}
 .select2-results .select2-position{ background-position: 0 -40px; }
 .select2-results .select2-user{ background-position: 0 -60px; }
-.select2-results .select2-role{ background-position: 0 -160px; }
+.select2-results .select2-role{ background-position: 0 -180px; }
 
 .select2-icon-company,
 .select2-icon-department,
 .select2-icon-position,
+.select2-icon-role,
 .select2-icon-user{
     display: inline-block;
     width: 20px;
@@ -637,6 +639,7 @@ disabled look for already selected choices in the results dropdown
 .select2-icon-company{ background-position: -3px -80px;}
 .select2-icon-department{ background-position: -3px -100px;}
 .select2-icon-position{ background-position: -3px -120px;}
+.select2-icon-role{ background-position: -3px -160px;}
 .select2-icon-user{ background-position: -3px -140px;}
 /* Retina-ize icons */
 

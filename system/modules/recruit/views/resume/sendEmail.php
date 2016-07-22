@@ -217,12 +217,12 @@
 
 		var ibosData = Ibos.data.get();
 		rec.select2({
-			data: ibosData,
+			data: Ibos.data.converToArray(ibosData),
 			multiple: true,
 			initSelection: function(element, callback) {
 				var data = [];
 				$(element.val().split(",")).each(function() {
-					var item = Ibos.data.getItem(this);
+					var item = Ibos.data.getUser(this);
 					data.push({id: this, text: item && item.text});
 				});
 				callback(data);

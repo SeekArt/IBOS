@@ -1,7 +1,4 @@
-<?php
 
-use application\core\utils\File;
-?>
 <div class="ct">
 	<div class="clearfix">
 		<h1 class="mt"><?php echo $lang['Unit'] ?></h1>
@@ -17,7 +14,7 @@ use application\core\utils\File;
 						<div class="controls">
 							<?php if ( !empty( $unit['logourl'] ) ): ?>
 								<div class="showlogo pull-left">
-									<img src="<?php echo File::fileName( $unit['logourl'] ); ?>" alt="<?php echo $lang['Enterprise logo'] ?>" class="custom-logo" id="upload_img">
+									<img src="<?php echo $unit['logourl']; ?>" alt="<?php echo $lang['Enterprise logo'] ?>" class="custom-logo" id="upload_img">
 									<input type="hidden" id='logoUrl' name="logourl" value="<?php echo $unit['logourl']; ?>">
 								</div>
 								<div class="showupload pull-left" style="display: none;">
@@ -108,8 +105,8 @@ use application\core\utils\File;
 	</div>
 </div>
 <script>
-	(function() {
-		$('#switchLogo').on('click', function() {
+	(function () {
+		$('#switchLogo').on('click', function () {
 			$('.showlogo').hide().siblings('.showupload').show();
 			$(this).hide();
 		});

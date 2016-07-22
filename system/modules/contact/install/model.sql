@@ -8,5 +8,5 @@ CREATE TABLE `{{contact}}` (
   KEY `cuid` (`cuid`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='常联系人表';
 
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','通讯录','contact/default/index','0','1','0','8','contact');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','通讯录','contact/default/index','0','1','0','5','contact');
 

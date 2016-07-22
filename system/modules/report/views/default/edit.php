@@ -139,7 +139,7 @@ use application\core\utils\StringUtil;
 														<i class="atti"><img width="44" height="44" src="<?php echo $attach['iconsmall']; ?>" alt="<?php echo $attach['filename']; ?>" title="<?php echo $attach['filename']; ?>"></i>
 														<div class="attc"><?php echo $attach['filename']; ?></div>
 														<span class="fss mlm">
-															<a href="<?php echo $attach['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+															<a href="<?php echo $attach['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>
 						                                    <?php if (isset($attach['officereadurl'])): ?>
 						                                        <a href="javascript:;" class="mlm" data-action="viewOfficeFile" data-param='{"href": "<?php echo $attach['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
 						                                            <?php echo $lang['View']; ?>

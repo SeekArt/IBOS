@@ -1,12 +1,16 @@
 <?php
 
-\application\core\utils\Cache::set( 'notifyNode', null );
+use application\core\utils\Cache;
+use application\core\utils\Convert;
+use application\modules\message\model\Comment;
+
+Cache::set( 'notifyNode', null );
 
 //清除评论和回复
-$assignmentComments = \application\modules\message\model\Comment::model()->fetchAllByAttributes(array('module'=>'assignment'));
-$cidArr = \application\core\utils\Convert::getSubByKey($assignmentComments, 'cid');
+$assignmentComments = Comment::model()->fetchAllByAttributes(array('module'=>'assignment'));
+$cidArr = Convert::getSubByKey($assignmentComments, 'cid');
 if(!empty($assignmentComments)){
 	$cidStr = implode( ',', $cidArr );
-	\application\modules\message\model\Comment::model()->deleteAll("rowid IN({$cidStr})");
-	\application\modules\message\model\Comment::model()->deleteAllByAttributes(array('module'=>'assignment'));
+	Comment::model()->deleteAll("rowid IN({$cidStr})");
+	Comment::model()->deleteAllByAttributes(array('module'=>'assignment'));
 }

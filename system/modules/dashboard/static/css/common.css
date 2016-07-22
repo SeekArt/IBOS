@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 6868 2016-04-15 08:05:05Z gzcsh $
+ *	@version $Id: common.css 7468 2016-06-29 10:36:42Z Aeolus $
  *	@modified 2013-03-22  
  */
 
@@ -584,7 +584,8 @@ body{
 	border-radius: 4px;
 	width: 120px;
 	height: 120px;
-	background: #FFF url(../image/logo_simple.png) no-repeat center center;
+	background-color: #fff;
+	background: url(../image/logo_simple.png) no-repeat center center;
 }
 .watermark label{
 	float: left;
@@ -1677,15 +1678,34 @@ a.progressCancel:hover {
 }
 
 
+.o-tip-success, 
+.o-tip-danger{
+	display: inline-block; 
+	width: 20px; 
+	height: 20px; 
+	vertical-align: middle; 
+	background-image: url(../image/global.png); 
+	background-repeat: no-repeat; 
+}
+.o-tip-danger {
+    background-position: -140px 0;
+}
+.o-tip-success {
+    background-position: -120px 0;
+}
+
 
 .o-back-arrow,
 .o-binding-success,
 .o-unbinding-success,
 .o-binding-add,
 .o-binding-ibos,
+.o-binding-weixin,
 .o-binding-co,
 .o-unbinding-intro,
+.o-unbinding-wxintro,
 .o-binding-tip,
+.o-binding-wxtip,
 .o-binding-new,
 .o-binding-remove,
 .o-binding-forbidden,
@@ -1694,18 +1714,31 @@ a.progressCancel:hover {
 	display: block;
 	background-image: url(../image/binding_guide.png);
 }
+.o-unbinding-wxintro{
+	width: 520px;
+	height: 190px;
+	margin: 30px auto;
+	background-position: 0 -510px;
+}
 .o-unbinding-intro{
 	width: 432px;
 	height: 152px;
 	margin: 30px auto;
 }
-.o-binding-tip{
+.o-binding-tip,
+.o-binding-wxtip{
 	width: 460px;
 	height: 108px;
 	margin: 35px auto;
+}
+.o-binding-tip{
 	background-position: 0 -155px;
 }
+.o-binding-wxtip{
+	background-position: 0 -390px;
+}
 .o-binding-ibos,
+.o-binding-weixin,
 .o-binding-co{
 	position: absolute;
 	width:24px;
@@ -1717,6 +1750,9 @@ a.progressCancel:hover {
 }
 .o-binding-ibos{
 	background-position: -484px -192px;
+}
+.o-binding-weixin{
+	background-position: -532px -192px;
 }
 .o-binding-co{
 	background-position: -508px -192px;
@@ -1893,6 +1929,7 @@ a.progressCancel:hover {
 	position: relative;
 	top: -2px;
 }
+.logout:hover .o-back-arrow,
 .co-login-back:hover .o-back-arrow{
 	background-position: -510px -244px;
 	cursor: pointer;
@@ -2157,4 +2194,146 @@ a.progressCancel:hover {
 	position: relative;
 	width: 100%;
 	height: 300px;
+}
+
+/* 全局信息导入样式 */
+.mt20{
+	margin-top: 20px;
+}
+.o-import-step1,
+.o-import-step2,
+.o-import-step3{
+	display: inline-block;
+	width: 572px;
+	height: 30px;
+	background-image: url(../image/import_data.png);
+	background-repeat: no-repeat;
+}
+.o-import-step1{
+	background-position: 0 0;
+}
+.o-import-step2{
+	background-position: 0 -40px;
+}
+.o-import-step3{
+	background-position: 0 -80px;
+}
+.o-import-upload{
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: inline-block;
+	width: 100px;
+	height: 40px;
+	vertical-align: middle;
+	background-image: url(../image/import_data.png);
+	background-repeat: no-repeat;
+	background-position: -9px -115px;
+}
+.aui_mask{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .2);
+	z-index: 6000;
+}
+.aui_import{
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 6001;
+}
+.import-upload{
+	position: relative;
+	width: 100px;
+	height: 40px;
+}
+.import-btn{
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 6002;
+	height: 40px;
+}
+.import-btn:link,
+.import-btn:visited{
+	color: #fff;
+	text-decoration: none;
+}
+.import-btn:hover{
+	cursor: pointer;
+}
+.import-btn:hover,
+.import-btn:active{
+	color: #fff;
+	text-decoration: none;
+	box-shadow: 0 0 5px #75b8e7;
+}
+.import-btn-tip{
+	position: relative;
+	top: 2px;
+}
+.aui_import .import-item{
+	position: relative;
+	display: block;
+	width: 100%;
+	*zoom: 1;
+	border-bottom: 1px solid #ebeff6; 
+}
+.aui_import .import-item:before,
+.aui_import .import-item:after{
+	content: '';
+	display: block;
+	line-height: 0;
+	clear: both;
+}
+.aui_import .import-item:last-child{
+	border: none;
+}
+.import-file-target{
+	display: block;
+	border-bottom: 1px solid #ebeff6;
+}
+.import-item-mc{
+	display: inline-block;
+	vertical-align: top;
+	width: 290px;
+	height: 263px;
+	border-left: 1px solid #ebeff6;
+}
+.import-content{
+	padding: 20px 15px;
+}
+.import-item-mc:nth-child(2n+1){
+	border-left: none;
+}
+.import-item .import-table{
+	margin: 10px 0;
+}
+.import-item-field{
+	display: table-cell;
+	width: 257px;
+	text-align: left;
+	padding: 0 20px;
+}
+.import-item .import-table:first-child{
+	margin-bottom: 0;
+}
+.import-item .import-table:last-child{
+	margin-bottom: 20px;
+}
+.import-res{
+	width: auto;
+	max-height: 200px;
+	overflow-y: auto;
+	margin: 10px 20px;
+	padding: 0;
+}
+.import-res li{
+	margin: 5px 0;
+	list-style: none;
+	color: #c1cdda;
 }

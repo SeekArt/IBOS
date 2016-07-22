@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\modules\statistics\core\ChartFactory;
 use application\modules\statistics\utils\StatCommon;
 

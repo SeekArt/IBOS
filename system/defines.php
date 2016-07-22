@@ -7,19 +7,25 @@
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2014 IBOS Inc
  */
-defined( 'DEBUG' ) or define( 'DEBUG', false );
+defined( 'DEBUG' ) || define( 'DEBUG', false );
 
 if ( DEBUG ) {
-    error_reporting( E_ALL | E_STRICT );
+	error_reporting( E_ALL | E_STRICT );
 }
-// 自动识别SAE环境
-if ( function_exists( 'saeAutoLoader' ) ) {// 自动识别SAE环境
-    defined( 'ENGINE' ) or define( 'ENGINE', 'SAE' );
-} else {
-    defined( 'ENGINE' ) or define( 'ENGINE', 'LOCAL' );            // 引擎 默认为本地引擎 
+//define( 'SAAS_STORAGE', 1 );
+switch ( 1 ) {
+	case function_exists( 'saeAutoLoader' ):
+		defined( 'ENGINE' ) || define( 'ENGINE', 'SAE' );
+		break;
+	case defined( 'SAAS_STORAGE' ) && SAAS_STORAGE === 1:
+		defined( 'ENGINE' ) || define( 'ENGINE', 'SAAS' );
+		break;
+	default:
+		defined( 'ENGINE' ) || define( 'ENGINE', 'LOCAL' );
+		break;
 }
-// 是否本地环境
-define( 'LOCAL', strtolower( ENGINE ) === 'local' ? true : false  );
+
+
 // 字符编码
 define( 'CHARSET', 'utf-8' );
 // 调试模式

@@ -163,7 +163,7 @@ class ApiController extends BaseController {
                 if ($fromInfo) {
                     $config = array(
                         '{reader}' => IBOS::app()->user->realname,
-                        '{url}' => IBOS::app()->urlManager->createUrl('email/content/show', array('id' => $fromInfo['bodyid'])),
+                        '{url}' => IBOS::app()->urlManager->createUrl('email/content/show', array('id' => $id)),
                         '{title}' => $fromInfo['subject'],
                         'id' => $fromInfo['bodyid'],
                     );

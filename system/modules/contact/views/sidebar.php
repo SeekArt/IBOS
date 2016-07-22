@@ -15,28 +15,16 @@ use application\core\utils\StringUtil;
 					<table class="org-dept-table">
 						<tbody>
 							<?php $op = Env::getRequest( 'op' ); ?>
-							<tr <?php if ( $this->id == "constant" ): ?>class="dep-active"<?php endif; ?>>
+							<tr data-id='0' data-pid='0' id="corp_unit">
 								<td>
-									<a href='<?php echo $this->createUrl( 'constant/index', array( 'op' => $op ) ); ?>' class='org-dep-name'><i class="o-common-users"></i> <?php echo $lang['Regular contact']; ?></a>
+									<a href='<?php echo $this->createUrl( 'default/index', array( 'op' => $op ) ); ?>' class='org-dep-name'><i class='os-company'></i> <?php echo isset( $unit['fullname'] ) ? $unit['fullname'] : ''; ?></a>
 								</td>
 							</tr>
-							<tr data-id='0' data-pid='0'>
-								<td>
-									<a href='<?php echo $this->createUrl( 'default/index', array( 'op' => $op ) ); ?>' class='org-dep-name'><i class='os-company'></i><?php echo isset( $unit['fullname'] ) ? $unit['fullname'] : ''; ?></a>
-								</td>
-							</tr>
-							<?php
-							$str = "
-						<tr data-id='\$deptid' data-pid='\$pid'>
-							<td>
-								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \$spacer<a href='" . $this->createUrl( "default/index&op={$op}&deptid=" ) . "\$deptid' class='org-dep-name'><i class='os-department'></i>\$deptname</a>
-							</td>
-						</tr>";
-							$categorys = StringUtil::getTree( $dept, $str );
-							echo $categorys;
-							?>
 						</tbody>
 					</table>
+					<div class="ztree-wrap">
+						<ul id="utree" class="ztree org-utree"></ul>
+					</div>
 				</div>
 			</li>
 		</ul>

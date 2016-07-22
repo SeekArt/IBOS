@@ -11,7 +11,7 @@
 /**
  * 信息中心模块------  article表的数据层操作类，继承ICModel
  * @package application.modules.article.model
- * @version $Id: Article.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Article.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author Ring <Ring@ibos.com.cn>
  */
 

@@ -28,121 +28,121 @@ use CWebApplication;
 
 class Application extends CWebApplication {
 
-    /**
-     * 已安装的模块
-     * @var array 
-     */
-    private $_enabledModule = array();
+	/**
+	 * 已安装的模块
+	 * @var array
+	 */
+	private $_enabledModule = array();
 
-    /**
-     * 准备初始化前的处理
-     */
-    protected function preinit() {
-        parent::preinit();
-        // 检查安装
-        if ( !is_file( PATH_ROOT . '/data/install.lock' ) ) {
-            header( 'Location:./install/' );
-            exit();
-        }
-    }
+	/**
+	 * 准备初始化前的处理
+	 */
+	protected function preinit() {
+		parent::preinit();
+	}
 
-    /**
-     * 初始化方法：设置授权，配置所有已安装的模块
-     * @return void
-     */
-    protected function init() {
-        if ( !defined( 'IN_DEBUG' ) ) {
-            $this->_enabledModule = Module::model()->fetchAllEnabledModule();
-            foreach ( $this->getEnabledModule() as $module ) {
+	/**
+	 * 初始化方法：设置授权，配置所有已安装的模块
+	 * @return void
+	 */
+	protected function init() {
+		//这个IN_DEBUG会在update.php里定义
+		if ( !defined( 'IN_DEBUG' ) ) {
+			$this->_enabledModule = Module::model()->fetchAllEnabledModule();
+			foreach ( $this->getEnabledModule() as $module ) {
 				$config = CJSON::decode( $module['config'], true );
-                if ( isset( $config['behaviors'] ) ) {
-                    $this->attachBehaviors( $config['behaviors'] );
-                }
-                if ( isset( $config['config'] ) ) {
-                    parent::configure( $config['config'] );
-                }
-            }
-        }
-        parent::init();
-    }
+				if ( isset( $config['behaviors'] ) ) {
+					$this->attachBehaviors( $config['behaviors'] );
+				}
+				if ( isset( $config['config'] ) ) {
+					parent::configure( $config['config'] );
+				}
+			}
+		}
+		parent::init();
+	}
 
-    /**
-     * 重写配置方法实现平台引擎驱动
-     * @param array $config
-     */
-    public function configure( $config ) {
-        // 初始化ENGINE定义的引擎驱动
-        $engineClass = 'application\core\engines\\' . ( ucfirst( strtolower( ENGINE ) ) );
-        $engine = new $engineClass( $config );
-        IBOS::setEngine( $engine );
-        parent::configure( $engine->getEngineConfig() );
-    }
+	/**
+	 * 重写配置方法实现平台引擎驱动
+	 * @param array $mainConfig
+	 */
+	public function configure( $mainConfig ) {
+		parent::configure( $mainConfig );
+		// 初始化ENGINE定义的引擎驱动
+		$engineClass = 'application\core\engines\\' . ( ucfirst( strtolower( ENGINE ) ) );
+		$engine = new $engineClass( );
+		IBOS::setEngine( $engine );
+		parent::configure( $engine->getEngineConfig() );
+	}
 
-    /**
-     * 执行Action前的动作。用于权限验证
-     * step1：强制执行不验证模块的判断
-     * step2：调用各自控制器定义的过滤路由方法，返回false表示验证不通过
-     * step3：调用authManager组件进行路由的验证
-     * @param CController $controller 控制器对象
-     * @param CAction $action 动作对象
-     * @return mixed
-     */
-    public function beforeControllerAction( $controller, $action ) {
-        $module = $controller->getModule()->getId();
-        // step1
-        if ( !$controller->filterNotAuthModule( $module ) ) {
-            $routes = strtolower( $controller->getUniqueId() . '/' . $action->getId() );
-            if ($controller->isFilterRoute) {
-                $check = false;
-                // step2：是否使用config里的配置路由去验证
-                // 当useConfig被设置成true时，只有在config里设置的才会验证
-                // 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
-                if (!$controller->useConfig) {
-                    $check = !$controller->filterRoutes($routes) ? true : false;
-                } else {
-                    $check = AuthItem::model()->checkIsInByRoute($routes) ? true : false;
-                }
-                if (true === $check) {
-                // step3
-                if ( !IBOS::app()->user->checkAccess( $routes, Auth::getParams( $routes ) ) ) {
-                    // 没有权限 抛出错误
-                    if ( isset( $this->rbacErrorPage ) ) {
-                        // 定义权限错误页面
-                        $controller->redirect( $this->rbacErrorPage );
-                    } else {
-                            $controller->error(IBOS::lang('Valid access', 'error'), '', $controller->errorParam);
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
+	/**
+	 * 执行Action前的动作。用于权限验证
+	 * step1：强制执行不验证模块的判断
+	 * step2：调用各自控制器定义的过滤路由方法，返回false表示验证不通过
+	 * step3：调用authManager组件进行路由的验证
+	 * @param CController $controller 控制器对象
+	 * @param CAction $action 动作对象
+	 * @return mixed
+	 */
+	public function beforeControllerAction( $controller, $action ) {
+		$module = $controller->getModule()->getId();
+		// step1
+		if ( !$controller->filterNotAuthModule( $module ) ) {
+			/**
+			 * 注意这里让所有路由都变成小写
+			 */
+			$routes = strtolower( $controller->getUniqueId() . '/' . $action->getId() );
+			if ( $controller->isFilterRoute ) {
+				$check = false;
+				// step2：是否使用config里的配置路由去验证
+				// 当useConfig被设置成true时，只有在config里设置的才会验证
+				// 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
+				if ( !$controller->useConfig ) {
+					$check = !$controller->filterRoutes( $routes ) ? true : false;
+				} else {
+					$check = AuthItem::model()->checkIsInByRoute( $routes ) ? true : false;
+				}
+				if ( true === $check ) {
+					// step3
+					if ( !IBOS::app()->user->checkAccess( $routes, Auth::getParams( $routes ) ) ) {
+						// 没有权限 抛出错误
+						if ( isset( $this->rbacErrorPage ) ) {
+							// 定义权限错误页面
+							$controller->redirect( $this->rbacErrorPage );
+						} else {
+							$controller->error( IBOS::lang( 'Valid access', 'error' ), '', $controller->errorParam );
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
-    /**
-     * 当模块完成配置时发起一个事件
-     * @param CEvent $event 事件参数
-     * @return void 
-     */
-    public function onInitModule( $event ) {
-        $this->raiseEvent( 'onInitModule', $event );
-    }
+	/**
+	 * 当模块完成配置时发起一个事件
+	 * @param CEvent $event 事件参数
+	 * @return void
+	 */
+	public function onInitModule( $event ) {
+		$this->raiseEvent( 'onInitModule', $event );
+	}
 
-    /**
-     * 当更新缓存时发起一个事件
-     * @param CEvent $event 事件参数
-     * @return void
-     */
-    public function onUpdateCache( $event ) {
-        $this->raiseEvent( 'onUpdateCache', $event );
-    }
+	/**
+	 * 当更新缓存时发起一个事件
+	 * @param CEvent $event 事件参数
+	 * @return void
+	 */
+	public function onUpdateCache( $event ) {
+		$this->raiseEvent( 'onUpdateCache', $event );
+	}
 
-    /**
-     * 返回可用的模块数组
-     * @return array
-     */
-    public function getEnabledModule() {
-        return (array) $this->_enabledModule;
-    }
+	/**
+	 * 返回可用的模块数组
+	 * @return array
+	 */
+	public function getEnabledModule() {
+		return (array) $this->_enabledModule;
+	}
 
 }

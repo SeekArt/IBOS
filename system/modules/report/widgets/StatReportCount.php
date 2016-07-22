@@ -18,6 +18,7 @@ namespace application\modules\report\widgets;
 
 use application\core\utils\IBOS;
 use application\modules\statistics\core\ChartFactory;
+use application\modules\statistics\utils\StatCommon;
 
 class StatReportCount extends StatReportBase {
 
@@ -34,7 +35,7 @@ class StatReportCount extends StatReportBase {
      */
     public function run() {
         $factory = new ChartFactory();
-        $properties = array( 'uid' => $this->getUid(), 'typeid' => $this->getTypeid(), 'timeScope' => $this->getTimeScope() );
+        $properties = array( 'uid' => $this->getUid(), 'typeid' => $this->getTypeid(), 'timeScope' => StatCommon::getCommonTimeScope() );
         $scoreCounter = $this->createComponent( 'application\modules\report\components\ReportScoreTimeCounter', $properties );
         $stampCounter = $this->createComponent( 'application\modules\report\components\ReportStampCounter', $properties );
         $data = array(

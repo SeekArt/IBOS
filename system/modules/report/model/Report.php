@@ -322,4 +322,18 @@ class Report extends Model {
         return $this->fetchAllSortByPk( 'repid', $criteria );
     }
 
+    /**
+     * 获取总结的开始结束时间
+     * @param  mixed $repIds 总结 ID
+     * @return array         
+     */
+    public function fetchBETimeById( $repIds ) {
+        is_array( $repIds ) && $repIds = implode( ',', $repIds );
+        $criteria = array(
+            'select' => 'repid,begindate,enddate',
+            'condition' => sprintf( "FIND_IN_SET(repid,'%s')", $repIds )
+        );
+        return $this->fetchAllSortByPk( 'repid', $criteria );
+    }
+
 }

@@ -27,7 +27,7 @@ use application\modules\vote\components\Vote;
 						<div class="control-group">
 							<label for=""><?php echo $lang['Appertaining category']; ?></label>
 							<select name="catid"  id="add_articleCategory">
-								<?php echo $categoryOption; ?>
+								<?php echo $this->getCategoryOption(); ?>
 							</select>
 						</div>
 						<script>$('#add_articleCategory').val('<?php echo $this->catid; ?>')</script>

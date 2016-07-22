@@ -11,7 +11,7 @@
 /**
  * 信息中心模块------分类组件 继承ICCategory
  * @package application.modules.article.components
- * @version $Id: ArticleCategory.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ArticleCategory.php 6981 2016-05-03 06:59:07Z gzcsh $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -69,8 +69,9 @@ class ArticleCategory extends Category {
 			$row['id'] = $row['catid'];
 			$row['pId'] = $row['pid'];
 			$row['name'] = $row['name'];
-			$row['target'] = '_self';
-			$row['url'] = IBOS::app()->urlManager->createUrl( "article/default/index" ) . '&catid=' . $row['catid'];
+            $row['target'] = '_self';
+			$row['url'] = 'javascript:;';
+            $row['catid'] = $row['catid'];
 			$row['open'] = true;
 			$return[] = $row;
 		}

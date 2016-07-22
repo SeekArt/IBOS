@@ -85,7 +85,13 @@ CREATE TABLE `{{user_profile}}` (
   `address` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
   `qq` varchar(255) NOT NULL DEFAULT '' COMMENT 'QQ',
   `bio` varchar(255) NOT NULL DEFAULT '' COMMENT '自我介绍',
-  `remindsetting` text NOT NULL COMMENT '提醒设置',
+  `remindsetting` text COMMENT '提醒设置',
+  `avatar_big` varchar(255) NOT NULL DEFAULT '' COMMENT '大头像',
+  `avatar_middle` varchar(255) NOT NULL DEFAULT '' COMMENT '中头像',
+  `avatar_small` varchar(255) NOT NULL DEFAULT '' COMMENT '小头像',
+  `bg_big` varchar(255) NOT NULL DEFAULT '' COMMENT '大背景',
+  `bg_middle` varchar(255) NOT NULL DEFAULT '' COMMENT '中背景',
+  `bg_small` varchar(255) NOT NULL DEFAULT '' COMMENT '小背景',
   PRIMARY KEY (`uid`),
   UNIQUE KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='用户资料表';
@@ -127,8 +133,18 @@ CREATE TABLE `{{bg_template}}` (
   `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否选中',
   `system` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否系统图片',
   `image` varchar(100) NOT NULL DEFAULT '' COMMENT '背景图片地址',
+  `image_path` varchar(100) NOT NULL DEFAULT '' COMMENT '背景图片地址相对路径',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `{{cache_user_detail}}`;
+CREATE TABLE `{{cache_user_detail}}` (
+  `uid`  int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'UID' ,
+  `detail`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '详细信息' ,
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '用户状态',
+  `deadline`  int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '过期时间' ,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
 INSERT INTO `{{user_group}}` (`grade`, `title`, `system`, `creditshigher`, `creditslower`) VALUES ('1', '乞丐', '1', '-9999999', '0');
 INSERT INTO `{{user_group}}` (`grade`, `title`, `system`, `creditshigher`, `creditslower`) VALUES ('2', '初入江湖', '1', '0', '50');
@@ -144,6 +160,6 @@ INSERT INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `extcredits1`,
 INSERT INTO `{{notify_node}}` (`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('user_group_upgrade', '用户组升级', 'user', 'user/default/User group upgrade title', 'user/default/User group upgrade content', '0', '1', '0', '2');
 INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ( '1', 'system','user', '清空本月在线时间', 'CronOnlinetimeMonthly.php', '1391184000', '1393603200', '-1', '1', '0', '0');
 
-INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('1', '默认背景', '0', '1', 'template1_bg');
-INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('2', '大气磅礴', '0', '1', 'template2_bg');
-INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('3', '青葱时光', '0', '1', 'template3_bg');
+INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('1', '默认背景', '0', '1', 'data/home/template1_bg_big.jpg');
+INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('2', '大气磅礴', '0', '1', 'data/home/template2_bg_big.jpg');
+INSERT INTO `{{bg_template}}` (`id`, `desc`, `status`, `system`, `image`) VALUES ('3', '青葱时光', '0', '1', 'data/home/template3_bg_big.jpg');

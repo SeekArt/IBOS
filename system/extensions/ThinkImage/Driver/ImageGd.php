@@ -109,12 +109,12 @@ class ImageGd {
         if ( 'gif' == $type && !empty( $this->gif ) ) {
             $this->gif->save( $imgname );
         } else {
-            $fun = "image{$type}";
+			$fun = "image{$type}";
             if ( !LOCAL ) {
                 $temp = IBOS::engine()->io()->file()->fetchTemp( File::fileName( $imgname ), $this->info['type'] );
                 $fun( $this->img, $temp );
                 $content = file_get_contents( $temp );
-                IBOS::engine()->io()->file()->writeFile( $imgname, $content );
+                IBOS::engine()->io()->file()->createFile( $imgname, $content );
             } else {
                 $fun( $this->img, $imgname );
             }

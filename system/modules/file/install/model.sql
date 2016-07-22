@@ -41,6 +41,7 @@ CREATE  TABLE IF NOT EXISTS `{{file_share}}` (
   `touids` TEXT NOT NULL COMMENT '共享给哪些uid' ,
   `todeptids` TEXT NOT NULL COMMENT '共享给哪些部门' ,
   `toposids` TEXT NOT NULL COMMENT '共享给哪些岗位' ,
+  `toroleids` TEXT NOT NULL COMMENT '共享给哪些岗位角色' ,
   `uptime` INT(10) NOT NULL DEFAULT '0' COMMENT '更新共享时间（只针对添加文件而记录的更新时间）' ,
   PRIMARY KEY (`id`) ,
   KEY `FID` (`fid`) USING BTREE,
@@ -66,9 +67,11 @@ CREATE  TABLE IF NOT EXISTS `{{file_dir_access}}` (
   `rdeptids` TEXT NOT NULL COMMENT '可读的部门ids' ,
   `rposids` TEXT NOT NULL COMMENT '可读的岗位ids' ,
   `ruids` TEXT NOT NULL COMMENT '可读的uids' ,
+  `rroleids` TEXT NOT NULL COMMENT '可读的角色roleids' ,
   `wdeptids` TEXT NOT NULL COMMENT '可写的部门ids' ,
   `wposids` TEXT NOT NULL COMMENT '可写的岗位ids' ,
   `wuids` TEXT NOT NULL COMMENT '可写的uids' ,
+  `wroleids` TEXT NOT NULL COMMENT '可写的roleids' ,
   PRIMARY KEY (`id`),
   UNIQUE KEY( `fid` )
 )ENGINE = MyISAM DEFAULT CHARACTER SET = utf8 COMMENT = '公司文件柜读写权限（包括云盘权限）';
@@ -102,6 +105,7 @@ CREATE  TABLE IF NOT EXISTS `{{file_capacity}}` (
   `deptids` TEXT NOT NULL COMMENT '部门ids' ,
   `posids` TEXT NOT NULL COMMENT '岗位ids' ,
   `uids` TEXT NOT NULL COMMENT 'uids' ,
+  `roleids` TEXT NOT NULL COMMENT '角色ids' ,
   `addtime` INT(10) NOT NULL DEFAULT '0' COMMENT '添加时间',
   PRIMARY KEY (`id`),
   KEY `ADDTIME` (`addtime`) USING BTREE
@@ -126,7 +130,7 @@ REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('filedefsize', '50');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('filecompmanager', '');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('filecloudopen', '0');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('filecloudid', '0');
-INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('文件柜','0','file','dashboard','index','','0','0');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','文件柜','file/default/index','0','1','0','7','file');
+INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('文件柜','0','file','dashboard','index','','4','0');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','文件柜','file/default/index','0','1','0','3','file');
 INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('file','文件柜','file/default/index','提供企业文件存储','13','0');
 INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ( '1', 'system','file', '清空文件柜回收站15天前的文件', 'CronFileTrash.php', '1393516800', '1393603200', '-1', '-1', '0', '0');

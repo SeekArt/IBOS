@@ -45,7 +45,7 @@ class PerformanceMeasurement extends CApplicationComponent {
      * 开始计时
      */
     public function startClock() {
-        $this->startTime = microtime( true );
+		$this->startTime = TIMESTAMP;
     }
 
     /**

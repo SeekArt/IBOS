@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_interview数据表操作类
  * @package application.modules.recruit.model
- * @version $Id: ResumeInterview.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ResumeInterview.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

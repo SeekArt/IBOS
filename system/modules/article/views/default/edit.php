@@ -1,4 +1,4 @@
-<?php 
+<?php
 use application\core\utils\IBOS;
 use application\modules\vote\components\Vote;
 ?>
@@ -28,7 +28,7 @@ use application\modules\vote\components\Vote;
                             <div class="control-group">
                                 <label for=""><?php echo IBOS::lang( 'Appertaining category'); ?></label>
                                 <select name="catid"  id="edit_articleCategory">
-                                    <?php echo $categoryOption; ?>
+                                    <?php echo $this->getCategoryOption(); ?>
                                 </select>
                                 <script>$('#edit_articleCategory').val(<?php echo $data['catid']; ?>);</script>
                             </div>
@@ -64,7 +64,7 @@ use application\modules\vote\components\Vote;
                     <div class="mb">
                         <div>
                             <ul class="nav nav-tabs nav-tabs-large nav-justified" id="content_type">
-                                <input type="hidden" name="type" id="content_type_value" 
+                                <input type="hidden" name="type" id="content_type_value"
                                        value="<?php echo $data['type']; ?>">
                                 <li>
                                     <a href="#type_article" data-toggle="tab" data-value="0">
@@ -107,9 +107,9 @@ use application\modules\vote\components\Vote;
                                                 <div class="attl-item" data-node-type="attachItem">
                                                     <a href="javascript:;" title="删除附件" class="cbtn o-trash" data-node-type="attachRemoveBtn" data-id="<?php echo $value['aid']; ?>" ></a>
                                                     <i class="atti"><img width="44" height="44" src="<?php echo $value['iconsmall']; ?>" alt="<?php echo $value['filename']; ?>" title="<?php echo $value['filename']; ?>"></i>
-                                                    <div class="attc"><?php echo $value['filename']; ?></div> 
+                                                    <div class="attc"><?php echo $value['filename']; ?></div>
                                                     <span class="fss mlm">
-    													<a href="<?php echo $value['downurl']; ?>" class="anchor">下载</a>&nbsp;&nbsp;
+    													<a href="<?php echo $value['downurl']; ?>" target="_blank" class="anchor">下载</a>&nbsp;&nbsp;
     		                                            <?php if (isset($value['officereadurl'])): ?>
     		                                                <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
     		                                                    <?php echo $lang['View']; ?>
@@ -120,12 +120,13 @@ use application\modules\vote\components\Vote;
     		                                                    <?php echo $lang['Edit']; ?>
     		                                                </a>
     		                                            <?php endif; ?>
+    													<!--<a href="#" class="anchor">转存到文件柜</a>-->
     												</span>
                                                 </div>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
                                         </div>
-                                    </div> 
+                                    </div>
                                 </div>
 
                                 <!-- 图片内容 -->
@@ -197,13 +198,13 @@ use application\modules\vote\components\Vote;
                                 <div class="stand stand-label">
                                     <!-- 判断开关初始状态 -->
                                     <div class="pull-right">
-                                        <input type="checkbox" value="1" id="commentStatus" 
+                                        <input type="checkbox" value="1" id="commentStatus"
                                         <?php if ( !$dashboardConfig['articlecommentenable'] ): ?>
                                         disabled title="<?php echo IBOS::lang( 'Comments module is not installed or enabled'); ?>"
                                         <?php elseif( $data['commentstatus'] ): ?>
                                             checked
                                         <?php else: ?>
-                                            
+
                                         <?php endif; ?>
                                         name="commentstatus" data-toggle="switch" class="visi-hidden">
                                     </div>
@@ -211,17 +212,17 @@ use application\modules\vote\components\Vote;
                                     <?php echo IBOS::lang( 'Comment'); ?>
                                 </div>
                             </div>
-        
+
                         </div>
                         <div class="span4">
                             <div class="control-group">
                                 <div class="stand stand-label">
                                     <div class="pull-right">
-                                        <input type="checkbox" id="voteStatus" value="<?php echo $data['votestatus']; ?>" 
+                                        <input type="checkbox" id="voteStatus" value="<?php echo $data['votestatus']; ?>"
                                         <?php if ( !$this->getVoteInstalled() || !$dashboardConfig['articlevoteenable'] ): ?>
                                         disabled title="<?php echo IBOS::lang( 'Votes module is not installed or enabled'); ?>"
                                         <?php elseif( !$data['votestatus'] ): ?>
-                                        
+
                                         <?php else: ?>
                                         checked
                                         <?php endif; ?>
@@ -237,7 +238,7 @@ use application\modules\vote\components\Vote;
                     <?php if ( $this->getVoteInstalled() && $dashboardConfig['articlevoteenable'] ): ?>
                         <?php echo Vote::getView( 'articleEdit'); ?>
                     <?php endif; ?>
-                    <!-- Row 6 Button -->   
+                    <!-- Row 6 Button -->
                     <div id="submit_bar" class="clearfix">
                         <button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back(-1);"><?php echo IBOS::lang( 'Return'); ?></button>
                         <div class="pull-right">
@@ -249,7 +250,7 @@ use application\modules\vote\components\Vote;
                 <input type="hidden" name="articleid" value="<?php echo $data['articleid']; ?>">
                 <input type="hidden" name="relatedmodule" value="article" />
                 <input type="hidden" name="relatedid" value="<?php echo $data['articleid']; ?>">
-            </form> 
+            </form>
         </div>
     </div>
 
@@ -275,7 +276,7 @@ use application\modules\vote\components\Vote;
     $(function() {
         var publishType = Ibos.app.g("publishType");
         $("#content_type [data-toggle='tab'][data-value='" + publishType + "']").tab("show");
-        
+
         //投票状态为假是不显示投票
         window.setTimeout(function(){
             var votestatus = Ibos.app.g('voteStatus'),
@@ -287,7 +288,7 @@ use application\modules\vote\components\Vote;
                 }
             }
         },100);
-    
+
 		$("#edit_articleCategory").on("change", function() {
 			var uid = Ibos.app.g("uid"),
 					catid = this.value,

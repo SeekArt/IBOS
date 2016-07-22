@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_bgchecks表的数据层操作类，继承ICModel
  * @package application.modules.resume.model
- * @version $Id: ResumeBgchecks.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ResumeBgchecks.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

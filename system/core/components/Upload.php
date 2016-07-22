@@ -9,12 +9,9 @@
 
 namespace application\core\components;
 
-use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\Image;
 use application\core\utils\StringUtil;
-use application\extensions\ThinkImage\ThinkImage;
 use application\modules\main\model\Setting;
 use CJSON;
 
@@ -38,7 +35,7 @@ class Upload {
      * @param string $module 模块名
      * @return boolean 初始化成功与否
      */
-    public final function __construct( $attach, $module = 'temp' ) {
+	public function __construct( $attach, $module = 'temp' ) {
         if ( !is_array( $attach ) || empty( $attach ) || !$this->isUploadFile( $attach['tmp_name'] ) || trim( $attach['name'] ) == '' || $attach['size'] == 0 ) {
             $this->_attach = array();
             $this->_errorCode = -1;
@@ -71,6 +68,11 @@ class Upload {
     public function getAttach() {
         return $this->_attach;
     }
+
+	public function setAttach( $attach ) {
+		$this->_attach = $attach;
+		return true;
+	}
 
     /**
      * 获取错误代码
@@ -109,15 +111,14 @@ class Upload {
                         $textConfig = $waterConfig['watermarktext'];
                         $size = ( $textConfig['size'] > 0 && $textConfig['size'] <= 48 ) ? $textConfig['size'] : 16; //文字水印大小限制在1-48
                         $fontPath = !empty( $textConfig['fontpath'] ) ? $textConfig['fontpath'] : 'msyh.ttf'; //字体默认是微软雅黑
-                        $rgb = Convert::hexColorToRGB( $textConfig['color'] );
-                        Image::waterMarkString( $textConfig['text'], $size, $attach['target']
-                                , $attach['target'], $waterConfig['watermarkposition'], $waterConfig['watermarkquality']
-                                , $rgb, $fontPath );
+
+						File::waterString( $textConfig['text'], $size, $attach['target']
+								, $attach['target'], $waterConfig['watermarkposition'], $waterConfig['watermarktrans'], $waterConfig['watermarkquality']
+								, $textConfig['color'], $fontPath );
                     } else {
-                        $pathinfo = pathinfo( $waterConfig['watermarkimg'] );
-                        Image::water( $attach['target'], $pathinfo['dirname'] . '/' . $pathinfo['filename'] . '_water.' . $pathinfo['extension'], $attach['target']
+						File::waterPic( $attach['target'], $waterConfig['watermarkimg'], $attach['target']
                                 , $waterConfig['watermarkposition'], $waterConfig['watermarktrans']
-                                , $waterConfig['watermarkquality'] );
+								, $waterConfig['watermarkquality'], $waterConfig['watermarkminheight'], $waterConfig['watermarkminwidth'] );
                     }
                 }
             }

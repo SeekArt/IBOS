@@ -1,10 +1,10 @@
-(function() {
+(function(doc, Ibos) {
+    'use strict';
     /**
      * 选择框弹出窗的类
      * @class SelectBox
-     * @uses $.fn.label    label插件
+     * @uses $.fn.label    label插件           性能消耗点
      * @uses $.fn.zTree    zTree插件
-     * @todo   是否增加一些自定义回调函数
      * @param  {Jquery}    $element            要初始化的宿主
      * @param  {Key-Value} options             配置
      * @param  {Array}     options.navSettings 导航栏配置
@@ -13,74 +13,73 @@
      * @return {Object}                        SelectBox实例对象
      */
     var SelectBox = function($element, options) {
-            if (!Ibos || !Ibos.data) {
-                $.error("(SelectBox): 未定义数据Ibos.data");
-            }
-            var _this = this;
-            this.$element = $element;
-            this.options = $.extend(true, {}, SelectBox.defaults, options);
+        if (!Ibos || !Ibos.data) {
+            $.error("(SelectBox): 未定义数据Ibos.data");
+        }
+        var _this = this;
+        this.$element = $element;
+        this.options = $.extend(true, {}, SelectBox.defaults, options);
 
-            this.hasInit = false;
-            this.currentType = "";
-            this.currentId = "";
-            this.values = this.options.values;
-            this.options.type = (function(){
-                                    var types = _this.options.type;
-                                    if( $.isArray(types) ){
-                                        return types;
-                                    }
-                                    return types.split(",");
-                                })();
-            this._init();
-        };
-        /**
-         * SelectBox默认配置
-         * @property defaults 
-         * @type {Object}
-         */
+        this.hasInit = false;
+        this.currentType = "";
+        this.currentId = "";
+        this.values = this.options.values;
+        this.options.type = (function() {
+            var types = _this.options.type;
+            if ($.isArray(types)) {
+                return types;
+            }
+            return types.split(",");
+        })();
+        this._init();
+    };
+    /**
+     * SelectBox默认配置
+     * @property defaults 
+     * @type {Object}
+     */
     SelectBox.defaults = {
-            data: [],
-            navSettings: [{
-                    // id: "select_box_department",
-                    icon: "select-box-department",
-                    text: U.lang("US.PER_DEPARTMENT"),
-                    data: Ibos.data && Ibos.data.get("department") || [],
-                    type: "department"
-                }, {
-                    // id: "select_box_position",
-                    icon: "select-box-position",
-                    text: U.lang("US.PER_POSITION"),
-                    data: Ibos.data && (Ibos.data.get("position").concat(Ibos.data.get("positioncategory"))) || [],
-                    type: "position"
-                }, {
-                    // id: "select_box_role",
-                    icon: "select-box-role",
-                    text: U.lang("US.PER_ROLE"),
-                    data: Ibos.data && Ibos.data.get("role") || [],
-                    type: "role"
-                }
-                // {
-                //     // id: "select_box_contact",
-                //     icon: "select-box-contact",
-                //     text: U.lang("US.CONTACT"),
-                //     data: Ibos.data && Ibos.data.get("contact") || [],
-                //     type: "contact"
-                // }
-            ],
-            values: [],
-            // 拓展 导航栏
-            noNav: false,
-            showLong: false,
-            // 只可选用户
-            // userOnly: false
-            // maximumSelectionSize: 1, // 最大选项数只能在type 为 "user" 下使用
-            type: "all" //"user" "position" "department"
-        };
-        /**
-         * SelectBox语言包
-         * @property lang
-         * @type {Object}
-         */
+        data: [],
+        size: 2000,
+        navSettings: [{
+            // id: "select_box_department",
+            icon: "select-box-department",
+            text: U.lang("US.PER_DEPARTMENT"),
+            data: function(){
+                return Ibos.data.get("department") || {};
+            },
+            type: "department"
+        }, {
+            // id: "select_box_position",
+            icon: "select-box-position",
+            text: U.lang("US.PER_POSITION"),
+            data: function(){
+                return Ibos.data.get("position", "positioncategory") || {};
+            },
+            type: "position"
+        }, {
+            // id: "select_box_role",
+            icon: "select-box-role",
+            text: U.lang("US.PER_ROLE"),
+            data: function(){
+                return Ibos.data.get("role") || {};
+            },
+            type: "role"
+        }],
+        values: [],
+        // 拓展-导航栏隐藏,自定义导航栏
+        noNav: false,
+        showLong: false,
+        // 只可选用户
+        // userOnly: false
+        // maximumSelectionSize: 1, // 最大选项数只能在type 为 "user" 下使用
+        type: "all" //"user" "position" "department"
+    };
+    /**
+     * SelectBox语言包
+     * @property lang
+     * @type {Object}
+     */
 
     SelectBox.zIndex = 7000;
     SelectBox.prototype = {
@@ -109,7 +108,6 @@
                 selectBoxTpl;
             if (!hasInit) {
                 selectBoxTpl = [
-                    // '<div id="select_box" class="select-box">',
                     '   <div class="select-box-header">',
                     '       <ul class="select-box-nav"></ul>',
                     '   </div>',
@@ -117,7 +115,7 @@
                     '       <div class="select-box-mainer-inner scroll">',
                     '           <div class="select-box-area">',
                     '               <div class="select-box-area-header">' + U.lang("US.SELECT_ALL"),
-                    '                   <label class="checkbox pull-right"><input type="checkbox" data-type="checkall"/></label>',
+                    '                   <label class="checkbox pull-right"><span class="icon"></span><span class="icon-to-fade"></span><input type="checkbox" data-type="checkall"/></label>',
                     '               </div>',
                     '               <div class="select-box-area-mainer">',
                     '                   <ul class="select-box-list"></ul>',
@@ -125,8 +123,7 @@
                     '           </div>',
                     '       </div>',
                     '       <div class="select-box-mainer-aside scroll"></div>',
-                    '   </div>',
-                    // '</div>'
+                    '   </div>'
                 ].join("");
                 this.$element.addClass("select-box")
                     .attr("data-init", "1")
@@ -151,63 +148,51 @@
             var settings = this.options.navSettings,
                 types = this.options.type,
                 // 有右侧栏
-                userSelectable = ~types.indexOf('all') || ~types.indexOf("user");
+                userSelectable = ~$.inArray("all", types) || ~$.inArray("user", types),
+                len = settings.length,
+                typesLen = settings.length,
+                i, j, setting, type;
 
             this.$header = this.$element.find(".select-box-header");
             this.$nav = this.$header.find(".select-box-nav");
             this.$mainer = this.$element.find(".select-box-mainer");
             this.$aside = this.$mainer.find(".select-box-mainer-aside");
             this.$inner = this.$mainer.find(".select-box-mainer-inner");
-            this.$checkbox = this.$inner.find(".select-box-area-header input").label();
+            this.$checkbox = this.$inner.find(".select-box-area-header input");
             this.$list = this.$inner.find(".select-box-list");
 
-            for (var i = 0, len = settings.length; i < len; i++) {
-                var setting = settings[i];
+            for (i = 0; i < len; i++) {
+                setting = settings[i];
                 // 只输出对应选择方式的导航
-                if( userSelectable ){
+                if (userSelectable) {
                     this._createNavItem(setting);
-                    this._createTree(setting.type, setting.data);
-                }else{
-                    for(var j=0, typesLen=types.length; j < typesLen; j++){
-                        var type = types[j];
+                    this._createTree(setting.type, setting.data());
+                } else {
+                    for (j = 0; j < typesLen; j++) {
+                        type = types[j];
                         if (type === setting.type) {
                             this._createNavItem(setting);
-                            this._createTree(setting.type, setting.data);
+                            this._createTree(setting.type, setting.data());
                         }
                     }
                 }
-                
             }
+
             // 当可选择用户时，需要绑定导航切换事件及列表刷新事件
             if (types[0]) {
                 this._bindChangeEvent();
                 this._bindNavEvent();
-                // 否则，隐藏右侧栏
+                this._bindScrollEvt();
             } else {
+                // 否则，隐藏右侧栏
                 this.$inner.hide();
             }
             this.setNav(0);
             // 隐藏导航栏
             this.options.noNav && this.$header.hide();
             if (this.options.showLong) {
-                $(document).off("mousedown.userselect.hideall", UserSelect.hideAllBox);
+                $(doc).off("mousedown.userselect.hideall", UserSelect.hideAllBox);
             }
-        },
-
-        _getListItems: function() {
-            var vals = [];
-            this.$list.find("input[type='checkbox']").each(function() {
-                vals.push(this.value);
-            })
-            return vals;
-        },
-
-        _getListChecked: function() {
-            var checkeds = [];
-            this.$list.find("input[type='checkbox']").each(function() {
-                checkeds.push(this.value);
-            })
-            return checkeds;
         },
         /**
          * 绑定右侧复选框change时的事件
@@ -224,20 +209,17 @@
                     type = $checkbox.attr("data-type"), //此属性用于判断此复选框是否全选
                     isChecked = $checkbox.prop("checked"),
                     val = $checkbox.val();
+
+                isChecked ? that._toCheck($checkbox) : that._toUnCheck($checkbox);
                 if (type && type === "checkall") {
-                    if (isChecked) {
-                        that.checkListCheckbox();
-                        $checkbox.label("check");
-                    } else {
-                        that.uncheckListCheckbox();
-                        $checkbox.label("uncheck");
-                    }
-                    results = that._getListItems();
+                    results = that._toggleListCheckboxes(isChecked);
                 } else {
                     if (isChecked) {
-                        // 超过最大人数时不能选择
-                        if (!that.addValue(val)) {
-                            $checkbox.label("uncheck");
+                        if (!that.options.maximumSelectionSize || that.values.length < that.options.maximumSelectionSize) {
+                            that.addValue(val);
+                        } else {
+                            Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
+                            that._toUnCheck($checkbox);
                         }
                     } else {
                         that.removeValue(val);
@@ -262,38 +244,28 @@
                 res = 0,
                 len = this.values.length,
                 max = that.options.maximumSelectionSize,
-                getCheckboxValue = function() {
-                    return that.$list.find("input[type='checkbox']").map(function() {
-                        return this.value;
-                    }).get();
-                };
+                $inputItem = this.$list.find('input'),
+                values;
 
-            // cancel refreshList in order to save dom_create time 
+            var getListValue = function() {
+                return that._listdatas.map(function(d) {
+                    return d.id;
+                });
+            };
+
+            // cancel refreshList in order to save dom_create time
+            values = getListValue();
             if (toCheck) {
-                this.addValue(getCheckboxValue());
-                // 当超过最大可选数时，将不再继续选择
-                if (!max) this.$inputItem.label('check');
-                if (len <= max) this.$inputItem.slice(0, max - len).label('check');
+                this.addValue(values);
+                if (!max) this._toCheck($inputItem);
+                // if over the maximum, the rest will not be selected
+                if (len <= max) this._toCheck($inputItem.slice(0, max - len));
             } else {
-                this.removeValue(getCheckboxValue());
-                this.$inputItem.label('uncheck');
+                this.removeValue(values);
+                this._toUnCheck($inputItem);
             }
-        },
-        /**
-         * 全选
-         * @method checkListCheckbox
-         * @return {[type]} 发生改变的值
-         */
-        checkListCheckbox: function() {
-            this._toggleListCheckboxes(true);
-        },
-        /**
-         * 全不选
-         * @method uncheckListCheckbox
-         * @return {[type]} 发生改变的值
-         */
-        uncheckListCheckbox: function() {
-            this._toggleListCheckboxes(false);
+
+            return values;
         },
         /**
          * 绑定导航点击事件
@@ -340,7 +312,7 @@
             var tpl = '<li data-type="' + setting.type + '"><a href="javascript:;"><i class="' + setting.icon + '"></i><span>' + setting.text + '</span></a></li>';
             // }
             this.$nav.append(tpl);
-            return this
+            return this;
         },
         /**
          * 创建树
@@ -357,14 +329,13 @@
                 $.error("(UserSelect): 缺少zTree组件")
             }
             if (!data || !$.isArray(data)) {
-                data = [];
+                data = Ibos.data.converToArray(data);
             }
             var that = this,
                 treeidPrefix = this.$element[0].id,
-                lastChecked = null,
                 treeClick = function(evt, treeid, node) {
                     var type = that.options.type,
-                        userSelectable = (~type.indexOf("user") || ~type.indexOf("all"));
+                        userSelectable = (~$.inArray("user", type) || ~$.inArray("all", type));
                     // 当用户可选择时，点击树项为刷新右侧列表
                     if (userSelectable) {
                         that.currentId = node.id;
@@ -376,18 +347,15 @@
                             if (node.checked) {
                                 that.removeValue(node.id);
                                 node.checked = false;
-                                lastChecked = null;
+                                // lastChecked = null;
                             } else {
                                 // 当超过最大可选数时，将不再继续选择
                                 if (that.options.maximumSelectionSize && that.options.maximumSelectionSize <= that.values.length) {
-                                    if (lastChecked) {
-                                        //that._checkNode(lastChecked.id, false);
-                                        return true;
-                                    }
+                                    Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
+                                    return true;
                                 }
                                 that.addValue(node.id);
                                 node.checked = true;
-                                lastChecked = node;
                             }
                         }
                     }
@@ -397,17 +365,14 @@
                     if (!node.nocheck) {
                         if (!node.checked) {
                             that.removeValue(node.id);
-                            lastChecked = null;
                         } else {
-                            // 当超过最大可选数时，取消上一个选中的项，加入当前选中的项
+                            // 当超过最大可选数时，将不再继续选择
                             if (that.options.maximumSelectionSize && that.options.maximumSelectionSize <= that.values.length) {
-                                if (lastChecked) {
-                                    that._checkNode(lastChecked.id, false);
-                                    return true;
-                                }
+                                node.checked = false;
+                                Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
+                                return true;
                             }
                             that.addValue(node.id);
-                            lastChecked = node;
                         }
                     }
                 },
@@ -420,8 +385,12 @@
                         }
                     },
                     data: {
+                        key: {
+                            name: 'text'
+                        },
                         simpleData: {
-                            enable: true
+                            enable: true,
+                            pIdKey: 'pid'
                         }
                     },
                     callback: {
@@ -441,6 +410,8 @@
             }
             this.$aside.append($tree);
             $.fn.zTree.init($tree, treeSetting, data);
+
+            data = null;
             return this;
         },
         /**
@@ -470,12 +441,6 @@
                 fixNumber();
                 this.currentType = items.removeClass("active").eq(index).addClass("active").attr("data-type");
                 currentTree = trees.hide().eq(index).show();
-                // 常用联系人
-                if (index == 2) {
-                    this.refreshList("contact");
-                    this.refreshCheckbox();
-                    return true;
-                }
                 // 根据当前树选中的节点ID刷新列表
                 currentZTreeObj = $.fn.zTree.getZTreeObj(currentTree[0].id);
                 currentSelected = currentZTreeObj.getSelectedNodes()[0];
@@ -493,31 +458,9 @@
          * @return {Object}    当前调用对象
          */
         refreshList: function(id) {
-            var contact = this.options.contact,
-                data = this.options.data,
-                type = this.currentType;
-
             id = id || this.currentId || "";
             this.clearList();
-            // @Debug: Hack, 列出所有人员，临时使用
-            if (id === "c_0") {
-                this._createListItem(function(d) {
-                    return d.type === "user";
-                });
-                return this;
-                // @Hack: 常用联系人
-            } else if (id === "contact" && contact && contact.length) {
-                this._createListItem(function(d) {
-                    return $.inArray(d.id, contact) !== -1;
-                });
-                this.currentId = "contact";
-                return this;
-            }
-
-            this._createListItem(function(d) {
-                return d[type] && $.inArray(id, d[type].split(",")) !== -1;
-            });
-
+            this._initListItem(Ibos.data.getRelated(id));
             return this;
         },
         /**
@@ -542,7 +485,7 @@
          * @param  {boolean} toCheck 是否选中
          * @return {Object}          当前调用对象
          */
-        _checkNode: function(id, toCheck, slient) {
+        _checkNode: function(id, toCheck) {
             var type = this.currentType,
                 values = this.values,
                 treeObj = this._getCurrentTree(),
@@ -553,9 +496,6 @@
                 if (treeNode !== null) {
                     treeObj.checkNode(treeNode, toCheck, false);
                 }
-            }
-            if (!slient) {
-                $(this).trigger("slbchange", { id: id, checked: toCheck });
             }
         },
         /**
@@ -569,54 +509,129 @@
             type = type || this.currentType;
             var values = this.values,
                 treeObj = this._getCurrentTree(type);
-            treeObj.checkAllNodes(false)
+            treeObj.checkAllNodes(false);
             for (var i = 0, len = values.length; i < len; i++) {
                 this._checkNode(values[i], true);
             }
+            // 统一触发更改
+            $(this).trigger("slbchange", { id: values.slice(0), checked: true });
             return this;
         },
         /**
          * 创建列表项
-         * @method _createListItem
+         * @method _initListItem
          * @private
          * @param  {Key-Value} data 列表项数据
          * @return {Jquery}      列表项jq对象
          */
-        _createListItem: function(matcher) {
+        _initListItem: function(datas) {
             var that = this,
-                datas = this.options.data,
                 values = this.values,
                 max = this.options.maximumSelectionSize,
-                listTpl = [],
-                data, len, i;
+                listTpl = [];
 
             // 判断初始化传入的值是否超过最大值
             if (max && values.length > max) {
                 values.splice(max);
             }
 
+            if (!$.isArray(datas)) {
+                datas = Ibos.data.converToArray(datas);
+            }
+
+            this._listdatas = datas.slice(0);
+            this._cachedatas = datas.slice(0);
+            this._cachedatas.length && this._createListTmpl(this._cachedatas.splice(0, this.options.size));
+
+            datas = null;
+            return this;
+        },
+        /**
+         * 创建列表模板
+         */
+        _createListTmpl: function(datas) {
+            var i, len, data, $list,
+                values = this.values,
+                checked,
+                listTpl = [];
+
             for (i = 0, len = datas.length; i < len; i++) {
                 data = datas[i];
-                // matcher 匹配条件，筛选data
-                if (!data) continue;
-                if (matcher && !matcher(data)) continue;
+                checked = $.inArray(data.id, values) < 0;
                 listTpl.push([
                     '<li class="', (data.online === '1' ? "online" : "offline"), '">',
-                    '<label class="checkbox ">',
-                    '<input type="checkbox" value="', data.id, '"', ($.inArray(data.id, values) < 0 ? "" : "checked"), '/>',
-                    '<img src="', data.imgUrl, '" />',
+                    '<label class="checkbox ', (checked ? '' : 'checked'), '">',
+                    '<span class="icon"></span><span class="icon-to-fade"></span>',
+                    '<input type="checkbox" value="', data.id, '"', (checked ? '' : 'checked'), '/>',
+                    '<img src="', data.avatar, '" />',
                     '<span>', data.text, '</span>',
                     '</label>',
                     '</li>'
                 ].join(''));
             }
 
-            $list_mc = $(listTpl.join(''));
-            this.$inputItem = $list_mc.find("input");
-            this.$inputItem.label();
+            $list = $(listTpl.join(''));
 
-            this.$list.append($list_mc);
+            this.$list.append($list);
             return this;
+        },
+
+        _toCheck: function($input) {
+            var $label, $this;
+            if ($input[0].tagName.toLowerCase() !== 'input') {
+                $input = $input.find('input');
+            }
+
+            $input.each(function(i, e) {
+                $this = $(this);
+                $label = $this.closest('label');
+                $label.addClass('checked');
+                $this.prop('checked', true);
+
+                $label = null;
+            });
+
+            $input = null;
+            return true;
+        },
+
+        _toUnCheck: function($input) {
+            var $label, $this;
+            if ($input[0].tagName.toLowerCase() !== 'input') {
+                $input = $input.find('input');
+            }
+
+            $input.each(function(i, e) {
+                $this = $(this);
+                $label = $this.closest('label');
+                $label.removeClass('checked');
+                $this.prop('checked', false);
+
+                $label = null;
+            });
+
+            $input = null;
+            return true;
+        },
+        /**
+         * 按需加载
+         */
+        _cacheListData: function() {
+            var datas = this._cachedatas;
+            datas.length && this._createListTmpl(datas.splice(0, this.options.size));
+        },
+        /**
+         * 滚动监听
+         */
+        _bindScrollEvt: function() {
+            var that = this,
+                innerTable = this.$inner[0];
+
+            this.$inner.on('scroll', function(evt) {
+                if ((innerTable.scrollHeight - innerTable.clientHeight - 600) <= innerTable.scrollTop) {
+                    that._cacheListData();
+                }
+            });
         },
         /**
          * 清空列表
@@ -625,12 +640,9 @@
          * @return {Object} 当前调用对象
          */
         clearList: function() {
-            var items = this.$list.find("li");
-            items.each(function() {
-                $(this).find("input").removeData().end().remove();
-            });
-            this.$checkbox.label("uncheck");
-            return this
+            this.$list.empty();
+            this._toUnCheck(this.$checkbox);
+            return this;
         },
         /**
          * 修改当前选中值
@@ -656,31 +668,31 @@
             var that = this,
                 res = [],
                 // 当插入数组时禁止多次触发slbchange
-                add_unit = function(value, flag) {
+                add_unit = function(value) {
                     // 如果 val 还未被增加 且 此前允许增加， 且推入values数组
                     if ($.inArray(value, that.values) === -1) {
                         // 验证是否超过选项最大长度，超过部分不处理
                         if (!that.options.maximumSelectionSize || that.values.length < that.options.maximumSelectionSize) {
                             that.values.push(value);
                             res.push(value);
-                            that._checkNode(value, true, flag);
-                            return true;
+                            that._checkNode(value, true);
                         } else {
-                            Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
                             return false;
                         }
                     }
+
+                    return true;
                 };
 
-            if ($.isArray(val)) {
+            if (!$.isArray(val)) { val = [val]; }
+            AddValue:
                 for (var i = 0, len = val.length; i < len; i++) {
-                    if (!add_unit(val[i], true)) return false;
+                    if (!add_unit(val[i])) {
+                        break AddValue;
+                    }
                 }
-                // 为全选事件统一触发更改
-                $(this).trigger("slbchange", { id: res, checked: true });
-            } else {
-                if (!add_unit(val)) return false;
-            }
+
+            $(this).trigger("slbchange", { id: res, checked: true });
             return this.values;
         },
         /**
@@ -691,23 +703,24 @@
          */
         removeValue: function(val) {
             var that = this,
-                remove_unit = function(value, flag) {
+                res = [],
+                remove_unit = function(value) {
                     var index;
                     index = $.inArray(value, that.values);
                     if (index !== -1) {
                         that.values.splice(index, 1);
-                        that._checkNode(value, false, flag);
+                        res.push(value);
+                        that._checkNode(value, false);
                     }
                 };
             // 若传入数组，则循环迭代
-            if ($.isArray(val)) {
+            if (!$.isArray(val)) { val = [val]; }
+            RemoveValue:
                 for (var i = 0, len = val.length; i < len; i++) {
-                    remove_unit(val[i], true);
+                    remove_unit(val[i]);
                 }
-                $(this).trigger("slbchange", { id: val, checked: false });
-            } else {
-                remove_unit(val);
-            }
+
+            $(this).trigger("slbchange", { id: res, checked: false });
             return this.values;
         },
         /**
@@ -787,22 +800,25 @@
             if (!this.$element.get(0).id) {
                 this.$element.attr("id", "userselect_" + U.uniqid());
             }
+
             this.options = options;
             if (!this.options.box || !this.options.box.length) {
                 var $box = $("#" + $element[0].id + "_box");
                 $box.length && $box.remove();
-                this.options.box = $('<div id="' + $element[0].id + '_box"></div>').appendTo(document.body);
+                this.options.box = $('<div id="' + $element[0].id + '_box"></div>').appendTo(doc.body);
             }
+
             this.btns = [];
             this.values = [];
-            this.data = this._cleanData(this.options.data);
+            this.data = $.extend({}, this.options.data);
+            delete this.options.data;
+
             if ($.trim(initialValue)) {
                 this.values = initialValue.split(",");
-                values = this.values;
                 // 防止后端输出未名数据
-                for (var i = 0; i < values.length; i++) {
-                    if (!this._getText(values[i])) {
-                        values.splice(i--, 1);
+                for (var i = 0; i < this.values.length; i++) {
+                    if (!this._getText(this.values[i])) {
+                        this.values.splice(i--, 1);
                     }
                 }
                 // 超过限定人数处理
@@ -822,13 +838,11 @@
     UserSelect.showAllBox = function() {
         $(".select-box").show();
         $(".operate-btn .glyphicon-user").parent().addClass("active");
-        // $(".operate-btn").has("glyphicon-user").addClass("active");
-
     }
     UserSelect.hideAllBox = function() {
-            $(".select-box").hide();
-            $(".operate-btn.active .glyphicon-user").parent().removeClass("active");
-        } //
+        $(".select-box").hide();
+        $(".operate-btn.active .glyphicon-user").parent().removeClass("active");
+    }
 
     UserSelect.prototype = {
         constructor: UserSelect,
@@ -843,8 +857,8 @@
             var boxSelector = "";
 
             this._createSelect();
-            // 配置了box属性并拥有长度时，假设其为一个jq对象
 
+            // 配置了box属性并拥有长度时，假设其为一个jq对象
             if (!this.options.box) {
                 boxSelector = this.$element.attr("data-box");
                 this.options.box = $(boxSelector);
@@ -853,20 +867,7 @@
             if (this.options.box && this.options.box.length) {
                 this._createSelectBox();
             }
-            return this
-        },
-        _cleanData: function(data) {
-            var ret = [];
-            if (!data || !data.length) {
-                return ret;
-            } else {
-                for (var i = 0, len = data.length; i < len; i++) {
-                    if (data[i] != null) {
-                        ret.push(data[i]);
-                    }
-                }
-            }
-            return ret;
+            return this;
         },
         /**
          * 创建Select2实例
@@ -923,9 +924,9 @@
                             p: "position",
                             u: "user",
                             r: "role"
-                        }
-                    text = '<i class="select2-icon-' + typeMap[type] + '"></i>' + data.text;
-                    return text
+                        },
+                        text = '<i class="select2-icon-' + typeMap[type] + '"></i>' + data.text;
+                    return text;
                 },
                 formatNoMatches = function() {
                     return U.lang("US.NO_MATCH");
@@ -934,28 +935,28 @@
                     return U.lang("US.SELECTION_TO_BIG", { limit: limit });
                 },
                 initSelection = function(element, callback) {
-                    var data = [],
+                    var data,
                         val = (element.val() || element.context.value).split(",");
-                    $(val).each(function() {
-                        // 将字符串对象转为原始类型
-                        var id = this + "",
-                            text = that._getText(id);
-                        data.push({
-                            id: id,
-                            text: text
-                        });
-                    });
-                    callback(data);
+
+                    data = Ibos.data.includes(val);
+                    callback(Ibos.data.converToArray(data));
+                    data = null;
                 },
                 query = function(query) {
                     var data = {
                             results: []
                         },
-                        i;
+                        term = query.term,
+                        userData;
                     // 提供拼音搜索功能
-                    query.matcher = function(term, text) {
-                        var textArr = pinyinEngine.toPinyin(text, false)
-                        var termArr = term.split("");
+                    query.matcher = function(data) {
+                        // 岗位分类应排除在数据集中
+                        if (data.id.charAt(0) === 'f') {
+                            return false;
+                        }
+                        var text = data.text,
+                            textArr = pinyinEngine.toPinyin(text, false),
+                            termArr = term.split("");
                         for (var i = 0; i < termArr.length; i++) {
                             var inside = false;
                             //假设使用首字母拼音搜索
@@ -972,23 +973,15 @@
                         }
                         return true;
                     };
-                    for (i = 0; i < that.data.length; i++) {
-                        if (that.data[i].enable) {
-                            var match = query.matcher(query.term, that.data[i].text);
-                            if (match) {
-                                data.results.push({
-                                    id: that.data[i].id,
-                                    text: that.data[i].text
-                                });
-                            }
-                        }
-                    }
+
+                    data.results = Ibos.data.converToArray(Ibos.data.filter(that.data, query.matcher));
                     query.callback(data);
+                    data = null;
                 },
                 getPlaceholder = function(type) {
-                    var types = (function(){
+                    var types = (function() {
                             var types = type || "";
-                            if( $.isArray(types) ){
+                            if ($.isArray(types)) {
                                 return types;
                             }
                             return types.split(",");
@@ -996,14 +989,14 @@
                         lang = U.lang,
                         str = lang("US.PLACEHOLDER");
 
-                    type = types[0] ? (~types.indexOf("all") ? ["all"] : types) : ["all"];
+                    type = types[0] ? (~$.inArray("all", types) ? ["all"] : types) : ["all"];
 
-                    if( type[0] === "all" ){
+                    if (type[0] === "all") {
                         str = lang("US.PLACEHOLDER_ALL");
-                    }else{
-                        for(var i=0, len=type.length; i < len; i++){
-                            str += lang("US." + type[i].toUpperCase() );
-                            if( i != len-1 ){
+                    } else {
+                        for (var i = 0, len = type.length; i < len; i++) {
+                            str += lang("US." + type[i].toUpperCase());
+                            if (i != len - 1) {
                                 str += "、";
                             }
                         }
@@ -1021,9 +1014,9 @@
                     placeholder: getPlaceholder(this.options.type),
                     query: query
                 },
-                select2Options = $.extend({}, select2Defaults, this.options);
+                select2Options = $.extend({}, select2Defaults, this.options, { data: Ibos.data.converToArray(this.data) });
 
-            this.$element.select2(select2Options).on("change", function(evt, data) {
+            this.$element.select2(select2Options).on("change", function(evt) {
                 if (evt.added && evt.added.id) {
                     that.addValue(evt.added.id);
                 } else if (evt.removed && evt.removed.id) {
@@ -1047,7 +1040,7 @@
 
             this.selectBox = new SelectBox(options.box, {
                 contact: that.options.contact,
-                data: that.data,
+                // data: that.data,
                 values: [].concat(that.values),
                 type: that.options.type,
                 maximumSelectionSize: this.options.maximumSelectionSize
@@ -1072,47 +1065,48 @@
             var that = this,
                 options = this.options,
                 $operateWrap = this._createSelectOperate(),
-                setPosition = function($el, $target) {
-                    var select2Obj = that.select,
-                        select2Container = select2Obj.container,
-                        // 当定义relative属性且指一个JQ对象时，则相对该JQ对象定位，否则相对select2Container;
-                        relative = (options.relative && options.relative.length) ? options.relative : select2Container;
-                        // 如果有额外绑定显示位置，则显示在该位置上
-                        if($target) relative = $target;
-                    $el.position($.extend({
-                        of: relative
-                    }, options.position));
-                },
-                openBoxBtnOption = {
-                    handler: function($btn) {
-                        // 打开弹窗选择器时，关闭下拉列表
-                        that.$element.select2("close");
-                        if ($btn.hasClass("active")) {
-                            that.selectBox && that.selectBox.hide();
-                            $btn.removeClass("active")
-                        } else {
-                            UserSelect.hideAllBox();
-                            that.selectBox && that.selectBox.show(function($el) {
-                                setPosition($el, $btn);
-                            });
-                            $btn.addClass("active")
-                        }
+                $openBoxBtn, $clearBtn;
+
+            var setPosition = function($el, $target) {
+                var select2Obj = that.select,
+                    select2Container = select2Obj.container,
+                    // 当定义relative属性且指一个JQ对象时，则相对该JQ对象定位，否则相对select2Container;
+                    relative = (options.relative && options.relative.length) ? options.relative : select2Container;
+                // 如果有额外绑定显示位置，则显示在该位置上
+                if ($target) relative = $target;
+                $el.position($.extend({
+                    of: relative
+                }, options.position));
+            };
+
+            // 弹出框按钮
+            $openBoxBtn = this._createOperateBtn({
+                handler: function($btn) {
+                    // 打开弹窗选择器时，关闭下拉列表
+                    that.$element.select2("close");
+                    if ($btn.hasClass("active")) {
+                        that.selectBox && that.selectBox.hide();
+                        $btn.removeClass("active");
+                    } else {
+                        UserSelect.hideAllBox();
+                        that.selectBox && that.selectBox.show(function($el) {
+                            setPosition($el, $btn);
+                        });
+                        $btn.addClass("active");
                     }
-                },
-                clearBtnOption = {
+                }
+            });
+            $operateWrap.append($openBoxBtn);
+
+            if (options.clearable) {
+                $clearBtn = this._createOperateBtn({
                     cls: "operate-btn",
                     iconCls: "glyphicon-trash",
                     handler: function() {
                         that.setValue();
                     }
-                }
-                // 弹出框按钮
-            $openBoxBtn = this._createOperateBtn(openBoxBtnOption);
-            $clearBtn = this._createOperateBtn(clearBtnOption);
-            $operateWrap.append($openBoxBtn);
-
-            if (options.clearable) {
-                $operateWrap.append($clearBtn)
+                });
+                $operateWrap.append($clearBtn);
             }
         },
         /**
@@ -1132,9 +1126,8 @@
                     iconCls: "glyphicon-user"
                 },
                 opt = $.extend({}, defaults, options),
-                $btn = $('<a href="javascript:;" class="' + opt.cls + '"></a>'),
-                iconTpl = '<i class="' + opt.iconCls + '"></i>';
-            $btn.html(iconTpl)
+                $btn = $('<a href="javascript:;" class="' + opt.cls + '"><i class="' + opt.iconCls + '"></i></a>');
+
             if (typeof opt.handler === "function") {
                 $btn.on("click", function(evt) {
                     opt.handler.call(that, $btn);
@@ -1144,6 +1137,7 @@
                     evt.stopPropagation();
                 })
             }
+
             that.btns.push($btn);
             return $btn;
         },
@@ -1166,29 +1160,32 @@
          * @chainable
          * @return {Object} 当前调用对象
          */
-        refreshSelectBox: function(id, toCheck, slient) {
+        refreshSelectBox: function(id, toCheck) {
             var that = this,
-                refresh_unit = function(u_id, u_toCheck, u_slient) {
-                    that.selectBox.values = that.values;
-                    // 传入ID时, 更新左侧对应选择框选中状态
-                    that.selectBox._checkNode(u_id, u_toCheck, u_slient);
-                };
+                i, len;
+
+            var refresh_unit = function(u_id, u_toCheck) {
+                that.selectBox.values = that.values;
+                // 传入ID时, 更新左侧对应选择框选中状态
+                that.selectBox._checkNode(u_id, u_toCheck);
+            };
 
             if (this.selectBox) {
-                toCheck = typeof toCheck === "undefined" ? true : toCheck;
-                // 若为数组，则迭代
-                if ($.isArray(id) && id.length > 0) {
-                    for (var i = 0, len = id.length; i < len; i++) {
-                        id[len] && refresh_unit(id[i], toCheck, slient);
-                    }
-                } else if (id) {
-                    refresh_unit(id, toCheck, slient);
-                } else {
+                if (!id) {
                     // 传入id为空
-                    that.selectBox.refreshCheckbox();
+                    this.selectBox.refreshCheckbox();
+                } else {
+                    if (!$.isArray(id)) { id = [id]; }
+                    i = 0;
+                    len = id.length;
+
+                    while (i < len) {
+                        id[i] && refresh_unit(id[i], toCheck);
+                        i++;
+                    }
                 }
                 // 更新右边列表
-                that.selectBox.refreshList();
+                this.selectBox.refreshList();
             }
         },
 
@@ -1198,27 +1195,13 @@
          * @return {String}    对应文本
          */
         _getText: function(id) {
-            var data = this.data;
-            for (var i = 0, len = data.length; i < len; i++) {
-                if (data[i].id === id) {
-                    return data[i].text;
-                }
+            if (!id) {
+                return false;
             }
-        },
 
-        /**
-         * 获取全局数据
-         * @method getData
-         * @return {Array} 全局数据
-         */
-        getData: function() {
-            return this.data;
-        },
-
-        getDataById: function(id) {
-            return $.grep(this.data, function(d) {
-                return d.id === id
-            });
+            var type, item;
+            type = Ibos.data.getType(id);
+            return this.data[type][id] && ['text'];
         },
 
         /**
@@ -1243,11 +1226,13 @@
         getValue: function() {
             return this.values;
         },
+
         getUnique: function(arr) {
             var unique = [],
                 i, len, temp;
-            if (!Array.isArray(arr)) return unique;
-            for(i = 0, len = arr.length; i < len; i++){
+
+            if (!$.isArray(arr)) return unique;
+            for (i = 0, len = arr.length; i < len; i++) {
                 temp = arr[i];
                 $.inArray(temp, unique) < 0 && unique.push(temp);
             }
@@ -1255,11 +1240,11 @@
         },
         /* 合并数组 */
         _mergeArray: function(source, val) {
-            var that = this;
             if (!$.isArray(source)) {
-                source = [];
+                source = [source];
             }
-            return that.getUnique(source.concat(val));
+
+            return this.getUnique(source.concat(val));
         },
 
         /**
@@ -1306,7 +1291,7 @@
                 }
                 this.values = this._mergeArray(this.values, val);
                 if (!ignore) {
-                    this.refreshSelectBox(val, true, true);
+                    this.refreshSelectBox(val, true);
                 }
                 this.select.val(this._fixEmptyArray(this.values));
                 if (!slient) {
@@ -1328,7 +1313,7 @@
                 }
                 this._resolveArray(this.values, val);
                 if (!ignore) {
-                    this.refreshSelectBox(val, false, true);
+                    this.refreshSelectBox(val, false);
                 }
                 this.select.val(this._fixEmptyArray(this.values));
                 if (!slient) {
@@ -1393,7 +1378,7 @@
     $.fn.userSelect.Constructor = UserSelect;
     $.fn.userSelect.defaults = {
         contact: $.parseJSON(G.contact),
-        data: [],
+        data: {},
         multiple: true,
         position: {
             my: "right top",
@@ -1402,5 +1387,5 @@
         clearable: true
     }
 
-    $(document).on("mousedown.userselect.hideall", UserSelect.hideAllBox);
-})();
+    $(doc).on("mousedown.userselect.hideall", UserSelect.hideAllBox);
+})(document, Ibos);

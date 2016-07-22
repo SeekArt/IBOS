@@ -22,7 +22,10 @@ class Feed {
      */
     public static function pushFeed( $uid, $module, $table, $rowid, $data, $type = 'post' ) {
         // 权限
-        if ( empty( $data['userid'] ) && empty( $data['deptid'] ) && empty( $data['positionid'] ) ) {
+        if ( empty( $data['userid'] ) &&
+                empty( $data['deptid'] ) &&
+                empty( $data['positionid'] ) &&
+                empty( $data['roleid'] ) ) {
             $data['view'] = 0;
         } else {
             $data['view'] = 3;

@@ -9,7 +9,7 @@
  */
 /**
  * @package application.modules.weibo.controllers
- * @version $Id: DashboardController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DashboardController.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author banyan <banyan@ibos.com.cn>
  */
 

@@ -42,8 +42,9 @@ class ReportStats extends Model {
      */
     public function fetchAllStampByUid( $uid, $start, $end, $typeid ) {
         $criteria = array(
-            'select' => 'stamp',
-            'condition' => sprintf( "uid = %d AND scoretime BETWEEN %d AND %d AND typeid = %d", $uid, $start, $end, $typeid )
+            'select' => 't.stamp',
+            'join' => 'LEFT JOIN ' . Report::model()->tableName() . ' rep ON t.repid = rep.repid',
+            'condition' => sprintf( "t.uid = %d AND rep.begindate > %d AND rep.enddate < %d AND t.typeid = %d", $uid, $start, $end, $typeid )
         );
         $datas = $this->fetchAll( $criteria );
         return Convert::getSubByKey( $datas, 'stamp' );

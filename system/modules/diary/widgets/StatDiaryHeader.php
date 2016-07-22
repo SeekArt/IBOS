@@ -34,7 +34,7 @@ class StatDiaryHeader extends StatDiaryBase {
         $data = array(
             'module' => $module,
             'timeRoute' => $timeRoute,
-            'lang' => IBOS::getLangSources( array( 'diary.default' ) ), 
+            'lang' => IBOS::getLangSources( array( 'diary.default' ) ),
             'time' => StatCommon::getCommonTimeScope()
         );
         $this->render( self::VIEW, $data );

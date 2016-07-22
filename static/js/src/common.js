@@ -988,6 +988,7 @@ Ibos.evt = (function(){
 			if(!_events[evtType]) {
 				_events[evtType] = {};
 				$(document).on(evtType + ".ink", "[data-action], [data-act]", function(evt){
+					evt.stopPropagation();
 					var act = $.attr(this, "data-action") || $.attr(this, "data-act"),
 						params = Ibos.app.getEvtParams(this);
 					_events[evtType][act] && _events[evtType][act].call(this, params, this, evt);

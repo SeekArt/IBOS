@@ -63,7 +63,7 @@ class PositionController extends OrganizationBaseController {
         $search = Env::getRequest( 'search' );
         $draw   = Env::getRequest( 'draw' );
         $condition = '';
-        if ( !empty( $search['vlaue'] ) ) {
+        if ( !empty( $search['value'] ) ) {
             $key = \CHtml::encode( $search['value'] );
             $condition .= "`posname` LIKE '%{$key}%'";
         }
@@ -99,7 +99,7 @@ class PositionController extends OrganizationBaseController {
                 'posid'     => $position['positionid'],
                 'posname'   => $position['posname'],
                 'catname'   => $categoryList[$position['catid']]['name'],
-                'num'       => User::model()->countNumsByPositionId( $position['positionid'] ),
+                'num'       => Position::model()->getPositionUserNumById( $position['positionid'] ),
             );
         }
         return $result;

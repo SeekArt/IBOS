@@ -21,7 +21,7 @@ use application\modules\user\model\UserStatus;
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2015-12-30 9:55:35
- * @version $Id: OrgIO.php 6807 2016-04-11 02:43:32Z tanghang $
+ * @version $Id: OrgIO.php 7251 2016-05-26 13:30:32Z tanghang $
  */
 class OrgIO {
 
@@ -167,6 +167,7 @@ class OrgIO {
         $newUser = array();
         if ( !empty( $data ) && is_array( $data ) ) {
             $count = count( $data );
+            Main::checkLicenseLimit( false, $count ); //检查授权人数
             $currentDeptA = self::findDeptAWithFormat(); //取出所有的部门
 
             $allUsers = User::model()->fetchAllSortByPk( 'uid' ); // 取出全部用户，包括锁定、禁用等, 等下做判定, 避免放在循环中影响效率, 注意,为了能匹配实时插入的数据,要在循环中增加新插入的用户
@@ -226,7 +227,6 @@ class OrgIO {
                 foreach ( $newUser as $newId => $origPass ) {
                     Org::hookSyncUser( $newId, $origPass, 1 );
                 }
-                Cache::update( array( 'Department' ) );
                 // 更新组织架构js调用接口
                 Org::update();
             }

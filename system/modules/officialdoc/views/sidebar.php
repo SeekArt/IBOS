@@ -6,6 +6,7 @@ use application\core\utils\IBOS;
 <div class="aside">
     <div class="sbbf">
         <ul class="nav nav-strip nav-stacked">
+            <!--
             <li <?php if ( Env::getRequest( 'space' ) == 'top' ): ?>class="active"<?php endif; ?>>
                 <a href="<?php echo $this->createUrl( 'officialdoc/index', array( 'type' => 'nosign', 'space' => 'top' ) ); ?>">
                     <?php if ( $noSignCount > 0 ): ?>
@@ -15,6 +16,7 @@ use application\core\utils\IBOS;
                     <?php echo IBOS::lang( 'No sign' ); ?>
                 </a>
             </li>
+            -->
             <li <?php if ( Env::getRequest( 'space' ) != 'top' ): ?>class="active"<?php endif; ?>>
                 <a href="<?php echo $this->createUrl( 'officialdoc/index' ); ?>">
                     <i class="o-art-doc"></i>
@@ -53,7 +55,7 @@ use application\core\utils\IBOS;
         <select class="input-small" name="aid" id="approval_id">
         <option value="0">无需审核</option>
         <?php foreach ( $approvals as $approval ): ?>
-            <option value="<?php echo $approval['id']; ?>" <%= aid == "<?php echo $approval['id'] ?>" ? "selected" : "" %>><?php echo $approval['name']; ?></option>
+            <option value="<?php echo $approval['id']; ?>" <%= aid == "<?php echo CHtml::encode($approval['id']) ?>" ? "selected" : "" %>><?php echo CHtml::encode($approval['name']); ?></option>
         <?php endforeach; ?>
         </select>
         </div>

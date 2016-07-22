@@ -93,7 +93,7 @@ class RoletypeController extends OrganizationBaseController {
             }
             CacheUtil::update( 'role' );
             Org::update();
-            IBOS::app()->cache->clear();
+            CacheUtil::clear();
             $this->success( IBOS::lang( 'Save succeed', 'message' ) );
         } else {
             $role = Role::model()->fetchByPk( $id );
@@ -143,7 +143,7 @@ class RoletypeController extends OrganizationBaseController {
             }
             CacheUtil::update( 'role' );
             Org::update();
-            IBOS::app()->cache->clear();
+            CacheUtil::clear();
             $this->ajaxReturn( array( 'isSuccess' => true ), 'json' );
         }
     }

@@ -59,7 +59,7 @@ class DiaryComment extends ICComment {
                     ) );
         }
         $attr['comments'] = $list;
-        $attr['lang'] = IBOS::getLangSources( array( 'message.default' ) ); 
+        $attr['lang'] = IBOS::getLangSources( array( 'message.default' ) );
         $attr['url'] = isset( $attr['url'] ) ? $attr['url'] : '';
         $attr['detail'] = isset( $attr['detail'] ) ? $attr['detail'] : '';
         $content = $this->render( $this->getParseView( 'comment' ), $attr, true );

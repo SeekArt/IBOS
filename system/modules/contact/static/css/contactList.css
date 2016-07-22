@@ -577,3 +577,100 @@
 .inexist-data{
 	display: none;
 }
+
+/************ Org-zTree ***************/
+.org-utree.ztree li a.opt-btn{
+	margin-left: 0;
+}
+.org-utree.ztree li a .utree-opt-wrap,
+.position-ztree.ztree li a .ptree-opt-wrap{
+	display: none;
+	width: 42px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 999;
+} 
+.org-utree.ztree li a:hover .utree-opt-wrap,
+.position-ztree.ztree li a:hover .ptree-opt-wrap{
+	display: inline-block;
+}
+a.level0:hover a.opt-btn,
+a.level1:hover a.opt-btn,
+a.level2:hover a.opt-btn,
+a.level3:hover a.opt-btn,
+a.level0.curSelectedNode a.opt-btn,
+a.level1.curSelectedNode a.opt-btn,
+a.level2.curSelectedNode a.opt-btn{
+	display: inline-block;
+}
+
+.org-utree.ztree{
+	padding-top: 0;
+	margin-left: 12px;
+}
+.org-utree.ztree li .user-avatar{
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	display: inline-block;
+	padding: 2px;
+	background-color: #fff;
+	border: 1px solid #DADFE6;
+}
+.org-utree.org-corporation-utree.ztree{
+	padding: 0 5px 0 0;
+	margin-left: 0;
+}
+.org-corporation-utree li .opt-edit-btn{
+	margin: 3px 5px 0 0;
+	display: none;
+}
+.org-corporation-utree li .opt-edit-btn:hover{
+	background-position: -38px 0;
+}
+.org-corporation-utree li:hover .opt-edit-btn{
+	display: inline-block;
+}
+.org-corporation-utree.ztree li a.curSelectedNode i.opt-edit-btn{
+	background-position: 3px -18px;
+}
+.org-utree.ztree li span.button{
+	background-image: url(../image/org_ztree.png);
+}
+.org-utree.ztree li span.button.noline_open{
+	margin-left: -12px;
+	width: 32px;
+	background-position: 0 -54px;
+}
+.org-utree.ztree li span.button.noline_close{
+	margin-left: -12px;
+	width: 32px;
+	background-position: 0 -72px;
+}
+
+.org-utree.ztree li span.button.noline_docu{
+	background-position: -36px 0;
+}
+.org-utree.ztree li span.button.corporation{
+	background-position: 0 0;
+	margin-right: 5px;
+}
+.org-utree.ztree li span.button.switch{
+	margin-top: 4px;
+}
+.org-utree.ztree li a{
+	padding-left: 0;
+	position: relative;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ztree-wrap{
+	padding-left: 15px;
+	overflow-y: auto;
+	overflow-x: hidden; 
+}

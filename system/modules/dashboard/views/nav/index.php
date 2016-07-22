@@ -54,10 +54,12 @@ use application\core\utils\IBOS;
 										<?php if ( $nav['system'] == '1' ): ?>
 											<span class="fss">系统内置</span>
 										<?php else: ?>
-											<select class="type-select input-small span6">
+											<span class="fss">超链接</span>
+											<!-- 暂时隐藏单页图文功能 -->
+											<!-- <select class="type-select input-small span6">
 												<option value="0" <?php if($nav['type'] == 0): ?>selected<?php endif; ?>>超链接</option>
 												<option value="1" <?php if($nav['type'] == 1): ?>selected<?php endif; ?>>单页图文</option>
-											</select>
+											</select> -->
 										<?php endif; ?>
 									</div>
 									<div class="nav-w35 system-url">
@@ -113,10 +115,11 @@ use application\core\utils\IBOS;
 													<?php if ( $subVal['system'] == '1' ): ?>
 														<span class="fss">系统内置</span>
 													<?php else: ?>
-														<select class="type-select input-small span6">
+														<span class="fss">超链接</span>
+														<!-- <select class="type-select input-small span6">
 															<option value="0" <?php if($subVal['type'] == 0): ?>selected<?php endif; ?>>超链接</option>
 															<option value="1" <?php if($subVal['type'] == 1): ?>selected<?php endif; ?>>单页图文</option>
-														</select>
+														</select> -->
 													<?php endif; ?>
 												</div>
 												<div class="nav-w35 system-url">
@@ -185,17 +188,14 @@ use application\core\utils\IBOS;
 			</div>
 		</div>
 		<div class="nav-w14" data-type="0">
-			<select class="type-select input-small span6">
-				<option value="0">超链接</option>
-				<option value="1">单页图文</option>
-			</select>
+			<span class="fss">超链接</span>
 		</div>
 		<div class="nav-w35 system-url">
 			<div class="nav-url">
 				<input type="text" data-type='url' class="input-small span9 mark" name="newnavs[<%=id%>][url]">
 				<input type="hidden" data-type="isSystem" name="newnavs[<%=id%>][isSystem]" value="0">
 			</div>
-			<div class="single-page hidden" style="display:none!important;">
+			<div class="single-page hidden">
 				<a class="dib" href="">修改内容</a>
 				<a class="dib mls" data-action="previewPage" href="javascript:;">预览</a>
 				<input type="hidden" data-type="pageid" value="0">
@@ -230,17 +230,14 @@ use application\core\utils\IBOS;
 			</div>
 		</div>
 		<div class="nav-w14" data-type="0">
-			<select class="type-select input-small span6">
-				<option value="0">超链接</option>
-				<option value="1">单页图文</option>
-			</select>
+			<span class="fss">超链接</span>
 		</div>
 		<div class="nav-w35 system-url">
 			<div class="nav-url">
 				<input type="text" data-type="url" class="input-small span9 mark" name="newnavs[<%=id%>][url]" />
 				<input type="hidden" data-type="isSystem" name="newnavs[<%=id%>][isSystem]" value="0">
 			</div>
-			<div class="single-page hidden" style="display:none!important;">
+			<div class="single-page hidden">
 				<a class="dib" href="">修改内容</a>
 				<a class="dib mls" data-action="previewPage" href="javascript:;">预览</a>
 				<input type="hidden" data-type="pageid" value="0">

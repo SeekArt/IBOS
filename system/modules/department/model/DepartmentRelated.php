@@ -24,57 +24,53 @@ use application\modules\user\model\User;
 
 class DepartmentRelated extends Model {
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
-    public function tableName() {
-        return '{{department_related}}';
-    }
+	public function tableName() {
+		return '{{department_related}}';
+	}
 
-    /**
-     * 根据uid查找赋值部门ID
-     * @staticvar array $uids 用户数组缓存
-     * @param integer $uid 用户id
-     * @return array
-     */
-    public function fetchAllDeptIdByUid( $uid ) {
-        static $uids = array();
-        if ( !isset( $uids[$uid] ) ) {
-            $deptids = $this->fetchAll( array( 'select' => 'deptid', 'condition' => '`uid` = :uid', 'params' => array( ':uid' => $uid ) ) );
-            $uids[$uid] = Convert::getSubByKey( $deptids, "deptid" );
-        }
-        return $uids[$uid];
-    }
+	/**
+	 * 根据uid查找赋值部门ID
+	 * @staticvar array $uids 用户数组缓存
+	 * @param integer $uid 用户id
+	 * @return array
+	 */
+	public function fetchAllDeptIdByUid( $uid ) {
+		return User::model()->findAllDeptidByUid( $uid, false );
+	}
 
-    /**
-     *
-     * @param type $deptId
-     * @return type
-     */
-    public function fetchAllUidByDeptId( $deptId ) {
-        $criteria = array( 'select' => 'uid', 'condition' => "`deptid`={$deptId}" );
-        $auxiliary = Convert::getSubByKey( $this->fetchAll( $criteria ), "uid" );
-        return $auxiliary;
-    }
+	/**
+	 *
+	 * @param type $deptId
+	 * @return type
+	 */
+	public function fetchAllUidByDeptId( $deptId ) {
+		return User::model()->fetchAllUidByDeptids( $deptId, true, true );
+	}
 
-    public function findDeptidIndexByUidX( $uidX = NULL ) {
-        $condition = 1;
-        if ( NULL === $uidX ) {
-            $condition = User::model()->uid_find_in_set( $uidX );
-        }
-        $related = IBOS::app()->db->createCommand()
-                ->select( 'uid,deptid' )
-                ->from( $this->tableName() )
-                ->where( $condition )
-                ->queryAll();
-        $return = array();
-        if ( !empty( $related ) ) {
-            foreach ( $related as $row ) {
-                $return[$row['uid']][] = $row['deptid'];
-            }
-        }
-        return $return;
-    }
+	public function findDeptidIndexByUidX( $uidX = NULL ) {
+		if ( NULL === $uidX ) {
+			$condition = 1;
+		} else if ( empty( $uidX ) ) {
+			return array();
+		} else {
+			$condition = User::model()->uid_find_in_set( $uidX );
+		}
+		$related = IBOS::app()->db->createCommand()
+				->select( 'uid,deptid' )
+				->from( $this->tableName() )
+				->where( $condition )
+				->queryAll();
+		$return = array();
+		if ( !empty( $related ) ) {
+			foreach ( $related as $row ) {
+				$return[$row['uid']][] = $row['deptid'];
+			}
+		}
+		return $return;
+	}
 
 }

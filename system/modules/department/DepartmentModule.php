@@ -11,7 +11,7 @@
  * 部门模块配置文件类
  * 
  * @package application.modules.department
- * @version $Id: DepartmentModule.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DepartmentModule.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,6 +20,5 @@ namespace application\modules\department;
 use application\core\modules\Module;
 
 class DepartmentModule extends Module {
-	public $__CODE__ = '90b5yW7IUgGYRgFglMDMYwOINmtt2FySiCzgcka5MhDFaI0c7o+j';
     
 }

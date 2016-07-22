@@ -357,9 +357,9 @@ $(function(){
 
 	//点击选择单页图文或超链接
 	$("#sys_nav_form").delegate('.type-select', 'change', function() {
-		var index = $(this).find('option:selected').val(),
+		var index = parseInt($(this).find('option:selected').val()),
 			$navType= $(this).parent(),
-			$linkList = $(this).parent().siblings(".nav-w40").children(),
+			$linkList = $(this).parent().siblings(".system-url").children(),
 			$urlInput = $linkList.find("input");
 		$linkList.addClass("hidden");
 		$urlInput.removeClass("mark");

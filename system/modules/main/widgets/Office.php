@@ -41,19 +41,19 @@ class Office extends CWidget {
 
     /**
      * 待处理的参数
-     * @var array 
+     * @var array
      */
     private $_param = array();
 
     /**
      * 该文档指向的附件数组
-     * @var array 
+     * @var array
      */
     private $_attach = array();
 
     /**
      * run方法处理的数组
-     * @var array 
+     * @var array
      */
     private $_var = array();
 
@@ -90,7 +90,7 @@ class Office extends CWidget {
     }
 
     /**
-     * 
+     *
      */
     public function init() {
         $attach = $this->getAttach();
@@ -123,16 +123,20 @@ class Office extends CWidget {
     }
 
     /**
-     * 
+     * @todo 完成 handleRequest 方法
      */
     public function handleRequest() {
         $allowedOps = array( 'lock', 'save' );
         $op = filter_input( INPUT_GET, 'op', FILTER_SANITIZE_STRING );
-            $bool = $this->save();
-        if($bool) {
-            return json_encode(array('isSuccess' => true, 'msg' => '保存成功'));
+
+        // if($op == 'save') {
+        $bool = $this->save();
+        // }
+
+        if ( $bool ) {
+            return json_encode( array( 'isSuccess' => true, 'msg' => '保存成功' ) );
         } else {
-            return json_encode(array('isSuccess' => false, 'msg' => '保存失败'));
+            return json_encode( array( 'isSuccess' => false, 'msg' => '保存失败' ) );
         }
     }
 
@@ -144,25 +148,25 @@ class Office extends CWidget {
 
         $file = 'Filedata';
 
-        if (empty($_FILES) || $_FILES[$file]['error'] != 0) {
+        if ( empty( $_FILES ) || $_FILES[$file]['error'] != 0 ) {
             return false;
         }
 
-        $filepath = Env::getRequest('filepath');
-        if(empty($filepath)) {
+        $filepath = Env::getRequest( 'filepath' );
+        if ( empty( $filepath ) ) {
             return false;
         }
         //$filename = filename($filepath);
 
-        if(file_exists($filepath) && is_file($filepath) && is_writable($filepath)) {
-            $bak = rename($filepath, $filepath.'.bak');
-            $bool = $bak && move_uploaded_file($_FILES[$file]['tmp_name'],$filepath);
-            if($bool) {
+        if ( file_exists( $filepath ) && is_file( $filepath ) && is_writable( $filepath ) ) {
+            $bak = rename( $filepath, $filepath . '.bak' );
+            $bool = $bak && move_uploaded_file( $_FILES[$file]['tmp_name'], $filepath );
+            if ( $bool ) {
                 // 保存新文件成功，删除掉原来的文件
-                @unlink($filepath.'.bak');
+                @unlink( $filepath . '.bak' );
             } else {
                 // 保存新文件失败，重命名备份文件回原文件名
-                rename($filepath.'.bak', $filepath);
+                rename( $filepath . '.bak', $filepath );
             }
             return $bool;
         }
@@ -225,14 +229,14 @@ class Office extends CWidget {
             $ext = StringUtil::utf8Unserialize( $param[3] );
             $return = array_merge( $return, $ext );
         }
-        if(isset($param['op'])) {
+        if ( isset( $param['op'] ) ) {
             $return['op'] = $param['op'];
         }
         return $return;
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
     private function getLicence() {

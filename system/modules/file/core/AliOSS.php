@@ -1,6 +1,6 @@
 <?php
 
-Ibos::import( 'application.modules.file.extensions.alioss.aliyun', true );
+IBOS::import( 'application.modules.file.extensions.alioss.aliyun', true );
 
 namespace application\modules\file\core;
 

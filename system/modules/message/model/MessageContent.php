@@ -143,7 +143,7 @@ class MessageContent extends Model {
         $config['ctime'] = date( 'Y-m-d H:i:s', $data['mtime'] );
         $config['source_url'] = IBOS::app()->urlManager->createUrl( 'message/pm/index' );
         // 推送私信
-		MessageUtil::push( 'pm', $data['touid'], array( 'message' => $data['content'] ) );
+        MessageUtil::push( 'pm', $data['touid'], array( 'message' => $data['content'] ) );
         return $data['listid'];
     }
 

@@ -21,7 +21,7 @@
 					<form action="<?php echo $this->createUrl('roleadmin/add'); ?>" method="post" id="position_edit_form">
 						<div class="page-list-header clearfix">
 							<div class="pull-left">
-								<span class="xwb">角色名称</span>
+								<span class="xwb">名称</span>
 								<input class="role-name mls" type="text" name="rolename" id="role_name" />
 							</div>
 							<!-- <div class="pull-right">

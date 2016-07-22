@@ -179,7 +179,7 @@ $(function() {
         el: $("#isread"),
         tmpl: '<li>'+
                     '<a href="<%= spaceurl %>" class="avatar-circle avatar-circle-small">'+
-                        '<img src="<%= imgUrl %>" data-id="4">'+
+                        '<img src="<%= avatar %>" data-id="4">'+
                     '</a>'+
                     '<%= text %>'+
                 '</li>'

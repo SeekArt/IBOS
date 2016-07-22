@@ -79,9 +79,9 @@ use application\modules\main\utils\Main;
 											</div>
 											<span class="fss"><?php echo $report['addtime']; ?></span>
 											<span class="fss ilsep">|</span>
-											<a href="javascript:;" class="j-comment fss" data-id="<?php echo $report['repid']; ?>">点评 <em><?php echo $report['commentcount']; ?></em></a>
+											<a href="javascript:;" class="j-comment fss" data-node-type="loadCommentUser" data-id="<?php echo $report['repid']; ?>">点评 <em><?php echo $report['commentcount']; ?></em></a>
 											<span class="fss ilsep">|</span>
-											<a href="javascript:;" class="j-reader fss" data-id="<?php echo $report['repid']; ?>">阅读  <em><?php echo $report['readercount']; ?></em></a>
+											<a href="javascript:;" class="j-reader fss" data-node-type="loadReader" data-id="<?php echo $report['repid']; ?>">阅读  <em><?php echo $report['readercount']; ?></em></a>
 											<?php if ( $report['stamp'] > 0 ): ?>
 												&nbsp;&nbsp;<img width="60" height="24" src="<?php echo $report['stampPath']; ?>" />
 											<?php endif; ?>

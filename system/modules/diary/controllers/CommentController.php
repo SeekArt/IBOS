@@ -8,7 +8,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 
 class CommentController extends Controller {

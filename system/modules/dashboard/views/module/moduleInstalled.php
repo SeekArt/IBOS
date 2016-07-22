@@ -97,7 +97,7 @@ use application\core\utils\Module;
 			$.artDialog({
 				title: "<?php echo IBOS::lang( 'Confirm action', 'message' ); ?>",
 				content: '<?php echo $lang['Confirm uninstall module']; ?>',
-				id: 'confirm_module_act', 
+				id: 'confirm_module_act',
 				lock: true,
 				ok: function() {
 					$.post(url, {module: module}, function(data) {

@@ -28,7 +28,11 @@ class CronController extends BaseController {
                     }
                     $minuteNew = array_slice( array_unique( $minuteNew ), 0, 12 );
                     $minuteNew = implode( "\t", $minuteNew );
-                } else {
+                }
+                elseif ( strpos( $_POST['minutenew'], '*/' ) !== FALSE ) {
+                    $minuteNew = $_POST['minutenew'];
+                }
+                else {
                     $minuteNew = intval( $_POST['minutenew'] );
                     $minuteNew = $minuteNew >= 0 && $minuteNew < 60 ? $minuteNew : '';
                 }
@@ -144,8 +148,11 @@ class CronController extends BaseController {
             } else {
                 $cron['time'] = IBOS::lang( 'Per hour' );
             }
+            
             $cron['time'] .= $cron['hour'] >= 0 && $cron['hour'] < 24 ? sprintf( '%02d', $cron['hour'] ) . IBOS::lang( 'Cron hour' ) : '';
-            if ( !in_array( $cron['minute'], array( -1, '' ) ) ) {
+            if ( strpos( $cron['minute'], '*/' ) !== FALSE ) {
+                $cron['time'] = IBOS::lang( 'Every few minutes', '', array( '{minutes}' => str_replace( '*/', '', $cron['minute'] ) ) );
+            } elseif ( !in_array( $cron['minute'], array( -1, '' ) ) ) {
                 foreach ( $cron['minute'] = explode( "\t", $cron['minute'] ) as $k => $v ) {
                     $cron['minute'][$k] = sprintf( '%02d', $v );
                 }
@@ -154,6 +161,7 @@ class CronController extends BaseController {
             } else {
                 $cron['time'] .= '00' . IBOS::lang( 'Cron minute' );
             }
+
             $cron['lastrun'] = $cron['lastrun'] ? Convert::formatDate( $cron['lastrun'], IBOS::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . IBOS::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';
 //			$cron['nextcolor'] = $cron['nextrun'] && $cron['nextrun'] + $_G['setting']['timeoffset'] * 3600 < TIMESTAMP ? 'style="color: #ff0000"' : '';
             $cron['nextrun'] = $cron['nextrun'] ? Convert::formatDate( $cron['nextrun'], IBOS::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . IBOS::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';

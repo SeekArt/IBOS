@@ -54,6 +54,9 @@ class Notify extends Model {
         }
         // 统一推送数组，此数组将在后面的步骤中逐渐赋值
         $pushDatas = array();
+        
+        // 设置酷办公推送,  change:: 取消个人设置里的开关，从setPushByUser里提出来。
+        $this->setCoPush( $toIds, $data, $pushDatas );
         // 设置微信推送
         $this->setWechatPush( $toIds, $data, $pushDatas );
         $this->setImPush( $toIds, $data );
@@ -155,7 +158,7 @@ class Notify extends Model {
                 }
                 // 加载个人提醒设置
                 $setting = !empty( $user['remindsetting'] ) ? StringUtil::utf8Unserialize( $user['remindsetting'] ) : array();
-                $pushToCO[$user['uid']] = isset( $setting[$node['node']] ) && isset( $setting[$node['node']]['app'] ) && $setting[$node['node']]['app'] == 1;
+//                $pushToCO[$user['uid']] = isset( $setting[$node['node']] ) && isset( $setting[$node['node']]['app'] ) && $setting[$node['node']]['app'] == 1;
 
                 if ( !empty( $node['sendemail'] ) ) {
                     $pushToEmail = isset( $setting[$node['node']] ) && isset( $setting[$node['node']]['email'] ) && $setting[$node['node']]['email'] == 1;
@@ -169,7 +172,7 @@ class Notify extends Model {
                 }
             }
             // 如果存在该节点并且用户允许推送至酷办公，发送之
-            $this->setCoPush( array_keys( $pushToCO ), $data, $pushDatas );
+//            $this->setCoPush( array_keys( $pushToCO ), $data, $pushDatas );
             if ( !empty( $sendArray ) ) {
                 $connection = IBOS::app()->db;
                 $transaction = $connection->beginTransaction();

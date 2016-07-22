@@ -10,7 +10,7 @@
 /**
  * 消息模块函数库类
  * @package application.modules.message.utils
- * @version $Id: Message.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Message.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -63,11 +63,17 @@ class Message {
             );
             $rs = Cloud::getInstance()->fetchPush( $params );
             $data['posturl'] = Cloud::getInstance()->getUrl();
-			if ( !is_array( $rs ) ) {
-            $data['return'] = $rs;
-			} else {
-				$data['return'] = CJSON::encode( $rs );
-			}
+            if ( !is_array( $rs ) ) {
+                $data['return'] = $rs;
+            } else {
+                $data['return'] = CJSON::encode( $rs );
+            }
+
+            /**
+             * 这里直接把返回的结果保存在了notify_sms表里
+             * ps：返回的提示信息参见：http://cloud.ibos.cn/下的Application.Api.Core.ApiCode.class.php
+             * 嗯，我是指源代码，上面的无法直接访问的~~~
+             */
             NotifySms::model()->sendSms( $data );
             return true;
         } else {

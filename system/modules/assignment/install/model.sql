@@ -41,17 +41,17 @@ CREATE TABLE IF NOT EXISTS `{{assignment_apply}}` (
 
 DROP TABLE IF EXISTS `{{assignment_remind}}`;
 CREATE TABLE IF NOT EXISTS `{{assignment_remind}}` (
-  `id` int(11) unsigned NOT NULL auto_increment COMMENT '记录id',
-  `assignmentid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '指派任务id',
-  `calendarid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '日程的id',
-  `remindtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '提醒时间，时间戳',
-  `uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '提醒人uid',
-  `content` varchar(255) NOT NULL DEFAULT '' COMMENT '提醒内容',
+	`id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '记录id',
+	`assignmentid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '指派任务id',
+	`calendarid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '日程的id',
+	`remindtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '提醒时间，时间戳',
+	`uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '提醒人uid',
+	`content` varchar(255) NOT NULL DEFAULT '' COMMENT '提醒内容',
 	`status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态。0 未提醒，1 已提醒',
-  PRIMARY KEY  (`id`),
-  KEY `A_ID` (`assignmentid`) USING BTREE,
-  KEY `C_ID` (`calendarid`) USING BTREE,
-  KEY `U_ID` (`uid`) USING BTREE
+	PRIMARY KEY (`id`),
+	KEY `A_ID` (`assignmentid`) USING BTREE,
+	KEY `C_ID` (`calendarid`) USING BTREE,
+	KEY `U_ID` (`uid`) USING BTREE
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 
 DROP TABLE IF EXISTS `{{assignment_log}}`;
@@ -77,6 +77,7 @@ INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `content
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_applycancel_message','任务取消申请消息','assignment','assignment/default/Applycancel assign title','assignment/default/Applycancel assign content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_applycancelresult_message','任务取消申请结果','assignment','assignment/default/Applycancelresult title','assignment/default/Applycancelresult content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('assignment_appraisal_message','任务评价消息','assignment','assignment/default/Appraisal assign title','assignment/default/Appraisal assign content','1','1','1','2');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','任务指派','assignment/unfinished/index','0','1','0','4','assignment');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','任务指派','assignment/unfinished/index','0','1','0','1','assignment');
 INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('assignment','任务指派','assignment/unfinished/index','提供企业工作任务指派','10','0');
 INSERT INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('完成任务指派', 'finishassignment', '1', '0', '0', '1','1');
+INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ( '1', 'system','assignment', '任务指派定时提醒', 'CronAssignmentTimer.php', '1393516800', '1393603200', '-1', '-1', '-1', '*/1');

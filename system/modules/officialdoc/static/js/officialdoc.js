@@ -119,7 +119,7 @@ var Official = {
 				ue.ready(function() {
 					var setTemplate = function() {
 						Official.op.getTemplate(tplId).done(function(res){
-							ue.setContent(res.content);
+							ue.setContent(res.escape_content);
 						});
 					};
 					if (ue.getContent() !== "") {
@@ -190,6 +190,9 @@ var Official = {
 
 		$tree.waiting(null, "mini");
 		Official.op.getTree().done(function(data) {
+			$.map(data, function(item) {
+	            item.name = U.entity.unescape(item.name);
+	        });
 			var treeSettings = {
 				data: {
 					simpleData: {
@@ -200,7 +203,25 @@ var Official = {
 					showLine: false,
 					showIcon: false,
 					selectedMulti: false
-				}
+				},
+				callback: {
+	                onClick: function(event, treeId, treeNode) {
+	                    var param = U.getUrlParam(),
+	                        catid = treeNode.catid;
+
+	                        
+                        Ibos.local.set("catid", catid);
+	                    // 路由判断是否列表页
+	                    if (/index/.test(param.r)) {
+	                        try {
+	                            OfficialIndex.tableConfig.catid = catid;
+	                            OfficialIndex.tableConfig.ajaxSearch();
+	                        } catch (e) {}
+	                    } else {
+	                        window.location.href = Ibos.app.url('officialdoc/officialdoc/index');
+	                    }
+	                }
+	            }
 			};
 
 			var selectedNode;
@@ -222,6 +243,10 @@ var Official = {
 								tNode.catid = node.id;
 								tree.updateNode(tNode);
 								Ui.tip(Ibos.l('TREEMENU.ADD_CATELOG_SUCCESS'));
+							},
+							error: function(res) {
+								Ui.tip(res.msg, 'warning');
+                        		return false;
 							}
 						}, {aid: aid});
 						categoryMenu.menu.hide();
@@ -235,6 +260,10 @@ var Official = {
 							url: Ibos.app.url('officialdoc/category/edit'),
 							success: function(node, tree) {
 								Ui.tip(Ibos.l('TREEMENU.EDIT_CATELOG_SUCCESS'));
+							},
+							error: function(res) {
+								Ui.tip(res.msg, 'warning');
+                        		return false;
 							}
 						});
 						categoryMenu.menu.hide();

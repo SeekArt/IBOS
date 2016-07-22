@@ -4,7 +4,7 @@
  * IBOS本地文件 处理类
  *
  * @author banyanCheung <banyan@ibos.com.cn>
- * @link http://www.ibos.com.cn/ 
+ * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2013 IBOS Inc
  */
 /**
@@ -17,13 +17,25 @@
 
 namespace application\core\engines\local;
 
+use application\core\engines\FileOperationInterface;
 use application\core\utils\Attach;
+use application\core\utils\Cache;
+use application\core\utils\Convert;
 use application\core\utils\File;
 use application\core\utils\IBOS;
+use application\core\utils\Image;
+use application\core\utils\Org;
 use application\core\utils\StringUtil;
+use application\extensions\ThinkImage\ThinkImage;
 use application\modules\main\model\Attachment;
+use application\modules\user\model\BgTemplate;
+use application\modules\user\utils\User as UserUtil;
 
-class LocalFile {
+class LocalFile implements FileOperationInterface {
+
+	public function __construct( $config = array() ) {
+		
+	}
 
 	private static $_instance;
 
@@ -76,8 +88,16 @@ class LocalFile {
 	 * @param string $fileName
 	 * @return string
 	 */
-	public function fileName( $fileName ) {
-		return sprintf( '%s', $fileName );
+	public function fileName( $fileName, $suffix = false ) {
+		$string = '';
+		if ( true === $suffix ) {
+			$string = '?' . VERHASH;
+		}
+		return $fileName . $string;
+	}
+
+	public function imageName( $fileName ) {
+		return $this->fileName( $fileName );
 	}
 
 	/**
@@ -86,7 +106,20 @@ class LocalFile {
 	 * @return string
 	 */
 	public function readFile( $fileName ) {
-		return file_get_contents( $fileName );
+		if ( file_exists( $fileName ) )
+			return file_get_contents( $fileName );
+		return false;
+	}
+
+	public function copyFile( $source, $savepath, $deleteSrc = false ) {
+		$dir = substr( $savepath, 0, strripos( $savepath, '/' ) );
+		if ( !file_exists( $dir ) ) {
+			mkdir( $dir, 0777, true );
+		}
+		if ( true === $deleteSrc ) {
+			$this->deleteFile( $source );
+		}
+		return copy( $source, $savepath );
 	}
 
 	/**
@@ -217,6 +250,138 @@ class LocalFile {
 			readfile( $file );
 			exit();
 		}
+	}
+
+	public function uploadFile( $destFileName, $srcFileName ) {
+		$isUpload = move_uploaded_file( $destFileName, $srcFileName );
+		if ( $isUpload ) {
+			return $destFileName;
+		} else {
+			return false;
+		}
+	}
+
+	public function createAvatar( $srcPath, $params ) {
+		$avatarPath = 'data/avatar/';
+		// 三种尺寸的地址
+		$avatarBig = UserUtil::getAvatar( $params['uid'], 'big' );
+		$avatarMiddle = UserUtil::getAvatar( $params['uid'], 'middle' );
+		$avatarSmall = UserUtil::getAvatar( $params['uid'], 'small' );
+		// 如果是本地环境，先确定文件路径要存在
+		File::makeDirs( $avatarPath . dirname( $avatarBig ) );
+		// 先创建空白文件
+		$this->createFile( $avatarPath . $avatarBig, '' );
+		$this->createFile( $avatarPath . $avatarMiddle, '' );
+		$this->createFile( $avatarPath . $avatarSmall, '' );
+		// 加载类库
+		IBOS::import( 'ext.ThinkImage.ThinkImage', true );
+		$imgObj = new ThinkImage( THINKIMAGE_GD );
+		//裁剪原图
+		$imgObj->open( $srcPath )->crop( $params['w'], $params['h'], $params['x'], $params['y'] )->save( $srcPath );
+		//生成缩略图
+		$imgObj->open( $srcPath )->thumb( 180, 180, 1 )->save( $avatarPath . $avatarBig );
+		$imgObj->open( $srcPath )->thumb( 60, 60, 1 )->save( $avatarPath . $avatarMiddle );
+		$imgObj->open( $srcPath )->thumb( 30, 30, 1 )->save( $avatarPath . $avatarSmall );
+		return array(
+			'avatar_big' => $avatarPath . $avatarBig,
+			'avatar_middle' => $avatarPath . $avatarMiddle,
+			'avatar_small' => $avatarPath . $avatarSmall,
+		);
+	}
+
+	public function createBg( $srcPath, $params ) {
+		$bgPath = 'data/home/';
+		// 三种尺    寸的地址
+		$bgBig = UserUtil::getBg( $params['uid'], 'big' );
+//		$bgMiddle = UserUtil::getBg( $params['uid'], 'middle' );
+		$bgSmall = UserUtil::getBg( $params['uid'], 'small' );
+		File::makeDirs( $bgPath . dirname( $bgBig ) );
+		// 先创建空白文件
+		$this->createFile( $bgPath . $bgBig, ' ' );
+//		$this->createFile( $bgPath . $bgMiddle, ' ' );
+		$this->createFile( $bgPath . $bgSmall, ' ' );
+		// 加载类库
+		$imgObj = new ThinkImage( THINKIMAGE_GD );
+		//裁剪原图(系统的背景图不需要裁剪)
+		if ( !isset( $params['noCrop'] ) ) {
+			$imgObj->open( $srcPath )->crop( $params['w'], $params['h'], $params['x'], $params['y'], 1000, 300 )->save( $srcPath );
+		}
+		//生成缩略图
+		$imgObj->open( $srcPath )->thumb( 1000, 300, 1 )->save( $bgPath . $bgBig );
+		//$imgObj->open( $srcPath )->thumb( 520, 156, 1 )->save( $bgPath . $bgMiddle );
+		$imgObj->open( $srcPath )->thumb( 400, 120, 1 )->save( $bgPath . $bgSmall );
+		$host = $this->getImgHost( $bgPath );
+		// 设置为公用模板
+		if ( isset( $params['commonSet'] ) && $params['commonSet'] ) {
+			$this->setCommonBg( $bgPath, $bgBig );
+		}
+		return array(
+			'bg_big' => $host . $bgBig,
+			'bg_middle' => '',
+			'bg_small' => $host . $bgSmall,
+		);
+	}
+
+	/**
+	 * 设置公用模板
+	 * @param string $src 图片路径
+	 * @return boolean
+	 */
+	private function setCommonBg( $bgPath, $bgBig ) {
+		$host = $this->getImgHost( $bgPath );
+		$data = array(
+			'desc' => '',
+			'status' => 0,
+			'system' => 0,
+			'image' => $host . $bgBig,
+			'image_path' => $bgPath . $bgBig,
+		);
+		$addRes = BgTemplate::model()->add( $data );
+		return $addRes;
+	}
+
+	public function getImgHost( $path ) {
+		return $path;
+	}
+
+	public function getHost( $path ) {
+		return $path;
+	}
+
+	public function thumbnail( $fromFileName, $toFileName, $thumbWidth = 96, $thumbHeight = 96 ) {
+		Image::thumb( $fromFileName, $toFileName, $thumbWidth, $thumbHeight );
+		return $toFileName;
+	}
+
+	public function getOrgJs( $typeArray ) {
+		$string = '';
+		foreach ( $typeArray as $type ) {
+			$js = $this->fileExists( 'data/org/' . $type . '.js' );
+			if ( !$js ) {
+				Org::update( $type );
+			}
+			$string .= '<script src = "data/org/' . $type . '.js?' . VERHASH . '" ></script>';
+		}
+		return $string;
+	}
+
+	public function setOrgJs( $type, $value ) {
+		Cache::set( $type . '_js', 1 ); //本地的话，直接引用js，所以只要设置这个cache存在就好了
+		return $this->createFile( 'data/org/' . $type . '.js', $value );
+	}
+
+	//tp的文字水印不支持透明度
+	public function waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath ) {
+		$rgb = Convert::hexColorToRGB( $color );
+		Image::waterMarkString( $text, $size, $from, $to, $position, $quality, $rgb, $fontPath );
+	}
+
+	//tp的图片水印
+	public function waterPic( $from, $pic, $to, $position, $alpha, $quality, $imgHeight, $imgWidth ) {
+		// 加载类库
+		$imgObj = new ThinkImage( THINKIMAGE_GD );
+		$imgObj->open( $pic )->thumb( $imgWidth, $imgHeight, 1 )->save( $pic );
+		Image::water( $from, $pic, $to, $position, $alpha, $quality );
 	}
 
 }

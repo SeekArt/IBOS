@@ -13,6 +13,7 @@ class Module extends CWebModule {
      */
     final protected function init() {
         $module = $this->getId();
+		defined( 'MODULE_NAME' ) || define( 'MODULE_NAME', $module );
         $this->controllerNamespace = 'application\modules\\' . $module . '\controllers';
         if ( IBOS::app()->hasEventHandler( 'onInitModule' ) ) {
             IBOS::app()->onInitModule( new CEvent( IBOS::app() ) );

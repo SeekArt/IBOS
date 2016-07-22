@@ -6,12 +6,12 @@
 			<li>
 				<span><?php echo $lang['Optimize Cache']; ?></span>
 			</li>
-			<li>
+			<!-- <li>
 				<a href="<?php echo $this->createUrl( 'optimize/search' ); ?>"><?php echo $lang['Full-text search setup']; ?></a>
 			</li>
 			<li>
 				<a href="<?php echo $this->createUrl( 'optimize/sphinx' ); ?>"><?php echo $lang['Sphnix control']; ?></a>
-			</li>
+			</li> -->
 		</ul>
 	</div>
 	<div>

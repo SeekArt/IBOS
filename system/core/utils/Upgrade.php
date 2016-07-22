@@ -9,9 +9,9 @@
  */
 /**
  * IBOS升级处理文件类,提供所有升级相关方法
- * 
+ *
  * @package application.core.utils
- * @version $Id: Upgrade.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Upgrade.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,7 +20,6 @@ namespace application\core\utils;
 use application\core\utils\Cache as CacheUtil;
 use application\modules\main\model\Setting;
 use application\modules\dashboard\model\Cache as CacheModel;
-
 
 class Upgrade {
 
@@ -31,20 +30,20 @@ class Upgrade {
 
     /**
      * 本地代号
-     * @var string 
+     * @var string
      */
     public static $locale = 'SC';
 
     /**
      * 升级编码
-     * @var string 
+     * @var string
      */
     public static $charset = 'UTF8';
 
     /**
      * 获取更新文件列表
      * @param array $upgradeInfo 版本信息
-     * @return array array('file'=>文件名列表, 'md5'=>每个文件对应的md5码) 
+     * @return array array('file'=>文件名列表, 'md5'=>每个文件对应的md5码)
      */
     public static function fetchUpdateFileList( $upgradeInfo ) {
         // 包含更新信息的文件的路径
@@ -112,26 +111,26 @@ class Upgrade {
             }
         }
         $modifyList = $showList = $searchList = array();
-		if ( !empty( $ibosFiles ) ) {
-        foreach ( $ibosFiles as $line ) {
-            $file = trim( substr( $line, 34 ) );
-            $md5DataNew[$file] = substr( $line, 0, 32 );
-            if ( isset( $newUpgradeFileList[$file] ) ) {
-                // md5不相等，则需要升级
-                if ( $md5DataNew[$file] != $newUpgradeFileList[$file] ) {
-                    $modifyList[$file] = $file;
-                } else {
-                    $showList[$file] = $file;
+        if ( !empty( $ibosFiles ) ) {
+            foreach ( $ibosFiles as $line ) {
+                $file = trim( substr( $line, 34 ) );
+                $md5DataNew[$file] = substr( $line, 0, 32 );
+                if ( isset( $newUpgradeFileList[$file] ) ) {
+                    // md5不相等，则需要升级
+                    if ( $md5DataNew[$file] != $newUpgradeFileList[$file] ) {
+                        $modifyList[$file] = $file;
+                    } else {
+                        $showList[$file] = $file;
+                    }
                 }
             }
         }
-		}
         return array( $modifyList, $showList );
     }
 
     /**
      * 检查更新信息，这些信息将被记录在setting中的upgrade中
-     * @return boolean 
+     * @return boolean
      */
     public static function checkUpgrade() {
         $return = false;
@@ -204,7 +203,7 @@ class Upgrade {
         }
         //下载这个文件
         $tempUploadFileUrl = self::UPGRADE_URL . $upgradeInfo['latestversion'] . '/' . $upgradeInfo['latestrelease'] . '/' . self::$locale . '/' . $folder . '/' . $file . '.sc';
-		$response = File::fileSockOpen( $tempUploadFileUrl, $offset, '', '', false, '', 15, true, 'URLENCODE', true, $position );
+        $response = File::fileSockOpen( $tempUploadFileUrl, $offset, '', '', false, '', 15, true, 'URLENCODE', true, $position );
         if ( $response ) {
             if ( $offset && strlen( $response ) == $offset ) {
                 $downloadFileFlag = false;

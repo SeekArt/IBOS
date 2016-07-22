@@ -39,12 +39,12 @@ $(function() {
 		button_placeholder_id: "qn_upload",
 		custom_settings: {
 			targetId: "qn_img_preview",
-			inputId: "qn_img_value",
 			success: function(data, res) {
 				if (res.isSuccess) {
 					// 上传成功后，隐藏自动生成的图标效果
 					// 显示重置按钮
 					qnIconPreview.hide();
+					$("#qn_img_value").val(res.path);
 					$("#reset_qn_upload").show();
 				} else {
 					Ui.tip(res.msg, 'warning');

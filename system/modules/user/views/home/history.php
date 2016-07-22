@@ -70,7 +70,7 @@ use application\core\utils\IBOS;
 					<?php foreach ( $history as $log ): ?>
 						<?php $row = json_decode( $log['message'], true ); ?>
 						<tr>
-							<td><?php echo date( 'y-n-j H:i:s', $log['logtime'] ); ?></td>
+							<td><?php echo $log['logtime']; ?></td>
 							<td><?php echo $row['ip']; ?></td>
 							<td><?php echo!empty( $row['address'] ) ? $row['address'] : Convert::convertIp( $row['ip'] ); ?></td>
 							<td class="fss"><?php echo $terminal[$row['terminal']]; ?></td>

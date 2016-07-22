@@ -5,7 +5,7 @@
  * @package application.modules.main.components
  * @todo 缓存的增删查改方法
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Session.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Session.php 7023 2016-05-10 08:01:05Z Aeolus $
  */
 
 namespace application\modules\main\components;

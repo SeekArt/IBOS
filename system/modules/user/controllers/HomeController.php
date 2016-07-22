@@ -69,6 +69,7 @@ class HomeController extends HomeBaseController {
 						$model['application\modules\user\model\User'][$key] = util\StringUtil::filterCleanHtml( $value );
 					}
 				}
+
 				//简单检查一下手机、邮箱、电话和QQ格式
 				//手机就简单的看看是否是11位数字，可以做更严格的验证
 				if ( isset( $model['application\modules\user\model\User'] ) && isset( $model['application\modules\user\model\User']['mobile'] ) ) {
@@ -134,24 +135,25 @@ class HomeController extends HomeBaseController {
 			$uid = $this->getUid();
 			$isCo = UserBinding::model()->getIsBinding( $uid, 'co' );
 			$cobinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
-            $dataCo = array(
+			$dataCo = array(
 				'co' => $isCo,
 				'cobinding' => $cobinding
 			);
-            $dataProvider = 'get' . ucfirst( $op );
-            $data = array();
+			$dataProvider = 'get' . ucfirst( $op );
+			$data = array();
 			if ( method_exists( $this, $dataProvider ) ) {
-                $data = $this->$dataProvider();
+				$data = $this->$dataProvider();
 			}
-            $param = array_merge( array(
-                'user' => $this->getUser(),
-                'op' => $op,
-                    ), $data, $dataCo );
+			$param = array_merge( array(
+				'user' => $this->getUser(),
+				'op' => $op,
+					), $data, $dataCo );
+
 			$this->setPageState( 'breadCrumbs', array(
 				array( 'name' => util\IBOS::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
 				array( 'name' => util\IBOS::lang( 'Profile' ) )
 			) );
-            $this->render( $op, $param );
+			$this->render( $op, $param );
 		}
 	}
 
@@ -229,10 +231,10 @@ class HomeController extends HomeBaseController {
 			'username' => $username,
 			'password' => md5( $password ),
 		);
-		$aeskey = Yii::app()->setting->get( 'aeskey' );
+		$aeskey = Yii::app()->setting->get( 'setting/aeskey' );
 		$oaUrl = rtrim( Yii::app()->setting->get( 'siteurl' ), '/' );
 		$signature = $this->getSignature( $aeskey, $oaUrl );
-        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+		$unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 		$param = array(
 			'code' => $unit['corpcode'],
 			'url' => urlencode( $oaUrl ),
@@ -245,24 +247,24 @@ class HomeController extends HomeBaseController {
 		$res = $api->fetchResult( $url, $userArr, 'post' );
 		if ( !is_array( $res ) ) {
 			$resArr = CJSON::decode( $res, true );
-		//返回成功，则查找绑定表，
-		if ( $resArr['isSuccess'] ) {
-			$userBind = UserBinding::model()->fetchBindValue( $this->getUid(), 'co' );
-			if ( empty( $userBind ) ) {
-				$data = array(
-					'uid' => $this->getUid(),
-					'bindvalue' => $resArr['guid'],
-					'app' => 'co'
-				);
-				$return = UserBinding::model()->add( $data );
-				if ( !$return ) {
-					$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '绑定失败' ) );
+			//返回成功，则查找绑定表，
+			if ( $resArr['isSuccess'] ) {
+				$userBind = UserBinding::model()->fetchBindValue( $this->getUid(), 'co' );
+				if ( empty( $userBind ) ) {
+					$data = array(
+						'uid' => $this->getUid(),
+						'bindvalue' => $resArr['guid'],
+						'app' => 'co'
+					);
+					$return = UserBinding::model()->add( $data );
+					if ( !$return ) {
+						$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '绑定失败' ) );
 					} else {
 						$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => '绑定成功' ) );
-			}
-		}
+					}
+				}
 			} else {
-		$this->ajaxReturn( $resArr );
+				$this->ajaxReturn( $resArr );
 			}
 		} else {
 			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => $res['error'] ) );
@@ -356,7 +358,7 @@ class HomeController extends HomeBaseController {
 	 * @param string $op 验证动作
 	 * @param string $data 验证目标（邮件地址或手机）
 	 * @param string $val 验证码
-	 * @return boolean 创建成功与否 
+	 * @return boolean 创建成功与否
 	 */
 	private function makeVerify( $op, $data, $val ) {
 		if ( $op == 'email' ) {
@@ -404,13 +406,10 @@ class HomeController extends HomeBaseController {
 		// 排名百分比
 		$rankPercent = (float) 100 - ( round( ($curRanking + 1 ) / $totalRanking, 2 ) * 100);
 		// 积分top6
-		$ranklist = array();
 		$top6 = array_slice( $allCreditRankList, 0, 6 );
-		foreach ( $top6 as $uid ) {
-			$ranklist[] = UserModel\User::model()->fetchByUid( $uid );
-		}
+		$ranklist = UserModel\User::model()->fetchAllByUids( $top6 );
 		// 是否第一名
-		if ( !empty( $ranklist ) && $ranklist[0]['uid'] == $this->getUid() ) {
+		if ( !empty( $ranklist ) && $allCreditRankList[0] == $this->getUid() ) {
 			$isTop = true;
 		} else {
 			$isTop = false;
@@ -464,12 +463,12 @@ class HomeController extends HomeBaseController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return array
 	 */
 	protected function getRemind() {
 		$user = $this->getUser();
-        $user['remindsetting'] = !empty( $user['remindsetting'] ) ? StringUtil::utf8Unserialize( $user['remindsetting'] ) : array();
+		$user['remindsetting'] = !empty( $user['remindsetting'] ) ? StringUtil::utf8Unserialize( $user['remindsetting'] ) : array();
 		$nodeList = Notify::model()->getNodeList();
 		$coBinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
 		foreach ( $nodeList as $id => &$node ) {
@@ -493,7 +492,7 @@ class HomeController extends HomeBaseController {
 	 * @return array
 	 */
 	protected function getCreditLog() {
-		util\Cache::load( array( 'creditrule' ) );
+		util\Cache::load(  'creditrule' );
 		// 系统
 		$creditRule = CreditRule::model()->fetchAllSortByPk( 'rid' );
 		$credits = util\IBOS::app()->setting->get( 'setting/extcredits' );

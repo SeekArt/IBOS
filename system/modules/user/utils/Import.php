@@ -2,15 +2,12 @@
 
 namespace application\modules\user\utils;
 
+use application\core\utils\Cache;
 use application\core\utils\IBOS;
+use application\core\utils\Org;
 use application\core\utils\StringUtil;
-use application\modules\department\model\Department as DepartmentModel;
-use application\modules\department\model\DepartmentRelated as DepartmentRelatedModel;
+use application\modules\main\utils\ImportInterface;
 use application\modules\main\utils\ImportParent;
-use application\modules\user\model\User as UserModel;
-use application\modules\user\model\UserCount as UserCountModel;
-use application\modules\user\model\UserProfile as UserProfileModel;
-use application\modules\user\model\UserStatus as UserStatusModel;
 
 /**
  * Description
@@ -22,149 +19,307 @@ use application\modules\user\model\UserStatus as UserStatusModel;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-3-24 17:06:34
- * @version $Id: Import.php 6722 2016-03-31 01:30:57Z tanghang $
+ * @version $Id: Import.php 7339 2016-06-07 03:37:59Z tanghang $
  */
-class Import extends ImportParent {
+class Import extends ImportParent implements ImportInterface {
 
-    public $tplField = array(
-        '手机号' => 'u.mobile',
-        '密码' => 'u.password',
-        '真实姓名' => 'u.realname',
-        '性别' => 'u.gender',
-        '邮箱' => 'u.email',
-        '微信号' => 'u.weixin',
-        '工号' => 'u.jobnumber',
-        '用户名' => 'u.username',
-        '生日' => 'up.birthday',
-        '住宅电话' => 'up.telephone',
-        '地址' => 'up.address',
-        'QQ' => 'up.qq',
-        '自我介绍' => 'up.bio',
-        '岗位' => 'p.posname',
-        '部门' => 'd.deptname',
-        '角色' => 'r.rolename',
-    );
-    public $tableMap = array(
-        'u' => '{{user}}',
-        'up' => '{{user_profile}}',
-        'p' => '{{position}}',
-        'd' => '{{department}}',
-        'r' => '{{role}}',
-    );
+	public function __construct( $tpl ) {
+		parent::__construct( $tpl );
+	}
 
-    public function importUser() {
-        return $this->importData( 'user' );
-    }
+	public function table() {
+		$table = array(
+			'user' => array(
+				'u' => '{{user}}',
+				'up' => '{{user_profile}}',
+				'p' => '{{position}}',
+				'd' => '{{department}}',
+				'r' => '{{role}}',
+			),
+		);
+		return parent::returnArray( $table );
+	}
 
-    /**
-     * 父类里importData里需要importDetail处理详细的数据
-     * importData里的循环处理是通用的
-     * @param integer $i 这个是父类中循环shift出数据时的一个顺序，用以全程给error的i赋值
-     */
-    public function importUserDetail( $i ) {
-        $importUserRow = $this->import->importData['{{user}}'];
-        if ( !StringUtil::isMobile( $importUserRow['mobile'] ) ) {
-            $this->error[$i]['status'] = false;
-            $this->error[$i]['text'] .= '手机号格式不正确;';
-        }
-        if ( !empty( $importUserRow['email'] ) && !StringUtil::isEmail( $importUserRow['email'] ) ) {
-            $this->error[$i]['status'] = false;
-            $this->error[$i]['text'] .='邮箱格式不正确;';
-        }
-        $importUserProfileRow = $this->import->importData['{{user_profile}}'];
-        if ( !empty( $importUserRow['birthday'] ) && false === strtotime( $importUserProfileRow['birthday'] ) ) {
-            $this->error[$i]['status'] = false;
-            $this->error[$i]['text'] .= '生日的日期格式不正确;';
-        }
-        //------------------------------通用部分------------------------------
-        $way = $this->import->check;
-        $result = $this->refuseRepeat( $i, $way );
-        $repeat = $result['repeat'];
-        $row = $result['row'];
-        if ( false === $this->error[$i]['status'] ) {
-            return; //如果error状态为fasle，说明有不合格的，不再保存数据
-        } else {
-            $this->error[$i]['text'] .= '成功！';
-        }
-        //------------------------------    end    ------------------------------
-        $updateUserData = array(
-            'mobile' => $importUserRow['mobile'],
-            'realname' => $importUserRow['realname'],
-            'gender' => $importUserRow['gender'] == '男' ? 1 : 0,
-            'email' => $importUserRow['email'],
-            'weixin' => $importUserRow['weixin'],
-            'jobnumber' => $importUserRow['jobnumber'],
-            'username' => $importUserRow['username'],
-        );
-        $updateUserProfileData = array(
-            'birthday' => strtotime( $importUserProfileRow['birthday'] ),
-            'telephone' => $importUserProfileRow['telephone'],
-            'address' => $importUserProfileRow['address'],
-            'qq' => $importUserProfileRow['qq'],
-            'bio' => $importUserProfileRow['bio'],
-        );
-        if ( $way == 'cover' && $repeat ) {//覆盖操作并且有重复值时的处理
-            //user表处理
-            $updateUserData['password'] = md5( md5( $importUserRow['password'] ) . $row['{{user}}']['salt'] );
-            $uid = $row['{{user}}']['uid'];
-            UserModel::model()->updateAll( $updateUserData, " `uid` = '{$uid}' " );
-            UserProfileModel::model()->updateAll( $updateUserProfileData, " `uid` = '{$uid}' " );
-        } else {//这里是nothing，或者为new和cover时，没有重复字段时的处理
-            //user表处理
-            $salt = StringUtil::random( 6 );
-            $updateUserData['salt'] = $salt;
-            $updateUserData['password'] = md5( md5( $importUserRow['password'] ) . $salt );
-            $updateUserData['guid'] = StringUtil::createGuid();
-            $updateUserData['createtime'] = TIMESTAMP;
-            $uid = UserModel::model()->add( $updateUserData, true );
-            if ( $way == 'cover' ) {
-                UserProfileModel::model()->updateAll( $updateUserProfileData, " `uid` = '{$uid}' " );
-            } else {
-                //处理user的其他关联数据
-                UserCountModel::model()->add( array( 'uid' => $uid ) );
-                $ip = IBOS::app()->setting->get( 'clientip' );
-                UserStatusModel::model()->add( array( 'uid' => $uid, 'regip' => $ip, 'lastip' => $ip ) );
-                UserProfileModel::model()->add( array_merge( $updateUserProfileData, array( 'uid' => $uid ) ) );
-            }
-        }
-        //部门的处理
-        if ( !empty( $this->import->importData['{{department}}']['deptname'] ) ) {
-            $departmentString = $this->import->importData['{{department}}']['deptname'];
-            $allDepartment = IBOS::app()->db->createCommand()
-                    ->select( 'deptid,deptname,pid' )
-                    ->from( '{{department}}' )
-                    ->queryAll();
-            $departData = $this->findToCreateFolder( $allDepartment, $departmentString, 'deptid', 'pid', 'deptname' );
-            $pid = $departData['pid'];
-            if ( !empty( $departData['findArray'] ) ) {
-                foreach ( $departData['findArray'] as $departname ) {
-                    $pid = DepartmentModel::model()->add( array(
-                        'pid' => $pid, 'deptname' => $departname
-                            ), true );
-                }
-            }
-            //循环结束后的pid其实是当前数据的部门id
-            $deptid = IBOS::app()->db->createCommand()
-                    ->select( 'deptid' )
-                    ->from( '{{user}}' )
-                    ->where( " `uid` = '{$uid}' " )
-                    ->queryScalar();
-            if ( empty( $deptid ) ) {
-                UserModel::model()->updateAll( array( 'deptid' => $pid ), " `uid` = '{$uid}' " );
-            } else {
-                $deptid = IBOS::app()->db->createCommand()
-                        ->select( 'deptid' )
-                        ->from( '{{department_related}}' )
-                        ->where( " `uid` = '{$uid}' AND 'deptid' = '{$pid}' " )
-                        ->queryScalar();
-                if ( empty( $deptid ) ) {
-                    DepartmentRelatedModel::model()->add( array(
-                        'deptid' => $deptid,
-                        'uid' => $uid,
-                    ) );
-                }
-            }
-        }
-    }
+	public function pk() {
+		$pk = array(
+			'user' => array(
+				'u' => 'uid',
+				'up' => 'uid',
+				'p' => 'positionid',
+				'd' => 'deptid',
+				'r' => 'roleid',
+			),
+		);
+		return parent::returnArray( $pk );
+	}
+
+	public function rules() {
+		$rules = array(
+			'user' => array(
+				array( array( 'u.mobile' ), array( 'mobile', 'unique', 'required', ), ),
+				array( array( 'u.email' ), array( 'email', 'unique', ), ),
+				array( array( 'u.username' ), array( 'unique', ), ),
+				array( array( 'u.weixin' ), array( 'unique', ), ),
+				array( array( 'u.jobnumber' ), array( 'unique', ), ),
+				array( array( 'up.birthday' ), array( 'datetime' ) ),
+			),
+		);
+		return parent::returnArray( $rules );
+	}
+
+//    public function format() {
+//        $format = array(
+//            'user' => array(
+//                array( array( 'up.birthday' ), array( 'strtotime' ), ),
+//                array( array( 'u.gender' ), array( 'formatGender' ), ),
+////                array( array( 'stringRandom', 'add' ), array( 'u.salt' ) ),
+////                array( array( 'md5Salt' ), array( 'u.password' ) ),
+////                array( array( 'createGuid' ), array( 'u.guid' ) ),
+////                array( array( 'createtime' ), array( 'u.createtime' ) ),
+//            ),
+//        );
+//        return parent::returnArray( $format );
+//    }
+
+	public function field() {
+		$field = array(
+			'user' => array(
+				'手机号' => 'u.mobile',
+				'密码' => 'u.password',
+				'真实姓名' => 'u.realname',
+				'性别' => 'u.gender',
+				'邮箱' => 'u.email',
+				'微信号' => 'u.weixin',
+				'工号' => 'u.jobnumber',
+				'用户名' => 'u.username',
+				'生日' => 'up.birthday',
+				'住宅电话' => 'up.telephone',
+				'地址' => 'up.address',
+				'QQ' => 'up.qq',
+				'自我介绍' => 'up.bio',
+				'岗位' => 'p.posname',
+				'部门' => 'd.deptname',
+				'角色' => 'r.rolename',
+			),
+		);
+		return parent::returnArray( $field );
+	}
+
+	public function config() {
+		$config = array(
+			'user' => array(
+				'module' => 'user',
+				'type' => 'common',
+				'name' => '用户导入模版',
+				'filename' => 'user_import.xls',
+				'fieldline' => 3,
+				'line' => 3,
+			),
+		);
+		return parent::returnArray( $config );
+	}
+
+	protected function force() {
+		$table = array(
+			'user' => array(
+				'{{user_profile}}'
+			),
+		);
+		return parent::returnArray( $table );
+	}
+
+	public function import() {
+		return parent::import();
+	}
+
+	protected function start() {
+		parent::start();
+		$deptArray = IBOS::app()->db->createCommand()
+				->select( 'deptid,deptname,pid' )
+				->from( '{{department}}' )
+				->queryAll();
+		$roleArray = IBOS::app()->db->createCommand()
+				->select( 'roleid,rolename' )
+				->from( '{{role}}' )
+				->queryAll();
+		$positionArray = IBOS::app()->db->createCommand()
+				->select( 'posname,positionid' )
+				->from( '{{position}}' )
+				->queryAll();
+		$arrayD = $arrayR = $arrayP = array();
+		if ( !empty( $deptArray ) ) {
+			foreach ( $deptArray as $dept ) {
+				$arrayD[$dept['pid']][] = $dept;
+			}
+		}
+		if ( !empty( $roleArray ) ) {
+			foreach ( $roleArray as $role ) {
+				$arrayR[$role['rolename']] = $role['roleid'];
+			}
+		}
+		if ( !empty( $positionArray ) ) {
+			foreach ( $positionArray as $position ) {
+				$arrayP[$position['posname']] = $position['positionid'];
+			}
+		}
+		$this->session->add( 'import_userTpl_deptArray', $arrayD );
+		$this->session->add( 'import_userTpl_roleArray', $arrayR );
+		$this->session->add( 'import_userTpl_positionArray', $arrayP );
+	}
+
+	protected function end() {
+		parent::end();
+		Cache::update( array( 'Position', 'Role' ) );
+		Org::update();
+		$this->session->remove( 'import_userTpl_deptArray' );
+		$this->session->remove( 'import_userTpl_roleArray' );
+		$this->session->remove( 'import_userTpl_positionArray' );
+	}
+
+	protected function beforeFormatData( &$data ) {
+		foreach ( $data as &$row ) {
+			$row['u.gender'] = trim( $row['u.gender'] );
+			$row['up.birthday'] = trim( $row['up.birthday'] );
+			$deptExplode = array_filter( explode( '/', $row['d.deptname'] ) );
+			$deptid = $this->findDept( $deptExplode );
+			$roleid = $this->findRole( $row['r.rolename'] );
+			$positionid = $this->findPosition( $row['p.posname'] );
+			$row['d.deptid'] = $deptid;
+			$row['r.roleid'] = $roleid;
+			$row['p.positionid'] = $positionid;
+		}
+	}
+
+	//键为角色名，值为roleid
+	private function findRole( $roleName ) {
+		if ( !empty( $roleName ) ) {
+			$roleArray = $this->session->get( 'import_userTpl_roleArray' );
+			if ( !empty( $roleArray[$roleName] ) ) {
+				return $roleArray[$roleName];
+			} else {
+				IBOS::app()->db->createCommand()
+						->insert( '{{role}}', array(
+							'rolename' => $roleName,
+						) );
+				$findRoleid = IBOS::app()->db->getLastInsertID();
+				$roleArray[$roleName] = $findRoleid;
+				$this->session->add( 'import_userTpl_roleArray', $roleArray );
+				return $findRoleid;
+			}
+		}
+	}
+
+	//键为岗位名，值为positionid
+	private function findPosition( $positionName ) {
+		if ( !empty( $positionName ) ) {
+			$positionArray = $this->session->get( 'import_userTpl_positionArray' );
+			if ( !empty( $positionArray[$positionName] ) ) {
+				return $positionArray[$positionName];
+			} else {
+				IBOS::app()->db->createCommand()
+						->insert( '{{position}}', array(
+							'posname' => $positionName,
+						) );
+				$findpositionid = IBOS::app()->db->getLastInsertID();
+				$positionArray[$positionName] = $findpositionid;
+				$this->session->add( 'import_userTpl_roleArray', $positionArray );
+				return $findpositionid;
+			}
+		}
+	}
+
+	//键为pid，值为索引数组，值有部门名，部门id，pid
+	private function findDept( $deptExplode, $pid = 0 ) {
+		if ( !empty( $deptExplode ) ) {
+			$deptArray = $this->session->get( 'import_userTpl_deptArray' );
+			$deptname = array_shift( $deptExplode );
+			$deptnameArray = array();
+			if ( !empty( $deptArray[$pid] ) ) {
+				foreach ( $deptArray[$pid] as $row ) {
+					$deptnameArray[] = $row['deptname'];
+				}
+			}
+
+			if ( in_array( $deptname, $deptnameArray ) ) {
+				$findDeptid = $row['deptid'];
+			} else {
+				IBOS::app()->db->createCommand()
+						->insert( '{{department}}', array(
+							'pid' => $pid,
+							'deptname' => $deptname,
+						) );
+				$findDeptid = IBOS::app()->db->getLastInsertID();
+				$deptArray[$pid][] = array(
+					'pid' => $pid,
+					'deptname' => $deptname,
+					'deptid' => $findDeptid,
+				);
+				$this->session->add( 'import_userTpl_deptArray', $deptArray );
+			}
+			if ( !empty( $deptExplode ) ) {
+				return $this->findDept( $deptExplode, $findDeptid );
+			} else {
+				return $findDeptid;
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	protected function formatData( &$data, $isInsert ) {
+		$data['u.gender'] = $data['u.gender'] == '男' ? 1 : 0;
+		$data['up.birthday'] = !empty( $data['up.birthday'] ) ? strtotime( $data['up.birthday'] ) : 0;
+		$data['up.uid'] = function($data) {
+			return $data['u.uid'];
+		};
+		if ( !empty( $data['d.deptid'] ) ) {
+			$data['u.deptid'] = $data['d.deptid'];
+		}
+		if ( !empty( $data['p.positionid'] ) ) {
+			$data['u.positionid'] = function($data) {
+				return $data['p.positionid'];
+			};
+		}
+		if ( !empty( $data['r.roleid'] ) ) {
+			$data['u.roleid'] = function($data) {
+				return $data['r.roleid'];
+			};
+		}
+		if ( $isInsert ) {
+			$salt = StringUtil::random( 6 );
+			$data['u.salt'] = $salt;
+			if ( empty( $data['u.password'] ) ) {
+				//如果密码为空，又是插入，则取手机号后六位
+				$data['u.password'] = substr( $data['u.mobile'], -6 );
+			}
+			$data['u.password'] = md5( md5( $data['u.password'] ) . $salt );
+			$data['u.guid'] = StringUtil::createGuid();
+			$data['u.createtime'] = TIMESTAMP;
+		} else {
+			//如果密码不为空，又是更新，才更新密码，否则不做任何处理
+			if ( !empty( $data['u.password'] ) ) {
+				$data['u.password'] = function($data, $row) {
+					return md5( md5( $data['u.password'] ) . $row['u.salt'] );
+				};
+			}
+
+			$data['u.createtime'] = TIMESTAMP;
+		}
+	}
+
+	protected function afterHandleData( $connection ) {
+		$saveData = $this->import->saveData;
+		$ip = IBOS::app()->setting->get( 'clientip' );
+		foreach ( $saveData as $i => $data ) {
+			$connection->schema->commandBuilder
+					->createInsertCommand( '{{user_count}}'
+							, array( 'uid' => $data['u.uid'] ) )
+					->execute();
+			$connection->schema->commandBuilder
+					->createInsertCommand( '{{user_status}}'
+							, array( 'uid' => $data['u.uid'], 'regip' => $ip, 'lastip' => $ip ) )
+					->execute();
+		}
+	}
 
 }

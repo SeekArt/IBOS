@@ -79,7 +79,7 @@ class Source {
      * 从动态评论中提取资源数据
      *
      * @param integer $rowId 资源ID
-     * @param boolean $forApi 是否提供API，默认为false 
+     * @param boolean $forApi 是否提供API，默认为false
      * @return array 格式化后的资源数据
      */
     private static function getInfoFromComment( $table, $rowId, $forApi ) {

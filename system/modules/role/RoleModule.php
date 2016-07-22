@@ -11,6 +11,5 @@ namespace application\modules\role;
 use application\core\modules\Module;
 
 class RoleModule extends Module {
-	public $__CODE__ = 'e7d7byOQREHInYJuu4CUyTeYat8mVyBvGpOfo47art5B82sD4x2G';
     
 }

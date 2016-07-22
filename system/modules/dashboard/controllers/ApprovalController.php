@@ -22,6 +22,7 @@ use application\core\utils\Env;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\dashboard\model\Approval;
+use application\modules\dashboard\model\ApprovalStep;
 
 class ApprovalController extends BaseController {
 
@@ -30,6 +31,10 @@ class ApprovalController extends BaseController {
      */
     public function actionIndex() {
         $approvals = Approval::model()->fetchAllApproval();
+        foreach ( $approvals as &$approval ) {
+            $approval = $approval->getAttributes();
+            $approval['levels'] = array();
+        }
         $params = array(
             'approvals' => $this->handleShowData( $approvals )
         );
@@ -44,7 +49,14 @@ class ApprovalController extends BaseController {
         if ( $formSubmit ) {
             $data = $this->handleSaveData( $_POST );
             $data['addtime'] = TIMESTAMP;
-            Approval::model()->add( $data );
+            $id = Approval::model()->add( $data, true );
+            $newData = array();
+            for ( $level = 1; $level <= $data['level']; $level++ ) {
+                $newData['aid'] = $id;
+                $newData['step'] = $level;
+                $newData['uids'] = $data["level{$level}"];
+                ApprovalStep::model()->add( $newData );
+            }
             $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'approval/index' ) );
         } else {
             $this->render( 'add' );
@@ -59,16 +71,32 @@ class ApprovalController extends BaseController {
         if ( $formSubmit ) {
             $id = intval( Env::getRequest( 'id' ) );
             $data = $this->handleSaveData( $_POST );
-            Approval::model()->modify( $id, $data );
+            $attributes = array('name'=>$data['name'],'level'=>$data['level'],'free'=>$data['free'],'desc'=>$data['desc']);
+            $condition = 'id=:id';
+            $params = array(':id'=>$id);
+            Approval::model()->updateAll($attributes, $condition, $params);
+            ApprovalStep::model()->deleteAll( array("condition"=>"aid='$id'") );
+            $newData = array();
+            for ( $level = 1; $level <= $data['level']; $level++ ) {
+                $newData['aid'] = $id;
+                $newData['step'] = $level;
+                $newData['uids'] = $data["level{$level}"];
+                ApprovalStep::model()->add( $newData );
+            }
             $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'approval/index' ) );
         } else {
             $id = Env::getRequest( 'id' );
             $approval = Approval::model()->fetchByPk( $id );
-            $approval['level1'] = StringUtil::wrapId( $approval['level1'] );
-            $approval['level2'] = StringUtil::wrapId( $approval['level2'] );
-            $approval['level3'] = StringUtil::wrapId( $approval['level3'] );
-            $approval['level4'] = StringUtil::wrapId( $approval['level4'] );
-            $approval['level5'] = StringUtil::wrapId( $approval['level5'] );
+            $approval['level1'] = '';
+            $approval['level2'] = '';
+            $approval['level3'] = '';
+            $approval['level4'] = '';
+            $approval['level5'] = '';
+            $approval['free'] = '';
+            for ( $level = 1; $level <= $approval['level']; $level++ ) {
+                $lev = ApprovalStep::model()->getApprovalerStr($id, $level);
+                $approval["level{$level}"] = StringUtil::wrapId( $lev );
+            }
             $approval['free'] = StringUtil::wrapId( $approval['free'] );
             $params = array(
                 'approval' => $approval
@@ -103,9 +131,10 @@ class ApprovalController extends BaseController {
     protected function handleShowData( $data ) {
         foreach ( $data as $k => $approval ) {
             for ( $level = 1; $level <= $approval['level']; $level++ ) {
+                $lev = ApprovalStep::model()->getApprovalerStr($approval['id'], $level);
                 $field = "level{$level}";
-                $data[$k]['levels'][$field] = $this->getShowNames( $approval[$field] );
-                $data[$k]['levels'][$field]['levelClass'] = $this->getShowLevelClass( $field );
+                $data[$k]['levels'][$level] = $this->getShowNames( $lev );
+                $data[$k]['levels'][$level]['levelClass'] = $this->getShowLevelClass( $field );
             }
             $data[$k]['free'] = $this->getShowNames( $approval['free'] );
             $data[$k]['free']['levelClass'] = $this->getShowLevelClass( 'free' );

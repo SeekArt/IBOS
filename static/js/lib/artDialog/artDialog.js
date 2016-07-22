@@ -1038,7 +1038,7 @@ this.artDialog = $.dialog = $.artDialog = artDialog;
 */
 
 ;(function ($) {
-
+var _isIE6 = window.VBArray && !window.XMLHttpRequest;
 /** 获取 artDialog 可跨级调用的最高层的 window 对象 */
 var _top = artDialog.top = function () {
     var top = window,
@@ -1144,6 +1144,7 @@ $.open = $.dialog.open = function (url, options, cache) {
             iframe = api.iframe = top.document.createElement('iframe');
             iframe.src = url;
             iframe.name = 'Open' + api.config.id;
+            iframe.id = 'Open' + api.config.id;
             iframe.style.cssText = initCss;
             iframe.setAttribute('frameborder', 0, 0);
             iframe.setAttribute('allowTransparency', true);
@@ -1322,7 +1323,7 @@ $.prompt = $.dialog.prompt = function (content, ok, defaultValue) {
             input = this.DOM.content.find('.d-input-text')[0];
             input.select();
             input.focus();
-			api.DOM.dialog.addClass("d-dialog-prompt");
+			this.DOM.dialog.addClass("d-dialog-prompt");
         },
         ok: function () {
             return ok && ok.call(this, input.value);

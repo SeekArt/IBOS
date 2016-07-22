@@ -59,7 +59,7 @@ use application\modules\dashboard\model\Stamp;
 		<?php if ( isset( $assignment['stampUrl'] ) ): ?>
 			<div id="am_stamp_holder">
 				<!-- 输出已选中的图章  -->
-				<img src="<?php echo File::fileName( Stamp::STAMP_PATH . $assignment['stampUrl'] ); ?>" width="150" height="90">
+				<img src="<?php echo File::imageName( Stamp::STAMP_PATH . $assignment['stampUrl'] ); ?>" width="150" height="90">
 			</div>
 		<?php endif; ?>
 		<div class="am-details-lside">
@@ -99,7 +99,7 @@ use application\modules\dashboard\model\Stamp;
 										<?php echo $value['filename']; ?> <span class="tcm">(<?php echo $value['filesize']; ?>)</span>
 									</div>
 									<div class="fss">
-										<a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+										<a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>
 										<?php if ( isset( $value['officereadurl'] ) ): ?>
 											<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
 												<?php echo $lang['Read']; ?>
@@ -154,10 +154,10 @@ use application\modules\dashboard\model\Stamp;
 	<div style="width: 370px;">
 	<div class="media">
 	<div class="pull-left avatar-circle">
-	<img src="<%=data.imgUrl%>">
+	<img src="<%=data.avatar%>">
 	</div>
 	<div class="mbs">
-	<p><strong><%=data.name%></strong>： <%= data.reason %></p>
+	<p><strong><%=data.text%></strong>： <%= data.reason %></p>
 	</div>
 	<% if (data.startTime  && data.endTime ) { %>
 	<div class="mb xco">
@@ -197,7 +197,7 @@ use application\modules\dashboard\model\Stamp;
 			taskStatus: <?php echo $assignment['status']; ?>,
 			taskId: <?php echo $assignment['assignmentid'] ?>,
 			stamps: <?php echo CJSON::encode( $this->getStamps() ) ?>,
-			stampUrl: "<?php echo  File::fileName( Stamp::STAMP_PATH ); ?>",
+			stampUrl: "<?php echo  File::imageName( Stamp::STAMP_PATH ); ?>",
 			// 延期任务、取消任务申请
 			apply:<?php echo $applyData; ?>,
 			// 评论附件url

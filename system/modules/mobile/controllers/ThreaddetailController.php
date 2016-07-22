@@ -79,7 +79,7 @@ class ThreadDetailController extends DetailController {
 				'module_rowid' => $thread['threadid'],
 				'module_table' => 'thread',
 				// 'url' => $sourceUrl,
-				// 'detail' => Ibos::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $thread['subject'], 50 ) ) )
+				// 'detail' => IBOS::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $thread['subject'], 50 ) ) )
 			)
 		);
 
@@ -149,8 +149,8 @@ class ThreadDetailController extends DetailController {
 		$assignments = $this->getThreadObj( $threadId )->getAssignment();
 		$settingObj = new ThreadSetting();
 		$params = array(
-			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, Ibos::app()->user->uid ),
-			// 'editAble' => $settingObj->chkEditAble( $threadId, Ibos::app()->user->uid ),
+			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, IBOS::app()->user->uid ),
+			// 'editAble' => $settingObj->chkEditAble( $threadId, IBOS::app()->user->uid ),
 			'members' => ThreadUtil::getInstance()->handleMembers( $threadId, $members ),
 			'attentions' => ThreadUtil::getInstance()->handleMembers( $threadId, $attentions ),
 			// 'counters' => $this->getCounters(),

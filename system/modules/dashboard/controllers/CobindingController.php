@@ -374,7 +374,7 @@ class CobindingController extends CoController {
     // 		Setting::model()->updateSettingValueByKey( 'coinfo', serialize( $coinfo ) );
     // 		// 如果是新注册用户，需要显示提示页
     // 		if ( $verifyLoginRes['data']['isNew'] == 1 ) {
-    // 			$uid = Ibos::app()->setting->get( 'session/uid' );
+    // 			$uid = IBOS::app()->setting->get( 'session/uid' );
     // 			$userInfo = UserModel::model()->findByPk( $uid );
     // 			$post = array( 'passwordciphertext' => $userInfo->password, 'salt' => $userInfo->salt );
     // 			$syncRes = CoApi::getInstance()->syncPassword( $verifyLoginRes['data']['accesstoken'], $post );
@@ -403,8 +403,8 @@ class CobindingController extends CoController {
     // 		 * 日志记录
     // 		 */
     // 		$log = array(
-    // 			'user'		=> Ibos::app()->user->username,
-    // 			'ip'		=> Ibos::app()->setting->get( 'clientip' ),
+    // 			'user'		=> IBOS::app()->user->username,
+    // 			'ip'		=> IBOS::app()->setting->get( 'clientip' ),
     // 			'isSuccess'	=> 0,
     // 			'msg'		=> $verifyLoginRes['message'],
     // 		);
@@ -492,8 +492,8 @@ class CobindingController extends CoController {
     // 		 * 日志记录
     // 		 */
     // 		$log = array(
-    // 			'user'		=> Ibos::app()->user->username,
-    // 			'ip'		=> Ibos::app()->setting->get( 'clientip' ),
+    // 			'user'		=> IBOS::app()->user->username,
+    // 			'ip'		=> IBOS::app()->setting->get( 'clientip' ),
     // 			'isSuccess'	=> 0,
     // 			'msg'		=> $res['message'],
     // 		);

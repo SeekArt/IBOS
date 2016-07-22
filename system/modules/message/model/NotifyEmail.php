@@ -22,6 +22,7 @@ class NotifyEmail extends Model {
 		$user = User::model()->fetchByUid( $data['uid'] );
 		$named = $user['realname'] . ($user['gender'] == 1 ? ' 先生' : ' 女士');
 		$body = $data['body'];
+		$time = date('Y',time());
 		if ( $data['hasContent'] ) {
 			$bodyStr = <<<str
         <tr>
@@ -95,15 +96,15 @@ str;
 	<table style="width:600px; margin:0 auto;" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td style="width:600px; height:30px; font-size:12px; font-family:'\5b8b\4f53';color:#50545f;">
-                <div style="line-height:30px; padding-top:5px;">2014 ©  IBOS协同办公平台</div>
+                <div style="line-height:30px; padding-top:5px;">{$time} ©  IBOS协同办公平台</div>
             </td>
 		</tr>
 		<tr>
 			<!-- 其他链接 -->
 			<td style="width:600px; height:30px; font-size:12px; font-family:'\5b8b\4f53';color:#50545f; line-height:30px;">
                 <a href="http://www.ibos.com.cn" style="color:#50545f;" target="_blank">开发者平台</a>&#12288;/&#12288;
-                <a href="http://bbs.ibos.com.cn" style="color:#50545f;" target="_blank">问答社区</a>&#12288;/&#12288;
-                <a href="http://www.ibos.com.cn/wiki" style="color:#50545f;" target="_blank">文档中心</a>&#12288;&#12288;客户支持: 400-838-1185&#12288;&#12288;&#12288;support@ibos.com.cn
+                <a href="http://kf.ibos.com.cn" style="color:#50545f;" target="_blank">问答社区</a>&#12288;/&#12288;
+                <a href="http://doc.ibos.com.cn/article/lists/category/home" style="color:#50545f;" target="_blank">文档中心</a>&#12288;&#12288;客户支持: 400-838-1185&#12288;&#12288;&#12288;support@ibos.com.cn
             </td>
 		</tr>
 	</table>

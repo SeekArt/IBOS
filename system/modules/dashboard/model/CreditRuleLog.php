@@ -11,7 +11,7 @@
  *  CreditRuleLog表的数据层操作
  * 
  * @package application.modules.dashboard.model
- * @version $Id: CreditRuleLog.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: CreditRuleLog.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

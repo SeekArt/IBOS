@@ -424,7 +424,7 @@ class WebController extends BaseController {
               $web = WebMail::getEmailConfig($web['address'], $web['password']);
               } else {
               // 没有的话，需要配置更详细的服务器信息，返回错误提示
-              $errMsg = Ibos::lang('More server info');
+              $errMsg = IBOS::lang('More server info');
               }
              */
             $errMsg = IBOS::lang('More server info');
@@ -487,7 +487,7 @@ class WebController extends BaseController {
      * @return void
      */
     protected function ajaxAdd() {
-        // if (Ibos::app()->request->getIsPostRequest()) {
+        // if (IBOS::app()->request->getIsPostRequest()) {
         if ( Env::submitCheck( 'formhash' ) ) {
             $newId = $this->processAddWebMail(true);
             $this->success(IBOS::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));

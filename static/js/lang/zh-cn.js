@@ -113,7 +113,7 @@ var L = {
         PASSWORD_PREG: "请填写<%=min%>-<%=max%>位<%=mixed%>密码",
         ORIGINAL_PASSWORD_INPUT_INVALID: "原密码输入错误"
     },
-    // 
+    //
     RULE: {
         NOT_NULL: "不为空",
         INVALID_FORMAT: "格式错误",
@@ -230,10 +230,12 @@ var L = {
         INPUT_TIP: "请输入部门或同事的名称或拼音",
         NO_MATCH: "没有查询结果",
         SELECTION_TO_BIG: "你最多只能选择<%=limit%>项",
-        PLACEHOLDER_ALL: "请选择部门、岗位或人员",
-        PLACEHOLDER_DEPARTMENT: "请选择部门",
-        PLACEHOLDER_USER: "请选择人员",
-        PLACEHOLDER_POSITION: "请选择岗位"
+        PLACEHOLDER_ALL: "请选择部门、岗位、角色或人员",
+        PLACEHOLDER: "请选择",
+        DEPARTMENT: "部门",
+        USER: "人员",
+        POSITION: "岗位",
+        ROLE: "角色",
     },
     // Treemenu
     TREEMENU: {
@@ -327,7 +329,7 @@ var L = {
         SINGLE_ITEM: "单项",
         SELECT_ONE_AT_LEAST_OBJECT: "请至少选择一个投票项",
         HAS_VOTE_THANKS: "<p>您已经投过票，谢谢您的参与</p>",
-        VOTE_TITLE: "请输入投票标题", 
+        VOTE_TITLE: "请输入投票标题",
         WRITE_AT_LEAST_TWO_ITEM: "请至少填写两个投票项",
     },
     CONTACT: {
@@ -343,4 +345,3 @@ var L = {
         SUCCESS: "评论成功"
     }
 };
-

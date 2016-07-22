@@ -41,14 +41,7 @@ Class ScheduleController extends BaseController {
             if ( !$this->checkIsMe() ) {
                 $this->error( IBOS::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
             }
-            $sysSetting = IBOS::app()->setting->get( 'setting' );
-            $workingtime = explode( ',', $sysSetting['calendarworkingtime'] );
-            $setting = array(
-                'worktimestart' => $workingtime[0],
-                'worktimeend' => $workingtime[1]
-            );
             $data = array(
-                'setting' => $setting,
                 'user' => User::model()->fetchByUid( $this->uid )
             );
             $this->setPageTitle( IBOS::lang( 'Personal schedule' ) );

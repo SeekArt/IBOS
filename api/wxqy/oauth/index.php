@@ -11,8 +11,8 @@ define( 'YII_DEBUG', true );
 $defines = PATH_ROOT . '/system/defines.php';
 defined( 'TIMESTAMP' ) or define( 'TIMESTAMP', time() );
 $yii = PATH_ROOT . '/library/yii.php';
-$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $defines );
+$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $yii );
 require_once '../../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
@@ -21,34 +21,35 @@ Yii::createApplication( 'application\core\components\Application', $mainConfig )
 $signature = Env::getRequest( 'signature' );
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 $userId = Env::getRequest( 'userid' );
+$text = '详见 <a href = "http://doc.ibos.com.cn/article/detail/id/329" target="_blank" >传送门</a>';
 if ( strcmp( $signature, md5( $aeskey . $userId ) ) != 0 ) {
-	Env::iExit( "签名错误" );
+    Env::iExit( "签名错误:" . $text );
 }
 if ( !empty( $userId ) ) {
-	$uid = UserBinding::model()->fetchUidByValue( $userId, 'wxqy' );
-	if ( $uid ) {
-		$resArr = dologin( $uid );
-		if ( !IBOS::app()->user->isGuest && $resArr['code'] > '0' ) {
-			$redirect = Env::getRequest( 'redirect' );
-			$url = base64_decode( $redirect );
-			$parse = parse_url( $url );
-			if ( isset( $parse['scheme'] ) ) {
-				header( 'Location:' . $url, true );
-				exit();
-			} else {
-				header( 'Location:../../../' . $url, true );
-				exit();
-			}
-		} else {
-			Env::iExit( $resArr['msg'] );
-		}
+    $uid = UserBinding::model()->fetchUidByValue( $userId, 'wxqy' );
+    if ( $uid ) {
+        $resArr = dologin( $uid );
+        if ( !IBOS::app()->user->isGuest && $resArr['code'] > '0' ) {
+            $redirect = Env::getRequest( 'redirect' );
+            $url = base64_decode( $redirect );
+            $parse = parse_url( $url );
+            if ( isset( $parse['scheme'] ) ) {
+                header( 'Location:' . $url, true );
+                exit();
+            } else {
+                header( 'Location:../../../' . $url, true );
+                exit();
+            }
+        } else {
+            Env::iExit( $resArr['msg'] );
+        }
     } else {
         file_put_contents( 'wx_userid.txt', var_export( $userId, true ) );
-        Env::iExit( '用户绑定失败' );
-	}
+        Env::iExit( '用户绑定失败：' . $text );
+    }
 }
 Env::iExit( '用户验证失败,尝试以下步骤的操作：<br/>'
-		. '1、在“微信企业号->通讯录”，找到并删除该用户<br/>'
-		. '2、在“IBOS后台->微信->部门及用户同步”，同步该用户<br/>'
-		. '3、邀请该用户关注企业号<br/>'
-		. '如果还存在此提示，请将问题反馈给我们的工作人员' );
+        . '1、在“微信企业号->通讯录”，找到并删除该用户<br/>'
+        . '2、在“IBOS后台->微信->部门及用户同步”，同步该用户<br/>'
+        . '3、邀请该用户关注企业号<br/>'
+        . '如果还存在此提示，请将问题反馈给我们的工作人员：' . $text );

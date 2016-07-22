@@ -32,7 +32,7 @@ use application\core\utils\StringUtil;
 		</tbody>
 	</table>
 	<div class="mbox-base">
-		<div class="fill-hn xac"> 
+		<div class="fill-hn xac">
 			<a href="<?php echo IBOS::app()->urlManager->createUrl( 'email/list/index' ); ?>" class="link-more">
 				<i class="cbtn o-more"></i>
 				<span class="ilsep"><?php echo $lang['See more email']; ?></span>

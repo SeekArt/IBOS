@@ -242,6 +242,8 @@ var Cld = {
                 // view.calendar.renderEvent(evt, true)
                 view.calendar.refetchEvents();
                 Ui.tip(U.lang("CAL.NEW_EVT_SUCCESS"));
+            }else{
+                Ui.tip(res.msg, 'danger');
             }
             callback && callback(res);
         });

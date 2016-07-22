@@ -6,7 +6,7 @@ use application\core\utils\Url;
 use application\modules\user\utils\User as UserUtil;
 
 ?>
-<!doctype <html>
+<!doctype html>
 </html>
 <html lang="en">
 	<head>
@@ -23,7 +23,7 @@ use application\modules\user\utils\User as UserUtil;
 				window.location.href = "<?php echo IBOS::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
 			</script>
 		<![endif]-->
-		
+
 	</head>
 	<body class="ibbody">
 		<div class="ibcontainer">
@@ -83,7 +83,9 @@ use application\modules\user\utils\User as UserUtil;
 								<i class="caret caret-small"></i>
 							</a>
 						</div>
-						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message"><?php echo IBOS::lang( 'Message', 'default' ); ?></a>
+						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message">
+							<?php echo IBOS::lang( 'Message', 'default' ); ?>
+						</a>
 					</div>
 					<div class="posr">
 						<div id="message_container" class="reminder" style="display: none;">
@@ -95,7 +97,7 @@ use application\modules\user\utils\User as UserUtil;
 								<li rel="unread_atme"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/mention/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_notify"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
-								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
+								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="car"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 								<li rel="assets"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 							</ul>
@@ -141,7 +143,7 @@ use application\modules\user\utils\User as UserUtil;
 					<h2 class="mt pull-left"><?php echo $pageTitle; ?></h2>
 					<span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
 				</div>
-				
+
 				<!-- Mainer -->
 				<!-- 这里就是内容模板 -->
 				<div class="mpc clearfix" id="page_content">
@@ -150,7 +152,7 @@ use application\modules\user\utils\User as UserUtil;
 							<div class="mc clearfix">
 								<!--sidebar-->
 								<div class="aside">
-									<div class="sbbf sbbf sbbl">		
+									<div class="sbbf sbbf sbbl">
 										<ul class="nav nav-stacked nav-strip">
 											<li class="active">
 												<a href="">这是菜单</a>
@@ -160,7 +162,7 @@ use application\modules\user\utils\User as UserUtil;
 											</li>
 										</ul>
 									</div>
-								</div>	
+								</div>
 								<div class="mcr">
 									<div>
 										<h1 style="font-size: 32px;text-align: center; color: #58585C;">这是标题</h1>
@@ -203,7 +205,7 @@ use application\modules\user\utils\User as UserUtil;
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>
 						Processed in <code><?php echo IBOS::app()->performance->endClockAndGet(); ?></code> second(s).
-						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries. 
+						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries.
 					<?php endif; ?>
 				</div>
 			</div>

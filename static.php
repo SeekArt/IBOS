@@ -8,15 +8,14 @@ if ( !in_array( $engine, array( 'local', 'sae' ) ) ) {
     $engine = 'local';
 }
 $type = $_GET['type'];
+$ext = '.jpg';
 switch ( $type ) {
     case 'avatar':
     case 'bg':
         if ( $type == 'avatar' ) {
             $path = './data/avatar/';
-            $ext = '.png';
         } else {
             $path = './data/home/';
-            $ext = '.jpg';
         }
         $uid = isset( $_GET['uid'] ) ? $_GET['uid'] : 0;
         $size = isset( $_GET['size'] ) && in_array(
@@ -88,7 +87,9 @@ switch ( $type ) {
 
 function showDataStatic( $uid, $size = 'small', $random = '' ) {
     global $engine, $path, $type, $ext;
-    $staticFile = getDataStaticFile( $uid, $size, $type );
+    // $staticFile = getDataStaticFile( $uid, $size, $type );
+    $dir = (int) ($uid / 100);
+    $staticFile = $dir . '/' . $uid . '_' . $type . '_' . $size . '.jpg';
     if ( $engine == 'local' ) {
         $fileExists = file_exists( $path . $staticFile );
     } else {

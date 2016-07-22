@@ -11,7 +11,7 @@
  * 消息模块通知中心控制器
  * @package application.modules.message.controllers
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: NotifyController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: NotifyController.php 7023 2016-05-10 08:01:05Z Aeolus $
  */
 
 namespace application\modules\message\controllers;

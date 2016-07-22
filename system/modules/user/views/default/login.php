@@ -7,6 +7,8 @@ use application\modules\dashboard\model\LoginTemplate;
 <!doctype html>
 <html lang="en">
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="renderer" content="webkit"/>
 		<meta charset=<?php echo CHARSET; ?> />
 		<title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico">
@@ -174,7 +176,7 @@ use application\modules\dashboard\model\LoginTemplate;
 						<span class="ilsep">|</span>
 						<a target="_blank" href="http://www.ibos.com.cn/file/99"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a href="javascript:;" data-action="appDownload">移动端下载</a>
+						<a href="javascript:;" data-action="appDownload">客户端下载</a>
 					</div>
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>
@@ -196,7 +198,7 @@ use application\modules\dashboard\model\LoginTemplate;
 <?php
 $image = '';
 foreach ( $loginBg as $bg ):
-	$image .= '"' . File::fileName( LoginTemplate::BG_PATH . $bg['image'] ) . '"' . ',';
+	$image .= '"' . $bg['image'] . '"' . ',';
 endforeach;
 echo trim( $image, ',' );
 ?>

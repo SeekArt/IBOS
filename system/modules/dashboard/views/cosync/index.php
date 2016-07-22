@@ -81,6 +81,7 @@
             <div class="ibosco-sync-list span12">
                 <ul class="ibosco-member-list clearfix">
                 </ul>
+                <div class="page ajax-pagination pts pull-right"></div>
             </div>
         </div>
     </div>
@@ -151,12 +152,12 @@
     <div class="co-sync-tip <%=ibos['ibosAddAct']%>">
     <i class="o-binding-new mrs"></i>
     <span>新增</span><span class="sync-tip-number"><%=ibos['ibosAddNum']%></span><span>人</span>
-    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "ibosAddList"}'>详情</span>
+    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "ibosAddList", "count": "<%=ibos['ibosAddNum']%>"}'>详情</span>
     </div>
     <div class="co-sync-tip <%=ibos['ibosDelAct']%>">
     <i class="o-binding-forbidden mrs"></i>
     <span>禁用</span><span class="sync-tip-number"><%=ibos['ibosDelNum']%></span><span>人</span>
-    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "ibosDelList"}'>详情</span>
+    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "ibosDelList", "count": "<%=ibos['ibosDelNum']%>"}'>详情</span>
     </div>
     </div>
     <div class="co-sync-box pull-right">
@@ -164,12 +165,12 @@
     <div class="co-sync-tip <%=co['coAddAct']%>">
     <i class="o-binding-new mrs"></i>
     <span>加入</span><span class="sync-tip-number"><%=co['coAddNum']%></span><span>人</span>
-    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "coAddList"}'>详情</span>
+    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "coAddList", "count": "<%=co['coAddNum']%>"}'>详情</span>
     </div>
     <div class="co-sync-tip <%=co['coDelAct']%>">
     <i class="o-binding-remove mrs"></i>
     <span>移除</span><span class="sync-tip-number"><%=co['coDelNum']%></span><span>人</span>
-    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "coDelList"}'>详情</span>
+    <span class="sync-tip-detail pull-right" data-action="bindingDetail" data-param='{"list": "coDelList", "count": "<%=co['coDelNum']%>"}'>详情</span>
     </div>
     </div>
     </div>

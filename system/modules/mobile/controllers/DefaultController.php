@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: DefaultController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DefaultController.php 7023 2016-05-10 08:01:05Z Aeolus $
  */
 
 namespace application\modules\mobile\controllers;
@@ -38,32 +38,45 @@ use application\modules\user\utils\User as UserUtil;
 class DefaultController extends BaseController {
 
 	/**
+	 * 登陆成功后返回的数据
+	 * @return array 
+	 */
+	private function getLoginReturns() {
+		$return = array(
+			'login' => true,
+			'formhash' => FORMHASH,
+			'uid' => IBOS::app()->user->uid,
+			'user' => User::model()->fetchByUid( IBOS::app()->user->uid ),
+			'APPID' => IBOS::app()->setting->get( 'setting/iboscloud/appid' )
+		);
+
+		if ( Env::getRequest( 'issetuser' ) != "true" ) {
+			$userData = UserUtil::getUserByPy(NULL, false);
+			$return['userData'] = $userData;
+		}
+
+		if ( Module::getIsEnabled( 'weibo' ) ) {
+			$udata = UserData::model()->getUserData();
+		}
+
+		$return['user']['following_count'] = isset( $udata['following_count'] ) ? $udata['following_count'] : 0;
+		$return['user']['follower_count'] = isset( $udata['follower_count'] ) ? $udata['follower_count'] : 0;
+		$return['user']['weibo_count'] = isset( $udata['weibo_count'] ) ? $udata['weibo_count'] : 0;
+		$return['departmentData'] = DeptUtils::getDepartmentByPy();
+		$return['positionData'] = PositionUtils::getPositionByPy();
+
+		return $return;
+	}
+
+	/**
 	 * 登陆处理
 	 * @return void 
 	 */
 	public function actionLogin() {
 		if ( !IBOS::app()->user->isGuest ) {
-			$return = array(
-				'login' => true,
-				'formhash' => FORMHASH,
-				'uid' => IBOS::app()->user->uid,
-				'user' => User::model()->fetchByUid( IBOS::app()->user->uid ),
-				'APPID' => IBOS::app()->setting->get( 'setting/iboscloud/appid' )
-			);
-			if ( Env::getRequest( 'issetuser' ) != "true" ) {
-				$userData = UserUtil::getUserByPy();
-				$return['userData'] = $userData;
-			}
-			if ( Module::getIsEnabled( 'weibo' ) ) {
-				$udata = UserData::model()->getUserData();
-			}
-			$return['user']['following_count'] = isset( $udata['following_count'] ) ? $udata['following_count'] : 0;
-			$return['user']['follower_count'] = isset( $udata['follower_count'] ) ? $udata['follower_count'] : 0;
-			$return['user']['weibo_count'] = isset( $udata['weibo_count'] ) ? $udata['weibo_count'] : 0;
-			$return['departmentData'] = DeptUtils::getUserByPy();
-			$return['positionData'] = PositionUtils::getUserByPy();
-			$this->ajaxReturn( $return, Mobile::dataType() );
+			$this->ajaxReturn($this->getLoginReturns(), Mobile::dataType());
 		}
+
 		$account = IBOS::app()->setting->get( 'setting/account' );
 		// 用户名
 		$userName = Env::getRequest( 'username' );
@@ -99,6 +112,9 @@ class DefaultController extends BaseController {
 			// 设置会话过期时间
 			Main::setCookie( 'autologin', 1, $cookieTime );
 			$user->login( $identity, $cookieTime );
+			if ( $user->uid != 1 ) {
+				Main::checkLicenseLimit( true );
+			}
 			$urlForward = Env::referer();
 			$log = array(
 				'terminal' => 'app',
@@ -111,30 +127,8 @@ class DefaultController extends BaseController {
 			);
 			Log::write( $log, 'login', sprintf( 'module.user.%d', IBOS::app()->user->uid ) );
 
-			$return = array(
-				'login' => true,
-				'formhash' => Env::formHash(),
-				'uid' => IBOS::app()->user->uid,
-				'user' => User::model()->fetchByUid( IBOS::app()->user->uid ),
-				'APPID' => IBOS::app()->setting->get( 'setting/iboscloud/appid' )
-			);
-
-			if ( Module::getIsEnabled( 'weibo' ) ) {
-				$udata = UserData::model()->getUserData();
-			}
-			$return['user']['following_count'] = isset( $udata['following_count'] ) ? $udata['following_count'] : 0;
-			$return['user']['follower_count'] = isset( $udata['follower_count'] ) ? $udata['follower_count'] : 0;
-			$return['user']['weibo_count'] = isset( $udata['weibo_count'] ) ? $udata['weibo_count'] : 0;
-
-			if ( Env::getRequest( 'issetuser' ) != "true" ) {
-				$userData = UserUtil::getUserByPy();
-				$return['userData'] = $userData;
-			}
-			$return['departmentData'] = DeptUtils::getUserByPy();
-			$return['positionData'] = PositionUtils::getUserByPy();
-
 			$this->sendLoginNotify();
-			$this->ajaxReturn( $return, Mobile::dataType() );
+			$this->ajaxReturn( $this->getLoginReturns(), Mobile::dataType() );
 		} else {
 			if ( $result === 0 ) {
 				$this->ajaxReturn( array( 'login' => false, 'msg' => IBOS::lang( 'User not fount', 'user.default', array( '{username}' => $userName ) ) ), Mobile::dataType() );

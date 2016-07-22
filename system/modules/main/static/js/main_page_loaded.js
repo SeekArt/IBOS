@@ -131,7 +131,7 @@ $(function() {
 				tpl = $("#moduel-type").children("li.active").find("a").attr("data-value"),
 				name = $("#navname").val(),
 				navid = $("#navid").val(),
-				pageid = $("#pageid").val()，
+				pageid = $("#pageid").val(),
 				param = { tpl: tpl, content: content, navid: navid, pageid: pageid };
 
 			SinglePage.op.save(param).done(function(res){

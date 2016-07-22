@@ -33,7 +33,7 @@ use application\core\utils\Cloud;
 				var arr = param.split(",");
 				var data = $.map(arr, function(uid) {
 					var data = Ibos.data.getUser(uid);
-					return {uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone}
+					return {uid: uid.slice(2), name: data.text, avatar: data.avatar, phone: data.phone}
 				});
 				return data;
 			} else {

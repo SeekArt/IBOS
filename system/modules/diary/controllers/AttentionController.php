@@ -11,7 +11,7 @@
 /**
  * 工作日志模块------关注控制器，继承ICController
  * @package application.modules.diary.components
- * @version $Id: AttentionController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: AttentionController.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -266,7 +266,7 @@ class AttentionController extends BaseController {
 		$this->setPageTitle( IBOS::lang( 'Show Attention diary' ) );
 		$this->setPageState( 'breadCrumbs', array(
 			array( 'name' => IBOS::lang( 'Personal Office' ) ),
-			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ), 
+			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
 			array( 'name' => IBOS::lang( 'Show Attention diary' ) )
 		) );
 		$this->render( 'show', $params );

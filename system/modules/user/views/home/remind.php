@@ -52,7 +52,6 @@ use application\core\utils\IBOS;
 							<tr>
 								<th width="80"><?php echo $lang['Module name']; ?></th>
 								<th><?php echo $lang['Remind desc']; ?></th>
-								<th width="80"><?php echo $lang['App remind']; ?></th>
 								<th width="80"><?php echo $lang['Email remind']; ?></th>
 								<th width="80"><?php echo $lang['Sms remind']; ?></th>
 							</tr>
@@ -62,11 +61,6 @@ use application\core\utils\IBOS;
 								<tr>
 									<td><?php echo $node['moduleName']; ?></td>
 									<td><?php echo $node['nodeinfo']; ?></td>
-									<td>
-										<label class="checkbox" <?php if ( $node['appdisabled'] ): ?>title='<?php echo $lang['Open cloud serivce first']; ?>'<?php endif; ?>>
-											<input type="checkbox" name="app[<?php echo $id; ?>]" value='1' <?php if ( $node['appcheck'] and !$node['appdisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['appdisabled'] ): ?>disabled<?php endif; ?> />
-										</label>
-									</td>
 									<td>
 										<label class="checkbox" <?php if ( $node['maildisabled'] ): ?>title='<?php echo $lang['Bind email first']; ?>'<?php endif; ?>>
 											<input type="checkbox" name="email[<?php echo $id; ?>]" value='1' <?php if ( $node['emailcheck'] and !$node['maildisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['maildisabled'] ): ?>disabled<?php endif; ?> />

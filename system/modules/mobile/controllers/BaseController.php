@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.componets
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BaseController.php 4239 2014-09-25 14:06:17Z Aeolus $
  */
 
 namespace application\modules\mobile\controllers;

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use application\core\utils\File;
 ?>
 <div class="ct">
@@ -29,7 +30,7 @@ use application\core\utils\File;
 										<div class="stamp-img-upload" id="stamp_upload_<?php echo $stamp['id']; ?>_wrap">
 											<span id="stamp_upload_<?php echo $stamp['id']; ?>"></span>
 										</div>
-										<img <?php if ( !empty( $stamp['stamp'] ) ): ?>src="<?php echo File::fileName( $stampUrl . $stamp['stamp'] ); ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
+										<img <?php if ( !empty( $stamp['stamp'] ) ): ?>src="<?php echo  $stamp['stamp']; ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
 										<input type="hidden" name="stamps[<?php echo $stamp['id']; ?>][stamp]" value="<?php echo $stamp['stamp']; ?>" />
 									</div>
 									<div class="stamp-icon">
@@ -37,7 +38,7 @@ use application\core\utils\File;
 										<div class="stamp-icon-upload" id="stamp_icon_upload_<?php echo $stamp['id']; ?>_wrap">
 											<span id="stamp_icon_upload_<?php echo $stamp['id']; ?>"></span>
 										</div>
-										<img <?php if ( !empty( $stamp['icon'] ) ): ?>src="<?php echo File::fileName( $stampUrl . $stamp['icon'] ); ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
+										<img <?php if ( !empty( $stamp['icon'] ) ): ?>src="<?php echo  $stamp['icon']; ?>"<?php endif; ?> alt="<?php echo $stamp['code']; ?>" />
 										<input type="hidden" name="stamps[<?php echo $stamp['id']; ?>][icon]" value="<?php echo $stamp['icon']; ?>" />
 									</div>
 									<?php if ( $stamp['system'] == 0 ): ?>
@@ -106,6 +107,6 @@ use application\core\utils\File;
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/handlers.js?<?php echo VERHASH; ?>"></script>
 <script>
-Ibos.app.s({"maxSort" : <?php echo $maxSort; ?>});
+	Ibos.app.s({"maxSort": <?php echo $maxSort; ?>});
 </script>
 <script src="<?php echo $assetUrl; ?>/js/db_sysstamp.js"></script>

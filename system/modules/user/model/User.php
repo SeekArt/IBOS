@@ -11,7 +11,7 @@
  * user表的数据层操作类
  *
  * @package application.modules.user.model
- * @version $Id: User.php 6832 2016-04-13 08:33:54Z tanghang $
+ * @version $Id: User.php 7505 2016-07-07 07:37:58Z gzhyj $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -25,7 +25,6 @@ use application\modules\department\model\DepartmentRelated;
 use application\modules\department\model\Department;
 use application\modules\position\model\PositionRelated;
 use application\modules\role\model\RoleRelated;
-use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
 class User extends Model {
@@ -34,8 +33,8 @@ class User extends Model {
     const USER_STATUS_LOCKED = 1;
     const USER_STATUS_NORMAL = 0;
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
     }
 
     public function tableName() {
@@ -47,13 +46,33 @@ class User extends Model {
     //参见：
     //作者本人对于AR的效率回复：http://www.yiiframework.com/forum/index.php/topic/16597-yii%E7%9A%84ar%E7%9C%9F%E7%9A%84%E8%83%BD%E7%94%A8%E4%B9%88%EF%BC%9F/
     public $select = '*';
+    public $limit = NULL;
+    public $offset = NULL;
+    public $leftJoin = NULL;
+    public $pre = '';
 
     /**
      * 用以设置select值，如果需要前缀，也直接加，如：' `u`.`uid`,`u`.`username` '
      * @param string $select
      */
-    public function setSelect( $select ) {
+    public function setSelect($select) {
         $this->select = $select;
+    }
+
+    public function setLimit($limit) {
+        $this->limit = $limit;
+    }
+
+    public function setOffset($offset) {
+        $this->offset = $offset;
+    }
+
+    public function setLeftJoin($table, $join) {
+        $this->leftJoin = array($table, $join);
+    }
+
+    public function setPre($pre) {
+        $this->pre = $pre;
     }
 
     /**
@@ -61,6 +80,10 @@ class User extends Model {
      */
     public function afterQuery() {
         $this->select = '*';
+        $this->limit = NULL;
+        $this->offset = NULL;
+        $this->leftJoin = NULL;
+        $this->pre = '';
     }
 
     //--------------------------builder condition------------------builder的条件
@@ -76,9 +99,9 @@ class User extends Model {
      * @param string $pre 表简称，一般直接拿除去前缀的表的首字母，比如ibos_user_profile这里定义成up
      * @return string 格式化后的condition语句。后面也是一样的，yii支持数组，所以这样的格式化函数也可以返回数组，只是这个是字符串
      */
-    public function uid_find_in_set( $uidX, $pre = '' ) {
-        $preString = empty( $pre ) ? $pre : '`' . $pre . '`.';
-        $uidString = is_array( $uidX ) ? implode( ',', $uidX ) : $uidX;
+    public function uid_find_in_set($uidX, $pre = '') {
+        $preString = empty($pre) ? $pre : '`' . $pre . '`.';
+        $uidString = is_array($uidX) ? implode(',', $uidX) : $uidX;
         return " FIND_IN_SET( {$preString}`uid`, '{$uidString}') ";
     }
 
@@ -87,8 +110,8 @@ class User extends Model {
      * @param string $pre 表简称
      * @return string
      */
-    public function status_not_disabled( $pre = '' ) {
-        $preString = empty( $pre ) ? $pre : '`' . $pre . '`.';
+    public function status_not_disabled($pre = '') {
+        $preString = empty($pre) ? $pre : '`' . $pre . '`.';
         $abandoned = self::USER_STATUS_ABANDONED;
         return " {$preString}`status` != '{$abandoned}' ";
     }
@@ -99,8 +122,8 @@ class User extends Model {
      * @param string $pre 表简写
      * @return string
      */
-    public function uid_eq( $uid, $pre = '' ) {
-        $preString = empty( $pre ) ? $pre : '`' . $pre . '`.';
+    public function uid_eq($uid, $pre = '') {
+        $preString = empty($pre) ? $pre : '`' . $pre . '`.';
         return "{$preString}`uid` = '{$uid}' ";
     }
 
@@ -118,11 +141,14 @@ class User extends Model {
      * @param mixed $extraCondition 额外的条件
      * @return array
      */
-    public function findUserIndexByUid( $uidX = array(), $returnDisabled = false, $extraCondition = '' ) {
-        $userArray = $this->findUserByUid( $uidX = array(), $returnDisabled, $extraCondition );
+    public function findUserIndexByUid($uidX = NULL, $returnDisabled = false, $extraCondition = '') {
+        if (empty($uidX) && NULL !== $uidX) {
+            return array();
+        }
+        $userArray = $this->findUserByUid($uidX, $returnDisabled, $extraCondition);
         $return = array();
-        if ( !empty( $userArray ) ) {
-            foreach ( $userArray as $user ) {
+        if (!empty($userArray)) {
+            foreach ($userArray as $user) {
                 $return[$user['uid']] = $user;
             }
         }
@@ -136,21 +162,27 @@ class User extends Model {
      * @param mixed $extraCondition 额外的条件
      * @return array
      */
-    public function findUserByUid( $uidX = array(), $returnDisabled = false, $extraCondition = '' ) {
+    public function findUserByUid($uidX = NULL, $returnDisabled = false, $extraCondition = '') {
+        if (empty($uidX) && NULL !== $uidX) {
+            return array();
+        }
         $query = IBOS::app()->db->createCommand()
-                ->select( $this->select )
-                ->from( $this->tableName() );
+            ->select($this->select)
+            ->from($this->tableName());
         $conditionArray = array(
-            !empty( $uidX ) ? $this->uid_find_in_set( $uidX ) : 1,
-            false === $returnDisabled ? $this->status_not_disabled() : 1,
-            !empty( $extraCondition ) ? $extraCondition : 1,
+            !empty($uidX) ? $this->uid_find_in_set($uidX, $this->pre) : 1,
+            false === $returnDisabled ? $this->status_not_disabled($this->pre) : 1,
+            !empty($extraCondition) ? $extraCondition : 1,
         );
-        $condition = array_filter( $conditionArray, function($cond) {
-            if ( $cond != 1 ) {
+        $condition = array_filter($conditionArray, function ($cond) {
+            if ($cond != 1) {
                 return true;
             }
-        } );
-        $query->where( implode( ' AND ', $condition ) );
+        });
+        $query->where(implode(' AND ', $condition));
+        NULL !== $this->limit && $query->limit($this->limit);
+        NULL !== $this->offset && $query->offset($this->offset);
+        NULL !== $this->leftJoin && $query->leftJoin($this->leftJoin[0], $this->leftJoin[1]);
         $userArray = $query->queryAll();
         $this->afterQuery();
         return $userArray;
@@ -161,15 +193,15 @@ class User extends Model {
      * @param mixed $uidX
      * @return array
      */
-    public function findRealnameIndexByUid( $uidX ) {
+    public function findRealnameIndexByUid($uidX) {
         $realName = IBOS::app()->db->createCommand()
-                ->select( 'uid,realname' )
-                ->from( $this->tableName() )
-                ->where( $this->uid_find_in_set( $uidX ) )
-                ->queryAll();
+            ->select('uid,realname')
+            ->from($this->tableName())
+            ->where($this->uid_find_in_set($uidX))
+            ->queryAll();
         $return = array();
-        if ( !empty( $realName ) ) {
-            foreach ( $realName as $name ) {
+        if (!empty($realName)) {
+            foreach ($realName as $name) {
                 $return[$name['uid']] = $name['realname'];
             }
         }
@@ -181,14 +213,28 @@ class User extends Model {
      * @param boolean $returnDisabled 是否禁用用户一起返回
      * @return array
      */
-    public function fetchUidA( $returnDisabled = true ) {
+    public function fetchUidA($returnDisabled = false) {
         $condition = $returnDisabled ? 1 : $this->status_not_disabled();
         $uidA = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( $condition )
-                ->queryColumn();
+            ->select('uid')
+            ->from($this->tableName())
+            ->where($condition)
+            ->queryColumn();
         return $uidA;
+    }
+
+    /**
+     * 根据批量uid获取批量真实姓名和电话，uid为数组的键
+     * @param mixed $uidX
+     * @return array
+     */
+    public function findThreeByUid($uidX) {
+        $return = IBOS::app()->db->createCommand()
+            ->select('uid,realname,mobile,deptid')
+            ->from($this->tableName())
+            ->where($this->uid_find_in_set($uidX))
+            ->queryAll();
+        return $return;
     }
 
     /**
@@ -196,16 +242,16 @@ class User extends Model {
      * @param mix $uidX uid一维数组或者逗号隔开的字符串
      * @return array
      */
-    public function findNotDisabledUid( $uidX ) {
+    public function findNotDisabledUid($uidX) {
         $uidArray = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( array(
-                    'AND',
-                    $this->uid_find_in_set( $uidX ),
-                    $this->status_not_disabled(),
-                ) )
-                ->queryColumn();
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(array(
+                'AND',
+                $this->uid_find_in_set($uidX),
+                $this->status_not_disabled(),
+            ))
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -214,12 +260,12 @@ class User extends Model {
      * @param integer $status 状态（0：启用 1：锁定 2：禁用）
      * @return type
      */
-    public function fetchAllUidsByStatus( $status ) {
+    public function fetchAllUidsByStatus($status) {
         $uidArray = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( " `status` = '{$status}' " )
-                ->queryColumn();
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(" `status` = '{$status}' ")
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -229,22 +275,22 @@ class User extends Model {
      * @param boolean $onlyRelated 是否只返回关联数据，默认false，返回包括主部门
      * @return array
      */
-    public function findAllDeptidByUid( $uid, $onlyRelated = false ) {
+    public function findAllDeptidByUid($uid, $onlyRelated = false) {
         $main = NULL;
-        if ( false === $onlyRelated ) {
+        if (false === $onlyRelated) {
             $main = IBOS::app()->db->createCommand()
-                    ->select( 'deptid' )
-                    ->from( $this->tableName() )
-                    ->where( $this->uid_eq( $uid ) )
-                    ->queryScalar();
+                ->select('deptid')
+                ->from($this->tableName())
+                ->where($this->uid_eq($uid))
+                ->queryScalar();
         }
         $related = IBOS::app()->db->createCommand()
-                ->select( 'deptid' )
-                ->from( DepartmentRelated::model()->tableName() )
-                ->where( $this->uid_eq( $uid ) )
-                ->queryColumn();
+            ->select('deptid')
+            ->from(DepartmentRelated::model()->tableName())
+            ->where($this->uid_eq($uid))
+            ->queryColumn();
 
-        return array_unique( array_merge( $related, array( $main ) ) );
+        return array_unique(array_merge($related, array($main)));
     }
 
     /**
@@ -253,22 +299,22 @@ class User extends Model {
      * @param boolean $onlyRelated 是否只返回关联数据，默认false，返回包括主岗位
      * @return array
      */
-    public function findAllPositionidByUid( $uid, $onlyRelated = false ) {
+    public function findAllPositionidByUid($uid, $onlyRelated = false) {
         $main = NULL;
-        if ( false === $onlyRelated ) {
+        if (false === $onlyRelated) {
             $main = IBOS::app()->db->createCommand()
-                    ->select( 'positionid' )
-                    ->from( $this->tableName() )
-                    ->where( $this->uid_eq( $uid ) )
-                    ->queryScalar();
+                ->select('positionid')
+                ->from($this->tableName())
+                ->where($this->uid_eq($uid))
+                ->queryScalar();
         }
         $related = IBOS::app()->db->createCommand()
-                ->select( 'positionid' )
-                ->from( PositionRelated::model()->tableName() )
-                ->where( $this->uid_eq( $uid ) )
-                ->queryColumn();
+            ->select('positionid')
+            ->from(PositionRelated::model()->tableName())
+            ->where($this->uid_eq($uid))
+            ->queryColumn();
 
-        return array_unique( array_merge( $related, array( $main ) ) );
+        return array_unique(array_merge($related, array($main)));
     }
 
     /**
@@ -277,22 +323,22 @@ class User extends Model {
      * @param boolean $onlyRelated 是否只返回关联数据，默认false，返回包括主角色
      * @return array
      */
-    public function findAllRoleidByUid( $uid, $onlyRelated = false ) {
+    public function findAllRoleidByUid($uid, $onlyRelated = false) {
         $main = NULL;
-        if ( false === $onlyRelated ) {
+        if (false === $onlyRelated) {
             $main = IBOS::app()->db->createCommand()
-                    ->select( 'roleid' )
-                    ->from( $this->tableName() )
-                    ->where( $this->uid_eq( $uid ) )
-                    ->queryScalar();
+                ->select('roleid')
+                ->from($this->tableName())
+                ->where($this->uid_eq($uid))
+                ->queryScalar();
         }
         $related = IBOS::app()->db->createCommand()
-                ->select( 'roleid' )
-                ->from( RoleRelated::model()->tableName() )
-                ->where( $this->uid_eq( $uid ) )
-                ->queryColumn();
+            ->select('roleid')
+            ->from(RoleRelated::model()->tableName())
+            ->where($this->uid_eq($uid))
+            ->queryColumn();
 
-        return array_unique( array_merge( $related, array( $main ) ) );
+        return array_unique(array_merge($related, array($main)));
     }
 
     /**
@@ -300,29 +346,29 @@ class User extends Model {
      * @param mixed $uidX uid数组或者逗号字符串，默认NULL，表示返回所有uid的
      * @return array 返回关联和主要部门id
      */
-    public function findDeptidIndexByUid( $uidX = NULL ) {
+    public function findDeptidIndexByUid($uidX = NULL) {
         $condition = 1;
-        if ( NULL !== $uidX ) {
-            $condition = $this->uid_find_in_set( $uidX );
+        if (NULL !== $uidX) {
+            $condition = $this->uid_find_in_set($uidX);
         }
         $deptRelated = IBOS::app()->db->createCommand()
-                ->select( 'uid,deptid' )
-                ->from( DepartmentRelated::model()->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,deptid')
+            ->from(DepartmentRelated::model()->tableName())
+            ->where($condition)
+            ->queryAll();
         $deptMain = IBOS::app()->db->createCommand()
-                ->select( 'uid,deptid' )
-                ->from( $this->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,deptid')
+            ->from($this->tableName())
+            ->where($condition)
+            ->queryAll();
         $return = $relatedArray = array();
-        foreach ( $deptRelated as $related ) {
+        foreach ($deptRelated as $related) {
             $relatedArray[$related['uid']][] = $related['deptid'];
         }
-        foreach ( $deptMain as $main ) {
+        foreach ($deptMain as $main) {
             $return[$main['uid']] = array(
                 'main' => $main['deptid'],
-                'related' => !empty( $relatedArray[$main['uid']] ) ? $relatedArray[$main['uid']] : array(),
+                'related' => !empty($relatedArray[$main['uid']]) ? $relatedArray[$main['uid']] : array(),
             );
         }
         return $return;
@@ -333,29 +379,29 @@ class User extends Model {
      * @param mixed $uidX uid数组或者逗号字符串，默认NULL，表示返回所有uid的
      * @return array 返回关联和主要岗位id
      */
-    public function findPositionidIndexByUid( $uidX = NULL ) {
+    public function findPositionidIndexByUid($uidX = NULL) {
         $condition = 1;
-        if ( NULL !== $uidX ) {
-            $condition = $this->uid_find_in_set( $uidX );
+        if (NULL !== $uidX) {
+            $condition = $this->uid_find_in_set($uidX);
         }
         $PositionRelated = IBOS::app()->db->createCommand()
-                ->select( 'uid,positionid' )
-                ->from( PositionRelated::model()->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,positionid')
+            ->from(PositionRelated::model()->tableName())
+            ->where($condition)
+            ->queryAll();
         $positionMain = IBOS::app()->db->createCommand()
-                ->select( 'uid,positionid' )
-                ->from( $this->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,positionid')
+            ->from($this->tableName())
+            ->where($condition)
+            ->queryAll();
         $return = $relatedArray = array();
-        foreach ( $PositionRelated as $related ) {
+        foreach ($PositionRelated as $related) {
             $relatedArray[$related['uid']][] = $related['positionid'];
         }
-        foreach ( $positionMain as $main ) {
+        foreach ($positionMain as $main) {
             $return[$main['uid']] = array(
                 'main' => $main['positionid'],
-                'related' => !empty( $relatedArray[$main['uid']] ) ? $relatedArray[$main['uid']] : array(),
+                'related' => !empty($relatedArray[$main['uid']]) ? $relatedArray[$main['uid']] : array(),
             );
         }
         return $return;
@@ -366,29 +412,29 @@ class User extends Model {
      * @param mixed $uidX uid数组或者逗号字符串，默认NULL，表示返回所有uid的
      * @return array 返回关联和主要角色id
      */
-    public function findRoleidIndexByUid( $uidX = NULL ) {
+    public function findRoleidIndexByUid($uidX = NULL) {
         $condition = 1;
-        if ( NULL !== $uidX ) {
-            $condition = $this->uid_find_in_set( $uidX );
+        if (NULL !== $uidX) {
+            $condition = $this->uid_find_in_set($uidX);
         }
         $roleRelated = IBOS::app()->db->createCommand()
-                ->select( 'uid,roleid' )
-                ->from( RoleRelated::model()->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,roleid')
+            ->from(RoleRelated::model()->tableName())
+            ->where($condition)
+            ->queryAll();
         $roleMain = IBOS::app()->db->createCommand()
-                ->select( 'uid,roleid' )
-                ->from( $this->tableName() )
-                ->where( $condition )
-                ->queryAll();
+            ->select('uid,roleid')
+            ->from($this->tableName())
+            ->where($condition)
+            ->queryAll();
         $return = $relatedArray = array();
-        foreach ( $roleRelated as $related ) {
+        foreach ($roleRelated as $related) {
             $relatedArray[$related['uid']][] = $related['roleid'];
         }
-        foreach ( $roleMain as $main ) {
+        foreach ($roleMain as $main) {
             $return[$main['uid']] = array(
                 'main' => $main['roleid'],
-                'related' => !empty( $relatedArray[$main['uid']] ) ? $relatedArray[$main['uid']] : array(),
+                'related' => !empty($relatedArray[$main['uid']]) ? $relatedArray[$main['uid']] : array(),
             );
         }
         return $return;
@@ -399,16 +445,16 @@ class User extends Model {
      * @param integer $uid
      * @return array
      */
-    public function fetchSubUidByUid( $uid ) {
+    public function fetchSubUidByUid($uid) {
         $uidArray = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( array(
-                    'AND',
-                    $this->status_not_disabled(),
-                    " `upuid` ='{$uid}' "
-                ) )
-                ->queryColumn();
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(array(
+                'AND',
+                $this->status_not_disabled(),
+                " `upuid` ='{$uid}' "
+            ))
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -417,12 +463,12 @@ class User extends Model {
      * @param string $name 真实姓名
      * @return array 用户数据
      */
-    public function findByRealname( $name ) {
+    public function findByRealname($name) {
         $user = IBOS::app()->db->createCommand()
-                ->select()
-                ->from( $this->tableName() )
-                ->where( " `realname` = ':name' ", array( ':name' => $name ) )
-                ->queryScalar();
+            ->select()
+            ->from($this->tableName())
+            ->where(" `realname` = ':name' ", array(':name' => $name))
+            ->queryScalar();
         return $user;
     }
 
@@ -431,13 +477,13 @@ class User extends Model {
      * @param mixed $realnameX 真实姓名的数组或者逗号字符串
      * @return array
      */
-    public function findUidByRealnameX( $realnameX ) {
-        $realnameString = is_array( $realnameX ) ? implode( ',', $realnameX ) : $realnameX;
+    public function findUidByRealnameX($realnameX) {
+        $realnameString = is_array($realnameX) ? implode(',', $realnameX) : $realnameX;
         $uidArray = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( " FIND_IN_SET( `realname`, ':realnameString') ", array( ':realnameString' => $realnameString ) )
-                ->queryColumn();
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(" FIND_IN_SET( `realname`, '{$realnameString}') ")
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -446,14 +492,9 @@ class User extends Model {
      * @param integer $uid
      * @return array
      */
-    public function fetchByUid( $uid ) {
-        $object = $this->findByPk( $uid );
-        if ( is_object( $object ) ) {
-            $users = UserUtil::wrapUserInfo( $uid );
-            return $users[$uid];
-        } else {
-            return array();
-        }
+    public function fetchByUid($uid) {
+        $user = UserUtil::wrapUserInfo($uid);
+        return !empty($user[$uid]) ? $user[$uid] : array();
     }
 
     /**
@@ -461,18 +502,18 @@ class User extends Model {
      * @param mixed $uidX uid的数组或者逗号字符串
      * @return array
      */
-    public function fetchAllByUids( $uidX = NULL, $returnDisabled = true ) {
-        if ( NULL == $uidX ) {
-            $uidMixed = $this->fetchUidA( $returnDisabled );
+    public function fetchAllByUids($uidX = NULL, $returnDisabled = true) {
+        if (NULL === $uidX) {
+            return UserUtil::wrapUserInfo($uidX);
         } else {
-            if ( false === $returnDisabled ) {
-                $uidMixed = $this->findNotDisabledUid( $uidX );
+            if (false === $returnDisabled) {
+                $uidMixed = $this->findNotDisabledUid($uidX);
             } else {
                 $uidMixed = $uidX;
             }
+            $uidArray = is_array($uidMixed) ? $uidMixed : explode(',', $uidMixed);
+            return UserUtil::wrapUserInfo(array_unique($uidArray));
         }
-        $uidArray = is_array( $uidMixed ) ? $uidMixed : explode( ',', $uidMixed );
-        return UserUtil::wrapUserInfo( array_unique( $uidArray ) );
     }
 
     /**
@@ -480,12 +521,12 @@ class User extends Model {
      * @param integer $uid
      * @return string
      */
-    public function fetchRealnameByUid( $uid ) {
+    public function fetchRealnameByUid($uid) {
         $realname = IBOS::app()->db->createCommand()
-                ->select( 'realname' )
-                ->from( $this->tableName() )
-                ->where( $this->uid_eq( $uid ) )
-                ->queryScalar();
+            ->select('realname')
+            ->from($this->tableName())
+            ->where($this->uid_eq($uid))
+            ->queryScalar();
         return $realname;
     }
 
@@ -495,28 +536,28 @@ class User extends Model {
      * @param string $glue 分隔符
      * @return string
      */
-    public function fetchRealnamesByUids( $uidX, $glue = ',' ) {
+    public function fetchRealnamesByUids($uidX, $glue = ',') {
         $realnameArray = IBOS::app()->db->createCommand()
-                ->select( 'realname' )
-                ->from( $this->tableName() )
-                ->where( $this->uid_find_in_set( $uidX ) )
-                ->queryColumn();
-        return implode( $glue, $realnameArray );
+            ->select('realname')
+            ->from($this->tableName())
+            ->where($this->uid_find_in_set($uidX))
+            ->queryColumn();
+        return implode($glue, $realnameArray);
     }
 
     /**
      * 检查能否禁用或者锁定一批用户，如果禁用了之后一个管理员都没有，就禁止禁用这些uid
      * @param type $uidX
      */
-    public function checkCanDisabled( $uidX ) {
-        $uidArray = is_array( $uidX ) ? $uidX : explode( ',', $uidX );
+    public function checkCanDisabled($uidX) {
+        $uidArray = is_array($uidX) ? $uidX : explode(',', $uidX);
         $adminArray = IBOS::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( $this->tableName() )
-                ->where( " isadministrator = 1 " )
-                ->queryColumn();
-        $isEmpty = array_diff( $adminArray, $uidArray );
-        return !empty( $isEmpty );
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(" isadministrator = 1 ")
+            ->queryColumn();
+        $isEmpty = array_diff($adminArray, $uidArray);
+        return !empty($isEmpty);
     }
 
     //--------------------------new function end------------------
@@ -525,9 +566,9 @@ class User extends Model {
      * @param string $name
      * @return boolean
      */
-    public function userNameExists( $name ) {
-        $user = $this->fetch( 'username = :name', array( ':name' => $name ) );
-        if ( !empty( $user ) ) {
+    public function userNameExists($name) {
+        $user = $this->fetch('username = :name', array(':name' => $name));
+        if (!empty($user)) {
             return true;
         } else {
             return false;
@@ -537,62 +578,62 @@ class User extends Model {
     /**
      * 检查唯一字段
      * @param 需要插入的用户 $data
-     * @param 唯一字段的配置 $uniqueConfig，格式：key对应数据表里的字段，value对应这个字段的解释
+     * @param 唯一字段的配置 $uniqueConfig ，格式：key对应数据表里的字段，value对应这个字段的解释
      */
-    public function checkUnique( $data, $uniqueConfig = array( 'mobile' => '手机号', 'username' => '用户名', ) ) {
+    public function checkUnique($data, $uniqueConfig = array('mobile' => '手机号', 'username' => '用户名',)) {
         $arr1 = $arr2 = array();
-        foreach ( $uniqueConfig as $k => $v ) {
-            if ( !empty( $data[$k] ) ) {
+        foreach ($uniqueConfig as $k => $v) {
+            if (!empty($data[$k])) {
                 $arr1[] = $k . '=:' . $k;
                 $arr2[':' . $k] = $data[$k];
             }
         }
 
-        $str = implode( ' or ', $arr1 );
-        if ( isset( $data['uid'] ) ) {
+        $str = implode(' or ', $arr1);
+        if (isset($data['uid'])) {
             $con = ' and uid != :uid';
             $arr2[':uid'] = $data['uid'];
             $str = '(' . $str . ')' . $con;
         }
-        $res = $this->fetch( $str, $arr2 );
-        if ( !empty( $res ) ) {
+        $res = $this->fetch($str, $arr2);
+        if (!empty($res)) {
             //todo:更好的显示方式
-            Env::iExit( '请检查：' . implode( ',', $uniqueConfig ) . '中是否有重复的用户' );
+            Env::iExit('请检查：' . implode(',', $uniqueConfig) . '中是否有重复的用户');
         }
     }
 
     /**
      * 查找部门内符合条件的人
      */
-    public function fetchAllFitDeptUser( $dept ) {
+    public function fetchAllFitDeptUser($dept) {
         $uidArray = util\IBOS::app()->db->createCommand()
-                ->select( 'u.uid' )
-                ->from( '{{user}} u' )
-                ->leftJoin( '{{department_related}} dr', 'u.uid = dr.uid' )
-                ->where( array(
-                    'AND',
-                    $this->status_not_disabled( 'u' ),
-                    array(
-                        'OR',
-                        Department::model()->deptid_find_in_set( $dept, 'u' ),
-                        Department::model()->deptid_find_in_set( $dept, 'dr' ),
-                    ),
-                ) )
-                ->queryColumn();
-        return $this->fetchAllByUids( $uidArray );
+            ->select('u.uid')
+            ->from('{{user}} u')
+            ->leftJoin('{{department_related}} dr', 'u.uid = dr.uid')
+            ->where(array(
+                'AND',
+                $this->status_not_disabled('u'),
+                array(
+                    'OR',
+                    Department::model()->deptid_find_in_set($dept, 'u'),
+                    Department::model()->deptid_find_in_set($dept, 'dr'),
+                ),
+            ))
+            ->queryColumn();
+        return $this->fetchAllByUids($uidArray);
     }
 
     /**
      * 没设部门主管的情况下查找其他有权限的人
      */
-    public function fetchAllOtherManager( $dept ) {
+    public function fetchAllOtherManager($dept) {
         $list = util\IBOS::app()->db->createCommand()
-                ->select( 'u.uid' )
-                ->from( '{{user}} u' )
-                ->leftJoin( '{{department_related}} dr', 'u.uid = dr.uid' )
-                ->where( $this->status_not_disabled( 'u' )
-                        . " AND ((FIND_IN_SET(u.deptid,'{$dept}') OR FIND_IN_SET(dr.deptid,'{$dept}')))" )
-                ->queryAll();
+            ->select('u.uid')
+            ->from('{{user}} u')
+            ->leftJoin('{{department_related}} dr', 'u.uid = dr.uid')
+            ->where($this->status_not_disabled('u')
+                . " AND ((FIND_IN_SET(u.deptid,'{$dept}') OR FIND_IN_SET(dr.deptid,'{$dept}')))")
+            ->queryAll();
         return $list;
     }
 
@@ -604,31 +645,31 @@ class User extends Model {
      * @author Ring
      * @refactor banyan
      */
-    public function fetchUidByPosId( $positionid, $returnDisabled = true, $related = false ) {
+    public function fetchUidByPosId($positionid, $returnDisabled = true, $related = false) {
         static $positionidArray = array();
-        if ( !isset( $positionidArray[$positionid] ) ) :
+        if (!isset($positionidArray[$positionid])) :
             $condition = " `u`.`positionid`= '{$positionid}' ";
             $query = IBOS::app()->db->createCommand();
-            if ( true === $related ):
-                $query = $query->leftJoin( PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
-                        , " `prpr`.`uid` = `u`.`uid` " );
+            if (true === $related):
+                $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
+                    , " `prpr`.`uid` = `u`.`uid` ");
                 $condition = array(
                     'OR',
                     $condition,
                     " `prpr`.`positionid`= '{$positionid}' ",
                 );
             endif;
-            if ( true === $returnDisabled ):
+            if (true === $returnDisabled):
                 $condition = array(
                     'AND',
                     $condition,
-                    $this->status_not_disabled( 'u' ),
+                    $this->status_not_disabled('u'),
                 );
             endif;
-            $uidArray = $query->selectDistinct( 'u.uid' )
-                    ->from( $this->tableName() . ' u' )
-                    ->where( $condition )
-                    ->queryColumn();
+            $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
             $positionidArray[$positionid] = $uidArray;
         endif;
         return $positionidArray;
@@ -641,30 +682,30 @@ class User extends Model {
      * @param boolean $related 是否返回辅助角色
      * @return array
      */
-    public function fetchUidByRoleId( $roleid, $returnDisabled = true, $related = false ) {
-        if ( !isset( $RoleidArray[$roleid] ) ) {
+    public function fetchUidByRoleId($roleid, $returnDisabled = true, $related = false) {
+        if (!isset($RoleidArray[$roleid])) {
             $condition = " `u`.`roleid` = '{$roleid}'";
             $query = IBOS::app()->db->createCommand();
-            if ( true === $related ):
-                $query = $query->leftJoin( RoleRelated::model()->tableName() . ' rr'
-                        , " `rr`.`uid` = `u`.`uid` " );
+            if (true === $related):
+                $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
+                    , " `rr`.`uid` = `u`.`uid` ");
                 $condition = array(
                     'OR',
                     $condition,
                     " `rr`.`roleid` = '{$roleid}' ",
                 );
             endif;
-            if ( true === $returnDisabled ):
+            if (true === $returnDisabled):
                 $condition = array(
                     'AND',
                     $condition,
-                    $this->status_not_disabled( 'u' ),
+                    $this->status_not_disabled('u'),
                 );
             endif;
-            $uidArray = $query->selectDistinct( 'u.uid' )
-                    ->from( $this->tableName() . ' u' )
-                    ->where( $condition )
-                    ->queryColumn();
+            $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
             $RoleidArray[$roleid] = $uidArray;
         }
         return $RoleidArray[$roleid];
@@ -672,35 +713,35 @@ class User extends Model {
 
     /**
      * 根据角色 ID 列表获取对应的用户 ID 数组
-     * @param  string|array  $roleids        角色列表
+     * @param  string|array $roleids 角色列表
      * @param  boolean $returnDisabled 是否去除被禁用的用户 ID
-     * @param  boolean $related        是否关联用户角色关系表数据
+     * @param  boolean $related 是否关联用户角色关系表数据
      * @return
      */
-    public function fetchAllUidByRoleids( $roleids, $returnDisabled = true, $related = false ) {
-        $roleids = is_array( $roleids ) ? implode( ',', $roleids ) : $roleids;
+    public function fetchAllUidByRoleids($roleids, $returnDisabled = true, $related = false) {
+        $roleids = is_array($roleids) ? implode(',', $roleids) : $roleids;
         $condition = " FIND_IN_SET( `u`.`roleid`, '{$roleids}' ) ";
         $query = IBOS::app()->db->createCommand();
-        if ( true === $related ):
-            $query = $query->leftJoin( RoleRelated::model()->tableName() . ' rr'
-                    , " `rr`.`uid` = `u`.`uid` " );
+        if (true === $related):
+            $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
+                , " `rr`.`uid` = `u`.`uid` ");
             $condition = array(
                 'OR',
                 $condition,
                 " FIND_IN_SET( `rr`.`roleid`, '{$roleids}' ) ",
             );
         endif;
-        if ( true === $returnDisabled ):
+        if (true === $returnDisabled):
             $condition = array(
                 'AND',
                 $condition,
                 " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
             );
         endif;
-        $uidArray = $query->selectDistinct( 'u.uid' )
-                ->from( $this->tableName() . ' u' )
-                ->where( $condition )
-                ->queryColumn();
+        $uidArray = $query->selectDistinct('u.uid')
+            ->from($this->tableName() . ' u')
+            ->where($condition)
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -711,30 +752,30 @@ class User extends Model {
      * @param boolean $related 是否返回辅助岗位
      * @return array
      */
-    public function fetchAllUidByPositionIds( $positionids, $returnDisabled = true, $related = false ) {
-        $positionString = is_array( $positionids ) ? implode( ',', $positionids ) : $positionids;
+    public function fetchAllUidByPositionIds($positionids, $returnDisabled = true, $related = false) {
+        $positionString = is_array($positionids) ? implode(',', $positionids) : $positionids;
         $condition = " FIND_IN_SET(`u`.`positionid`, '{$positionString}') ";
         $query = IBOS::app()->db->createCommand();
-        if ( true === $related ):
-            $query = $query->leftJoin( PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
-                    , " `prpr`.`uid` = `u`.`uid` " );
+        if (true === $related):
+            $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
+                , " `prpr`.`uid` = `u`.`uid` ");
             $condition = array(
                 'OR',
                 $condition,
                 " FIND_IN_SET(`prpr`.`positionid`, '{$positionString}') ",
             );
         endif;
-        if ( true === $returnDisabled ):
+        if (true === $returnDisabled):
             $condition = array(
                 'AND',
                 $condition,
                 " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
             );
         endif;
-        $uidArray = $query->selectDistinct( 'u.uid' )
-                ->from( $this->tableName() . ' u' )
-                ->where( $condition )
-                ->queryColumn();
+        $uidArray = $query->selectDistinct('u.uid')
+            ->from($this->tableName() . ' u')
+            ->where($condition)
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -745,31 +786,31 @@ class User extends Model {
      * @param boolean $related 是否返回辅助部门的用户
      * @return array
      */
-    public function fetchAllUidByDeptid( $deptid, $returnDisabled = true, $related = false ) {
+    public function fetchAllUidByDeptid($deptid, $returnDisabled = true, $related = false) {
         static $deptidArray = array();
-        if ( !isset( $deptidArray[$deptid] ) ) {
+        if (!isset($deptidArray[$deptid])) {
             $condition = " `u`.`deptid` = '{$deptid}'";
             $query = IBOS::app()->db->createCommand();
-            if ( true === $related ):
-                $query = $query->leftJoin( DepartmentRelated::model()->tableName() . ' dr'
-                        , " `dr`.`uid` = `u`.`uid` " );
+            if (true === $related):
+                $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
+                    , " `dr`.`uid` = `u`.`uid` ");
                 $condition = array(
                     'OR',
                     $condition,
                     " `dr`.`deptid` = '{$deptid}'",
                 );
             endif;
-            if ( true === $returnDisabled ):
+            if (true === $returnDisabled):
                 $condition = array(
                     'AND',
                     $condition,
                     " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
                 );
             endif;
-            $uidArray = $query->selectDistinct( 'u.uid' )
-                    ->from( $this->tableName() . ' u' )
-                    ->where( $condition )
-                    ->queryColumn();
+            $uidArray = $query->selectDistinct('u.uid')
+                ->from($this->tableName() . ' u')
+                ->where($condition)
+                ->queryColumn();
             $deptidArray[$deptid] = $uidArray;
         }
         return $deptidArray[$deptid];
@@ -781,30 +822,30 @@ class User extends Model {
      * @param boolean $returnDisabled 是否禁用用户一起返回
      * @return array
      */
-    public function fetchAllUidByDeptids( $deptids, $returnDisabled = true, $related = false ) {
-        $deptidString = is_array( $deptids ) ? implode( ',', $deptids ) : $deptids;
+    public function fetchAllUidByDeptids($deptids, $returnDisabled = true, $related = false) {
+        $deptidString = is_array($deptids) ? implode(',', $deptids) : $deptids;
         $condition = " FIND_IN_SET(`u`.`deptid`, '{$deptidString}') ";
         $query = IBOS::app()->db->createCommand();
-        if ( true === $related ):
-            $query = $query->leftJoin( DepartmentRelated::model()->tableName() . ' dr'
-                    , " `dr`.`uid` = `u`.`uid` " );
+        if (true === $related):
+            $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
+                , " `dr`.`uid` = `u`.`uid` ");
             $condition = array(
                 'OR',
                 $condition,
                 " FIND_IN_SET(`dr`.`deptid`, '{$deptidString}') ",
             );
         endif;
-        if ( true === $returnDisabled ):
+        if (true === $returnDisabled):
             $condition = array(
                 'AND',
                 $condition,
                 " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
             );
         endif;
-        $uidArray = $query->selectDistinct( 'u.uid' )
-                ->from( $this->tableName() . ' u' )
-                ->where( $condition )
-                ->queryColumn();
+        $uidArray = $query->selectDistinct('u.uid')
+            ->from($this->tableName() . ' u')
+            ->where($condition)
+            ->queryColumn();
         return $uidArray;
     }
 
@@ -813,17 +854,13 @@ class User extends Model {
      * @return array
      */
     public function fetchAllCredit() {
-        $condition = array(
-            'select' => 'uid',
-            'condition' => 'status != 2',
-            'order' => 'credits DESC'
-        );
-        $ids = $this->fetchAll( $condition );
-        $result = array();
-        if ( !empty( $ids ) ) {
-            $result = util\Convert::getSubByKey( $ids, 'uid' );
-        }
-        return $result;
+        $uid = IBOS::app()->db->createCommand()
+            ->select('uid')
+            ->from($this->tableName())
+            ->where(" `status` != 2 ")
+            ->order(' credits DESC ')
+            ->queryColumn();
+        return !empty($uid) ? $uid : array();
     }
 
     /**
@@ -833,14 +870,14 @@ class User extends Model {
      * @param integer $offset
      * @return array
      */
-    public function fetchAllByDeptIdType( $deptId, $type, $limit, $offset ) {
+    public function fetchAllByDeptIdType($deptId, $type, $limit, $offset) {
         $condition = array(
-            'condition' => $this->getConditionByDeptIdType( $deptId, $type ),
+            'condition' => $this->getConditionByDeptIdType($deptId, $type),
             'order' => 'createtime DESC',
             'limit' => $limit,
             'offset' => $offset
         );
-        return $this->fetchAll( $condition );
+        return $this->fetchAll($condition);
     }
 
     /**
@@ -849,8 +886,8 @@ class User extends Model {
      * @param array $attributes 要更新的值
      * @return integer
      */
-    public function updateByUids( $uidX, $attributes = array() ) {
-        $counter = $this->updateAll( $attributes, $this->uid_find_in_set( $uidX ) );
+    public function updateByUids($uidX, $attributes = array()) {
+        $counter = $this->updateAll($attributes, $this->uid_find_in_set($uidX));
         return $counter;
     }
 
@@ -860,8 +897,8 @@ class User extends Model {
      * @param type $attributes
      * @return type
      */
-    public function updateByUid( $uid, $attributes ) {
-        $counter = $this->updateByPk( $uid, $attributes );
+    public function updateByUid($uid, $attributes) {
+        $counter = $this->updateByPk($uid, $attributes);
         return $counter;
     }
 
@@ -870,8 +907,8 @@ class User extends Model {
      * @param string $type 查询类型
      * @return integer
      */
-    public function countByDeptIdType( $deptId, $type ) {
-        return $this->count( array( 'condition' => $this->getConditionByDeptIdType( $deptId, $type ) ) );
+    public function countByDeptIdType($deptId, $type) {
+        return $this->count(array('condition' => $this->getConditionByDeptIdType($deptId, $type)));
     }
 
     /**
@@ -879,9 +916,9 @@ class User extends Model {
      * @param string $type 查询类型
      * @return string SQL where 字段
      */
-    public function getConditionByDeptIdType( $deptId, $type ) {
+    public function getConditionByDeptIdType($deptId, $type) {
         $condition = $deptId ? "`deptid` = {$deptId} AND " : '';
-        switch ( $type ) {
+        switch ($type) {
             case 'enabled':
                 $condition .= '`status` = 0';
                 break;
@@ -903,14 +940,14 @@ class User extends Model {
      * @param integer $uid
      * @return array
      */
-    public function fetchSubByPk( $uid, $limitCondition = '' ) {
-        $records = $this->fetchAll( array(
+    public function fetchSubByPk($uid, $limitCondition = '') {
+        $records = $this->fetchAll(array(
             'select' => 'uid, username, deptid, upuid, realname',
             'condition' => 'upuid=:upuid AND status != 2' . $limitCondition,
-            'params' => array( ':upuid' => $uid )
-                ) );
+            'params' => array(':upuid' => $uid)
+        ));
         $userArr = array();
-        foreach ( $records as $user ) {
+        foreach ($records as $user) {
             $userArr[] = $user;
         }
         return $userArr;
@@ -922,15 +959,15 @@ class User extends Model {
      * @param string $size 大小标识，b大，m中，s小
      * @return string
      */
-    public function fetchAvatarByUid( $uid, $size = 'm' ) {
-        $user = $this->fetchByUid( $uid );
-        if ( empty( $user ) ) {
+    public function fetchAvatarByUid($uid, $size = 'm') {
+        $user = $this->fetchByUid($uid);
+        if (empty($user)) {
             return '';
         }
-        if ( $size == 'b' ) {
+        if ($size == 'b') {
             // 大头像
             $avatar = $user['avatar_big'];
-        } elseif ( $size == 's' ) {
+        } elseif ($size == 's') {
             // 小头像
             $avatar = $user['avatar_small'];
         } else {
@@ -945,8 +982,8 @@ class User extends Model {
      * @param integer $positionid
      * @return integer
      */
-    public function countNumsByPositionId( $positionid ) {
-        return User::model()->count( 'positionid = :positionid AND status != 2', array( ':positionid' => $positionid ) );
+    public function countNumsByPositionId($positionid) {
+        return User::model()->count('positionid = :positionid AND status != 2', array(':positionid' => $positionid));
     }
 
     /**
@@ -954,8 +991,8 @@ class User extends Model {
      * @param integer $roleId
      * @return integer
      */
-    public function countNumsByRoleId( $roleId ) {
-        return User::model()->count( 'roleid = :roleid AND status != 2', array( ':roleid' => $roleId ) );
+    public function countNumsByRoleId($roleId) {
+        return User::model()->count('roleid = :roleid AND status != 2', array(':roleid' => $roleId));
     }
 
     /**
@@ -965,18 +1002,18 @@ class User extends Model {
      * @return integer
      * @author Sam 2015-08-21 <gzxgs@ibos.com.cn>
      */
-    public function updateByConditions( $uidX, $attributes = array(), $condition = "" ) {
+    public function updateByConditions($uidX, $attributes = array(), $condition = "") {
         $cond = array(
             'AND',
-            $this->uid_find_in_set( $uidX ),
-            empty( $condition ) ? 1 : $condition,
+            $this->uid_find_in_set($uidX),
+            empty($condition) ? 1 : $condition,
         );
-        return $this->updateAll( $attributes, $cond );
+        return $this->updateAll($attributes, $cond);
     }
 
-    public function checkIsExistByMobile( $mobile ) {
-        $result = $this->fetch( 'mobile  = :mobile', array( ':mobile' => $mobile ) );
-        return !empty( $result ) ? true : false;
+    public function checkIsExistByMobile($mobile) {
+        $result = $this->fetch('mobile  = :mobile', array(':mobile' => $mobile));
+        return !empty($result) ? true : false;
     }
 
     /**
@@ -984,15 +1021,87 @@ class User extends Model {
      * @param  integer|array $status 用户状态 0,1,2 可以是数组也可以是整型
      * @return array         用户信息数组
      */
-    public function fetchAllByStatus( $status ) {
-        if ( is_array( $status ) ) {
-            $status = implode( ',', $status );
+    public function fetchAllByStatus($status) {
+        if (is_array($status)) {
+            $status = implode(',', $status);
         }
-        $result = $this->fetchAll( array(
+        $result = $this->fetchAll(array(
             'condition' => "FIND_IN_SET( status, ':status' )",
-            'params' => array( ':status' => $status ),
-                ) );
-        return !empty( $result ) ? TRUE : FALSE;
+            'params' => array(':status' => $status),
+        ));
+        return !empty($result) ? TRUE : FALSE;
+    }
+
+    /**
+     *查询未跟酷办公关联的用户id
+     * @param  integer $limit
+     * @return array  用户uid数组
+     */
+    public function fetchUnbind($limit = NULL) {
+        $query = util\IBOS::app()->db->createCommand()
+            ->select('u.uid')
+            ->from('{{user}} u')
+            ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
+            ->where("b.uid is null");
+        if ($limit) {
+            $query = $query->limit($limit);
+        }
+        $list = $query->queryColumn();
+
+        return $list;
+    }
+
+    /**
+     *查询跟酷办公关联但已禁用的用户id
+     */
+    public function fetchDeletebind() {
+        $list = util\IBOS::app()->db->createCommand()
+            ->select('u.uid')
+            ->from('{{user}} u')
+            ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
+            ->where("u.status =" . self::USER_STATUS_ABANDONED . " and app='co' ")->queryColumn();
+        return $list;
+    }
+
+
+    /**
+     *查询未跟酷办公关联的用户总数
+     * @return array  用户uid数组
+     */
+    public function CountUnbind() {
+        $list = util\IBOS::app()->db->createCommand()
+            ->select('count(uid)')
+            ->from('{{user}}')
+            ->where("status != " . self::USER_STATUS_ABANDONED . " and uid not in (select uid from {{user_binding}} where app='co' )")->queryColumn();
+        return $list;
+    }
+
+    /**
+     *查询跟酷办公关联但已禁用的用户id总数
+     */
+    public function CountDelete() {
+        $list = util\IBOS::app()->db->createCommand()
+            ->select('count(u.uid)')
+            ->from('{{user}} u')
+            ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
+            ->where("u.status =" . self::USER_STATUS_ABANDONED . " and app='co' ")->queryColumn();
+        return $list;
+    }
+
+    /**
+     *按条件查询未跟酷办公关联的用户id
+     * @param  integer $limit
+     * @return array  用户uid数组
+     */
+    public function fetchPartUnbind($start, $length) {
+        $list = util\IBOS::app()->db->createCommand()
+            ->select('u.uid')
+            ->from('{{user}} u')
+            ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
+            ->where("b.uid is null")
+            ->limit($length, $start)
+            ->queryColumn();
+        return $list;
     }
 
 }

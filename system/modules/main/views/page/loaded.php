@@ -67,14 +67,16 @@ use application\modules\user\utils\User;
 <script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all.min.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/Select2/select2.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo File::fileName( 'data/org.js' ); ?>?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>'></script>
+<!--数据包-->
+<?php echo File::getOrgJs() ?>
+<script src='<?php echo STATICURL; ?>/js/app/ibos.userData.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>'></script>
 <script src="<?php echo STATICURL; ?>/js/lib/ueditor/editor_config.js"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/ueditor/editor_all_min.js"></script>
-<script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
-<script src='<?php echo $assetUrl; ?>/js/main_page_loaded.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>  
+<script src='<?php echo $assetUrl; ?>/js/main_page_loaded.js?<?php echo VERHASH; ?>'></script>				
 <script>
     Ibos.app.setPageParam({
         "assetUrl": "<?php echo $assetUrl; ?>"

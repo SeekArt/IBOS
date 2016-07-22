@@ -22,7 +22,7 @@ class OptimizeController extends BaseController {
         if ( LOCAL ) {
             $operation = Env::getRequest( 'op' );
             if ( $operation == 'clear' ) {
-                IBOS::app()->cache->clear();
+                Cache::clear();
                 $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
             }
             $options = IBOS::app()->cache->options;

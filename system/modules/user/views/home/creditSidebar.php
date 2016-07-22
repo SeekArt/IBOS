@@ -15,11 +15,11 @@
 		<div class="progress mb">
 			<div class="progress-bar <?php if ( $user['upgrade_percent'] > 90 ): ?>progress-bar-danger<?php else: ?>progress-bar-success<?php endif; ?>" role="progressbar" aria-valuenow="<?php echo $user['upgrade_percent']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $user['upgrade_percent']; ?>%;"></div>
 		</div>
-		<div>
-			<div class="dib">
+		<div class="clearfix">
+			<div class="pull-left">
 				<span><?php echo $lang['Upgrade needed']; ?>&nbsp;:&nbsp;</span><span class="xwb"><?php echo (int) ($user['next_group_credit'] - $user['credits']); ?></span>
 			</div>
-			<div class="dib mlf">
+			<div class="pull-right">
 				<span><?php echo $lang['Online time']; ?>&nbsp;:&nbsp;</span><span class="xwb"><?php echo $userCount['oltime']; ?><?php echo $lang['Hour']; ?></span>
 			</div>
 		</div>
@@ -27,14 +27,17 @@
 	<div>
 		<table class="table table-striped table-condensed mbz">
 			<tbody>
-				<?php foreach ( $extcredits as $ext ): ?>
+				<?php
+				if(is_array($extcredits)):
+				 foreach ( $extcredits as $ext ): ?>
 					<?php if ( !empty( $ext ) ): ?>
 						<tr>
 							<td><?php echo $ext['name']; ?></td>
 							<td class="integral-info"><?php echo $ext['value']; ?></td>
 						</tr>
 					<?php endif; ?>
-				<?php endforeach; ?>
+				<?php endforeach; 
+				endif; ?>
 			</tbody>
 			<tfoot>
 				<tr>

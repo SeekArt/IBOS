@@ -10,7 +10,7 @@
 /**
  * 工作日志模块------diary_record表操作类，继承ICModel
  * @package application.modules.diary.model
- * @version $Id: DiaryRecord.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DiaryRecord.php 4442 2014-10-24 10:38:56Z gzpjh $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -36,7 +36,7 @@ class DiaryRecord extends Model {
 	 * @param integer $plantime
 	 */
 	public function fetchAllByPlantime( $plantime, $uid = 0 ) {
-		$uid = empty( $uid ) ? IBOS::app()->user->uid : $uid; 
+		$uid = empty( $uid ) ? IBOS::app()->user->uid : $uid;
 		$records = DiaryRecord::model()->fetchAll( array(
 			'condition' => 'plantime=:plantime AND uid=:uid',
 			'order' => 'recordid ASC',

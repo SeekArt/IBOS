@@ -1,3 +1,6 @@
+.ctb{
+	background-color: transparent;
+}
 .fsn{
 	font-size: 14px;	
 }
@@ -231,46 +234,159 @@
 .o-transport-left{
 	background-position: -120px -90px;
 }
-.conpamy-info-wrap{
-	margin-left: 40px;
+
+.company-info-wrap{
+	height: 78px;
+	padding: 20px 0 0 20px;
+	border: 1px solid #ffecd1;
+	border-radius: 2px;
+	background-color: #fffbf4;
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+}
+.company-logo,
+.company-logo img{
+	width: 58px;
+	height: 58px;
+	border-radius: 29px;
+}
+.company-logo{
+	border: 1px solid #dadfe5;
+	background-color: #fff;
+	position: relative;
+	display: inline-block;
+}
+.weixin-logo,
+.ibos-logo{
+	width: 24px;
+	height: 24px;
+	padding: 3px;
+	position: absolute;
+	left: 38px;
+	top: 33px;
+    border-radius: 30px;
+}
+.ibos-logo{
+	background-color: #fffbf4;
+}
+.weixin-logo{
+	background-color: #f9fbff;
 }
 .bind-info-wrap{
-	width: 380px;
-	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
-	-moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
-	box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
-	position: relative;
-	overflow: hidden;
-	border: 1px solid #EBEFF6;
-	border: 0 solid rgba(0, 0, 0, 0);
-	background-color: #FFF;
+	width: 798px;
+	padding: 30px;
+	box-sizing: border-box;
 }
 .bind-result-wrap{
 	width: 320px;
-	-webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
-	-moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
-	box-shadow: 0 1px 10px rgba(0, 0, 0, .1);
+}
+.box-shadow{
+	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	border-radius: 4px;
 	position: relative;
-	overflow: hidden;
 	border: 1px solid #EBEFF6;
-	border: 0 solid rgba(0, 0, 0, 0);
 	background-color: #FFF;
 }
-.wrap-top,
-.wrap-body{
-	border-bottom: 1px #ebeff6 solid;
+
+.tooltip-inner{
+  	white-space: normal;
 }
-.wrap-footer{
+.aes-key-tip{
+	width: 200px;
+}
+.aes-key-tip p{
+	text-align: left;
+	word-break: break-all; 
+	line-height: 20px;
+}
+
+.ibos-qy,
+.weixin-qy{
+	width: 350px;
+	padding: 20px 0 17px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+.ibos-qy{
+	background-color: #fffbf4;
+	float: left;
+	position: relative;
+	border-color: #ffecd1;
+}
+.weixin-qy{
 	background-color: #f9fbff;
+	float: right;
 }
-.strat-sync-btn{
-	padding: 14px 130px;
+.ibos-qy .aes-key{
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	padding: 0 5px 0 4px;
+	background: #fff;
+	border: 1px solid #ee8c0c;
+	border-radius: 4px;
+	font-size: 10px;
+	color: #ee8c0c;
+	cursor: pointer;
+}
+
+.sysurl-verify{
+	margin-top: 10px;
+}
+.sysurl-verify span{
+	color: #82939e;
+	font-size: 18px;
+	line-height: 54px;
+}
+.verify-msg{
+	padding: 15px 0 29px;
+	line-height: 16px;
+	border-bottom: 1px solid #ebeff6;
+}
+.verify-msg.success{
+	color: #91ce31;
+}
+.verify-msg.error{
+	color: #e26f50;
+}
+
+.co-binding-info-box {
+	margin: 15px 0 0;
+	position: relative;
+}
+
+.co-binding-info-box .logout{
+	position: absolute;
+	left: 0;
+	top: 15px;
+    line-height: 20px;
+}
+.logout .o-back-arrow{
+	display: inline-block;
+	position: relative;
+	top: 2px;
+}
+
+.wrap-footer label{
+	margin: 20px 0;
+}
+
+.auto-sync{
+	margin: 0 -30px;
+	padding: 0 30px;
+	background-color: #fbfbfb;
+	border-top: 1px solid #ebeff6;
+	border-bottom: 1px solid #ebeff6;
+}
+.auto-sync label{
+	float: right;
+	position: relative;
+	top: -50px;
 }
 .form-crowded .control-group>.control-label{
 	width: 70px;
@@ -330,10 +446,15 @@
 }
 
 .bind-info-wrap .result-info-wrap{
-	height: 220px;
+	width: 300px;
+	padding: 20px 0;
+	margin: 0 auto;
 }
 .bind-info-wrap .syncing-info-wrap{
 	height: 160px;
+}
+.bind-info-wrap .co-binding-state{
+	top: 85px;
 }
 .license{
 	padding: 15px 20px;
@@ -364,7 +485,8 @@
 	border: 1px solid #EBEFF6;
 }
 .sync-data-select{
-	width: 150px;
+	width: 350px;
+	height: 190px !important;
 }
 .sync-hr{
 	margin: 10px 0;

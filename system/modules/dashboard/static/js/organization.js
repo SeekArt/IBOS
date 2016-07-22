@@ -169,13 +169,12 @@ Organization.memberList = (function(){
 			deptData,
 			results;
 		if(Ibos.data && typeof id !== "undefined"){
-			userData = Ibos.data.getItem(id)[0];
-			deptData = Ibos.data.getItem(userData.department)[0];
+			userData = Ibos.data.getUser(id);
 			results = {
 				id: id,
-				imgurl: userData.imgUrl || "",
-				user: userData.name || "",
-				department: (deptData && deptData.name) || ""
+				imgurl: userData.avatar || "./data/avatar/noavatar_middle.jpg",
+				user: userData.text || "",
+				department: userData.department || ""
 			}
 		}
 		return results||{};

@@ -11,7 +11,7 @@
 /**
  * 信息中心模块------分类组件 继承ICCategory
  * @package application.modules.article.components
- * @version $Id: OfficialdocCategory.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: OfficialdocCategory.php 6981 2016-05-03 06:59:07Z gzcsh $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -70,8 +70,9 @@ class OfficialdocCategory extends Category {
             $row['id'] = $row['catid'];
 			$row['pId'] = $row['pid'];
 			$row['name'] = $row['name'];
-			$row['target'] = '_self';
-            $row['url'] = IBOS::app()->urlManager->createUrl( "officialdoc/officialdoc/index" ) . '&catid=' . $row['catid'];
+            $row['target'] = '_self';
+            $row['url'] = 'javascript:;';
+            $row['catid'] = $row['catid'];
             $row['open'] = true;
 			$return[] = $row;
         }

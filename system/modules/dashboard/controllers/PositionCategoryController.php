@@ -21,8 +21,9 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\modules\position\components\PositionCategory as ICPositionCategory;
 use application\modules\position\model\PositionCategory;
+use application\modules\position\model\Position;
 
-class PositionCategoryController extends OrganizationBaseController {
+class PositioncategoryController extends OrganizationBaseController {
 
     /**
      * 当前分类对象
@@ -112,6 +113,7 @@ class PositionCategoryController extends OrganizationBaseController {
             $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('Leave at least a Category')), 'json');
         }
         $ret = $this->_category->delete($catid);
+        Position::model()->updateAll( array( 'catid' => 1 ), '`catid` = ' . $catid );
         $msg = $ret ? IBOS::lang('Operation succeed', 'message') : IBOS::lang('Operation failure', 'message');
         $this->ajaxReturn(array('isSuccess' => !!$ret, 'msg' => $msg), 'json');
     }

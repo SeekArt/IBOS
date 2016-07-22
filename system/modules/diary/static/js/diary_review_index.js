@@ -60,18 +60,21 @@ var RevIndex = {
 				placement: "bottom",
 				html: true
 			},
-			popoverUrl = Ibos.app.url('diary/default/index'),
-			popoverParam = { diaryid: $.attr(this, "data-id") };
+			popoverUrl = Ibos.app.url('diary/default/index');
 
 		// 阅读ajax
 		$daReader.popover(popoverSetting).on("show", function() {
-			popoverParam.op = 'getreaderlist';
-			RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
+			RevIndex.loadPopoverContent(popoverUrl, { 
+				diaryid: $.attr(this, "data-id"),
+			 	op: 'getreaderlist'
+			}, $(this));
 		});
 		//点评ajax
 		$daComment.popover(popoverSetting).on("show", function() {
-			popoverParam.op = 'getcommentlist';
-			RevIndex.loadPopoverContent(popoverUrl, popoverParam, $(this));
+			RevIndex.loadPopoverContent(popoverUrl, { 
+				diaryid: $.attr(this, "data-id"),
+			 	op: 'getcommentlist'
+			}, $(this));
 		});
 	}
 };

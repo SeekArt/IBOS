@@ -126,8 +126,7 @@ INSERT INTO `{{email_folder}}`(`fid`, `system`, `sort`, `name`, `uid`, `webid`) 
 INSERT INTO `{{email_folder}}`(`fid`, `system`, `sort`, `name`, `uid`, `webid`) VALUES ('2','1','0','draft','0','0');
 INSERT INTO `{{email_folder}}`(`fid`, `system`, `sort`, `name`, `uid`, `webid`) VALUES ('3','1','0','send','0','0');
 INSERT INTO `{{email_folder}}`(`fid`, `system`, `sort`, `name`, `uid`, `webid`) VALUES ('4','1','0','del','0','0');
-INSERT INTO `{{nav}}`( `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','邮件','email/list/index','0','1','0','2','email');
-
+INSERT INTO `{{nav}}`(`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','0','邮件','email/list/index','0','1','0','2','email');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('邮件','0','email','dashboard','index','','2','0');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('email_message','邮件消息提醒','email','email/default/New message title','email/default/New message content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('email_receive_message','邮件回执提醒','email','email/default/Already receive','','1','1','1','2');

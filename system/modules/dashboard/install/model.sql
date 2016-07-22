@@ -160,8 +160,8 @@ CREATE TABLE `{{stamp}}` (
   `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水id',
   `sort` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
   `code` varchar(30) NOT NULL DEFAULT '' COMMENT '显示名称',
-  `stamp` varchar(30) NOT NULL DEFAULT '' COMMENT '图章地址',
-  `icon` varchar(30) NOT NULL DEFAULT '' COMMENT '图标地址',
+  `stamp` varchar(100) NOT NULL DEFAULT '' COMMENT '图章地址',
+  `icon` varchar(100) NOT NULL DEFAULT '' COMMENT '图标地址',
   `system` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否系统自带图章',
   PRIMARY KEY (`id`),
   KEY `sort` (`sort`) USING BTREE
@@ -198,16 +198,20 @@ CREATE TABLE `{{approval}}` (
   `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水id',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '审批流程名称',
   `level` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '审核等级,1-5级',
-  `level1` text NOT NULL COMMENT '1级审核人uid，逗号隔开',
-  `level2` text NOT NULL COMMENT '2级审核人uid，逗号隔开',
-  `level3` text NOT NULL COMMENT '3级审核人uid，逗号隔开',
-  `level4` text NOT NULL COMMENT '4级审核人uid，逗号隔开',
-  `level5` text NOT NULL COMMENT '5级审核人uid，逗号隔开',
   `free` text NOT NULL COMMENT '免审核人uid，逗号隔开',
   `desc` text NOT NULL COMMENT '描述',
   `addtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
   PRIMARY KEY (`id`),
   KEY `addtime` (`addtime`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `{{approval_step}}`;
+CREATE TABLE `{{approval_step}}` (
+`id`  int NOT NULL AUTO_INCREMENT COMMENT '主键，自增 ID' ,
+`aid`  int NOT NULL COMMENT '审批流程 ID' ,
+`step`  tinyint NOT NULL COMMENT '处于流程中第几级步骤' ,
+`uids`  text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '当前步骤审核人员 ID 串 1,2,3....' ,
+PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO {{credit}} VALUES ('1', '1', '经验', '0', '0', '1');
@@ -245,43 +249,43 @@ INSERT INTO `{{syscode}}` VALUES ('28', '27', 'INTERNAL_REFERRAL', '28', '内部
 INSERT INTO `{{syscode}}` VALUES ('29', '27', 'INTERMEDIARY', '29', '人才中介机构', '1', '');
 INSERT INTO `{{syscode}}` VALUES ('30', '27', 'RECRUITMENT_SITE', '30', '招聘网站', '1', '');
 INSERT INTO `{{syscode}}` VALUES ('31', '27', 'HEAD_HUNTING_COMPANY', '31', '猎头公司', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('32', '0', 'VEHICLE_MIANTAIN_TYPE', '32', '车辆维护类型', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('33', '32', 'MAINTENANCE', '33', '保养', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('34', '32', 'WASH', '34', '洗车', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('35', '32', 'MAINTAIN', '35', '维护', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('36', '32', 'ANNUAL_SURVEY', '36', '年检', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('37', '32', 'DISCARD', '37', '报废', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('38', '0', 'VEHICLE_COLOR', '38', '车辆颜色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('39', '38', 'WHITE', '39', '白色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('40', '38', 'BLUE', '40', '蓝色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('41', '38', 'GREEN', '41', '绿色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('42', '38', 'YELLOW', '42', '黄色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('43', '38', 'RED', '43', '红色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('44', '38', 'BLACK', '44', '黑色', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('45', '0', 'VEHICLE_STATUS', '45', '车辆状态', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('46', '45', 'AVAILABLE', '46', '可用', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('47', '45', 'STOPPAGE', '47', '损坏', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('48', '45', 'MAINTAIN', '48', '维修中', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('49', '45', 'DISCARD', '49', '报废', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('50', '0', 'VEHICLE_TYPE', '50', '车辆类型', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('51', '50', 'MINIBUS', '51', '面包车', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('52', '50', 'TRUCK', '52', '货车', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('53', '50', 'BUS', '53', '巴士', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('54', '50', 'SEDAN', '54', '轿车', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('55', '0', 'VEHICLE_RUN_COST', '55', '车辆运行费用类型', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('56', '55', 'TOLL', '56', '过路费', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('57', '0', 'VEHICLE_MAINTAIN_COST', '57', '车辆维护费用类型', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('58', '57', 'RENEWAL_PARTS', '58', '更换配件', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('59', '57', 'SERVICE', '59', '修理', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('60', '57', 'WASH', '60', '洗车', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('61', '0', 'VEHICLE_FUEL_TYPE', '61', '车辆燃油规格', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('62', '61', 'GASOLINE_90#', '62', '90# 汽油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('63', '61', 'GASOLINE_93#', '63', '93# 汽油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('64', '61', 'GASOLINE_97#', '64', '97# 汽油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('65', '61', 'GASOLINE_98#', '65', '98# 汽油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('66', '61', 'DIESEL_-10#', '66', '-10# 柴油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('67', '61', 'DIESEL_10#', '67', '10# 柴油', '1', '');
-INSERT INTO `{{syscode}}` VALUES ('68', '61', 'DIESEL_0#', '68', '0# 柴油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('32', '0', 'VEHICLE_MIANTAIN_TYPE', '32', '车辆维护类型', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('33', '32', 'MAINTENANCE', '33', '保养', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('34', '32', 'WASH', '34', '洗车', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('35', '32', 'MAINTAIN', '35', '维护', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('36', '32', 'ANNUAL_SURVEY', '36', '年检', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('37', '32', 'DISCARD', '37', '报废', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('38', '0', 'VEHICLE_COLOR', '38', '车辆颜色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('39', '38', 'WHITE', '39', '白色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('40', '38', 'BLUE', '40', '蓝色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('41', '38', 'GREEN', '41', '绿色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('42', '38', 'YELLOW', '42', '黄色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('43', '38', 'RED', '43', '红色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('44', '38', 'BLACK', '44', '黑色', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('45', '0', 'VEHICLE_STATUS', '45', '车辆状态', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('46', '45', 'AVAILABLE', '46', '可用', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('47', '45', 'STOPPAGE', '47', '损坏', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('48', '45', 'MAINTAIN', '48', '维修中', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('49', '45', 'DISCARD', '49', '报废', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('50', '0', 'VEHICLE_TYPE', '50', '车辆类型', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('51', '50', 'MINIBUS', '51', '面包车', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('52', '50', 'TRUCK', '52', '货车', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('53', '50', 'BUS', '53', '巴士', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('54', '50', 'SEDAN', '54', '轿车', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('55', '0', 'VEHICLE_RUN_COST', '55', '车辆运行费用类型', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('56', '55', 'TOLL', '56', '过路费', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('57', '0', 'VEHICLE_MAINTAIN_COST', '57', '车辆维护费用类型', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('58', '57', 'RENEWAL_PARTS', '58', '更换配件', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('59', '57', 'SERVICE', '59', '修理', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('60', '57', 'WASH', '60', '洗车', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('61', '0', 'VEHICLE_FUEL_TYPE', '61', '车辆燃油规格', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('62', '61', 'GASOLINE_90#', '62', '90# 汽油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('63', '61', 'GASOLINE_93#', '63', '93# 汽油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('64', '61', 'GASOLINE_97#', '64', '97# 汽油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('65', '61', 'GASOLINE_98#', '65', '98# 汽油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('66', '61', 'DIESEL_-10#', '66', '-10# 柴油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('67', '61', 'DIESEL_10#', '67', '10# 柴油', '1', '');
+-- INSERT INTO `{{syscode}}` VALUES ('68', '61', 'DIESEL_0#', '68', '0# 柴油', '1', '');
 INSERT INTO `{{syscode}}` VALUES ('69', '0', 'MEETING_ROOM_TYPE', '69', '会议室类型', '1', '');
 INSERT INTO `{{syscode}}` VALUES ('70', '69', 'INTERVIEW_FORM', '70', '接见式', '1', '');
 INSERT INTO `{{syscode}}` VALUES ('71', '69', 'T-SHAPED', '71', 'T型', '1', '');
@@ -305,25 +309,27 @@ INSERT INTO `{{syscode}}` VALUES ('88', '78', 'CAMERA', '88', '相机', '1', 'ca
 INSERT INTO `{{syscode}}` VALUES ('89', '78', 'SLIDE', '89', '幻灯片', '1', 'slide.png');
 
 INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('1', '0', '首页', 'javascript:void(0)', '0', '1', '0', '1','','0', '0');
-INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('2', '0', '个人办公', 'javascript:void(0)', '0', '1', '0', '3','','0', '0');
+INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('3', '0', '个人办公', 'javascript:void(0);', '0', '1', '0', '5','','0', '0');
+INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('5', '0', '综合办公', 'javascript:void(0);', '0', '1', '0', '6','','0', '0');
 
+INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('9', '0', '人力资源', 'javascript:void(0)', '0', '1', '1', '9','','0', '0');
 
 INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('10', '1', '个人门户', 'weibo/home/index', '0', '1', '0', '2','','0', '0');
 INSERT INTO `{{nav}}` (`id`, `pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`, `type`, `pageid`) VALUES ('11', '1', '办公门户', 'main/default/index', '0', '1', '0', '1','','0', '0');
 
-INSERT INTO `{{stamp}}` VALUES ('1', '1', '已阅', '001.png', '001.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('2', '2', '有进步', '002.png', '002.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('3', '3', '继续努力', '003.png', '003.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('4', '4', '干得不错', '004.png', '004.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('5', '5', '很给力', '005.png', '005.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('6', '6', '非常赞', '006.png', '006.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('7', '7', '待提高', '007.png', '007.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('8', '8', '不理想', '008.png', '008.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('9', '9', '不给力', '009.png', '009.small.png', '1');
-INSERT INTO `{{stamp}}` VALUES ('10', '10', '没完成', '010.png', '010.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('1', '1', '已阅', 'data/stamp/001.png', 'data/stamp/001.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('2', '2', '有进步', 'data/stamp/002.png', 'data/stamp/002.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('3', '3', '继续努力', 'data/stamp/003.png', 'data/stamp/003.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('4', '4', '干得不错', 'data/stamp/004.png', 'data/stamp/004.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('5', '5', '很给力', 'data/stamp/005.png', 'data/stamp/005.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('6', '6', '非常赞', 'data/stamp/006.png', 'data/stamp/006.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('7', '7', '待提高', 'data/stamp/007.png', 'data/stamp/007.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('8', '8', '不理想', 'data/stamp/008.png', 'data/stamp/008.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('9', '9', '不给力', 'data/stamp/009.png', 'data/stamp/009.small.png', '1');
+INSERT INTO `{{stamp}}` VALUES ('10', '10', '没完成', 'data/stamp/010.png', 'data/stamp/010.small.png', '1');
 
-INSERT INTO `{{login_template}}` VALUES ('1', '0', '1', 'ibos_login1.jpg');
-INSERT INTO `{{login_template}}` VALUES ('2', '0', '1', 'ibos_login2.jpg');
+INSERT INTO `{{login_template}}` VALUES ('1', '0', '1', 'data/login/ibos_login1.jpg');
+INSERT INTO `{{login_template}}` VALUES ('2', '0', '1', 'data/login/ibos_login2.jpg');
 
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('setting', '1', '0', '');
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('nav', '1', '0', '');
@@ -339,8 +345,12 @@ INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('users'
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('usergroup', '1', '0', '');
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('cronnextrun', '1', '1393603200', '');
 
-INSERT INTO `{{approval}}` (`name`, `level`, `level1`, `level2`, `level3`, `level4`, `level5`, `free`, `desc`, `addtime`) VALUES ('一级审核', '1', '1', '', '', '', '', '', '', '1402631014');
-INSERT INTO `{{approval}}` (`name`, `level`, `level1`, `level2`, `level3`, `level4`, `level5`, `free`, `desc`, `addtime`) VALUES ('二级审核', '2', '1', '1', '', '', '', '', '', '1402631014');
+INSERT INTO `{{approval}}` (`id`, `name`, `level`, `free`, `desc`, `addtime`) VALUES (1, '一级审核', '1', '', '', '1402631014');
+INSERT INTO `{{approval}}` (`id`, `name`, `level`, `free`, `desc`, `addtime`) VALUES (2, '二级审核', '2', '', '', '1402631014');
+
+INSERT INTO `{{approval_step}}` (`aid`, `step`, `uids`) VALUES (1, 1, 1);
+INSERT INTO `{{approval_step}}` (`aid`, `step`, `uids`) VALUES (2, 1, 1);
+INSERT INTO `{{approval_step}}` (`aid`, `step`, `uids`) VALUES (2, 2, 1);
 
 INSERT INTO `{{announcement}}` (`id`, `author`, `subject`, `type`, `sort`, `starttime`, `endtime`, `message`) VALUES (1, '管理员', '<span style=\'color: rgb(226, 111, 80);\'>请使用支持HTML5的浏览器登录！</span>', 0, 0, 1401552000, 1433088000, '');
 INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ('1', 'system', 'dashboard', '自动同步 IBOS 绑定酷办公用户列表', 'CronAutoSync.php', '1457661663', '1457748000', '-1', '-1', '10', '0');

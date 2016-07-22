@@ -10,7 +10,7 @@
 /**
  * 招聘模块------ICResumeDetail类
  * @package application.modules.recruit.core
- * @version $Id: ResumeDetail.php 6583 2016-03-11 08:24:01Z gzhyj $
+ * @version $Id: ResumeDetail.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

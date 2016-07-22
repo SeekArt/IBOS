@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <link rel="stylesheet" href="../../../../../css/base.css">        
+        <link rel="stylesheet" href="print.css">
+        <script type="text/javascript" src="../internal.js"></script>
+        <script src="../../ueditor.parse.min.js"></script>
+        <title></title>
+    </head>
+    <body class="view">
+        <div class="main">
+            <div id="preview">
+
+            </div>
+        </div>
+    </body>
+    <script>
+        document.getElementById('preview').innerHTML = editor.getContent();
+        uParse('#preview',{
+            rootPath : '../../',
+            chartContainerHeight:500
+        })
+        dialog.oncancel = function(){
+            document.getElementById('preview').innerHTML = '';
+        }
+    </script>
+</html>

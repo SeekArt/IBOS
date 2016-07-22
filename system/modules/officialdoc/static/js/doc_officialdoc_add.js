@@ -41,8 +41,13 @@ $(function() {
 				catid = this.value,
 				url = Ibos.app.url("officialdoc/officialdoc/add", {op: "checkIsAllowPublish"});
 		$.get(url, {catid: catid, uid: uid}, function(res) {
-			$("#article_status label").eq(1).toggle(res.isSuccess);
-			$("#article_status label").eq(0).toggle(res.checkIsPublish);
+			var label = $("#article_status label"),
+				check = label.eq(0),
+				publish = label.eq(1);
+			check.toggle(res.checkIsPublish);
+			res.checkIsPublish ? check.find('input').prop('checked', true) : check.find('input').prop('checked', false);
+			publish.toggle(res.isSuccess);
+			res.isSuccess ? publish.find('input').prop('checked', true) : publish.find('input').prop('checked', false);
 		}, 'json');
 	});
 

@@ -20,6 +20,5 @@ namespace application\modules\vote;
 use application\core\modules\Module;
 
 class VoteModule extends Module {
-	public $__CODE__ = '9377u1OfwHmIj5VGPBpg8ZilTF6LxZqLZQA5nNNq0vFZE44NL5tl';
     
 }

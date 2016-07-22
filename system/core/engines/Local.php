@@ -24,54 +24,71 @@ use CMap;
 
 class Local extends Engine {
 
-    /**
-     * 本地引擎初始化配置方法
-     * @param array $appConfig 程序配置 
-     * @param array $mainConfig 安装配置
-     * @return array 处理后的配置
-     */
-    public function initConfig( $appConfig, $mainConfig ) {
-        // 本地环境使用安装时配置的数据库信息
-        $connectionString = "mysql:host={$mainConfig['db']['host']};port={$mainConfig['db']['port']};dbname={$mainConfig['db']['dbname']}";
-        $config = array(
-            'runtimePath' => PATH_ROOT . DIRECTORY_SEPARATOR . 'data/runtime',
-            'language' => $mainConfig['env']['language'],
-            'theme' => $mainConfig['env']['theme'],
-            'components' => array(
-                'db' => array(
-                    'connectionString' => $connectionString,
-                    'username' => $mainConfig['db']['username'],
-                    'password' => $mainConfig['db']['password'],
-                    'tablePrefix' => $mainConfig['db']['tableprefix'],
-                    'charset' => $mainConfig['db']['charset']
-                )
-            )
-        );
-        return CMap::mergeArray( $appConfig, $config );
-    }
+	protected function defineConst() {
+		define( 'LOCAL', true );
+	}
 
-    /**
-     * 获取 IO 接口
-     * @staticvar null $io
-     * @return \application\core\engines\local\io
-     */
-    public function io() {
-        static $io = null;
-        if ( $io == null ) {
-            $io = new LocalIo();
-        }
-        return $io;
-    }
+	public function getMainConfig() {
+		$mainConfigFile = PATH_ROOT . '/system/config/config.php';
+		$mainConfig = require_once ( $mainConfigFile );
+		return $mainConfig;
+	}
 
-    /**
-     * 设置别名，加载驱动路径
-     * @return void
-     */
-    protected function init() {
-        // 设置data别名
-        IBOS::setPathOfAlias( 'data', PATH_ROOT . DIRECTORY_SEPARATOR . 'data' );
-        // 设置引擎驱动别名
-        IBOS::setPathOfAlias( 'engineDriver', IBOS::getPathOfAlias( 'application.core.engines.local' ) );
-    }
+	/**
+	 * 本地引擎初始化配置方法
+	 * @param array $mainConfig 安装配置
+	 * @return array 处理后的配置
+	 */
+	protected function initConfig( $mainConfig ) {
+		// 本地环境使用安装时配置的数据库信息
+		$connectionString = "mysql:host={$mainConfig['db']['host']};port={$mainConfig['db']['port']};dbname={$mainConfig['db']['dbname']}";
+		$config = array(
+			'runtimePath' => PATH_ROOT . DIRECTORY_SEPARATOR . 'data/runtime',
+			'language' => $mainConfig['env']['language'],
+			'theme' => $mainConfig['env']['theme'],
+			'components' => array(
+				'db' => array(
+					'connectionString' => $connectionString,
+					'username' => $mainConfig['db']['username'],
+					'password' => $mainConfig['db']['password'],
+					'tablePrefix' => $mainConfig['db']['tableprefix'],
+					'charset' => $mainConfig['db']['charset']
+				)
+			)
+		);
+		return $config;
+	}
+
+	/**
+	 * 获取 IO 接口
+	 * @staticvar null $io
+	 * @return \application\core\engines\local\io
+	 */
+	public function io() {
+		static $io = null;
+		if ( $io == null ) {
+			$io = new LocalIo();
+		}
+		return $io;
+	}
+
+	/**
+	 * 设置别名，加载驱动路径
+	 * @return void
+	 */
+	protected function init() {
+		// 设置data别名
+		IBOS::setPathOfAlias( 'data', PATH_ROOT . DIRECTORY_SEPARATOR . 'data' );
+		// 设置引擎驱动别名
+		IBOS::setPathOfAlias( 'engineDriver', IBOS::getPathOfAlias( 'application.core.engines.local' ) );
+	}
+
+	protected function preinit() {
+		// 检查安装
+		if ( !is_file( PATH_ROOT . '/data/install.lock' ) ) {
+			header( 'Location:./install/' );
+			exit();
+		}
+	}
 
 }

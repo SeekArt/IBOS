@@ -18,30 +18,29 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
-use application\modules\user\utils\User as UserUtil;
 
 class BgTemplate extends Model {
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
-    public function tableName() {
-        return '{{bg_template}}';
-    }
+	public function tableName() {
+		return '{{bg_template}}';
+	}
 
-    /**
-     * 获取所有皮肤背景
-     * @return type array
-     */
-    public function fetchAllBg() {
-        $bgs = $this->fetchAll( array(
-            'order' => 'id ASC'
-                ) );
-        foreach ( $bgs as $k => $bg ) {
-            $bgs[$k]['imgUrl'] = UserUtil::getTempBg( $bg['image'], 'big' );
-        }
-        return $bgs;
-    }
+	/**
+	 * 获取所有皮肤背景
+	 * @return type array
+	 */
+	public function fetchAllBg() {
+		$bgs = $this->fetchAll( array(
+			'order' => 'id ASC'
+				) );
+		foreach ( $bgs as $k => $bg ) {
+			$bgs[$k]['imgUrl'] = $bg['image'];
+		}
+		return $bgs;
+	}
 
 }

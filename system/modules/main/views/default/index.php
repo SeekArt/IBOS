@@ -1,5 +1,5 @@
-<?php 
-use application\core\utils\Cloud;
+<?php
+
 use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\Url;
@@ -235,6 +235,7 @@ use application\modules\main\utils\Main;
                 {name: "<?php echo $index; ?>", title: "<?php echo $module['title']; ?>", show: true},
 <?php endforeach; ?>
         ];
+
         // 按上面的输出方式在Ie 8下 数组多出一位null，所以要去掉
         if (moduleInstalled[moduleInstalled.length - 1] == null) {
             moduleInstalled.pop();
@@ -249,6 +250,7 @@ use application\modules\main\utils\Main;
                 return $.extend(true, {}, moduleSettings[name], options);
             };
         })();
+
 
         // 获取已安装模块名称组合的字符串
         var getInstalledModuleName = function() {

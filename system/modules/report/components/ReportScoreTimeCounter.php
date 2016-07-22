@@ -64,12 +64,11 @@ class ReportScoreTimeCounter extends ReportTimeCounter {
         $dateScope = array_flip( $dateScopeTmp );
         // 取得结果集内的总结ID，查找对应的添加时间
         $repIds = Convert::getSubByKey( $list, 'repid' );
-        $timeList = Report::model()->fetchAddTimeByRepId( $repIds );
+        $timeList = Report::model()->fetchBETimeById( $repIds );
         $new = array();
         // 转换为日期为键，值为总结ID的数组
         foreach ( $timeList as $time ) {
-            $dayTime = date( 'Y-m-d', $time['addtime'] );
-            $new[$dayTime] = $time['repid'];
+            $new[$time['repid']] = array( 'begintime' => $time['begindate'], 'endtime' => $time['enddate'] );
         }
         // 获取正确的积分显示
         $ret = $this->getLegalScore( $dateScope, $new, $list );
@@ -79,16 +78,15 @@ class ReportScoreTimeCounter extends ReportTimeCounter {
     /**
      * 赋值正确的积分
      * @param array $dateScope 要显示的日期范围，
-     * @param array $new 用于对比的 日期=>总结ID 数组
+     * @param array $newDates 用于对比的 日期=>总结ID 数组
      * @param array $list 结果集
      */
-    private function getLegalScore( $dateScope, $new, $list ) {
-        $newDates = array_flip( $new );
+    private function getLegalScore( $dateScope, $newDates, $list ) {
         foreach ( $dateScope as $k => $date ) {
             list($st, $et) = explode( ':', $date );
-            foreach ( $newDates as $repid => $newDate ) {
+            foreach ( $newDates as $repid => $new ) {
                 // 如果不在日期范围内，赋值为0
-                if ( strtotime( $st ) < strtotime( $newDate ) && strtotime( $et ) > strtotime( $newDate ) ) {
+                if ( strtotime( $st )-86400 == $new['begintime'] && strtotime( $et )-86400 == $new['endtime'] ) {
                     $dateScope[$k] = $list[$repid]['integration'];
                     break;
                 }

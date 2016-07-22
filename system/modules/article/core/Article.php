@@ -10,7 +10,7 @@
 /**
  * 文章模块------文章组件类
  * @package application.modules.article.model
- * @version $Id: Article.php 6803 2016-04-09 08:51:23Z tanghang $
+ * @version $Id: Article.php 7060 2016-05-16 03:12:00Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -26,6 +26,7 @@ use application\modules\article\model\ArticleCategory;
 use application\modules\article\model\ArticleReader;
 use application\modules\article\utils\Article as ArticleUtil;
 use application\modules\dashboard\model\Approval;
+use application\modules\dashboard\model\ApprovalStep;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\position\utils\Position as PositionUtil;
@@ -62,12 +63,12 @@ class Article {
         $data['addtime'] = Convert::formatDate( $data['addtime'], 'u' );
         $data['uptime'] = empty( $data['uptime'] ) ? '' : Convert::formatDate( $data['uptime'], 'u' );
         $data['categoryName'] = ArticleCategory::model()->fetchCateNameByCatid( $data['catid'] );
-        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
+        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) && empty( $data['roleid'] ) ) {
             $data['departmentNames'] = IBOS::lang( 'All' );
             $data['positionNames'] = $data['uidNames'] = '';
         } else if ( $data['deptid'] == 'alldept' ) {
             $data['departmentNames'] = IBOS::lang( 'All' );
-            $data['positionNames'] = $data['uidNames'] = '';
+            $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
             $department = DepartmentUtil::loadDepartment();
@@ -75,6 +76,9 @@ class Article {
             //取得职位名称集以、号分隔
             $position = PositionUtil::loadPosition();
             $data['positionNames'] = ArticleUtil::joinStringByArray( $data['positionid'], $position, 'posname', '、' );
+            // 取得角色名称集以、号分割
+            $role = RoleUtil::loadRole();
+            $data['roleNames'] = ArticleUtil::joinStringByArray( $data['roleid'], $role, 'rolename', '、' );
 
             //取得阅读范围人员名称集以、号分隔
             if ( !empty( $data['uid'] ) ) {
@@ -176,8 +180,7 @@ class Article {
                     if ( $i <= $art['stepNum'] ) { // 如果已走审批步骤，找审批的人的名称， 否则找应该审核的人
                         $art['approval'][$i]['approvaler'] = isset( $step[$i] ) ? $step[$i] : '未知'; // 容错
                     } else {
-                        $levelName = Approval::model()->getLevelNameByStep( $i );
-                        $approvalUids = $art['approval'][$levelName];
+                        $approvalUids = ApprovalStep::model()->getApprovalerStr( $art['approval']['id'], $i );
                         $art['approval'][$i]['approvaler'] = User::model()->fetchRealnamesByUids( $approvalUids, '、' );
                     }
                 }

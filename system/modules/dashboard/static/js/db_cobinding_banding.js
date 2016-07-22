@@ -142,6 +142,8 @@ $(function() {
         });
     });
 
+    var cache = {};
+
     Ibos.evt.add({
         // 开始同步
         "startedSync": function() {
@@ -158,11 +160,15 @@ $(function() {
         // 显示同步详情，成员列表
         "bindingDetail": function(param, elem) {
             var listname = param.list,
-                params = {
-                    op: param.list
-                },
-                title = "";
-            $list = $("#ibosco_sync_dialog ul");
+                op = param.list,
+                title = "",
+                data, 
+                count = param.count,
+                $list = $("#ibosco_sync_dialog ul"),
+                $page = $("#ibosco_sync_dialog .page"),
+                isLoad = false,
+                iboscoSyncDialog;
+
             $list.empty();
 
             switch (listname) {
@@ -178,51 +184,92 @@ $(function() {
                 case "coDelList":
                     title = Ibos.l("CO.CO_DEL_LIST");
                     break;
-                default:
-                    break;
+            }
+            iboscoSyncDialog = Ui.dialog({
+                title: title,
+                id: "ibosco_sync_dialog",
+                lock: true,
+                content: document.getElementById("ibosco_sync_dialog"),
+                minHeight: "600px",
+                close: function() {
+                    $list.empty();
+                }
+            });
+            getData(0);
+            _initPagination();
+
+            function _initPagination() {
+                var _settings = {
+                    items_per_page: 99,
+                    num_display_entries: 5,
+                    prev_text: false,
+                    next_text: false,
+                    renderer: "ibosRenderer",
+                    allow_jump: true,
+                    callback: function(page, elem) {
+                        if (isLoad) {
+                            getData(page);
+                        }
+                        render();
+                        isLoad = true;
+                        $.ajaxSetup({
+                            async: true
+                        });
+                    }
+                };
+
+                if (!$.fn.pagination) {
+                    $.getScript(Ibos.app.getStaticUrl("/js/lib/jquery.pagination.js"))
+                        .done(function() {
+                            $page.pagination(count, _settings);
+                        });
+                } else {
+                    $page.pagination(count, _settings);
+                }
             }
 
-            var _bindingDetail = function(fn) {
-                CoBinding.op.bindingDetail(params).done(function(res) {
-                    if (res.isSuccess) {
-                        var data = res.data;
-                        try {
-                            var detailflag = /^ibos/.test(listname);
-                            $(data).each(function(index, item) {
-                                var detail = detailflag ? (item.deptname + " " + item.posname) : item.mobile,
-                                    user = {
-                                        uid: item.uid,
-                                        realname: item.realname || "佚名",
-                                        avatar: item.avatar || "static.php?type=avatar&uid=2&size=middle&engine=LOCAL",
-                                        detail: detail
-                                    };
-                                $.tmpl("binding_member_tpl", user).prependTo($list);
-                            });
+            function getData(page) {
+                $.ajaxSetup({
+                    async: false
+                });
+                var params ={
+                    op: op,
+                    start: (page || 0) * 99,
+                    length: 99
+                };
 
-                            fn && fn.call(null);
-                        } catch (e) {
-                            console.error("ajaxReturn must be Array");
+                cache[op] = cache[op] || {};
+                cache[op][page] = cache[op][page] || [];
+                if( cache[op][page].length ){
+                    data = cache[op][page];
+                }else{
+                    CoBinding.op.bindingDetail(params).done(function(res) {
+                        if (res.isSuccess) {
+                            data = res.data || [];
+                            cache[op][page] = data;
+                        } else {
+                            Ui.tip(res.msg, "danger");
                             return false;
                         }
-                    } else {
-                        Ui.tip(res.msg, "danger");
-                        return false;
-                    }
-                });
+                    });
+                }
             }
 
-            _bindingDetail(function() {
-                Ui.dialog({
-                    title: title,
-                    id: "ibosco_sync_dialog",
-                    lock: true,
-                    content: document.getElementById("ibosco_sync_dialog"),
-                    minHeight: "600px",
-                    close: function() {
-                        $list.empty();
-                    }
+            function render(){
+                var detailflag = /^ibos/.test(listname);
+                $list.empty();
+                $(data).each(function(index, item) {
+                    var detail = detailflag ? (item.deptname + " " + item.posname) : item.mobile,
+                        user = {
+                            uid: item.uid,
+                            realname: item.realname || "佚名",
+                            avatar: item.avatar || "static.php?type=avatar&uid=2&size=middle&engine=LOCAL",
+                            detail: detail
+                        };
+                    $.tmpl("binding_member_tpl", user).prependTo($list);
+                    iboscoSyncDialog.DOM.content.scrollTop(0);
                 });
-            });
+            }
         },
         // 解绑操作
         "unBinding": function() {

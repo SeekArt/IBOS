@@ -9,7 +9,10 @@
 		<div class="ct fill">
 			<form id="add_form" action="<?php echo $this->createUrl( 'web/add' ); ?>" method="post" class="form-horizontal">
 				<?php if ( isset( $errMsg ) ): ?>
-					<div class="alert alert-danger"><?php echo $errMsg; ?></div>
+					<div class="alert alert-danger">
+						<span><?php echo $errMsg; ?>, 若设置失败, 请查看</span>
+						<a href="http://doc.ibos.com.cn/article/detail/id/330" target="_blank" class="xcbu">[常见问题及解决方法]</a>
+					</div>
 				<?php endif; ?>
 				<fieldset>
 					<legend><?php echo $lang['Add web mail']; ?></legend>		

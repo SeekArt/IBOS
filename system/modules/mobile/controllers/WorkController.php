@@ -4,13 +4,11 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
-use application\modules\main\model\Attachment;
-use application\modules\main\model\AttachmentN;
+use application\modules\main\components\CommonAttach;
 use application\modules\main\utils\Main;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\message\model\Notify;
@@ -52,7 +50,7 @@ class WorkController extends BaseController {
 
 	/**
 	 * 列表页专用属性
-	 * @var array 
+	 * @var array
 	 */
 
 	protected $_extraAttributes = array(
@@ -187,7 +185,7 @@ class WorkController extends BaseController {
 			$readOnly = $_POST['readonly'];
 			// 隐藏控件
 			$hidden = $_POST['hidden'];
-			// 保存标志 
+			// 保存标志
 			$saveflag = $_POST['saveflag']; //保存跳转标志
 			// 会签意见附件
 			$fbAttachmentId = $_POST['fbattachmentid'];
@@ -244,12 +242,12 @@ class WorkController extends BaseController {
 			switch ( $saveflag ) {
 				case 'save':
 					MainUtil::setCookie( 'save_flag', 1, 300 );
-					// $this->redirect( $this->createUrl( 'form/index', array( 'key' => $this->key ) ) );
+					$this->redirect( $this->createUrl( 'form/index', array( 'key' => $this->key ) ) );
 					$this->ajaxReturn( "<script>alert('保存成功')</script>", "EVAL" );
 					break;
 				case 'turn':
 					MainUtil::setCookie( 'turn_flag', 1, 300 );
-					// $this->redirect( $this->createUrl( 'form/index', array( 'key' => $this->key ) ) );
+					$this->redirect( $this->createUrl( 'form/index', array( 'key' => $this->key ) ) );
 					break;
 				case 'end':
 				case 'finish':
@@ -277,14 +275,16 @@ class WorkController extends BaseController {
 			$runProcess = new ICFlowRunProcess( $this->runid, $this->processid, $this->flowprocess, $this->uid );
 			// 如果是固定流程，取步骤信息
 			$checkitem = '';
+			$attr = array();
 			if ( $flow->isFixed() ) {
 				// 步骤实例
 				$process = new ICFlowProcess( $this->flowid, $this->flowprocess );
 				// 会签人不需要添加表单填写验证
-				if ( $runProcess->opflag != 0 ) {
+				$attr = $process->toArray();
+				if ( !empty( $attr ) && $runProcess->opflag != 0 ) {
 					$checkitem = $process->checkitem;
 				}
-				if ( $process->allowback > 0 ) {
+				if ( !empty( $attr ) && $process->allowback > 0 ) {
 					$isAllowBack = true; //$this->isAllowBack( $runProcess->parent );
 				}
 			} else {
@@ -328,12 +328,13 @@ class WorkController extends BaseController {
 			// 修改上一步骤状态为已经办理完毕
 			$preProcess = $this->processid - 1;
 			if ( $preProcess ) {
-				if ( $flow->isFree() || $flow->isFixed() && $process->gathernode != self::FORCE ) {
+				if ( $flow->isFree() ||
+						$flow->isFixed() && !empty( $attr ) && $process->gathernode != self::FORCE ) {
 					$this->setProcessDone( $preProcess );
 				}
 			}
 			// 如果是固定流程并设置了超时间隔的
-			if ( $flow->isFixed() && $process->timeout != 0 ) {
+			if ( $flow->isFixed() && !empty( $attr ) && $process->timeout != 0 ) {
 				// 如果该步骤未接收并且不是第一步，流程开始的时间为上一步的办结完的时间
 				if ( $runProcess->flag == self::UN_RECEIVE && $this->processid !== 1 ) {
 					$processBegin = FlowRunProcess::model()->fetchDeliverTime( $this->runid, $preProcess );
@@ -357,7 +358,7 @@ class WorkController extends BaseController {
 					array(
 				'flow' => $flow->toArray(),
 				'run' => $run->toArray(),
-				'process' => !empty( $process ) ? $process->toArray() : $process,
+				'process' => !empty( $process ) ? $attr : $process,
 				'checkItem' => $checkitem,
 				'prcscache' => WfCommonUtil::loadProcessCache( $this->flowid ),
 				'rp' => $runProcess->toArray(),
@@ -393,7 +394,6 @@ class WorkController extends BaseController {
 						$enableFiled = array();
 					}
 				}
-				// var_dump($data['model']['itemData']); die;
 				foreach ( $data['model']['itemData'] as $k => $v ) {
 					if ( substr( $k, 0, 5 ) != "data_" ) {
 						continue;
@@ -405,7 +405,7 @@ class WorkController extends BaseController {
 						if ( in_array( $data['model']['structure'][$k]['data-title'], $enableFiled ) ) {
 							//记下可修改的页面
 							$data['enablefiled'][] = $k;
-							$data['model']['structure'][$k]['value'] = $data['model']['eleout'][$k];
+							$data['model']['structure'][$k]['value'] = empty( $data['model']['eleout'][$k] ) ? '' : $data['model']['eleout'][$k];
 							$formdata['enableArr'][] = $data['model']['structure'][$k];
 							continue;
 						}
@@ -458,13 +458,15 @@ class WorkController extends BaseController {
 			} else {
 				$data['allowAttach'] = false;
 			}
+
 			// 是否允许会签及读取会签意见信息
-			if ( $flow->isFixed() && $process->feedback != 1 ) {
+			if ( $flow->isFixed() && !empty( $attr ) && $process->feedback != 1 ) {
 				$data['allowFeedback'] = true;
 				$data['feedback'] = WfHandleUtil::loadFeedback( $flow->getID(), $run->getID(), $flow->type, $this->uid );
 			} else {
 				$data['allowFeedback'] = false;
 			}
+
 			// 自由流程判断是否有预设步骤，如果没有，则可以结束当前流程
 			if ( $flow->isFree() && $runProcess->opflag == '1' ) {
 				$hasDefault = FlowRunProcess::model()->getHasDefaultStep( $this->runid, $this->processid );
@@ -660,28 +662,11 @@ class WorkController extends BaseController {
 					if ( !empty( $old ) ) {
 						Attach::delAttach( $old );
 					}
-					$upload = File::getUpload( $_FILES[$key], 'workflow' );
-					$upload->save();
-					$attach = $upload->getAttach();
-					$attachment = 'workflow/' . $attach['attachment'];
-					$imgData = array(
-						'dateline' => TIMESTAMP,
-						'filename' => $attach['name'],
-						'filesize' => $attach['size'],
-						'isimage' => $attach['isimage'],
-						'attachment' => $attachment,
-						'uid' => $this->uid,
-					);
-					$aid = Attachment::model()->add(
-							array(
-						'uid' => $this->uid,
-						'rid' => $this->runid,
-						'tableid' => Attach::getTableId( $this->runid )
-							), true
-					);
-					$imgData['aid'] = $aid;
-					$newAttach = AttachmentN::model()->add( sprintf( 'rid:%d', $this->runid ), $imgData, true );
-					$formData["{$key}"] = $newAttach;
+					$upload = new CommonAttach( $key, 'workflow' );
+					$upload->upload();
+					$info = $upload->getUpload()->getAttach();
+					$upload->updateAttach( $info['aid'], $this->runid );
+					$formData["{$key}"] = $info['aid'];
 				} else {
 					$formData["{$key}"] = $old;
 				}
@@ -762,9 +747,9 @@ class WorkController extends BaseController {
 		// 		'flow' => $flow->toArray(),
 		// 		'runName' => $runName
 		// 		// ,'lang' => IBOS::getLangSources()
-		// 	);			
+		// 	);
 		// 	$this->ajaxReturn( $data, Mobile::dataType() );
-		// }		
+		// }
 	}
 
 	/**
@@ -858,7 +843,7 @@ class WorkController extends BaseController {
 			}
 			$flowList[$catId][] = $flow; //和网页端不一样，只需要数组
 		}
-		// 根据后台分类的排序对数组重新排序 
+		// 根据后台分类的排序对数组重新排序
 		ksort( $flowList, SORT_NUMERIC );
 //		$data['flows'] = $flowList;
 		$data['common'] = $commonlyFlowList;
@@ -871,10 +856,10 @@ class WorkController extends BaseController {
 		}
 	}
 
-// -------------------来自listController-----------------------------	
+// -------------------来自listController-----------------------------
 	/**
 	 * 检索类型 - 数据库标识 映射数组
-	 * @var array 
+	 * @var array
 	 */
 	protected $typeMapping = array(
 		'todo' => self::TODO,
@@ -1171,8 +1156,8 @@ class WorkController extends BaseController {
 		}
 	}
 
-// -------------------来自listController结束-----------------------------		
-// -------------------来自handleController-----------------------------		
+// -------------------来自listController结束-----------------------------
+// -------------------来自handleController-----------------------------
 	/**
 	 * 主办页面回退操作
 	 */
@@ -1271,7 +1256,7 @@ class WorkController extends BaseController {
 		// $prcsTo = filter_input( INPUT_POST, 'processto', FILTER_SANITIZE_STRING );
 		// $prcsChoose = filter_input( INPUT_POST, 'prcs_choose', FILTER_SANITIZE_STRING );
 		$prcsTo = Env::getRequest( 'processto' );
-		// $prcsChoose = Env::getRequest( 'prcs_choose' );	
+		// $prcsChoose = Env::getRequest( 'prcs_choose' );
 
 		$prcsToArr = explode( ",", trim( $prcsTo, ',' ) );
 		// $prcsChooseArr = explode( ",", trim( $prcsChoose, ',' ) );
@@ -1695,7 +1680,7 @@ class WorkController extends BaseController {
 					$param['isover'] = false;
 					$curProcess = FlowProcess::model()->fetchProcess( $flowId, $to );
 					$param['prcsname'] = $curProcess['name'];
-					$processOut = FlowProcessTurn::model()->fetchByUnique( $flowId, $processId, $to );
+					$processOut = FlowProcessTurn::model()->fetchByUnique( $flowId, $flowProcess, $to );
 					if ( !$processOut ) {
 						$processOut = array( 'processout' => '', 'conditiondesc' => '' );
 					}
@@ -1778,7 +1763,7 @@ class WorkController extends BaseController {
 			if ( $flow ) {
 				$type = $flow['type'];
 			}
-            if ( $type == FlowType::FLOW_TYPE_FREE ) { //自由流程
+			if ( $type == FlowType::FLOW_TYPE_FREE ) { //自由流程
 				$process['prcs_id_next'] = '';
 			}
 			//获取子流程第一步的信息
@@ -1917,17 +1902,17 @@ class WorkController extends BaseController {
 							$tempArray[$key] = $value;
 						}
 					}
-                    $uidArray = User::model()->findUidByRealnameX( $tempArray );
-                    $temp = array();
-                    foreach ( $uidArray as $u ) {
-                        $temp[] = array(
-                            'uid' => $u,
-                            'alldeptid' => User::model()->findAllDeptidByUid( $u ),
-                            'allposid' => User::model()->findAllPositionidByUid( $u ),
-                        );
-                    }
+					$uidArray = User::model()->findUidByRealnameX( $tempArray );
+					$temp = array();
+					foreach ( $uidArray as $u ) {
+						$temp[] = array(
+							'uid' => $u,
+							'alldeptid' => User::model()->findAllDeptidByUid( $u ),
+							'allposid' => User::model()->findAllPositionidByUid( $u ),
+						);
+					}
 
-                    foreach ( $temp as $k => $v ) {
+					foreach ( $temp as $k => $v ) {
 						$dept = Department::model()->queryDept( $v['alldeptid'] );
 						if ( $process['deptid'] == "alldept" || StringUtil::findIn( $process['uid'], $v['uid'] ) || StringUtil::findIn( $process['deptid'], $dept ) || StringUtil::findIn( $process['positionid'], $v["allposid"] ) ) {
 							$prcsUserAuto .= $v["uid"] . ",";
@@ -1940,11 +1925,11 @@ class WorkController extends BaseController {
 			} elseif ( $process['autotype'] == 8 && is_numeric( $process['autouser'] ) ) { //自动选择指定步骤主办人
 				$uid = FlowRunProcess::model()->fetchBaseUid( $runId, $process['autouser'] );
 				if ( $uid ) {
-                    $temp = array(
-                        'uid' => $uid,
-                        'alldeptid' => User::model()->findAllDeptidByUid( $uid ),
-                        'allposid' => User::model()->findAllPositionidByUid( $uid ),
-                    );
+					$temp = array(
+						'uid' => $uid,
+						'alldeptid' => User::model()->findAllDeptidByUid( $uid ),
+						'allposid' => User::model()->findAllPositionidByUid( $uid ),
+					);
 					if ( $temp ) {
 						if ( $process['deptid'] == 'alldept' || StringUtil::findIn( $process['uid'], $temp['uid'] ) || StringUtil::findIn( $process['deptid'], $temp["alldeptid"] ) || StringUtil::findIn( $process['positionid'], $temp["allposid"] ) ) {
 							$prcsOpUser = $prcsUserAuto = $temp['uid'];
@@ -2025,7 +2010,7 @@ class WorkController extends BaseController {
 		}
 	}
 
-// -------------------来自handleController结束-----------------------------		
+// -------------------来自handleController结束-----------------------------
 
 	/**
 	 * 自由流程下一步流程或视图
@@ -2223,11 +2208,11 @@ class WorkController extends BaseController {
 						'processid' => $processId,
 						'flowprocess' => $flowProcess
 					);
-                    $key = Common::param( $param );
+					$key = Common::param( $param );
 					$config = array(
 						'{runname}' => $run['name'],
-                        '{url}' => IBOS::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => $key ) ),
-                        'id' => $key,
+						'{url}' => IBOS::app()->urlManager->createUrl( 'workflow/form/index', array( 'key' => $key ) ),
+						'id' => $key,
 					);
 					Notify::model()->sendNotify( $uid, 'workflow_sign_notice', $config );
 				}

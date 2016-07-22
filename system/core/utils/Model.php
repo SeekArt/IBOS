@@ -21,10 +21,10 @@ class Model {
      * @param string $tableName 支持如{{user}}和ibos_user两种形式
      * @return boolean
      */
-    public static function tableExists($tableName) {
+    public static function tableExists( $tableName ) {
         $isExist = IBOS::app()->db
                 ->createCommand()
-                ->setText(sprintf("SHOW TABLES LIKE '%s'", $tableName))
+                ->setText( sprintf( "SHOW TABLES LIKE '%s'", $tableName ) )
                 ->execute();
         return (bool) $isExist;
     }
@@ -34,11 +34,11 @@ class Model {
      * @param string $tableName
      * @return boolean
      */
-    public static function dropTable($tableName) {
+    public static function dropTable( $tableName ) {
         $res = false;
-        if (self::tableExists($tableName)) {
+        if ( self::tableExists( $tableName ) ) {
             $res = IBOS::app()->db
-                            ->createCommand()->dropTable($tableName);
+                            ->createCommand()->dropTable( $tableName );
         }
         return (bool) $res;
     }
@@ -49,11 +49,11 @@ class Model {
      * @param string $sql 创建语句
      * @return boolean
      */
-    public static function createTable($tableName, $sql) {
+    public static function createTable( $tableName, $sql ) {
         $res = false;
-        if (!self::tableExists($tableName)) {
+        if ( !self::tableExists( $tableName ) ) {
             IBOS::app()->db
-                    ->createCommand()->setText($sql)->execute();
+                    ->createCommand()->setText( $sql )->execute();
         }
         return (bool) $res;
     }
@@ -65,7 +65,7 @@ class Model {
     public static function getCurrentDbName() {
         $sql = "select database();";
         return IBOS::app()->db
-                        ->createCommand()->setText($sql)->queryScalar();
+                        ->createCommand()->setText( $sql )->queryScalar();
     }
 
     /**
@@ -74,16 +74,16 @@ class Model {
      * @param mixed $columnMixed 需要检测的列，数组或者逗号字符串
      * @return array 返回不存在的列
      */
-    public static function checkColumnExist($tableName, $columnMixed) {
-        $columnArray = is_array($columnMixed) ? $columnMixed : explode(',', $columnMixed);
-        $conditionString = " `COLUMN_NAME` = '" . implode("' OR `COLUMN_NAME` = '", $columnArray) . "' ";
+    public static function checkColumnExist( $tableName, $columnMixed ) {
+        $columnArray = is_array( $columnMixed ) ? $columnMixed : explode( ',', $columnMixed );
+        $conditionString = " `COLUMN_NAME` = '" . implode( "' OR `COLUMN_NAME` = '", $columnArray ) . "' ";
         $currentDbName = self::getCurrentDbName();
         $sql = "SELECT `COLUMN_NAME` FROM information_schema.`COLUMNS`"
                 . " WHERE `TABLE_SCHEMA` = '{$currentDbName}'"
                 . " AND `TABLE_NAME` = '{$tableName}' AND ( {$conditionString} )";
         $existColumnArray = IBOS::app()->db
-                        ->createCommand()->setText($sql)->queryColumn();
-        $notExistArray = array_diff($columnArray, $existColumnArray);
+                        ->createCommand()->setText( $sql )->queryColumn();
+        $notExistArray = array_diff( $columnArray, $existColumnArray );
         return $notExistArray;
     }
 
@@ -101,4 +101,5 @@ class Model {
         }
         return $result;
     }
+
 }

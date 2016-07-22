@@ -12,7 +12,7 @@ use application\modules\user\utils\User;
 <![endif]-->
 <!--[if gt IE 8]><!-->
 <html lang="en">
-<![endif]-->
+	<![endif]-->
 	<head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name="renderer" content="webkit"/>
@@ -40,10 +40,10 @@ use application\modules\user\utils\User;
 			<link rel="stylesheet" href="<?php echo STATICURL; ?>/css/iefix.css?<?php echo VERHASH; ?>" />
 		<![endif]-->
 		<!-- load css end -->
-		
+
 		<!-- JS全局变量-->
 		<script>
-			<?php include './data/jsconfig.php'; ?>
+<?php include PATH_ROOT . '/data/jsconfig.php'; ?>
 		</script>
 		<script src='<?php echo STATICURL; ?>/js/require.js?<?php echo VERHASH; ?>'></script>
 		<!-- 语言包 -->
@@ -61,9 +61,9 @@ use application\modules\user\utils\User;
 					<div class="logo">
 						<?php $unit = IBOS::app()->setting->get( 'setting/unit' ); ?>
 						<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php
-						if( !empty( $unit['logourl'] ) ): echo $unit['logourl']; 
-						else:
-						 ?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
+							if ( !empty( $unit['logourl'] ) ): echo File::imageName( $unit['logourl'] );
+							else:
+								?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
 					</div>
 					<!-- Nav -->
 					<?php $navs = IBOS::app()->setting->get( 'cache/nav' ); ?>
@@ -75,11 +75,11 @@ use application\modules\user\utils\User;
 									if ( $nav['disabled'] ) {
 										continue;
 									}
-									$nav['url'] = Url::getUrl($nav['url']);
+									$nav['url'] = Url::getUrl( $nav['url'] );
 									?>
 									<li data-target="#sub_nav_<?php echo $index; ?>" data-id="<?php echo $index; ?>">
 										<a href="<?php echo $nav['url']; ?>" target="<?php echo $nav['targetnew'] ? '_blank' : '_self'; ?>"><?php echo $nav['name']; ?></a>
-										<?php if ( 1==2 ): ?><i class="o-new-nav-tip"></i> <?php endif; ?>
+										<?php if ( 1 == 2 ): ?><i class="o-new-nav-tip"></i> <?php endif; ?>
 									</li>
 								<?php endforeach; ?>
 							</ul>
@@ -95,13 +95,13 @@ use application\modules\user\utils\User;
 												continue;
 											}
 											$hasPurv = User::checkNavPurv( $subNav );
-											$subNav['url'] = Url::getUrl($subNav['url']);
+											$subNav['url'] = Url::getUrl( $subNav['url'] );
 											?>
-											<?php if ($hasPurv): ?>
+											<?php if ( $hasPurv ): ?>
 												<li>
 													<a target="<?php echo $subNav['targetnew'] ? '_blank' : '_self'; ?>" href="<?php echo $subNav['url']; ?>" data-id="<?php echo $subNav['id']; ?>">
 														<?php echo $subNav['name']; ?>
-														<?php if ( 1==2 ): ?><i class="o-new-nav-tip"></i><?php endif; ?>
+														<?php if ( 1 == 2 ): ?><i class="o-new-nav-tip"></i><?php endif; ?>
 													</a>
 												</li>
 											<?php else: ?>
@@ -112,13 +112,13 @@ use application\modules\user\utils\User;
 								<?php endif; ?>
 							<?php endforeach; ?>
 						</div>
-	
+
 					<?php endif; ?>
 					<!-- Nav end -->
 					<div class="usi">
 						<div class="btn-group">
 							<a href="javascript:;" data-toggle="dropdown" id="user_login_ctrl">
-								<?php echo StringUtil::cutStr(IBOS::app()->user->realname, 6); ?>
+								<?php echo StringUtil::cutStr( IBOS::app()->user->realname, 6 ); ?>
 								<i class="caret caret-small"></i>
 							</a>
 						</div>
@@ -208,7 +208,7 @@ use application\modules\user\utils\User;
 			<!-- Header end -->
 			<!-- load script end -->
 			<div class="wrap" id="mainer">
-				<?php if ( !in_array( IBOS::app()->setting->get( 'module' ), array( 'user', 'weibo','app','main' ) ) ): ?>
+				<?php if ( !in_array( IBOS::app()->setting->get( 'module' ), array( 'user', 'weibo', 'app', 'main' ) ) ): ?>
 					<div class="mtw">
 						<h2 class="mt pull-left"><?php echo IBOS::app()->setting->get( 'pageTitle' ); ?></h2>
 						<span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
@@ -237,18 +237,20 @@ use application\modules\user\utils\User;
 						<span class="ilsep">|</span>
 						<a target="_blank" href="http://kf.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
 						<span class="ilsep">|</span>
+						<a href="javascript:;" data-action="showCert"><?php echo IBOS::lang( 'Certificate of authorization', 'default' ); ?></a>
+						<span class="ilsep">|</span>
 						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a href="javascript:;" data-action="appDownload">移动端下载</a>
+						<a href="javascript:;" data-action="appDownload">客户端下载</a>
 						<?php
 						$qr = IBOS::app()->setting->get( 'setting/qrcode' );
 						$qrcode = isset( $qr ) ? $qr : '';
 						if ( !empty( $qrcode ) ) :
 							?>
-						<span class="ilsep">|</span>
-						<a href="javascript:;" data-action="followWx" class="im-link">
-							<i class="o-olw-crcode"></i>关注微信号
-						</a>
+							<span class="ilsep">|</span>
+							<a href="javascript:;" data-action="followWx" class="im-link">
+								<i class="o-olw-crcode"></i>关注微信号
+							</a>
 						<?php endif; ?>
 					</div>
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
@@ -259,8 +261,12 @@ use application\modules\user\utils\User;
 				</div>
 			</div>
 		</div>
-		<script src='<?php echo File::fileName( 'data/org.js' ); ?>?<?php echo VERHASH; ?>'></script>
+
 		<script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>' defer asnyc="true"></script>
 		<script src='<?php echo STATICURL; ?>/js/main.js?<?php echo VERHASH; ?>'></script>
+		<!--数据包-->
+		<?php echo File::getOrgJs() ?>
+		<script src='<?php echo STATICURL; ?>/js/app/ibos.userData.js?<?php echo VERHASH; ?>'></script>
+		<script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
 	</body>
 </html>

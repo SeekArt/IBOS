@@ -22,6 +22,8 @@ L.DOC = {
 
 
 	MOVETO: "移到至",
+	SET_TOP: "置顶",
+	HIGHLIGHT: "高亮",
 
 	// 新建公文
 	INTRO: {

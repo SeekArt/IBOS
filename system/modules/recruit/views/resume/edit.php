@@ -531,7 +531,7 @@ use application\core\utils\StringUtil;
 									</i>
 									<div class="attc"><?php echo $fileInfo['filename']; ?></div>
 									<span class="fss mlm">
-										<a href="<?php echo $fileInfo['downurl']; ?>" class="anchor"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+										<a href="<?php echo $fileInfo['downurl']; ?>" target="_blank" class="anchor"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
 										<?php if (isset($fileInfo['officereadurl'])): ?>
 											<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $fileInfo['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
 												<?php echo $lang['View']; ?>

@@ -1,458 +1,553 @@
-/**
- * contact.js
- * 日程安排
- */
+(function(win, $, Ibos, undefined) {
+    'use strict';
+    // global
+    var Ibos = Ibos || {},
+        Contact = {},
+        domMap = {
+            $win: $(win),
+            $doc: $(document),
+            $mc: $('.mc'),
+            $user_list: $('#user_datalist'),
+            $search_list: $('#user_searchlist'),
+            $search_area: $('#search_area')
+        };
+    // const
+    var DEPTID = Ibos.app.g('deptid'),
+        OP = Ibos.app.g('op') || 'letter',
+        SORTED = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        UIDS, AllDATA = {};
+    // function
+    var ajaxApi, setDomMap, userInfoBarShown, calLetterPosition, formatUserInfo,
+        loadUserList, pidCache, getPreg, getLetterList, getDeptList, cacheRelated,
+        toDataTmpl, toDeptData, toCreateTmpl, toLetterTmpl, searchUser, treeObj;
+    // flag
+    var _do_search = false,
+        _has_cache = false;
 
-var ContactList = {
-	op : {
-		/**
-		 * 显示侧边栏人员信息
-		 * @method getProfile
-		 * @param  {Object} param 传入JSON格式数据
-		 * @return {Object}       返回deffered对象
-		 */
-		getProfile : function(param){
-			var url = Ibos.app.url('contact/default/ajaxApi');
-				param = $.extend({}, param, {op: 'getProfile'});
-			return $.post(url, param, $.noop);
-		},
-		/**
-		 * 改变常用联系人状态
-		 * @method changeConstant
-		 * @param  {Object} param 传入JSON格式数据
-		 * @return {Object}       返回deffered对象
-		 */
-		changeConstant : function(param){
-			var url = Ibos.app.url('contact/default/ajaxApi');
-				param = $.extend({}, param, {op: 'changeConstant'});
-			return $.post(url, param, $.noop);
-		},
-		/**
-		 * 打印常用联系人
-		 * @method printContact
-		 * @param  {Object} param 传入JSON格式数据
-		 * @return {Object}       返回deffered对象
-		 */
-		printContact : function(param){
-			var url = Ibos.app.url('contact/default/printContact');
-			return $.post(url, param, $.noop);
-		}
-	},
-	/**
-	 * 初始化表单
-	 * @method  initForm
-	 */
-	initForm : function(){
-		//初始化添加外部联系人的生日日期选择
-		$("#date_time").datepicker();
+    ajaxApi = {
+        // get userInfo for sidebar showing
+        getProfile: function(param) {
+            var url = Ibos.app.url('contact/default/ajaxApi');
+            param = $.extend({}, param, { op: 'getProfile' });
 
-		$.formValidator.initConfig({
-			formId: "add_user_form"
-		});
+            return $.post(url, param, $.noop, 'json');
+        },
+        // page print
+        printContact: function(param) {
+            var url = Ibos.app.url('contact/default/printContact');
 
-		$("#add_user_name").formValidator()
-		.regexValidator({
-			regExp: "notempty",
-			dataType: "enum",
-			onError: U.lang("RULE.REALNAME_CANNOT_BE_EMPTY")
-		});
+            return $.post(url, param, $.noop);
+        }
+    };
 
-		$("#add_user_phone").formValidator()
-		.regexValidator({
-			regExp: "mobile",
-			dataType: "enum",
-			onError: U.lang("RULE.MOBILE_INVALID_FORMAT")
-		});
+    setDomMap = function(name, dom) {
+        if (!name) {
+            return false;
+        }
 
-		$("#add_user_email").formValidator()
-		.regexValidator({
-			regExp: "email",
-			dataType: "enum",
-			onError: U.lang("RULE.EMAIL_INVALID_FORMAT")
-		});
+        if (typeof name === 'object') {
+            $.extend(domMap, name);
+        } else if (typeof name === 'string') {
+            domMap[name] = dom;
+        }
 
-		$("#add_user_qq").formValidator()
-		.regexValidator({
-			regExp: "qq",
-			dataType: "enum",
-			onError: U.lang("CONT.QQ_INVALID_FORMAT")
-		});
+        return true;
+    };
 
-		$("#add_user_form").submit(function() {
-			$("#save_info_btn").trigger("click");
-			var self = $(this),
-				isPass = $.formValidator.pageIsValid();
-			if(isPass){
-				$.post("", self.serialize(), function(res){
-					if(res.isSuccess){
-						$("#close_add_wrap").trigger("click");
-						window.location.reload();
-						U.tip(U.lang("CONT.SUCCESS_ADD_CONTACT"), "success");
-					}
-				}, "json");
-			}
-			return false;
-		});
-	},
+    userInfoBarShown = function(show) {
+        !domMap.$cl_rolling_sidebar && setDomMap({
+            $cl_rolling_sidebar: $('#cl_rolling_sidebar')
+        });
+        domMap.$cl_rolling_sidebar.animate(show ? { width: '520px', marginLeft: '261px' } : { width: '0', marginLeft: '780px' }, 200);
+    };
 
-	/**
-	 * 侧栏信息栏的现实与隐藏的操作，已经搜索栏长度的改变
-	 * @method  contact
-	 */
-	contact : {
-		/**
-		 * 联系人侧边栏信息的显示和隐藏
-		 * @method sidebarDisplay
-		 */
-		sidebarDisplay:{
-			show: function($elem) {
-				$elem.animate({
-					width: '520px',
-					marginLeft: '261px'
-				}, 200);
-			},
-			hide: function($elem) {
-				$elem.animate({
-					width: '0',
-					marginLeft: '780px'
-				}, 200);
-			}
-		},
-		/**
-		 * 搜索框宽度的变动
-		 * @method searchToggle
-		 */
-		searchToggle: {
-			expand: function($search){
-				$search.removeClass('w230').addClass('span7');
-			},
-			collapse: function($search){
-				$search.removeClass('span7').addClass('w230');
-			}
-		},
-		/**
-		 * 头像的上传
-		 * @method avatarUpLoad
-		 * @param  {Object} 传入JSON格式参数 
-		 */
-		avatarUpLoad: function(uploadParam) {
-			var attachUpload = Ibos.upload.image($.extend({
-				button_placeholder_id: "upload_img",
-				file_size_limit: "2000", //设置图片最大上传值
-				button_width: "100",
-				button_height: "100",
-				button_image_url: "",
-				custom_settings: {
-					//头像上传成功后的操作
-					success: function(file, data) {
-						if(data.IsSuccess){
-							// 上传头像的路径
-							$("#img_src").val(data.file);
-							//将上传后的图片显示出来
-							$("#portrait_img").show().attr("src", data.data);
-						
-							//当头像上传成功后,鼠标移入移除时,显示和隐藏头像的覆盖层
-							$("#pc_avatar_wrap").hover(function() {
-								$("#tip_tier").toggle();
-							});
-						} else {
-							Ui.tip(data.msg, 'danger');
-							return false;
-						}
-					},
-					progressId: "portrait_img_wrap"
-				}
-			}, uploadParam));
-		},
-		/**
-		 * 计算侧栏信息栏和字母导航栏的定位及高度的计算
-		 * @method calculateSidebar
-		 */
-		calculateSidebar: function(){
-			var cwtop = $('#cl_list_header').offset().top,
-			dctop = $(document).scrollTop(),
-			windowHeight = $(window).height(),
-			mcheight = $('.mc').height();
+    calLetterPosition = function() {
+        // cache domlist result
+        setDomMap({
+            $cl_list_header: $('#cl_list_header'),
+            $rollingSidebar: $('#cl_rolling_sidebar'),
+            $addWrap: $('#add_contacter_wrap'),
+            $letterSidebar: $('#cl_letter_sidebar'),
+            $funbar: $('#cl_funbar')
+        });
 
-			var slidtop = dctop - cwtop;
-				linkheight = mcheight - slidtop,
-				rollingSlideHeight = linkheight + 'px',
-				mcheightval = mcheight + 'px',
-				slidtopval = -slidtop + 'px',
-				nletterHeightVal = mcheight - 60 + 'px',
-				rletterHeightVal = linkheight - 60 + 'px',
-				$rollingSidebar = $("#cl_rolling_sidebar"),
-				$addWrap = $("#add_contacter_wrap"),
-				$letterSidebar = $("#cl_letter_sidebar"),
-				$funbar = $("#cl_funbar");
+        var mcheight = domMap.$mc.height(),
+            slidetop = domMap.$doc.scrollTop() - domMap.$cl_list_header.offset().top,
+            linkheight = mcheight - slidetop,
+            rollingslideheight = linkheight + 'px',
+            mcheightval = mcheight + 'px',
+            slidetopval = -slidetop + 'px',
+            rletterHeightVal = linkheight - 60 + 'px';
 
-			if (slidtop > 0) {
-				$addWrap.css({"top": '60px', "height": rollingSlideHeight});
-				$rollingSidebar.css({"top": '60px', "height": rollingSlideHeight});
-				$letterSidebar.css({'height': rletterHeightVal})
-					.addClass('sidebar-rolling').removeClass('sidebar-normal');
-				$funbar.addClass('funbar-rolling').removeClass('funbar-normal');
-			} else {
-				$addWrap.css({"top": slidtopval, "height": mcheightval});
-				$rollingSidebar.css({"top": slidtopval, "height": mcheightval});
-				$letterSidebar
-					.addClass('sidebar-normal').removeClass('sidebar-rolling');
-				$funbar.addClass('funbar-normal').removeClass('funbar-rolling');
-			}
+        if (slidetop > 0) {
+            domMap.$addWrap.css({ 'top': '60px', 'height': rollingslideheight });
+            domMap.$rollingSidebar.css({ 'top': '60px', 'height': rollingslideheight });
+            domMap.$letterSidebar
+                .css({ 'height': rletterHeightVal })
+                .addClass('sidebar-rolling')
+                .removeClass('sidebar-normal');
+            domMap.$funbar.addClass('funbar-rolling').removeClass('funbar-normal');
+        } else {
+            domMap.$addWrap.css({ 'top': slidetopval, 'height': mcheightval });
+            domMap.$rollingSidebar.css({ 'top': slidetopval, 'height': mcheightval });
+            domMap.$letterSidebar
+                .addClass('sidebar-normal')
+                .removeClass('sidebar-rolling');
+            domMap.$funbar.addClass('funbar-normal')
+                .removeClass('funbar-rolling');
+        }
+    };
 
-		},
-		/**
-		 * 格式化用户信息
-		 * @method formatUserInfo
-		 * @param  {String} param 传入用户ID
-		 * @return {Object}       返回JSON格式数据
-		 */
-		formatUserInfo: function(param){
-			if(param.indexOf("u") === 0){
-				var arr = param.split(",");
-				var data = $.map(arr, function(uid){
-					 	var data = Ibos.data.getUser(uid);
-					  	return { uid: uid.slice(2), name: data.name, avatar: data.avatar_big, phone: data.phone };
-					});
-				return data;
-			}else{
-				var avatar = Ibos.app.g("emptyAvatar");
-				return [{name: "未知", avatar: avatar, phone: param}];
-			}
-		}
-	}
-};
-$(function() {
-	//计算侧栏信息栏和字母导航栏的定位及高度的计算
-	ContactList.contact.calculateSidebar();
+    formatUserInfo = function(param) {
+        if (param.indexOf('u') === 0) {
+            var arr = param.split(','),
+                data = $.map(arr, function(uid) {
+                    var data = Ibos.data.getUser(uid);
+                    return { uid: uid.slice(2), name: data.text, avatar: data.avatar, phone: data.phone };
+                });
+            return data;
+        } else {
+            var avatar = Ibos.app.g('emptyAvatar');
+            return [{ name: '未知', avatar: avatar, phone: param }];
+        }
+    };
+    // load userList
+    // divide to types
+    loadUserList = function(deptid) {
+        var action = {
+                letter: getLetterList,
+                dept: getDeptList
+            },
+            fetchDatas;
 
-	//搜索自动获取焦点
-	$("#search_area").focus();
+        fetchDatas = action[OP](deptid);
+        toCreateTmpl('tpl_contact_table', domMap.$user_list, { datas: fetchDatas });
+        OP === 'letter' && toLetterTmpl(fetchDatas);
+        // while creating tmpl, we can record UIDS for print and export
+        UIDS = Ibos.app.g('uids');
 
-	//当调整浏览器窗口时，计算侧栏，字母导航栏的位置和高度
-	$(window).resize(function() {
-		ContactList.contact.calculateSidebar();
-	});
+        return true;
+    };
+    // make sure related user of department by id has been cache
+    pidCache = function(deptid) {
+        var deptCache = win.sessionStorage.getItem('contact.dept.cache') || '',
+            deptArr = deptCache.split(',');
 
-	//当移动滚动条时，计算侧栏，字母导航栏的位置和高度
-	$(window).scroll(function() {
-		ContactList.contact.calculateSidebar();
-	});
+        if (deptArr.indexOf(deptid) !== -1) {
+            _has_cache = true;
+        } else {
+            deptArr.push(deptid);
+            win.sessionStorage.setItem('contact.dept.cache', deptArr.join(','));
+        }
 
-	//初始化表单
-	ContactList.initForm();
+        return true;
+    };
+    // using pinyinEngine
+    // support complete and brief and chinese
+    getPreg = function(text) {
+        if (typeof text !== 'string') {
+            return '';
+        }
 
+        var toPinyin = pinyinEngine.toPinyin,
+            pyArr = toPinyin(text, false),
+            allStr = [],
+            sinStr = [],
+            firstChar, atZero,
+            i, j, alen, slen;
 
-	//公司通讯录，点击列表单行，侧栏信息显示，改变选择行背景色
-	$(".contact-list").on('click', "tr", function() {
-		var $elem = $(this),
-			$sidebar = $("#cl_rolling_sidebar"),
-			$search = $('#name_search'),
-			id = $elem.attr('data-id'),
-			bgVal = $elem.attr("data-bg");
-		$('tr').removeClass('active');
-		$elem.addClass('active');
-		ContactList.contact.sidebarDisplay.show($sidebar);
-		ContactList.contact.searchToggle.collapse($search);
-		$("#personal_info").waitingC();
+        for (i = 0, alen = pyArr.length; i < alen; i += 1) {
+            firstChar = pyArr[i];
+            allStr.push(firstChar.join(''));
+            atZero = [];
+            for (j = 0, slen = firstChar.length; j < slen; j += 1) {
+                atZero.push(firstChar[j].charAt(0));
+            }
+            sinStr.push(atZero.join(''));
+        }
 
-		var param = {uid: id};	
-		ContactList.op.getProfile(param).done(function(res) {
-			if (res.isSuccess) {
-				var uid = "u_" + res.user.uid,
-					formatdata = ContactList.contact.formatUserInfo(uid);
-				Ibos.app.s({formatdata: formatdata});
-				var user = res.user,
-					tpl = $.tmpl("tpl_rolling_sidebar", {user: res.user}),
-					$sidebar = $("#cl_rolling_sidebar");
-				$sidebar.html("").append(tpl);
-				$("#personal_info").stopWaiting();
+        allStr = allStr.join(',');
+        sinStr = sinStr.join(',');
+        return allStr + ',' + sinStr + ',' + text;
+    };
+    // get list by letter sort
+    getLetterList = function(deptid) {
+        var ret = {},
+            src = Ibos.data.getRelated(deptid)['user'];
 
-				//判断用户是否有私信功能
-				$("#card_pm").toggle(res.uid != user.uid);
+        ret = toDataTmpl(src, true);
+        // cache search list
+        // letter/dept different types
+        AllDATA = ret;
 
-				//判断用户是否为常用联系人
-				var isComContact = res.cuids.length > 0 && $.inArray(id.toString(), res.cuids) !== -1;
-				$("#card_mark").attr("class", "o-si-"+ (isComContact ? "mark" : "nomark") );
-			}
-		});
-	});
+        src = null;
+        return ret;
+    };
+    // get list by dept sort
+    getDeptList = function(deptid) {
+        var ret, i, len, curData, childrenDatas = {},
+            // if curNode is null or undefined, it represent to c_0
+            curNode = treeObj.getNodeByParam('id', deptid),
+            childrenNodes = treeObj.getNodesByParamFuzzy('id', '', curNode);
 
-	//公司通讯录，点击添加常用联系人
-	$(".o-nomark, .o-mark").on('click', function(evt) {
-		evt.stopPropagation();
-		var $elem = $(this),
-			toFocus = $elem.hasClass("o-mark"),
-			status = toFocus ? 'unmark' : 'mark',
-			id = $elem.attr('data-id'),
-			$trelem = $("i[data-id='" + id + "']"),
-			$aelem = $("a[data-id='" + id + "']"),
-			param = {cuid: id, status: status};
+        // get data by dept
+        if (!curNode) {
+            // d_0 contain users who do not belong to anyother
+            // simulate an ztree obj for toDeptData
+            curData = toDeptData({
+                id: 'd_0',
+                getPath: function() {
+                    return [{ id: 'd_0', text: Ibos.data.getText('c_0') }];
+                }
+            }, true);
+            pidCache('c_0');
+        } else {
+            curData = toDeptData(curNode, true);
+            pidCache(curNode.id);
+        }
 
+        if (childrenNodes.length > 0) {
+            // collect deptids in order to request once for saving time
+            // too gruff, need to optimize
+            // use sessionStorage to cache, prevent request more
+            if (!_has_cache) {
+                cacheRelated(childrenNodes);
+            }
 
-		ContactList.op.changeConstant(param).done(function(res) {
-			if (res.isSuccess) {
-				//调整列表中对应行中标识是否为常用联系人
-				$trelem.attr({'class': 'o-'+(toFocus ? 'nomark' : 'mark'),
-							'title': (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))});
-				//调整侧栏中标识是否为常用联系人
-				$aelem.attr({'class': 'o-si-'+(toFocus ? 'nomark' : 'mark')});
-				Ui.tip(U.lang("OPERATION_SUCCESS"));
-			}
-		});
-	});
+            // get datas by children depts
+            for (i = 0, len = childrenNodes.length; i < len; i += 1) {
+                childrenDatas = $.extend(childrenDatas, toDeptData(childrenNodes[i]));
+            }
+        }
 
-	//常用联系人，点击取消常用联系
-	$(".o-mark", ".common-uer-table").on("click", function(evt) {
-		evt.stopPropagation();
-		var $elem = $(this),
-				$tr = $elem.closest("tr"),
-				id = $elem.attr('data-id'),
-				param = {cuid: id, status: 'unmark'};
+        ret = $.extend({}, curData, childrenDatas);
+        curData = childrenDatas = childrenNodes = null;
+        return ret;
+    };
+    // if nodes's too long
+    // divide into piece
+    cacheRelated = function(nodes) {
+        var i, len, deptids = [];
+        for (i = 0, len = nodes.length; i < len; i += 1) {
+            deptids.push(nodes[i].id);
+        }
 
-		ContactList.op.changeConstant(param).done(function(res) {
-			if (res.isSuccess) {
-				$tr.remove();
-				Ui.tip(U.lang("OPERATION_SUCCESS"));
-			}
-		});
-	});
+        while (deptids.length) {
+            Ibos.data.getRelated(deptids.splice(0, 100).join(','));
+        }
 
-	//侧栏个人信息头像点击添加常用联系人操作
-	$("#cl_rolling_sidebar").on('click', "#card_mark", function() {
-		var $elem = $(this),
-			toFocus = $elem.hasClass("o-si-mark"),
-			status = toFocus ? 'unmark' : 'mark',
-			id = $elem.attr('data-id'),
-			$trelem = $("i[data-id='" + id + "']"),
-			$mark = $("#card_mark"),
-			param = {cuid: id, status: status};
-		$mark.waiting(null, "mini", true);
+        return true;
+    };
 
-		ContactList.op.changeConstant(param).done(function(res) {
-			if (res.isSuccess) {
-				$elem.attr({"class" : 'o-si-'+(toFocus ? 'nomark' : 'mark'),
-					"title" : (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))
-				});
-				//调整列表中对应用户是否为常用联系人的标识
-				$trelem.attr({'class': 'o-'+(toFocus ? 'nomark' : 'mark'),
-					'title': (toFocus ? U.lang("CONTACT.ADD_TOP_CONTACTS") : U.lang("CONTACT.CANCLE_TOP_CONTACTS"))
-				});
-				
-				$mark.waiting(false); 
-				Ui.tip(U.lang("OPERATION_SUCCESS"));
-			}
-		});
-	});
+    toDataTmpl = function(data, issort) {
+        var fetch = {},
+            ret = {},
+            firstChar, uid, preg, text, sort;
 
-	//点击字母导航，滚动条滚动到对应字母位置
-	$(".letter-mark").on("click", function(){
-		var $elem = $(this),
-			$mark = $(".letter-mark");
-		$mark.removeClass('active');
-		$elem.addClass('active');
+        for (uid in data) {
+            text = data[uid]['text'];
+            preg = getPreg(text);
+            firstChar = preg.charAt(0).toUpperCase();
+            if (!fetch[firstChar]) {
+                fetch[firstChar] = [];
+            }
+            fetch[firstChar].push($.extend({}, data[uid], { preg: preg }));
+        }
 
-		var id = $elem.attr("data-id"),
-			targetid = "#target_" +  id,
-			target = "target_" + id;
-		$(".cl-letter-title").removeClass("active");
-		Ui.scrollYTo(target, -120, function(){ $(targetid).addClass("active"); });
-	});
+        // sort list
+        if (!issort) {
+            return fetch;
+        }
 
-	// 搜索
-	$(document).keyup(function(event) {
-		var searchStr = $("#search_area").val().toLowerCase(),
-				nTrs = $(".contact-list-item"),
-				$noDataTip = $(".inexist-data");
-		nTrs.each(function() {
-			var $elem = $(this),
-				pregName = $elem.attr("data-preg"),
-				isSeachStr = pregName.indexOf(searchStr) === -1;
+        for (var i = 0; i < 26; i++) {
+            sort = SORTED[i];
+            if (sort in fetch) {
+                ret[sort] = fetch[sort];
+            }
+        }
 
-			$elem.removeClass( isSeachStr ? 'show' : 'hide').addClass( isSeachStr ? 'hide' : 'show');
-		});
-		var groupItems = $(".group-item");
-		groupItems.each(function() {
-			var $elem = $(this),
-			$userItem = $elem.find(".contact-list-item.show"),
-			isUserItem = $userItem.length === 0;
+        fetch = null;
+        return ret;
+    };
 
-			$elem.removeClass( isUserItem ? 'show' : 'hide').addClass( isUserItem ? 'hide' : 'show');
-		});
+    toDeptData = function(node, isSave) {
+        var deptid = node.id,
+            ret = {},
+            dept, path, users;
 
-		(searchStr === "") && $(".group-item").removeClass("hide").addClass("show");
-	});
+        // waste time for request one by one
+        // think a better way to cache children list once
+        users = Ibos.data.converToArray(toDataTmpl(Ibos.data.getRelated(deptid)['user']));
+        // save the parent node for shown
+        if (users.length === 0 && !isSave) {
+            return {};
+        }
 
-	//sidebar高亮显示
-	$(".org-dept-table tr").on("click", function(){
-		var $elem = $(this);
-		$(".org-dept-table tr").removeClass("active");
-		$elem.addClass("active");
-	});
-	
-	setInterval(function(){
-		ContactList.contact.calculateSidebar();
+        dept = !ret[deptid] && (ret[deptid] = {});
+        path = node.getPath().map(function(val, i) {
+            return val.text;
+        });
 
-		//当搜索结果无数据时的信息提示
-		var $data = $(".group-item.hide"),
-			hideDataLength = $data.length,
-			allDataLength = $(".exist-data .group-item").length,
-			$noDataTip = $(".inexist-data");
-		$noDataTip.toggle(allDataLength == hideDataLength);
-	}, 200);
+        dept['pDeptids'] = path;
+        dept['users'] = users;
+        AllDATA[deptid] = dept['users'];
 
-	var isInit = false;
+        return ret;
+    };
 
+    toCreateTmpl = function(tmplID, $container, data) {
+        var tpl;
+        tpl = $.tmpl(tmplID, data);
+        $container.html(tpl);
 
-	Ibos.evt.add({
-		//关闭侧栏个人信息
-		"closeSidebar": function(param, elem){
-			var $sidebar = $("#cl_rolling_sidebar"),
-				$search = $('#name_search');
-			ContactList.contact.sidebarDisplay.hide($sidebar);
-			ContactList.contact.searchToggle.expand($search);
-			$("tr", ".contact-list").removeClass('active');
-		},
-		//打印通讯录
-		"printCont": function(param, elem){
-			var $this = $(elem),
-				uids = $this.attr("data-uids"),
-				contParam = {uids: uids, deptid: Ibos.app.g("deptid")};
+        return tpl;
+    };
 
-			ContactList.op.printContact(contParam).done(function(res) {
-				if (res.isSuccess) {
-					if(!isInit){
-						$("body").append(res.view);
-						isInit = true;
-					}
-				}
-				window.print();
-			});
-		},
-		//导出通讯录
-		"educeCont": function(param, elem, ev){
-			var $this = $(elem),
-				uids = $this.attr("data-uids"),
-				url = Ibos.app.url('contact/default/export');
+    toLetterTmpl = function(data) {
+        var ret = {},
+            letter;
 
-			window.location = url + '&uids=' + uids;
-		},
-		//添加联系人
-		"addContacter": function(param, elem){
-			addContacter("add");
-			$.formValidator.reloadAutoTip();
-		},
-		// 关闭添加窗口
-		"closeAddMunberWrap": function(param, elem){
-			addContacter();
-		}
-	});
-	//添加联系人和关闭添加窗口公共函数
-	function addContacter(add){
-		var $wrap = $("#add_contacter_wrap"),
-			$search = $("#name_search");
-		$.formValidator.resetTipState();
-		ContactList.contact.sidebarDisplay[ add ? "show" : "hide" ]($wrap);
-		ContactList.contact.searchToggle[ add ? "collapse" : "expand" ]($search);
-	}
-});
+        ret['allLetters'] = SORTED;
+        ret['existLetters'] = [];
+
+        for (letter in data) {
+            ret['existLetters'].push(letter);
+        }
+        toCreateTmpl('tpl_letter_sidebar', $('#cl_letter_sidebar'), ret);
+
+        return true;
+    };
+
+    searchUser = function(val) {
+        if (!val) {
+            domMap.$search_list.hide().empty();
+            domMap.$user_list.show();
+            Ibos.app.s('uids', UIDS);
+            return false;
+        }
+
+        var searchArr = [],
+            tmplData = {},
+            letter, users,
+            i, len, user;
+
+        for (letter in AllDATA) {
+            users = AllDATA[letter];
+            for (i = 0, len = users.length; i < len; i += 1) {
+                if (!_do_search) {
+                    return false;
+                }
+                user = users[i];
+                if (user.preg.indexOf(val) !== -1) {
+                    if (!tmplData[letter]) {
+                        tmplData[letter] = [];
+                    }
+                    tmplData[letter].push(user);
+                }
+            }
+        }
+
+        domMap.$user_list.hide();
+        domMap.$search_list.show();
+        toCreateTmpl('tpl_search_table', domMap.$search_list, { datas: tmplData });
+
+        searchArr = null;
+        tmplData = null;
+        return true;
+    };
+    // create zTree of department
+    treeObj = (function() {
+        var ztreeOpt, settings, treeObj;
+        setDomMap({
+            $tree: $('#utree'),
+            $corp_unit: $('#corp_unit')
+        });
+
+        ztreeOpt = {
+            'nodeOnClick': function(event, treeId, treeNode) {
+                domMap.$corp_unit.removeClass('dep-active');
+                win.location.href = Ibos.app.url('contact/default/index', {
+                    op: OP,
+                    deptid: treeNode.id.slice(2)
+                });
+            }
+        };
+
+        settings = {
+            data: {
+                key: {
+                    name: 'text'
+                },
+                simpleData: {
+                    enable: true,
+                    pIdKey: 'pid'
+                }
+            },
+            view: {
+                showLine: false,
+                selectedMulti: false,
+                showIcon: false
+            },
+            callback: {
+                onClick: ztreeOpt.nodeOnClick
+            }
+        };
+
+        treeObj = $.fn.zTree.init(domMap.$tree, settings, Ibos.data.converToArray(Ibos.data.get('department', function(data) {
+            return data.id !== 'c_0';
+        })));
+
+        return treeObj;
+    })();
+
+    // page init to select department by deptid
+    treeObj.selectNode(treeObj.getNodeByParam('id', 'd_' + DEPTID));
+
+    $(function() {
+        //load user list
+        loadUserList(DEPTID ? 'd_' + DEPTID : 'c_0');
+
+        domMap.$win.on('resize scroll', function() {
+            calLetterPosition();
+        });
+
+        // page init to calculate letter position
+        calLetterPosition();
+        setDomMap({
+            $mark: $('.letter-mark')
+        });
+
+        // search
+        domMap.$search_area.on('input propertychange', (function() {
+            var timer = null,
+                startTime;
+
+            return function() {
+                var val = $(this).val().toLowerCase(),
+                    curTime = +new Date();
+
+                clearTimeout(timer);
+                // to prevent the pre search
+                _do_search = false;
+                if (!startTime) {
+                    startTime = curTime;
+                }
+
+                if (curTime - startTime >= 400) {
+                    // deal with the search request
+                    _do_search = true;
+                    searchUser(val);
+                } else {
+                    startTime = curTime;
+                    timer = setTimeout(function() {
+                        _do_search = true;
+                        searchUser(val);
+                    }, 250);
+                }
+            }
+        })());
+
+        (function noDataTip() {
+            setDomMap({
+                $group_item: $(".exist-data .group-item"),
+                $noDataTip: $(".inexist-data")
+            });
+
+            var nodata = domMap.$group_item.length == 0 || (domMap.$group_item.length == 1 && domMap.$group_item.find('tr').length == 0);
+            domMap.$noDataTip.toggle(nodata);
+        })();
+
+        Ibos.evt.add({
+            // 公司通讯录，点击列表单行，侧栏信息显示，改变选择行背景色
+            'getUserInfo': function(param, elem) {
+                var $elem = $(elem),
+                    id = $elem.attr('data-id'),
+                    param = { uid: id };
+                // control css style
+                domMap.$user_list.find('tr').removeClass('active');
+                $elem.addClass('active');
+                userInfoBarShown(true);
+                // load userInfo async
+                setDomMap({
+                    $personal_info: $('#personal_info'),
+                    $card_pm: $('#card_pm')
+                });
+
+                domMap.$personal_info.waitingC();
+                ajaxApi.getProfile(param).done(function(res) {
+                    if (res.isSuccess) {
+                        var user = res.user,
+                            tpl = $.tmpl('tpl_rolling_sidebar', { user: user });
+
+                        domMap.$cl_rolling_sidebar.empty().append(tpl);
+                        domMap.$personal_info.stopWaiting();
+
+                        // if have chat feature
+                        domMap.$card_pm.toggle(res.uid != user.uid);
+                        // set formatdata to global
+                        Ibos.app.s({ formatdata: formatUserInfo('u_' + user.uid) });
+                    }
+                });
+            },
+            // 点击字母导航，滚动条滚动到对应字母位置
+            'letterNav': function(param, elem) {
+                var $elem = $(elem),
+                    id = $elem.attr('data-id');
+
+                setDomMap({
+                    $target: $('#target_' + id),
+                    $letter_title: $('.cl-letter-title')
+                });
+
+                domMap.$mark.removeClass('active');
+                $elem.addClass('active');
+
+                if (!id) {
+                    return false;
+                }
+                domMap.$letter_title.removeClass('active');
+                Ui.scrollYTo(domMap.$target, -120, function() { domMap.$target.addClass('active'); });
+            },
+            // 关闭侧栏个人信息
+            'closeSidebar': function(param, elem) {
+                userInfoBarShown(false);
+            },
+            // print current table
+            'printCont': function(param, elem) {
+                ajaxApi.printContact({ uids: Ibos.app.g('uids') }).done(function(res) {
+                    if (res.isSuccess) {
+                        $('body').find('.main-content').remove().end().append(res.view);
+                    }
+                    window.print();
+                });
+            },
+            // exports current table
+            'educeCont': function(param, elem) {
+                var $form = $('#export_contact'),
+                    $input = $form.find('input[name="uids"]');
+
+                $input.val(Ibos.app.g('uids'));
+                $form.submit();
+            }
+        });
+    })
+
+    // export obj
+    Contact = {
+        ajaxApi: ajaxApi,
+        getPreg: getPreg,
+        treeObj: treeObj,
+        getLetterListById: getLetterList,
+        getDeptListById: getDeptList
+    }
+
+    if (typeof define === 'function' && define.amd) {
+        define(function() {
+            return Contact;
+        });
+    } else if (typeof module !== "undefined" && module.exports) {
+        module.exports = Contact;
+    } else {
+        win.Contact = Contact;
+    }
+})(window, jQuery, Ibos);

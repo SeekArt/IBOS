@@ -10,271 +10,163 @@
 
 namespace application\core\utils;
 
-use application\modules\department\utils\Department as DepartmentUtil;
+use application\modules\department\model\Department as DepartmentModel;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\position\utils\Position as PositionUtil;
 use application\modules\role\utils\Role as RoleUtil;
+use application\modules\user\model\UserProfile;
 use application\modules\user\utils\User as UserUtil;
+use CJSON;
 
 class Org {
 
-    /**
-     * 更新组织架构js调用接口
-     * @staticvar boolean $execute 执行标识，确保一个进程只执行一次更新操作
-     * @return boolean 执行成功标识
-     */
-    public static function update() {
-        static $execute = false;
-        if ( !$execute ) {
-            self::createStaticJs();
-            $execute = true;
-        }
-        return $execute;
-    }
+	/**
+	 * 更新组织架构js调用接口
+	 * @param mixed $type NULL表示所有，数组表示对应的类型
+	 * @staticvar boolean $execute 执行标识，确保一个进程只执行一次更新操作
+	 * @return boolean 执行成功标识
+	 */
+	public static function update( $type = NULL ) {
+		static $execute = false;
+		if ( !$execute ) {
+			self::createStaticJs( $type );
+			$execute = true;
+		}
+		return $execute;
+	}
 
-    public static function hookSyncUser( $uid, $pwd = '', $syncFlag = 1 ) {
-        $type = '';
-        $imCfg = array();
-        foreach ( IBOS::app()->setting->get( 'setting/im' ) as $imType => $config ) {
-            if ( $config['open'] == '1' ) {
-                $type = $imType;
-                $imCfg = $config;
-                break;
-            }
-        }
-        if ( !empty( $type ) && !empty( $imCfg ) && $imCfg['syncuser'] == '1' ) {
-            MainUtil::setCookie( 'hooksyncuser', 1, 30 );
-            MainUtil::setCookie( 'syncurl', IBOS::app()->createUrl( 'dashboard/organizationApi/syncUser', array( 'type' => $type, 'uid' => $uid, 'pwd' => $pwd, 'flag' => $syncFlag ) ), 30 );
-        }
-    }
+	public static function hookSyncUser( $uid, $pwd = '', $syncFlag = 1 ) {
+		$type = '';
+		$imCfg = array();
+		foreach ( IBOS::app()->setting->get( 'setting/im' ) as $imType => $config ) {
+			if ( $config['open'] == '1' ) {
+				$type = $imType;
+				$imCfg = $config;
+				break;
+			}
+		}
+		if ( !empty( $type ) && !empty( $imCfg ) && $imCfg['syncuser'] == '1' ) {
+			MainUtil::setCookie( 'hooksyncuser', 1, 30 );
+			MainUtil::setCookie( 'syncurl', IBOS::app()->createUrl( 'dashboard/organizationApi/syncUser', array( 'type' => $type, 'uid' => $uid, 'pwd' => $pwd, 'flag' => $syncFlag ) ), 30 );
+		}
+	}
 
-    /**
-     * 生成组织架构静态文件JS
-     * @return void
-     */
-    private static function createStaticJs() {
-        //更新最新缓存到全局
-        Cache::load( array( 'department', 'position' ), true );
-        $unit = IBOS::app()->setting->get( 'setting/unit' );
-        $department = DepartmentUtil::loadDepartment();
-        $position = PositionUtil::loadPosition();
-        $positionCategory = PositionUtil::loadPositionCategory();
-        $role = RoleUtil::loadRole();
-        $companyData = self::initCompany( $unit );
-        $deptData = self::initDept( $department );
-        $userData = self::initUser();
-        $posData = self::initPosition( $position );
-        $posCatData = self::initPositionCategory( $positionCategory );
-        $roleData = self::initRole( $role );
-        $default = file_get_contents( PATH_ROOT . '/static/js/src/org.default.js' );
-        if ( $default ) {
-            $patterns = array(
-                '/\{\{(company)\}\}/',
-                '/\{\{(department)\}\}/',
-                '/\{\{(position)\}\}/',
-                '/\{\{(users)\}\}/',
-                '/\{\{(positioncategory)\}\}/',
-                '/\{\{(role)\}\}/',
-            );
-            $replacements = array(
-                $companyData,
-                $deptData,
-                $posData,
-                $userData,
-                $posCatData,
-                $roleData
-            );
-            $new = preg_replace( $patterns, $replacements, $default );
-            File::createFile( PATH_ROOT . '/data/org.js', $new );
-            // 更新VERHASH
-            Cache::update( 'setting' );
-        }
-    }
+	private static function createStaticJs( $type = NULL ) {
+		if ( NULL !== $type ) {
+			$type = is_array( $type ) ? $type : explode( ',', $type );
+		}
+		if ( NULL === $type || is_array( $type ) && in_array( 'user', $type ) ) {
+			//生成用户文件
+			$users = UserUtil::wrapUserInfo( NULL, false, false );
+			$userArray = array();
+			foreach ( $users as $user ) {
+				$userArray['u_' . $user['uid']] = array(
+					'id' => 'u_' . $user['uid'],
+					'text' => $user['realname'],
+					'phone' => $user['mobile'],
+					'avatar' => $user['avatar_small'],
+					'department' => $user['deptname'],
+					'position' => $user['posname'],
+					'role' => $user['rolename'],
+					'spaceurl' => $user['space_url'],
+				);
+			}
+			$userString = "var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};\nIbos.data.user = " . CJSON::encode( $userArray ) . ';';
+			File::setOrgJs( 'user', $userString );
+		}
+		if ( NULL === $type || is_array( $type ) && in_array( 'department', $type ) ) {
+			//生成部门文件
+			$departments = DepartmentModel::model()->findDepartmentByDeptid();
+			$departmentArray = array();
+			$unit = IBOS::app()->setting->get( 'setting/unit' );
+			$departmentArray['c_0'] = array( 'id' => 'c_0', 'text' => $unit['fullname'], 'type' => 'department', );
+			if ( !empty( $departments ) ) {
+				foreach ( $departments as $department ) {
+					$departmentArray['d_' . $department['deptid']] = array(
+						'id' => 'd_' . $department['deptid'],
+						'text' => $department['deptname'],
+						'pid' => 'd_' . $department['pid'],
+					);
+				}
+			}
 
-    /**
-     * 初始化岗位分类数据
-     * @return string
-     */
-    private static function initPositionCategory( $categorys ) {
-        $catList = '';
-        if ( !empty( $categorys ) ) {
-            foreach ( $categorys as $catId => $category ) {
-                $catList .= "{id: 'f_{$catId}',"
-                        . " text: '{$category['name']}',"
-                        . " name: '{$category['name']}',"
-                        . " type: 'positioncategory',"
-                        . " pId: 'f_{$category['pid']}',"
-                        . " open: 1,"
-                        . " nocheck:true},\n";
-            }
-        }
-        return $catList;
-    }
+			$departmentString = "var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};\nIbos.data.department = " . CJSON::encode( $departmentArray ) . ';';
+			File::setOrgJs( 'department', $departmentString );
+		}
 
-    /**
-     * 初始化公司数据
-     * @param array $unit 单位信息
-     * @return string
-     */
-    private static function initCompany( $unit ) {
-        $comList = "{id: 'c_0',"
-                . " text: '{$unit['fullname']}',"
-                . " name: '{$unit['fullname']}',"
-                . " iconSkin: 'department',"
-                . " type: 'department',"
-                . " enable: 1,"
-                . " open: 1},\n";
-        return $comList;
-    }
+		if ( NULL === $type || is_array( $type ) && in_array( 'role', $type ) ) {
+			//生成角色数据
+			$roles = RoleUtil::loadRole();
+			$roleArray = array();
+			if ( !empty( $roles ) ) {
+				foreach ( $roles as $role ) {
+					$roleArray['r_' . $role['roleid']] = array(
+						'id' => 'r_' . $role['roleid'],
+						'text' => $role['rolename'],
+					);
+				}
+			}
 
-    /**
-     * 初始化部门静态文件
-     * @param array $department 部门信息数组
-     * @return string
-     */
-    private static function initDept( $department ) {
-        $deptList = '';
-        //针对情况1的解决办法：
-        //判断是否是字符串，是的话反序列化
-        if ( !is_array( $department ) ) {
-            //反序列化失败返回false
-            $department = StringUtil::utf8Unserialize( $department );
-        }
-        if ( !empty( $department ) && is_array( $department ) ) {
-            foreach ( $department as $deptId => $dept ) {
-                $deptList .= "{id: 'd_{$deptId}',"
-                        . " text: '{$dept['deptname']}',"
-                        . " name: '{$dept['deptname']}',"
-                        . " iconSkin: 'department',"
-                        . " type: 'department',"
-                        . " pId: 'd_{$dept['pid']}',"
-                        . " enable: 1,"
-                        . " open: 1},\n";
-            }
-        } else {
-            //do nothing
-        }
-        return $deptList;
-    }
+			$roleString = "var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};\nIbos.data.role = " . CJSON::encode( $roleArray ) . ';';
+			File::setOrgJs( 'role', $roleString );
+		}
 
-    /**
-     * 初始用户静态文件
-     * @param array $users 用户信息数组
-     * @return string
-     */
-    private static function initUser() {
-        $userArray = UserUtil::getOrgJsData();
-        $userList = '';
-        if ( !empty( $userArray['userArray'] ) ) :
-            foreach ( $userArray['userArray'] as $user ) :
-                $deptRelated = !empty( $userArray['deptRelated'][$user['uid']] ) ? $userArray['deptRelated'][$user['uid']] : array();
-                $deptArray = array_merge( $deptRelated, array( $user['deptid'] ) );
-                $deptStr = StringUtil::wrapId( $deptArray, 'd' );
-                $positionRelated = !empty( $userArray['positionRelated'][$user['uid']] ) ? $userArray['positionRelated'][$user['uid']] : array();
-                $positionArray = array_merge( $positionRelated, array( $user['positionid'] ) );
-                $positionStr = StringUtil::wrapId( $positionArray, 'p' );
-                $roleRelated = !empty( $userArray['roleRelated'][$user['uid']] ) ? $userArray['roleRelated'][$user['uid']] : array();
-                $roleArray = array_merge( $roleRelated, array( $user['roleid'] ) );
-                $roleStr = StringUtil::wrapId( $roleArray, 'r' );
-                $space_url = "?r=user/home/index&uid=" . $user['uid'];
-                // 头像
-                $avatarArray = Org::getDataStatic( $user['uid'], 'avatar', 'small', true );
-                $userList .= "{id: 'u_{$user['uid']}',
-                text: '{$user['realname']}',
-                name: '{$user['realname']}',
-                phone: '{$user['mobile']}',
-                iconSkin: 'user',
-                type: 'user',
-                enable: 1,
-                imgUrl:'{$avatarArray['small']}',
-                avatar_small:'{$avatarArray['small']}',
-                avatar_middle:'{$avatarArray['middle']}',
-                avatar_big:'{$avatarArray['big']}',
-                spaceurl:'{$space_url}',
-                department:'{$deptStr}',
-                role:'{$roleStr}',
-                position: '{$positionStr}'},\n";
-            endforeach;
-        endif;
-        return $userList;
-    }
+		if ( NULL === $type || is_array( $type ) && in_array( 'position', $type ) ) {
+			//生成岗位数据
+			$positions = PositionUtil::loadPosition();
+			$positionArray = array();
+			if ( !empty( $positions ) ) {
+				foreach ( $positions as $position ) {
+					$positionArray['p_' . $position['positionid']] = array(
+						'id' => 'p_' . $position['positionid'],
+						'text' => $position['posname'],
+						'pid' => 'f_' . $position['catid'],
+					);
+				}
+			}
 
-    /**
-     * 获取静态资源
-     * @param string $uid
-     * @param string $type
-     * @param string $size
-     * @return string
-     */
-    public static function getDataStatic( $uid, $type, $size = 'small', $returnArray = false ) {
-        if ( $type == 'avatar' ) {
-            $path = './data/avatar/';
-        } else {
-            $path = './data/home/';
-        }
-        $dir = (int) ($uid / 100);
-        $staticFile = $dir . '/' . $uid . '_' . $type . '_' . $size . '.jpg';
-        if ( strtolower( ENGINE ) == 'local' ) {
-            $fileExists = file_exists( $path . $staticFile );
-        } else {
-            require_once PATH_ROOT . '/system/extensions/enginedriver/sae/SAEFile.php';
-            $file = new SAEFile();
-            $path = $file->fileName( trim( $path, './' ) );
-            $fileExists = $file->fileExists( $path . $staticFile );
-        }
-        $string = $fileExists ? $path . $dir . '/' . $uid . '_' . $type : $path . 'no' . $type;
-        if ( true === $returnArray ) {
-            $returnArray = array(
-                'small' => $string . '_small.jpg',
-                'big' => $string . '_big.jpg',
-                'middle' => $string . '_middle.jpg',
-            );
-            return $returnArray;
-        } else {
-            return $string . '_' . $size . '.jpg';
-        }
-    }
+			$positionString = "var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};\nIbos.data.position = " . CJSON::encode( $positionArray ) . ';';
+			File::setOrgJs( 'position', $positionString );
+		}
 
-    /**
-     * 初始化岗位信息数据
-     * @param array $position 岗位信息数组
-     * @return array
-     */
-    private static function initPosition( $position ) {
-        $posList = '';
-        if ( !is_array( $position ) ) {
-            $position = StringUtil::utf8Unserialize( $position );
-        }
-        if ( !empty( $position ) && is_array( $position ) ) {
-            foreach ( $position as $posId => $pos ) {
-                $posList .= "{id: 'p_{$posId}',"
-                        . " text: '{$pos['posname']}',"
-                        . " name: '{$pos['posname']}', "
-                        . " iconSkin: 'position', "
-                        . " type: 'position', "
-                        . " pId:'f_{$pos['catid']}', "
-                        . " enable: 1},\n ";
-            }
-        }
-        return $posList;
-    }
+		if ( NULL === $type || is_array( $type ) && in_array( 'positioncategory', $type ) ) {
+			//生成岗位分类数据
+			$positionCategorys = PositionUtil::loadPositionCategory();
+			$positionCategoryArray = array();
+			if ( !empty( $positionCategorys ) ) {
+				foreach ( $positionCategorys as $positionCategory ) {
+					$positionCategoryArray['f_' . $positionCategory['catid']] = array(
+						'id' => 'f_' . $positionCategory['catid'],
+						'text' => $positionCategory['name'],
+						'nocheck' => true,
+					);
+				}
+			}
 
-    private static function initRole( $role ) {
-        $roleList = '';
-        $role = !is_array( $role ) ? StringUtil::utf8Unserialize( $role ) : $role;
-        if ( !empty( $role ) && is_array( $role ) ):
-            foreach ( $role as $roleid => $row ):
-                $roleList .= "{id: 'r_{$roleid}',"
-                        . " text: '{$row['rolename']}',"
-                        . " name: '{$row['rolename']}', "
-                        . " roletype: '{$row['roletype']}', "
-                        . " iconSkin: 'role', "
-                        . " type: 'role', "
-                        . " enable: 1, "
-                        . " open: 1},\n ";
-            endforeach;
-        endif;
-        return $roleList;
-    }
+			$positionCategoryString = "var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};\nIbos.data.positioncategory = " . CJSON::encode( $positionCategoryArray ) . ';';
+			File::setOrgJs( 'positioncategory', $positionCategoryString );
+		}
+	}
+
+	/**
+	 * 获取静态资源
+	 * @param string $uid
+	 * @param string $type
+	 * @param string $size
+	 * @return string
+	 */
+	public static function getDataStatic( $uid, $type, $size = 'small' ) {
+		if ( $type == 'avatar' ) {
+			$path = 'data/avatar/';
+		} else {
+			$path = 'data/home/';
+		}
+		$userProfile = UserProfile::model()->findByPk( $uid );
+		$fieldName = $type . '_' . $size;
+		$return = !empty( $userProfile[$fieldName] ) ?
+				$userProfile[$fieldName] :
+				$path . 'no' . $type . '_' . $size . '.jpg';
+		return $return;
+	}
 
 }

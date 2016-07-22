@@ -5,7 +5,7 @@
  * @package application.modules.main.components
  * @see application.modules.main.behaviors.onInitModuleBehavior
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Cron.php 6001 2015-12-21 07:18:15Z tanghang $
+ * @version $Id: Cron.php 7234 2016-05-25 07:41:12Z tanghang $
  */
 
 namespace application\modules\main\components;
@@ -24,7 +24,7 @@ class Cron extends CApplicationComponent {
      */
     public function run( $cronId = 0 ) {
         if ( $cronId ) {
-            $cron = CronModel::model()->fetchByPk( $cronId );
+            $cron = CronModel::model()->findByPk( $cronId );
         } else {
             // 如果没有指定进程id,则查询下一次应该执行的进程
             $cron = CronModel::model()->fetchByNextRun( TIMESTAMP );
@@ -141,11 +141,15 @@ class Cron extends CApplicationComponent {
         $timeoffSet = IBOS::app()->setting->get( 'setting/timeoffset' );
         $hour = $hour == -2 ? gmdate( 'H', TIMESTAMP + $timeoffSet * 3600 ) : $hour;
         $minute = $minute == -2 ? gmdate( 'i', TIMESTAMP + $timeoffSet * 3600 ) : $minute;
-
+        
         $nextTime = array();
         if ( $cron['hour'] == -1 && !$cron['minute'] ) {
             $nextTime['hour'] = $hour;
             $nextTime['minute'] = $minute + 1;
+        } elseif ( $cron['hour'] == -1 && strpos( $cron['minute'][0], '*/' ) !== FALSE ) {
+            $nextMinute = $minute + intval( str_replace( '*/', '', $cron['minute'][0] ) );
+            $nextTime['minute'] = $nextMinute % 60;
+            $nextTime['hour'] = ( $nextMinute >= 60 ? ++$hour : $hour ) % 24;
         } elseif ( $cron['hour'] == -1 && $cron['minute'] != '' ) {
             $nextTime['hour'] = $hour;
             if ( ($nextMinute = $this->nextMinute( $cron['minute'], $minute )) === false ) {

@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  module类文件
  * @package application.modules.article
- * @version $Id: RecruitModule.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: RecruitModule.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -19,6 +19,5 @@ namespace application\modules\recruit;
 use application\core\modules\Module;
 
 class RecruitModule extends Module {
-	public $__CODE__ = 'ec6bv9Cye9fhq937mpBUeiHj/5k0dHY+l3+eXqon3z/l5/alVN/D';
     
 }

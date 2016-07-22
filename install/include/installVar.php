@@ -1,13 +1,11 @@
 <?php
 
 define( 'IBOS_STATIC', '../static/' ); //static路径
-define( 'CHARSET', 'utf-8' ); // 字符编码
 define( 'DBCHARSET', 'utf8' ); // 数据库编码
-define( 'MODULE_PATH', PATH_ROOT . 'system/modules/' ); // 模块文件夹目录
-define( 'CONFIG_PATH', PATH_ROOT . 'system/config/' ); // 配置文件目录
-define( 'LOCAL', true ); // 本地环境
+define( 'MODULE_PATH', PATH_ROOT . '/system/modules/' ); // 模块文件夹目录
+define( 'CONFIG_PATH', PATH_ROOT . '/system/config/' ); // 配置文件目录
 define( 'IBOS_VERSION_FULL', 'IBOS ' . VERSION . ' ' . VERSION_DATE ); // 版本号
-$lockfile = PATH_ROOT . './data/install.lock';
+$lockfile = PATH_ROOT . '/data/install.lock';
 // 核心模块,安装顺序有限制
 $coreModules = array( 'main', 'dashboard', 'message', 'user', 'department', 'position', 'role' );
 // 核心依赖模块
@@ -16,7 +14,7 @@ $sysDependModule = array( 'weibo' );
 $sysModules = array( 'main', 'dashboard', 'message', 'user', 'department', 'position', 'weibo', 'role' );
 // 要检测的函数
 $funcItems = array(
-	'mysqli_connect' => array( 'status' => 1 ),
+	'mysql_connect' => array( 'status' => 1 ),
 	'gethostbyname' => array( 'status' => 1 ),
 	'file_get_contents' => array( 'status' => 1 ),
 	'scandir' => array( 'status' => 1 ),
@@ -32,7 +30,7 @@ $filesockItems = array(
 );
 // 要检测的扩展
 $extLoadedItems = array(
-	'mysqli' => array( 'status' => 1 ),
+	'mysql' => array( 'status' => 1 ),
 	'pdo_mysql' => array( 'status' => 1 ),
 	'mbstring' => array( 'status' => 1 ),
 );
@@ -47,21 +45,21 @@ $envItems = array(
 );
 // 要检测的文件、文件夹权限
 $dirfileItems = array(
-	'config' => array( 'type' => 'file', 'path' => './system/config/configDefault.php' ),
-	'org' => array( 'type' => 'file', 'path' => './data/org.js' ),
-	'config_dir' => array( 'type' => 'dir', 'path' => './system/config' ),
-	'data' => array( 'type' => 'dir', 'path' => './data' ),
-	'attachment' => array( 'type' => 'dir', 'path' => './data/attachment' ),
-	'avatar' => array( 'type' => 'dir', 'path' => './data/avatar' ),
-	'backup' => array( 'type' => 'dir', 'path' => './data/backup' ),
-	'font' => array( 'type' => 'dir', 'path' => './data/font' ),
-	'home' => array( 'type' => 'dir', 'path' => './data/home' ),
-	'ipdata' => array( 'type' => 'dir', 'path' => './data/ipdata' ),
-	'login' => array( 'type' => 'dir', 'path' => './data/login' ),
-	'runtime' => array( 'type' => 'dir', 'path' => './data/runtime' ),
-	'stamp' => array( 'type' => 'dir', 'path' => './data/stamp' ),
-	'temp' => array( 'type' => 'dir', 'path' => './data/temp' ),
-	'static' => array( 'type' => 'dir', 'path' => './static' )
+	'config' => array( 'type' => 'file', 'path' => '/system/config/configDefault.php' ),
+	'org' => array( 'type' => 'file', 'path' => '/data/org' ),
+	'config_dir' => array( 'type' => 'dir', 'path' => '/system/config' ),
+	'data' => array( 'type' => 'dir', 'path' => '/data' ),
+	'attachment' => array( 'type' => 'dir', 'path' => '/data/attachment' ),
+	'avatar' => array( 'type' => 'dir', 'path' => '/data/avatar' ),
+	'backup' => array( 'type' => 'dir', 'path' => '/data/backup' ),
+	'font' => array( 'type' => 'dir', 'path' => '/data/font' ),
+	'home' => array( 'type' => 'dir', 'path' => '/data/home' ),
+	'ipdata' => array( 'type' => 'dir', 'path' => '/data/ipdata' ),
+	'login' => array( 'type' => 'dir', 'path' => '/data/login' ),
+	'runtime' => array( 'type' => 'dir', 'path' => '/data/runtime' ),
+	'stamp' => array( 'type' => 'dir', 'path' => '/data/stamp' ),
+	'temp' => array( 'type' => 'dir', 'path' => '/data/temp' ),
+	'static' => array( 'type' => 'dir', 'path' => '/static' )
 );
 
 $moduleSql = "CREATE TABLE IF NOT EXISTS `{dbpre}module` (
@@ -93,11 +91,8 @@ $adminInfo = "<?php
 		'email' => '{email}',
 );
 	\$adminco =array(
-		'accesstoken'=> '{accesstoken}',
-		'corptoken' => '{corptoken}',
 		'fullname' => '{fullname}',
 		'shortname' => '{shortname}',
-		'guid' => '{guid}',
 		'corpcode' => '{corpcode}',
 		'aeskey' => '{aeskey}',
 );";

@@ -22,7 +22,7 @@ use application\modules\user\model\BgTemplate;
         </a>
     <?php else: ?>
         <span class="pc-usi-avatar posr">
-            <img src="<?php echo IBOS::app()->user->avatar_big; ?>" alt="<?php echo $user['realname']; ?>" width="180" height="180" />
+            <img src="<?php echo $user['avatar_big']; ?>" alt="<?php echo $user['realname']; ?>" width="180" height="180" />
         </span>
     <?php endif; ?>
     <?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
@@ -166,7 +166,7 @@ use application\modules\user\model\BgTemplate;
                             </a>
                         </div>
                         <div class="pull-right">
-                            <?php if ( IBOS::app()->user->uid == 1 ): ?>
+                            <?php if ( IBOS::app()->user->isadministrator == 1 ): ?>
                                 <label class="checkbox dib sk-setting-model">
                                     <input type="checkbox" name="commonSet" value="同时设为公用模板" id="sk_setting_model" />同时设为公用模板
                                 </label>

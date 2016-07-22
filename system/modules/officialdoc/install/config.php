@@ -19,8 +19,8 @@ return array(
 	'config' => array(
 		'modules' => array(
 			'officialdoc' => array(
-                'class' => 'application\modules\officialdoc\OfficialdocModule'
-            )
+				'class' => 'application\modules\officialdoc\OfficialdocModule'
+			)
 		),
 		'components' => array(
 			'messages' => array(
@@ -36,8 +36,8 @@ return array(
 			'name' => '公文浏览',
 			'group' => '公文',
 			'controllerMap' => array(
-				'officialdoc' => array( 'index', 'show' ),
-				'category' => array( 'index', 'add', 'edit', 'del' ),
+				'officialdoc' => array( 'index', 'show', 'getdoclist' ),
+				'category' => array( 'index'),
 				'comment' => array( 'getcommentlist', 'addcomment', 'delcomment' )
 			)
 		),
@@ -48,6 +48,14 @@ return array(
 			'controllerMap' => array(
 				'officialdoc' => array( 'add' ),
 			)
+		),
+		'category' => array(
+			'type' => 'node',
+			'name' => '公文分类管理',
+			'group' => '公文',
+			'controllerMap' => array(
+				'category' => array( 'index', 'add', 'edit', 'del' ),
+			),
 		),
 		'manager' => array(
 			'type' => 'data',

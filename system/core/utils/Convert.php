@@ -2,7 +2,7 @@
 
 /**
  * 转换工具类文件
- * 
+ *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2013 IBOS Inc
@@ -20,22 +20,6 @@ namespace application\core\utils;
 use application\extensions\chinese\Chinese;
 
 class Convert {
-
-	/**
-	 * 根据数值计算出文件大小
-	 * @param integer $val
-	 * @return integer
-	 */
-	public static function ConvertBytes( $val ) {
-		$val = trim( $val );
-		$last = strtolower( $val{strlen( $val ) - 1} );
-		switch ( $last ) {
-			case 'g': $val *= 1024;
-			case 'm': $val *= 1024;
-			case 'k': $val *= 1024;
-		}
-		return $val;
-	}
 
 	/**
 	 * 字节格式化单位

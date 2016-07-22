@@ -109,8 +109,8 @@
 	position: relative;
 }
 .msg-remind-timeline .msg-box { margin: 20px 0; }
-.msg-remind-timeline .msg-alert { border: 1px solid #E26F50; }
-.msg-remind-timeline .msg-alert .msg-box-arrow { border-right: 10px solid #E26F50; }
+.msg-remind-timeline .msg-alert { border: 1px solid #3497db; }
+.msg-remind-timeline .msg-alert .msg-box-arrow { border-right: 10px solid #3497db; }
 .msg-remind-timeline .msg-box-inverse { left: -80px; position: absolute; top: -40px; }
 .msg-remind-timeline .msg-box-inverse .msg-box-arrow { top: 8px; }
 .msg-remind-timeline .msg-box-inverse .msg-box-body {

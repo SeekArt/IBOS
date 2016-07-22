@@ -164,6 +164,8 @@ class ReviewController extends BaseController {
         if ( empty( $report ) ) {
             $this->error( IBOS::lang( 'No data found', 'error' ), $this->createUrl( 'review/index' ) );
         }
+        // 增加阅读记录
+        Report::model()->addReaderuid( $report, $uid );
         if ( $report['uid'] == $uid ) {
             $this->redirect( $this->createUrl( 'default/show', array( 'repid' => $repid ) ) );
         }

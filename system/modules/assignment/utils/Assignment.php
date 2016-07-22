@@ -48,7 +48,7 @@ class Assignment {
             // 图章
             if ( $assignment['stamp'] != 0 ) {
                 $path = Stamp::model()->fetchIconById( $assignment['stamp'] );
-                $data[$k]['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+                $data[$k]['stampPath'] = File::imageName( Stamp::STAMP_PATH . $path );
             }
         }
         return $data;
@@ -68,7 +68,7 @@ class Assignment {
             }
         }
         // 重新生成数组索引，确保前端输出的格式是数组
-        return array_merge( $designeeData, array() );
+        return array_values( $designeeData );
     }
 
     /**

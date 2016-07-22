@@ -53,6 +53,7 @@ class Officialdoc {
         $allupdeptid = Department::model()->queryDept( $allDeptId );
         $allDeptId .= ',' . $allupdeptid . '';
         $allPosId = IBOS::app()->user->allposid . '';
+        $allRoleid = IBOS::app()->user->allroleid;
         $deptCondition = '';
         $deptIdArr = explode( ',', trim( $allDeptId, ',' ) );
         if ( count( $deptIdArr ) > 0 ) {
@@ -63,7 +64,17 @@ class Officialdoc {
         } else {
             $deptCondition = "FIND_IN_SET('',deptid)";
         }
-        $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allCcDeptId}',ccdeptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$allPosId}',ccpositionid) OR FIND_IN_SET('{$uid}',uid ) OR FIND_IN_SET('{$uid}',ccuid )) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
+        $scopeCondition = " ( ((deptid='alldept' OR "
+                . "{$deptCondition} OR "
+                . "FIND_IN_SET('{$allCcDeptId}',ccdeptid) OR "
+                . "FIND_IN_SET('{$allPosId}',positionid) OR "
+                . "FIND_IN_SET('{$allPosId}',ccpositionid) OR "
+                . "FIND_IN_SET('{$uid}',uid ) OR "
+                . "FIND_IN_SET('{$uid}',ccuid )) OR "
+                . "FIND_IN_SET('{$allRoleid}',roleid) OR "
+                . "FIND_IN_SET('{$allRoleid}',ccroleid) OR "
+                . "(deptid='' AND positionid='' AND uid='' AND roleid = '') OR "
+                . "(author='{$uid}') OR (approver='{$uid}')) )";
         $condition.=" AND " . $scopeCondition;
         if ( !empty( $catid ) ) {
             $condition.=" AND catid IN ($catid)";
@@ -141,13 +152,16 @@ class Officialdoc {
             return true;
         }
         //如果是审核人
-//		$dashboardConfig = Ibos::app()->setting->get( 'setting/docconfig' );
+//		$dashboardConfig = IBOS::app()->setting->get( 'setting/docconfig' );
 //		$approver = $dashboardConfig['doccommentenable'];
 //		if ( StringUtil::findIn( $uid, $approver ) ) {
 //			return true;
 //		}
         //如果都为空，返回true
-        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
+        if ( empty( $data['deptid'] ) &&
+                empty( $data['positionid'] ) &&
+                empty( $data['uid'] ) &&
+                empty( $data['roleid'] ) ) {
             return true;
         }
         //得到用户的部门id,如果该id存在于文章部门范围之内,返回true
@@ -166,14 +180,21 @@ class Officialdoc {
         if ( StringUtil::findIn( $data['positionid'], $user['positionid'] ) ) {
             return true;
         }
-        if ( StringUtil::findIn( $data['uid'], $uid ) ) {
-            return true;
-        }
         //取得文章抄送岗位范围Id与用户抄送岗位相比较
         if ( StringUtil::findIn( $data['ccpositionid'], $user['positionid'] ) ) {
             return true;
         }
+        if ( StringUtil::findIn( $data['uid'], $uid ) ) {
+            return true;
+        }
         if ( StringUtil::findIn( $data['ccuid'], $uid ) ) {
+            return true;
+        }
+        //角色部分
+        if ( StringUtil::findIn( $data['roleid'], $user['roleid'] ) ) {
+            return true;
+        }
+        if ( StringUtil::findIn( $data['ccroleid'], $user['roleid'] ) ) {
             return true;
         }
         return false;
@@ -207,6 +228,11 @@ class Officialdoc {
                 $string .= 'u_' . $uid;
             }
         }
+        if ( false === $all && !empty( $data['roleid'] ) ) {
+            foreach ( explode( ',', $data['roleid'] ) as $roleid ) {
+                $string.= 'r_' . $roleid;
+            }
+        }
         $uidArray = StringUtil::getUidAByUDPX( $string, true, false, true );
         return $uidArray;
     }
@@ -230,75 +256,6 @@ class Officialdoc {
         }
         $resultStr = implode( $join, $result );
         return $resultStr;
-    }
-
-    /**
-     * 取得选人框数据，去掉各自的前缀，返回数组，数组内
-     * <pre>
-     *  array(
-     *      'deptid' => '2,3,4',
-      'positionid' => '5,6',
-      'uid' => '',
-     * )
-     * </pre>
-     * @param string $data 源数据 格式 d_1,d_23,p_108
-     *
-     * @return array
-     */
-    public static function handleSelectBoxData( $data, $flag = true ) {
-        $result = array(
-            'deptid' => '',
-            'positionid' => '',
-            'uid' => '',
-        );
-        if ( !empty( $data ) ) {
-            if ( isset( $data['c'] ) ) {
-                $result = array(
-                    'deptid' => 'alldept',
-                    'positionid' => '',
-                    'uid' => '',
-                );
-                return $result;
-            }
-            if ( isset( $data['d'] ) ) {
-                $result['deptid'] = implode( ',', $data['d'] );
-            }
-            if ( isset( $data['p'] ) ) {
-                $result['positionid'] = implode( ',', $data['p'] );
-            }
-            if ( isset( $data['u'] ) ) {
-                $result['uid'] = implode( ',', $data['u'] );
-            }
-        } else {
-            if ( $flag ) {
-                $result['deptid'] = 'alldept';
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * 组合选人框的值
-     * @param string $deptid 部门id
-     * @param string $positionid 岗位Id
-     * @param string $uid 用户id
-     * @return type
-     */
-    public static function joinSelectBoxValue( $deptid, $positionid, $uid ) {
-        $tmp = array();
-        if ( !empty( $deptid ) ) {
-            if ( $deptid == 'alldept' ) {
-                return 'c_0';
-            }
-            $tmp[] = StringUtil::wrapId( $deptid, 'd' );
-        }
-        if ( !empty( $positionid ) ) {
-            $tmp[] = StringUtil::wrapId( $positionid, 'p' );
-        }
-        if ( !empty( $uid ) ) {
-            $tmp[] = StringUtil::wrapId( $uid, 'u' );
-        }
-        return implode( ',', $tmp );
     }
 
     /**
@@ -518,18 +475,20 @@ class Officialdoc {
 
     /**
      * 处理获取未签收公文记录需要的 SQL 查询条件语句
-     * @param  integer $uid        用户 UID
-     * @param  array $deptid     用户部门 ID 数组
-     * @param  array $positionid 用户职位 ID 数组
-     * @return string             SQL WHERE 语句
+     * @param  integer  $uid        用户 UID
+     * @param  string   $condition  额外的查询条件
+     * @return string               SQL WHERE 语句
      */
-    public static function getNoSignDocSqlConditionByUid( $uid ) {
+    public static function getNoSignDocSqlConditionByUid( $uid, $condition = '' ) {
         $userInfo = User::model()->findByPk( $uid );
         $deptidList = explode( ',', Department::model()->queryDept( $userInfo['deptid'] ) );
         $deptidList = array_merge( $deptidList, DepartmentRelated::model()->fetchAllDeptIdByUid( $uid ) );
         $positionidList = array_merge( array( $userInfo['positionid'] ), PositionRelated::model()->fetchAllPositionIdByUid( $uid ) );
         // 发布范围中有我的 WHERE 条件
-        $condition = sprintf( '`deptid` = \'alldept\' OR FIND_IN_SET( \'%s\', `uid` )', $uid );
+        if ( !empty( $condition ) ) {
+            $condition .= ' AND ';
+        }
+        $condition .= sprintf( '`deptid` = \'alldept\' OR FIND_IN_SET( \'%s\', `uid` )', $uid );
         foreach ( $deptidList as $deptid ) {
             if ( !empty( $deptid ) )
                 $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `deptid` )', $deptid );
@@ -538,7 +497,7 @@ class Officialdoc {
             if ( !empty( $positionid ) )
                 $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `positionid` )', $positionid );
         }
-        $condition = '(' . $condition . ') AND `status` = 1';
+        $condition = '(' . $condition . ' OR FIND_IN_SET( ' . $userInfo['roleid'] . ', `roleid` ) ) AND `status` = 1';
         // 组合上去掉已签收公文的 WHERE 条件
         $hasSignDocList = OfficialdocReader::model()->findAll( sprintf( '`uid` = %d AND `issign` = 1', $uid ) );
         $hasSignDocIdList = array();

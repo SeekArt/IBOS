@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  Resume数据表操作类
  * @package application.modules.recruit.model
- * @version $Id: Resume.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Resume.php 4105 2014-09-15 05:47:07Z gzpjh $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

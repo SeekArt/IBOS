@@ -10,7 +10,7 @@
 /**
  * 招聘模块------  resume_contact表的数据层操作类，继承ICModel
  * @package application.modules.recruit.model
- * @version $Id: ResumeContact.php 6583 2016-03-11 08:24:01Z gzhyj $
+ * @version $Id: ResumeContact.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

@@ -1,15 +1,19 @@
 <?php
 
 use application\core\utils\DateTime;
+use application\core\utils\IBOS;
 
+$rtxIsOpen = IBOS::app()->setting->get( 'setting/im/rtx/open' );
 ?>
 <div class="ct">
 	<div class="clearfix">
 		<h1 class="mt"><?php echo $lang['Instant messaging binding']; ?></h1>
 		<ul class="mn">
-			<li>
-				<a href="<?php echo $this->createUrl( 'im/index', array( 'type' => 'rtx' ) ); ?>"><?php echo $lang['Rtx Setup']; ?></a>
-			</li>
+			<?php if(LOCAL && SAAS_STORAGE !== 1 && $rtxIsOpen ):?>
+				<li>
+					<a href="<?php echo $this->createUrl( 'im/index', array( 'type' => 'rtx' ) ); ?>"><?php echo $lang['Rtx Setup']; ?></a>
+				</li>
+			<?php endif; ?>
 			<li>
 				<span><?php echo $lang['QQ setup']; ?></span>
 			</li>

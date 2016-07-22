@@ -11,7 +11,7 @@
  *  Credit表的数据层操作
  * 
  * @package application.modules.dashboard.model
- * @version $Id: Credit.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Credit.php 5456 2015-08-17 07:10:43Z gzxgs $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -22,9 +22,9 @@ use application\core\utils\IBOS;
 
 class Credit extends Model {
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
-    }
+	public static function model( $className = __CLASS__ ) {
+		return parent::model( $className );
+	}
 
 	public function tableName() {
 		return '{{credit}}';

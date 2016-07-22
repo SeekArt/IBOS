@@ -35,32 +35,40 @@ class ThreadController extends OpController {
 		$uid = IBOS::app()->user->uid;
 		$status = isset( $_GET['status'] ) ? intval( $_GET['status'] ) : 0;
 		$offset = isset( $_GET['offset'] ) ? intval( $_GET['offset'] ) : 0;
+
 		if ( Env::getRequest( 'param' ) == 'search' ) {
 			$this->search( $offset );
 		}
 		$condition = " (`designeeuid`={$uid} OR `chargeuid`={$uid} OR FIND_IN_SET({$uid}, `participantuid`) ) AND `status`={$status}";
 		$ob =IBOS::app()->db->createCommand();
+
+		// 当查询已完成主线时，限制每次 10 条，查询进行中主线不做限制直接获取全部
 		if($status == 1) {
 			$ob->setLimit( self::DEFAULT_PAGE_SIZE );
 		}
 		$result = $ob
-				->select( '*' )
-				->from( '{{thread}}' )
-				->where( $condition )
-				->order( 'addtime DESC' )
-				->offset( $offset )
-				->queryAll();
+			->select( '*' )
+			->from( '{{thread}}' )
+			->where( $condition )
+			->order( 'addtime DESC' )
+			->offset( $offset )
+			->queryAll();
+
 		$result = $this->mergeAttentionStatus($result);
+
 		if ( count( $result ) < self::DEFAULT_PAGE_SIZE ) {
 			$hasMore = false;
 		} else {
 			$hasMore = true;
 		}
+
 		$this->ajaxReturn( array_merge( array( 'datas' => $result, 'hasMore' => $hasMore ) ) );
 	}
+
 	private function mergeAttentionStatus($list) {
 		$result = array();
 		$attenThreadIds = ThreadAttention::model()->fetchThreadIdsByUid( IBOS::app()->user->uid );
+
 		foreach ( $list as $thread ) {
 			$thread = array_merge($thread, array('isAttention' => in_array( $thread['threadid'], $attenThreadIds )));
 			array_push( $result, $thread );

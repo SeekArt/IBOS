@@ -52,8 +52,8 @@ OCX.prototype = {
 		this.settings.attachUrl = this.settings.attachUrl.replace(re, "&");
 		try {
 			 // if ($.browser.msie) {
-			 	this.onDocumentOpened();
 				this._openDocumentByOP(this.settings.op);
+			 	this.onDocumentOpened();
 			 // }
 		} catch (err) {
 			var msg = Ibos.l("MAIN.DOC_OPEN");
@@ -119,7 +119,7 @@ OCX.prototype = {
 		var timer = null,
 			_this = this;
 		timer = setInterval(function(){
-			if( _this.settings.obj && this.settings.obj.ActiveDocument){
+			if( _this.settings.obj && _this.settings.obj.ActiveDocument){
 				callback && callback();
 				clearInterval(timer);
 			}
@@ -564,19 +564,19 @@ OCX.prototype = {
 Ibos.evt.add({
 	// 保存
 	"save": function(param, elem) {
-		return OCX.saveDoc(param.flag);
+		return officeOcx.saveDoc(param.flag);
 	},
 	// 页面设置
 	"chgLayout": function(param, elem) {
-		return OCX.changeLayout();
+		return officeOcx.changeLayout();
 	},
 	// 打印
 	"print": function(param, elem) {
-		return OCX.printDoc();
+		return officeOcx.printDoc();
 	},
 	// 导出PDF
 	"export": function(param, elem) {
-		return OCX.saveAsPDFFile(true, true);
+		return officeOcx.saveAsPDFFile(true, true);
 	},
 	// 此功能暂先不做
 	"showLog": function(param, elem) {
@@ -585,20 +585,20 @@ Ibos.evt.add({
 	// 保留痕迹与否
 	"setMarkModify": function(param, elem) {
 		var $elem = $(elem);
-		return OCX.setMarkModify($elem.prop('checked'));
+		return officeOcx.setMarkModify($elem.prop('checked'));
 	},
 	// 显示痕迹与否
 	"showRevisions": function(param, elem) {
 		var $elem = $(elem);
-		return OCX.showRevisions($elem.prop('checked'));
+		return officeOcx.showRevisions($elem.prop('checked'));
 	},
 	// 模板套红
 	"selectWord": function(param, elem) {
-		if( OCX.settings.attachName.indexOf('xls') != -1){
+		if( officeOcx.settings.attachName.indexOf('xls') != -1){
 			alert('excel不能使用插入套红');
 			return;
 		}
-		var url = OCX.settings.staticurl + 'wordmodel/view/index.php';
+		var url = officeOcx.settings.staticurl + 'wordmodel/view/index.php';
 		var myleft = (screen.availWidth - 650) / 2;
 		var paramStr = "menubar=0,toolbar=0,status=0,resizable=1,scrollbars=1";
 		paramStr += ",top=0,left=" + myleft + ",height=350,width=400";
@@ -606,30 +606,30 @@ Ibos.evt.add({
 	},
 	// 插入本地图片
 	"addPictureFromLocal": function(param, elem) {
-		return OCX.addPictureFromLocal();
+		return officeOcx.addPictureFromLocal();
 	},
 	// 全屏手写签名
 	"fullHandSign": function(param, elem) {
 		var key = param.key;
-		return OCX.fullHandSign(key);
+		return officeOcx.fullHandSign(key);
 	},
 	// 全屏手工绘图
 	"fullHandDraw": function(param, elem) {
-		return OCX.fullHandDraw();
+		return officeOcx.fullHandDraw();
 	},
 	// 插入手写签名
 	"handSign": function(param, elem) {
 		var key = param.key;
-		return OCX.handSign(key);
+		return officeOcx.handSign(key);
 	},
 	// 插入手工绘图
 	"handDraw": function(param, elem) {
-		return OCX.handDraw();
+		return officeOcx.handDraw();
 	},
 	// 加盖本地电子印章
 	"addSignFromLocal": function(param, elem) {
 		var key = param.key;
-		return OCX.addSignFromLocal(key);
+		return officeOcx.addSignFromLocal(key);
 	},
 	// 加盖服务器电子印章
 	"addSignFromServer": function(param, elem) {
@@ -638,6 +638,6 @@ Ibos.evt.add({
 	// 验证签名及印章
 	"checkSign": function(param, elem) {
 		var key = param.key;
-		return OCX.checkSign(key);
+		return officeOcx.checkSign(key);
 	}
 });

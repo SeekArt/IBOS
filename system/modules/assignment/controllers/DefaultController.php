@@ -274,8 +274,8 @@ class DefaultController extends BaseController {
         foreach ($this->_stamps as $id) {
             $stamp = Stamp::model()->fetchByPk($id);
             $stamps[] = array(
-                'path' => File::fileName(Stamp::STAMP_PATH . $stamp['icon']),
-                'stampPath' => File::fileName(Stamp::STAMP_PATH . $stamp['stamp']),
+                'path' => File::imageName(Stamp::STAMP_PATH . $stamp['icon']),
+                'stampPath' => File::imageName(Stamp::STAMP_PATH . $stamp['stamp']),
                 'stamp' => $stamp['stamp'],
                 'title' => $stamp['code'],
                 'value' => $id

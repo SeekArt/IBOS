@@ -2,46 +2,46 @@
 
 defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
 return array(
-    'param' => array(
-        'name' => '新闻',
-        'category' => '信息中心',
-        'description' => '提供企业新闻信息发布',
-        'author' => 'banyanCheung @ IBOS Team Inc',
-        'version' => '1.0',
-        'pushMovement' => 1,
-        'indexShow' => array(
-            'widget' => array(
+	'param' => array(
+		'name' => '信息中心',
+		'category' => '信息中心',
+		'description' => '提供企业新闻信息发布',
+		'author' => 'banyanCheung @ IBOS Team Inc',
+		'version' => '1.0',
+		'pushMovement' => 1,
+		'indexShow' => array(
+			'widget' => array(
 				'article/article'
 			),
-            'link' => 'article/default/index'
-        )
-    ),
-    'config' => array(
-        'modules' => array(
-            'article' => array(
-                'class' => 'application\modules\article\ArticleModule'
-            )
-        ),
-        'components' => array(
-            'ArticleVote' => array(
-                'class' => 'application\modules\article\components\ArticleVote',
-            ),
-            'messages' => array(
-                'extensionPaths' => array(
-                    'article' => 'application.modules.article.language'
-                )
-            )
-        ),
-    ),
+			'link' => 'article/default/index'
+		)
+	),
+	'config' => array(
+		'modules' => array(
+			'article' => array(
+				'class' => 'application\modules\article\ArticleModule'
+			)
+		),
+		'components' => array(
+			'ArticleVote' => array(
+				'class' => 'application\modules\article\components\ArticleVote',
+			),
+			'messages' => array(
+				'extensionPaths' => array(
+					'article' => 'application.modules.article.language'
+				)
+			)
+		),
+	),
 	'authorization' => array(
 		'view' => array(
 			'type' => 'node',
 			'name' => '新闻浏览',
 			'group' => '新闻',
 			'controllerMap' => array(
-				'default' => array( 'index' ),
-				'category' => array( 'index', 'add', 'edit', 'del' ),
-				'comment' => array( 'getcommentlist', 'addcomment', 'delcomment' )
+				'default' => array( 'index', 'getarticlelist', 'show' ),
+				'comment' => array( 'getcommentlist', 'addcomment', 'delcomment' ),
+                'category' =>array( 'index' )
 			)
 		),
 		'publish' => array(
@@ -51,6 +51,14 @@ return array(
 			'controllerMap' => array(
 				'default' => array( 'add' ),
 			)
+		),
+		'category' => array(
+			'type' => 'node',
+			'name' => '新闻分类管理',
+			'group' => '新闻',
+			'controllerMap' => array(
+				'category' => array(  'add', 'edit', 'del' ),
+			),
 		),
 		'manager' => array(
 			'type' => 'data',
@@ -69,7 +77,10 @@ return array(
 						'default' => array( 'del' )
 					)
 				),
-			)
+			),
+			'controllerMap' => array(
+				'category' => array( 'add', 'edit', 'del' ),
+			),
 		)
 	)
 );

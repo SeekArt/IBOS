@@ -181,7 +181,7 @@ class PermissionsController extends BaseController {
             }
         }
         util\Cache::update( 'Role' );
-        util\IBOS::app()->cache->clear();
+        util\Cache::clear();
         $this->ajaxReturn( array( 'isSuccess' => true ) );
     }
 

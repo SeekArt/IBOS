@@ -290,6 +290,7 @@
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	overflow: hidden;
+	color: #000;
 }
 .officialdoc-content:first-child{
 	border-top: 0;
@@ -297,6 +298,9 @@
 }
 .officialdoc-content:last-child{
 	margin-bottom: 0;
+}
+.officialdoc-content table td{
+	border: 1px solid #DDD;
 }
 .page-num{
 	position: absolute;

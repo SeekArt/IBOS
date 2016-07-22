@@ -292,7 +292,7 @@ use application\core\utils\StringUtil;
 									<?php $row = json_decode( $log['message'], true ); ?>    
 									<tr>
 										<td>
-											<?php echo Convert::formatDate( $log['logtime'], 'u' ); ?></td>
+											<?php echo Convert::formatDate( strtotime( $log['logtime'] ), 'u' ); ?></td>
 										<td>
 											<?php echo StringUtil::cutStr( !empty( $row['address'] ) ? $row['address'] : Convert::convertIp( $row['ip'] ), 7 ); ?></td>
 										<td>

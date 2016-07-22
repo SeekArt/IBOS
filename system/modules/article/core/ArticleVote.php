@@ -11,7 +11,7 @@
 /**
  * 文章模块------ 文章投票类
  * @package application.modules.comment.components
- * @version $Id: ArticleVote.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ArticleVote.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

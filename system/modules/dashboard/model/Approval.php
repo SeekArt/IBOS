@@ -22,6 +22,10 @@ use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\modules\article\model\ArticleCategory;
 use application\modules\officialdoc\model\OfficialdocCategory;
+use application\modules\meeting\model\MeetingRoom;
+use application\modules\car\model\Car;
+use application\modules\assets\model\AssetsAudit;
+
 
 class Approval extends Model {
 
@@ -34,10 +38,19 @@ class Approval extends Model {
     }
 
     /**
+     * 审批流程步骤审核人关联关系
+     */
+    public function relations() {
+        return array(
+            'step'  => array( self::HAS_MANY, 'application\modules\dashboard\model\ApprovalStep', '', 'on' => 't.id = step.aid' ),
+        );
+    }
+
+    /**
      * 获得所有审批流程，按添加倒序
      */
     public function fetchAllApproval() {
-        return $this->fetchAll(array('order' => 'addtime DESC'));
+        return $this->with( 'step' )->findAll( array( 'order' => 'addtime DESC' ) );
     }
 
     /**
@@ -47,25 +60,23 @@ class Approval extends Model {
      * @return array
      */
     public function fetchNextApprovalUids($id, $step) {
-        $ret = array('step' => '', 'uids' => array());
+        $result = array('step' => '', 'uids' => array());
         if (empty($id)) {
-            return $ret;
+            return $result;
         }
-        $approval = $this->fetchByPk($id);
+        $approval = $this->with( 'step' )->findByPk( $id );
         $nextStep = $step + 1;
-        if (!empty($approval)) {
-            // 大于审核等级的话返回可发布标识
-            if ($nextStep > $approval['level']) {
-                $ret = array('step' => 'publish', 'uids' => array());
-            } else { // 否则返回下一步用户数组
-                $nextLevelName = $this->getLevelNameByStep($nextStep);
-                $ret = array(
-                    'step' => $nextStep,
-                    'uids' => explode(',', $approval[$nextLevelName])
-                );
+        if ( $nextStep > $approval['level'] ) {
+            $result['step'] = 'publish';
+        }
+        else {
+            foreach ( $approval->getRelated( 'step' ) as $step ) {
+                if ( $step->step == $nextStep ) {
+                    $result = array( 'step' => $nextStep, 'uids' => explode( ',', $step->uids ) );
+                }
             }
         }
-        return $ret;
+        return $result;
     }
 
     /**
@@ -73,20 +84,20 @@ class Approval extends Model {
      * @param integer $step 步骤（1,2,3,4,5）
      * @return string
      */
-    public function getLevelNameByStep($step) {
-        $levels = array(
-            '1' => 'level1',
-            '2' => 'level2',
-            '3' => 'level3',
-            '4' => 'level4',
-            '5' => 'level5'
-        );
-        if (in_array($step, array_keys($levels))) {
-            return $levels[$step];
-        } else {
-            return $levels['1'];
-        }
-    }
+    // public function getLevelNameByStep($step) {
+    //     $levels = array(
+    //         '1' => 'level1',
+    //         '2' => 'level2',
+    //         '3' => 'level3',
+    //         '4' => 'level4',
+    //         '5' => 'level5'
+    //     );
+    //     if (in_array($step, array_keys($levels))) {
+    //         return $levels[$step];
+    //     } else {
+    //         return $levels['1'];
+    //     }
+    // }
 
     /**
      * 根据主键ids获取所有步骤审核人uid数组
@@ -94,17 +105,19 @@ class Approval extends Model {
      * @return array
      */
     public function fetchApprovalUidsByIds($ids) {
-        $ids = is_array($ids) ? implode(',', $ids) : $ids;
+        $ids = is_array( $ids ) ? implode( ',', $ids ) : $ids;
         $uidStr = '';
-        $approvals = $this->fetchAll("FIND_IN_SET(`id`, '{$ids}')");
-        foreach ($approvals as $approval) {
-            for ($i = 1; $i <= $approval['level']; $i++) {
-                $uidStr .= $approval["level{$i}"] . ',';
+        $approvals = $this->with( 'step' )->findAll( sprintf( "FIND_IN_SET(`t`.`id`, '%s')", $ids ) );
+        foreach ( $approvals as $approval ) {
+            foreach ( $approval->getRelated( 'step' ) as $step ) {
+                if ( !empty( $step ) ) {
+                    $uidStr .= $step->uids . ',';
+                }
             }
         }
-        $uidArrTemp = explode(',', $uidStr);
-        $uidArr = array_unique($uidArrTemp);
-        return array_filter($uidArr);
+        $uidArrTemp = explode( ',', $uidStr );
+        $uidArr = array_unique( $uidArrTemp );
+        return array_values( array_filter( $uidArr ) );
     }
 
     /**
@@ -113,17 +126,39 @@ class Approval extends Model {
      * @return boolean
      */
     public function deleteApproval($id) {
-        if (empty($id)) {
-            return false;
+        if ( empty( $id ) ) {
+            return FALSE;
         }
-        $ret = $this->deleteByPk($id);
-        if ($ret) {
-            if (Module::getIsEnabled('article')) {
-                ArticleCategory::model()->updateAll(array('aid' => 0), "aid={$id}");
+        else {
+            // 启用事务进行数据更新，删除对应审批流程同时更新 新闻、公文、车辆、会议、资产 五个模块相关表的 aid 字段
+            $flag = TRUE;
+            $transaction = $this->dbConnection->beginTransaction();
+            try {
+                $this->deleteByPk( $id );
+                $connection = $this->dbConnection;
+                if ( Module::getIsEnabled( 'article' ) ) {
+                    $connection->createCommand()->update( ArticleCategory::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                }
+                if ( Module::getIsEnabled( 'officialdoc' ) ) {
+                    $connection->createCommand()->update( OfficialdocCategory::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                }
+                if ( Module::getIsEnabled( 'car' ) ) {
+                    $connection->createCommand()->update( Car::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                }
+                if ( Module::getIsEnabled( 'meeting' ) ) {
+                    $connection->createCommand()->update( MeetingRoom::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                }
+                if ( Module::getIsEnabled( 'assets' ) ) {
+                    $connection->createCommand()->update( AssetsAudit::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                }
+                $transaction->commit();
             }
-            OfficialdocCategory::model()->updateAll(array('aid' => 0), "aid={$id}");
+            catch ( Exception $e ) {
+                $transaction->rollBack();
+                $flag = FALSE;
+            }
+            return $flag;
         }
-        return $ret;
     }
 
     /**
@@ -132,43 +167,49 @@ class Approval extends Model {
      * @return array
      */
     public function fetchAllUidsByIds($ids) {
-        $res = array();
-        $ids = is_array($ids) ? implode(',', $ids) : $ids;
-        $approvals = $this->fetchAll("FIND_IN_SET(`id`, '{$ids}')");
-        foreach ($approvals as $approval) {
-            $uids = array();
-            for ($i = 1; $i <= $approval['level']; $i++) {
-                $uids = array_merge($uids, explode(',', $approval["level{$i}"]));
+        $result = array();
+        $ids = is_array( $ids ) ? implode( ',', $ids ) : $ids;
+        $approvals = $this->with( 'step' )->findAll( sprintf( "FIND_IN_SET(`t`.`id`, '%s')", $ids ) );
+        foreach ( $approvals as $approval ) {
+            foreach ( $approval->getRelated( 'step' ) as $step ) {
+                if ( !empty( $step ) ) {
+                    if ( !isset( $result[$approval['id']] ) ) {
+                        $result[$approval['id']] = explode( ',', $step->uids );
+                    }
+                    else {
+                        $result[$approval['id']] = array_unique( array_merge( $result[$approval['id']], explode( ',', $step->uids ) ) );
+                    }
+                }
             }
-            $aid = $approval['id'];
-            $res[$aid] = array_filter(array_unique($uids));
         }
-        return $res;
+        return $result;
     }
 
-    public function fetchApprovalidIndexByLevelNByUid($uid) {
-        $rows = IBOS::app()->db->createCommand()
-                ->select('level,level1,level2,level3,level4,level5,id')
-                ->from($this->tableName())
-                ->where(array(
-                    'OR',
-                    " FIND_IN_SET( '{$uid}', `level1` ) ",
-                    " FIND_IN_SET( '{$uid}', `level2` ) ",
-                    " FIND_IN_SET( '{$uid}', `level3` ) ",
-                    " FIND_IN_SET( '{$uid}', `level4` ) ",
-                    " FIND_IN_SET( '{$uid}', `level5` ) ",
-                ))
-                ->queryAll();
-        $returnArray = array();
-        foreach ($rows as $row) :
-            for ($i = 1; $i <= $row['level']; $i++):
-                if (in_array($uid, explode(',', $row['level' . $i]))):
-                    $returnArray[$i][] = $row['id'];
-                endif;
-            endfor;
-        endforeach;
-        return $returnArray;
-    }
+    // public function fetchApprovalidIndexByLevelNByUid($uid) {
+
+    //     $rows = IBOS::app()->db->createCommand()
+    //             ->select('level,level1,level2,level3,level4,level5,id')
+    //             ->from($this->tableName())
+    //             ->where(array(
+    //                 'OR',
+    //                 " FIND_IN_SET( '{$uid}', `level1` ) ",
+    //                 " FIND_IN_SET( '{$uid}', `level2` ) ",
+    //                 " FIND_IN_SET( '{$uid}', `level3` ) ",
+    //                 " FIND_IN_SET( '{$uid}', `level4` ) ",
+    //                 " FIND_IN_SET( '{$uid}', `level5` ) ",
+    //             ))
+    //             ->queryAll();
+    //     $returnArray = array();
+    //     foreach ($rows as $row) :
+    //         for ($i = 1; $i <= $row['level']; $i++):
+    //             if (in_array($uid, explode(',', $row['level' . $i]))):
+    //                 $returnArray[$i][] = $row['id'];
+    //             endif;
+    //         endfor;
+    //     endforeach;
+    //     return $returnArray;
+    // }
+
     /**
      * 根据审批流程id获取免审人员
      * @param string $id

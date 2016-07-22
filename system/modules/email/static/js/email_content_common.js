@@ -8,7 +8,8 @@ $(function(){
 	.functionValidator({
 		fun: function(txt, elem){
 			// 内部收件人及外部收件人只要有一者即可允许发送
-			if($.trim(elem.value) === "" && $.trim(document.getElementById("to_web_email").value) === "") {
+			var toWebEmail = document.getElementById("to_web_email");
+			if($.trim(elem.value) === "" && toWebEmail && $.trim(toWebEmail.value) === "") {
 				return false;
 			}
 			return true;

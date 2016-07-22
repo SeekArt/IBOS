@@ -46,7 +46,7 @@ use application\core\utils\IBOS;
 <script src="<?php echo STATICURL; ?>/js/lib/ueditor/editor_all_min.js?<?php echo VERHASH; ?>"></script>
 <script>
 	(function() {
-		UEDITOR_CONFIG.mode.simple[0].push('pagebreak');
+		UEDITOR_CONFIG.mode.simple[0].push('pagebreak', 'source');
 		new UE.ui.Editor({
 			initialFrameWidth: 738,
 			minFrameWidth: 738,

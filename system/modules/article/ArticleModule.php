@@ -10,7 +10,7 @@
 /**
  * 信息中心模块------  module类文
  * @package application.modules.article
- * @version $Id: ArticleModule.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: ArticleModule.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -19,5 +19,5 @@ namespace application\modules\article;
 use application\core\modules\Module;
 
 class ArticleModule extends Module {
-	public $__CODE__ = 'bc39ItKqywuA0RH9QtWF8WYjmA8J+xWZmv6dK2KqaYaG5gxaPUWT';
+    
 }

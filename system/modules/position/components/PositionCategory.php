@@ -10,7 +10,7 @@
 /**
  * 岗位模块-分类组件 继承自ICCategory
  * @package application.modules.position.components
- * @version $Id: PositionCategory.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: PositionCategory.php 4606 2014-11-25 10:04:42Z gzhzh $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 

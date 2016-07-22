@@ -76,7 +76,7 @@
                         <a href="<?php echo $this->createUrl( 'roleadmin/add' ); ?>">
                             <div class="add-item-wrap">
                                 <i class="o-add-role mbs"></i>
-                                <p class="fsl add-opt-tip">新建角色</p>
+                                <p class="fsl add-opt-tip">新建管理员</p>
                             </div>
                         </a>
                     </li>

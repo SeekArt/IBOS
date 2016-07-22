@@ -21,6 +21,7 @@ use application\core\utils\Env;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
+use application\modules\dashboard\model\ApprovalStep;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\officialdoc\model\Officialdoc as Doc;
@@ -141,12 +142,15 @@ class Officialdoc {
         $data['categoryName'] = OfficialdocCategory::model()->fetchCateNameByCatid( $data['catid'] );
 
         //发布范围
-        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
+        if ( empty( $data['deptid'] ) &&
+                empty( $data['positionid'] ) &&
+                empty( $data['uid'] ) &&
+                empty( $data['roleid'] ) ) {
             $data['departmentNames'] = IBOS::lang( 'All' );
-            $data['positionNames'] = $data['uidNames'] = '';
+            $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else if ( $data['deptid'] == 'alldept' ) {
             $data['departmentNames'] = IBOS::lang( 'All' );
-            $data['positionNames'] = $data['uidNames'] = '';
+            $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
             $department = DepartmentUtil::loadDepartment();
@@ -162,15 +166,20 @@ class Officialdoc {
             } else {
                 $data['uidNames'] = "";
             }
+            $role = RoleUtil::loadRole();
+            $data['roleNames'] = OfficialdocUtil::joinStringByArray( $data['roleid'], $role, 'rolename', '、' );
         }
         //抄送
 
-        if ( empty( $data['ccdeptid'] ) && empty( $data['ccpositionid'] ) && empty( $data['ccuid'] ) ) {
-            $data['ccDepartmentNames'] = ''; //Ibos::lang( 'All' );
-            $data['ccPositionNames'] = $data['ccUidNames'] = '';
+        if ( empty( $data['ccdeptid'] ) &&
+                empty( $data['ccpositionid'] ) &&
+                empty( $data['ccuid'] ) &&
+                empty( $data['ccroleid'] ) ) {
+            $data['ccDepartmentNames'] = ''; //IBOS::lang( 'All' );
+            $data['ccPositionNames'] = $data['ccUidNames'] = $data['ccRoleNames'] = '';
         } else if ( $data['ccdeptid'] == 'alldept' ) {
             $data['ccDepartmentNames'] = IBOS::lang( 'All' );
-            $data['ccPositionNames'] = $data['ccUidNames'] = '';
+            $data['ccPositionNames'] = $data['ccUidNames'] = $data['ccRoleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
             $department = DepartmentUtil::loadDepartment();
@@ -186,6 +195,8 @@ class Officialdoc {
             } else {
                 $data['ccUidNames'] = "";
             }
+            $role = RoleUtil::loadRole();
+            $data['ccRoleNames'] = OfficialdocUtil::joinStringByArray( $data['ccroleid'], $role, 'rolename', '、' );
         }
         return $data;
     }
@@ -287,8 +298,7 @@ class Officialdoc {
                     if ( $i <= $doc['stepNum'] ) { // 如果已走审批步骤，找审批的人的名称， 否则找应该审核的人
                         $doc['approval'][$i]['approvaler'] = isset( $step[$i] ) ? $step[$i] : '未知'; // 容错
                     } else {
-                        $levelName = Approval::model()->getLevelNameByStep( $i );
-                        $approvalUids = $doc['approval'][$levelName];
+                        $approvalUids = ApprovalStep::model()->getApprovalerStr( $doc['approval']['id'], $i );
                         $doc['approval'][$i]['approvaler'] = User::model()->fetchRealnamesByUids( $approvalUids, '、' );
                     }
                 }
@@ -350,6 +360,13 @@ class Officialdoc {
         $delPurv = RoleUtil::getMaxPurv( $uid, 'officialdoc/manager/del' );
         $list = self::handlePermission( $user, $list, $editPurv, 'edit' );
         $list = self::handlePermission( $user, $list, $delPurv, 'del' );
+        // 如果发布人是自己，拥有编辑、删除权限
+        foreach ( $list as &$doc ) {
+            if ( $doc['author'] == $uid ) {
+                $doc['allowEdit'] = 1;
+                $doc['allowDel'] = 1;
+            }
+        }
         return $list;
     }
 

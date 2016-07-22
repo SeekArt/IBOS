@@ -1,348 +1,376 @@
-var me = editor,
-    doc = me.document,
-    bodyStyle,
-    cp = $G("colorPicker"),
-    bkbodyStyle = "",
-    bkcolor = "";
-var popup = new UE.ui.Popup({
-    content:new UE.ui.ColorPicker({
-        noColorText:me.getLang("clearColor"),
-        editor:me,
-        onpickcolor:function (t, color) {
-            domUtils.setStyle(cp, "background-color", color);
-            bkcolor = color;
-            UE.ui.Popup.postHide();
-        },
-        onpicknocolor:function (t, color) {
-            domUtils.setStyle(cp, "background-color", "transparent");
-            bkcolor = "";
-            UE.ui.Popup.postHide();
-        }
-    }),
-    editor:me,
-    onhide:function () {
-        setBody();
-    }
-});
-domUtils.on(cp, "click", function () {
-    popup.showAnchor(this);
-});
-domUtils.on(document, 'mousedown', function (evt) {
-    var el = evt.target || evt.srcElement;
-    UE.ui.Popup.postHide(el);
-});
-domUtils.on(window, 'scroll', function () {
-    UE.ui.Popup.postHide();
-});
-//获得head
-var getHead = function () {
-    return domUtils.getElementsByTagName($G("tabHeads"), "span");
-};
-//给head绑定事件
-var bindClick = function () {
-    var heads = getHead();
-    for (var i = 0, head; head = heads[i++];) {
-        head.onclick = function () {
-            var bodyid = this.getAttribute("tabsrc");
-            toggleHead(this);
-            toggleBody(bodyid);
-            if (bodyid == "imgManager") {
-                ajax.request(editor.options.imageManagerUrl, {
-                    timeout:100000,
-                    action:"get",
-                    onsuccess:function (xhr) {
-                        var tmp = utils.trim(xhr.responseText),
-                            imageUrls = !tmp ? [] : tmp.split("ue_separate_ue"),
-                            length = imageUrls.length,
-                            imgList = $G("imageList");
-                        imgList.innerHTML = !length ? "&nbsp;&nbsp;" + lang.noUploadImage : "";
-                        for (var k = 0, ci; ci = imageUrls[k++];) {
-                            var img = document.createElement("img");
-                            var div = document.createElement("div");
-                            div.appendChild(img);
-                            div.style.display = "none";
-                            imgList.appendChild(div);
-                            img.onclick = function () {
-                                var nodes = imgList.childNodes;
-                                for (var i = 0, node; node = nodes[i++];) {
-                                    node.firstChild.removeAttribute("selected");
-                                    node.firstChild.style.cssText = "filter:alpha(Opacity=100);-moz-opacity:1;opacity: 1;border: 2px solid #fff";
-                                }
-                                changeSelected(this);
-                            };
-                            img.onload = function () {
-                                this.parentNode.style.display = "";
-                                var w = this.width, h = this.height;
-                                scale(this, 95, 120, 80);
-                                this.title = lang.toggleSelect + w + "X" + h;
-                            };
-                            img.setAttribute(k < 35 ? "src" : "lazy_src", editor.options.imageManagerPath + ci.replace(/\s+|\s+/ig, ""));
-                            img.setAttribute("data_ue_src", editor.options.imageManagerPath + ci.replace(/\s+|\s+/ig, ""));
+(function () {
 
+    var onlineImage,
+        backupStyle = editor.queryCommandValue('background');
+
+    window.onload = function () {
+        initTabs();
+        initColorSelector();
+    };
+
+    /* 初始化tab标签 */
+    function initTabs(){
+        var tabs = $G('tabHeads').children;
+        for (var i = 0; i < tabs.length; i++) {
+            domUtils.on(tabs[i], "click", function (e) {
+                var target = e.target || e.srcElement;
+                for (var j = 0; j < tabs.length; j++) {
+                    if(tabs[j] == target){
+                        tabs[j].className = "focus";
+                        var contentId = tabs[j].getAttribute('data-content-id');
+                        $G(contentId).style.display = "block";
+                        if(contentId == 'imgManager') {
+                            initImagePanel();
                         }
-                    },
-                    onerror:function () {
-                        $G("imageList").innerHTML = lang.imageLoadError;
-                    }
-                });
-            } else {
-                var radios = document.getElementsByName("t");
-                for (var i = 0, r; r = radios[i++];) {
-                    if (r.checked && r.value != "none") {
-                        $G("repeatType").style.display = "";
-                        net(r);
+                    }else {
+                        tabs[j].className = "";
+                        $G(tabs[j].getAttribute('data-content-id')).style.display = "none";
                     }
                 }
-            }
+            });
         }
     }
-};
-/**
- * 改变o的选中状态
- * @param o
- */
-function changeSelected(o) {
-    if (o.getAttribute("selected")) {
-        o.removeAttribute("selected");
-        o.style.cssText = "filter:alpha(Opacity=100);-moz-opacity:1;opacity: 1;border: 2px solid #fff";
-    } else {
-        o.setAttribute("selected", "true");
-        o.style.cssText = "filter:alpha(Opacity=50);-moz-opacity:0.5;opacity: 0.5;border:2px solid blue;";
-    }
-    $G("url").value = o.getAttribute("src")
-}
-/**
- * 图片缩放
- * @param img
- * @param max
- */
-function scale(img, max, oWidth, oHeight) {
-    var width = 0, height = 0, percent, ow = img.width || oWidth, oh = img.height || oHeight;
-    if (ow > max || oh > max) {
-        if (ow >= oh) {
-            if (width = ow - max) {
-                percent = (width / ow).toFixed(2);
-                img.height = oh - oh * percent;
-                img.width = max;
-            }
+
+    /* 初始化颜色设置 */
+    function initColorSelector () {
+        var obj = editor.queryCommandValue('background');
+        if (obj) {
+            var color = obj['background-color'],
+                repeat = obj['background-repeat'] || 'repeat',
+                image = obj['background-image'] || '',
+                position = obj['background-position'] || 'center center',
+                pos = position.split(' '),
+                x = parseInt(pos[0]) || 0,
+                y = parseInt(pos[1]) || 0;
+
+            if(repeat == 'no-repeat' && (x || y)) repeat = 'self';
+
+            image = image.match(/url[\s]*\(([^\)]*)\)/);
+            image = image ? image[1]:'';
+            updateFormState('colored', color, image, repeat, x, y);
         } else {
-            if (height = oh - max) {
-                percent = (height / oh).toFixed(2);
-                img.width = ow - ow * percent;
-                img.height = max;
+            updateFormState();
+        }
+
+        var updateHandler = function () {
+            updateFormState();
+            updateBackground();
+        }
+        domUtils.on($G('nocolorRadio'), 'click', updateBackground);
+        domUtils.on($G('coloredRadio'), 'click', updateHandler);
+        domUtils.on($G('url'), 'keyup', function(){
+            if($G('url').value && $G('alignment').style.display == "none") {
+                utils.each($G('repeatType').children, function(item){
+                    item.selected = ('repeat' == item.getAttribute('value') ? 'selected':false);
+                });
             }
-        }
-    }
-}
-//切换body
-var toggleBody = function (id) {
-    var bodys = ["normal", "imgManager"];
-    for (var i = 0, body; body = bodys[i++];) {
-        $G(body).style.zIndex = body == id ? 200 : 1;
-    }
-};
-//切换head
-var toggleHead = function (obj) {
-    var heads = getHead();
-    for (var i = 0, head; head = heads[i++];) {
-        domUtils.removeClasses(head, ["focus"]);
-        $G("repeatType").style.display = "none";
-    }
-    domUtils.addClass(obj, "focus");
-};
-//获得当前选中的tab
-var getCheckedTab = function () {
-    var heads = getHead();
-    for (var i = 0, head; head = heads[i++];) {
-        if (domUtils.hasClass(head, "focus")) {
-            return head;
-        }
-    }
-};
+            updateHandler();
+        });
+        domUtils.on($G('repeatType'), 'change', updateHandler);
+        domUtils.on($G('x'), 'keyup', updateBackground);
+        domUtils.on($G('y'), 'keyup', updateBackground);
 
+        initColorPicker();
+    }
 
-var init = function () {
-    bindClick();
-    var el = getHead()[0],
-            bodyid = el.getAttribute("tabsrc");
-    toggleHead(el);
-    toggleBody(bodyid);
-    $G("alignment").style.display = "none";
-    $G("custom").style.display = "none";
-    //初始化颜色
-    domUtils.setStyle(cp, "background-color", domUtils.getComputedStyle(doc.body, "background-color"));
-    var color = domUtils.getComputedStyle(doc.body, "background-color");
-    if ((color && color != "#ffffff" && color != "transparent") || domUtils.getComputedStyle(doc.body, "background-image") != "none") {
-        setTimeout(function () {
-            document.getElementsByName("t")[1].click();
-        }, 200);
-    }
-    initImgUrl();
-    initSelfPos();
-    initAlign();
-};
-//初始化自定义位置
-function initSelfPos() {
-    var x, y;
-    if (browser.ie) {
-        x = domUtils.getComputedStyle(doc.body, "background-position-x").replace(/50%|%|px|center/ig, "");
-        y = domUtils.getComputedStyle(doc.body, "background-position-y").replace(/50%|%|px|center/ig, "");
-    } else {
-        var arr = domUtils.getComputedStyle(doc.body, "background-position").match(/\s?(\d*)px/ig);
-        if (arr && arr.length) {
-            x = arr[0].replace("px", "");
-            y = arr[1].replace("px", "");
-        }
-    }
-    $G("x").value = x || 0;
-    $G("y").value = y || 0;
-}
-//初始化图片地址
-function initImgUrl() {
-    var su = domUtils.getComputedStyle(doc.body, "background-image"),
-        url = "";
-    if (su.indexOf(me.options.imagePath) > 0) {
-        url = su.match(/url\("?(.*[^\)"])"?/i);
-        if (url && url.length) {
-            url = url[1].substring(url[1].indexOf(me.options.imagePath), url[1].length);
-        }
-    } else {
-        url = su != "none" ? su.replace(/url\("?|"?\)/ig, "") : "";
-    }
-    $G("url").value = url;
-}
-//初始化定位
-function initAlign() {
-    var align = domUtils.getComputedStyle(doc.body, "background-repeat"),
-        alignType = $G("repeatType");
-    if (align == "no-repeat") {
-        var pos = domUtils.getComputedStyle(doc.body, browser.ie ? "background-position-x" : "background-position");
-        alignType.value = pos && pos.match(/\s?(\d*)px/ig) ? "self" : "center";
-        if (pos == "center") {
-            alignType.value = "center";
-        }
-        $G("custom").style.display = alignType.value == "self" ? "" : "none";
-    } else {
-        alignType.value = align;
-    }
-}
-    init();
+    /* 初始化颜色选择器 */
+    function initColorPicker() {
+        var me = editor,
+            cp = $G("colorPicker");
 
-
-
-//获得选中的类型
-function getCheckIpt() {
-    var ipts = document.getElementsByName("t");
-    for (var i = 0, ipt; ipt = ipts[i++];) {
-        if (ipt.checked) {
-            return ipt.value;
-        }
-    }
-}
-var net = function (obj) {
-    var align = $G("alignment"),
-        url = $G("url"),
-        custom = $G("custom");
-    if (obj.value == "none") {
-        align.style.display = "none";
-        custom.style.display = "none";
-        if (browser.ie) {
-            url.onpropertychange = null;
-        } else {
-            url.removeEventListener("input", setBody);
-        }
-    } else {
-        bindSelfPos();
-        $G("repeatType").style.display = "";
-        align.style.display = "";
-        if (browser.ie) {
-            url.onpropertychange = setBody;
-        } else {
-            url.addEventListener("input", setBody, false);
-        }
-    }
-    setBody();
-};
-//给自定义位置绑定事件
-var bindSelfPos = function () {
-    var x = $G("x"),
-        y = $G("y");
-    domUtils.on(x, ["propertychange", "input", "keydown"], function (evt) {
-        bindkeydown(evt, this);
-    });
-    domUtils.on(y, ["propertychange", "input", "keydown"], function (evt) {
-        bindkeydown(evt, this);
-    });
-    function bindkeydown(evt, obj) {
-        evt = evt || event;
-        if (evt.keyCode == 38 || evt.keyCode == 40) {
-            obj.value = evt.keyCode == 38 ? parseInt(obj.value) + 1 : parseInt(obj.value) - 1;
-            if (obj.value < 0) {
-                obj.value = 0;
+        /* 生成颜色选择器ui对象 */
+        var popup = new UE.ui.Popup({
+            content: new UE.ui.ColorPicker({
+                noColorText: me.getLang("clearColor"),
+                editor: me,
+                onpickcolor: function (t, color) {
+                    updateFormState('colored', color);
+                    updateBackground();
+                    UE.ui.Popup.postHide();
+                },
+                onpicknocolor: function (t, color) {
+                    updateFormState('colored', 'transparent');
+                    updateBackground();
+                    UE.ui.Popup.postHide();
+                }
+            }),
+            editor: me,
+            onhide: function () {
             }
-        } else {
-            if (evt.keyCode < 48 && evt.keyCode > 57) {
-                domUtils.preventDefault(evt);
-            }
-        }
-        setBody();
+        });
+
+        /* 设置颜色选择器 */
+        domUtils.on(cp, "click", function () {
+            popup.showAnchor(this);
+        });
+        domUtils.on(document, 'mousedown', function (evt) {
+            var el = evt.target || evt.srcElement;
+            UE.ui.Popup.postHide(el);
+        });
+        domUtils.on(window, 'scroll', function () {
+            UE.ui.Popup.postHide();
+        });
     }
-};
-var showAlign = function () {
-    $G("alignment").style.display = "";
-};
-var selectAlign = function (obj) {
-    $G("custom").style.display = obj.value == "self" ? "" : "none";
-    setBody();
-};
-//给body增加样式和背景图片
-var setBody = function () {
-    var color = domUtils.getStyle(cp, "background-color"),
-        bgimg = $G("url").value,
-        align = $G("repeatType").value,
-        alignObj = {
-            "background-repeat":"no-repeat",
-            "background-position":"center center"
+
+    /* 初始化在线图片列表 */
+    function initImagePanel() {
+        onlineImage = onlineImage || new OnlineImage('imageList');
+    }
+
+    /* 更新背景色设置面板 */
+    function updateFormState (radio, color, url, align, x, y) {
+        var nocolorRadio = $G('nocolorRadio'),
+            coloredRadio = $G('coloredRadio');
+
+        if(radio) {
+            nocolorRadio.checked = (radio == 'colored' ? false:'checked');
+            coloredRadio.checked = (radio == 'colored' ? 'checked':false);
+        }
+        if(color) {
+            domUtils.setStyle($G("colorPicker"), "background-color", color);
+        }
+
+        if(url && /^\//.test(url)) {
+            var a = document.createElement('a');
+            a.href = url;
+            browser.ie && (a.href = a.href);
+            url = browser.ie ? a.href:(a.protocol + '//' + a.host + a.pathname + a.search + a.hash);
+        }
+
+        if(url || url === '') {
+            $G('url').value = url;
+        }
+        if(align) {
+            utils.each($G('repeatType').children, function(item){
+                item.selected = (align == item.getAttribute('value') ? 'selected':false);
+            });
+        }
+        if(x || y) {
+            $G('x').value = parseInt(x) || 0;
+            $G('y').value = parseInt(y) || 0;
+        }
+
+        $G('alignment').style.display = coloredRadio.checked && $G('url').value ? '':'none';
+        $G('custom').style.display = coloredRadio.checked && $G('url').value && $G('repeatType').value == 'self' ? '':'none';
+    }
+
+    /* 更新背景颜色 */
+    function updateBackground () {
+        if ($G('coloredRadio').checked) {
+            var color = domUtils.getStyle($G("colorPicker"), "background-color"),
+                bgimg = $G("url").value,
+                align = $G("repeatType").value,
+                backgroundObj = {
+                    "background-repeat": "no-repeat",
+                    "background-position": "center center"
+                };
+
+            if (color) backgroundObj["background-color"] = color;
+            if (bgimg) backgroundObj["background-image"] = 'url(' + bgimg + ')';
+            if (align == 'self') {
+                backgroundObj["background-position"] = $G("x").value + "px " + $G("y").value + "px";
+            } else if (align == 'repeat-x' || align == 'repeat-y' || align == 'repeat') {
+                backgroundObj["background-repeat"] = align;
+            }
+
+            editor.execCommand('background', backgroundObj);
+        } else {
+            editor.execCommand('background', null);
+        }
+    }
+
+
+    /* 在线图片 */
+    function OnlineImage(target) {
+        this.container = utils.isString(target) ? document.getElementById(target) : target;
+        this.init();
+    }
+    OnlineImage.prototype = {
+        init: function () {
+            this.reset();
+            this.initEvents();
         },
-        outstr = [];
-    if (color)
-        alignObj["background-color"] = color;
-    if (bgimg)
-        alignObj["background-image"] = 'url("' + bgimg + '")';
-    switch (align) {
-        case "repeat-x":
-            alignObj["background-repeat"] = "repeat-x;";
-            break;
-        case "repeat-y":
-            alignObj["background-repeat"] = "repeat-y;";
-            break;
-        case "repeat":
-            alignObj["background-repeat"] = "repeat;";
-            break;
-        case "self":
-            alignObj["background-position"] = $G("x").value + "px " + $G("y").value + "px";
-            break;
-    }
-    for (var name in alignObj) {
-        if (alignObj.hasOwnProperty(name)) {
-            outstr.push(name + ":" + alignObj[name]);
+        /* 初始化容器 */
+        initContainer: function () {
+            this.container.innerHTML = '';
+            this.list = document.createElement('ul');
+            this.clearFloat = document.createElement('li');
+
+            domUtils.addClass(this.list, 'list');
+            domUtils.addClass(this.clearFloat, 'clearFloat');
+
+            this.list.id = 'imageListUl';
+            this.list.appendChild(this.clearFloat);
+            this.container.appendChild(this.list);
+        },
+        /* 初始化滚动事件,滚动到地步自动拉取数据 */
+        initEvents: function () {
+            var _this = this;
+
+            /* 滚动拉取图片 */
+            domUtils.on($G('imageList'), 'scroll', function(e){
+                var panel = this;
+                if (panel.scrollHeight - (panel.offsetHeight + panel.scrollTop) < 10) {
+                    _this.getImageData();
+                }
+            });
+            /* 选中图片 */
+            domUtils.on(this.container, 'click', function (e) {
+                var target = e.target || e.srcElement,
+                    li = target.parentNode,
+                    nodes = $G('imageListUl').childNodes;
+
+                if (li.tagName.toLowerCase() == 'li') {
+                    updateFormState('nocolor', null, '');
+                    for (var i = 0, node; node = nodes[i++];) {
+                        if (node == li && !domUtils.hasClass(node, 'selected')) {
+                            domUtils.addClass(node, 'selected');
+                            updateFormState('colored', null, li.firstChild.getAttribute("_src"), 'repeat');
+                        } else {
+                            domUtils.removeClasses(node, 'selected');
+                        }
+                    }
+                    updateBackground();
+                }
+            });
+        },
+        /* 初始化第一次的数据 */
+        initData: function () {
+
+            /* 拉取数据需要使用的值 */
+            this.state = 0;
+            this.listSize = editor.getOpt('imageManagerListSize');
+            this.listIndex = 0;
+            this.listEnd = false;
+
+            /* 第一次拉取数据 */
+            this.getImageData();
+        },
+        /* 重置界面 */
+        reset: function() {
+            this.initContainer();
+            this.initData();
+        },
+        /* 向后台拉取图片列表数据 */
+        getImageData: function () {
+            var _this = this;
+
+            if(!_this.listEnd && !this.isLoadingData) {
+                this.isLoadingData = true;
+                var url = editor.getActionUrl(editor.getOpt('imageManagerActionName')),
+                    isJsonp = utils.isCrossDomainUrl(url);
+                ajax.request(url, {
+                    'timeout': 100000,
+                    'dataType': isJsonp ? 'jsonp':'',
+                    'data': utils.extend({
+                            start: this.listIndex,
+                            size: this.listSize
+                        }, editor.queryCommandValue('serverparam')),
+                    'method': 'get',
+                    'onsuccess': function (r) {
+                        try {
+                            var json = isJsonp ? r:eval('(' + r.responseText + ')');
+                            if (json.state == 'SUCCESS') {
+                                _this.pushData(json.list);
+                                _this.listIndex = parseInt(json.start) + parseInt(json.list.length);
+                                if(_this.listIndex >= json.total) {
+                                    _this.listEnd = true;
+                                }
+                                _this.isLoadingData = false;
+                            }
+                        } catch (e) {
+                            if(r.responseText.indexOf('ue_separate_ue') != -1) {
+                                var list = r.responseText.split(r.responseText);
+                                _this.pushData(list);
+                                _this.listIndex = parseInt(list.length);
+                                _this.listEnd = true;
+                                _this.isLoadingData = false;
+                            }
+                        }
+                    },
+                    'onerror': function () {
+                        _this.isLoadingData = false;
+                    }
+                });
+            }
+        },
+        /* 添加图片到列表界面上 */
+        pushData: function (list) {
+            var i, item, img, icon, _this = this,
+                urlPrefix = editor.getOpt('imageManagerUrlPrefix');
+            for (i = 0; i < list.length; i++) {
+                if(list[i] && list[i].url) {
+                    item = document.createElement('li');
+                    img = document.createElement('img');
+                    icon = document.createElement('span');
+
+                    domUtils.on(img, 'load', (function(image){
+                        return function(){
+                            _this.scale(image, image.parentNode.offsetWidth, image.parentNode.offsetHeight);
+                        }
+                    })(img));
+                    img.width = 113;
+                    img.setAttribute('src', urlPrefix + list[i].url + (list[i].url.indexOf('?') == -1 ? '?noCache=':'&noCache=') + (+new Date()).toString(36) );
+                    img.setAttribute('_src', urlPrefix + list[i].url);
+                    domUtils.addClass(icon, 'icon');
+
+                    item.appendChild(img);
+                    item.appendChild(icon);
+                    this.list.insertBefore(item, this.clearFloat);
+                }
+            }
+        },
+        /* 改变图片大小 */
+        scale: function (img, w, h, type) {
+            var ow = img.width,
+                oh = img.height;
+
+            if (type == 'justify') {
+                if (ow >= oh) {
+                    img.width = w;
+                    img.height = h * oh / ow;
+                    img.style.marginLeft = '-' + parseInt((img.width - w) / 2) + 'px';
+                } else {
+                    img.width = w * ow / oh;
+                    img.height = h;
+                    img.style.marginTop = '-' + parseInt((img.height - h) / 2) + 'px';
+                }
+            } else {
+                if (ow >= oh) {
+                    img.width = w * ow / oh;
+                    img.height = h;
+                    img.style.marginLeft = '-' + parseInt((img.width - w) / 2) + 'px';
+                } else {
+                    img.width = w;
+                    img.height = h * oh / ow;
+                    img.style.marginTop = '-' + parseInt((img.height - h) / 2) + 'px';
+                }
+            }
+        },
+        getInsertList: function () {
+            var i, lis = this.list.children, list = [], align = getAlign();
+            for (i = 0; i < lis.length; i++) {
+                if (domUtils.hasClass(lis[i], 'selected')) {
+                    var img = lis[i].firstChild,
+                        src = img.getAttribute('_src');
+                    list.push({
+                        src: src,
+                        _src: src,
+                        floatStyle: align
+                    });
+                }
+
+            }
+            return list;
         }
-    }
-    if (getCheckIpt() != "none") {
-        utils.cssRule('body','body{' + outstr.join(";") + '}',doc);
+    };
 
-    } else {
+    dialog.onok = function () {
+        updateBackground();
+        editor.fireEvent('saveScene');
+    };
+    dialog.oncancel = function () {
+        editor.execCommand('background', backupStyle);
+    };
 
-        utils.cssRule('body','',doc)
-    }
-};
-
-
-
-dialog.onok = function () {
-    setBody();
-};
-dialog.oncancel = function () {
-    utils.cssRule('body',bkbodyStyle,doc)
-};
-bkbodyStyle = utils.cssRule('body',undefined,doc);
+})();

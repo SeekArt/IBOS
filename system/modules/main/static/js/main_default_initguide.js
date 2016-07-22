@@ -288,7 +288,8 @@ var initialize = {
 						// 上传头像的路径
 						$("#img_src").val(data.file);
 						//将上传后的图片显示出来
-						$("#portrait_img").css("display", "block").attr("src", data.data);
+						$("#portrait_img").css("display", "block").attr("src", data.file
+								);
 						//改变初始化的头像判断值
 						vali.avatar = true;
 						//改变进度条视图

@@ -135,7 +135,7 @@ use application\core\utils\IBOS;
 													<i class="atti"><img width="32" height="32" src="<?php echo $value['iconsmall']; ?>" alt="<?php echo $value['filename']; ?>" title="<?php echo $value['filename']; ?>"></i>
 													<div class="attc"><?php echo $value['filename']; ?></div>
 													<span class="fss mlm">
-														<a href="<?php echo $value['downurl']; ?>" class="anchor">下载</a>&nbsp;&nbsp;
+														<a href="<?php echo $value['downurl']; ?>" target="_blank" class="anchor">下载</a>&nbsp;&nbsp;
 			                                            <?php if (isset($value['officereadurl'])): ?>
 			                                                <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
 			                                                    <?php echo $lang['View']; ?>

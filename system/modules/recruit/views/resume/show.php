@@ -253,7 +253,7 @@
 													<span class="tcm">(<?php echo $fileInfo['filesize']; ?>)</span>
 												</div>
 												<span class="fss">
-													<a href="<?php echo $fileInfo['downurl']; ?>" class="anchor"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+													<a href="<?php echo $fileInfo['downurl']; ?>" target="_blank" class="anchor"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
                                                     <?php if (isset($fileInfo['officereadurl'])): ?>
                                                         <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $fileInfo['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
                                                             <?php echo $lang['View']; ?>
@@ -480,6 +480,7 @@
 <!-- 增加/编辑联系记录 -->
 <div id="contact_dialog" style="width: 500px; display:none;">
     <form id="contact_dialog_form">
+        <input type="hidden" name="detailid" value="<?php echo $resumeDetail['detailid']; ?>">
 		<div class="form-horizontal form-compact">
 			<div class="control-group">
 				<label class="control-label"><?php echo $lang['Contact time']; ?></label>
@@ -527,6 +528,7 @@
 				</div>
 			</div>
 		</div>
+        <input type="hidden" name="detailid" value="<?php echo $resumeDetail['resumeid']; ?>" />
     </form>
 </div>
 
@@ -578,6 +580,7 @@
 			</div>
 		</div>
 		<input type="hidden" name="interviewid" id="interviewid" />
+        <input type="hidden" name="detailid" value="<?php echo $resumeDetail['resumeid']; ?>" />
     </form>
 </div>
 <!--增加/修改背景记录-->
@@ -636,6 +639,7 @@
 				</div>
 			</div>
 		</div>
+        <input type="hidden" name="detailid" value="<?php echo $resumeDetail['resumeid']; ?>" />
     </form>
 </div>
 

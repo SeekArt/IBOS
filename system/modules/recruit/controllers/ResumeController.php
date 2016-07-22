@@ -10,7 +10,7 @@
 /**
  * 招聘模块------招聘默认控制器，继承RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: ResumeController.php 6584 2016-03-11 08:31:13Z gzhyj $
+ * @version $Id: ResumeController.php 7182 2016-05-21 08:38:03Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -31,6 +31,7 @@ use application\modules\recruit\model\ResumeBgchecks;
 use application\modules\recruit\model\ResumeContact;
 use application\modules\recruit\model\ResumeDetail;
 use application\modules\recruit\model\ResumeInterview;
+use application\modules\recruit\model\ResumeStats;
 use application\modules\recruit\utils\AnalysisConfig;
 use application\modules\recruit\utils\Recruit as RecruitUtil;
 use application\modules\recruit\utils\ResumeAnalysis;
@@ -38,6 +39,17 @@ use application\modules\user\utils\User as UserUtil;
 use CJSON;
 
 class ResumeController extends BaseController {
+
+    /**
+     * 简历状态对应 resume_statistics 表字段名
+     * @var array
+     */
+    protected $stateList = array(
+        1 => 'interview',
+        2 => 'employ',
+        4 => 'pending',
+        5 => 'eliminate',
+    );
 
     /**
      * 模块首页
@@ -121,6 +133,8 @@ class ResumeController extends BaseController {
             //更新积分
             $uid = IBOS::app()->user->uid;
             UserUtil::updateCreditByAction( 'addresume', $uid );
+            ResumeStats::model()->updateState( 'new' );
+            ResumeStats::model()->updateState( $this->stateList[$data['status']] );
 
             $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'resume/index' ) );
         }
@@ -240,6 +254,12 @@ class ResumeController extends BaseController {
             'statustime' => $statustime
         );
         $flag = Resume::model()->modify( $resumeid, $data );
+        // resume_statistics 表更新
+        if ( $resume['status'] != $resumeDetail['status'] ) {
+            // 如果简历上次更新时间是当天，则需要同时将简历原状态的统计数更新
+            $oldStatus = ( in_array( $resume['status'], array( 1, 2, 4, 5 ) ) && $resume['statustime'] == strtotime( date( "Y-m-d", time() ) ) ) ? $this->stateList[$resume['status']] : '';
+            ResumeStats::model()->updateState( $this->stateList[$resumeDetail['status']], $oldStatus );
+        }
         if ( $flag ) {
             unset( $resumeDetail['status'] );
             $resumeDetail['birthday'] = strtotime( $resumeDetail['birthday'] );
@@ -323,6 +343,10 @@ class ResumeController extends BaseController {
         if ( IBOS::app()->request->isAjaxRequest ) {
             $resumeid = Env::getRequest( 'resumeid' );
             $status = Env::getRequest( 'status' );
+            $resume = Resume::model()->findByPk( $resumeid );
+            // 如果简历上次更新时间是当天，则需要同时将简历原状态的统计数更新
+            $oldStatus = ( in_array( $resume->status, array( 1, 2, 4, 5 ) ) && $resume->statustime == strtotime( date( "Y-m-d", time() ) ) ) ? $this->stateList[$resume->status] : '';
+            ResumeStats::model()->updateState( $this->stateList[$status], $oldStatus );
             Resume::model()->updateAll( array( 'status' => $status, 'uptime' => TIMESTAMP, 'statustime' => strtotime( date( 'Y-m-d' ) ) ), "FIND_IN_SET(resumeid,'{$resumeid}')" );
             $showStatus = ICResumeDetail::handleResumeStatus( $status );
             $this->ajaxReturn( array( 'showStatus' => $showStatus, 'isSuccess' => 1, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );

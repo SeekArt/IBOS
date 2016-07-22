@@ -1,15 +1,5 @@
 <?php
 
-
-namespace application\modules\article\controllers;
-
-use application\core\controllers\Controller;
-use application\core\utils\IBOS;
-use application\core\utils\Module;
-use application\core\utils\StringUtil;
-use application\modules\article\core\ArticleCategory;
-use application\modules\dashboard\model\Approval;
-
 /**
  * 文章模块------ 基类控制器文件
  *
@@ -20,9 +10,19 @@ use application\modules\dashboard\model\Approval;
 /**
  * 文章模块------ 信息中心基类控制器，继承Controller
  * @package application.modules.article.controllers
- * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BaseController.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
+
+namespace application\modules\article\controllers;
+
+use application\core\controllers\Controller;
+use application\core\utils\IBOS;
+use application\core\utils\Module;
+use application\core\utils\StringUtil;
+use application\modules\article\core\ArticleCategory;
+use application\modules\dashboard\model\Approval;
+
 class BaseController extends Controller {
 
     /**

@@ -10,13 +10,13 @@
 /**
  * 工作日志模块------  工具类
  * @package application.modules.diary.utils
- * @version $Id: Diary.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Diary.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
 namespace application\modules\diary\utils;
 
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\diary\model\DiaryAttention;
@@ -30,22 +30,22 @@ class Diary {
      * @param string $dateStr 
      * @return array
      */
-    public static function getDateAndWeekDay( $dateStr ) {
-        list($year, $month, $day) = explode( '-', $dateStr );
+    public static function getDateAndWeekDay($dateStr) {
+        list($year, $month, $day) = explode('-', $dateStr);
         $weekArray = array(
-            IBOS::lang( 'Day', 'date' ),
-            IBOS::lang( 'One', 'date' ),
-            IBOS::lang( 'Two', 'date' ),
-            IBOS::lang( 'Three', 'date' ),
-            IBOS::lang( 'Four', 'date' ),
-            IBOS::lang( 'Five', 'date' ),
-            IBOS::lang( 'Six', 'date' )
+            IBOS::lang('Day', 'date'),
+            IBOS::lang('One', 'date'),
+            IBOS::lang('Two', 'date'),
+            IBOS::lang('Three', 'date'),
+            IBOS::lang('Four', 'date'),
+            IBOS::lang('Five', 'date'),
+            IBOS::lang('Six', 'date')
         );
-        $weekday = $weekArray[date( "w", strtotime( $dateStr ) )];
-        return array( 'year' => $year,
+        $weekday = $weekArray[date("w", strtotime($dateStr))];
+        return array('year' => $year,
             'month' => $month,
             'day' => $day,
-            'weekday' => IBOS::lang( 'Weekday', 'date' ) . $weekday
+            'weekday' => IBOS::lang('Weekday', 'date') . $weekday
         );
     }
 
@@ -54,24 +54,24 @@ class Diary {
      * @param array $search 查询数组
      * @return string
      */
-    public static function joinSearchCondition( $search ) {
+    public static function joinSearchCondition($search) {
         $searchCondition = '';
         //对keyword添加转义
         $keyword = \CHtml::encode($search['keyword']);
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
-        if ( !empty( $keyword ) ) {
+        if (!empty($keyword)) {
             $searchCondition.=" content LIKE '%$keyword%' AND ";
         }
-        if ( !empty( $starttime ) ) {
-            $starttime = strtotime( $starttime );
+        if (!empty($starttime)) {
+            $starttime = strtotime($starttime);
             $searchCondition.=" diarytime>=$starttime AND ";
         }
-        if ( !empty( $endtime ) ) {
-            $endtime = strtotime( $endtime );
+        if (!empty($endtime)) {
+            $endtime = strtotime($endtime);
             $searchCondition.=" diarytime<=$endtime AND ";
         }
-        $condition = !empty( $searchCondition ) ? substr( $searchCondition, 0, -4 ) : '';
+        $condition = !empty($searchCondition) ? substr($searchCondition, 0, -4) : '';
         return $condition;
     }
 
@@ -81,8 +81,8 @@ class Diary {
      * @param string $condition2 条件2
      * @return string
      */
-    public static function joinCondition( $condition1, $condition2 ) {
-        if ( empty( $condition1 ) ) {
+    public static function joinCondition($condition1, $condition2) {
+        if (empty($condition1)) {
             return $condition2;
         } else {
             return $condition1 . ' AND ' . $condition2;
@@ -95,50 +95,50 @@ class Diary {
      * @param array $diaryList 日志信息
      * @return string
      */
-    public static function getCalendar( $ym, $diaryList, $currentDay ) {
-        if ( $ym ) {
-            $year = substr( $ym, 0, 4 );
-            $month = substr( $ym, 4, (strlen( $ym ) - 4 ) );
+    public static function getCalendar($ym, $diaryList, $currentDay) {
+        if ($ym) {
+            $year = substr($ym, 0, 4);
+            $month = substr($ym, 4, (strlen($ym) - 4));
 
-            if ( $month > 12 ) {
-                $year += floor( $month / 12 );
+            if ($month > 12) {
+                $year += floor($month / 12);
                 $month = $month % 12;
             }
-            if ( $year > 2030 )
+            if ($year > 2030)
                 $year = 2030;
-            if ( $year < 1980 )
+            if ($year < 1980)
                 $year = 1980;
         }
 
-        $nowtime = mktime( 0, 0, 0, $month, 1, $year ); //当月１号转为秒 
-        $daysofmonth = date( 't', $nowtime ); //当月天数 
-        $weekofbeginday = date( 'w', $nowtime ); //当月第一天是星期几 
-        $weekofendday = date( 'w', mktime( 0, 0, 0, $month + 1, 0, $year ) ); //当月最后一天是星期几 
-        $daysofprevmonth = date( 't', mktime( 0, 0, 0, $month, 0, $year ) ); //上个月天数 
+        $nowtime = mktime(0, 0, 0, $month, 1, $year); //当月１号转为秒 
+        $daysofmonth = date('t', $nowtime); //当月天数 
+        $weekofbeginday = date('w', $nowtime); //当月第一天是星期几 
+        $weekofendday = date('w', mktime(0, 0, 0, $month + 1, 0, $year)); //当月最后一天是星期几 
+        $daysofprevmonth = date('t', mktime(0, 0, 0, $month, 0, $year)); //上个月天数 
 
         $result = array();
         $count = 1; //计数
         //列出上月后几天 
-        for ( $i = 1; $i <= $weekofbeginday; $i++ ) {
-            $result[] = array( 'day' => $daysofprevmonth - $weekofbeginday + $i, 'className' => 'old', 'diaryid' => '' );
+        for ($i = 1; $i <= $weekofbeginday; $i++) {
+            $result[] = array('day' => $daysofprevmonth - $weekofbeginday + $i, 'className' => 'old', 'diaryid' => '');
             $count++;
         }
         //当月全部 
-        for ( $i = 1; $i <= $daysofmonth; $i++ ) {
+        for ($i = 1; $i <= $daysofmonth; $i++) {
             $css = '';
-            if ( $i == $currentDay ) {
+            if ($i == $currentDay) {
                 $css .= "current";
-            } else if ( $diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == false ) {
+            } else if ($diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == false) {
                 $css.='log';
-            } else if ( $diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == true ) {
+            } else if ($diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == true) {
                 $css.='log comment';
             }
-            $result[] = array( 'day' => $i, 'className' => $css, 'diaryid' => $diaryList[$i]['diaryid'] );
+            $result[] = array('day' => $i, 'className' => $css, 'diaryid' => $diaryList[$i]['diaryid']);
             $count++;
         }
         //下月前几天 
-        for ( $i = 1; $i <= 6 - $weekofendday; $i++ ) {
-            $result[] = array( 'day' => $i, 'className' => 'new', 'diaryid' => '' );
+        for ($i = 1; $i <= 6 - $weekofendday; $i++) {
+            $result[] = array('day' => $i, 'className' => 'new', 'diaryid' => '');
         }
         return $result;
     }
@@ -149,13 +149,13 @@ class Diary {
      * @param integer $author 该日志的作者
      * @return boolean $flag 通过或不通过
      */
-    public static function checkShowPurview( $uid, $author ) {
+    public static function checkShowPurview($uid, $author) {
         $flag = false;
-        if ( $uid == $author ) {
+        if ($uid == $author) {
             return true;
         }
-        $subUidArr = UserUtil::getAllSubs( $uid, '', true );
-        if ( StringUtil::findIn( $author, implode( ',', $subUidArr ) ) ) {
+        $subUidArr = UserUtil::getAllSubs($uid, '', true);
+        if (StringUtil::findIn($author, implode(',', $subUidArr))) {
             $flag = true;
         }
         return $flag;
@@ -166,8 +166,8 @@ class Diary {
      * @param array $arr  要处理的数组
      * @return array  处理过后的数组
      */
-    public static function removeNullVal( $arr ) {
-        $ret = array_filter( $arr, create_function( '$v', 'return !empty($v);' ) );
+    public static function removeNullVal($arr) {
+        $ret = array_filter($arr, create_function('$v', 'return !empty($v);'));
         return $ret;
     }
 
@@ -177,7 +177,7 @@ class Diary {
      * @return type
      */
     public static function getSetting() {
-        return IBOS::app()->setting->get( 'setting/diaryconfig' );
+        return IBOS::app()->setting->get('setting/diaryconfig');
     }
 
     /**
@@ -185,9 +185,9 @@ class Diary {
      * @param integer $attentionUid 被关注的uid
      * @return boolean
      */
-    public static function getIsAttention( $attentionUid ) {
-        $aUids = DiaryAttention::model()->fetchAuidByUid( IBOS::app()->user->uid );
-        return in_array( $attentionUid, $aUids );
+    public static function getIsAttention($attentionUid) {
+        $aUids = DiaryAttention::model()->fetchAuidByUid(IBOS::app()->user->uid);
+        return in_array($attentionUid, $aUids);
     }
 
     /**
@@ -195,9 +195,9 @@ class Diary {
      * @param integer $stamp 图章id
      * @return int 返回分数
      */
-    public static function getScoreByStamp( $stamp ) {
+    public static function getScoreByStamp($stamp) {
         $stamps = self::getEnableStamp();
-        if ( isset( $stamps[$stamp] ) ) {
+        if (isset($stamps[$stamp])) {
             return $stamps[$stamp];
         } else {
             return 0;
@@ -213,13 +213,13 @@ class Diary {
         //取得所有图章
         $stampDetails = $config['stampdetails'];
         $stamps = array();
-        if ( !empty( $stampDetails ) ) {
-            $stampidArr = explode( ',', trim( $stampDetails ) );
-            if ( count( $stampidArr ) > 0 ) {
-                foreach ( $stampidArr as $stampidStr ) {
-                    list($stampId, $score) = explode( ':', $stampidStr );
-                    if ( $stampId != 0 ) {
-                        $stamps[$stampId] = intval( $score );
+        if (!empty($stampDetails)) {
+            $stampidArr = explode(',', trim($stampDetails));
+            if (count($stampidArr) > 0) {
+                foreach ($stampidArr as $stampidStr) {
+                    list($stampId, $score) = explode(':', $stampidStr);
+                    if ($stampId != 0) {
+                        $stamps[$stampId] = intval($score);
                     }
                 }
             }
@@ -233,9 +233,9 @@ class Diary {
      */
     public static function checkIsHasSub() {
         static $hasSub = null;
-        if ( $hasSub === null ) {
-            $subUidArr = User::model()->fetchSubUidByUid( IBOS::app()->user->uid );
-            if ( !empty( $subUidArr ) ) {
+        if ($hasSub === null) {
+            $subUidArr = User::model()->fetchSubUidByUid(IBOS::app()->user->uid);
+            if (!empty($subUidArr)) {
                 $hasSub = true;
             } else {
                 $hasSub = false;
@@ -249,10 +249,10 @@ class Diary {
      * @return string 格式：（18.00）
      */
     public static function getOffTime() {
-        if ( Module::getIsEnabled( "calendar" ) ) {
-            $workTime = explode( ',', IBOS::app()->setting->get( "setting/calendarworkingtime" ) );
+        if (Module::getIsEnabled("calendar")) {
+            $workTime = explode(',', IBOS::app()->setting->get("setting/calendarworkingtime"));
             $offTime = $workTime[1];
-            $ret = self::handleOffTime( $offTime );
+            $ret = self::handleOffTime($offTime);
         } else {
             $ret = '18.00';
         }
@@ -264,7 +264,7 @@ class Diary {
      * @param string $stamp 日程设置的下班时间
      * @return string
      */
-    public static function handleOffTime( $offTime ) {
+    public static function handleOffTime($offTime) {
         $times = array(
             '0' => '00.00',
             '0.5' => '00.30',
@@ -316,7 +316,7 @@ class Diary {
             '23.5' => '23.30',
             '24' => '24.00'
         );
-        if ( isset( $times[$offTime] ) ) {
+        if (isset($times[$offTime])) {
             return $times[$offTime];
         } else {
             return '18.00';

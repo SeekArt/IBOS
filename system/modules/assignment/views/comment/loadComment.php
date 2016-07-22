@@ -46,7 +46,7 @@ use application\core\utils\StringUtil;
 											<?php echo $value['filename']; ?> <span class="tcm">(<?php echo $value['filesize']; ?>)</span>
 										</div>
 										<div class="fss">
-											<a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>
+											<a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>
 											<?php if ( isset( $value['officereadurl'] ) ): ?>
 												<a href="javascript:;" class="mls" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}'  title="<?php echo $lang['Read']; ?>">
 													<?php echo $lang['Read']; ?>

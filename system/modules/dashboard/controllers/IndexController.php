@@ -27,7 +27,7 @@ use CHtml;
  *
  * @package application.modules.dashboard.controllers
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: IndexController.php 6765 2016-04-06 03:27:45Z tanghang $
+ * @version $Id: IndexController.php 7023 2016-05-10 08:01:05Z Aeolus $
  */
 class IndexController extends BaseController {
 

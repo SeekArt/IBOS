@@ -55,7 +55,7 @@
 		<script Language="JavaScript">
 			var parent_window = window.opener;
 			function click_model(ID) {
-				parent_window.OCX.addDocHeader(ID);
+				parent_window.officeOcx.addDocHeader(ID);
 				window.close();
 			}
 		</script>

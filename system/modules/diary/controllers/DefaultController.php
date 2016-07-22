@@ -10,7 +10,7 @@
 /**
  * 工作日志模块------工作日志默认控制器，继承DiaryBaseController
  * @package application.modules.diary.controllers
- * @version $Id: DefaultController.php 6869 2016-04-15 08:45:14Z tanghang $
+ * @version $Id: DefaultController.php 7193 2016-05-23 06:09:26Z php_lxy $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -59,10 +59,7 @@ class DefaultController extends BaseController {
             $uid = IBOS::app()->user->uid;
             //是否搜索
             if ( Env::getRequest( 'param' ) == 'search' ) {
-                //搜索必须是post类型请求
-                if ( IBOS::app()->request->isPostRequest ) {
-                    $this->search();
-                }
+                $this->search();
             }
             $this->_condition = DiaryUtil::joinCondition( $this->_condition, "uid = $uid" );
             $paginationData = Diary::model()->fetchAllByPage( $this->_condition );
@@ -663,7 +660,11 @@ class DefaultController extends BaseController {
             if ( !empty( $records ) ) {
                 foreach ( $records as $record ) {
                     $record['realname'] = User::model()->fetchRealnameByUid( $record['uid'] );
-                    $content = StringUtil::parseHtml( StringUtil::cutStr( $record['content'], 45 ) );
+                    if ( StringUtil::strExists($record['content'], '<img class') === FALSE) {
+                        $content = StringUtil::parseHtml( StringUtil::cutStr( $record['content'], 45 ) );
+                    } else {
+                        $content = StringUtil::parseHtml( $record['content'] );
+                    }
                     $htmlStr.= '<li class="media">
 									<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
 										<img src="' . Org::getDataStatic( $record['uid'], 'avatar', 'small' ) . '" title="' . $record['realname'] . '" class="img-rounded"/>

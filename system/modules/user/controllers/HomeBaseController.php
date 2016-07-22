@@ -114,7 +114,9 @@ class HomeBaseController extends Controller {
         $onlineStatus = UserUtil::getOnlineStatus( $this->getUid() );
         $styleMap = array(
             -1 => 'o-pm-offline',
-            1 => 'o-pm-online'
+            0 => 'o-pm-online',
+            1 => 'o-pm-online',
+            2 => 'o-pm-offline',
         );
         $data = array(
             'user' => $this->getUser(),

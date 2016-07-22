@@ -5,79 +5,37 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\core\utils\Module;
-use application\core\utils\Org;
+use application\modules\main\utils\Main;
+use application\modules\main\utils\Update;
 
 class UpdateController extends BaseController {
 
-    public function actionIndex() {
-        $types = Env::getRequest( 'updatetype' );
-        $data = array();
-        // 处理提交
-        if ( Env::submitCheck( 'formhash' ) ) {
-            $type = implode( ',', $types );
-            if ( !empty( $type ) ) {
-                $this->redirect( $this->createUrl( 'update/index', array( 'doupdate' => 1, 'updatetype' => $type ) ) );
-            }
-        }
-        // 执行更新缓存操作
-        if ( IBOS::app()->request->getIsAjaxRequest() ) {
-            $op = Env::getRequest( 'op' );
-            // 保险起见，设置执行时间为两分钟，更长一些
-            if ( LOCAL ) {
-                @set_time_limit( 0 );
-            }
-            if ( $op == 'data' ) {
-                Cache::update();
-            }
-            /**
-             * 必须先执行data缓存，否则org缓存更新后的组织架构还是错的
-             */
-            if ( $op == 'static' ) {
-                LOCAL && IBOS::app()->assetManager->republicAll();
-                Org::update();
-            }
-            if ( $op == 'module' ) {
-                Module::updateConfig();
-            }
-            // 清除缓存文件
-            IBOS::app()->cache->clear();
-            $this->ajaxReturn( array( 'isSuccess' => true ) );
-        }
-        // 处理提交上来的动作项
-        if ( Env::getRequest( 'doupdate' ) == 1 ) {
-            $type = explode( ',', trim( $types, ',' ) );
-            $data['doUpdate'] = true;
-            foreach ( $type as $index => $act ) {
-                if ( !empty( $act ) ) {
-                    // 数据缓存
-                    if ( in_array( 'data', $type ) ) {
-                        unset( $type[$index] );
-                        $data['typedesc'] = IBOS::lang( 'Update' ) . IBOS::lang( 'Data cache' );
-                        $data['op'] = 'data';
-                        break;
-                    }
-                    // 静态文件重发布
-                    if ( in_array( 'static', $type ) ) {
-                        unset( $type[$index] );
-                        $data['typedesc'] = IBOS::lang( 'Update' ) . IBOS::lang( 'Static cache' );
-                        $data['op'] = 'static';
-                        break;
-                    }
-                    // 更新模块配置文件
-                    if ( in_array( 'module', $type ) ) {
-                        $data['typedesc'] = IBOS::lang( 'Update' ) . IBOS::lang( 'Module setting' );
-                        $data['op'] = 'module';
-                        unset( $type[$index] );
-                        break;
-                    }
-                }
-            }
-            $data['next'] = $this->createUrl( 'update/index', array( 'doupdate' => intval( !empty( $type ) ), 'updatetype' => implode( ',', $type ) ) );
-        } else {
-            $data['doUpdate'] = false;
-        }
-        $this->render( 'index', $data );
-    }
+	public function actionIndex() {
+
+		if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+			if ( LOCAL ) {
+				@set_time_limit( 0 );
+			}
+			$op = Env::getRequest( 'op' );
+			if ( !in_array( $op, array( 'data', 'static', 'module' ) ) ) {
+				return $this->ajaxReturn( array(
+							'isSuccess' => false,
+							'data' => array(),
+							'msg' => '错误的op参数，确定你是正常操作？',
+						) );
+			}
+			$offset = Env::getRequest( 'offset' );
+			$update = Main::getCookie( IBOS::app()->user->uid . '_update_lock' );
+			if ( $offset == '0' && empty( $update ) ) {
+				Main::setCookie( IBOS::app()->user->uid . '_update_lock', 1 );
+				Cache::update();
+			}
+			Cache::clear();
+			$method = $op . 's';
+			return $this->ajaxReturn( Update::$method( $offset ) );
+		} else {
+			return $this->render( 'index' );
+		}
+	}
 
 }

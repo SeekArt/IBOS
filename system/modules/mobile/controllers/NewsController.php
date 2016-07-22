@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: NewsController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: NewsController.php 4484 2014-10-29 02:07:53Z gzpjh $
  */
 
 namespace application\modules\mobile\controllers;

@@ -30,6 +30,6 @@ use application\core\utils\IBOS;
 				<input type="hidden" name="op" value="sync" />
 				<input type="hidden" name="flag" value="<?php echo $flag; ?>" />
 			</form>
-		</div> 
+		</div>
 	</body>
 </html>

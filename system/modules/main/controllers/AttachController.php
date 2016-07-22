@@ -2,8 +2,8 @@
 
 /**
  * main模块的附件控制器
- * 
- * @version $Id: AttachController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ *
+ * @version $Id: AttachController.php 7549 2016-07-14 10:08:35Z tanghang $
  * @package application.modules.main.controllers
  */
 
@@ -11,6 +11,7 @@ namespace application\modules\main\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils as util;
+use application\core\utils\File;
 use application\modules\main\model\AttachmentN;
 
 class AttachController extends Controller {
@@ -20,13 +21,14 @@ class AttachController extends Controller {
 	 * @return mixed
 	 */
 	public function actionUpload() {
-        //会议管理》会议申请》文件上传 的bug
-        //检查$_FILES是否为空，检查$_FILES['Filedata']['error']是否非0
-        if (empty($_FILES) || $_FILES['Filedata']['error'] != 0) {
-            //TODO 这里不知道返回什么错误提示
-            $echo = array('icon' => '', 'aid' => -1, 'name' => '上传失败', 'url' => '');
-            $this->ajaxReturn(json_encode($echo), 'eval');
-        }
+		//会议管理》会议申请》文件上传 的bug
+		//检查$_FILES是否为空，检查$_FILES['Filedata']['error']是否非0
+		if ( empty( $_FILES ) || $_FILES['Filedata']['error'] != 0 ) {
+			//TODO 这里不知道返回什么错误提示
+			$echo = array( 'icon' => '', 'aid' => -1, 'name' => '上传失败', 'url' => '' );
+			$this->ajaxReturn( json_encode( $echo ), 'eval' );
+		}
+
 		// 安全验证
 		// 附件类型，可指定可不指定，不指定为普通类型
 		$attachType = util\Env::getRequest( 'type' );
@@ -34,12 +36,7 @@ class AttachController extends Controller {
 			$attachType = 'common';
 		}
 		$module = util\Env::getRequest( 'module' );
-		// 初始化工厂类并调用上传方法
-		if ( $attachType == 'common' ) {
-			$object = '\application\modules\main\components\CommonAttach';
-		} else {
-			$object = '\application\modules\\' . $module . '\components\\' . ucfirst( $attachType ) . 'Attach';
-		}
+		$object = '\application\modules\main\components\CommonAttach';
 		if ( class_exists( $object ) ) {
 			$attach = new $object( 'Filedata', $module );
 			$return = $attach->upload();
@@ -50,6 +47,7 @@ class AttachController extends Controller {
 	/*
 	 * 获取上传弹框视图
 	 */
+
 	public function actionGetView() {
 		$alias = 'application.views.upload';
 		$views = $this->renderPartial( $alias, array(), true );
@@ -62,6 +60,7 @@ class AttachController extends Controller {
 	 */
 	public function actionDownload() {
 		$data = $this->getData();
+		$data['attach']['attachment'] = util\File::getAttachUrl() . '/' . $data['attach']['attachment'];
 		if ( !empty( $data ) ) {
 			return util\File::download( $data['attach'], $data['decodeArr'] );
 		}
@@ -73,15 +72,15 @@ class AttachController extends Controller {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function actionOffice() {
 		if ( util\Env::submitCheck( 'formhash' ) ) {
 			$widget = util\IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\main\widgets\Office', array() );
-            echo $widget->handleRequest();
+			echo $widget->handleRequest();
 		} else {
 			$data = $this->getData();
-            $data['decodeArr']['op'] = util\Env::getRequest('op');
+			$data['decodeArr']['op'] = util\Env::getRequest( 'op' );
 			$widget = $this->createWidget( 'application\modules\main\widgets\Office', array( 'param' => $data['decodeArr'], 'attach' => $data['attach'] ) );
 			echo $widget->run();
 		}

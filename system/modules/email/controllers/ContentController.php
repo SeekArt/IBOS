@@ -267,20 +267,19 @@ class ContentController extends BaseController {
             if (isset($_GET['op']) && $_GET['op'] === 'send') {
                 $email = EmailBody::model()->fetchById($id, $this->archiveId);
                 $data['isSend'] = TRUE;
-            }
-            // 我接收的邮件
+            } // 我接收的邮件
             else {
                 $email = Email::model()->fetchById($id, $this->archiveId);
                 $data['isSend'] = FALSE;
             }
             if (!$email) {
-                $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('list/index'));
+                $this->error(IBOS::lang('Email not exists'), $this->createUrl('list/index'));
             }
             // 阅读权限判定
             $isReceiver = $email['toid'] == $this->uid ||
-                    $email['fromid'] == $this->uid ||
-                    StringUtil::findIn($email['copytoids'], $this->uid) ||
-                    StringUtil::findIn($email['toids'], $this->uid);
+                $email['fromid'] == $this->uid ||
+                StringUtil::findIn($email['copytoids'], $this->uid) ||
+                StringUtil::findIn($email['toids'], $this->uid);
             if (!$isReceiver) {
                 $this->error(IBOS::lang('View access invalid'), $this->createUrl('list/index'));
             }
@@ -295,14 +294,10 @@ class ContentController extends BaseController {
             }
             $email['dateTime'] = Convert::formatDate($email['sendtime']);
             // 处理人员信息
-            if ($this->uid == $email['fromid']) {
-                $email['fromName'] = IBOS::lang('Me');
+            if (!empty($email['fromid'])) {
+                $email['fromName'] = User::model()->fetchRealnameByUid($email['fromid']);
             } else {
-                if (!empty($email['fromid'])) {
-                    $email['fromName'] = User::model()->fetchRealnameByUid($email['fromid']);
-                } else {
-                    $email['fromName'] = $email['fromwebmail'];
-                }
+                $email['fromName'] = $email['fromwebmail'];
             }
             //外部邮箱的
             if (!empty($email['toids']) && !is_numeric($email['toids'][0])) {//内部邮件toids第一个字符一定是数字
@@ -328,11 +323,7 @@ class ContentController extends BaseController {
                 if (!empty($uid)) {
                     $tempUid = strpos($uid, '@');
                     if (!$tempUid) {
-                        if ($this->uid == $uid) {
-                            $name = IBOS::lang('Me');
-                        } else {
-                            $name = User::model()->fetchRealnameByUid($uid);
-                        }
+                        $name = User::model()->fetchRealnameByUid($uid);
                     } else {
                         $name = $uid;
                     }
@@ -375,7 +366,7 @@ class ContentController extends BaseController {
                 array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
                 array('name' => IBOS::lang('Show email'))
             ));
-            NotifyMessage::model()->setReadByUrl( $this->uid, IBOS::app()->getRequest()->getUrl() );
+            NotifyMessage::model()->setReadByUrl($this->uid, IBOS::app()->getRequest()->getUrl());
             $this->render('show', $data);
         } else {
             $this->error(IBOS::lang('Parameters error'), $this->createUrl('list/index'));
@@ -401,7 +392,8 @@ class ContentController extends BaseController {
     protected function checkUserSize() {
         $userSize = EmailUtil::getUserSize($this->uid);
         $usedSize = EmailFolder::model()->getUsedSize($this->uid);
-        if ($usedSize > Convert::ConvertBytes($userSize . 'm')) {
+        //如果要比较数字大小，只要其中一个是数字即可
+        if ((float)$usedSize > implode('', StringUtil::ConvertBytes($userSize . 'm'))) {
             $this->error(IBOS::lang('Capacity overflow', '', array('{size}' => $usedSize)), $this->createUrl('email/list'));
         }
     }

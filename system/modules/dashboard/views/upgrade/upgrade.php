@@ -1,4 +1,4 @@
-<?php 
+<?php
 use application\core\utils\IBOS;
 ?>
 
@@ -31,7 +31,7 @@ use application\core\utils\IBOS;
 	<th><?php echo $lang['Operation']; ?></th>
 	</tr>
 	</thead>
-	<%=list%>		
+	<%=list%>
 	</table>
 	</div>
 </script>
@@ -136,14 +136,15 @@ use application\core\utils\IBOS;
 	</form>
 </script>
 <script type="text/ibos-template" id="upgrade_complete">
-			<div>
-			<div class="alert alert-success">
-				<%=msg%>
-				<br/>
-				<p><?php echo $lang['Upgrade complete recommand']; ?></p>
-				<button type="button" onclick="window.location.href = '<?php echo $this->createUrl( 'update/index' ); ?>';" class="btn btn-primary btn-large"><?php echo $lang['Update cache']; ?></button>
-			</div>
-			</div>
+	<div>
+	<div class="alert alert-success">
+		<%=msg%>
+		<br/>
+		<p><?php echo $lang['Upgrade complete recommand']; ?></p>
+		<button type="button" onclick="window.location.href = '<?php echo $this->createUrl( 'update/index' ); ?>';" class="btn btn-primary btn-large"><?php echo $lang['Update cache']; ?></button>
+	</div>
+	</div>
 </script>
+
 <script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js"></script>
 <script src="<?php echo $assetUrl; ?>/js/db_upgrade.js"></script>

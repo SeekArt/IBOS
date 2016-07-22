@@ -3,7 +3,7 @@
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS; 
+use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Tasks;
 use application\modules\file\core\FileCloud;
@@ -14,8 +14,8 @@ $defines = PATH_ROOT . '/system/defines.php';
 define( 'TIMESTAMP', time() );
 define( 'YII_DEBUG', true );
 $yii = PATH_ROOT . '/library/yii.php';
-$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $defines );
+$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $yii );
 require_once '../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
@@ -118,7 +118,7 @@ function doAttachDownload( $userId, $appId, $aid ) {
 	if ( $attach['uid'] != IBOS::app()->user->uid ) {
 		return close( '您没有权限下载此文件' );
 	}
-	$filepath = File::getAttachUrl() . '/' . $attach['attachment'];
+	$filepath = File::fileName( File::getAttachUrl() . '/' . $attach['attachment'] );
 	if ( $cloud ) {
 		$core = new FileCloud( $cloud );
 		$url = $core->getRealUrl( $filepath );

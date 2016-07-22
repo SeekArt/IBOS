@@ -51,7 +51,7 @@ Class FileOperationApi extends System {
 			return false;
 		}
 		Attach::updateAttach( $attachids );
-		$core->moveAttach( $attachids );
+		//$core->moveAttach( $attachids );
 		$res = File::model()->addObject( $fileAttr->pid, $attachids, $fileAttr->uid, $fileAttr->belongType, $fileAttr->cloudid );
 		return $res;
 	}

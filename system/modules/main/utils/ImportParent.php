@@ -3,7 +3,10 @@
 namespace application\modules\main\utils;
 
 use application\core\utils\IBOS;
+use application\core\utils\StringUtil;
 use application\modules\user\utils\Import;
+use CDbCriteria;
+use Exception;
 
 /**
  * 导入父类
@@ -15,421 +18,531 @@ use application\modules\user\utils\Import;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-3-24 17:07:27
- * @version $Id: ImportParent.php 6726 2016-03-31 02:07:23Z tanghang $
+ * @version $Id: ImportParent.php 7288 2016-05-30 04:05:21Z tanghang $
  */
 class ImportParent {
 
-    //值在下方set方法里设置
-    public $import = NULL;
-    //二维数组，内层有status（成功标识，0或者1），text（提示信息），数组data（该行数据，如果有错误，则在错误处添加【醒目】的标记）
-    public $error = array();
-    //模版字段以及数据库对应关系，带表前缀，由子类属性覆盖
-    public $tplField = array();
-    //模版字段关系中，数据表的前缀和表的对应关系，由子类属性覆盖
-    public $tableMap = array();
+	//值在下方set方法里设置
+	public $import = NULL;
+	//二维数组，内层有status（成功标识，0或者1），text（提示信息），数组data（该行数据，如果有错误，则在错误处添加【醒目】的标记）
+	public $error = array();
+	//模版的标识符
+	public $tpl = NULL;
+	//规则模版
+	public $rules = array(
+		'unique' => array(),
+		'required' => array(),
+		'mobile' => array(),
+		'email' => array(),
+		'datetime' => array(),
+	);
+	public $session = NULL;
 
-    public function __construct() {
-        if ( NULL === $this->import ) {
-            $this->import = (object) array();
-            $this->import->config = array();
-            $this->import->data = array();
-            $this->import->relation = array();
-            $this->import->per = 10;
-            $this->import->importData = array();
-            $this->import->fieldCheck = array();
-            $this->import->times = 0;
-        }
-    }
+	public function __construct( $tpl ) {
+		if ( NULL === $this->import ) {
+			$this->import = (object) array();
+			$this->import->data = array();
+			$this->import->format = array();
+			$this->import->insert = array();
+			$this->import->update = array();
+			$this->import->saveData = array();
+			$this->import->relation = array();
+			$this->import->per = 10;
+			$this->import->times = 0;
+			$this->import->i = 0;
+			$this->import->importData = array();
+			$this->tpl = $tpl;
+			$this->session = IBOS::app()->session;
+		}
+	}
 
-    /**
-     *  'module' => 'user',
-     *  'type' => 'common',
-     *  'name' => '用户导入模版',
-     *  'filename' => 'user_import.xls',
-     *  'fieldline' => 3,
-     *  'line' => 3,
-     *  'required'=>'手机号,密码',
-     *  'unique' => '手机号,用户名,微信号,工号,邮箱',
-     * @param type $config
-     * @return Import
-     */
-    public function setConfig( $config ) {
-        $this->import->config = $config;
-        return $this;
-    }
+	protected function customRules( $rules ) {
+		$ruleArray = is_array( $rules ) ? $rules : explode( ',', $rules );
+		foreach ( $ruleArray as $rule ) {
+			$this->rules[$rule] = array();
+		}
+	}
 
-    public function setData( $data ) {
-        $this->import->data = $data;
-        return $this;
-    }
+	public function returnArray( $array ) {
+		if ( !empty( $array[$this->tpl] ) ) {
+			return $array[$this->tpl];
+		} else {
+			return array();
+		}
+	}
 
-    /**
-     * 模版字段对应导入数据字段的一维数组
-     * 注意：这个数组在ImportController里经过了array_filter处理
-     * @param type $fieldRelation
-     * @return Import
-     */
-    public function setRelation( $fieldRelation ) {
-        $this->import->relation = $fieldRelation;
-        return $this;
-    }
+	public function setData( $data ) {
+		$this->import->data = $data;
+		return $this;
+	}
 
-    /**
-     * nothing,cover,new
-     * @param type $check
-     * @return Import
-     */
-    public function setCheck( $check ) {
-        $this->import->check = $check;
-        return $this;
-    }
+	/**
+	 * 模版字段对应导入数据字段的一维数组
+	 * 注意：这个数组在ImportController里经过了array_filter处理
+	 * @param type $fieldRelation
+	 * @return Import
+	 */
+	public function setRelation( $fieldRelation ) {
+		$this->import->relation = $fieldRelation;
+		return $this;
+	}
 
-    public function setPer( $per ) {
-        $this->import->per = $per;
-        return $this;
-    }
+	public function setPer( $per ) {
+		$this->import->per = $per;
+		return $this;
+	}
 
-    public function setTimes( $times ) {
-        $this->import->times = $times;
-        return $this;
-    }
+	public function setTimes( $times ) {
+		$this->import->times = $times;
+		return $this;
+	}
 
-    /**
-     * 格式见：formatFieldCheck
-     * @param type $fieldCheck
-     * @return ImportParent
-     */
-    public function setFieldCheck( $fieldCheck ) {
-        $this->import->fieldCheck = $fieldCheck;
-        return $this;
-    }
+	public function setI( $i ) {
+		$this->import->i = $i;
+		return $this;
+	}
 
-    /**
-     * 对每次取出的一行格式化，并放入import->imosrtData里
-     * 格式为：
-     * 'importData' =>
-     *    array (
-     *      '{{department}}' =>
-     *      array (
-     *        'deptname' => 'mm',
-     *      ),
-     *      '{{user}}' =>
-     *      array (
-     *        'mobile' => 13250302684,
-     *        'password' => 123456,
-     *        'realname' => 木木,
-     *        'gender' => NULL,
-     *        'email' => NULL,
-     *        'weixin' => NULL,
-     *        'jobnumber' => 748360,
-     *        'username' => '木木',
-     *      ),
-     *      '{{user_profile}}' =>
-     *      array (
-     *        'birthday' => NULL,
-     *        'telephone' => NULL,
-     *        'address' => NULL,
-     *        'qq' => NULL,
-     *        'bio' => NULL,
-     *      ),
-     *    ),
-     * @param array $shiftRow 导入数据的一行
-     */
-    public function formatDataIndexByTable( $shiftRow ) {
-        foreach ( $this->import->relation as $tplField => $dataField ) {
-            $field = $this->tplField[$tplField];
-            list($tablePrefix, $fieldName) = explode( '.', $field );
-            $data = $shiftRow[$dataField];
-            $pushData = array( $fieldName => trim( $data ) ); //去除导入数据里左右两边的空白符
-            if ( empty( $this->import->importData[$this->tableMap[$tablePrefix]] ) ) {
-                $this->import->importData[$this->tableMap[$tablePrefix]] = $pushData;
-            } else {
-                $this->import->importData[$this->tableMap[$tablePrefix]] = array_merge(
-                        $this->import->importData[$this->tableMap[$tablePrefix]], $pushData );
-            }
-        }
-    }
+	public function getFieldRule( $tplArray ) {
+		$return = array();
+		$fieldMap = $this->field();
+		$rules = $this->rules();
+		foreach ( $tplArray as $tplName ) {
+			foreach ( $rules as $rule ) {
+				$fieldArray = $rule[0];
+				$return[$tplName] = in_array( $fieldMap[$tplName], $fieldArray ) ? $rule[1] : array();
+			}
+		}
+		return $return;
+	}
 
-    /**
-     * 格式化必须字段和唯一字段，在最开始的时候调用，存入session，后面放入import->fieldCheck里
-     * 格式：
-     * 'fieldCheck' =>
-     *     array (
-     *       'required' =>
-     *       array (
-     *         '{{user}}' =>
-     *         array (
-     *           0 => 'mobile',
-     *           1 => 'password',
-     *         ),
-     *         ),
-     *         'unique' =>
-     *         array (
-     *           '{{user}}' =>
-     *           array (
-     *             0 => 'mobile',
-     *             1 => 'email',
-     *             2 => 'weixin',
-     *             3 => 'jobnumber',
-     *             4 => 'username',
-     *           ),
-     *         ),
-     *       ),
-     * @param array $tplConfig config文件里的配置
-     * @return 返回上面格式里键fieldCheck对应的数组
-     */
-    public function formatFieldCheck( $tplConfig ) {
-        $list = array();
-        foreach ( $this->tplField as $tplField => $field ) {
-            list($tablePrefix, $fieldName) = explode( '.', $field );
-            $requiredArray = explode( ',', $tplConfig['required'] );
-            $uniqueArray = explode( ',', $tplConfig['unique'] );
-            if ( in_array( $tplField, $requiredArray ) ) {
-                $list['required'][$this->tableMap[$tablePrefix]][] = $fieldName;
-            }
-            if ( in_array( $tplField, $uniqueArray ) ) {
-                $list['unique'][$this->tableMap[$tablePrefix]][] = $fieldName;
-            }
-        }
-        return $list;
-    }
+	/**
+	 * 重复检查设置：
+	 * 创建新纪录new，格式：new
+	 * 覆盖旧记录cover，格式：cover
+	 * nothing,cover,new
+	 * @param type $check
+	 * @return Import
+	 */
+	public function setCheck( $check ) {
+		$this->import->check = $check;
+		return $this;
+	}
 
-    /**
-     * 处理必须字段
-     * @param integer $i 从数组里取出的顺序，比如取出第一个，i就等于1
-     * @return array 错误数组，当然有可能是成功的
-     */
-    public function handleRequired( $i ) {
-        $requiredAll = array();
-        $table2PrefixArray = array_flip( $this->tableMap );
-        $prefixDotField2Text = array_flip( $this->tplField );
-        foreach ( array_values( $this->tableMap ) as $table ) {
-            if ( empty( $this->import->importData[$table] ) ||
-                    empty( $this->import->fieldCheck['required'][$table] ) ) {
-                continue; //imortData真实的一条导入数据里以及必须字段里有可能没有某张表的数据，没有的话，跳过
-            }
-            $row = $this->import->importData[$table];
-            foreach ( $this->import->fieldCheck['required'][$table] as $field ) {
-                $prefixDotField = $table2PrefixArray[$table] . '.' . $field;
-                if ( empty( $row[$field] ) ) {
-                    $requiredAll[] = $prefixDotField2Text[$prefixDotField];
-                }
-            }
-        }
+	private function formatRules() {
+		//表前缀.字段=>规则
+		$ruleArray = $this->rules();
+		if ( !empty( $ruleArray ) ) {
+			foreach ( $ruleArray as $row ) {
+				if ( !empty( $row[0] ) && !empty( $row[1] ) ) {
+					$fields = $row[0];
+					$rules = $row[1];
+					foreach ( $rules as $rule ) {
+						if ( isset( $this->rules[$rule] ) ) {
+							$this->rules[$rule] = array_merge( $this->rules[$rule], $fields );
+						}
+					}
+				}
+			}
+		}
+	}
 
-        $num = $i + $this->import->times * $this->import->per;
-        $this->error[$i] = array(
-            'status' => true,
-            'text' => sprintf( "第%s个：", $num ),
-            'i' => $i,
-        );
-        if ( !empty( $requiredAll ) ) {
-            $this->error[$i]['status'] = false;
-            $this->error[$i]['text'] .= implode( ',', $requiredAll ) . '不能为空;';
-        }
-        return $this->error[$i]['status'];
-    }
+	private function convertToRealFieldRelation( $shiftRow ) {
+		//模版字段=>表前缀.表字段
+		$fieldMap = $this->field();
+		$i = $this->import->i;
+		//模版字段=>导入的数据字段
+		foreach ( $this->import->relation as $tplField => $dataField ) {
+			$field = $fieldMap[$tplField];
+			$data = !empty( $shiftRow[$dataField] ) ? $shiftRow[$dataField] : '';
+			//表前缀.表字段=>导入的数据
+			$this->import->importData[$field] = trim( $data );
+		}
+		$this->import->format[$i] = $this->import->importData;
+	}
 
-    /**
-     * 根据唯一字段查数据库，如果条件不为空并且查到了，说明有重复，则返回重复标记
-     * @param string $table 表名，带花括号
-     * @param array $importRow 导入数据中的一行，经过处理，处理格式见formatDataIndexByTable的importData
-     * @param array $uniqueArray 唯一字段数组，格式见formatFieldCheck里的unique
-     * @param array $row 开始值不论传什么都会被变成通过查询之后的结果，建议给false
-     * @return boolean 重复标记
-     */
-    public function repeatOrNot( $table, $importRow, $uniqueArray, &$row ) {
-        foreach ( $uniqueArray as $unique ) {
-            if ( !empty( $importRow[$unique] ) ) {
-                $where[] = "`{$unique}` = '{$importRow[$unique]}' ";
-            }
-        }
-        $row = IBOS::app()->db->createCommand()
-                ->select( '*' )
-                ->from( $table )
-                ->where( implode( ' OR ', $where ) )
-                ->queryRow();
-        $repeat = !empty( $row ) && !empty( $where );
-        return $repeat;
-    }
+	private function handleBaseCondition() {
+		//表前缀.表字段=>模版字段
+		$fieldMap = array_flip( $this->field() );
+		//模版字段=>导入的数据字段
+		$relation = $this->import->relation;
+		//规则名=>array( 表前缀.字段名 ...)
+		foreach ( $this->rules as $ruleName => $fields ) {
+			if ( $ruleName == 'unique' ) {
+				continue; //这个后面去检测
+			} else {
+				$method = 'check' . ucfirst( $ruleName );
+				foreach ( $fields as $field ) {
+					if ( isset( $this->import->importData[$field] ) ) {
+						if ( method_exists( $this, $method ) ) {
+							$this->$method( $this->import->importData[$field], $relation[$fieldMap[$field]] );
+						}
+					}
+				}
+			}
+		}
+	}
 
-    public function importData( $importName ) {
-        $session = IBOS::app()->session;
-        $failData = $session->get( 'import_fail_data', array() );
-        $failCount = $successCount = 0;
-        if ( !empty( $this->import->data ) ) {
-            $num = min( count( $this->import->data ), $this->import->per );
-            $this->error[0] = array(
-                'status' => true,
-                'text' => '分批导入' . $num . '个，第' . ($this->import->times + 1 ) . '批',
-                'i' => 0,
-            );
-            set_time_limit( 300 );
-            for ( $i = 1; $i <= $this->import->per; $i++ ) {
-                if ( empty( $this->import->data ) ) {
-                    break;
-                }
-                $shiftRow = array_shift( $this->import->data );
-                $this->formatDataIndexByTable( $shiftRow );
-                $requiredPass = $this->handleRequired( $i ); //必须字段通过与否判断
-                if ( $requiredPass ) {
-                    $this->{'import' . ucfirst( $importName ) . 'Detail'}( $i ); //子类必须实现具体的导入
-                }
-                if ( false === $this->error[$i]['status'] ) {
-                    $failData = array_merge( $failData, array( $shiftRow ) );
-                    $failCount ++;
-                } else {
-                    $successCount ++;
-                }
-            }
-            $failAllCount = $session->get( 'import_fail_all_count' );
-            $successAllCount = $session->get( 'import_success_all_count' );
-            $session->add( 'import_fail_data', $failData );
-            $session->add( 'import_fail_count', $failCount );
-            $session->add( 'import_fail_all_count', $failCount + $failAllCount );
-            $session->add( 'import_success_count', $successCount );
-            $session->add( 'import_success_all_count', $successCount + $successAllCount );
-            $session->add( 'import_dataArray', $this->import->data );
-            $session->add( 'import_dataArray_first', false );
-            return array(
-                'isSuccess' => true,
-                'msg' => '',
-                'data' => array(
-                    'op' => 'continue',
-                    'queue' => array_filter( $this->error ),
-                    'times' => $this->import->times + 1,
-                    'success' => $successCount,
-                    'failed' => $failCount,
-                ),
-            );
-        } else {
-            $session->add( 'import_dataArray_first', true );
-            $time = $this->returnTime( microtime() ) - $this->returnTime( $session->get( 'import_time' ) );
-            $failAllCount = $session->get( 'import_fail_all_count' );
-            $successAllCount = $session->get( 'import_success_all_count' );
-            $session->add( 'import_fail_all_count', 0 );
-            $session->add( 'import_success_all_count', 0 );
-            $ajaxReturn = array(
-                'isSuccess' => true,
-                'msg' => $time,
-                'data' => array(
-                    'op' => 'end',
-                    'failed' => $failAllCount,
-                    'success' => $successAllCount,
-                    'time' => $time,
-                ),
-            );
-        }
+	private function handleUniqueCondition() {
+		$unique = $this->rules['unique'];
+		//表前缀=>带双大括号的表名
+		$tableMap = $this->table();
+		//表前缀=>表主键
+		$pkMap = $this->pk();
+		//表前缀.表字段=>模版字段
+		$fieldMap = array_flip( $this->field() );
+		//模版字段=>导入的数据字段
+		$relation = $this->import->relation;
+		//i
+		$i = $this->import->i;
+		$insert = true;
+		foreach ( $unique as $field ) {
+			if ( !empty( $this->import->importData[$field] ) ) {
+				$data = $this->import->importData[$field];
+				list($tablePrefix, $fieldName ) = explode( '.', $field );
+				$table = $tableMap[$tablePrefix];
+				$pk = $pkMap[$tablePrefix];
+				$row = IBOS::app()->db->createCommand()
+						->select( '*' )
+						->from( $table )
+						->where( " `{$fieldName}` = '{$data}' " )
+						->queryRow();
 
-        return $ajaxReturn;
-    }
+				//如果根据唯一字段找到了记录，则记录下来
+				//这里会记录一个数组，因为每个唯一字段都可能对应一个更新操作
+				if ( false !== $row ) {
+					$insert = false;
+					array_map( function($key, $value)use(&$rowArray, $tablePrefix) {
+						$rowArray[$tablePrefix . '.' . $key] = $value;
+					}, array_keys( $row ), array_values( $row ) );
+					$dataFieldName = $relation[$fieldMap[$field]];
+					$this->import->update[$i][$table] = array(
+						'pk' => $pk,
+						'rowid' => $row[$pk],
+						'row' => $rowArray,
+					);
+					$this->error[$i]['text'].=$dataFieldName . '是唯一字段;';
+				}
+			}
+		}
+		//如果检查完成并没有发现重复，则设置当前数据为插入
+		if ( true === $insert ) {
+			$this->import->insert[$i] = array();
+		}
+	}
 
-    public function returnTime( $microtime ) {
-        list($usec, $sec) = explode( ' ', $microtime );
-        return ((float) $usec + (float) $sec);
-    }
+	/**
+	 * 这是入口
+	 * @return string
+	 */
+	protected function import() {
+		@set_time_limit( 0 );
+		$failData = $this->session->get( 'import_fail_data', array() );
+		$start = $this->session->get( 'import_start' );
+		if ( true === $start ) {
+			$this->start();
+		}
+		$failCount = $successCount = 0;
+		$beginTime = microtime( true );
+		if ( !empty( $this->import->data ) ) {
+			$num = min( count( $this->import->data ), $this->import->per );
+			$this->error[0] = array(
+				'status' => true,
+				'text' => '分批导入' . $num . '个，第' . ($this->import->times + 1 ) . '批',
+				'i' => 0,
+			);
+			//格式化所有的设置好的规则
+			$this->formatRules();
+			for ( $i = 1; $i <= $this->import->per; $i++ ) {
+				if ( empty( $this->import->data ) ) {
+					break;
+				}
+				$this->setI( $i );
+				//$i就是一次性批量导入的数据的位置
+				$shiftRow = array_shift( $this->import->data );
+				//重置导入的数据
+				$this->resetImortData();
+				//转化为导入的数据格式
+				$this->convertToRealFieldRelation( $shiftRow );
+				//重置错误提示数组
+				$this->resetErrorText();
+				//处理唯一字段之外的检查
+				$this->handleBaseCondition();
+				//如果通过，则再检查唯一字段
+				if ( true === $this->error[$i]['status'] ) {
+					$this->handleUniqueCondition();
+				}
+				//处理根据选项判断是否继续插入或者更新数据
+				$pass = $this->handleCheck();
+				if ( $pass ) {
+					$successCount ++;
+					$this->error[$i]['text'] .='成功！';
+				} else {
+					$failData[] = $shiftRow;
+					if ( isset( $this->import->update[$i] ) ) {
+						unset( $this->import->update[$i] );
+					}
+					if ( isset( $this->import->insert[$i] ) ) {
+						unset( $this->import->insert[$i] );
+					}
+					$failCount ++;
+				}
+			}
+			if ( !empty( $this->import->insert ) || !empty( $this->import->update ) ) {
+				$this->handleData();
+			}
+			$failAllCount = $this->session->get( 'import_fail_all_count' );
+			$successAllCount = $this->session->get( 'import_success_all_count' );
+			$this->session->add( 'import_fail_data', $failData );
+			$this->session->add( 'import_fail_count', $failCount );
+			$this->session->add( 'import_fail_all_count', $failCount + $failAllCount );
+			$this->session->add( 'import_success_count', $successCount );
+			$this->session->add( 'import_success_all_count', $successCount + $successAllCount );
+			$this->session->add( 'import_dataArray', $this->import->data );
+			$this->session->add( 'import_dataArray_first', false );
+			return array(
+				'isSuccess' => true,
+				'msg' => '',
+				'data' => array(
+					'op' => 'continue',
+					'queue' => array_filter( $this->error ),
+					'times' => $this->import->times + 1,
+					'success' => $successCount,
+					'failed' => $failCount,
+				),
+			);
+		} else {
+			$this->end();
+			$this->session->add( 'import_dataArray_first', true );
+			$endTime = microtime( true );
+			$failAllCount = $this->session->get( 'import_fail_all_count' );
+			$successAllCount = $this->session->get( 'import_success_all_count' );
+			$this->session->add( 'import_fail_all_count', 0 );
+			$this->session->add( 'import_success_all_count', 0 );
+			$ajaxReturn = array(
+				'isSuccess' => true,
+				'msg' => '',
+				'data' => array(
+					'op' => 'end',
+					'failed' => $failAllCount,
+					'success' => $successAllCount,
+					'time' => $endTime - $beginTime,
+				),
+			);
+		}
 
-    /**
-     * 由子类调用
-     * @param type $i
-     * @return type
-     */
-    public function refuseRepeat( $i, $way ) {
-        $tableArray = array_values( $this->tableMap );
-        $refuse = false;
-        $row = false;
-        $repeat = false;
-        $tableMapFilp = array_flip( $this->tableMap );
-        $tplFieldMapFilp = array_flip( $this->tplField );
-        foreach ( $tableArray as $table ) {
-            if ( empty( $this->import->importData[$table] ) ) {
-                continue;
-            }
-            $importRow = $this->import->importData[$table];
-            $prefix = $tableMapFilp[$table];
-            if ( !empty( $this->import->fieldCheck['unique'][$table] ) ) {
-                $uniqueArray = $this->import->fieldCheck['unique'][$table];
-                $repeat = $this->repeatOrNot( $table, $importRow, $uniqueArray, $row );
-                $textArray = array();
-                foreach ( $uniqueArray as $uniqueField ) {
-                    $textArray[] = $tplFieldMapFilp[$prefix . '.' . $uniqueField];
-                }
-                //重复检查的规则是创建新的数据时，如果有重复数据，则创建失败
-                if ( $way == 'new' && $repeat ) {
-                    $this->error[$i]['status'] = false;
-                    $this->error[$i]['text'] .= implode( ',', $textArray );
-                }
-            }
-            $rowArray[$table] = $row;
-        }
-        //虽然可能有重复的值，但是如果是覆盖的方式（覆盖之后还是唯一啊）
-        //或者不处理的方式（只要不是数据库限定死的，那么就算是唯一还是可以重复的嘛）
-        //所以，当状态是false的时候，才加上这句话。true的时候，text到这里时应该“成功”的字样
-        if ( false === $this->error[$i]['status'] ) {
-            $this->error[$i]['text'].='为唯一字段，请保证值唯一;';
-        }
-        return array(
-            'refuse' => $refuse,
-            'row' => $rowArray,
-            'repeat' => $repeat,
-        );
-    }
+		return $ajaxReturn;
+	}
 
-    /**
-     * 解释一下这个函数的名字和参数名，如果你觉得有更好的名字，告诉我吧
-     * 函数名：查找（并且）创建文件夹，这是一个比喻的说法
-     * 类似于组织架构那种树状结构，如果需要创建一个新的根节点，就是需要“查找（根节点），并且创建（他们）”
-     * 这样的树在数据库存的格式就是id,pid的格式，查询出来就是一个二维数组
-     * 而一般插入树节点，都是提供类似于“a/b/c”这样的路径，因此这里我把他们叫做path
-     *
-     * 说明：这个函数里的“无尽の数组”必须确保永远都处于最新状态，因此并未对一次性插入多个文件夹进行优化处理
-     * 如果要做这样的操作，需要找到文件夹后，插入数据库，查出新的数据，再查找
-     * @param array $endlessArray “无尽の数组”（指的是用以无限级格式的数组，也就是有pid的那种）
-     * @param string $path 目录的路径名
-     * @param string $idName id的字段名
-     * @param string $pidName pid的字段名
-     * @param string $nameName name的字段名
-     */
-    public function findToCreateFolder( $endlessArray, $path, $idName, $pidName, $nameName ) {
-        //以pid为键重新生成一个数组
-        $arrayIndexByPid = array();
-        foreach ( $endlessArray as $endless ) {
-            $arrayIndexByPid[$endless[$pidName]][] = $endless;
-        }
-        $pathArray = explode( '/', $path );
-        $findArray = array();
-        $root = $pid = 0; //根父节点的值一定是0，而默认的找到的根父节点的值也是0
-        foreach ( $pathArray as $folderName ) {
-            if ( !empty( $arrayIndexByPid[$root] ) ) {
-                $folderArray = $arrayIndexByPid[$root];
-                $nameArray = array();
-                //I和II的循环的数组都是一样的
-                //I为了让目录名和某个父节点下的目录对比
-                //II在I的确保下，那个等于号一定是存在的，此时就需要找到对应的id
-                foreach ( $folderArray as $folder ) {//--------------------(I)
-                    $nameArray[] = $folder[$nameName];
-                }
-                if ( in_array( $folderName, $nameArray ) ) {
-                    foreach ( $folderArray as $folder ) {//-----------------(II)
-                        if ( $folder[$nameName] == $folderName ) {
-                            $root = $folder[$idName];
-                            $pid = $root;
-                        }
-                    }
-                    continue;
-                } else {
-                    $pid = $root;
-                    $findArray[] = $folderName;
-                }
-            } else {
-                $pid = $root;
-                $findArray[] = $folderName;
-            }
-        }
-        return array(
-            'pid' => $pid,
-            'findArray' => $findArray,
-        );
-    }
+	private function handleCheck() {
+		$check = $this->import->check;
+		$i = $this->import->i;
+		//如果选择的是“新建记录”的选项，并且在重复性检查时有发现重复的值
+		//设置错误状态，并且返回失败
+		if ( isset( $this->import->update[$i] ) && 'new' === $check ) {
+			$this->error[$i]['status'] = false;
+			return false;
+		}
+		return true;
+	}
+
+	private function resetImortData() {
+		$this->import->importData = array();
+	}
+
+	private function resetErrorText() {
+		$i = $this->import->i;
+		$times = $this->import->times;
+		$per = $this->import->per;
+		$this->error[$i] = array(
+			'status' => true,
+			'text' => '第' . ($times * $per + $i) . '条记录：',
+			'i' => $i,
+		);
+	}
+
+	private function checkRequired( $data, $dataFieldName ) {
+		$i = $this->import->i;
+		if ( empty( $data ) ) {
+			$this->error[$i]['status'] .= $dataFieldName . '必填;';
+		}
+	}
+
+	private function checkEmail( $data, $dataFieldName ) {
+		$i = $this->import->i;
+		if ( !empty( $data ) && !StringUtil::isEmail( $data ) ) {
+			$this->error[$i]['status'] = false;
+			$this->error[$i]['text'] .= $dataFieldName . '格式不正确;';
+		}
+	}
+
+	private function checkMobile( $data, $dataFieldName ) {
+		$i = $this->import->i;
+		if ( !empty( $data ) && !StringUtil::isMobile( $data ) ) {
+			$this->error[$i]['status'] = false;
+			$this->error[$i]['text'] .=$dataFieldName . '格式不正确;';
+		}
+	}
+
+	private function checkDatetime( $data, $dataFieldName ) {
+		$i = $this->import->i;
+		if ( !empty( $data ) && false === strtotime( $data ) ) {
+			$this->error[$i]['status'] = false;
+			$this->error[$i]['text'] .= $dataFieldName . '格式不正确;';
+		}
+	}
+
+	private function handleData() {
+		$tableMap = $this->table();
+		$tableFlipMap = array_flip( $tableMap );
+		$pkMap = $this->pk();
+		$insert = $this->import->insert;
+		$update = $this->import->update;
+		$format = $this->import->format;
+		$insertArray = array_intersect_key( $format, $insert );
+		$updateArray = array_intersect_key( $format, $update );
+		$array = $insertArray + $updateArray;
+		$formatData = array();
+		$this->beforeFormatData( $array );
+		foreach ( $array as $i => $data ) {
+			$insert = in_array( $i, array_keys( $this->import->insert ) );
+			$this->formatData( $data, $insert );
+			$this->import->saveData[$i] = $data;
+			foreach ( $data as $field => $value ) {
+				list($tablePrefix, $fieldName ) = explode( '.', $field );
+				$table = $tableMap[$tablePrefix];
+				$formatData[$i][$table][$fieldName] = $value;
+			}
+		}
+		$connection = IBOS::app()->db;
+		$transaction = $connection->beginTransaction();
+		try {
+			foreach ( $formatData as $i => $dataArray ) {
+				foreach ( $dataArray as $table => $row ) {
+					//如果插入某张表的数据都是空的，那么就不插入
+					$temp = array_filter( $row );
+					if ( empty( $temp ) && !in_array( $table, $this->force() ) ) {
+						continue;
+					}
+					$prefix = $tableFlipMap[$table];
+					$key = $prefix . '.' . $pkMap[$prefix];
+					$formatI = $this->import->format[$i];
+					if ( in_array( $i, array_keys( $this->import->insert ) ) ) {
+						foreach ( $row as $column => $value ) {
+							if ( !is_array( $value ) && is_callable( $value ) ) {
+								$row[$column] = $value( $formatI );
+							}
+						}
+						$findRow = NULL;
+						if ( !empty( $row[$pkMap[$prefix]] ) ) {
+							$id = $row[$pkMap[$prefix]];
+							$criteria = new CDbCriteria();
+							$criteria->condition = $pkMap[$prefix] . '=:row';
+							$criteria->params = array( ':row' => $id );
+							$findRow = $connection->schema->commandBuilder
+									->createFindCommand( $table, $criteria )
+									->execute();
+						}
+						if ( empty( $findRow ) ) {
+							$connection->schema->commandBuilder
+									->createInsertCommand( $table, $row )
+									->execute();
+							$id = $connection->getLastInsertID();
+						}
+					} else {
+						$updateRow = $this->import->update[$i];
+						if ( in_array( $table, array_keys( $updateRow ) ) ) {
+							$id = $updateRow[$table]['rowid'];
+							$criteria = new CDbCriteria();
+							$criteria->condition = $updateRow[$table]['pk'] . '=:row';
+							$criteria->params = array( ':row' => $id );
+							$findRow = $updateRow[$table]['row'];
+							foreach ( $row as $column => $value ) {
+								if ( !is_string( $value ) && is_callable( $value ) ) {
+									$row[$column] = $value( $formatI, $findRow );
+								}
+							}
+							$connection->schema->commandBuilder
+									->createUpdateCommand( $table, $row, $criteria )
+									->execute();
+						} else {
+							//这里是导入行中唯一字段检测出存在
+							//但是没有指定唯一字段的表的数据
+							//暂时不处理
+						}
+					}
+					//如果不是自增id，则id会为0的！！像这样的主键，一般都会自己生成
+					//所以这样的id在这两个数组里一定已经存在
+					//如果没有，就应该在子类设置
+					if ( !empty( $id ) ) {
+						$this->import->format[$i][$key] = $id;
+						$this->import->saveData[$i][$key] = $id;
+					}
+				}
+			}
+			$this->afterHandleData( $connection );
+			$transaction->commit();
+		} catch (Exception $e) {
+			$transaction->rollBack();
+		}
+	}
+
+	/**
+	 * 第一次开始的时候做的事情
+	 * 只有在所有数据导入结束才会变成false
+	 * 在第一次循环时会被设置成true
+	 */
+	protected function start() {
+		$this->session->add( 'import_start', false );
+	}
+
+	/**
+	 * 所有数据导入完成后做的事情
+	 * 只有在所有数据导入结束才会变成true
+	 * 在第一次循环时会被设置成false
+	 */
+	protected function end() {
+		
+	}
+
+	protected function force() {
+		return array();
+	}
+
+	/**
+	 * 格式化处理之前的处理
+	 * @param array $data
+	 * @return boolean
+	 */
+	protected function beforeFormatData( &$data ) {
+		
+	}
+
+	/**
+	 * 用以给子类重写然后返回需要的格式
+	 * @param array $data
+	 * @param boolean $isInsert 是否是插入
+	 * @return true
+	 */
+	protected function formatData( &$data, $isInsert ) {
+		
+	}
+
+	/**
+	 * 新增或者更新之后操作
+	 * @return boolean
+	 */
+	protected function afterHandleData( $connection ) {
+		
+	}
+
+	/**
+	 * 这个暂时用不到，可能以后也用不到，用来设置表中数据依赖关系的顺序
+	 * 目前的顺序是根据子类的table方法定义的
+	 * @param type $data
+	 * @return boolean
+	 */
+	protected function order( &$data ) {
+		
+	}
 
 }

@@ -17,6 +17,8 @@
 
 namespace application\core\utils;
 
+use application\extensions\Zip;
+
 class File {
 
 	/**
@@ -52,8 +54,20 @@ class File {
 	 * @param string $fileName 要读取的文件名
 	 * @return string 
 	 */
-	public static function fileName( $fileName ) {
-		return IBOS::engine()->io()->file()->fileName( $fileName );
+	public static function fileName( $fileName, $suffix = false ) {
+		return IBOS::engine()->io()->file()->fileName( $fileName, $suffix );
+	}
+
+	public static function imageName( $fileName, $suffix = false ) {
+		return IBOS::engine()->io()->file()->imageName( $fileName, $suffix );
+	}
+
+	public static function getImgHost( $fileName ) {
+		return IBOS::engine()->io()->file()->getImgHost( $fileName );
+	}
+
+	public static function getHost( $fileName ) {
+		return IBOS::engine()->io()->file()->getHost( $fileName );
 	}
 
 	/**
@@ -102,6 +116,14 @@ class File {
 		return IBOS::engine()->io()->file()->readFile( $fileName );
 	}
 
+	public static function waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath ) {
+		return IBOS::engine()->io()->file()->waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath );
+	}
+
+	public static function waterPic( $from, $pic, $to, $position, $alpha, $quality, $hight, $wight ) {
+		return IBOS::engine()->io()->file()->waterPic( $from, $pic, $to, $position, $alpha, $quality, $hight, $wight );
+	}
+
 	/**
 	 * io：storage 获取临时读写文件夹接口
 	 * @return type
@@ -126,6 +148,10 @@ class File {
 	 */
 	public static function deleteFile( $fileName ) {
 		return IBOS::engine()->io()->file()->deleteFile( $fileName );
+	}
+
+	public static function copyFile( $from, $to, $deleteSrc = false ) {
+		return IBOS::engine()->io()->file()->copyFile( $from, $to, $deleteSrc );
 	}
 
 	/**
@@ -356,6 +382,8 @@ class File {
 				$state = IBOS::engine()->io()->file()->moveFile( $file, $copyToPath . $name );
 			}
 			return $state;
+		} else {
+			return false;
 		}
 	}
 
@@ -395,6 +423,11 @@ class File {
 		echo $data;
 	}
 
+	/**
+	 * 导出html文件
+	 * @param string $filename  导出的文件名
+	 * @param string $data  导出的数据
+	 */
 	public static function exportHtml( $filename, $data ) {
 		header( "Cache-control: private" );
 		header( "Content-type: text/html" );
@@ -403,6 +436,42 @@ class File {
 		header( "Content-Disposition: attachment; filename=" . $filename . ".html" );
 		echo "<meta charset=utf-8 />";
 		echo $data;
+	}
+
+	/**
+	 * 导出zip文件
+	 * @param string $arr   要导出的内容数组
+	 */
+	public static function exportZip( $arr ) {
+		$zip = new Zip();
+		foreach ( $arr as $row ) {
+			$filename = Convert::iIconv( $row['filename'], CHARSET, 'gbk' );
+			$zip->addFile( $row['content'], $filename . ".html" );
+		}
+		$output = $zip->file();
+		header( "Content-type: text/html; charset=" . CHARSET );
+		header( "Cache-control: private" );
+		header( "Content-type: application/x-zip" );
+		header( "Accept-Ranges: bytes" );
+		header( "Accept-Length: " . strlen( $output ) );
+		header( "Content-Length: " . strlen( $output ) );
+		header( "Content-Disposition: attachment; filename= IBOS" . urlencode( IBOS::lang( 'Workflow', 'workflow.default' ) ) .
+				"(" . date( "Y-m-d", TIMESTAMP ) . ").zip" );
+		echo $output;
+	}
+
+	public static function getOrgJs( $type = NULL ) {
+		$org = array( 'user', 'department', 'role', 'position', 'positioncategory' );
+		if ( empty( $type ) || !in_array( $type, $org ) ) {
+			$typeArray = $org;
+		} else {
+			$typeArray = is_array( $type ) ? $type : explode( ',', $type );
+		}
+		return IBOS::engine()->io()->file()->getOrgJs( $typeArray );
+	}
+
+	public static function setOrgJs( $type, $value ) {
+		return IBOS::engine()->io()->file()->setOrgJs( $type, $value );
 	}
 
 }

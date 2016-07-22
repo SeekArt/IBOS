@@ -72,30 +72,16 @@
                 '</div>',
                 '<div class="import-item">',
                 '<div class="import-table">',
-                /**
-                '<div class="import-item-field">',
-                '<p class="xwb">重复判断依据</p>',
-                '</div>',
-                */
                 '<div class="import-item-field">',
                 '<p class="xwb">如何处理重复</p>',
                 '</div>',
                 '</div>',
                 '<div class="import-table">',
-                /**
-                '<div class="import-item-field">',
-                '<select name="checkRepeat">',
-                '<option value="nothing">当不做任何重复检查重复时</option>',
-                '<option value="idrepeat">当编号重复时</option>',
-                '<option value="namerepeat">当名称重复时</option>',
-                '</select>',
-                '</div>',
-                */
                 '<div class="import-item-field">',
                 '<select name="checkDone">',
                 '<option value="new" selected>创建新记录</option>',
                 '<option value="cover">覆盖旧记录</option>',
-                '<option value="nothing">不做任何重复检查</option>',
+                // '<option value="nothing">不做任何重复检查</option>',
                 '</select>',
                 '</div>',
                 '</div>',
@@ -161,7 +147,25 @@
                 var url = Ibos.app.url('main/import/import');
                 return $.post(url, param, $.noop, 'json');
             }
+        },
+        configTip = {
+            'unique': '唯一',
+            'required': '必填',
+            'mobile': '手机',
+            'email': '邮箱',
+            'datetime': '日期'
         };
+
+    function tipLanChange(rule) {
+        var i, len,
+            res = [];
+
+        for(i = 0, len = rule.length; i < len; i++){
+            res.push(configTip[rule[i]]);
+        }
+        
+        return res.join('、');
+    }
 
     var Button = function(config) {
         this.text = config.text;
@@ -272,7 +276,7 @@
 
     importDialog.defaults = {
         lock: false,
-        per: 10,
+        per: 500,
         top: "50%",
         left: "50%",
         zIndex: 6000
@@ -404,7 +408,7 @@
                     break;
                 case 1:
                     // setting
-                    this.getField();
+                    act === 'next' && this.getField();
                     break;
                 case 2:
                     // done
@@ -528,6 +532,7 @@
                 if (res.isSuccess) {
                     var fieldArray = res.data.fieldArray,
                         tplFieldArray = res.data.tplFieldArray,
+                        rule = res.data.rule,
 
                         _temp = '',
                         _field = '',
@@ -552,7 +557,7 @@
                             '</select>' +
                             '</div>' +
                             '<div class="import-item-field">' +
-                            '<p>' + tplFieldArray[j] + '</p>' +
+                            '<p>' + tplFieldArray[j] + '<small class="mlm xcr">' + tipLanChange(rule[tplFieldArray[j]]) + '</small></p>' + 
                             '</div>' +
                             '</div>';
                         _field += _temp;
@@ -572,7 +577,8 @@
 
             ajaxData.setModuleField(param).done(function(res) {
                 if (res.isSuccess) {
-                    var data = res.data;
+                    var data = res.data,
+                        resBox = $('.import-res');
                     if (data.op === 'continue') {
                         var i, len, tmp,
                             text = '',
@@ -583,7 +589,8 @@
                             text += tmp.status ? '<li>' + tmp.text + '</li>' : '<li><span class="xcr">' + tmp.text + '</span></li>';
                         };
 
-                        $('.import-res').append($(text));
+                        resBox.append($(text));
+                        resBox[0].scrollTop = resBox[0].scrollHeight;
                         that.importLoad({ op: data.op, per: that.per, times: data.times });
                     } else if (data.op === 'end') {
                         var text = '导入总数' + (data.success + data.failed) + '条&nbsp;&nbsp;' + '成功' + data.success + '条&nbsp;&nbsp;' + '<span class="xcr">失败' + data.failed + '条</span>';

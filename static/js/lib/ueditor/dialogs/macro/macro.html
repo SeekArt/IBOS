@@ -192,7 +192,7 @@
 						UE.utils.extend(data, res);
 					}
 
-					return "#[" + data.value + data.number + data.type + "]" + (data.format ? "[" + data.format + "]" : "[]");
+					return "#[" + data.value + data.number + data.type + "]" + (data.format ? "[" + data.format + "]" : "");
 				},
 				add: function(value){
 					var res = this.getResult(value);

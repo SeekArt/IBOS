@@ -82,26 +82,12 @@ $(document).ready(function() {
             window.location.href = Ibos.app.url('dashboard/user/export', { uid: encodeURI(uid) });
         },
         "batchImport": function(param, elem) {
-            var dialog = Ui.dialog({
-                title: Ibos.l("ORG.BATCH_IMPORT_USER"),
-                id: "import_dialog",
-                padding: 0,
-                width: "480px",
-                height: "382px",
-                lock: true,
-                content: document.getElementById("batch_import_dialog"),
-                init: function() {
-                    var $wrap = $("#batch_import_wrap");
-                    $("#batch_result_wrap").hide();
-                    $("#attachmentid").val("");
-                    $("#download_error_info").attr("href", "");
-                    $("#file_target").children().remove();
-                    importUser.updateUserInfo($wrap);
-                    $wrap.show();
-                },
-                close: function() {
-                    window.location.reload();
-                }
+            var dialog = new importData({ lock: true, tpl: 'user', module: 'user', per: 1000 });
+
+            $(document).on('closed.dialog', function(e) {
+                setTimeout(function() {
+                    userTable ? userTable.draw() : window.location.reload();
+                }, 500);
             });
         },
         "closeDialog": function(param, elem) {
@@ -231,8 +217,8 @@ $(document).ready(function() {
         "addDiyDom": function(treeId, treeNode) {
             var aObj = $("#" + treeNode.tId + "_a");
             var optBtn = "<span class='utree-opt-wrap'>" +
-                "<a href='" + Ibos.app.url('dashboard/department/edit', { 'op': 'get', 'id': treeNode.deptid }) + "' title='" + Ibos.l("ORG.EDIT_DEPARTMENT_INFO") + "' class='o-org-ztree-edit opt-btn opt-edit-btn'></a>" +
-                "<a href='javascript:;' title='" + Ibos.l("ORG.DELETE_DEPARTMENT_TIP") + "' class='o-org-ztree-del opt-btn opt-del-btn' data-action='delZtreeNode' data-deptname='" + treeNode.deptname + "' id='" + treeNode.deptid + "'></a>" +
+                "<a href='" + Ibos.app.url('dashboard/department/edit', { 'op': 'get', 'id': treeNode.id.substr(2) }) + "' title='" + Ibos.l("ORG.EDIT_DEPARTMENT_INFO") + "' class='o-org-ztree-edit opt-btn opt-edit-btn'></a>" +
+                "<a href='javascript:;' title='" + Ibos.l("ORG.DELETE_DEPARTMENT_TIP") + "' class='o-org-ztree-del opt-btn opt-del-btn' data-action='delZtreeNode' data-deptname='" + treeNode.text + "' id='" + treeNode.id.substr(2) + "'></a>" +
                 "</span>";
 
             aObj.append(optBtn);
@@ -291,9 +277,7 @@ $(document).ready(function() {
             });
         },
         "nodeOnClick": function(event, treeId, treeNode) {
-            var url = treeNode.url;
-
-            userTable.user.deptid = U.getUrlParam(url).deptid;
+            userTable.user.deptid = treeNode.id.substr(2);
             $('#corp_unit').removeClass('curSelectedNode');
             userTable.user.search();
         },
@@ -377,9 +361,10 @@ $(document).ready(function() {
                             text = '<span class="fss xcr">' + rolename + '</span>';
                         if (len = row.relatedRole.length) { // array
                             for (i = 0; i < len; i++) {
-                                text += '<span class="fss">' + row.relatedRole[i] + '</span>';
+                                text += '<span class="fss">，' + row.relatedRole[i] + '</span>';
                             }
                         }
+                        // text = text.substring(0,text.length-1);
                         return text;
                     }
                 },
@@ -448,43 +433,41 @@ $(document).ready(function() {
 
     // 初始化右栏树
     var settings = {
-            data: {
-                simpleData: { enable: true }
+        data: {
+            key: {
+                name: 'text'
             },
-            view: {
-                showLine: false,
-                selectedMulti: false,
-                showIcon: false,
-                addDiyDom: ztreeOpt.addDiyDom,
-                fontCss: ztreeOpt.getFontCss
-            },
-            edit: {
+            simpleData: {
                 enable: true,
-                drag: {
-                    isCopy: false,
-                    isMove: true
-                }
-            },
-            callback: {
-                onDrop: ztreeOpt.zTreeOnDrop,
-                onClick: ztreeOpt.nodeOnClick
+                pIdKey: 'pid'
             }
         },
-        $tree = $("#utree");
+        view: {
+            showLine: false,
+            selectedMulti: false,
+            showIcon: false,
+            addDiyDom: ztreeOpt.addDiyDom,
+            fontCss: ztreeOpt.getFontCss
+        },
+        edit: {
+            enable: true,
+            drag: {
+                isCopy: false,
+                isMove: true
+            }
+        },
+        callback: {
+            onDrop: ztreeOpt.zTreeOnDrop,
+            onClick: ztreeOpt.nodeOnClick
+        }
+    };
+    var $tree = $("#utree");
     $tree.waiting(null, 'mini');
-    $.get(Ibos.app.url('dashboard/user/getdepttree'), function(data) {
-        $.fn.zTree.init($tree, settings, data);
-        $tree.waiting(false);
-        var treeObj = $.fn.zTree.getZTreeObj("utree");
-
-        var auxiliaryId = Ibos.app.g("auxiliaryId");
-        ztreeOpt.selectAuxiliaryNode(auxiliaryId);
-    }, 'json');
-
-    /**
-     * 编辑总公司，原来这里是可以编辑总公司的，为了更好管理，把这里的删除，只留下“全局设置”的
-     */
-
+    $.fn.zTree.init($tree, settings, Ibos.data.converToArray(Ibos.data.get('department', function(data){
+        return data.id !== 'c_0';
+    })));
+    ztreeOpt.selectAuxiliaryNode(Ibos.app.g("auxiliaryId"));
+    $tree.waiting(false);
     /**
      *  批量更新用户部门和岗位信息
      *

@@ -586,7 +586,13 @@ Email.moveTargetList = {
 			},
 			// 批量标记为待办
 			"mark": function(elem, param) {
-				Email.access(param.url, {ismark: 'true'});
+				Email.access(param.url, {ismark: 'true'}, function(res, ids){
+					if(res.isSuccess){
+						$.each(ids.split(","), function(i, item){
+							$("#list_tr_"+ item).find(".j-mark a").removeClass("o-unmark").addClass("o-mark");
+						});
+					}
+				});
 			},
 			// 批量取消待办
 			"unmark": function(elem, param) {

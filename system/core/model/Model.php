@@ -9,7 +9,7 @@
  */
 /**
  * 数据层操作的抽象基类,提供给所有Model封装过的基本操作
- * 
+ *
  * @package application.core.model
  * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -27,13 +27,13 @@ class Model extends CActiveRecord {
 
     /**
      * 是否允许缓存
-     * @var mixed 
+     * @var mixed
      */
     protected $allowCache;
 
     /**
      * 缓存生命周期
-     * @var mixed 
+     * @var mixed
      */
     protected $cacheLife = null;
 
@@ -47,7 +47,7 @@ class Model extends CActiveRecord {
      * Cache::update将更新当前系统设置的缓存类型（默认file）以及syscache表的数据，这里的更新是真实数据更新
      * 其中XXX对应了core\cache\provider里定义好的缓存类型，setting是这里面单独拿出来的，剩下的都是cache
      * ps，这个文件夹下的每种缓存值也对应了syscache表的数据
-     * pps，当前系统的缓存类型可以使用Ibos::app()->setting->get( 'setting' )或者里面写cache调用，对应syscache表
+     * pps，当前系统的缓存类型可以使用IBOS::app()->setting->get( 'setting' )或者里面写cache调用，对应syscache表
      * ppps，本类中调用afterSave的方法将使用$isAfter控制是否执行afterSave防止多次调用Cache::update，默认是调用，如果有出现多次调用的，请关闭
      * 野生的缓存需要调用本类里面的方法使用
      *
@@ -59,7 +59,7 @@ class Model extends CActiveRecord {
      */
     public function init() {
         $cacheLife = $this->cacheLife !== null ? $this->cacheLife : null;
-        if (NULL !== $cacheLife && Cache::check()) {
+        if ( NULL !== $cacheLife && Cache::check() ) {
             $this->cacheLife = $cacheLife;
             $this->allowCache = true;
         }
@@ -69,7 +69,7 @@ class Model extends CActiveRecord {
      * 查询一条符合条件的数据，返回数组 不缓存
      * @param mixed $condition 条件字符串 || 数组 || criteria对象{@link CDbCriteria}
      * @param array $params 参数绑定到SQL语句
-     * @return array 
+     * @return array
      */
     public function fetch( $condition = '', $params = array() ) {
         $result = array();
@@ -86,7 +86,7 @@ class Model extends CActiveRecord {
      */
     public function fetchByPk( $pk ) {
         $record = $this->fetchCache( $pk );
-        if (false === $record) {
+        if ( false === $record ) {
             $object = $this->findByPk( $pk );
             if ( is_object( $object ) ) {
                 $record = $object->attributes;
@@ -117,10 +117,10 @@ class Model extends CActiveRecord {
     }
 
     /**
-     * 查询所有数据，返回一个数组集合 不缓存 
+     * 查询所有数据，返回一个数组集合 不缓存
      * @param mixed $condition 条件字符串 || 数组 || criteria对象{@link CDbCriteria}
      * @param array $params 参数绑定到SQL语句
-     * @return array 
+     * @return array
      */
     public function fetchAll( $condition = '', $params = array() ) {
         $result = array();
@@ -249,9 +249,9 @@ class Model extends CActiveRecord {
      * @param array $attributes 更新的值
      * @return boolean 成功与否
      */
-    public function modify($pk, $attributes, $condition = '', $params = array(), $isAfter = true) {
+    public function modify( $pk, $attributes, $condition = '', $params = array(), $isAfter = true ) {
         if ( $this->beforeSave() ) {
-            $result = $this->updateByPk($pk, $attributes, $condition, $params, $isAfter);
+            $result = $this->updateByPk( $pk, $attributes, $condition, $params, $isAfter );
             return $result;
         }
     }
@@ -293,17 +293,17 @@ class Model extends CActiveRecord {
      * 覆盖此方法实现各model的afterSave
      * @see parent::updateByPk
      */
-    public function updateByPk($pkX, $attributes, $condition = '', $params = array(), $isAfter = true) {
-        $pkA = is_array($pkX) ? $pkX : explode(',', $pkX);
-        $counter = parent::updateByPk($pkA, $attributes, $condition, $params);
-        foreach ($pkA as $id) {
-        if ( $this->getIsAllowCache() ) {
+    public function updateByPk( $pkX, $attributes, $condition = '', $params = array(), $isAfter = true ) {
+        $pkA = is_array( $pkX ) ? $pkX : explode( ',', $pkX );
+        $counter = parent::updateByPk( $pkA, $attributes, $condition, $params );
+        foreach ( $pkA as $id ) {
+            if ( $this->getIsAllowCache() ) {
                 $key = $this->getCacheKey( $id );
                 // 删除缓存，在取数据的时候再写入
                 Cache::rm( $key );
             }
         }
-        if (true === $isAfter) {
+        if ( true === $isAfter ) {
             $this->afterSave();
         }
         return $counter;
@@ -326,7 +326,7 @@ class Model extends CActiveRecord {
      * @param array $params
      */
     public function deleteByPk( $pk, $condition = '', $params = array() ) {
-		$ids = is_array( $pk ) ? $pk : explode( ',', $pk );
+        $ids = is_array( $pk ) ? $pk : explode( ',', $pk );
         if ( $this->getIsAllowCache() ) {
             foreach ( $ids as $id ) {
                 if ( !empty( $id ) ) {

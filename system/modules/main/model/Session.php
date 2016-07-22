@@ -4,12 +4,13 @@
  * session表对应的数据层操作
  * 
  * @package application.modules.main.model
- * @version $Id: Session.php 5157 2015-06-10 12:27:40Z tanghang $
+ * @version $Id: Session.php 7262 2016-05-27 02:53:35Z tanghang $
  */
 
 namespace application\modules\main\model;
 
 use application\core\model\Model;
+use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 
 class Session extends Model {
@@ -33,8 +34,12 @@ class Session extends Model {
 		if ( empty( $sid ) ) {
 			return array();
 		}
-		$result = $this->findByAttributes( array( 'sid' => $sid ) );
-		$session = is_null( $result ) ? array() : $result->attributes;
+		$result = IBOS::app()->db->createCommand()
+				->select()
+				->from( $this->tableName() )
+				->where( " `sid` = '{$sid}' " )
+				->queryRow();
+		$session = is_null( $result ) ? array() : $result;
 		if ( !empty( $session ) ) {
 			$ipConcat = "{$session['ip1']}.{$session['ip2']}.{$session['ip3']}.{$session['ip4']}";
 		} else {

@@ -41,12 +41,12 @@
 		color: ['#ffaa49', '#fd917b', '#4fa4e6', '#a9d36a', '#83a3c8'],
 		tooltip: {
 			trigger: 'axis',
-			padding: '10',
+			padding: 10,
 			backgroundColor: 'rgba(75, 79, 84, 1)',
 			formatter: function(params, ticket, callback) {
-				var res = params[0][1] + '<br/>';
+				var res = '招聘过程<br/>';
 				for (var i = 0, l = params.length; i < l; i++) {
-					res += '<span class="tcm">' + params[i][0] + '</span>' + 　'<span class="fill-mm">:</span>' + parseInt(params[i][2]) + '<br/>';
+					res += '<span class="tcm">' + params[i].seriesName + '</span>' + 　'<span class="fill-mm">:</span>' + parseInt(params[i].data) + '<br/>';
 				}
 				return res;
 			},

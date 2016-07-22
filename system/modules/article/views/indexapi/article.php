@@ -16,9 +16,9 @@ use application\core\utils\IBOS;
                     <td>
                         <div>
                             <span class="tcm pull-right"><?php echo date('n月j日', $article['addtime']); ?></span>
-                            <a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/index', array('op' => 'show', 'articleid' => $article['articleid'])); ?>" class="title xcm"><?php echo $article['subject']; ?></a>
+                            <a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/show', array( 'articleid' => $article['articleid'])); ?>" class="title xcm"><?php echo $article['subject']; ?></a>
                             <?php if ($index == 0): ?>
-                                <div class="content mbs"><a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/index', array('op' => 'show', 'articleid' => $article['articleid'])); ?>"><?php echo $article['content']; ?></a></div>
+                                <div class="content mbs"><a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/show', array('articleid' => $article['articleid'])); ?>"><?php echo $article['content']; ?></a></div>
                             <?php endif; ?>
                         </div>
                     </td>

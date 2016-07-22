@@ -26,11 +26,16 @@ class WxController extends BaseController {
 
 	protected $isBinding = false;
 	protected $msg = '';
+	protected $wxqyInfo = array();
 
 	public function init() {
 		parent::init();
 		//通过aeskey向官网发起请求，查询是否有对应记录
 		$this->chkBinding();
+	}
+
+	protected function unbindRender() {
+		return $this->render( 'application.modules.dashboard.views.wx.unbindtip', array( 'msg' => $this->msg ) );
 	}
 
 	/**
@@ -42,23 +47,26 @@ class WxController extends BaseController {
 		$res = WebSite::getInstance()->fetch( $url, array( 'aeskey' => $aeskey ) );
 		if ( !is_array( $res ) ) {
 			$result = CJSON::decode( $res, true );
-		switch ( $result['type'] ) {
-			case 1 :
-				Setting::model()->updateSettingValueByKey( 'corpid', $result['corpid'] );
-				Setting::model()->updateSettingValueByKey( 'qrcode', urldecode( $result['qrcode'] ) );
-				$this->isBinding = true;
-				break;
-			case 2 :
-				$this->isBinding = false;
-				$this->msg = $result['msg'];
-				break;
-			case 3 :
-				WxApi::getInstance()->resetCorp();
-				$this->isBinding = false;
-				$this->msg = $result['msg'];
-				break;
+			switch ( $result['type'] ) {
+				case 1 :
+					Setting::model()->updateSettingValueByKey( 'corpid', $result['corpid'] );
+					Setting::model()->updateSettingValueByKey( 'qrcode', urldecode( $result['qrcode'] ) );
+					$this->isBinding = true;
+					$this->wxqyInfo['name'] = $result['name'];
+					$this->wxqyInfo['corpid'] = $result['corpid'];
+					$this->wxqyInfo['logo'] = $result['logo'];
+					break;
+				case 2 :
+					$this->isBinding = false;
+					$this->msg = $result['msg'];
+					break;
+				case 3 :
+					WxApi::getInstance()->resetCorp();
+					$this->isBinding = false;
+					$this->msg = $result['msg'];
+					break;
+			}
 		}
-	}
 	}
 
 }

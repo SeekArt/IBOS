@@ -343,13 +343,15 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 .os-company,
 .os-department,
 .os-position,
-.os-user{
-	display: inline-block;  width: 16px; height: 16px;vertical-align: middle; background: url(../image/user_select.png) no-repeat; 
+.os-user,
+.os-role{
+	display: inline-block;  width: 20px; height: 20px;vertical-align: top; background: url(../image/user_select.png) no-repeat; 
 }
 
 .os-department{ background-position: 0 -20px; }
 .os-position{ background-position: 0 -40px; }
 .os-user{ background-position: 0 -60px; }
+.os-role{ background-position: 0 -180px;}
 
 .o-plus-big{ display: inline-block; width: 72px; height: 72px; background: url(../image/plus_big.png) no-repeat; }
 
@@ -1984,4 +1986,78 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 .editor-content table td{
 	color: #333;
 	border: 1px solid #ddd;
+}
+.pagebreak {
+    display: block;
+    clear: both !important;
+    cursor: default !important;
+    width: 100% !important;
+    margin: 0;
+    -webkit-user-select: none;
+    border: solid rgb(128, 128, 128);
+    border-right: none;
+    border-left: none;
+    background-color: rgb(128, 128, 128);
+}
+
+/* 未授权提示 */
+.o-auth-first,
+.o-auth-second,
+.o-auth-third,
+.o-auth-guide{
+	display: inline-block;
+	background-image: url(../image/bg-unauthorized.png);
+	background-repeat: no-repeat;
+}
+.o-auth-first,
+.o-auth-second,
+.o-auth-third{
+	width: 16px;
+	height: 16px;
+}
+.o-auth-first{
+	background-position: -10px -156px;
+}
+.o-auth-second{
+	background-position: -34px -156px;
+}
+.o-auth-third{
+	background-position: -58px -156px;
+}
+.o-auth-guide{
+	width: 600px;
+	height: 156px;
+}
+.ml30{
+	margin-left: 30px;
+}
+.ml40{
+	margin-left: 40px;
+}
+.license-title{
+	display: block;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-weight: 800;
+	font-size: 20px;
+	color: #58585C;
+}
+.mt30{
+	margin-top: 30px;
+}
+.license-tip{
+	font-size: 14px;
+	color: #82939E;
+}
+.license-href{
+	color: #3497DB;
+}
+.license-href:hover{
+	text-decoration: underline;
+}
+.auth-step{
+	display: inline-block;
+	width: 170px;
+	height: auto;
+	margin-bottom: 10px;
 }

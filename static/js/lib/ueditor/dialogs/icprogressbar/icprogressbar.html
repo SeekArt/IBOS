@@ -131,6 +131,7 @@
 						data.id = oldData.id;
 						fc.updateContorl(editing, data);
 						delete UE.plugins['formcontrols'].editing
+						dialog.close();
 					} else {
 						$('body').waitingC();
 						$.get(Ibos.app.url('workflow/api/getNextItemID', {id: parent.Ibos.app.g('formid')}), function(res) {
@@ -144,6 +145,7 @@
 							}
 						}, 'json');
 					}
+					return false;
 				};
 			})();
 		</script>

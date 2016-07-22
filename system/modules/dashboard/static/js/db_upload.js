@@ -7,7 +7,8 @@ $(function() {
 		custom_settings: {
 			//图片显示节点
 			success: function(file, data) {
-				Dom.byId("upload_img").src = Dom.byId("watermark_img").value = data.url;
+				Dom.byId("upload_img").src = data.url;
+				Dom.byId("watermark_img").value = data.path;
 			},
 			progressId: 'upload_img_wrap'
 		}
@@ -62,7 +63,9 @@ $(function() {
 					pos: $('input[name="watermarkposition"]:checked').val(),
 					textcolor: $('#watermark_color_value').val(),
 					size: $('#watermark_text_size').val(),
-					fontpath: $('#watermark_fontpath').val()
+					fontpath: $('#watermark_fontpath').val(),
+					watermarkminheight: $('input[name="watermarkminheight"]').val(),
+					watermarkminwidth: $('input[name="watermarkminwidth"]').val()
 				};
 
 		if (waterMarkType === 'image') {

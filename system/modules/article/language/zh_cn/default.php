@@ -4,18 +4,18 @@
  * 信息中心默认语言包 zh_cn
  * 
  * @package application.modules.article.language.zh_cn
- * @version $Id: default.php 3878 2014-07-23 10:07:56Z gzhzh $
+ * @version $Id: default.php 7152 2016-05-20 07:23:47Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 return array(
 	//----------------golabs-------------------
 	'Information center' => '信息中心',
-	'Article' => '新闻',
-	'Article list' => '新闻列表',
-	'Add Article' => '添加新闻',
-	'Edit Article' => '编辑新闻',
-	'Show Article' => '查看新闻',
-	'Preview Acticle' => '预览新闻',
+	'Article' => '信息',
+	'Article list' => '信息列表',
+	'Add Article' => '添加信息',
+	'Edit Article' => '编辑信息',
+	'Show Article' => '查看信息',
+	'Preview Acticle' => '预览信息',
 	//----------------ContentController-------------------
 	'No_permission' => '没有权限操作',
 	'No_exists' => '文章不存在',
@@ -33,7 +33,7 @@ return array(
     'New message content'=>'{content}',
     'New verify message title' => '{sender} 在信息中心-{category}发布了“{subject}”的信息，请您审核！',
     'New verify message content'=>'{content}',
-	'New back title' => '您发表的新闻“{subject}”被退回 ',
+	'New back title' => '您发表的信息“{subject}”被退回 ',
 	'New back content'=>'{content}',
 	'You do not have permission to verify the article' => '抱歉，您不是该审核步骤的审核人',
 	//----------------list-------------------
@@ -97,7 +97,7 @@ return array(
 	'Temporarily no' => '暂无',
 	'Sign failed' => '签收失败',
 	'No permission or article not exists' => '您没有权限或文章不存在',
-	'Comment my article' => '评论{realname}的新闻<a href=\"{url}\">&nbsp;“{title}”</a>',
+	'Comment my article' => '评论{realname}的信息<a href=\"{url}\">&nbsp;“{title}”</a>',
 	//----------------sidebar-------------------
 	'Officialdoc' => '公文',
 	'None' => '无',
@@ -127,19 +127,19 @@ return array(
 	'File size limit' => '&nbsp;&nbsp;&nbsp;&nbsp;文件大小限制',
 	'Enter the link address' => '输入链接地址',
 	//----------------后台-------------------
-	'Article setting' => '新闻设置',
-	'Article approver' => '新闻审批人',
+	'Article setting' => '信息设置',
+	'Article approver' => '信息审批人',
 	'Enable' => '启用',
 	'Disabled' => '禁用',
 	'NO.' => '序号',
 	'Template name' => '模板名称',
 	'Whether to open the thumbnails' => '是否开启缩略图',
 	'Thumbnail size' => '缩略图大小',
-	'See more news' => '查看更多新闻',
-	'Comment source desc' => ' {sourceUser} {sourceType} 了 {author} 发布的新闻 “<a class="anchor" target="_blank" href="{sourceUrl}">{subject}</a>”',
+	'See more news' => '查看更多信息',
+	'Comment source desc' => ' {sourceUser} {sourceType} 了 {author} 发布的信息 “<a class="anchor" target="_blank" href="{sourceUrl}">{subject}</a>”',
 	'Feed title' => '<a href="{url}" class="xwb anchor">{subject}</a>',
-	'Post news' => '发表了一篇新闻',
+	'Post news' => '发表了一篇信息',
 	'Picture empty tip' => '添加失败,没有添加任何图片',
-	'Content empty tip' => '添加失败,新闻内容不能为空',
+	'Content empty tip' => '添加失败,信息内容不能为空',
 	'Url empty tip' => '添加失败,连接地址不能为空',
 );

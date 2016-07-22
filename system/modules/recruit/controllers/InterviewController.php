@@ -10,7 +10,7 @@
 /**
  * 招聘模块------面试记录控制器，继承RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: InterviewController.php 6762 2016-04-06 02:59:13Z gzhyj $
+ * @version $Id: InterviewController.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

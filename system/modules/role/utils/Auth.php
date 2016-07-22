@@ -32,16 +32,9 @@ class Auth {
 	 * @return array 参数数组
 	 */
 	public static function getParams( $route ) {
-		/**
-		 * <del>$roleId = IBOS::app()->user->roleid;</del>
-		 * 原来的时候是根据自己的角色去拿权限的data
-		 * 实际上应该是拿自己的所有角色，包括“辅助角色”去拿data
-		 * @author mm
-		 */
-		$user = User::model()->fetchByUid( IBOS::app()->user->uid );
-		$roleidA = explode( ',', $user['allroleid'] );
+		$roleidA = explode( ',', IBOS::app()->user->allroleid );
 		if ( !empty( $roleidA ) ) {
-		$dataItems = Node::model()->fetchAllDataNode();
+			$dataItems = Node::model()->fetchAllDataNode();
 			$param = array();
 			foreach ( $roleidA as $roleid ) {
 				if ( isset( $dataItems[$route] ) ) {
@@ -118,7 +111,9 @@ class Auth {
 	public static function addRoleChildItem( $role, $currentNode, $routes = array() ) {
 		if ( !empty( $routes ) ) {
 			foreach ( $routes as $route ) {
-				$role->addChild( $route, $currentNode['name'], '', $currentNode['node'] );
+				if ( !($role->hasChild( $route )) ) {
+					$role->addChild( $route, $currentNode['name'], '', $currentNode['node'] );
+				}
 			}
 		}
 	}

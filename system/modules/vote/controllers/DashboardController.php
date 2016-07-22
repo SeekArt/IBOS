@@ -10,7 +10,7 @@
 /**
  * 投票模块------ 后台控制器，继承DashboardBaseController
  * @package application.modules.comment.controllers
- * @version $Id: DashboardController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: DashboardController.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

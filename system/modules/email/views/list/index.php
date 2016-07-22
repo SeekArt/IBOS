@@ -90,7 +90,7 @@ use application\core\utils\IBOS;
                             </ul>
                         </div>
                     <?php endif; ?>
-                    <?php if (in_array($op, array('inbox', 'todo', 'send', 'folder', 'web'))): ?>
+                    <?php if (in_array($op, array('inbox', 'todo', 'folder', 'web'))): ?>
                         <div class="btn-group">
                             <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                                 <?php echo $lang['Move to']; ?>
@@ -114,7 +114,7 @@ use application\core\utils\IBOS;
                         </div>
                     <?php endif; ?>
                 </div>
-                <form id="normal_search" action="<?php echo $this->createUrl('list/search'); ?>" method="post">
+                <form id="normal_search" action="<?php echo $this->createUrl('list/search', array('op'=> $op)); ?>" method="post">
                     <div class="search search-config pull-right span3">
                         <input type="text" placeholder="Search" name="search[keyword]"  data-toggle="search" id="mal_search">
                         <a href="javascript:;">search</a>

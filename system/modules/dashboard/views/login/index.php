@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use application\core\utils\File;
 ?>
 <div class="ct">
@@ -24,7 +25,7 @@ use application\core\utils\File;
 						<?php if ( !empty( $list ) ): ?>
 							<?php foreach ( $list as $bg ): ?>
 								<li>
-									<img <?php if ( !empty( $bg['image'] ) ): ?>src="<?php echo File::fileName( 'data/login/' . $bg['image'] ); ?>"<?php endif; ?> />
+									<img <?php if ( !empty( $bg['image'] ) ): ?>src="<?php echo $bg['image']; ?>"<?php endif; ?> />
 									<input type="hidden" name="bgs[<?php echo $bg['id']; ?>][image]" value="<?php echo $bg['image']; ?>" />
 									<div class="pic-item-body">
 										<div class="pic-upload-bg"></div>
@@ -66,28 +67,28 @@ use application\core\utils\File;
 	</div>
 </div>
 <script type="text/template" id="pic_upload_tpl">
-			<li class="pic-item-new">
-				<img src="" alt="">
-				<input type="hidden" name="newbgs[<%=picid%>][image]" />
-				<div class="pic-item-body">
-					<div class="pic-upload-bg"></div>
-					<div class="pic-upload-btn">
-						<i class="o-img-default-large"></i>
-						<p><?php echo $lang['Upload background image']; ?></p>
-					</div>
-					<div class="pic-upload-holder" id="pic_upload_<%=picid%>_wrap">
-						<span id="pic_upload_<%=picid%>"></span>
-					</div>
-				</div>
-				<div class="pic-item-operate">
-					<div class="pull-left">
-						<input type="checkbox" name="newbgs[<%=picid%>][disabled]" value="0" data-toggle="switch" class="visi-hidden" checked>
-					</div>
-					<div class="pull-right">
-						<a href="javascript:;" class="cbtn o-trash" data-target="pic_upload_<%=picid%>"></a>
-					</div>
-				</div>
-			</li>
+	<li class="pic-item-new">
+	<img src="" alt="">
+	<input type="hidden" name="newbgs[<%=picid%>][image]" />
+	<div class="pic-item-body">
+	<div class="pic-upload-bg"></div>
+	<div class="pic-upload-btn">
+	<i class="o-img-default-large"></i>
+	<p><?php echo $lang['Upload background image']; ?></p>
+	</div>
+	<div class="pic-upload-holder" id="pic_upload_<%=picid%>_wrap">
+	<span id="pic_upload_<%=picid%>"></span>
+	</div>
+	</div>
+	<div class="pic-item-operate">
+	<div class="pull-left">
+	<input type="checkbox" name="newbgs[<%=picid%>][disabled]" value="0" data-toggle="switch" class="visi-hidden" checked>
+	</div>
+	<div class="pull-right">
+	<a href="javascript:;" class="cbtn o-trash" data-target="pic_upload_<%=picid%>"></a>
+	</div>
+	</div>
+	</li>
 </script>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js?<?php echo VERHASH; ?>"></script>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/handlers.js?<?php echo VERHASH; ?>"></script>

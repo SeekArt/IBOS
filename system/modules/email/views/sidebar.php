@@ -89,7 +89,7 @@
 
 <!-- 高级设置弹窗 -->
 <div id="mn_search_advance" style="width: 400px; display:none;">
-	<form id="mn_search_advance_form" class="form-horizontal form-compact" action="<?php echo $this->createUrl( 'list/search' ); ?>" method="post">
+	<form id="mn_search_advance_form" class="form-horizontal form-compact" action="<?php echo $this->createUrl( 'list/search' , array('op'=> $op)); ?>" method="post">
 		<div class="control-group">
 			<label class="control-label"><?php echo $lang['Keyword']; ?>：</label>
 			<div class="controls">

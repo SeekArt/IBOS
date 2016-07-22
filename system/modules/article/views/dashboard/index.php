@@ -31,12 +31,12 @@ use application\core\utils\Module as ModuleUtil;
                         </div>
                     </div>
 
-                    <div class="control-group">
-                        <label for="" class="control-label"><?php echo $lang['Message reminding']; ?></label>
+                    <!-- <div class="control-group">
+                        <label for="" class="control-label"><?php //echo $lang['Message reminding']; ?></label>
                         <div class="controls">
-                            <input type="checkbox" name="articlemessageenable" value='1' id="" data-toggle="switch" <?php if ( $data['articlemessageenable'] ): ?>checked<?php endif; ?>>
+                            <input type="checkbox" name="articlemessageenable" value='1' id="" data-toggle="switch" <?php //if ( $data['articlemessageenable'] ): ?>checked<?php //endif; ?>>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="control-group">
                         <label for="" class="control-label"><?php echo $lang['Whether to open the thumbnails']; ?></label>
                         <div class="controls">

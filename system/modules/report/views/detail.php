@@ -86,7 +86,7 @@ use application\modules\user\model\User;
             <th class="sep" width="68"><?php echo $lang['Work']; ?><br /><?php echo $lang['Summary']; ?></th>
             <td class="sep" width="3"></td>
             <td>
-                <div class="fill" style="min-height: 180px; width: 620px">
+                <div class="fill editor-content" style="min-height: 180px; width: 620px">
                     <p class="summary">
                         <?php echo $report['content']; ?>
                     </p>
@@ -110,7 +110,7 @@ use application\modules\user\model\User;
                                     <span class="tcm">(<?php echo $attache['filesize']; ?>)</span>
                                 </div>
                                 <span class="fss">
-                                    <a href="<?php echo $attache['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+                                    <a href="<?php echo $attache['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
                                     <?php if ( isset( $attache['officereadurl'] ) ): ?>
                                         <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $attache['officereadurl']; ?>"}' title="<?php echo $lang['View']; ?>">
                                             <?php echo $lang['View']; ?>

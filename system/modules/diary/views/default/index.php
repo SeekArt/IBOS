@@ -45,7 +45,7 @@ use application\modules\main\utils\Main;
                 </div>
                 <form action="<?php echo $this->createUrl( 'default/index', array( 'param' => 'search' ) ); ?>" method="post">
                     <div class="search search-config pull-right span3">
-                        <input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php
+                        <input type="text" name="keyword" placeholder="搜索" id="mn_search" nofocus value="<?php
                         if ( Env::getRequest( 'param' ) == 'search' ) {
                             echo Main::getCookie( 'keyword' );
                         };

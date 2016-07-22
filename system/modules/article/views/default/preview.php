@@ -34,7 +34,7 @@ use application\core\utils\File;
 				<div class="art">
 					<div class="art-container">
 						<h1 class="art-title"><?php echo $subject; ?></h1>
-						<div class="art-ct mb">
+						<div class="art-ct mb editor-content">
 							<?php if($type == 1): ?>
 								<div id="gallery" class="ad-gallery">
 									<div class="ad-image-wrapper"></div>
@@ -45,8 +45,8 @@ use application\core\utils\File;
 												<?php $attachDir = File::getAttachUrl() . '/'; ?>
 												<?php foreach ( $pictureData as $key => $picture ): ?>
 													<li>
-														<a href="<?php echo  $attachDir . File::fileName( $picture['attachment'] ); ?>">
-															<img src="<?php echo $attachDir . File::fileName( $picture['attachment'] ); ?>" alt="<?php echo $picture['filename']; ?>" />
+														<a href="<?php echo  $attachDir . File::imageName( $picture['attachment'] ); ?>">
+															<img src="<?php echo $attachDir . File::imageName( $picture['attachment'] ); ?>" alt="<?php echo $picture['filename']; ?>" />
 															<!-- 此处输出索引和总张数 -->
 															<span><em><?php echo $key + 1; ?>/<?php echo count( $pictureData ); ?></em></span>
 														</a>

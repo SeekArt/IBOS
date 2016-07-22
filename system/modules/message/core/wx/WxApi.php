@@ -17,11 +17,13 @@
 
 namespace application\modules\message\core\wx;
 
+use application\core\model\Log;
 use application\core\utils\Api;
 use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\WebSite;
+use application\modules\department\model\DepartmentBinding;
 use application\modules\main\model\Setting;
 use application\modules\user\model\UserBinding;
 use CJSON;
@@ -47,6 +49,7 @@ class WxApi extends Api {
 		Setting::model()->updateSettingValueByKey( 'corpid', '0' );
 		Setting::model()->updateSettingValueByKey( 'qrcode', '0' );
 		UserBinding::model()->deleteAll( " `app` = 'wxqy'" );
+		DepartmentBinding::model()->deleteAll( " `app` = 'wxqy' " );
 	}
 
 	public function getAeskey() {
@@ -54,7 +57,7 @@ class WxApi extends Api {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type $mediaId
 	 * @return type
 	 */
@@ -81,6 +84,11 @@ class WxApi extends Api {
 			'corpid' => $corpid,
 		);
 		$res = WebSite::getInstance()->fetch( $route, json_encode( $param ), 'post' );
+		Log::write( array(
+			'param' => $param,
+			'route' => $route,
+			'res' => $res,
+				), 'wxqy_push', 'message.core.wx.WxApi' );
 		return $this->getSendIsSuccess( $res );
 	}
 
@@ -102,8 +110,10 @@ EOT;
 		$return = $this->fetchResult( $url, $post, 'post' );
 		$isSuccess = $this->getSendIsSuccess( $return );
 		$res = CJSON::decode( $return, true );
-        if ( $res['errcode'] == '60008' || $res['errcode'] == '60004' ) {
-			$isSuccess = true; //部门已经存在的话，也继续同步部门操作
+		if ( $res['errcode'] == '60008' || //部门已经存在的话，也继续同步部门操作
+				$res['errcode'] == '60004' || //父部门不存在的话，也继续同步部门操作
+				$res['errcode'] == '60011' ) {//如果遇到权限不够，也继续同步
+			$isSuccess = true;
 		}
 		return array(
 			'isSuccess' => $isSuccess,
@@ -128,7 +138,7 @@ EOT;
    "tel": "{$telephone}",
    "email": "{$user['email']}",
    "weixinid": "{$user['weixin']}"
-}    
+}
 EOT;
 		$res = $this->fetchResult( $url, $post, 'post' );
 		if ( !is_array( $res ) ) {
@@ -136,7 +146,27 @@ EOT;
 			if ( $res['errcode'] == '0' ) {
 				return '';
 			} else {
-				return Code::getErrmsg( $res['errcode'] );
+				switch ( $res['errcode'] ) {
+					case '60104'://手机号存在
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
+						break;
+					case '60106'://邮箱已存在
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
+						break;
+					case '60108'://微信已存在
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
+						break;
+					case '60102'://userid存在
+						$msg = '';
+						$this->setBind( $user['uid'], '9527:' . $user['userid'] );
+						break;
+					default :
+						$msg = Code::getErrmsg( $res['errcode'] );
+				}
+				return $msg;
 			}
 		} else {
 			return Code::SYNC_ERROR_MSG;
@@ -144,7 +174,20 @@ EOT;
 	}
 
 	/**
-	 * 
+	 * 如果是手机邮箱微信存在，微信返回的errmsg里带有userid
+	 * 如果，我是说如果，这个规则被微信改了……怪我么？
+	 * 这么做是为了减少对微信的请求次数，不然你行你上
+	 * @param type $uid
+	 * @param type $errmsg
+	 */
+	private function setBind( $uid, $errmsg ) {
+		list($msg, $userid) = explode( ':', $errmsg );
+		UserBinding::model()->deleteAll( sprintf( "`uid` = '%s' AND `app` = 'wxqy' ", $uid ) );
+		UserBinding::model()->add( array( 'uid' => $uid, 'bindvalue' => $userid, 'app' => 'wxqy' ) );
+	}
+
+	/**
+	 *
 	 * @param string $url 官网那边接收请求地址
 	 * @param array $userid 需要发送邀请的用户id（姓名转成拼音）列表
 	 * @return type

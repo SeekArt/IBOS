@@ -59,7 +59,10 @@ use application\core\utils\StringUtil;
                     <a href="javascript:;" onclick="window.print();" class="btn"><?php echo $lang['Print']; ?></a>
                 </div>
                 <div class="btn-group">
-                    <a href="#" class="btn dropdown-toggle" data-toggle="dropdown"><?php echo $lang['More option']; ?></a>
+                    <a href="#" class="btn dropdown-toggle" data-toggle="dropdown">
+                        <?php echo $lang['More option']; ?>
+                        <i class="caret"></i>
+                    </a>
                     <ul class="dropdown-menu">
                         <li><a href="<?php
                             echo $this->createUrl( 'content/export', array( 'op' => 'eml', 'id' => $email['emailid'] ) );
@@ -122,7 +125,7 @@ use application\core\utils\StringUtil;
                         </div>
                     </div>
                 </div>
-                <div class="ctb xcm bdbs" style="min-height: 400px;">
+                <div class="ctb xcm bdbs editor-content" style="min-height: 400px;">
                     <?php if ( $email['isweb'] ): ?>
                         <div id="mainFrameContainer">
                             <iframe onload="setScale()" style="width:100%;" src="<?php

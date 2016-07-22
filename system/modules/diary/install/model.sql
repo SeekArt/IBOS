@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS {{diary_statistics}} (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('diaryconfig', 'a:11:{s:7:"lockday";s:1:"0";s:14:"sharepersonnel";s:1:"1";s:12:"sharecomment";s:1:"1";s:9:"attention";s:1:"1";s:10:"autoreview";s:1:"1";s:15:"autoreviewstamp";s:1:"1";s:13:"remindcontent";s:0:"";s:11:"stampenable";s:1:"1";s:11:"pointsystem";s:1:"5";s:12:"stampdetails";s:40:"0:10,0:9,0:8,0:7,0:6,4:5,5:4,2:3,1:2,8:1";s:10:"reviewlock";i:0;}');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('2','工作日志','diary/default/index','0','1','0','4','diary');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','工作日志','diary/default/index','0','1','0','2','diary');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('工作日志','0','diary','dashboard','index','','10','0');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('diary_message','工作日志消息提醒','diary','diary/default/New message title','diary/default/New message content','1','1','1','2');
 REPLACE INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表工作日志', 'adddiary', '3', '2', '0', '2','1');

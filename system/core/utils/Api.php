@@ -29,7 +29,7 @@ class Api extends System {
 		CURLOPT_USERAGENT => "spider", // 
 		CURLOPT_AUTOREFERER => true, // 自定重定向
 		CURLOPT_CONNECTTIMEOUT => 15, // 链接超时时间
-		CURLOPT_TIMEOUT => 20, // 超时时间
+		CURLOPT_TIMEOUT => 60, // 超时时间
 		CURLOPT_MAXREDIRS => 10, // 超过十次重定向后停止
 		CURLOPT_SSL_VERIFYHOST => 0, // 不检查ssl链接
 		CURLOPT_SSL_VERIFYPEER => false, //

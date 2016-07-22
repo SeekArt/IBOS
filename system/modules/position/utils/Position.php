@@ -11,7 +11,7 @@
  * 岗位模块函数库类
  *
  * @package application.modules.position.utils
- * @version $Id: Position.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: Position.php 7021 2016-05-10 03:34:50Z gzzcs $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -42,7 +42,7 @@ class Position {
      * 按拼音排序岗位
      * @return array
      */
-    public static function getUserByPy() {
+    public static function getPositionByPy() {
         $group = array();
         $list = self::loadPosition();
         foreach ( $list as $k => $v ) {

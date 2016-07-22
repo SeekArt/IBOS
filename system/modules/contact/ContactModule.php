@@ -19,5 +19,5 @@ namespace application\modules\contact;
 use application\core\modules\Module;
 
 class ContactModule extends Module {
-	public $__CODE__ = 'c3c3CwR1jm6HA2mom27eRzafyrO8GHcW6pHb8GVp8Oif+GOygsQY';
+    
 }

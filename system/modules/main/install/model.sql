@@ -355,6 +355,8 @@ INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('corpid','0');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('qrcode','0');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('cobinding','0');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('coinfo','');
+INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('cacheuserstatus','1');
+INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('cacheuserconfig','{"offset":"0","limit":"1000","uid":"1"}');
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('notempty', '不能为空', '');
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('chinese', '只能为中文', '');
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('letter', '只能为英文', '');

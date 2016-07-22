@@ -1,4 +1,3 @@
-
 DROP TABLE IF EXISTS `{{auth_item}}`;
 CREATE TABLE `{{auth_item}}` (
   `name` varchar(64) NOT NULL COMMENT '项目名字',
@@ -67,3 +66,7 @@ CREATE TABLE `{{role_related}}` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('1', '管理员');
+INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('2', '编辑人员');
+INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('3', '普通成员');

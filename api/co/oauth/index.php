@@ -7,27 +7,29 @@ use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
 
 // CORS 设置
-$str = strtolower($_SERVER['SERVER_SOFTWARE']);
-list($server) = explode('/', $str);
+$str = strtolower( $_SERVER['SERVER_SOFTWARE'] );
+list($server) = explode( '/', $str );
 
-if($server == "apache" || $server == "nginx" || $server == "lighttpd"){
-	if(isset($_SERVER['HTTP_ORIGIN'])){
-		header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
+if ( $server == "apache" || $server == "nginx" || $server == "lighttpd" ) {
+	if ( isset( $_SERVER['HTTP_ORIGIN'] ) ) {
+		header( 'Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] );
 	}
-header( 'Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS' );
-header( 'Access-Control-Allow-Credentials: true' );
-header( 'Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE' );
-	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+	header( 'Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS' );
+	header( 'Access-Control-Allow-Credentials: true' );
+	header( 'Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE' );
+
+	if ( $_SERVER['REQUEST_METHOD'] == 'OPTIONS' ) {
 		exit();
 	}
-}else if($server == "iis"){
-	if($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-if ( isset( $_SERVER['HTTP_ORIGIN'] ) ) {
-	header( 'Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] );
-}
-		header('Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS');
-		header('Access-Control-Allow-Credentials: true');
-		header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE');
+} else if ( $server == "iis" ) {
+	if ( $_SERVER['REQUEST_METHOD'] == 'OPTIONS' ) {
+		// CORS 设置，有待讨论
+		if ( isset( $_SERVER['HTTP_ORIGIN'] ) ) {
+			header( 'Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN'] );
+		}
+		header( 'Access-Control-Allow-Headers: Origin, Accept, Content-Type, Authorization, ISCORS' );
+		header( 'Access-Control-Allow-Credentials: true' );
+		header( 'Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS, DELETE' );
 		exit();
 	}
 }
@@ -38,8 +40,8 @@ $defines = PATH_ROOT . '/system/defines.php';
 define( 'YII_DEBUG', true );
 define( 'TIMESTAMP', time() );
 $yii = PATH_ROOT . '/library/yii.php';
-$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $defines );
+$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
 require_once ( $yii );
 require_once '../../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
@@ -51,6 +53,7 @@ $redirect = Env::getRequest( 'redirect' );
 $signature = Env::getRequest( 'signature' );
 $deadline = Env::getRequest( 'deadline' );
 $op = Env::getRequest( 'op' );
+
 if ( empty( $deadline ) ) {
 	$deadline = 60 * 60;
 }

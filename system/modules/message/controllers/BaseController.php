@@ -3,7 +3,7 @@
 /**
  * message模块的默认控制器
  * 
- * @version $Id: BaseController.php 5175 2015-06-17 13:25:24Z Aeolus $
+ * @version $Id: BaseController.php 4064 2014-09-03 09:13:16Z zhangrong $
  * @package application.modules.main.controllers
  */
 

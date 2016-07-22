@@ -16,7 +16,7 @@ use application\core\utils\IBOS;
                 <div class="pull-right">
                     <div class="search">
                         <input type="text" name="keyword" placeholder="搜索文件" id="fc_search" nofocus/>
-                        <a href="javascripe:;"></a>
+                        <a href="javascript:;"></a>
                     </div>
                 </div>
                 <div id="fc_file_toolbar" class="fc-file-toolbar clearfix" style="display:none;"></div>
@@ -120,10 +120,16 @@ use application\core\utils\IBOS;
     <% for(var i = 0, len = breadcrumbs.length; i < len; i++){ %>
     <!-- 当前活动项 -->
     <% if(i == len - 1) { %>
-    <a href="<%= breadcrumbs[i].path %>" class="current"><%= breadcrumbs[i].name %></a>
+    <div class="ellipsis plm prm pull-left" style="max-width:80px;" title="<%= breadcrumbs[i].name %>">
+        <a href="<%= breadcrumbs[i].path %>" class="current"><%= breadcrumbs[i].name %></a>
+    </div>
     <% } else { %>
-    <a href="<%= breadcrumbs[i].path %>"><%= breadcrumbs[i].name %></a>
-    <i class="o-fc-level mls"></i>
+    <div class="ellipsis plm prm pull-left" style="max-width:80px;" title="<%= breadcrumbs[i].name %>">
+        <a href="<%= breadcrumbs[i].path %>"><%= breadcrumbs[i].name %></a>
+    </div>
+    <div class="pull-left">
+        <i class="o-fc-level mls"></i>
+    </div>
     <% } %>
     <% } %>
 </script>
@@ -254,7 +260,6 @@ use application\core\utils\IBOS;
     Ibos.app.s({
         "pid": <?php echo $pid; ?>,
         "cabinetType": "personal",
-        'PHPSESSID': '<?php echo IBOS::app()->session->getSessionID(); ?>',
         "isAdministrator": <?php echo IBOS::app()->user->isadministrator; ?>
     })
 </script>

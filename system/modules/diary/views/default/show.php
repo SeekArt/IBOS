@@ -120,7 +120,7 @@ use application\modules\dashboard\model\Stamp;
                         <th class="sep" width="68"><?php echo $lang['Work']; ?><br /><?php echo $lang['Summary']; ?></th>
                         <td class="sep" width="3"></td>
                         <td class="summary-td">
-                            <div class="fill" style="width: 660px; min-height: 180px">
+                            <div class="fill  editor-content" style="width: 660px; min-height: 180px">
                                 <p class="summary"><?php echo $diary['content']; ?>
                                 </p>
                             </div>
@@ -142,7 +142,7 @@ use application\modules\dashboard\model\Stamp;
                                                 <?php echo $value['filename']; ?><span class="tcm">(<?php echo $value['filesize']; ?>)</span>
                                             </div>
                                             <span class="fss">
-                                                <a href="<?php echo $value['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+                                                <a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
                                                 <?php if ( isset( $value['officereadurl'] ) ): ?>
                                                     <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
                                                         <?php echo $lang['Read']; ?>

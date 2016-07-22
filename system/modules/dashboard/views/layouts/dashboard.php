@@ -1,9 +1,8 @@
 <?php
 
-use application\core\utils\IBOS;
 use application\core\utils\File;
+use application\core\utils\IBOS;
 use application\modules\user\utils\User;
-
 ?>
 <!doctype html>
 <html lang="en">
@@ -21,25 +20,25 @@ use application\modules\user\utils\User;
 		<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/Select2/select2.css?<?php echo VERHASH; ?>" />
 		<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/artDialog/skins/ibos.css?<?php echo VERHASH; ?>" />
 		<script>
-			<?php $gAccount = User::getAccountSetting(); ?>
+<?php $gAccount = User::getAccountSetting(); ?>
 			var G = {
-				VERHASH: '<?php echo VERHASH; ?>',
-				SITE_URL: '<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>',
-				STATIC_URL: '<?php echo STATICURL; ?>',
-				cookiePre: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
-				cookiePath: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
-				cookieDomain: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
-				creditRemind: '<?php echo IBOS::app()->setting->get( 'setting/creditnames' ); ?>',
-				formHash: '<?php echo FORMHASH ?>',
-				<?php if(!IBOS::app()->user->isGuest): ?>
+			VERHASH: '<?php echo VERHASH; ?>',
+					SITE_URL: '<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>',
+					STATIC_URL: '<?php echo STATICURL; ?>',
+					cookiePre: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
+					cookiePath: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
+					cookieDomain: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
+					creditRemind: '<?php echo IBOS::app()->setting->get( 'setting/creditnames' ); ?>',
+					formHash: '<?php echo FORMHASH ?>',
+<?php if ( !IBOS::app()->user->isGuest ): ?>
 				uid: '<?php echo IBOS::app()->user->uid; ?>',
-				contact: '<?php echo User::getJsConstantUids( IBOS::app()->user->uid ); ?>',
-				<?php endif; ?>
-				password: {
-					minLength: "<?php echo $gAccount['minlength']; ?>",
+						contact: '<?php echo User::getJsConstantUids( IBOS::app()->user->uid ); ?>',
+<?php endif; ?>
+			password: {
+			minLength: "<?php echo $gAccount['minlength']; ?>",
 					maxLength: 32,
 					regex: "<?php echo $gAccount['preg'] ?>"
-				}
+			}
 			};
 		</script>
 		<!-- 核心库类 -->
@@ -50,13 +49,16 @@ use application\modules\user\utils\User;
 		<script src='<?php echo STATICURL; ?>/js/lib/artDialog/artDialog.min.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/zTree/jquery.ztree.all.min.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/lib/Select2/select2.js?<?php echo VERHASH; ?>'></script>
-		<script src='<?php echo File::fileName( 'data/org.js' ); ?>?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/src/common.js?<?php echo VERHASH; ?>'></script>
-		<script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>'></script>
 		<script src="<?php echo $this->getAssetUrl(); ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>"></script>
 	</head>
 	<body>
+		<!--数据包-->
+
+		<?php echo File::getOrgJs() ?>
+		<script src='<?php echo STATICURL; ?>/js/app/ibos.userData.js?<?php echo VERHASH; ?>'></script>
+		<script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
 		<?php echo $content; ?>
 	</body>
 </html>

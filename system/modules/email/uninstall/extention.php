@@ -32,7 +32,7 @@ NodeRelated::model()->deleteAllByAttributes( array( 'module' => 'email' ) );
 AuthItem::model()->deleteAll( "name LIKE 'email%'" );
 AuthItemChild::model()->deleteAll( "child LIKE 'email%'" );
 // step4:删除所有相关表
-$db = IBOS::app()->db->createCommand(); 
+$db = IBOS::app()->db->createCommand();
 $prefix = $db->getConnection()->tablePrefix;
 $tables = $db->setText( "SHOW TABLES LIKE '" . str_replace( '_', '\_', $prefix . 'email_%' ) . "'" )
 		->queryAll( false );

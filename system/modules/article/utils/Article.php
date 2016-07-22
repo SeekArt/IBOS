@@ -10,7 +10,7 @@
 /**
  * 信息中心模块------  文章工具类
  * @package application.modules.article.model
- * @version $Id: Article.php 6767 2016-04-06 05:43:03Z tanghang $
+ * @version $Id: Article.php 7605 2016-07-20 02:16:23Z gzhyj $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -20,7 +20,7 @@ use application\core\utils\StringUtil;
 use application\modules\article\model\Article as ArticleModel;
 use application\modules\article\model\ArticleReader;
 use application\modules\department\model\Department;
-use application\modules\department\model\DepartmentRelated as DeptRelated;
+use application\modules\department\model\DepartmentRelated;
 use application\modules\user\model\User;
 use CHtml;
 
@@ -44,6 +44,7 @@ class Article {
      */
     public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
         $user = User::model()->fetchByUid( $uid );
+        $upDeptid = Department::model()->queryDept( $user['deptid'] );
         $typeWhere = self::joinTypeCondition( $type, $uid, $catid );
         if ( !empty( $condition ) ) {
             $condition .=" AND " . $typeWhere;
@@ -51,22 +52,30 @@ class Article {
             $condition = $typeWhere;
         }
         //加上阅读权限判断
-        $allDeptId = $user['alldeptid'] . '';
-        $allupdeptid = Department::model()->queryDept( $allDeptId );
-        $allDeptId .= ',' . $allupdeptid . '';
-        $allPosId = $user['allposid'] . '';
-
+        $allDeptId = array_filter( array_unique( explode( ',', $upDeptid . $user['alldeptid'] ) ) );
         $deptCondition = '';
-        $deptIdArr = explode( ',', trim( $allDeptId, ',' ) );
-        if ( count( $deptIdArr ) > 0 ) {
-            foreach ( $deptIdArr as $deptId ) {
+        if ( count( $allDeptId ) > 0 ) {
+            foreach ( $allDeptId as $deptId ) {
                 $deptCondition .= "FIND_IN_SET('$deptId',deptid) OR ";
             }
             $deptCondition = substr( $deptCondition, 0, -4 );
         } else {
             $deptCondition = "FIND_IN_SET('',deptid)";
         }
-        $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
+        // $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
+        $scopeCondition = " ( ((deptid='alldept' OR "
+                . "{$deptCondition} OR "
+                . "FIND_IN_SET('{$user['allposid']}',positionid) OR "
+                . "FIND_IN_SET('{$uid}',uid) OR "
+                . "FIND_IN_SET('{$user['allroleid']}',roleid)) OR "
+                . "(author='{$uid}') OR (approver='{$uid}')) ";
+
+        // 如果新闻当前状态为：未审核
+        // 审核人可以看到所有属于他的所有未审核新闻
+        if (self::TYPE_NOTALLOW === $type) {
+            $scopeCondition .= " OR {$typeWhere} ";
+        }
+        $scopeCondition .= " ) ";
         $condition.=" AND " . $scopeCondition;
         if ( !empty( $catid ) ) {
             $condition.=" AND catid IN ($catid)";
@@ -151,7 +160,7 @@ class Article {
         }
         //得到用户的部门id,如果该id存在于文章部门范围之内,返回true
         $user = User::model()->fetch( array( 'select' => array( 'deptid', 'positionid' ), 'condition' => 'uid=:uid', 'params' => array( ':uid' => $uid ) ) );
-        $departRelated = DeptRelated::model()->fetchAllDeptIdByUid( $uid );
+        $departRelated = DepartmentRelated::model()->fetchAllDeptIdByUid( $uid );
         //取得文章部门范围id以及他的子id
         $childDeptid = Department::model()->fetchChildIdByDeptids( $data['deptid'] );
         if ( StringUtil::findIn( $user['deptid'] . ',' . implode( ',', $departRelated ), $childDeptid . ',' . $data['deptid'] ) ) {
@@ -162,6 +171,9 @@ class Article {
             return true;
         }
         if ( StringUtil::findIn( $data['uid'], $uid ) ) {
+            return true;
+        }
+        if ( StringUtil::findIn( $data['roleid'], $user['roleid'] ) ) {
             return true;
         }
         return false;
@@ -181,21 +193,26 @@ class Article {
                     $all = true;
                     $string = 'c_0';
                 } else {
-                    $string .='d_' . $deptid;
+                    $string .=',d_' . $deptid;
                 }
             }
         }
         if ( false === $all && !empty( $data['positionid'] ) ) {
             foreach ( explode( ',', $data['positionid'] ) as $positionid ) {
-                $string .= 'p_' . $positionid;
+                $string .= ',p_' . $positionid;
             }
         }
         if ( false === $all && !empty( $data['uid'] ) ) {
             foreach ( explode( ',', $data['uid'] ) as $uid ) {
-                $string .= 'u_' . $uid;
+                $string .= ',u_' . $uid;
             }
         }
-        $uidArray = StringUtil::getUidAByUDPX( $string, true, false, true );
+        if ( false === $all && !empty( $data['roleid'] ) ) {
+            foreach ( explode( ',', $data['roleid'] ) as $roleid ) {
+                $string .= ',r_' . $roleid;
+            }
+        }
+        $uidArray = StringUtil::getUidAByUDPX( trim( $string, ',' ), true, false, true );
         return $uidArray;
     }
 
@@ -218,30 +235,6 @@ class Article {
         }
         $resultStr = implode( $join, $result );
         return $resultStr;
-    }
-
-    /**
-     * 组合选人框的值
-     * @param string $deptid 部门id
-     * @param string $positionid 岗位Id
-     * @param string $uid 用户id
-     * @return type
-     */
-    public static function joinSelectBoxValue( $deptid, $positionid, $uid ) {
-        $tmp = array();
-        if ( !empty( $deptid ) ) {
-            if ( $deptid == 'alldept' ) {
-                return 'c_0';
-            }
-            $tmp[] = StringUtil::wrapId( $deptid, 'd' );
-        }
-        if ( !empty( $positionid ) ) {
-            $tmp[] = StringUtil::wrapId( $positionid, 'p' );
-        }
-        if ( !empty( $uid ) ) {
-            $tmp[] = StringUtil::wrapId( $uid, 'u' );
-        }
-        return implode( ',', $tmp );
     }
 
     /**
@@ -277,52 +270,6 @@ class Article {
             $highLight['ishighlight'] = 0;
         }
         return $highLight;
-    }
-
-    /**
-     * 取得选人框数据，去掉各自的前缀，返回数组，数组内
-     * <pre>
-     *  array(
-     *      'deptid' => '2,3,4',
-      'positionid' => '5,6',
-      'uid' => '',
-     * )
-     * </pre>
-     * @param string $data 源数据 格式 d_1,d_23,p_108
-     * @return array
-     */
-    public static function handleSelectBoxData( $data ) {
-        $result = array(
-            'deptid' => '',
-            'positionid' => '',
-            'uid' => '',
-        );
-        if ( !empty( $data ) ) {
-            if ( isset( $data['c'] ) ) {
-                $result = array(
-                    'deptid' => 'alldept',
-                    'positionid' => '',
-                    'uid' => '',
-                );
-                return $result;
-            }
-            if ( isset( $data['d'] ) ) {
-                $result['deptid'] = implode( ',', $data['d'] );
-            }
-            if ( isset( $data['p'] ) ) {
-                $result['positionid'] = implode( ',', $data['p'] );
-            }
-            if ( isset( $data['u'] ) ) {
-                $result['uid'] = implode( ',', $data['u'] );
-            }
-        } else {
-            $result = array(
-                'deptid' => 'alldept',
-                'positionid' => '',
-                'uid' => ''
-            );
-        }
-        return $result;
     }
 
     /**

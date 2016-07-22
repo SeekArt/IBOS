@@ -10,7 +10,7 @@
 /**
  * 邮件中心模块函数库类，提供全局静态方法调用
  * @package application.modules.email.utils
- * @version $Id: Email.php 6759 2016-04-06 02:09:02Z tanghang $
+ * @version $Id: Email.php 7636 2016-07-22 03:30:48Z gzhyj $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -23,6 +23,7 @@ use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email as EmailModel;
 use application\modules\user\model\User;
+use application\core\utils\Env;
 use CHtml;
 
 class Email {
@@ -60,7 +61,32 @@ class Email {
      * @return array
      */
     public static function mergeSearchCondition( $search, $uid ) {
-        $condition = "(eb.fromid = {$uid} OR e.toid = {$uid})";
+        if ( Env::getRequest( 'type' ) === 'normal_search' ) {
+            switch ( Env::getRequest( 'op' ) ) {
+                case 'inbox':
+                    $condition = "e.toid = {$uid} AND eb.subject LIKE '%{$search['keyword']}%'";
+                    break;
+                case 'todo':
+                    $condition = "e.toid = {$uid} AND eb.subject LIKE '%{$search['keyword']}%' AND e.ismark = 1";
+                    break;
+                case 'draft':
+                    $condition = "eb.fromid = {$uid} AND eb.subject LIKE '%{$search['keyword']}%' AND eb.issend = 0";
+                    break;
+                case 'send':
+                    $condition = "eb.fromid = {$uid} AND eb.subject LIKE '%{$search['keyword']}%' AND eb.issend = 1";
+                    break;
+                case 'del':
+                    $condition = "e.toid = {$uid} AND eb.subject LIKE '%{$search['keyword']}%' AND e.isdel = 1";
+                    break;
+                default:
+                    $condition = "( e.toid = 0 )";
+                    break;
+            }
+            return array( 'condition' => $condition, 'archiveId' => 0 );
+        }
+        // 上面是新增专门针对普通搜索的查询条件处理
+        // 下面是原来的搜索处理代码
+        $condition = "(e.toid = {$uid})";
         // 关键字
         //添加对keyword的转义，防止SQL错误
         $keyword = CHtml::encode( stripcslashes( $search['keyword'] ) );
@@ -86,7 +112,7 @@ class Email {
         }
         if ( !empty( $keyword ) ) {
             //搜索的时候也应该转义然后搜索，不然找不到
-            StringUtil::ihtmlSpecialCharsUseReference( $keyword );
+            // StringUtil::ihtmlSpecialCharsUseReference( $keyword );
             // 搜索位置条件
             $allPos = ($pos == 'all');
             $posWhereJoin = $allPos ? ' OR ' : ' AND ';
@@ -152,8 +178,8 @@ class Email {
                 $recipient = StringUtil::getUid( $search['recipient'] );
                 $condition .= " AND e.toid = " . implode( ',', $recipient );
             }
-            return array( 'condition' => $condition, 'archiveId' => $queryArchiveId );
         }
+        return array( 'condition' => $condition, 'archiveId' => $queryArchiveId );
     }
 
     /**

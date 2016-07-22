@@ -33,19 +33,19 @@ class Database {
 
     /**
      * 备份时要排除的表
-     * @var array 
+     * @var array
      */
     private static $exceptTables = array( 'session' );
 
     /**
      * 开始处理行数。这个值在备份时会被重复赋值
-     * @var integer 
+     * @var integer
      */
     private static $startRow = 0;
 
     /**
      * 完成状态标识
-     * @var boolean 
+     * @var boolean
      */
     private static $complete = true;
 
@@ -151,7 +151,7 @@ class Database {
      * 参照某一个表的数据结构，创建一个与其一样的表
      * @param string $prototype 原型表的表名
      * @param string $target 目标表名
-     * @return boolean 
+     * @return boolean
      */
     public static function cloneTable( $prototype, $target ) {
         $db = IBOS::app()->db->createCommand();

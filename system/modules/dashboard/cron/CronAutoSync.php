@@ -14,6 +14,7 @@ use application\modules\user\model\User;
 
 set_time_limit(120);
 $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
+$coBindType = 'ibos';
 if ( !isset( $coinfo['corpid'] ) ) {
     Setting::model()->updateSettingValueByKey('cobinding', 0);
 }
@@ -22,22 +23,26 @@ if ( Setting::model()->fetchSettingValueByKey('cobinding') == 0 ) {
 }
 else {
     // 根据酷办公需要的格式，获取 IBOS 的用户列表
-    $userList = getUserList();
+    // $userList = getUserList();
     // 获取用户同步数据列表
-    $syncList = getSyncList($userList, $coinfo['corpid']);
+    $syncList = getSyncList($coinfo['corpid']);
     // 准备 Cache 表的相关 key 值记录
     readySync();
     // 将需要同步的用户数据列表存放在 Cache 表
     $syncList['third']['delete'] = removeAdminUidFromIbosRemoveList($syncList['third']['delete']);
     Cache::model()->updateByPk('iboscreatelist', array('cachevalue' => serialize($syncList['third']['add'])));
     Cache::model()->updateByPk('ibosremovelist', array('cachevalue' => serialize($syncList['third']['delete'])));
-    Cache::model()->updateByPk('cocreatelist', array('cachevalue' => serialize($syncList['co']['add'])));
-    Cache::model()->updateByPk('coremovelist', array('cachevalue' => serialize($syncList['co']['delete'])));
+    $coids = User::model()->fetchUnbind(50);
+    $removeids = User::model()->fetchDeletebind();
+    $coCreateList = User::model()->findThreeByUid( $coids );
+    $coRemoveList = User::model()->findThreeByUid( $removeids );
+    // Cache::model()->updateByPk('cocreatelist', array('cachevalue' => serialize($syncList['co']['add'])));
+    // Cache::model()->updateByPk('coremovelist', array('cachevalue' => serialize($syncList['co']['delete'])));
     // 初始化同步需要的相关数据
     $ibosCreateList = Cache::model()->fetchArrayByPk('iboscreatelist');
     $ibosRemoveList = Cache::model()->fetchArrayByPk('ibosremovelist');
-    $coCreateList = Cache::model()->fetchArrayByPk('cocreatelist');
-    $coRemoveList = Cache::model()->fetchArrayByPk('coremovelist');
+    // $coCreateList = Cache::model()->fetchArrayByPk('cocreatelist');
+    // $coRemoveList = Cache::model()->fetchArrayByPk('coremovelist');
     $removeIdenticalRes = removeIdenticalByMobile($ibosCreateList, $coCreateList);
     $ibosCreateList = $removeIdenticalRes['userList_1'];
     $coCreateList = $removeIdenticalRes['userList_2'];
@@ -88,18 +93,45 @@ function getUserList() {
  * @param  array $userList IBOS 用户列表
  * @return array           同步用户列表
  */
-function getSyncList($userList, $corpid) {
+function getSyncList($corpid) {
+    // 查出Ibos新增和禁用的用户 
+    $add = $delete = '';
+    $result = array();
+    $disabled = User::USER_STATUS_ABANDONED;
+    $count = User::model()->find(" status != {$disabled} ")->count();
+    $delete = User::model()->CountDelete();
+    $add = User::model()->CountUnbind();
+    //请求酷办公的用户数据
     $post = array(
-        'type' => 'ibos',
+        'type' => $coBindType,
         'corpid' => $corpid,
-        'userlist' => $userList,
     );
-    $getSyncListRes = CoApi::getInstance()->getDiffUsers($post);
-    if ($getSyncListRes['errorcode'] == CodeApi::SUCCESS) {
-        return $getSyncListRes['data'];
+    $getSync = CoApi::getInstance()->getCoUsers( $post );
+    if ( $getSync['errorcode'] == CodeApi::SUCCESS ) {
+        $result['data'] = array( 
+            'co' => array( 
+                'add' => $add['0'], 
+                'delete' => $delete['0'], 
+                'count' => $count 
+                ), 
+            'third' => $getSync['data']['third'] 
+            );
+        return $result['data'];
     } else {
-        die;
+       die;
     }
+
+    // $post = array(
+    //     'type' => $coBindType,
+    //     'corpid' => $corpid,
+    //     'userlist' => $userList,
+    // );
+    // $getSyncListRes = CoApi::getInstance()->getDiffUsers($post);
+    // if ($getSyncListRes['errorcode'] == CodeApi::SUCCESS) {
+    //     return $getSyncListRes['data'];
+    // } else {
+    //     die;
+    // }
 }
 
 /**
@@ -193,7 +225,7 @@ function removeIdenticalByMobile($userList_1, $userList_2) {
  */
 function coCreateRelation($relationCreateList, $corpid) {
     $post = array(
-        'type' => 'ibos',
+        'type' => $coBindType,
         'corpid' => $corpid,
         'data' => $relationCreateList,
     );
@@ -214,7 +246,7 @@ function coCreateRelation($relationCreateList, $corpid) {
  */
 function coRemoveRelation($relationRemoveList, $corpid) {
     $post = array(
-        'type' => 'ibos',
+        'type' => $coBindType,
         'corpid' => $corpid,
         'data' => $relationRemoveList,
     );
@@ -246,7 +278,7 @@ function coRemoveRelation($relationRemoveList, $corpid) {
  */
 function createCoUser($userCreateList, $corpid) {
     $post = array(
-        'type' => 'ibos',
+        'type' => $coBindType,
         'corpid' => $corpid,
         'data' => $userCreateList,
     );
@@ -285,7 +317,7 @@ function createCoUser($userCreateList, $corpid) {
  */
 function removeCoUser($userRemoveList, $corpid) {
     $post = array(
-        'type' => 'ibos',
+        'type' => $coBindType,
         'corpid' => $corpid,
         'data' => $userRemoveList,
     );

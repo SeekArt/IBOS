@@ -10,7 +10,7 @@
 /**
  * 招聘模块------联系记录控制器类，RecruitBaseController
  * @package application.modules.recruit.components
- * @version $Id: ContactController.php 6762 2016-04-06 02:59:13Z gzhyj $
+ * @version $Id: ContactController.php 7023 2016-05-10 08:01:05Z Aeolus $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 

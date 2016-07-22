@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS {{article}} (
   `catid` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '所属分类',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '文章状态，1为公开2为审核3为草稿',
   `deptid` text NOT NULL COMMENT '阅读范围部门',
-  `positionid` text NOT NULL COMMENT '职位',
+  `positionid` text NOT NULL COMMENT '阅读范围职位',
+  `roleid` text NOT NULL COMMENT '阅读范围角色',
   `uid` text NOT NULL COMMENT '阅读范围人员',
   `istop` tinyint(1) NOT NULL DEFAULT '0' COMMENT '置顶，1代表置顶，0为不置顶',
   `toptime` int(10) NOT NULL DEFAULT '0' COMMENT '置顶时间',
@@ -98,12 +99,12 @@ REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('articlevoteenable', '1');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('articlemessageenable', '1');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('articlethumbenable', '1');
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('articlethumbwh', '160,120');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('0','信息中心','article/default/index','0','1','0','6','article');
-INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('新闻','0','article','dashboard','index','','10','0');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('5','信息公告','article/default/index','0','1','0','1','article');
+INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('信息中心','0','article','dashboard','index','','10','0');
 INSERT INTO `{{article_category}}`(`pid`, `name`, `sort`) VALUES ('0','默认分类','0');
 INSERT INTO `{{syscache}}`(`name`, `type`, `dateline`, `value`) VALUES ('articlecategory','1','0','');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('article_message','信息中心消息提醒','article','article/default/New message title','article/default/New message content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('article_verify_message','信息中心新闻审核提醒','article','article/default/New verify message title','article/default/New verify message content','1','1','1','2');
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('article_back_message','信息中心审核退回提醒','article','article/default/New back title','article/default/New back content','1','1','1','2');
 REPLACE INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表信息公告', 'addarticle', '3', '2', '0', '2','1');
-INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('article','新闻','article/default/index','提供企业新闻信息发布','5','1');
+INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('article','信息中心','article/default/index','提供企业新闻信息发布','5','1');

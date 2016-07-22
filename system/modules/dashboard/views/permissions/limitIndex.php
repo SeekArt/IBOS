@@ -69,4 +69,4 @@ use application\core\utils\Env;
 	$(".privilege-level").tooltip();
 	
 </script>
-<script src='<?php echo $assetUrl; ?>/js/db_permissions_limit.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo $assetUrl; ?>/js/db_permissions_limit.js'></script>

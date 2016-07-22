@@ -106,6 +106,7 @@ use application\modules\role\utils\Role as RoleUtil;
 		</div>
 	</div>
 </div>
+<!--
 <div id="batch_import_dialog" style="display:none;">
 	<div class="batch-import-wrap" id="batch_import_wrap">
 		<div class="fill-nn" id="upload_wrap">
@@ -126,7 +127,7 @@ use application\modules\role\utils\Role as RoleUtil;
 						<span class="remain-num xco xwb fsm"></span>
 						<span>人。</span>
 					</p>
-					<a href="<?php echo $this->createUrl( 'user/import', array( 'op' => 'downloadTpl' ) ); ?>" class="btn">下载模版</a>
+					<a href="<?php //echo $this->createUrl( 'user/import', array( 'op' => 'downloadTpl' ) ); ?>" class="btn">下载模版</a>
 				</div>
 			</div>
 			<div class="clearfix">
@@ -208,7 +209,7 @@ use application\modules\role\utils\Role as RoleUtil;
 		</div>
 	</div>
 </div>
-
+-->
 <div id="update_userinfo_dialog" style="display:none;">
     <div class="user-form-con">
         <form class="form-horizontal" id="update_userinfo_form">
@@ -244,4 +245,5 @@ use application\modules\role\utils\Role as RoleUtil;
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/SWFUpload/handlers.js?<?php echo VERHASH; ?>'></script>
+<script src='<?php echo STATICURL; ?>/js/app/ibos.importData.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/org_user_index.js?<?php echo VERHASH; ?>'></script>

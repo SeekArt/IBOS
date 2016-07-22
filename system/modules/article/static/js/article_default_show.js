@@ -1,6 +1,6 @@
 /**
  * 信息中心--查看页
- * Article/default/index&op=show
+ * Article/default/show
  * @version $Id$
  */
 

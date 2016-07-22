@@ -11,7 +11,7 @@
  * 岗位表的数据层操作
  *
  * @package application.modules.position.model
- * @version $Id: Position.php 6759 2016-04-06 02:09:02Z tanghang $
+ * @version $Id: Position.php 7194 2016-05-23 06:56:07Z gzhyj $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -126,6 +126,17 @@ class Position extends Model {
             $return[$position['positionid']] = $position['posname'];
         }
         return $return;
+    }
+
+    /**
+     * 根据岗位 ID 获取对应岗位的在职人数
+     * @param  integer $positionid 岗位 ID
+     * @return integer             在职人数
+     */
+    public function getPositionUserNumById( $positionid )
+    {
+        $position = $this->fetchByPk( $positionid );
+        return !empty( $position ) ? $position['number'] : 0;
     }
 
 }
