@@ -85,8 +85,6 @@ class InitMainModule extends CBehavior {
 		$owner->attachEventHandler( 'onInitModule', array( $this, 'handleInitOrg' ) );
 		// 检查更新升级
 		$owner->attachEventHandler( 'onInitModule', array( $this, 'handleCheckUpgrade' ) );
-		// 授权检查
-		$owner->attachEventHandler( 'onInitModule', array( $this, 'handleCheckLicence' ) );
 	}
 
 	/**
@@ -383,14 +381,6 @@ class InitMainModule extends CBehavior {
 		}
 	}
 
-	/**
-	 * 检查主授权
-	 * @param mixed $event
-	 * @author Ring 
-	 */
-	public function handleCheckLicence( $event ) {
-		IBOS::app()->licence->checkMainLicence();
-	}
 
 	/**
 	 * 设置时区

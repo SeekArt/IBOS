@@ -27,17 +27,7 @@ class Module extends CWebModule {
      * @return boolean 合法与否
      */
     final protected function checkModule( $module ) {
-        $fileName = $this->getBasePath() . '/licence.key';
-        if ( file_exists( $fileName ) && is_readable( $fileName ) ) {
-            $licence = file_get_contents( $fileName );
-        } else {
-            $licence = '';
-        }
-        if ( !empty( $licence ) ) {
-            $rs = IBOS::app()->licence->readLicence( $licence, false );
-            return strcasecmp( $rs, $module ) == 0;
-        }
-        return false;
+        return true;
     }
 
 }
