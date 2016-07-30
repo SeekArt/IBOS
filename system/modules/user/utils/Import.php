@@ -112,8 +112,8 @@ class Import extends ImportParent implements ImportInterface {
 				'type' => 'common',
 				'name' => '用户导入模版',
 				'filename' => 'user_import.xls',
-				'fieldline' => 3,
-				'line' => 3,
+				'fieldline' => 1,
+				'line' => 1,
 			),
 		);
 		return parent::returnArray( $config );
@@ -234,15 +234,15 @@ class Import extends ImportParent implements ImportInterface {
 			$deptArray = $this->session->get( 'import_userTpl_deptArray' );
 			$deptname = array_shift( $deptExplode );
 			$deptnameArray = array();
+			$findDeptid = NULL;
 			if ( !empty( $deptArray[$pid] ) ) {
 				foreach ( $deptArray[$pid] as $row ) {
-					$deptnameArray[] = $row['deptname'];
+					if ( $row['deptname'] == $deptname ) {
+						$findDeptid = $row['deptid'];
+					}
 				}
 			}
-
-			if ( in_array( $deptname, $deptnameArray ) ) {
-				$findDeptid = $row['deptid'];
-			} else {
+			if ( NULL === $findDeptid ) {
 				IBOS::app()->db->createCommand()
 						->insert( '{{department}}', array(
 							'pid' => $pid,

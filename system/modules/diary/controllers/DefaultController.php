@@ -21,7 +21,6 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Module;
 use application\core\utils\Org;
@@ -584,7 +583,7 @@ class DefaultController extends BaseController {
         $stampUrl = '';
         if ( $diary['stamp'] != 0 ) {
             $stamp = Stamp::model()->fetchStampById( $diary['stamp'] );
-            $stampUrl = File::fileName( Stamp::STAMP_PATH ) . $stamp;
+			$stampUrl = $stamp;
         }
         // 日志时间拆分
         $diary['diarytime'] = DiaryUtil::getDateAndWeekDay( date( 'Y-m-d', $diary['diarytime'] ) );
@@ -666,7 +665,7 @@ class DefaultController extends BaseController {
                         $content = StringUtil::parseHtml( $record['content'] );
                     }
                     $htmlStr.= '<li class="media">
-									<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
+									<a href="' . Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
 										<img src="' . Org::getDataStatic( $record['uid'], 'avatar', 'small' ) . '" title="' . $record['realname'] . '" class="img-rounded"/>
 									</a>
 									<div class="media-body">

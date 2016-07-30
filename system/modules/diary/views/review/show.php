@@ -1,10 +1,8 @@
 <?php
 
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
-use application\modules\dashboard\model\Stamp;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/diary.css?<?php echo VERHASH; ?>">
@@ -68,7 +66,7 @@ use application\modules\dashboard\model\Stamp;
                     <tbody>
                     <div class="da-stamp" style="position: absolute; top: 25px; right: 180px; z-index: 1000">
                         <span id="preview_stamp">
-                            <?php if ( $diary['stamp'] > 0 ): ?><img id="stamp_<?php echo $diary['diaryid']; ?>" src="<?php echo File::fileName( Stamp::STAMP_PATH . $stampUrl ); ?>" width="150px" height="90px" /><?php endif; ?>
+							<?php if ( $diary['stamp'] > 0 ): ?><img id="stamp_<?php echo $diary['diaryid']; ?>" src="<?php echo $stampUrl; ?>" width="150px" height="90px" /><?php endif; ?>
                         </span>
                     </div>
                     <!-- 原计划 -->
@@ -260,7 +258,7 @@ use application\modules\dashboard\model\Stamp;
 
         $stampBtn.on("stampChange", function (evt, data) {
             var $commentBtn = $comment.find("[data-act='addcomment']");
-            var stamp = '<img src="<?php echo File::fileName( Stamp::STAMP_PATH ); ?>' + data.stamp + '" width="150px" height="90px" />',
+			var stamp = '<img src="' + data.stamp + '" width="150px" height="90px" />',
                     smallStamp = '<img src="' + data.path + '" width="60px" height="24px" />',
                     $parentRow = $stampBtn.parents("div").eq(0);
 

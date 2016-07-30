@@ -28,6 +28,7 @@ use application\modules\main\model\Attachment;
 use application\modules\message\model\Notify;
 use application\modules\thread\utils\Thread as ThreadUtil;
 use application\modules\user\model\User;
+use CHtml;
 
 class Email extends Model {
 
@@ -789,68 +790,193 @@ class Email extends Model {
     }
 
     /**
-     * 普通搜索，仅返回一个包含 CDBCommand 和 $conditon 条件的数组
+     * 通用搜索
      *
      * @param $uid integer 用户id
      * @param $op string 操作
-     * @param $keyword string 搜索关键字
      * @param int $aid 存储表id（archiveId）
-     * @return array 返回包含 CDBCommand 和 条件的数组
+     * @return CDbCommand 返回 CDbCommand 对象
      */
-    public function normalSearch($uid, $op, $keyword, $aid = 0, $searchScope = "subject") {
+    public function commonSearch($uid, $op, $aid = 0) {
+        // 参数处理
+        $uid = (int)$uid;
+        $aid = (int)$aid;
+
         $emailTable = $this->getTableName($aid);
         $emailAlias = "e";
         $emailbodyTable = EmailBody::model()->getTableName($aid);
         $emailbodyAlias = "eb";
 
         $command = IBOS::app()->db->createCommand();
-        $condition = " {$emailbodyAlias}.`subject` LIKE '%{$keyword}%' ";
+        $condition = "";
 
-        // 草稿箱和已发送不需要连接表
-        if (in_array($op, array("send", "draft"))) {
-            $command = $command->select("*")
-                ->from(sprintf('{{%s}} %s', $emailbodyTable, $emailbodyAlias));
-            if ($op == "draft") {
+        $command = $command->select("*")
+            ->from(sprintf("{{%s}} %s", $emailbodyTable, $emailbodyAlias))
+            ->leftjoin(sprintf("{{%s}} %s", $emailTable, $emailAlias), "{$emailAlias}.`bodyid` = {$emailbodyAlias}.`bodyid`")
+            ->group("{$emailbodyAlias}.bodyid")
+            ->order("{$emailbodyAlias}.bodyid DESC");
+
+        switch ($op) {
+            case 'inbox':
+                // 内部收件箱
+                $condition .= "  {$emailAlias}.`toid` = {$uid} ";
+                break;
+            case 'todo':
+                // 代办邮件
+                $condition .= "  {$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`ismark` = 1 ";
+                break;
+            case 'del':
+                // 已删除邮件
+                $condition .= "  {$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`isdel` = 1 ";
+                break;
+            case "draft":
                 // 草稿箱
-                $condition .= " AND {$emailbodyAlias}.`fromid` = {$uid} AND {$emailbodyAlias}.`issend` = 0 ";
-            }
-            if ($op == "send") {
+                $condition .= "  {$emailbodyAlias}.`fromid` = {$uid} AND {$emailbodyAlias}.`issend` = 0 ";
+                break;
+            case "send":
                 // 已发送
-                $condition .= " AND {$emailbodyAlias}.`fromid` = {$uid} AND {$emailbodyAlias}.`issend` = 1 ";
-            }
-
-        } else {
-            // 其他操作需要连接表
-            $command = $command->select("*")
-                ->from(sprintf("{{%s}} %s", $emailbodyTable, $emailbodyAlias))
-                ->leftjoin(sprintf("{{%s}} %s", $emailTable, $emailAlias), "{$emailAlias}.bodyid = {$emailbodyAlias}.bodyid");
-            switch ($op) {
-                case 'inbox':
-                    // 内部收件箱
-                    $condition .= " AND {$emailAlias}.toid = {$uid} ";
-                    break;
-                case 'todo':
-                    // 代办邮件
-                    $condition .= " AND {$emailAlias}.toid = {$uid} AND {$emailAlias}.ismark = 1 ";
-                    break;
-                case 'del':
-                    // 已删除邮件
-                    $condition .= " AND {$emailAlias}.toid = {$uid} AND {$emailAlias}.isdel = 1 ";
-                    break;
-                default:
-                    break;
-            }
+                $condition .= "  {$emailbodyAlias}.`fromid` = {$uid} AND {$emailbodyAlias}.`issend` = 1 ";
+                break;
+            default:
+                break;
         }
 
-        return array(
-            $command,
-            $condition,
-        );
+        return $command->andWhere($condition);
+        }
+
+    // 获取高级搜索需要的条件
+    public function getAdvancedSearchCondition($search) {
+        $condition = "";
+
+        // 关键字
+        //添加对keyword的转义，防止SQL错误
+        $keyword = CHtml::encode(stripcslashes($search['keyword']));
+        // 查询位置
+        $pos = isset($search['pos']) ? $search['pos'] : 'all';
+        // 文件夹
+        $folder = isset($search['folder']) ? $search['folder'] : 0;
+        $setAttach = isset($search['attachment']) && $search['attachment'] !== '-1';
+        if ($folder == 'allbynoarchive') {//全部邮件（不含归档）
+            $queryArchiveId = 0;
+            $folder = 0;
+        } elseif ($folder == 'all') {//全部邮件（包含归档）
+            $ids = IBOS::app()->setting->get('setting/emailtableids');
+            $queryArchiveId = $ids;
+            $folder = 0;
+        } elseif (strpos($folder, 'archive_') !== false) { //某一个归档
+            $queryArchiveId = intval(preg_replace('/^archive_(\d+)/', '\1', $folder));
+            //重置文件夹
+            $folder = 0;
+        } else { //某一个文件夹（不含归档）
+            $queryArchiveId = 0;
+            $folder = intval($folder);
+        }
+        //搜索的时候也应该转义然后搜索，不然找不到
+        // StringUtil::ihtmlSpecialCharsUseReference( $keyword );
+        // 搜索位置条件
+        $allPos = ($pos == 'all');
+        $posWhereJoin = $allPos ? ' OR ' : ' AND ';
+        $posWhere = '';
+        if ($pos == 'content' || !empty($pos)) {
+            if ($pos == 'subject' || $allPos) {  //标题
+                $posWhere .= $posWhereJoin . "eb.subject LIKE '%{$keyword}%'";
+            }
+            if ($pos == 'content' || $allPos) {  //邮件正文
+                $posWhere .= $posWhereJoin . "eb.content LIKE '%{$keyword}%'";
+            }
+            if ($pos == 'attachment' || $allPos) {  //附件名
+                $containAttach = isset($search['attachment']) && $search['attachment'] !== '0'; // 是否设置包含附件
+                $kwBodyIds = $this->fetchAllBodyIdByKeywordFromAttach($keyword, $condition, $queryArchiveId);
+                if (!$allPos && (!$containAttach || count($kwBodyIds) == 0)) { // 高级模式下，不包含附件或者没找到数据就直接返回
+                    return array('condition' => "1=0", 'archiveId' => $queryArchiveId); // 找不到直接返回
+                } else {
+                    $posWhere .= $posWhereJoin . 'FIND_IN_SET(eb.bodyid,\'' . implode(',', $kwBodyIds) . '\')';
+                }
+            } //end 搜索附件名
+            if ($allPos) {
+                $condition .= ' AND  (' . preg_replace('/^' . $posWhereJoin . '/', '', $posWhere) . ')';
+            } else {
+                $condition .= $posWhere;
+            }
+        }
+        // 文件夹条件
+        if ($folder) {
+            if ($folder == 1) {
+                $condition .= " AND (e.fid = 1 AND e.isdel = 0)";
+            } elseif ($folder == 3) {
+                $condition .= " AND (eb.issend = 1 AND eb.issenderdel != 1 AND e.isweb=0)";
+            } else {
+                $condition .= " AND (e.fid = {$folder} AND e.isdel = 0)";
+            }
+        }
+        // 时间范围条件
+        if (isset($search['dateRange']) && $search['dateRange'] !== '-1') {
+            $dateRange = intval($search['dateRange']);
+            $endTime = TIMESTAMP;
+            $startTime = strtotime("- {$dateRange}day", $endTime);
+            $condition .= " AND (eb.sendtime BETWEEN {$startTime} AND {$endTime})";
+        }
+        // 邮件读取状态
+        if (isset($search['readStatus']) && $search['readStatus'] !== '-1') {
+            $readStatus = intval($search['readStatus']);
+            $condition .= " AND e.isread = {$readStatus}";
+        }
+        // 设置附件
+        if ($setAttach) {
+            if ($search['attachment'] == '0') {
+                $condition .= " AND eb.attachmentid = ''";
+            } else if ($search['attachment'] == '1') {
+                $condition .= " AND eb.attachmentid != ''";
+            }
+        }
+        // 发件人与收件人
+        if (isset($search['sender']) && !empty($search['sender'])) {
+            $sender = StringUtil::getUid($search['sender']);
+            $condition .= " AND eb.fromid = " . implode(',', $sender);
+        }
+        if (isset($search['recipient']) && !empty($search['recipient'])) {
+            $recipient = StringUtil::getUid($search['recipient']);
+            $condition .= " AND e.toid = " . implode(',', $recipient);
+        }
+
+
+        return $condition;
+    }
+
+    /**
+     * 普通搜索，仅返回一个 CDbCommand 对象
+     *
+     * @param $uid integer 用户id
+     * @param $op string 操作
+     * @param $keyword string 搜索关键字
+     * @param int $aid 存储表id（archiveId）
+     * @return CDbCommand 返回 CDbCommand 对象
+     */
+    public function normalSearch($uid, $op, $keyword, $aid = 0) {
+        $command = $this->commonSearch($uid, $op, $aid)
+                        ->andWhere("`eb`.`subject` LIKE :keyword", array(":keyword" => '%' . $keyword . '%'));
+        return $command;
+    }
+
+    /**
+     * 高级搜索
+     *
+     * @param $uid int 用户id
+     * @param $op string 操作
+     * @param $search array 搜索参数
+     * @param int $aid $aid 存储表id（archiveId）
+     * @return CDbCommand 返回 CDbCommand 对象
+     */
+    public function advancedSearch($uid, $op, $search, $aid = 0) {
+        $condition = $this->getAdvancedSearchCondition($search);
+        $command = $this->commonSearch($uid, $op, $aid);
+        $command->setWhere($command->getWhere() . $condition);
+        return $command;
     }
 
     /**
      * 处理邮件搜索结果
-     * 
+     *
      * @param $emailData array 待处理邮件数据
      * @return array 处理成功后的邮件数据
      */

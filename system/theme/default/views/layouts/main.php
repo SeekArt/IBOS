@@ -256,8 +256,10 @@ use application\modules\user\utils\User;
 					<a target="_blank" href="http://doc.ibos.com.cn/"><?php echo IBOS::lang( 'Ibos help', 'default' ); ?></a>
 					<span class="ilsep">|</span>
 					<a target="_blank" href="http://kf.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
-					<span class="ilsep">|</span>
-					<a href="javascript:;" data-action="showCert"><?php echo IBOS::lang( 'Certificate of authorization', 'default' ); ?></a>
+					<?php if ( ENGINE !== 'SAAS' ): ?>
+						<span class="ilsep">|</span>
+						<a href="javascript:;" data-action="showCert"><?php echo Ibos::lang( 'Certificate of authorization', 'default' ); ?></a>
+					<?php endif; ?>
 					<span class="ilsep">|</span>
 					<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
 					<span class="ilsep">|</span>

@@ -219,6 +219,8 @@ class RestController extends Controller {
 		$this->sendHttpStatus( $code );
 		exit( $this->encodeData( $data, strtolower( $type ) ) );
 	}
+	
+	
 	public function filterRoutes( $routes ) {
 		$notAuthArr = array(
 			'restroom/get',

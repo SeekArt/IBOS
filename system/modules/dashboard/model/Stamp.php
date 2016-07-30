@@ -91,8 +91,8 @@ class Stamp extends Model {
     public function delImg( $id, $index = '' ) {
         $stamp = $this->fetchByPk( $id );
         if ( !empty( $stamp[$index] ) ) {
-            if ( File::fileExists( self::STAMP_PATH . $stamp[$index] ) ) {
-                File::deleteFile( self::STAMP_PATH . $stamp[$index] );
+			if ( File::fileExists( $stamp[$index] ) ) {
+				File::deleteFile( $stamp[$index] );
             }
         }
     }
@@ -117,8 +117,8 @@ class Stamp extends Model {
         }
         $this->deleteByPk( $id );
         foreach ( $files as $file ) {
-            if ( File::fileExists( self::STAMP_PATH . $file ) ) {
-                File::deleteFile( self::STAMP_PATH . $file );
+			if ( File::fileExists( $file ) ) {
+				File::deleteFile( $file );
             }
         }
     }

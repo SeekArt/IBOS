@@ -29,7 +29,7 @@ class NotifyNode extends CBehavior {
     }
 
     /**
-     * 
+     *
      * @param type $event
      */
     public function handleNode( $event ) {

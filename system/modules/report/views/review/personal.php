@@ -1,10 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\File;
-use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
-
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
@@ -13,7 +10,10 @@ use application\modules\main\utils\Main;
 <div class="wrap">
 	<div class="mc clearfix">
 		<!-- Sidebar -->
-		<?php $getUid = Env::getRequest( 'uid' ); $getUser = Env::getRequest( 'user' ); ?>
+		<?php
+		$getUid = Env::getRequest( 'uid' );
+		$getUser = Env::getRequest( 'user' );
+		?>
 		<?php $this->getSidebar( $getUid, $getUser ); ?>
 		<!-- Mainer right -->
 		<div class="mcr">
@@ -44,9 +44,11 @@ use application\modules\main\utils\Main;
 				<div class="page-list-header">
 					<form action="<?php echo $this->createUrl( 'review/index', array( 'op' => 'personal', 'param' => 'search', 'uid' => $getUid ) ); ?>" method="post">
 						<div class="search search-config pull-right span3">
-							<input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php if ( Env::getRequest( 'param' ) == 'search' ) {
+							<input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php
+							if ( Env::getRequest( 'param' ) == 'search' ) {
 								echo Main::getCookie( 'keyword' );
-							}; ?>">
+							};
+							?>">
 							<a href="javascript:;">search</a>
 							<input type="hidden" name="type" value="normal_search">
 						</div>
@@ -141,11 +143,17 @@ use application\modules\main\utils\Main;
 <script>
 	Ibos.app.setPageParam({
 		currentSubUid: "<?php echo (Env::getRequest( 'uid' ) ? Env::getRequest( 'uid' ) : 0); ?>",
-		supUid: <?php if( isset($supUid) ) { echo $supUid; } else { echo 0; } ?>,
+		supUid: <?php
+					if ( isset( $supUid ) ) {
+						echo $supUid;
+					} else {
+						echo 0;
+					}
+					?>,
 		stampEnable: '<?php echo $dashboardConfig["stampenable"] ?>',
 		stamps: <?php echo $this->getStamp(); ?>,
-		stampPath: '<?php echo File::fileName( Stamp::STAMP_PATH ); ?>',
-		autoReview: '<?php echo $dashboardConfig["autoreview"]?>'
+		stampPath: '',
+		autoReview: '<?php echo $dashboardConfig["autoreview"] ?>'
 	})
 </script>
 <script src='<?php echo $assetUrl; ?>/js/report.js?<?php echo VERHASH; ?>'></script>

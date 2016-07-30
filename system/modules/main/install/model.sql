@@ -333,7 +333,7 @@ INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('filetype', 'chm, pdf, zip,
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('im', 'a:2:{s:3:"rtx";a:8:{s:4:"open";i:0;s:6:"server";s:9:"127.0.0.1";s:7:"appport";i:8006;s:7:"sdkport";i:6000;s:4:"push";a:2:{s:4:"note";i:0;s:3:"msg";i:0;}s:3:"sso";i:0;s:14:"reverselanding";i:0;s:8:"syncuser";i:0;}s:2:"qq";a:10:{s:4:"open";i:0;s:2:"id";s:0:"";s:5:"token";s:0:"";s:5:"appid";s:0:"";s:9:"appsecret";s:0:"";s:3:"sso";i:0;s:4:"push";a:2:{s:4:"note";i:0;s:3:"msg";i:0;}s:8:"syncuser";i:0;s:7:"syncorg";i:0;s:10:"showunread";i:0;}}');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('custombackup', '');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('mail', 'a:5:{s:8:"mailsend";i:1;s:6:"server";a:0:{}s:13:"maildelimiter";i:2;s:12:"mailusername";i:1;s:14:"sendmailsilent";i:1;}');
-INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('account', 'a:9:{s:10:"expiration";i:0;s:9:"minlength";i:5;s:5:"mixed";i:0;s:10:"errorlimit";i:1;s:11:"errorrepeat";i:5;s:9:"errortime";i:15;s:9:"autologin";i:0;s:10:"allowshare";i:1;s:7:"timeout";i:30;}');
+INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('account', 'a:9:{s:10:"expiration";i:0;s:9:"minlength";i:5;s:5:"mixed";i:0;s:10:"errorlimit";i:1;s:11:"errorrepeat";i:5;s:9:"errortime";i:15;s:9:"autologin";i:0;s:10:"allowshare";i:1;s:7:"timeout";i:720;}');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('license', '');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('upgrade', '');
 INSERT INTO `{{setting}}` (`skey`, `svalue`) VALUES ('verhash', '');

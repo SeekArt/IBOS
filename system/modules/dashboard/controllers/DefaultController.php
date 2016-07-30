@@ -208,7 +208,145 @@ EOT;
 	 * @return array
 	 */
 	protected function getControllerMap() {
-		return $this->_controllerMap;
+		return array(
+			'index' => array(
+				'index/index' => array(
+					'lang' => 'Management center home page',
+					'isShow' => true,
+				), 'status/index' => array(
+					'lang' => 'System state',
+					'isShow' => false,
+				),
+			),
+			'binding' => array(
+				'cobinding/index' => array(
+					'lang' => 'Co binding',
+					'isShow' => true,
+				), 'wxbinding/index' => array(
+					'lang' => 'Weixin binding',
+					'isShow' => true,
+				), 'im/index' => array(
+					'lang' => 'Action im',
+					'isShow' => true,
+				),
+			),
+			'global' => array(
+				'unit/index' => array(
+					'lang' => 'Unit management',
+					'isShow' => true,
+				), 'credit/setup' => array(
+					'lang' => 'Integral set',
+					'isShow' => true,
+				), 'usergroup/index' => array(
+					'lang' => 'User group',
+					'isShow' => true,
+				), 'optimize/cache' => array(
+					'lang' => 'Performance optimization',
+					'isShow' => ENGINE === 'SAAS' ? false : true,
+				), 'date/index' => array(
+					'lang' => 'Date setup',
+					'isShow' => true,
+				), 'upload/index' => array(
+					'lang' => 'Upload setting',
+					'isShow' => true,
+				), 'sms/manager' => array(
+					'lang' => 'Sms setting',
+					'isShow' => true,
+				), 'syscode/index' => array(
+					'lang' => 'System code setting',
+					'isShow' => true,
+				), 'email/setup' => array(
+					'lang' => 'Email setting',
+					'isShow' => true,
+				), 'security/setup' => array(
+					'lang' => 'Security setting',
+					'isShow' => true,
+				), 'sysstamp/index' => array(
+					'lang' => 'System stamp',
+					'isShow' => true,
+				), 'approval/index' => array(
+					'lang' => 'Approval process',
+					'isShow' => true,
+				), 'notify/setup' => array(
+					'lang' => 'Notify setup',
+					'isShow' => true,
+				),
+			),
+			'organization' => array(
+				'user/index' => array(
+					'lang' => 'Department personnel management',
+					'isShow' => true,
+				), 'role/index' => array(
+					'lang' => 'Role management',
+					'isShow' => true,
+				), 'position/index' => array(
+					'lang' => 'Position management',
+					'isShow' => true,
+				), 'roleadmin/index' => array(
+					'lang' => 'Admin managment',
+					'isShow' => true,
+				),
+			),
+			'interface' => array(
+				'nav/index' => array(
+					'lang' => 'Navigation setting',
+					'isShow' => true,
+				), 'quicknav/index' => array(
+					'lang' => 'Quicknav setting',
+					'isShow' => true,
+				), 'login/index' => array(
+					'lang' => 'Login page setting',
+					'isShow' => true,
+				), 'page/index' => array(
+					'lang' => 'Login page setting',
+					'isShow' => false,
+				), 'background/index' => array(
+					'lang' => 'System background setting',
+					'isShow' => true,
+				),
+			),
+			'module' => array(
+				'module/manager' => array(
+					'lang' => 'Module manager',
+					'isShow' => true,
+				),
+				'permissions/setup' => array(
+					'lang' => 'Permissions setup',
+					'isShow' => true,
+				),
+			),
+			'manager' => array(
+				'update/index' => array(
+					'lang' => 'Update cache',
+					'isShow' => true,
+				), 'announcement/setup' => array(
+					'lang' => 'System announcement',
+					'isShow' => true,
+				),
+				'database/backup' => array(
+					'lang' => 'Database',
+					'isShow' => ENGINE === 'SAAS' ? false : true,
+				), 'split/index' => array(
+					'lang' => 'Table archive',
+					'isShow' => false,
+				), 'cron/index' => array(
+					'lang' => 'Scheduled task',
+					'isShow' => true,
+				), 'fileperms/index' => array(
+					'lang' => 'Check file permissions',
+					'isShow' => false,
+				), 'upgrade/index' => array(
+					'lang' => 'Online upgrade',
+					'isShow' => ENGINE === 'SAAS' ? false : true,
+				),
+			),
+			'service' => array(
+				'service/index' => array(
+					'lang' => 'Shop',
+					'isShow' => true,
+				),
+			),
+		);
 	}
 
 	/**
@@ -268,149 +406,5 @@ EOT;
 			),
 		);
 	}
-
-	/**
-	 * 路由配置
-	 * @var array
-	 */
-	private $_controllerMap = array(
-		'index' => array(
-			'index/index' => array(
-				'lang' => 'Management center home page',
-				'isShow' => true,
-			), 'status/index' => array(
-				'lang' => 'System state',
-				'isShow' => false,
-			),
-		),
-		'binding' => array(
-			'cobinding/index' => array(
-				'lang' => 'Co binding',
-				'isShow' => true,
-			), 'wxbinding/index' => array(
-				'lang' => 'Weixin binding',
-				'isShow' => true,
-			), 'im/index' => array(
-				'lang' => 'Action im',
-				'isShow' => true,
-			),
-		),
-		'global' => array(
-			'unit/index' => array(
-				'lang' => 'Unit management',
-				'isShow' => true,
-			), 'credit/setup' => array(
-				'lang' => 'Integral set',
-				'isShow' => true,
-			), 'usergroup/index' => array(
-				'lang' => 'User group',
-				'isShow' => true,
-			), 'optimize/cache' => array(
-				'lang' => 'Performance optimization',
-				'isShow' => true,
-			), 'date/index' => array(
-				'lang' => 'Date setup',
-				'isShow' => true,
-			), 'upload/index' => array(
-				'lang' => 'Upload setting',
-				'isShow' => true,
-			), 'sms/manager' => array(
-				'lang' => 'Sms setting',
-				'isShow' => true,
-			), 'syscode/index' => array(
-				'lang' => 'System code setting',
-				'isShow' => true,
-			), 'email/setup' => array(
-				'lang' => 'Email setting',
-				'isShow' => true,
-			), 'security/setup' => array(
-				'lang' => 'Security setting',
-				'isShow' => true,
-			), 'sysstamp/index' => array(
-				'lang' => 'System stamp',
-				'isShow' => true,
-			), 'approval/index' => array(
-				'lang' => 'Approval process',
-				'isShow' => true,
-			), 'notify/setup' => array(
-				'lang' => 'Notify setup',
-				'isShow' => true,
-			),
-		),
-		'organization' => array(
-			'user/index' => array(
-				'lang' => 'Department personnel management',
-				'isShow' => true,
-			), 'role/index' => array(
-				'lang' => 'Role management',
-				'isShow' => true,
-			), 'position/index' => array(
-				'lang' => 'Position management',
-				'isShow' => true,
-			), 'roleadmin/index' => array(
-				'lang' => 'Admin managment',
-				'isShow' => true,
-			),
-		),
-		'interface' => array(
-			'nav/index' => array(
-				'lang' => 'Navigation setting',
-				'isShow' => true,
-			), 'quicknav/index' => array(
-				'lang' => 'Quicknav setting',
-				'isShow' => true,
-			), 'login/index' => array(
-				'lang' => 'Login page setting',
-				'isShow' => true,
-			), 'page/index' => array(
-				'lang' => 'Login page setting',
-				'isShow' => false,
-			), 'background/index' => array(
-				'lang' => 'System background setting',
-				'isShow' => true,
-			),
-		),
-		'module' => array(
-			'module/manager' => array(
-				'lang' => 'Module manager',
-				'isShow' => true,
-			),
-			'permissions/setup' => array(
-				'lang' => 'Permissions setup',
-				'isShow' => true,
-			),
-		),
-		'manager' => array(
-			'update/index' => array(
-				'lang' => 'Update cache',
-				'isShow' => true,
-			), 'announcement/setup' => array(
-				'lang' => 'System announcement',
-				'isShow' => true,
-			),
-			'database/backup' => array(
-				'lang' => 'Database',
-				'isShow' => true,
-			), 'split/index' => array(
-				'lang' => 'Table archive',
-				'isShow' => false,
-			), 'cron/index' => array(
-				'lang' => 'Scheduled task',
-				'isShow' => true,
-			), 'fileperms/index' => array(
-				'lang' => 'Check file permissions',
-				'isShow' => false,
-			), 'upgrade/index' => array(
-				'lang' => 'Online upgrade',
-				'isShow' => true,
-			),
-		),
-		'service' => array(
-			'service/index' => array(
-				'lang' => 'Shop',
-				'isShow' => true,
-			),
-		),
-	);
 
 }

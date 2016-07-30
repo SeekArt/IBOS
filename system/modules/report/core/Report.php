@@ -17,7 +17,6 @@
 namespace application\modules\report\core;
 
 use application\core\utils\Convert;
-use application\core\utils\File;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
@@ -43,7 +42,7 @@ class Report {
             // 图章
             if ( $report['stamp'] != 0 ) {
                 $path = Stamp::model()->fetchIconById( $report['stamp'] );
-                $report['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+				$report['stampPath'] = $path;
             }
             $return[] = $report;
         }

@@ -31,18 +31,19 @@ class Update {
 
 	public static function datas( $position ) {
 		//是否需要更新用户cache
-		$settingStatus = Setting::model()->fetchSettingValueByKey( 'cacheuserstatus' );
-		if ( $settingStatus == '0' ) {
-			return array(
-				'isSuccess' => true,
-				'data' => array(
-					'process' => 'end',
-					'offset' => 0,
-					'total' => 0,
-				),
-				'msg' => '【数据缓存】：最近更新过用户数据，不需要更新'
-			);
-		} else {
+//		$settingStatus = Setting::model()->fetchSettingValueByKey( 'cacheuserstatus' );
+//		if ( $settingStatus == '0' ) {
+//			return array(
+//				'isSuccess' => true,
+//				'data' => array(
+//					'process' => 'end',
+//					'offset' => 0,
+//					'total' => 0,
+//				),
+//				'msg' => '【数据缓存】：最近更新过用户数据，不需要更新'
+//			);
+//		} else {
+		//暂时不设置这个状态值，不然可能一直都不更新
 			$settingConfig = Setting::model()->fetchSettingValueByKey( 'cacheuserconfig' );
 			$settingConfigArray = CJSON::decode( $settingConfig );
 			//取较大的offset。毕竟前端过来的offset第一次都是0
@@ -97,7 +98,7 @@ class Update {
 					'total' => $total,
 				),
 			);
-		}
+//		}
 	}
 
 	public static function statics( $position ) {

@@ -1,8 +1,6 @@
 <?php 
 
 use application\core\utils\Env;
-use application\core\utils\File;
-use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
 
 ?>
@@ -47,9 +45,11 @@ use application\modules\main\utils\Main;
 			<div class="page-list-header">
                 <form action="<?php echo $this->createUrl( 'review/personal', array( 'param' => 'search', 'uid' => $user['uid'] ) ); ?>" method="post">
                     <div class="search search-config pull-right span3">
-                        <input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php if ( Env::getRequest( 'param' ) == 'search' ) {
+                        <input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php
+						if ( Env::getRequest( 'param' ) == 'search' ) {
 						echo Main::getCookie( 'keyword' );
-					}; ?>">
+						};
+						?>">
                         <a href="javascript:;">search</a>
                         <input type="hidden" name="type" value="normal_search">
                     </div>
@@ -144,8 +144,8 @@ use application\modules\main\utils\Main;
 		issetStamp: '<?php echo $this->issetStamp(); ?>',
 		stampEnable: '<?php echo $dashboardConfig["stampenable"] ?>',
 		stamps: <?php echo $this->getStamp(); ?>,
-		stampPath: '<?php echo File::fileName( Stamp::STAMP_PATH ); ?>',
-		autoReview: '<?php echo $dashboardConfig["autoreview"]?>'
+		stampPath: '',
+		autoReview: '<?php echo $dashboardConfig["autoreview"] ?>'
 	})
 </script>
 <!-- Footer -->

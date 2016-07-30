@@ -20,7 +20,6 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
@@ -32,12 +31,11 @@ use application\modules\diary\model\DiaryRecord;
 use application\modules\diary\model\DiaryShare;
 use application\modules\diary\model\DiaryStats;
 use application\modules\diary\utils\Diary as DiaryUtil;
+use application\modules\main\model\Setting;
 use application\modules\message\model\Comment;
 use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
-use CPagination;
-use application\modules\main\model\Setting;
 
 class DiaryController extends BaseController {
 
@@ -66,7 +64,7 @@ class DiaryController extends BaseController {
 				// 图章
 				if ( $v['stamp'] != 0 ) {
 					$path = Stamp::model()->fetchIconById( $v['stamp'] );
-					$datas["data"][$k]['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+					$datas["data"][$k]['stampPath'] = $path;
 				}
 			}
 		}
@@ -300,13 +298,12 @@ class DiaryController extends BaseController {
 			$params['readers'] = '';
 		}
 		//图章
-		$stampBasePath = File::fileName( Stamp::STAMP_PATH );
 		if ( !empty( $diary['stamp'] ) ) {
 			$stamp = Stamp::model()->fetchStampById( $diary['stamp'] );
-			$params['stampUrl'] = $stampBasePath . $stamp;
+			$params['stampUrl'] = $stamp;
 		}
 		$allStampA = Stamp::model()->fetchAll();
-		$params['stampBasePath'] = $stampBasePath;
+		$params['stampBasePath'] = '';
 		$params['allStamps'] = $allStampA;
 		//评论
 		$params['list'] = $this->getCommentList( $diary );
@@ -670,7 +667,7 @@ class DiaryController extends BaseController {
 			// 图章
 			if ( $data['stamp'] != 0 ) {
 				$path = Stamp::model()->fetchIconById( $data['stamp'] );
-				$data['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+				$data['stampPath'] = $path;
 			}
 		}
 		$this->ajaxReturn( $params, Mobile::dataType() );

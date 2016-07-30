@@ -114,7 +114,6 @@ class DefaultController extends Controller {
 				Main::setCookie( $uid . '_update_lock', 1 );
 				Cache::update();
 			}
-			Cache::clear();
 			$method = $op . 's';
 			if ( $op == 'data' && $offset == '0' ) {
 				//这里操作的时候，会强制把用户数据状态改成需要更新

@@ -18,7 +18,6 @@ namespace application\modules\diary\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\model\Diary;
@@ -26,6 +25,7 @@ use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use CHtml;
 use CJSON;
 
 class BaseController extends Controller {
@@ -157,7 +157,7 @@ class BaseController extends Controller {
                 $temp[$stampid]['title'] = $stamp['code'];
                 $temp[$stampid]['stamp'] = $stamp['stamp'];
                 $temp[$stampid]['value'] = $stamp['id'];
-                $temp[$stampid]['path'] = File::fileName(Stamp::STAMP_PATH . $stamp['icon']);
+				$temp[$stampid]['path'] = $stamp['icon'];
             }
             $result = array();
             if (!empty($stamps)) {
@@ -259,7 +259,7 @@ class BaseController extends Controller {
             $this->_condition = DiaryUtil::joinSearchCondition($search);
         } else if ($type == 'normal_search') {
             //添加转义，防止SQL错误
-            $keyword = \CHtml::encode(isset($_POST['keyword']) ? $_POST['keyword'] : null );
+			$keyword = CHtml::encode( isset( $_POST['keyword'] ) ? $_POST['keyword'] : null  );
             MainUtil::setCookie('keyword', $keyword, 10 * 60);
             $this->_condition = " content LIKE '%$keyword%' ";
         } else {

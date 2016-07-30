@@ -6,7 +6,6 @@ use application\core\controllers\Controller;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -82,7 +81,7 @@ class BaseController extends Controller {
         $stampUrl = '';
         if ( $report['stamp'] != 0 ) {
             $stamp = Stamp::model()->fetchStampById( $report['stamp'] );
-            $stampUrl = File::fileName( Stamp::STAMP_PATH ) . $stamp;
+			$stampUrl = $stamp;
         }
         // 日期个性化
         $report['addtime'] = Convert::formatDate( $report['addtime'], 'u' );
@@ -174,7 +173,7 @@ class BaseController extends Controller {
                 $temp[$stampid]['title'] = $stamp['code'];
                 $temp[$stampid]['stamp'] = $stamp['stamp'];
                 $temp[$stampid]['value'] = $stamp['id'];
-                $temp[$stampid]['path'] = File::fileName( Stamp::STAMP_PATH . $stamp['icon'] );
+				$temp[$stampid]['path'] = $stamp['icon'];
             }
             $result = array();
             if ( !empty( $stamps ) ) {

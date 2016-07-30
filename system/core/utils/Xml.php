@@ -1,5 +1,7 @@
 <?php
 
+namespace application\core\utils;
+
 /**
  * XML助手类文件
  *
@@ -7,21 +9,19 @@
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2013 IBOS Inc
  */
+
 /**
  * XML助手类,提供xml转换到数组和数组转换到xml方法
- * 
+ *
  * @package application.core.utils
- * @version $Id: Xml.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Xml.php 6060 2015-12-30 10:21:51Z tanghang $
  * @author Ring <Ring@ibos.com.cn>
  */
-
-namespace application\core\utils;
-
 class Xml {
 
     /**
      * XML文件内容转成数组
-     * 
+     *
      * @param string $xml
      * @param boolean $isNormal 默认false
      * @return array $data
@@ -41,7 +41,7 @@ class Xml {
      * @return string
      */
     public static function arrayToXml( $arr, $htmlOn = true, $level = 1 ) {
-		$string = $level == 1 ? "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<root>\r\n" : '';
+        $string = $level == 1 ? "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<root>\r\n" : '';
         $space = str_repeat( "\t", $level );
         foreach ( $arr as $key => $value ) {
             if ( !is_array( $value ) ) {
@@ -58,68 +58,68 @@ class Xml {
 
 /**
  * XML解析类,提供创建xml解析方法
- * 
+ *
  * @package application.core.utils
- * @version $Id: Xml.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id: Xml.php 6060 2015-12-30 10:21:51Z tanghang $
  * @author Ring <Ring@ibos.com.cn>
  */
 class XMLParse {
 
     /**
      * xml解析对象
-     * @var mixed 
+     * @var mixed
      */
     private $_parser;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_document;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_stack;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_data;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_lastOpenedTag;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_isNormal;
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_attrs = array();
 
     /**
      *
-     * @var type 
+     * @var type
      */
     private $_failed = false;
 
     /**
-     * 
+     *
      * @param type $isNormal
      */
     public function __construct( $isNormal ) {
         $this->_isNormal = $isNormal;
-		$this->_parser = xml_parser_create( 'UTF-8' );
+        $this->_parser = xml_parser_create( 'UTF-8' );
         xml_parser_set_option( $this->_parser, XML_OPTION_CASE_FOLDING, false );
         xml_set_object( $this->_parser, $this );
         xml_set_element_handler( $this->_parser, 'open', 'close' );
@@ -127,14 +127,14 @@ class XMLParse {
     }
 
     /**
-     * 
+     *
      */
     public function destruct() {
         xml_parser_free( $this->_parser );
     }
 
     /**
-     * 
+     *
      * @param type $data
      * @return string
      */
@@ -151,7 +151,7 @@ class XMLParse {
     }
 
     /**
-     * 
+     *
      * @param type $parser
      * @param type $tag
      * @param type $attributes
@@ -178,7 +178,7 @@ class XMLParse {
     }
 
     /**
-     * 
+     *
      * @param type $parser
      * @param type $data
      */
@@ -189,7 +189,7 @@ class XMLParse {
     }
 
     /**
-     * 
+     *
      * @param type $parser
      * @param type $tag
      */

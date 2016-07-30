@@ -1,11 +1,9 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
-use application\modules\dashboard\model\Stamp;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
@@ -65,7 +63,7 @@ use application\modules\dashboard\model\Stamp;
                         <tbody>
                         <div class="rp-stamp">
                             <span id="preview_stamp">
-                                <?php if ( $report['stamp'] > 0 ): ?><img id="stamp_<?php echo $report['repid']; ?>" src="<?php echo File::fileName( Stamp::STAMP_PATH . $stampUrl ); ?>" width="150px" height="90px" /><?php endif; ?>
+								<?php if ( $report['stamp'] > 0 ): ?><img id="stamp_<?php echo $report['repid']; ?>" src="<?php echo $stampUrl; ?>" width="150px" height="90px" /><?php endif; ?>
                             </span>
                         </div>
                         <tr>
@@ -248,7 +246,7 @@ use application\modules\dashboard\model\Stamp;
         currentSubUid: "<?php echo (Env::getRequest( 'uid' ) ? Env::getRequest( 'uid' ) : 0); ?>",
         reportId: <?php echo $report['repid']; ?>,
         stamps: <?php echo $this->getStamp(); ?>,
-        stampPath: '<?php echo File::fileName( Stamp::STAMP_PATH ); ?>',
+		stampPath: '',
     })
 </script>
 <script src='<?php echo $assetUrl; ?>/js/report.js?<?php echo VERHASH; ?>'></script>

@@ -100,24 +100,5 @@ class IndexController extends BaseController {
         }
     }
 
-    /**
-     * 授权码写入文件
-     */
-    public function actionLicense() {
-        if ( Env::submitCheck( 'formhash' ) ) {
-            $licensekey = CHtml::encode( Env::getRequest( 'licensekey' ) );
-            $filename = PATH_ROOT . '/data/licence.key';
-            @file_put_contents( $filename, $licensekey );
-            $license = IBOS::app()->licence;
-            $license->init();
-            $licenseInfo = $license->getLicence();
-            $iboscloud = IBOS::app()->setting->get( 'setting/iboscloud' );
-            $iboscloud['appid'] = isset( $licenseInfo['appid'] ) ? $licenseInfo['appid'] : '';
-            $iboscloud['secret'] = isset( $licenseInfo['secret'] ) ? $licenseInfo['secret'] : '';
-            Setting::model()->updateSettingValueByKey( 'iboscloud', serialize( $iboscloud ) );
-            Cache::update( 'setting' );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
-        }
-    }
 
 }

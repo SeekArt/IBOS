@@ -20,7 +20,6 @@ namespace application\modules\diary\components;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
-use application\core\utils\File;
 use application\modules\dashboard\model\Stamp;
 use application\modules\department\model\Department;
 use application\modules\diary\model\DiaryAttention;
@@ -62,7 +61,7 @@ class Diary {
 			//图章
 			if ( $value['stamp'] != 0 ) {
 				$path = Stamp::model()->fetchIconById( $value['stamp'] );
-				$value['stampPath'] = File::fileName( Stamp::STAMP_PATH . $path );
+				$value['stampPath'] = $path;
 			}
 			$return[] = $value;
 		}

@@ -2,7 +2,6 @@
 
 namespace application\modules\report\utils;
 
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\message\utils\MessageApi;
@@ -117,14 +116,13 @@ class ReportApi extends MessageApi {
      * @return 返回处理过图章icon后的数组
      */
     private function handleIconUrl( $reports, $returnUserInfo = false ) {
-        $stampPath = File::fileName( Stamp::STAMP_PATH );
         foreach ( $reports as $k => $report ) {
             if ( $returnUserInfo ) {
                 $reports[$k]['userInfo'] = User::model()->fetchByUid( $report['uid'] );
             }
             if ( $report['stamp'] != 0 ) {
                 $stamp = Stamp::model()->fetchIconById( $report['stamp'] );
-                $reports[$k]['iconUrl'] = $stampPath . $stamp;
+				$reports[$k]['iconUrl'] = $stamp;
             } else {
                 $reports[$k]['iconUrl'] = '';
             }

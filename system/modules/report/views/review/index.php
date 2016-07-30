@@ -1,9 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\Org;
-use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
@@ -131,7 +129,7 @@ use application\modules\main\utils\Main;
         currentSubUid: "<?php echo (Env::getRequest( 'uid' ) ? Env::getRequest( 'uid' ) : 0); ?>",
         stampEnable: '<?php echo $dashboardConfig["stampenable"] ?>',
         stamps: <?php echo $this->getStamp(); ?>,
-        stampPath: '<?php echo File::fileName( Stamp::STAMP_PATH ); ?>',
+		stampPath: '',
         autoReview: '<?php echo $dashboardConfig["autoreview"] ?>'
     })
 </script>

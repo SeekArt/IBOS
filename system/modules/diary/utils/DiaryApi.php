@@ -3,14 +3,13 @@
 namespace application\modules\diary\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\model\Diary;
+use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\message\utils\MessageApi;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
-use application\modules\diary\utils\Diary as DiaryUtil;
 
 class DiaryApi extends MessageApi {
 
@@ -79,9 +78,8 @@ class DiaryApi extends MessageApi {
         // 获取前一篇日志
         $data['preDiary'] = Diary::model()->fetchPreDiary( strtotime( $today ), $uid );
         if ( !empty( $data['preDiary'] ) && $data['preDiary']['stamp'] != 0 ) {
-            $stampPath = File::fileName( Stamp::STAMP_PATH );
             $iconUrl = Stamp::model()->fetchIconById( $data['preDiary']['stamp'] );
-            $data['preStampIcon'] = $stampPath . $iconUrl;
+			$data['preStampIcon'] = $iconUrl;
         }
 
         //已评阅数

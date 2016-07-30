@@ -98,13 +98,13 @@ class ImportController extends Controller {
 			if ( empty( $tplFieldArray ) ) {
 				$module = $this->session->get( 'import_module' );
 				$tplPath = $this->getTplPath( $module );
-				$tplPHPExcel = PHPExcel_IOFactory::load( $tplPath . '/' . $tplConfig['filename'] );
+				$tplPHPExcel = $this->createPHPExcel( $tplPath . '/' . $tplConfig['filename'] );
 				$tplArray = $tplPHPExcel->getActiveSheet()->toArray();
 				$tplFieldArray = $tplArray[$tplConfig['fieldline'] - 1];
 				$this->session->add( 'import_tplFieldArray', array_filter( $tplFieldArray ) );
 			}
 
-			$objPHPExcel = PHPExcel_IOFactory::load( $file );
+			$objPHPExcel = $this->createPHPExcel( $file );
 			if ( $sheet >= $objPHPExcel->getSheetCount() ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
@@ -332,6 +332,21 @@ class ImportController extends Controller {
 			exit;
 		} else {
 			$this->error( "抱歉，找不到模板文件！" );
+		}
+	}
+
+	private function createPHPExcel( $file ) {
+		$isCsv = substr( $file, -3 ) == 'csv' ? true : false;
+		if ( true === $isCsv ) {
+			$objReader = PHPExcel_IOFactory::createReader( 'CSV' )
+					->setDelimiter( ',' )
+					->setInputEncoding( 'GBK' ) //不设置将导致中文列内容返回boolean(false)或乱码
+					->setEnclosure( '"' )
+					->setLineEnding( "\r\n" )
+					->setSheetIndex( 0 );
+			return $objReader->load( $file );
+		} else {
+			return PHPExcel_IOFactory::load( $file );
 		}
 	}
 

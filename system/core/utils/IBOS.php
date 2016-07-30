@@ -28,9 +28,10 @@ class IBOS extends Yii {
     /**
      * 翻译语言
      * @param string $message 翻译内容<br/>
-     * 当eg：'test_language' 当前模块默认语言包找test_language翻译<br/>
-     * 当eg：'error/test_language' 当前模块的error语言包中找test_language翻译<br/>
-     * 当eg：'article/default/test_language' 在article模块的default语言包中找test_language翻译。
+     * <del>当eg：'test_language' 当前模块默认语言包找test_language翻译</del><br/>
+     * <del>当eg：'error/test_language' 当前模块的error语言包中找test_language翻译</del><br/>
+     * <del>当eg：'article/default/test_language' 在article模块的default语言包中找test_language翻译。</del>
+     * 上面的说明是错的：应该把斜杠改成"."
      * @param string $category 指定目录名，为空则遵循以上规则查找
      * @param array $params 语言变量替换数组
      * @param string $source 语言文件

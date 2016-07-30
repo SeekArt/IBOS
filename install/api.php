@@ -5,6 +5,7 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Model;
 use application\core\utils\Module;
+use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\role\model\Role;
 use application\modules\user\model\User;
@@ -107,9 +108,7 @@ switch ( 1 ) {
 	//处理数据更新
 	case $option == 'handleUpdateData':
 		// 初始化ibos，执行各个已安装模块有extention.php的安装文件，更新缓存
-		if ( ENGINE !== 'SAAS' ) {
-			file_put_contents( PATH_ROOT . '/data/install.lock', '' );
-		}
+		file_put_contents( PATH_ROOT . '/data/install.lock', '' );
 		$commonConfig = require CONFIG_PATH . 'common.php';
 		Yii::createApplication( 'application\core\components\Application', $commonConfig );
 		handleUpdateDataOp();
@@ -496,6 +495,7 @@ function handleInstallAllOp() {
 		}
 	}
 
+	$_SERVER['HTTP_USER_AGENT'] = isset( $_SERVER['HTTP_USER_AGENT'] ) ? : '';
 	$aeskey = substr( md5( $_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time() ), 14, 10 ) . StringUtil::random( 33 );
 	$authkey = substr( md5( $_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time() ), 8, 6 ) . StringUtil::random( 10 );
 	$cookiepre = StringUtil::random( 4 );
@@ -644,7 +644,7 @@ function handleAfterInstallAllOp() {
 						, " `skey`= 'aeskey'" );
 		//更新Setting的unit
 		//@todo 请改成正确的地址
-		$systemurl = 'http://' . $corpCode . '.ibos.com';
+		$systemurl = 'http://' . $corpCode . '.saas.ibos.cn';
 		$unit = StringUtil::utf8Unserialize(
 						Yii::app()->db->createCommand()
 								->select( 'svalue' )

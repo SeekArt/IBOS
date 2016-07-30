@@ -5,9 +5,8 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\IBOS;
-use application\modules\user\model\User;
 use application\modules\dashboard\model\Stamp;
-use application\core\utils\File;
+use application\modules\user\model\User;
 
 class AssignmentFinishedController extends BaseController {
 
@@ -111,8 +110,8 @@ class AssignmentFinishedController extends BaseController {
 		foreach ( $this->_stamps as $id ) {
 			$stamp = Stamp::model()->fetchByPk( $id );
 			$stamps[] = array(
-				'path' => File::fileName( Stamp::STAMP_PATH . $stamp['icon'] ),
-				'stampPath' => File::fileName( Stamp::STAMP_PATH . $stamp['stamp'] ),
+				'path' => $stamp['icon'],
+				'stampPath' => $stamp['stamp'],
 				'stamp' => $stamp['stamp'],
 				'title' => $stamp['code'],
 				'value' => $id

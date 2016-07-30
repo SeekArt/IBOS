@@ -19,16 +19,19 @@ use application\modules\dashboard\utils\CoSync;
 use application\modules\department\model\Department as DepartmentModel;
 use application\modules\department\model\DepartmentBinding;
 use application\modules\main\model\Setting;
+use application\core\utils\Api;
 use application\modules\message\core\co\CoApi;
 use application\modules\message\core\co\CodeApi;
 use application\modules\position\model\Position;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
+use CDbCriteria;
 use CHtml;
+use CJSON;
 use application\core\utils\Org;
 
 class CosyncController extends CoController {
-    // protected $aeskey;
+    protected $aeskey;
     // protected $oaUrl;
 
     /**
@@ -48,6 +51,7 @@ class CosyncController extends CoController {
         parent::init();
         $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
         $this->coBindType = 'ibos';
+        $this->aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
         if (isset($coinfo['corpid'])):
             $this->corpid = $coinfo['corpid'];
         else:
@@ -94,6 +98,7 @@ class CosyncController extends CoController {
         $op = Env::getRequest('op');
         $isInstall = Env::getRequest('isInstall');
         $opList = array('init', 'deptinit', 'dept', 'syncIbosUser', 'syncCoUser', 'buildRelation');
+        $msgPlatform = 'co';
         if (!in_array($op, $opList)) {
             // 先是不带 op 参数访问 sync 视图，将同步进行中的页面内容显示出来
             // 再根据 op 参数去进行对应的同步步骤 && 修改相应的显示内容
@@ -119,23 +124,8 @@ class CosyncController extends CoController {
         set_time_limit(120);
          // 记录同步成功数据的数组
         $successInfo = Cache::model()->fetchArrayByPk('successinfo');
-        // 初始化同步需要的相关数据
-        // $ibosCreateList = Cache::model()->fetchArrayByPk('iboscreatelist');
-        // $ibosRemoveList = Cache::model()->fetchArrayByPk('ibosremovelist');
-        //$removeIdenticalRes = $this->removeIdenticalByMobile($ibosCreateList, $coCreateList);
-        //$ibosCreateList = $removeIdenticalRes['userList_1'];
-        // $coCreateList = $removeIdenticalRes['userList_2'];
-        //$relationList = $removeIdenticalRes['identicalList'];
         switch ($op) {
             case 'init':
-                // 开启/关闭 自动同步
-                // $changeAutoSyncStatusRes = $this->changeAutoSyncStatus( $autoSyncStatus !== NULL ? $autoSyncStatus : 0 );
-                // if ( $changeAutoSyncStatusRes === FALSE ) {
-                // 	$this->ajaxReturn( array(
-                // 		'status'	=> 2,
-                // 		'message'	=> '开启/关闭 自动同步失败！',
-                // 	) );
-                // }
                 // 准备同步结果数据记录字段
                 if (Cache::model()->fetchArrayByPk('successinfo') === FALSE) {
                     Cache::model()->add(array('cachekey' => 'successinfo', 'cachevalue' => serialize(array())));
@@ -146,7 +136,7 @@ class CosyncController extends CoController {
                 $this->syncCoDept();
                 $this->ajaxReturn(array(
                     'status' => 1,
-                    'message' => '初始化数据成功，请稍后...',
+                    'message' => '开始同步酷办公部门，请稍后...',
                     'op' => 'deptinit',
                     'progress' => '10%',
                 ));
@@ -202,119 +192,26 @@ class CosyncController extends CoController {
                 }
                 break;
             case 'syncIbosUser':
-                // $newList = [];
-				 // 初始化同步需要的相关数据
-				$ibosCreateList = Cache::model()->fetchArrayByPk('iboscreatelist');
-				$ibosRemoveList = Cache::model()->fetchArrayByPk('ibosremovelist');
-                $_ibosCreateList = array_slice($ibosCreateList,50);
-                $ibosCreateList = array_slice($ibosCreateList, 0, 50);
-                if ( empty( $ibosCreateList ) && empty( $ibosRemoveList )) {
+                $this->coSendUser();
                     $this->ajaxReturn(array(
                         'status' => 1,
-                        'message' => '开始同步用户，请稍后...',
+                    'message' => '开始同步酷办公用户，接着同步IBOS用户...',
                         'op' => 'syncCoUser',
-                        'progress' => '50%',
-                    ));
-                    break;
-                }
-                // 根据酷办公的用户变动，对应修改 IBOS 的用户保持同步关系
-                $ibosCreateRes = CoSync::createUserAndBindRelation( $ibosCreateList );
-                $ibosRemoveRes = CoSync::removeUserAndBindRelation( $ibosRemoveList );
-                // IBOS 新增 & 删除 绑定关系后，需要调用酷办公对应接口，让酷办公也做相应的绑定关系增删
-                $this->coCreateRelation( $ibosCreateRes );
-                $this->coRemoveRelation( $ibosRemoveRes );
-                // 保存 IBOS 创建/启用、禁用 成功的数据
-                if ( !isset($successInfo['ibosCreateNum']) ) {
-                    $successInfo['ibosCreateNum'] = count($ibosCreateRes);
-                }else {
-                    $successInfo['ibosCreateNum'] += count($ibosCreateRes);
-                }
-                if ( !isset($successInfo['ibosRemoveNum']) ) {
-                    $successInfo['ibosRemoveNum'] = count($ibosRemoveRes);
-                }else {
-                    $successInfo['ibosRemoveNum'] += count($ibosRemoveRes);
-                }
-
-                Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
-                Cache::model()->updateByPk('iboscreatelist', array('cachevalue' => serialize($_ibosCreateList)));
-				// self::$successInfo['ibosCreateNum'] = count( $ibosCreateRes );
-				// self::$successInfo['ibosRemoveNum'] = count( $ibosRemoveRes );
-                $this->ajaxReturn(array(
-                    'status' => 1,
-                    'message' => '开始同步用户，请稍后...',
-                    'op' => 'syncIbosUser',
                     'progress' => '45%',
                 ));
                 break;
             case 'syncCoUser':
-				$coids = User::model()->fetchUnbind(5);
-				$removeids = User::model()->fetchDeletebind();
-				$coCreateList = User::model()->findThreeByUid( $coids );
-				$coRemoveList = User::model()->findThreeByUid( $removeids );
-                // 根据 IBOS 的用户变动，调用酷办公 新增 & 移除 用户接口
-                // 并根据接口返回数据 新增 & 删除 对应的绑定关系记录
-                if ( !empty( $coCreateList ) ) {
-                    $coCreateRes = $this->createCoUser( $coCreateList );
-                    $coRemoveRes = $this->removeCoUser( $coRemoveList );
-                     // 保存酷办公 创建/加入、移除 成功的数据
-                    if ( !isset( $successInfo['coCreateNum'] ) ) {
-                        $successInfo['coCreateNum'] = count($coCreateRes);
-                    } else {
-                        $successInfo['coCreateNum'] += count($coCreateRes);
+                $limit = 1000;
+                $offset = 0;
+                while ( 1 ) {
+                    $userArray = $this->sendSyncUser( $msgPlatform, $limit, $offset );
+                    if ( empty( $userArray ) ) {
+                        break;
                     }
-                    if ( !isset( $successInfo['coRemoveNum'] ) ) {
-                        $successInfo['coRemoveNum'] = count($coRemoveRes);
-                    } else {
-                        $successInfo['coRemoveNum'] += count($coRemoveRes);
                     }
-                    Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
-                    $this->ajaxReturn(array(
-                        'status' => 1,
-                        'message' => '同步中...',
-                        'op' => 'syncCoUser',
-                        'progress' => '60%',
-                    ));
-                }else {
-                    $this->ajaxReturn(array(
-                        'status' => 1,
-                        'message' => '开始建立绑定关系，请稍后...',
-                        'op' => 'buildRelation',
-                        'progress' => '70%',
-                    ));
-                }
-
-                // $coCreateRes = $this->createCoUser($coCreateList);
-                // $coRemoveRes = $this->removeCoUser($coRemoveList);
-                // // 保存酷办公 创建/加入、移除 成功的数据
-                // $successInfo['coCreateNum'] = count($coCreateRes);
-                // $successInfo['coRemoveNum'] = count($coRemoveRes);
-                // Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
-                // $this->ajaxReturn(array(
-                //     'status' => 1,
-                //     'message' => '开始建立绑定关系，请稍后...',
-                //     'op' => 'buildRelation',
-                //     'progress' => '70%',
-                // ));
-                break;
-            case 'buildRelation':
-                // 实际上 IBOS 酷办公 用户创建、移除/禁用时已经对那部分用户进行了绑定
-                // IBOS 与酷办公企业都已经存在的用户，直接添加绑定关系
-                // 先添加 IBOS 绑定关系，再添加酷办公绑定关系
-                // 根据调用 removeIdenticalByMobile 时的数组顺序 uid_1 是酷办公用户 uid，uid_2 是 IBOS 用户 uid
-				$successInfo['addRelationNum'] = 0;
-                // if (!empty($relationList)) {
-                //     foreach ($relationList as $relation) {
-                //         $successInfo['addRelationNum'] = $this->addBindRelation($relation['uid_2'], $relation['uid_1']['guid']);
-                //         $coRelation[] = array('uid' => $relation['uid_1']['uid'], 'bindvalue' => $relation['uid_2']);
-                //     }
-                //     $this->coCreateRelation($coRelation);
-                // }
-                // 统计同步结果，并返回
+                $successInfo = Cache::model()->fetchArrayByPk('successinfo');
                 $relationCount = UserBinding::model()->count("`app` = 'co'");
 				$successInfo['syncCountNum'] = $relationCount;
-                $autosync = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('autosync'));
-                $autosync['lastsynctime'] = time();
-                Setting::model()->updateSettingValueByKey('autosync', serialize($autosync));
                 $this->ajaxReturn(array(
                     'status' => 0,
                     'message' => '同步成功！',
@@ -969,5 +866,198 @@ class CosyncController extends CoController {
                 'message' => $res['message'],
             ));
         }
+    }
+
+    /**
+     * @param  string $msgPlatform  
+     * @param  integer $pid 部门父id
+     * @return array 部门数组
+     */
+    protected function findDeptByPid( $msgPlatform, $pid = 0 ) {
+        $list = IBOS::app()->db->createCommand()
+                ->select( 'deptname,deptid,pid' )
+                ->from( '{{department}}' )
+                ->where( " `pid` IN ({$pid})" )
+                ->andWhere( " `deptid` NOT IN"
+                        . " ( SELECT `deptid` FROM `{{department_binding}}` WHERE"
+                        . " `app` = '{$msgPlatform}' )" )
+                ->queryAll();
+        $return = array();
+        foreach ( $list as $row ) {
+            $return[$row['deptid']] = $row;
+        }
+        return $return;
+    }
+
+    /**
+     * 酷办公发送用户过来
+     */
+    protected function coSendUser() {
+        $url = $this->getUrl( 'usersync' );
+        $res = Api::getInstance()->fetchResult( $url, '', 'post' );
+        if ( is_string( $res ) ) {
+            $array = CJSON::decode( $res );
+            // 更新缓存表
+            $successInfo = Cache::model()->fetchArrayByPk('successinfo');
+            if ( !isset($successInfo['ibosCreateNum']) ) {
+                $successInfo['ibosCreateNum'] = isset( $array['data']['bind'] ) ? $array['data']['bind'] : '0';
+            }else {
+                $successInfo['ibosCreateNum'] += isset( $array['data']['bind'] ) ? $array['data']['bind'] : '0';
+            }
+            if ( !isset($successInfo['ibosRemoveNum']) ) {
+                $successInfo['ibosRemoveNum'] = isset( $array['data']['bind'] ) ? $array['data']['delete'] : '0';
+            }else {
+                $successInfo['ibosRemoveNum'] += isset( $array['data']['bind'] ) ? $array['data']['delete'] : '0';
+            }
+            Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
+            if (!empty( $array['data']['offset'] )) {
+                $this->coSendUser();
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * 发送部门数据过去
+     */
+    protected function sendSyncDept( $msgPlatform, $deptArray ) {
+        $url = $this->getUrl( 'syncdept' );
+        $post = array_values( $deptArray );
+        $res = Api::getInstance()->fetchResult( $url, CJSON::encode( $post ), 'post' );
+        if ( is_string( $res ) ) {
+            $array = CJSON::decode( $res );
+            !empty( $array['data']['bind'] ) && $this->deptBind( $msgPlatform, $array['data']['bind'] );
+        }
+    }
+
+    /**
+     * 传用户数据上去
+     */
+    protected function sendSyncUser( $msgPlatform, $limit, $offset ) {
+        $userArray = IBOS::app()->db->createCommand()
+                ->select( implode( ',', $this->getSelectUser() ) )
+                ->from( '{{user}} u' )
+                ->leftJoin( '{{user_profile}} up', ' `u`.`uid` = `up`.`uid` ' )
+                ->where( " u.uid NOT IN ( SELECT `uid` FROM {{user_binding}} WHERE"
+                        . " `app` = '{$msgPlatform}' )" )
+                ->andWhere( " u.status != '2' " )
+                ->limit( $limit )
+                ->offset( $offset )
+                ->queryAll();
+        if ( empty( $userArray ) ) {
+            // 更新缓存表
+            $successInfo = Cache::model()->fetchArrayByPk('successinfo');
+            if ( !isset( $successInfo['coCreateNum'] ) ) {
+                $successInfo['coCreateNum'] = '0';
+            } 
+            if ( !isset( $successInfo['coRemoveNum'] ) ) {
+                $successInfo['coRemoveNum'] = '0';
+            } 
+            Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
+            return array();
+        }
+        $url = $this->getUrl( 'syncuser' );
+        $post = array_values( $userArray );
+        $res = Api::getInstance()->fetchResult( $url, CJSON::encode( $post ), 'post' );
+        if ( is_string( $res ) ) {
+            $array = CJSON::decode( $res );
+            !empty( $array['data']['bind'] ) && $this->userBind( $msgPlatform , $array['data']['bind'] );
+            !empty( $array['data']['delete'] ) && $this->userDelete( $msgPlatform, $array['data']['delete'] );
+            // 更新缓存表
+            $successInfo = Cache::model()->fetchArrayByPk('successinfo');
+            if ( !isset( $successInfo['coCreateNum'] ) ) {
+                $successInfo['coCreateNum'] = isset( $array['data']['bind'] ) ? count($array['data']['bind']) : '0';
+            } else {
+                $successInfo['coCreateNum'] += isset( $array['data']['bind'] ) ? count($array['data']['bind']) : '0';
+            }
+            if ( !isset( $successInfo['coRemoveNum'] ) ) {
+                $successInfo['coRemoveNum'] = isset( $array['data']['bind'] ) ? count($array['data']['delete']) : '0';
+            } else {
+                $successInfo['coRemoveNum'] += isset( $array['data']['bind'] ) ? count($array['data']['delete']) : '0';
+            } 
+            Cache::model()->updateByPk('successinfo', array('cachevalue' => serialize($successInfo)));
+        }
+        return $userArray;
+    }
+
+    /**
+     * 绑定用户
+     */
+    protected function userBind( $msgPlatform, $array ) {
+        foreach ( $array as $uid => $bindvalue ) {
+            IBOS::app()->db->createCommand()
+                    ->insert( '{{user_binding}}', array(
+                        'uid' => $uid,
+                        'bindvalue' => $bindvalue,
+                        'app' => $msgPlatform
+                    ) );
+        }
+    }
+
+     /**
+     * 禁用用户
+     */
+    protected function userDelete( $msgPlatform, $array ) {
+        foreach ( $array as $uid => $bindvalue ) {
+            IBOS::app()->db->createCommand()
+                    ->delete( 'user_binding'
+                            , " `uid` = '{$uid}' AND"
+                            . " `bindvalue` = '{$bindvalue}' AND"
+                            . " `app` = '{$msgPlatform}' " );
+            IBOS::app()->db->createCommand()
+                    ->update( '{{user}}'
+                            , array( 'status' => 2 )
+                            , " `uid` = '{$uid}' " );
+        }
+    }
+
+    /**
+     * 构造url
+     */
+    protected function getUrl( $type ) {
+        $api = 'http://cooo.com/api/sync/' . $type;
+        $time = time();
+        return Api::getInstance()->buildUrl( $api, array(
+                    'signature' => sha1( $this->aeskey . $time ),
+                    'timestamp' => $time,
+                    'corpid' => $this->corpid,
+                    'type' => 'ibos',
+                ) );
+    }
+
+    /**
+     * 绑定部门
+     */
+    protected function deptBind( $msgPlatform, $array ) {
+        foreach ( $array as $deptid => $bindvalue ) {
+            IBOS::app()->db->createCommand()
+                    ->insert( '{{department_binding}}', array(
+                        'deptid' => $deptid,
+                        'bindvalue' => $bindvalue,
+                        'app' => $msgPlatform
+                    ) );
+        }
+    }
+
+    /**
+     * 构造查询字段
+     */
+    private function getSelectUser() {
+        return array(
+            'u.deptid',
+            'u.uid',
+            'u.mobile',
+            'u.password',
+            'u.salt',
+            'u.email',
+            'u.realname',
+            'u.username nickname',
+            'u.weixin wechat',
+            'up.qq',
+            'u.gender',
+            'up.birthday',
+            'up.address'
+        );
     }
 }

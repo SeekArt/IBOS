@@ -1,7 +1,6 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\Org;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
@@ -58,7 +57,6 @@ use application\modules\main\utils\Main;
             <div class="page-list-mainer">
                 <ul class="da-list" id="da_list">
                     <?php if ( count( $data ) > 0 ): ?>
-                        <?php $stampPath = File::fileName( Stamp::STAMP_PATH ); ?>
                         <?php foreach ( $data as $diary ): ?>
                             <li class="da-list-item">
                                 <div class="da-summary">
@@ -87,7 +85,7 @@ use application\modules\main\utils\Main;
                                             <a href="javascript:;" data-node-type="showReader" class="fss" data-id="<?php echo $diary['diaryid']; ?>"><?php echo $lang['Read']; ?>  <em><?php echo $diary['readercount']; ?></em></a>
                                             <?php if ( $diary['stamp'] > 0 ): ?>
                                                 <?php $iconUrl = Stamp::model()->fetchIconById( $diary['stamp'] ); ?>
-                                                &nbsp;&nbsp;<img width="60" height="24" src="<?php echo $stampPath . $iconUrl; ?>"/>
+												&nbsp;&nbsp;<img width="60" height="24" src="<?php echo  $iconUrl; ?>"/>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -149,7 +147,7 @@ use application\modules\main\utils\Main;
         issetStamp: '<?php echo $this->issetStamp(); ?>',
         stampEnable: '<?php echo $dashboardConfig["stampenable"] ?>',
         stamps: <?php echo $this->getStamp(); ?>,
-        stampPath: '<?php echo File::fileName( Stamp::STAMP_PATH ); ?>',
+		stampPath: '',
         autoReview: '<?php echo $dashboardConfig["autoreview"] ?>'
     })
 </script>

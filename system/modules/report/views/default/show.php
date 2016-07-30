@@ -1,9 +1,7 @@
 <?php
 
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
-use application\modules\dashboard\model\Stamp;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
 
@@ -68,7 +66,7 @@ use application\modules\dashboard\model\Stamp;
                                 </td>
                             </tr>
                         <div class="rp-stamp">
-                            <?php if ( $report['stamp'] > 0 ): ?><img id="stamp_<?php echo $report['repid']; ?>" src="<?php echo File::fileName( Stamp::STAMP_PATH . $stampUrl ); ?>" width="150px" height="90px" /><?php endif; ?>
+							<?php if ( $report['stamp'] > 0 ): ?><img id="stamp_<?php echo $report['repid']; ?>" src="<?php echo $stampUrl; ?>" width="150px" height="90px" /><?php endif; ?>
                         </div>
                         <!-- 原计划 -->
                         <?php if ( !empty( $orgPlanList ) ): ?>

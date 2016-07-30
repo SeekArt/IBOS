@@ -19,18 +19,18 @@ use CBehavior;
 
 class Role extends CBehavior {
 
-	public function attach( $owner ) {
-		$owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleRole' ) );
-	}
+    public function attach( $owner ) {
+        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleRole' ) );
+    }
 
-	/**
-	 * 处理角色数据缓存
-	 * @param object $event
-	 * @return void
-	 */
-	public function handleRole( $event ) {
-		$records = RoleModel::model()->fetchAllSortByPk( 'roleid' );
+    /**
+     * 处理角色数据缓存
+     * @param object $event
+     * @return void
+     */
+    public function handleRole( $event ) {
+        $records = RoleModel::model()->fetchAllSortByPk( 'roleid' );
         Syscache::model()->modifyCache( 'role', $records );
-	}
+    }
 
 }

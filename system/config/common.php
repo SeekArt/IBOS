@@ -77,7 +77,6 @@ return array(
 			//如果是saas版，还需要配置redis服务器设置
 			'class' => defined( 'SAAS_STORAGE' ) ? '\CRedisCache' : '\CFileCache',
 		),
-		// 授权组件
 	),
 	'params' => array(
 		// Yii版本

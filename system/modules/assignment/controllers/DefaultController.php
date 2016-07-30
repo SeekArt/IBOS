@@ -16,9 +16,9 @@
 
 namespace application\modules\assignment\controllers;
 
+use application\core\model\Log;
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\assignment\core\AssignmentOpApi;
@@ -27,11 +27,10 @@ use application\modules\assignment\model\AssignmentApply;
 use application\modules\assignment\model\AssignmentLog;
 use application\modules\assignment\model\AssignmentRemind;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
-use application\modules\dashboard\model\Stamp;
-use application\modules\user\model\User;
 use application\modules\calendar\model\Calendars;
+use application\modules\dashboard\model\Stamp;
 use application\modules\message\model\NotifyMessage;
-use application\core\model\Log;
+use application\modules\user\model\User;
 use CJSON;
 
 class DefaultController extends BaseController {
@@ -246,42 +245,42 @@ class DefaultController extends BaseController {
         }
     }
 
-    /**
-     * 处理取消、延期申请的前台数据
-     * @param array $apply 申请记录
-     * @return array
-     */
-    protected function handleApplyData($assignmentId, $apply) {
-        $applyData = array();
-        if (!empty($apply)) {
-            if ($apply['isdelay']) { // 延期申请
-                $applyData = array('id' => $assignmentId, 'uid' => $apply['uid'],
-                    'reason' => $apply['delayreason'], 'startTime' => date('m月d日 H:i', $apply['delaystarttime']), 'endTime' => date('m月d日 H:i', $apply['delayendtime']));
-            } else { // 取消申请
-                $applyData = array('id' => $assignmentId, 'uid' => $apply['uid'],
-                    'reason' => $apply['cancelreason']);
-            }
-        }
-        return $applyData;
-    }
+	/**
+	 * 处理取消、延期申请的前台数据
+	 * @param array $apply 申请记录
+	 * @return array
+	 */
+	protected function handleApplyData( $assignmentId, $apply ) {
+		$applyData = array();
+		if ( !empty( $apply ) ) {
+			if ( $apply['isdelay'] ) { // 延期申请
+				$applyData = array( 'id' => $assignmentId, 'uid' => $apply['uid'],
+					'reason' => $apply['delayreason'], 'startTime' => date( 'm月d日 H:i', $apply['delaystarttime'] ), 'endTime' => date( 'm月d日 H:i', $apply['delayendtime'] ) );
+			} else { // 取消申请
+				$applyData = array( 'id' => $assignmentId, 'uid' => $apply['uid'],
+					'reason' => $apply['cancelreason'] );
+			}
+		}
+		return $applyData;
+	}
 
-    /**
-     * 获取图章信息
-     * @return array
-     */
-    public function getStamps() {
-        $stamps = array();
-        foreach ($this->_stamps as $id) {
-            $stamp = Stamp::model()->fetchByPk($id);
-            $stamps[] = array(
-                'path' => File::imageName(Stamp::STAMP_PATH . $stamp['icon']),
-                'stampPath' => File::imageName(Stamp::STAMP_PATH . $stamp['stamp']),
-                'stamp' => $stamp['stamp'],
-                'title' => $stamp['code'],
-                'value' => $id
-            );
-        }
-        return $stamps;
-    }
+	/**
+	 * 获取图章信息
+	 * @return array
+	 */
+	public function getStamps() {
+		$stamps = array();
+		foreach ( $this->_stamps as $id ) {
+			$stamp = Stamp::model()->fetchByPk( $id );
+			$stamps[] = array(
+				'path' => $stamp['icon'],
+				'stampPath' => $stamp['stamp'],
+				'stamp' => $stamp['stamp'],
+				'title' => $stamp['code'],
+				'value' => $id
+			);
+		}
+		return $stamps;
+	}
 
 }

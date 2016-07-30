@@ -199,5 +199,6 @@ return array(
     'Already receive' => '{reader}已经阅读了您的邮件【{title}】。',
     'Associated with the thread' => '关联主线',
     'Not associated' => '不关联主线',
-    'Relative thread' => '发送邮件给@{realname} <a href="{url}" class="anchor" target="_blank">{subject}</a>'
+    'Relative thread' => '发送邮件给@{realname} <a href="{url}" class="anchor" target="_blank">{subject}</a>',
+    'Invalid params' => '参数错误',
 );

@@ -76,15 +76,31 @@ class ListController extends BaseController {
         if (!in_array($op, $opArr)) {
             $op = "inbox";
         }
+        $typeArr = array(
+            "normal_search",
+            "advanced_search",
+        );
+        if (!in_array($type, $typeArr)) {
+            $type = "normal_search";
+        }
         if (!isset($search["keyword"])) {
             $search["keyword"] = "";
         }
 
         // 搜索
-        list($command, $conditionStr) = Email::model()->normalSearch($uid, $op, $search["keyword"]);
-        $emailData = $command->where($conditionStr)->queryAll();
+        if ("normal_search" === $type) {
+            $command = Email::model()->normalSearch($uid, $op, $search["keyword"]);
+        } elseif ("advanced_search" === $type) {
+            $command = Email::model()->advancedSearch($uid, $op, $search);
+        } else {
+            return $this->error(Ibos::lang("Invalid params"), $this->createUrl('email/list'));
+        }
+
+        $conditionStr = $command->getWhere();
+        $emailData = $command->queryAll();
         $emailData = Email::model()->handleSearchData($emailData);
 
+        // 获取分页数据 & 输出视图
         $count = count( $emailData );
         $pages = Page::create( $count, $this->getListPageSize(), false );
         $pages->params = array( 'condition' => $conditionStr );

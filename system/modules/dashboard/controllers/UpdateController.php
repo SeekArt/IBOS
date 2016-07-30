@@ -30,7 +30,6 @@ class UpdateController extends BaseController {
 				Main::setCookie( IBOS::app()->user->uid . '_update_lock', 1 );
 				Cache::update();
 			}
-			Cache::clear();
 			$method = $op . 's';
 			return $this->ajaxReturn( Update::$method( $offset ) );
 		} else {

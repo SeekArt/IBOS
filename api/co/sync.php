@@ -6,11 +6,11 @@ use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache as CacheModel;
 use application\modules\dashboard\model\Syscache;
+use application\modules\dashboard\utils\CoSync;
 use application\modules\department\model\DepartmentBinding;
 use application\modules\main\model\Setting;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
-use CDbCriteria;
 
 // 程序根目录路径
 define( 'PATH_ROOT', dirname( __FILE__ ) . '/../../' );
@@ -442,16 +442,31 @@ function syncUser( $msgData, $msgPlatform ) {
 }
 
 function ibosSync( $msgPlatform ) {
+	Setting::model();
 	$corpid = Setting::model()->fetchSettingValueByKey( 'corpid' );
 	if ( !empty( $corpid ) ) {
 		define( 'CORPID', $corpid );
-		$pid = [0 ];
+		$pidArray = createPidOrder();
+		$per = 50;
+		$times = 10;
+		$everyPid = floor( count( $pidArray ) / $times );
+		$array = array_chunk( $pidArray, $everyPid );
+		$pid = array_shift( $array );
+		set_time_limit( 0 );
 		while ( 1 ) {
-			$deptArray = findDeptByPid( $msgPlatform, "'" . implode( "','", $pid ) . "'" );
+			$deptArray = findDeptByPid( $msgPlatform, implode( ',', $pid ), $per );
+			if ( count( $deptArray ) < $per ) {
+				$pid = array_shift( $array );
+				if ( empty( $array ) ) {
+					break;
+				}
+			}
 			if ( !empty( $deptArray ) ) {
 				sendSyncDept( $msgPlatform, $deptArray );
-				$pid = array_keys( $deptArray );
 			} else {
+				continue;
+			}
+			if ( empty( $pidArray ) ) {
 				break;
 			}
 		}
@@ -481,7 +496,7 @@ function ibosSync( $msgPlatform ) {
 	}
 }
 
-function findDeptByPid( $msgPlatform, $pid = 0 ) {
+function findDeptByPid( $msgPlatform, $pid, $per ) {
 	$list = IBOS::app()->db->createCommand()
 			->select( 'deptname,deptid,pid' )
 			->from( '{{department}}' )
@@ -489,12 +504,24 @@ function findDeptByPid( $msgPlatform, $pid = 0 ) {
 			->andWhere( " `deptid` NOT IN"
 					. " ( SELECT `deptid` FROM `{{department_binding}}` WHERE"
 					. " `app` = '{$msgPlatform}' )" )
+			->limit( $per )
 			->queryAll();
-	$return = array();
-	foreach ( $list as $row ) {
-		$return[$row['deptid']] = $row;
+	return $list;
 	}
-	return $return;
+function createPidOrder( $pid = array( 0 ) ) {
+	static $pidArray = array( 0 );
+	$pidString = implode( ',', $pid );
+	$pidList = Ibos::app()->db->createCommand()
+			->select( 'deptid' )
+			->from( '{{department}}' )
+			->where( " `pid` IN ( {$pidString} )" )
+			->queryColumn();
+	if ( !empty( $pidList ) ) {
+		$pidArray = array_merge( $pidArray, $pidList );
+		return createPidOrder( $pidList );
+	} else {
+		return $pidArray;
+	}
 }
 
 function sendSyncDept( $msgPlatform, $deptArray ) {
@@ -581,6 +608,7 @@ function userDelete( $msgPlatform, $array ) {
 
 function getSelectUser() {
 	return array(
+		'u.deptid',
 		'u.uid',
 		'u.mobile',
 		'u.password',

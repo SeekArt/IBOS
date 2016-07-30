@@ -8,7 +8,6 @@ class WebMailPop extends WebMailBase {
 
     /**
      * email test
-     * 15-8-24 上午9:54 gzdzl
      * @param string $host
      * @param string $user
      * @param string $pass

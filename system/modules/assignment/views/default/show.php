@@ -1,9 +1,7 @@
 <?php
 
-use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
-use application\modules\dashboard\model\Stamp;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/assignment.css?<?php echo VERHASH; ?>">
 <div class="am-details">
@@ -59,7 +57,7 @@ use application\modules\dashboard\model\Stamp;
 		<?php if ( isset( $assignment['stampUrl'] ) ): ?>
 			<div id="am_stamp_holder">
 				<!-- 输出已选中的图章  -->
-				<img src="<?php echo File::imageName( Stamp::STAMP_PATH . $assignment['stampUrl'] ); ?>" width="150" height="90">
+				<img src="<?php echo $assignment['stampUrl']; ?>" width="150" height="90">
 			</div>
 		<?php endif; ?>
 		<div class="am-details-lside">
@@ -179,29 +177,29 @@ use application\modules\dashboard\model\Stamp;
 	<div class="input-group datepicker mb" id="task_delay_starttime">
 	<span class="input-group-addon"><?php echo $lang['Starttime']; ?></span>
 	<a href="javascript:;" class="datepicker-btn"></a>
-	<input type="text" name="starttime" class="datepicker-input" value="<?php echo date('Y-m-d H:i',$assignment['starttime']); ?>">
+	<input type="text" name="starttime" class="datepicker-input" value="<?php echo date( 'Y-m-d H:i', $assignment['starttime'] ); ?>">
 	</div>
 	<div class="input-group datepicker mb" id="task_delay_endtime">
 	<span class="input-group-addon"><?php echo $lang['Endtime']; ?></span>
 	<a href="javascript:;" class="datepicker-btn"></a>
-	<input type="text" name="endtime" class="datepicker-input" value="<?php echo date( 'Y-m-d H:i',$assignment['endtime']); ?> ">
+	<input type="text" name="endtime" class="datepicker-input" value="<?php echo date( 'Y-m-d H:i', $assignment['endtime'] ); ?> ">
 	</div>
 	</form>
 </script>
 
 <script>
 	Ibos.app.s({
-			isDesignee: <?php echo $isDesigneeuid ? 'true' : 'false'; ?>,
-			isCharge: <?php echo $isChargeuid ? 'true' : 'false'; ?>,
-			// 任务状态(0:未读,1:进行中,2:已完成,3:已评价,4:取消)
-			taskStatus: <?php echo $assignment['status']; ?>,
-			taskId: <?php echo $assignment['assignmentid'] ?>,
-			stamps: <?php echo CJSON::encode( $this->getStamps() ) ?>,
-			stampUrl: "<?php echo  File::imageName( Stamp::STAMP_PATH ); ?>",
-			// 延期任务、取消任务申请
-			apply:<?php echo $applyData; ?>,
-			// 评论附件url
-			commentAttachUrl: Ibos.app.url("assignment/default/show", {'op': 'updateCommentAttach'})
+		isDesignee: <?php echo $isDesigneeuid ? 'true' : 'false'; ?>,
+		isCharge: <?php echo $isChargeuid ? 'true' : 'false'; ?>,
+		// 任务状态(0:未读,1:进行中,2:已完成,3:已评价,4:取消)
+		taskStatus: <?php echo $assignment['status']; ?>,
+		taskId: <?php echo $assignment['assignmentid'] ?>,
+		stamps: <?php echo CJSON::encode( $this->getStamps() ) ?>,
+		stampUrl: "",
+		// 延期任务、取消任务申请
+		apply:<?php echo $applyData; ?>,
+		// 评论附件url
+		commentAttachUrl: Ibos.app.url("assignment/default/show", {'op': 'updateCommentAttach'})
 	});
 </script>
 <script src="<?php echo STATICURL; ?>/js/lib/SWFUpload/swfupload.packaged.js?<?php echo VERHASH; ?>"></script>

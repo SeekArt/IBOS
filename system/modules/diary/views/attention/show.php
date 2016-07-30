@@ -1,11 +1,8 @@
 <?php
 
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
-use application\modules\dashboard\model\Stamp;
-use application\modules\user\utils\User;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/diary.css?<?php echo VERHASH; ?>">
@@ -74,7 +71,7 @@ use application\modules\user\utils\User;
                 <table class="da-detail-table">
                     <tbody>
                     <div class="da-stamp">
-                        <?php if ( $diary['stamp'] > 0 ): ?><img id="stamp_<?php echo $diary['diaryid']; ?>" src="<?php echo File::fileName( Stamp::STAMP_PATH . $stampUrl ); ?>" width="150px" height="90px" /><?php endif; ?>
+						<?php if ( $diary['stamp'] > 0 ): ?><img id="stamp_<?php echo $diary['diaryid']; ?>" src="<?php echo $stampUrl; ?>" width="150px" height="90px" /><?php endif; ?>
                     </div>
                     <!-- 原计划 -->
                     <?php if ( count( $data['originalPlanList'] ) > 0 ) { ?>

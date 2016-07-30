@@ -198,7 +198,12 @@ var customModules = {
     do: function(){
         var _this = this;
         this.$el.on("click", "[type='submit']", function(){
-            var modules = U.getCheckedValue("customModules[]");
+            var customModules = U.getCheckedValue("customModules[]");
+            var coreModules = U.getCheckedValue("coreModules[]");
+			var modules = coreModules;
+			if( customModules !== ''  ){
+				modules += "," + customModules;
+			}
             _this.data["customModules[]"] = modules;
             _this.op.handleInstall(_this.data).done(function(res){
                 if(res.isSuccess){
@@ -232,7 +237,7 @@ var installing = {
     init: function(data){
         var _this = this;
         this.$el.show();
-        if( data ){
+        if( data != undefined ){
             this.modules = data;
             this.install();
         }else{

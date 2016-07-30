@@ -1,11 +1,10 @@
 <?php
 
-use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
 ?>
-<link rel="stylesheet" href="<?php echo $assetUrl.'/css/index_diary.css'; ?>">
+<link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_diary.css'; ?>">
 <!-- IE 8 Hack 加入空script标签延迟html加载，为了让空值图片能正常显示 -->
 <script></script>
 
@@ -60,7 +59,7 @@ use application\modules\main\utils\Main;
             <?php if ( !empty($diary) ): ?>
                 <!-- 当已经点评时 -->
                 <?php if( isset( $stampUrl ) ): ?>
-                    <img src="<?php echo File::fileName( Stamp::STAMP_PATH . $stampUrl);?>" alt="" width="135" height="81" class="in-diary-stamp">
+					<img src="<?php echo $stampUrl; ?>" alt="" width="135" height="81" class="in-diary-stamp">
                 <?php else: ?>
                     <div class="mb xac">
                         <?php echo $lang['You have write log']; ?>
@@ -128,7 +127,7 @@ use application\modules\main\utils\Main;
                         <td width="60">
 							<?php if($review['stamp']!=0): ?>
 							<?php $iconUrl = Stamp::model()->fetchIconById($review['stamp']); ?>
-                            <img src="<?php echo File::fileName( Stamp::STAMP_PATH) . $iconUrl  ?>" alt="">
+										<img src="<?php echo $iconUrl ?>" alt="">
 							<?php endif; ?>
                         </td>
                     </tr>
@@ -173,7 +172,13 @@ use application\modules\main\utils\Main;
                 </div>
                 <div>
                     <div class="progress">
-                        <div class="progress-bar" style="width: <?php if($reviewInfo['count']){ echo $reviewInfo['reviewedCount']/$reviewInfo['count']*100;}else{ echo 0;} ?>%;"></div>
+						<div class="progress-bar" style="width: <?php
+						if ( $reviewInfo['count'] ) {
+							echo $reviewInfo['reviewedCount'] / $reviewInfo['count'] * 100;
+						} else {
+							echo 0;
+						}
+						?>%;"></div>
                     </div>
                 </div>
             </div>
@@ -198,7 +203,7 @@ use application\modules\main\utils\Main;
         currentMonth: '<?php echo $dateWeekDay['month']; ?>',
         currentYear: '<?php echo $dateWeekDay['year']; ?>',
         subUids: '<?php echo $subUids; ?>',
-        date: '<?php echo date("Y-m-d"); ?>'
+		date: '<?php echo date( "Y-m-d" ); ?>'
     });
 
     (function(){
