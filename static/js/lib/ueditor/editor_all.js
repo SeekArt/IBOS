@@ -14907,12 +14907,12 @@ UE.plugins['list'] = function () {
     me.setOpt( {
         'autoTransWordToList':false,
         'insertorderedlist':{
-            'num':'',
-            'num1':'',
-            'num2':'',
-            'cn':'',
-            'cn1':'',
-            'cn2':'',
+            // 'num':'',
+            // 'num1':'',
+            // 'num2':'',
+            // 'cn':'',
+            // 'cn1':'',
+            // 'cn2':'',
             'decimal':'',
             'lower-alpha':'',
             'lower-roman':'',
@@ -14923,8 +14923,8 @@ UE.plugins['list'] = function () {
             'circle':'',
             'disc':'',
             'square':'',
-            'dash' : '',
-            'dot':''
+            // 'dash' : '',
+            // 'dot':''
         },
         listDefaultPaddingLeft : '30',
         listiconpath : 'http://bs.baidu.com/listicon/',
