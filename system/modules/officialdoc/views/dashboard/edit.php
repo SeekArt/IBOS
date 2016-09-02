@@ -33,7 +33,7 @@ use application\core\utils\IBOS;
 					<div class="control-group">
 						<label for="" class="control-label"></label>
 						<div class="controls">
-							<button class="btn btn-primary btn-large btn-submit" type="submit"><?php echo IBOS::lang( 'Submit' ); ?></button>
+							<button class="btn btn-primary btn-large btn-submit" type="button"><?php echo IBOS::lang( 'Submit' ); ?></button>
 						</div>
 					</div>
 					<input type="hidden" name="rcid" value="<?php echo $data['rcid']; ?>">
@@ -54,9 +54,10 @@ use application\core\utils\IBOS;
 		}).render('editor');
 		var ue = UE.getEditor('editor');
 		$('.btn-submit').on('click', function() {
-			//alert(ue.getContentTxt());
+			var $form = $('form');
+			$form[0].content.value = ue.getContent();
 			$('#content_text').val(ue.getContentTxt());
-			$(this).submit();
+			$form.submit();
 		});
 
 		

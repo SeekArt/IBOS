@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Ibos 应用程序组件
+ * IBOS 应用程序组件
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2014 IBOS Inc
  */
 /**
- * 初始化Ibos Application,模块及分发控制器
+ * 初始化IBOS Application,模块及分发控制器
  * @package application.core.components
  * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -25,6 +25,7 @@ use CController;
 use CEvent;
 use CJSON;
 use CWebApplication;
+use application\modules\role\utils\Role as RoleUtil;
 
 class Application extends CWebApplication {
 
@@ -71,7 +72,7 @@ class Application extends CWebApplication {
 		// 初始化ENGINE定义的引擎驱动
 		$engineClass = 'application\core\engines\\' . ( ucfirst( strtolower( ENGINE ) ) );
 		$engine = new $engineClass( );
-		IBOS::setEngine( $engine );
+		Ibos::setEngine( $engine );
 		parent::configure( $engine->getEngineConfig() );
 	}
 
@@ -85,37 +86,19 @@ class Application extends CWebApplication {
 	 * @return mixed
 	 */
 	public function beforeControllerAction( $controller, $action ) {
-		$module = $controller->getModule()->getId();
-		// step1
-		if ( !$controller->filterNotAuthModule( $module ) ) {
-			/**
-			 * 注意这里让所有路由都变成小写
-			 */
-			$routes = strtolower( $controller->getUniqueId() . '/' . $action->getId() );
-			if ( $controller->isFilterRoute ) {
-				$check = false;
-				// step2：是否使用config里的配置路由去验证
-				// 当useConfig被设置成true时，只有在config里设置的才会验证
-				// 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
-				if ( !$controller->useConfig ) {
-					$check = !$controller->filterRoutes( $routes ) ? true : false;
-				} else {
-					$check = AuthItem::model()->checkIsInByRoute( $routes ) ? true : false;
-				}
-				if ( true === $check ) {
-					// step3
-					if ( !IBOS::app()->user->checkAccess( $routes, Auth::getParams( $routes ) ) ) {
-						// 没有权限 抛出错误
-						if ( isset( $this->rbacErrorPage ) ) {
-							// 定义权限错误页面
-							$controller->redirect( $this->rbacErrorPage );
-						} else {
-							$controller->error( IBOS::lang( 'Valid access', 'error' ), '', $controller->errorParam );
-						}
-					}
-				}
+		$routes = strtolower( $controller->getUniqueId() . '/' . $action->getId() );
+		$canAccess = RoleUtil::checkRouteAccess($routes);
+
+		// 没有权限 抛出错误
+		if (false === $canAccess) {
+			if ( isset( $this->rbacErrorPage ) ) {
+				// 定义权限错误页面
+				$controller->redirect( $this->rbacErrorPage );
+			} else {
+				$controller->error( Ibos::lang( 'Valid access', 'error' ), '', $controller->errorParam );
 			}
 		}
+
 		return true;
 	}
 

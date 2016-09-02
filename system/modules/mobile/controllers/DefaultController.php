@@ -12,7 +12,7 @@
  * 
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: DefaultController.php 7023 2016-05-10 08:01:05Z Aeolus $
+ * @version $Id: DefaultController.php 7727 2016-08-01 06:33:09Z gzzcs $
  */
 
 namespace application\modules\mobile\controllers;
@@ -64,6 +64,7 @@ class DefaultController extends BaseController {
 		$return['user']['weibo_count'] = isset( $udata['weibo_count'] ) ? $udata['weibo_count'] : 0;
 		$return['departmentData'] = DeptUtils::getDepartmentByPy();
 		$return['positionData'] = PositionUtils::getPositionByPy();
+		$return['unit'] = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 
 		return $return;
 	}

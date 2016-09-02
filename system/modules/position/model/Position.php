@@ -11,7 +11,7 @@
  * 岗位表的数据层操作
  *
  * @package application.modules.position.model
- * @version $Id: Position.php 7194 2016-05-23 06:56:07Z gzhyj $
+ * @version $Id: Position.php 8197 2016-09-01 10:22:14Z tanghang $
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -139,4 +139,10 @@ class Position extends Model {
         return !empty( $position ) ? $position['number'] : 0;
     }
 
+    /*
+     * 根据岗位ID来更新对应的岗位人数
+     */
+    public function updatePositionNum($positionid,$number){
+        $this->updateAll(array('number' => $number),'`positionid` = :positionid',array(':positionid' => $positionid));
+    }
 }

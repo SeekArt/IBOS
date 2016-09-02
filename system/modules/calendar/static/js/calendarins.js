@@ -21,11 +21,11 @@ var Cld = {
     showDetailMenu: function(evt, jsEvt) {
         var _this = this;
         this._timer = setTimeout(function() {
-            var typeLang = type = evt.type == "1" ?
+            var typeLang = type = (evt.type == "1" || evt.type == "2") ?
                 "CAL.LOOP_TYPE" :
                 evt.acrossDay ?
                 "CAL.ACROSSDAY_TYPE" :
-                evt.allDay ?
+                evt.allDay == '1' ?
                 "CAL.ALLDAY_TYPE" :
                 "CAL.NORMAL_TYPE";
 

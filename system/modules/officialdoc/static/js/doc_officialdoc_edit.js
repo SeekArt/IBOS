@@ -35,6 +35,19 @@ var OfficialEdit = {
 			data: Ibos.data.get()
 		});
 
+		$('#publishScope').formValidator()
+			.functionValidator({
+				fun : function(){
+					if(!!$('#publishScope').val()){
+						return true;
+					}
+
+					Ui.tip(Ibos.l("DOC.PUBLISH_RANGE_CANNOT_BE_EMPTY"), 'warning');
+					return false;
+				},
+				validateType:"functionValidator"
+			});
+
 		//上传
 		Ibos.upload.attach({
 			post_params: {module: 'officialdoc'},
@@ -51,6 +64,7 @@ $(function() {
 	// 初始化编辑页面
 	OfficialEdit.initEditPage();
 
+	Ibos.checkFormChange("#officialdoc_form");
 	//修改内容后，点击提交时，选择修改理由
 	$("#officialdoc_form").submit(function() {
 		var status = $(this).attr("data-status");

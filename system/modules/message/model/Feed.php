@@ -807,6 +807,22 @@ class Feed extends Model {
         $_data['data'] = StringUtil::utf8Unserialize( $_data['feeddata'] );
 		// 模版变量赋值
         $var = isset( $_data['data'] ) ? $_data['data'] : array();
+        // 因为需要直接输出 HTML，如果不进行过滤的话，可能会有安全的问题
+        $varBody = isset($var['body']) ? $var['body'] : '';
+        $varBody = StringUtil::parseHtml($varBody);
+
+        $purifier = new \CHtmlPurifier();
+        $purifier->setOptions(
+            array(
+                'URI.AllowedSchemes' => array(
+                    'http' => true,
+                    'https' => true,
+                ),
+                'HTML.AllowedElements' => 'img',
+            ));
+
+        $varBody = $purifier->purify($varBody);
+        $var['body'] = $varBody;
 		if ( !empty( $var['attach_id'] ) ) {
 			$var['attachInfo'] = util\Attach::getAttach( $var['attach_id'] );
 			$attachUrl = util\File::getAttachUrl();

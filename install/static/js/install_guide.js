@@ -260,7 +260,6 @@ var installing = {
             installUrl = "api.php?op=handleInstall",
             $progressbar = $("#progressbar"),
             $show_process = $("#show_process"),
-            $mod_name = $("#mod_name"),
             $install_info = $("#install_info");
 
         function install(module) {
@@ -275,7 +274,7 @@ var installing = {
                     if (res.isSuccess) {
                         $progressbar.css("width", data.process);
                         $show_process.text(data.process);
-                        $mod_name.text(data.nextModuleName);
+						$install_info.text("正在安装 "+ data.nextModuleName +" ,请稍等...");
                         install(data.nextModule);
                     } else {
                         result.error(res.msg);
@@ -283,7 +282,7 @@ var installing = {
                 }
             }, 'json');
         }
-        $mod_name.text("请求中");
+		$install_info.text("准备安装...");
         install();
     },
     /**

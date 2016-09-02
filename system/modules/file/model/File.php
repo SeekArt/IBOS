@@ -276,7 +276,23 @@ class File extends Model {
 		}
 		return $records;
 	}
-
+    /*
+     * 获取某个文件夹下的没有被删除的所有文件和文件夹（包括深层文件和文件夹）
+     */
+    public function fetchNoDelSubByIdpath($fid){
+        $records = array();
+        $fid = intval($fid);
+        if($fid){
+            $condition = "f.`idpath` LIKE '%\/{$fid}\/%' AND f.`isdel`=0";
+            $records = IBOS::app()->db->createCommand()
+                ->select( "*,f.fid AS fid" )
+                ->from( "{{file}} f" )
+                ->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
+                ->where( $condition )
+                ->queryAll();
+        }
+        return $records;
+    }
 	/**
 	 * 获取一个文件夹的总大小
 	 * @param integer $fid 文件夹id（必须是文件夹，若果传的是文件，会返回0）

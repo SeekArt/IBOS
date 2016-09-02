@@ -49,25 +49,25 @@ class Stamp extends Model {
         return !empty( $record ) ? intval( $record['sort'] ) : 0;
     }
 
-    /**
-     * 获取图章地址
-     * @param integer $id
-     * @return string
-     */
-    public function fetchStampById( $id ) {
-        $stamp = $this->fetchByPk( $id );
-        return $stamp['stamp'];
-    }
+	/**
+	 * 获取图章地址
+	 * @param integer $id
+	 * @return string
+	 */
+	public function fetchStampById( $id ) {
+		$stamp = $this->findByPk( $id );
+		return $stamp['stamp'];
+	}
 
-    /**
-     * 获取图标地址
-     * @param integer $id
-     * @return string
-     */
-    public function fetchIconById( $id ) {
-        $stamp = $this->fetchByPk( $id );
-        return $stamp['icon'];
-    }
+	/**
+	 * 获取图标地址
+	 * @param integer $id
+	 * @return string
+	 */
+	public function fetchIconById( $id ) {
+		$stamp = $this->findByPk( $id );
+		return $stamp['icon'];
+	}
 
     /**
      * 采用静态缓存方法封装

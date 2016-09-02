@@ -61,9 +61,15 @@ class AssignmentRemind extends Model {
 	 * @return array      任务提醒列表数组
 	 */
 	public function fetchNeedRemindReminder( $uid ) {
-		$condition = sprintf( "`uid` = :uid AND `remindtime` < %d AND `status` = 0", time() );
+		$condition = sprintf( "`uid` = :uid AND `remindtime` <= %d AND `status` = 0", time() );
 		$params = array( ':uid' => $uid );
 		return $this->findAll( $condition, $params );
 	}
 
+    /*
+    * 根据用户的uid和指派的任务id更新任务指派的提醒为已提醒
+    */
+    public function updateNeedRemindReminder($uid,$assignmentId){
+        $this->updateAll(array('status' => 1),"uid = :uid AND assignmentid = :assginmentid",array(':uid' => $uid,':assginmentid' => $assignmentId));
+    }
 }

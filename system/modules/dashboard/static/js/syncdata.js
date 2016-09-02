@@ -1,3 +1,16 @@
+var IbosCoLogin = IbosCoLogin || {};
+
+$(IbosCoLogin).on({
+    // 酷办公注册成功
+    "regsuccess": function(evt, evtData){
+        location.reload();
+    },
+    // 酷办公登录成功
+    "loginsuccess": function(evt, evtData){
+        location.reload();
+    }
+});
+
 $(function() {
 
     $("[data-toggle='tooltip']").tooltip();
@@ -60,21 +73,9 @@ $(function() {
         }
     };
 
-    var IbosCoLogin = IbosCoLogin || {};
-    $(IbosCoLogin).on({
-        // 酷办公注册成功
-        "regsuccess": function(evt, evtData){
-            location.reload();
-        },
-        // 酷办公登录成功
-        "loginsuccess": function(evt, evtData){
-            location.reload();
-        }
-    });
-
     Ibos.evt.add({
         // 验证系统链接
-        "sysUrlVerify": function(elem, param){
+        "sysUrlVerify": function(param, elem){
             var $sysUrl = $("#sys_url"),
                 sysUrlValue = $sysUrl.val(),
                 that = this;
@@ -97,11 +98,11 @@ $(function() {
             });
         },
         // 安装套件应用
-        "installApply": function(){
-
+        "installApply": function(param, elem){
+            param.url && window.open(param.url);
         },
         // 自动同步按钮
-        "autoSync": function(elem, param){
+        "autoSync": function(param, elem){
             this.value = +!+this.value;
 
             WxSync.op.autoSync({
@@ -115,7 +116,7 @@ $(function() {
             });
         },
         // 同步
-        "syncData": function(elem, param) {
+        "syncData": function(param, elem) {
             var $this = $(this),
                 status = $("#send_email").prop("checked") ? 1 : 0, //同步成功后，是否发送邮件
                 paramData = {
@@ -131,7 +132,7 @@ $(function() {
             });
         },
         // 获取详情
-        getDetail: function(elem, param){
+        getDetail: function(param, elem){
             Ui.dialog({
                 title: "详情",
                 id: "ibosqyh_sync_dialog",
@@ -145,7 +146,7 @@ $(function() {
                 }
             });
         },
-        "changeSeting": function(elem, param) {
+        "changeSeting": function(param, elem) {
             var url = Ibos.app.url('dashboard/wxbinding/update');
             $.get(url, function(res) {
                 if (res.isSuccess) {

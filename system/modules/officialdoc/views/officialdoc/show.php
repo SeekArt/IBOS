@@ -23,9 +23,9 @@ use application\modules\user\model\User;
                 <div class="art">
                     <div class="art-container">
                         <a href="javascript:" <?php if ( (!empty( $signInfo ) && $signInfo['issign'] == 1 ) || $data['status'] == 2 ): ?>onclick="window.location.href = document.referrer;"<?php else: ?>id="art_close"<?php endif; ?>  title="<?php echo $lang['Close']; ?>" class="art-close"></a>
-                        <h1 class="art-title"><?php echo $data['subject']; ?></h1>
+                        <h1 class="art-title ellipsis"><?php echo $data['subject']; ?></h1>
                         <!-- 套红 -->
-                        <div class="mb art-content" id="art_content">
+                        <div class="mb art-content text-break" id="art_content">
                             <div class="officialdoc-content">
                                 <?php echo $data['content']; ?>
                             </div>

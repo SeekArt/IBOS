@@ -26,7 +26,10 @@ use application\modules\calendar\utils\Calendar;
 					</div>
 				</div>
 			</div>
-			<div id="calendar" class="fc-ibos"></div>	
+			<div class="page-list">
+				<div id="calendar" class="fc-ibos"></div>
+				<input type="hidden" id="time_range" />
+			</div>
 		</div>
 		<!-- Mainer right end -->
 	</div>

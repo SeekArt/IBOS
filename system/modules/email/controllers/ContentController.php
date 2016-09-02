@@ -204,6 +204,7 @@ class ContentController extends BaseController {
                 array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
                 array('name' => IBOS::lang('Fill in email'))
             ));
+            $data['backurl'] = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
             $this->render('add', $data);
         }
     }
@@ -451,7 +452,13 @@ class ContentController extends BaseController {
         if (IBOS::app()->request->getIsAjaxRequest()) {
             $this->ajaxReturn(array('isSuccess' => true, 'messsage' => $message));
         } else {
-            $this->success($message, $this->createUrl('list/index'));
+            $backurl = Env::getRequest('backurl');
+            if (empty($backurl)) {
+                $returnUrl = $this->createUrl('list/index');
+            } else {
+                $returnUrl = $backurl;
+            }
+            $this->success($message, $returnUrl);
         }
     }
 

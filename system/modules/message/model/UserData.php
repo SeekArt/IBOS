@@ -155,6 +155,7 @@ class UserData extends Model {
      * @return array 指定用户的通知统计数目
      */
     public function getUnreadCount( $uid ) {
+        $this->getAssignRemind($uid);
         $userData = $this->getUserData( $uid );
         // 指定用户的提醒通知统计数目
         $count = NotifyMessage::model()->count( " uid = {$uid} and isread = 0 " );
@@ -175,6 +176,42 @@ class UserData extends Model {
         return $return;
     }
 
+    /*
+     * 将任务提醒时间到时，将其添加到消息提醒表中去
+     */
+    private function getAssignRemind($uid){
+        $remind = AssignmentRemind::model()->fetchNeedRemindReminder($uid);
+        $remindLength = count($remind);
+        for ($i=0;$i<$remindLength;$i++){
+            $assignment = Assignment::model()->fetchByPk( $remind[$i]->assignmentid );
+            $this->sendNotify($assignment['designeeuid'],$remind[$i]->assignmentid,$assignment['subject'],$remind[$i]->uid,'assignment_timing_message');
+            AssignmentRemind::model()->updateNeedRemindReminder($uid,$remind[$i]->assignmentid);
+        }
+    }
+
+    /**
+     * 任务提醒时间到了的推送消息
+     * @param integer $assignmentId 任务id
+     * @param string $subject 消息内容
+     * @param integer $toUid 发送给谁
+     * @param string $node 消息节点
+     * @param string $result 是否是申请结果的提醒(是的话传递“同意“或”拒绝“文字)
+     */
+    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null) {
+        $config = array(
+            '{sender}' => User::model()->fetchRealnameByUid($uid),
+            '{subject}' => $subject,
+            '{url}' => Ibos::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId)),
+            '{content}' => '您设置的提醒时间到了',
+            'id' => $assignmentId,
+        );
+        if (isset($result)) {
+            $config['{result}'] = $result;
+        }
+        if (!empty($toUid)) {
+            Notify::model()->sendNotify($toUid, $node, $config, $uid);
+        }
+    }
     /**
      * 获取指定用户的提醒通知统计
      * @param integer $uid 用户ID

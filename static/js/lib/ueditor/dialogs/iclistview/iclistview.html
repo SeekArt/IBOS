@@ -42,6 +42,7 @@
 								<li><span>表头</span><span class="xcr">*</span></li>
 								<li><span data-toggle="popover" data-content="计算公式说明：用[1] [2] [3]等代表某列的数值。运算符支持+,-,*,/,%等。">数据类型</span></li>
 								<li><span data-toggle="popover" data-content="数据类型的默认值。多个值之间用英文逗号分隔。当数据类型为日期时，默认值无效。">默认值</span></li>
+								<li><span>宽度</span></li>
 								<li><span data-toggle="popover" data-content="在该列的底部显示该列的合计数值"><abbr>合计数值</abbr></span></li>
 							</ul>
 						</div>
@@ -127,6 +128,13 @@
 										<td><input type="text" class="input-small" name="lv-colvalue"></td>
 									</tr>
 									<tr>
+										<td><input type="text" class="input-small" name="lv-colwidth"></td>
+										<td><input type="text" class="input-small" name="lv-colwidth"></td>
+										<td><input type="text" class="input-small" name="lv-colwidth"></td>
+										<td><input type="text" class="input-small" name="lv-colwidth"></td>
+										<td><input type="text" class="input-small" name="lv-colwidth"></td>
+									</tr>
+									<tr>
 										<td><label class="checkbox"><input type="checkbox" name="lv-sum"></label></td>
 										<td><label class="checkbox"><input type="checkbox" name="lv-sum"></label></td>
 										<td><label class="checkbox"><input type="checkbox" name="lv-sum"></label></td>
@@ -164,7 +172,18 @@
 		<!-- 列表控件模板 -->
 		<!-- 用于插入编辑器的内容不能有空格，否则会被转化为&nbsp; -->
 		<script type="text/template" id="ic_listview_tpl">
-			<ic data-type="listview" data-id="<%=id%>" data-title="<%=title%>" data-lv-title="<%=lvTitle%>" data-lv-coltype="<%=lvColtype%>" data-lv-colvalue="<%=lvColvalue%>" data-lv-sum="<%=lvSum%>" contenteditable="false"><table class="table table-bordered"><thead><tr><% for(var i = 0; i < lvTitles.length; i++) { %><th><%=lvTitles[i]%></th><%}%></tr></thead><tbody><tr><% for(var i = 0; i < lvTitles.length; i++) { %><td></td><% } %></tr></tbody></table></ic>
+			<ic data-type="listview" data-id="<%=id%>" data-title="<%=title%>" data-lv-title="<%=lvTitle%>" data-lv-coltype="<%=lvColtype%>" data-lv-colvalue="<%=lvColvalue%>" data-lv-colwidth="<%=lvColwidth%>" data-lv-sum="<%=lvSum%>" contenteditable="false">
+				<table class="table table-bordered">
+					<thead>
+						<tr><th>序号</th>
+						<% for(var i = 0; i < lvTitles.length; i++) { %><th width="<%= lvColwidths[i] %>"><%=lvTitles[i]%></th><%}%>
+						<th>操作</th></tr>
+					</thead>
+					<tbody>
+						<tr><% for(var i = 0; i < lvTitles.length; i++) { %><td></td><% } %></tr>
+					</tbody>
+				</table>
+			</ic>
 		</script>
 		<!-- 列表控件菜单表格模板 -->
 		<script type="text/template" id="ic_listview_table_tpl">
@@ -197,6 +216,11 @@
 				<tr>
 					<% for(var i = 0; i < data.length; i++) { %>
 						<td><input type="text" class="input-small" name="lv-colvalue" value="<%=data[i].value%>"></td>
+					<% } %>
+				</tr>
+				<tr>
+					<% for(var i = 0; i < data.length; i++) { %>
+						<td><input type="text" class="input-small" name="lv-colwidth" value="<%=data[i].width%>"></td>
 					<% } %>
 				</tr>
 				<tr>
@@ -234,6 +258,7 @@
 							'</select>' +
 							'</td>',
 					'<td><input type="text" name="lv-colvalue" value="<%=colvalue%>" class="input-small"></td>',
+					'<td><input type="text" name="lv-colwidth" value="<%=colwidth%>" class="input-small"></td>',
 					'<td><label class="checkbox"><input type="checkbox" name="lv-sum" <% if(sum){ %> checked <% } %> ></label></td>'
 				],
 				tableTpl: "ic_listview_table_tpl",
@@ -265,6 +290,7 @@
 						title: "",
 						coltype: "",
 						colvalue: "",
+						colwidth: "",
 						sum: false
 					}, data);
 
@@ -291,10 +317,12 @@
 					var titles = [],
 							coltypes = [],
 							colvalues = [],
+							colwidths = [],
 							sums = [],
 							$titles = $("[name='lv-title']", this.$table),
 							$coltypes = $("[name='lv-coltype']", this.$table),
 							$colvalues = $("[name='lv-colvalue']", this.$table),
+							$colwidths = $("[name='lv-colwidth']", this.$table),
 							$sums = $("[name='lv-sum']", this.$table);
 
 					$titles.each(function(index, elem) {
@@ -303,6 +331,7 @@
 							titles.push(elem.value);
 							coltypes.push($coltypes.get(index).value);
 							colvalues.push($colvalues.get(index).value);
+							colwidths.push($colwidths.get(index).value);
 							sums.push(+$sums.get(index).checked);
 						}
 					});
@@ -311,6 +340,7 @@
 						lvTitle: titles.join("`"),
 						lvColtype: coltypes.join("`"),
 						lvColvalue: colvalues.join("`"),
+						lvColwidth: colwidths.join("`"),
 						lvSum: sums.join("`"),
 					}
 				},
@@ -327,14 +357,16 @@
 						lvTitles = data.lvTitle.split("`");
 						lvColtypes = data.lvColtype.split("`");
 						lvColvalues = data.lvColvalue.split("`");
+						lvColwidths = data.lvColwidth.split("`");
 						lvSums = data.lvSum.split("`");
 						for(var i = 0; i < lvTitles.length; i++) {
 							tplData.push({
 								title: lvTitles[i],
 								type: lvColtypes[i],
 								value: lvColvalues[i] || "",
+								width: lvColwidths[i] || "",
 								sum: lvSums[i]
-							})
+							});
 						};
 					}
 					// 数据不足5列，生成空列数据，保证至少5列
@@ -383,6 +415,7 @@
 						lvTitle: oldData.lvTitle || "",
 						lvColtype: oldData.lvColtype || "",
 						lvColvalue: oldData.lvColvalue || "",
+						lvColwidth: oldData.lvColwidth || "",
 						lvSum: oldData.lvSum ? oldData.lvSum + "" : ""
 					});
 					if(dataCount >= 5){
@@ -406,7 +439,8 @@
 						type: 'listview',
 						title: title,
 						lvTitles: ("" + data.lvTitle).split("`"),
-						lvColvalues: ("" + data.lvColvalue).split("`")
+						lvColvalues: ("" + data.lvColvalue).split("`"),
+						lvColwidths: ("" + data.lvColwidth).split("`")
 					}, data);
 
 					if ($.trim(data.lvTitle) === "") {

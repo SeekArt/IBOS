@@ -4,7 +4,7 @@
  * 用户模块函数库
  *
  * @package application.app.user.utils
- * @version $Id: User.php 7507 2016-07-07 07:48:53Z tanghang $
+ * @version $Id: User.php 8197 2016-09-01 10:22:14Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -313,7 +313,7 @@ class User {
 			$condition = 1;
 		} else {
 			$uidString = is_array( $uidX ) ? implode( ',', $uidX ) : $uidX;
-			$condition = !empty( $uidString ) ? " `uid` IN ( {$uidString} ) " : 0;
+			$condition = !empty( $uidString ) ? " `uid` IN ( '{$uidString}' ) " : 0;
 		}
 		if ( false === $force ) {
 			//找缓存
@@ -336,11 +336,16 @@ class User {
 		}
 		unset( $uidArray );
 		if ( false === $onlyCache ) {
+			$where = false === $returnDisabled ? array(
+				'AND',
+				" `status` != 2 ",
+				$condition,
+					) : $condition;
 			//从cache表里取数据
 			$cache = IBOS::app()->db->createCommand()
 					->select( 'uid,detail' )
 					->from( '{{cache_user_detail}}' )
-					->where( $condition )
+					->where( $where )
 					->queryAll();
 			$return = array();
 			foreach ( $cache as $k => $c ) {
@@ -952,6 +957,11 @@ class User {
 	public static function getUserByPy( $uids = NULL, $returnDisabled = false, $first = false ) {
 		$group = array();
 		$list = UserModel\User::model()->fetchAllByUids( $uids, $returnDisabled );
+		// $list 的值可能为 false， 需判断 $list 是否可迭代数据。
+		// 否则，在使用 foreach 的时候，会导致错误。即 Invalid argument supplied for foreach()
+		if (!is_array( $list ) && !($list instanceof \Traversable)) {
+			$list = array();
+		}
 		foreach ( $list as $k => $v ) {
 			$py = Convert::getPY( $v['realname'], $first );
 			if ( !empty( $py ) ) {

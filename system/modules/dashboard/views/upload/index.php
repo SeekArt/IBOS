@@ -80,18 +80,18 @@ use application\core\utils\StringUtil;
                         </div>
                     </div>
                     <div id="watermark_setup" <?php if ( $waterStatus == '0' ): ?>style="display: none;"<?php endif; ?>>
-                        
+
                         <div class="control-group">
                             <label  class="control-label"><?php echo $lang['Watermark module']; ?></label>
                             <div class="controls open-watermark-module">
-                                <?php foreach ( $modules as $row ): ?>
-                                    <?php if ( $row['module'] == 'baidu' || $row['iscore'] == '0' ): ?>
-                                        <label class="checkbox">
-                                            <?php echo $row['name']; ?>
-                                            <input type ="checkbox" name ="module[]" <?php if ( in_array( $row['module'], $waterModule ) ) : ?>checked<?php endif; ?> value ="<?php echo $row['module']; ?>"/>
-                                        </label>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
+								<?php foreach ( $modules as $row ): ?>
+									<?php if ( $row['module'] != 'baidu' && $row['iscore'] == '0' ): ?>
+										<label class="checkbox">
+											<?php echo $row['name']; ?>
+											<input type ="checkbox"  name ="module[]" <?php if ( in_array( $row['module'], $waterModule ) ) : ?>checked<?php endif; ?> value ="<?php echo $row['module']; ?>"/>
+										</label>
+									<?php endif; ?>
+								<?php endforeach; ?>
                             </div>
                         </div>
 

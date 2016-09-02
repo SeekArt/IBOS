@@ -4,7 +4,7 @@
  * 系统默认语言包文件
  * @package application.language.zh_cn
  * @link http://www.ibos.com.cn/
- * @version $Id: default.php 4726 2014-12-03 08:55:32Z gzpjh $
+ * @version $Id: default.php 8231 2016-09-02 09:29:13Z tanghang $
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author banyanCheung <banyan@ibos.com.cn>
  */
@@ -59,5 +59,7 @@ return array(
 	'Certificate of authorization' => '授权证书',
 	'Chrome frame' => 'Chrome 框架',
 	'System notify' => '系统提醒',
-	'From unit' => '来自 {unit} 的提醒'
+	'From unit' => '来自 {unit} 的提醒',
+	'Login timeout' => '登录超时，请重新登录！',
+
 );

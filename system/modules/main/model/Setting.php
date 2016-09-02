@@ -11,13 +11,12 @@
  * setting表的数据层操作类。
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.main.model
- * @version $Id: Setting.php 7465 2016-06-29 08:52:17Z Aeolus $
+ * @version $Id: Setting.php 7831 2016-08-12 02:17:23Z tanghang $
  */
 
 namespace application\modules\main\model;
 
 use application\core\model\Model;
-use application\core\utils\Cache as CacheUtil;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 

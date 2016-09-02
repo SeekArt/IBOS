@@ -19,6 +19,7 @@ L.ART = {
 	REASON_IS_EMPTY:             "退回理由不能为空！",
 	APPROVAL_NEXT_TIME:          "下次签收",
 	EDIT_AT_SURE:				 "修改后可能需要重新审核",
+	PUBLISH_RANGE_CANNOT_BE_EMPTY: "发布范围不能为空",
 
 	// 新建新闻
 	INTRO: {

@@ -2,7 +2,7 @@
 
 /**
  * 主模块默认语言包
- * @version $Id: default.php 6722 2016-03-31 01:30:57Z tanghang $
+ * @version $Id: default.php 8231 2016-09-02 09:29:13Z tanghang $
  */
 return array(
     'not post request' => '不是post请求',
@@ -146,5 +146,5 @@ return array(
     'Page_subfield' => '左右分栏模板',
     'Page not fount' => '单页图文信息不存在',
     'Template illegal' => '模板不合法，找不到id为page_content的div',
-    'Template not fount' => '模板不存在，请检查data/目录下是否存在{file}模板'
+    'Template not fount' => '模板不存在，请检查data/目录下是否存在{file}模板',
 );

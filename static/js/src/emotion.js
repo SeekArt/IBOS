@@ -135,7 +135,9 @@
 			}
 			//点击表情，将对应表情的代表字符串插入输入框中
 			$('.container a', $emotions).on("click", function() {
-				target.insertText($(this).attr('title'));
+				var title = $(this).attr('title');
+				target.insertText(title);
+				target.trigger('addEmotion', { mc: target, title: title });
 				hideEmotionBox();
 			});
 

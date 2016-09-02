@@ -1,4 +1,7 @@
+<?php
 
+use application\core\utils\Ibos;
+?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/file_cabinets.css?<?php echo VERHASH; ?>">
 <!-- Mainer -->

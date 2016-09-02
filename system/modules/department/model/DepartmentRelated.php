@@ -18,8 +18,7 @@
 namespace application\modules\department\model;
 
 use application\core\model\Model;
-use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
 class DepartmentRelated extends Model {
@@ -33,13 +32,13 @@ class DepartmentRelated extends Model {
 	}
 
 	/**
-	 * 根据uid查找赋值部门ID
+	 * 根据uid查找辅助部门ID
 	 * @staticvar array $uids 用户数组缓存
 	 * @param integer $uid 用户id
 	 * @return array
 	 */
 	public function fetchAllDeptIdByUid( $uid ) {
-		return User::model()->findAllDeptidByUid( $uid, false );
+		return User::model()->findAllDeptidByUid( $uid, true );
 	}
 
 	/**

@@ -11,7 +11,7 @@
  * 主模块初始化,执行主要操作如初始化环境变量，初始化链接，升级，license,session,缓存及
  * 系统配置等重要操作
  * @package application.module.main.components
- * @version $Id: InitMainModule.php 7507 2016-07-07 07:48:53Z tanghang $
+ * @version $Id: InitMainModule.php 8197 2016-09-01 10:22:14Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -258,8 +258,21 @@ class InitMainModule extends CBehavior {
 				break;
 			}
 		}
-		if ( !IBOS::app()->user->isGuest ) {
-			$user = User::model()->fetchByUid( IBOS::app()->user->uid );
+		foreach ( array( '/api' ) as $url ) {
+			$find = strpos( $requestedUrl, $url );
+			if ( $find === 0 || $find ) {
+				$isUrlAllowedToGuests = true;
+				break;
+			}
+		}
+
+		// 处理 swf 上传问题
+		if (isset($_POST['PHPSESSID']) && (preg_match('/^[-,a-zA-Z0-9]{1,128}$/', $_POST['PHPSESSID']) > 0)) {
+			session_id($_POST['PHPSESSID']);
+		}
+
+		if ( !Ibos::app()->user->isGuest ) {
+			$user = User::model()->fetchByUid( Ibos::app()->user->uid );
 			$userComponents = new UserComponents();
 			$names = array();
 			if ( is_array( $user ) ) {
@@ -279,10 +292,19 @@ class InitMainModule extends CBehavior {
 			defined( 'IN_SWFHASH' ) || define( 'IN_SWFHASH', false );
 			// 未登录即跳转
 			if ( !$isUrlAllowedToGuests ) {
+				// 如果是 Ajax 请求
+				if (IBOS::app()->request->getIsAjaxRequest()) {
+					$retData = array(
+						'isSuccess' => false,
+						'msg' => IBOS::lang('Login timeout'),
+					);
+					header('Content-Type:application/json; charset=' . CHARSET);
+					exit(CJSON::encode($retData));
+				}
 				if ( IN_DASHBOARD ) {
-					IBOS::app()->request->redirect( IBOS::app()->createUrl( 'dashboard/default/login', array( 'refer' => $requestedUrl ) ) );
+					return IBOS::app()->request->redirect( Ibos::app()->createUrl( 'dashboard/default/login', array( 'refer' => $requestedUrl ) ) );
 				} else {
-					IBOS::app()->user->loginRequired();
+					return IBOS::app()->user->loginRequired();
 				}
 			}
 		}

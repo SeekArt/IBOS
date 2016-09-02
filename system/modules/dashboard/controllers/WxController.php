@@ -55,6 +55,10 @@ class WxController extends BaseController {
 					$this->wxqyInfo['name'] = $result['name'];
 					$this->wxqyInfo['corpid'] = $result['corpid'];
 					$this->wxqyInfo['logo'] = $result['logo'];
+					$this->wxqyInfo['qrcode'] = $result['qrcode'];
+					$this->wxqyInfo['mobile'] = $result['mobile'];
+					$this->wxqyInfo['app'] = $result['app'];
+					$this->wxqyInfo['uid'] = $result['uid'];
 					break;
 				case 2 :
 					$this->isBinding = false;

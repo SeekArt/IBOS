@@ -1055,21 +1055,22 @@
                 key = $G('searchTxt').value,
                 type = $G('searchType').value,
                 keepOriginName = editor.options.keepOriginName ? "1" : "0",
-                url = "http://image.baidu.com/i?ct=201326592&cl=2&lm=-1&st=-1&tn=baiduimagejson&istype=2&rn=32&fm=index&pv=&word=" + _this.encodeToGb2312(key) + type + "&keeporiginname=" + keepOriginName + "&" + +new Date;
+                // url = "http://image.baidu.com/i?ct=201326592&cl=2&lm=-1&st=-1&tn=baiduimagejson&istype=2&rn=32&fm=index&pv=&word=" + key + type + "&keeporiginname=" + keepOriginName + "&" + +new Date;
+                url = "http://image.baidu.com/search/acjson?tn=resultjson_com&ipn=rj&ct=201326592&is=&fp=result&queryWord="+ key +"&cl=2&lm=-1&ie=utf-8&oe=utf-8&adpicid=&st=&z=&ic=&word="+ key +"&s=&se=&tab=&width=&height=&face=&istype=&qc=&nc=&fr=&pn=30&rn=30&gsm=1e&"+ (+new Date) +"=";
 
             $G('searchListUl').innerHTML = lang.searchLoading;
             ajax.request(url, {
                 'dataType': 'jsonp',
-                'charset': 'GB18030',
                 'onsuccess':function(json){
                     var list = [];
                     if(json && json.data) {
                         for(var i = 0; i < json.data.length; i++) {
                             if(json.data[i].objURL) {
+                                console.log(json.data[i].thumbURL);
                                 list.push({
                                     title: json.data[i].fromPageTitleEnc,
-                                    src: json.data[i].objURL,
-                                    url: json.data[i].fromURL
+                                    src: json.data[i].thumbURL,
+                                    url: json.data[i].thumbURL
                                 });
                             }
                         }

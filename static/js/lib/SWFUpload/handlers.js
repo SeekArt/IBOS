@@ -141,7 +141,7 @@ var Ibos = Ibos || {};
 	SWFUpload.defaults = {
 		// Backend Settings
 		upload_url:                                 "",
-		post_params:                                {},
+		post_params:                                {PHPSESSID: U.getCookie("PHPSESSID")},
 
 		// File Upload Settings
 		// 默认不限制大小、数目和类型
@@ -175,6 +175,7 @@ var Ibos = Ibos || {};
 		// Flash Settings
 		flash_url:                                  Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload_fp10/swfupload.swf"),
 		flash9_url:                                 Ibos.app.getStaticUrl("/js/lib/SWFUpload/swfupload_fp9/swfupload.swf")
+
 	}
 	SWFUpload.getErrorInfo = getErrorInfo;
 

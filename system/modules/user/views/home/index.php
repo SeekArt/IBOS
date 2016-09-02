@@ -68,10 +68,21 @@ use application\core\utils\StringUtil;
 									<?php 
 									foreach ( $extcredits as $index => $credits ): ?>
 										<?php if(!empty($credits)): ?>
-										<td>
-											<div><?php echo $credits['name']; ?></div>
-											<strong><?php echo $userCount['extcredits' . $index]; ?></strong>
-										</td>
+<!--										<td>-->
+<!--											<div>--><?php //echo $credits['name']; ?><!--</div>-->
+<!--											<strong>--><?php //echo $userCount['extcredits' . $index]; ?><!--</strong>-->
+<!--										</td>-->
+											<?php if($userCount['extcredits' . $index] == 0):?>
+												<td>
+													<div><?php echo $credits['name'];?></div>
+													<strong><?php echo $credits['initial']?></strong>
+												</td>
+												<?php else:?>
+												<td>
+													<div><?php echo $credits['name']; ?></div>
+													<strong><?php echo $userCount['extcredits' . $index]; ?></strong>
+												</td>
+												<?php endif;?>
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</tr>

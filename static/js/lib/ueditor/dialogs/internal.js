@@ -47,6 +47,12 @@
                 if(!dom) continue;
                 var tagName = dom.tagName,
                     content = lang["static"][i];
+
+                if( /在线|图片搜索/.test(content) && 'saas' == window.parent.PLATFORM ){
+                    dom.parentNode.remove();
+                    continue;
+                }
+
                 if(content.src){
                     //clone
                     content = utils.extend({},content,false);

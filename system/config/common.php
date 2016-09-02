@@ -27,7 +27,8 @@ return array(
 		// 基础数据库配置，详细的会在engine配置
 		'db' => array(
 			'enableProfiling' => YII_DEBUG,
-            'emulatePrepare' => true
+			'emulatePrepare' => true,
+			'enableParamLogging' => false
 		),
 		// 日志记录组件
 		'log' => array(

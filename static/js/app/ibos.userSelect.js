@@ -45,7 +45,7 @@
             // id: "select_box_department",
             icon: "select-box-department",
             text: U.lang("US.PER_DEPARTMENT"),
-            data: function(){
+            data: function() {
                 return Ibos.data.get("department") || {};
             },
             type: "department"
@@ -53,7 +53,7 @@
             // id: "select_box_position",
             icon: "select-box-position",
             text: U.lang("US.PER_POSITION"),
-            data: function(){
+            data: function() {
                 return Ibos.data.get("position", "positioncategory") || {};
             },
             type: "position"
@@ -61,7 +61,7 @@
             // id: "select_box_role",
             icon: "select-box-role",
             text: U.lang("US.PER_ROLE"),
-            data: function(){
+            data: function() {
                 return Ibos.data.get("role") || {};
             },
             type: "role"
@@ -248,7 +248,7 @@
                 values;
 
             var getListValue = function() {
-                return that._listdatas.map(function(d) {
+                return $.map(that._listdatas, function(d) {
                     return d.id;
                 });
             };
@@ -517,6 +517,25 @@
             $(this).trigger("slbchange", { id: values.slice(0), checked: true });
             return this;
         },
+        dataFilter: function(datas) {
+            var selfData = this.options.data,
+                res = {},
+                key, idx, items;
+
+            for (key in datas) {
+                items = selfData[key];
+                if (items) {
+                    res[key] = {};
+                    for (idx in datas[key]) {
+                        idx in items && (res[key][idx] = datas[key][idx]);
+                    }
+                }
+            }
+
+            selfData = null;
+            datas = null;
+            return res;
+        },
         /**
          * 创建列表项
          * @method _initListItem
@@ -535,6 +554,7 @@
                 values.splice(max);
             }
 
+            datas = this.dataFilter(datas);
             if (!$.isArray(datas)) {
                 datas = Ibos.data.converToArray(datas);
             }
@@ -1040,7 +1060,7 @@
 
             this.selectBox = new SelectBox(options.box, {
                 contact: that.options.contact,
-                // data: that.data,
+                data: that.data,
                 values: [].concat(that.values),
                 type: that.options.type,
                 maximumSelectionSize: this.options.maximumSelectionSize

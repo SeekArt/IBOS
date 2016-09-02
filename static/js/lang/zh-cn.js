@@ -235,7 +235,7 @@ var L = {
         DEPARTMENT: "部门",
         USER: "人员",
         POSITION: "岗位",
-        ROLE: "角色",
+        ROLE: "角色"
     },
     // Treemenu
     TREEMENU: {

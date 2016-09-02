@@ -487,34 +487,28 @@ class User extends Model {
         return $uidArray;
     }
 
-    /**
-     * 根据用户id查找一条用户数据，该函数将获取用户的详细信息
-     * @param integer $uid
-     * @return array
-     */
-    public function fetchByUid($uid) {
-        $user = UserUtil::wrapUserInfo($uid);
-        return !empty($user[$uid]) ? $user[$uid] : array();
-    }
+	/**
+	 * 根据用户id查找一条用户数据，该函数将获取用户的详细信息
+	 * @param integer $uid
+	 * @return array
+	 */
+	public function fetchByUid( $uid ) {
+		$user = UserUtil::wrapUserInfo( $uid,true,true );
+		return !empty( $user[$uid] ) ? $user[$uid] : array();
+	}
 
-    /**
-     * 根据用户id数组查找多条用户数据，该函数将获取用户的详细信息。uid作为键
-     * @param mixed $uidX uid的数组或者逗号字符串
-     * @return array
-     */
-    public function fetchAllByUids($uidX = NULL, $returnDisabled = true) {
-        if (NULL === $uidX) {
-            return UserUtil::wrapUserInfo($uidX);
-        } else {
-            if (false === $returnDisabled) {
-                $uidMixed = $this->findNotDisabledUid($uidX);
-            } else {
-                $uidMixed = $uidX;
-            }
-            $uidArray = is_array($uidMixed) ? $uidMixed : explode(',', $uidMixed);
-            return UserUtil::wrapUserInfo(array_unique($uidArray));
-        }
-    }
+	/**
+	 * 根据用户id数组查找多条用户数据，该函数将获取用户的详细信息。uid作为键
+	 * @param mixed $uidX uid的数组或者逗号字符串
+	 * @return array
+	 */
+	public function fetchAllByUids( $uidX = NULL, $returnDisabled = true ) {
+		if ( NULL !== $uidX && empty($uidX)) {
+			return false;
+		} else {
+			return UserUtil::wrapUserInfo( $uidX, $returnDisabled );
+		}
+	}
 
     /**
      * 根据UID查找用户真实姓名
@@ -711,73 +705,73 @@ class User extends Model {
         return $RoleidArray[$roleid];
     }
 
-    /**
-     * 根据角色 ID 列表获取对应的用户 ID 数组
-     * @param  string|array $roleids 角色列表
-     * @param  boolean $returnDisabled 是否去除被禁用的用户 ID
-     * @param  boolean $related 是否关联用户角色关系表数据
-     * @return
-     */
-    public function fetchAllUidByRoleids($roleids, $returnDisabled = true, $related = false) {
-        $roleids = is_array($roleids) ? implode(',', $roleids) : $roleids;
-        $condition = " FIND_IN_SET( `u`.`roleid`, '{$roleids}' ) ";
-        $query = IBOS::app()->db->createCommand();
-        if (true === $related):
-            $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
-                , " `rr`.`uid` = `u`.`uid` ");
-            $condition = array(
-                'OR',
-                $condition,
-                " FIND_IN_SET( `rr`.`roleid`, '{$roleids}' ) ",
-            );
-        endif;
-        if (true === $returnDisabled):
-            $condition = array(
-                'AND',
-                $condition,
-                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
-            );
-        endif;
-        $uidArray = $query->selectDistinct('u.uid')
-            ->from($this->tableName() . ' u')
-            ->where($condition)
-            ->queryColumn();
-        return $uidArray;
-    }
+	/**
+	 * 根据角色 ID 列表获取对应的用户 ID 数组
+	 * @param  string|array $roleids 角色列表
+	 * @param  boolean $returnDisabled 是否去除被禁用的用户 ID
+	 * @param  boolean $related 是否关联用户角色关系表数据
+	 * @return
+	 */
+	public function fetchAllUidByRoleids( $roleids, $returnDisabled = true, $related = false ) {
+		$roleids = is_array( $roleids ) ? implode( ',', $roleids ) : $roleids;
+		$condition = " FIND_IN_SET( `u`.`roleid`, '{$roleids}' ) ";
+		$query = Ibos::app()->db->createCommand();
+		if ( true === $related ):
+			$query = $query->leftJoin( RoleRelated::model()->tableName() . ' rr'
+					, " `rr`.`uid` = `u`.`uid` " );
+			$condition = array(
+				'OR',
+				$condition,
+				" FIND_IN_SET( `rr`.`roleid`, '{$roleids}' ) ",
+			);
+		endif;
+		if ( false === $returnDisabled ):
+			$condition = array(
+				'AND',
+				$condition,
+				" `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+			);
+		endif;
+		$uidArray = $query->selectDistinct( 'u.uid' )
+				->from( $this->tableName() . ' u' )
+				->where( $condition )
+				->queryColumn();
+		return $uidArray;
+	}
 
-    /**
-     * 根据多个岗位id获取所有uid
-     * @param mix $positionids
-     * @param boolean $returnDisabled 是否禁用用户一起返回
-     * @param boolean $related 是否返回辅助岗位
-     * @return array
-     */
-    public function fetchAllUidByPositionIds($positionids, $returnDisabled = true, $related = false) {
-        $positionString = is_array($positionids) ? implode(',', $positionids) : $positionids;
-        $condition = " FIND_IN_SET(`u`.`positionid`, '{$positionString}') ";
-        $query = IBOS::app()->db->createCommand();
-        if (true === $related):
-            $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
-                , " `prpr`.`uid` = `u`.`uid` ");
-            $condition = array(
-                'OR',
-                $condition,
-                " FIND_IN_SET(`prpr`.`positionid`, '{$positionString}') ",
-            );
-        endif;
-        if (true === $returnDisabled):
-            $condition = array(
-                'AND',
-                $condition,
-                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
-            );
-        endif;
-        $uidArray = $query->selectDistinct('u.uid')
-            ->from($this->tableName() . ' u')
-            ->where($condition)
-            ->queryColumn();
-        return $uidArray;
-    }
+	/**
+	 * 根据多个岗位id获取所有uid
+	 * @param mix $positionids
+	 * @param boolean $returnDisabled 是否禁用用户一起返回
+	 * @param boolean $related 是否返回辅助岗位
+	 * @return array
+	 */
+	public function fetchAllUidByPositionIds( $positionids, $returnDisabled = true, $related = false ) {
+		$positionString = is_array( $positionids ) ? implode( ',', $positionids ) : $positionids;
+		$condition = " FIND_IN_SET(`u`.`positionid`, '{$positionString}') ";
+		$query = Ibos::app()->db->createCommand();
+		if ( true === $related ):
+			$query = $query->leftJoin( PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
+					, " `prpr`.`uid` = `u`.`uid` " );
+			$condition = array(
+				'OR',
+				$condition,
+				" FIND_IN_SET(`prpr`.`positionid`, '{$positionString}') ",
+			);
+		endif;
+		if ( false === $returnDisabled ):
+			$condition = array(
+				'AND',
+				$condition,
+				" `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+			);
+		endif;
+		$uidArray = $query->selectDistinct( 'u.uid' )
+				->from( $this->tableName() . ' u' )
+				->where( $condition )
+				->queryColumn();
+		return $uidArray;
+	}
 
     /**
      * 根据部门id获取所有uid
@@ -816,38 +810,38 @@ class User extends Model {
         return $deptidArray[$deptid];
     }
 
-    /**
-     * 根据多个部门id获取所有uid
-     * @param mix $deptIds
-     * @param boolean $returnDisabled 是否禁用用户一起返回
-     * @return array
-     */
-    public function fetchAllUidByDeptids($deptids, $returnDisabled = true, $related = false) {
-        $deptidString = is_array($deptids) ? implode(',', $deptids) : $deptids;
-        $condition = " FIND_IN_SET(`u`.`deptid`, '{$deptidString}') ";
-        $query = IBOS::app()->db->createCommand();
-        if (true === $related):
-            $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
-                , " `dr`.`uid` = `u`.`uid` ");
-            $condition = array(
-                'OR',
-                $condition,
-                " FIND_IN_SET(`dr`.`deptid`, '{$deptidString}') ",
-            );
-        endif;
-        if (true === $returnDisabled):
-            $condition = array(
-                'AND',
-                $condition,
-                " `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
-            );
-        endif;
-        $uidArray = $query->selectDistinct('u.uid')
-            ->from($this->tableName() . ' u')
-            ->where($condition)
-            ->queryColumn();
-        return $uidArray;
-    }
+	/**
+	 * 根据多个部门id获取所有uid
+	 * @param mix $deptIds
+	 * @param boolean $returnDisabled 是否禁用用户一起返回
+	 * @return array
+	 */
+	public function fetchAllUidByDeptids( $deptids, $returnDisabled = true, $related = false ) {
+		$deptidString = is_array( $deptids ) ? implode( ',', $deptids ) : $deptids;
+		$condition = " FIND_IN_SET(`u`.`deptid`, '{$deptidString}') ";
+		$query = Ibos::app()->db->createCommand();
+		if ( true === $related ):
+			$query = $query->leftJoin( DepartmentRelated::model()->tableName() . ' dr'
+					, " `dr`.`uid` = `u`.`uid` " );
+			$condition = array(
+				'OR',
+				$condition,
+				" FIND_IN_SET(`dr`.`deptid`, '{$deptidString}') ",
+			);
+		endif;
+		if ( false === $returnDisabled ):
+			$condition = array(
+				'AND',
+				$condition,
+				" `u`.`status` != '" . self::USER_STATUS_ABANDONED . "'",
+			);
+		endif;
+		$uidArray = $query->selectDistinct( 'u.uid' )
+				->from( $this->tableName() . ' u' )
+				->where( $condition )
+				->queryColumn();
+		return $uidArray;
+	}
 
     /**
      * 查找所有用户UID以积分高低排序

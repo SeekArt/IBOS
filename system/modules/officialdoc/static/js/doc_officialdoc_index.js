@@ -69,7 +69,15 @@ OfficialIndex.baseTable = (function() {
         deferLoading: 0,
         ajax: {
             url: Ibos.app.url('officialdoc/officialdoc/getdoclist'),
-            type: 'post'
+            type: 'post',
+            dataSrc: function(res) {
+                if (res.isSuccess) {
+                    return res.data;
+                } else {
+                    Ui.tip(res.msg, 'warning');
+                    return [];
+                }
+            }
         },
         initComplete: function() {
             $(this).find('[data-name]').label();
@@ -147,7 +155,15 @@ OfficialIndex.approvalTable = (function() {
         deferLoading: 0, // 每个文件加上这一行
         ajax: {
             url: Ibos.app.url('officialdoc/officialdoc/getdoclist'),
-            type: 'post'
+            type: 'post',
+            dataSrc: function(res) {
+                if (res.isSuccess) {
+                    return res.data;
+                } else {
+                    Ui.tip(res.msg, 'warning');
+                    return [];
+                }
+            }
         },
         // --- Callback
         initComplete: function() {
@@ -226,10 +242,11 @@ OfficialIndex.approvalTable = (function() {
     }));
 })();
 
+Ibos.local.remove("catid");
 OfficialIndex.tableConfig = {
     curModule: 'baseTable', // ['baseTable', 'approvalTable']
     curType: 'all', // ['all', 'nosign', 'sign', 'notallow', 'draft']
-    catid: Ibos.local.get('catid') || 1,
+    catid: Ibos.local.get('catid') || Ibos.app.g("catId"),
     draw: function(bool){
         var table = OfficialIndex[this.curModule];
         table.draw(bool);
@@ -256,7 +273,6 @@ OfficialIndex.tableConfig = {
 
 $(function() {
     OfficialIndex.tableConfig.ajaxSearch();
-    window.localStorage.clear();
 
     var tableConfig = OfficialIndex.tableConfig,
         doc_base = $('#doc_base'),
@@ -310,14 +326,14 @@ $(function() {
             if (type === 'notallow') {
                 if (tableConfig.curModule !== 'approvalTable') {
                     tableConfig.curModule = 'approvalTable';
-                    doc_base.fadeOut(300, function(){
+                    doc_base.stop(true, true).fadeOut(100, function(){
                         doc_approval.fadeIn();
                     });
                 }
             } else {
                 if (tableConfig.curModule === 'approvalTable') {
                     tableConfig.curModule = 'baseTable';
-                    doc_approval.fadeOut(300, function(){
+                    doc_approval.stop(true, true).fadeOut(100, function(){
                         doc_base.fadeIn();
                     });
                 }
@@ -400,6 +416,9 @@ $(function() {
                         if (res.isSuccess === true) {
                             Ui.tip(res.info);
                             tableConfig.draw(false);
+                        } else {
+                        	Ui.tip(res.msg, 'warning');
+                        	return false;
                         }
                     });
                 }

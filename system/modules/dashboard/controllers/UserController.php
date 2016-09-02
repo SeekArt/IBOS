@@ -93,6 +93,8 @@ class UserController extends OrganizationBaseController {
 			$condition = "( `username` LIKE '%{$key}%' OR `realname` LIKE '%{$key}%' OR `mobile` LIKE '%{$key}%' ) AND " . $condition;
 		}
 		$this->ajaxReturn( array(
+			'isSuccess' => true,
+			'msg' => '调用成功',
 			'data' => $this->handleUserListDataByCondition( $condition ),
 			'draw' => $draw,
 			'recordsFiltered' => User::model()->count( $condition ),
@@ -173,6 +175,12 @@ class UserController extends OrganizationBaseController {
 					$posIds = StringUtil::getId( $_POST['auxiliarypos'] );
 					$this->handleAuxiliaryPosition( $newId, $posIds, $_POST['positionid'] );
 				}
+				//岗位
+				if(isset($_POST['positionid'])){
+				    $number = Position::model()->getPositionUserNumById($_POST['positionid']);
+                    $number = $number + 1;
+                    Position::model()->updatePositionNum($_POST['positionid'],$number);
+                }
 				// 辅助角色
 				if ( !empty( $_POST['auxiliaryrole'] ) ) {
 					$roleIds = explode( ',', $_POST['auxiliaryrole'] );
@@ -239,9 +247,18 @@ class UserController extends OrganizationBaseController {
 	 */
 	public function actionEdit() {
 		$op = Env::getRequest( 'op' );
-
+		if ( $op && in_array( $op, array( 'enabled', 'disabled', 'lock' ) ) ) {
+			$ids = Env::getRequest( 'uid' );
+			if ( $op !== 'disabled' ) {
+				Main::checkLicenseLimit();
+			}
+			return $this->setStatus( $op, $ids );
+		} else {
+			Main::checkLicenseLimit();
+		}
 		$uid = Env::getRequest( 'uid' );
 		$user = User::model()->fetchByUid( $uid );
+        $positionid = $user['positionid'];//拿到修改之前的positionid
 		if ( Env::submitCheck( 'userSubmit' ) ) {
 			$this->dealWithSpecialParams();
 			$_POST['realname'] = CHtml::encode( $_POST['realname'] );
@@ -264,6 +281,28 @@ class UserController extends OrganizationBaseController {
 				$posIds = StringUtil::getId( $_POST['auxiliarypos'] );
 				$this->handleAuxiliaryPosition( $uid, $posIds, $_POST['positionid'] );
 			}
+			//岗位的修改
+            if(!isset($_POST['positionid'])){
+                $number = Position::model()->getPositionUserNumById($positionid);//拿到修改之前的岗位人数
+                $number = $number-1;
+                if($number <= 0){
+                    $number = 0;
+                }
+                Position::model()->updatePositionNum($positionid,$number);//修改之前的岗位数
+            }else{
+                if($positionid != $_POST['positionid']){
+                    $beforeNum = Position::model()->getPositionUserNumById($positionid);//拿到修改之前的岗位人数
+                    $beforeNum = $beforeNum - 1;
+                    if($beforeNum <= 0){
+                        $beforeNum = 0;
+                    }
+                    Position::model()->updatePositionNum($positionid,$beforeNum);//修改之前的岗位数减一
+
+                    $afterNum = Position::model()->getPositionUserNumById($_POST['positionid']);//通过post过来岗位ID来得到对应的人数
+                    $afterNum = $afterNum + 1;
+                    Position::model()->updatePositionNum($_POST['positionid'],$afterNum);//通过post过来岗位ID来得到对应的人数加一
+                }
+            }
 			// 辅助角色
 			if ( isset( $_POST['auxiliaryrole'] ) ) {
 				$roleIds = explode( ',', $_POST['auxiliaryrole'] );

@@ -122,9 +122,7 @@ $(function() {
 	    target: $('#wb_pub_textarea')
 	});
 	$("#mn_search").search(function(val) {
-	    if ($.trim(val) !== '') {
-	        window.location.href = Ibos.app.url('weibo/home/index', {feedkey: val, type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
-	    }
+        window.location.href = Ibos.app.url('weibo/home/index', {feedkey: val, type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
 	});
 
 	// 发布类型

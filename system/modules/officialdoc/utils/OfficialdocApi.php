@@ -64,7 +64,8 @@ class OfficialdocApi extends MessageApi {
         $uid = IBOS::app()->user->uid;
         $allDeptId = IBOS::app()->user->alldeptid . '';
         $allPosId = IBOS::app()->user->allposid . '';
-        $condition = " ( ((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) ) AND `status`='1'";
+        //$condition = " ( ((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) ) AND `status`='1'";
+        $condition = "((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='')) AND `status`='1'";
         $criteria = array(
             'select' => 'docid,subject,author,addtime',
             'condition' => $condition,

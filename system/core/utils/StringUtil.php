@@ -19,6 +19,7 @@ namespace application\core\utils;
 
 use application\core\utils\IBOS;
 use application\extensions\Tree;
+use application\modules\department\model\Department;
 use application\modules\message\utils\Expression;
 use application\modules\user\model\User;
 
@@ -1002,7 +1003,7 @@ class StringUtil {
 	 * @param string $scope 选人框数据
 	 * @return array
 	 */
-	public static function handleSelectBoxData( $scope ) {
+	public static function handleSelectBoxData( $scope, $returnChild = true ) {
 		$data = self::getId( $scope, true );
 		$result = array(
 			'deptid' => '',
@@ -1015,7 +1016,11 @@ class StringUtil {
 			return $result;
 		}
 		if ( isset( $data['d'] ) ) {
-			$result['deptid'] = implode( ',', $data['d'] );
+			$deptidString = implode( ',', $data['d'] );
+			if ( true === $returnChild ) {
+				$deptidString = Department::model()->fetchChildIdByDeptids( $deptidString, true );
+			}
+			$result['deptid'] = $deptidString;
 		}
 		if ( isset( $data['p'] ) ) {
 			$result['positionid'] = implode( ',', $data['p'] );
@@ -1048,6 +1053,7 @@ class StringUtil {
 			return $arr;
 		}
 	}
+
 	/**
 	 * 获取文件大小，传入数组或者逗号字符串
 	 * @param mixed $sizeMixed 文件大小

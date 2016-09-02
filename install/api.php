@@ -5,8 +5,8 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Model;
 use application\core\utils\Module;
-use application\core\utils\Org;
 use application\core\utils\StringUtil;
+use application\modules\message\core\co\CoApi;
 use application\modules\role\model\Role;
 use application\modules\user\model\User;
 
@@ -26,25 +26,30 @@ $yii = PATH_ROOT . '/library/yii.php';
 require_once ( $yii );
 Yii::setPathOfAlias( 'application', PATH_ROOT . '/system' );
 
-if ( isset( $_GET['p'] ) && $_GET['p'] == 'phpinfo' ) {
+if ( get( 'p' ) == 'phpinfo' ) {
 	phpinfo();
 	exit();
 }
 
-$option = isset( $_GET['op'] ) ? $_GET['op'] : '';
-
+$option = get( 'op', '' );
+if ( !in_array( $option, array( 'envCheck', 'configCheck', 'dbCheck', 'moduleCheck',
+			'handleInstall', 'handleInstallAll', 'handleAfterInstallAll',
+			'handleCheckSaas', 'handleUpdateData' ) ) ) {
+	$option = '';
+}
 if ( in_array( ENGINE, array( 'LOCAL', 'SAE' ) ) ) {
-	if ( $option == 'handleInstallAll' ) {
-		$option = '';
-	}
-	$extraData = isset( $_POST['extData'] ) && !empty( $_POST['extData'] ) ? 1 : 0;
+	$extData = post( 'extData' );
+	$extraData = isset( $extData ) && !empty( $extData ) ? 1 : 0;
 	setcookie( 'install_config', json_encode( array( 'extData' => $extraData ) ) );
+	if ( true === checkInstallLock() ) {
+		return InstallCheck();
+	}
 } else if ( ENGINE == 'SAAS' ) {
 	$saasConfigPath = PATH_ROOT . '/saas_config.php';
 	if ( file_exists( $saasConfigPath ) ) {
 		$saasConfig = include $saasConfigPath;
-		$sign = isset( $_GET['sign'] ) ? $_GET['sign'] : '';
-		if ( md5( $saasConfig['saasSignCode'] . $_POST['qycode'] ) != $sign ) {
+		$sign = get( 'sign', '' );
+		if ( md5( $saasConfig['saasSignCode'] . post( 'qycode' ) ) != $sign ) {
 			echo '签名错误';
 			die;
 		}
@@ -53,15 +58,16 @@ if ( in_array( ENGINE, array( 'LOCAL', 'SAE' ) ) ) {
 		die();
 	}
 	//SAAS
-	if ( !isset( $_POST['qycode'] ) ) {
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => '必须带POST参数qycode（企业代码）' ) );
+	if ( !post( 'qycode' ) ) {
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => '必须带POST参数qycode（企业代码）' ) );
 	} else {
-		defined( 'CORP_CODE' ) || define( 'CORP_CODE', $_POST['qycode'] );
+		defined( 'CORP_CODE' ) || define( 'CORP_CODE', post( 'qycode' ) );
 	}
 } else {
 	echo 'engine error';
 	die;
 }
+
 
 //请求的各个接口
 //必须参数[op]，值如下
@@ -77,10 +83,10 @@ switch ( 1 ) {
 		break;
 	//检查数据库参数
 	case $option == 'dbCheck':
-		if ( isset( $_POST['submitDbInit'] ) ) {
+		if ( post( 'submitDbInit' ) ) {
 			dbCheckOp();
 		} else {
-			ajaxReturn( array( 'isSuccess' => false, 'msg' => lang( 'Request tainting' ) ) );
+			return ajaxReturn( array( 'isSuccess' => false, 'msg' => lang( 'Request tainting' ) ) );
 		}
 		break;
 	//检测存在的模块
@@ -93,7 +99,7 @@ switch ( 1 ) {
 		if ( !empty( $config ) ) {
 			Yii::createWebApplication( $config );
 		} else {
-			ajaxReturn( array( 'isSuccess' => false, 'msg' => '请先请求dbCheck步骤' ) );
+			return ajaxReturn( array( 'isSuccess' => false, 'msg' => '请先请求dbCheck步骤' ) );
 		}
 		handleInstallOp();
 		break;
@@ -105,10 +111,14 @@ switch ( 1 ) {
 		//只有saas版才会进这里
 		handleAfterInstallAllOp();
 		break;
+	case $option == 'handleCheckSaas':
+		//只有saas版才会进这里
+		handleCheckSaasOp();
+		break;
 	//处理数据更新
 	case $option == 'handleUpdateData':
-		// 初始化ibos，执行各个已安装模块有extention.php的安装文件，更新缓存
 		file_put_contents( PATH_ROOT . '/data/install.lock', '' );
+		// 初始化ibos，执行各个已安装模块有extention.php的安装文件，更新缓存
 		$commonConfig = require CONFIG_PATH . 'common.php';
 		Yii::createApplication( 'application\core\components\Application', $commonConfig );
 		handleUpdateDataOp();
@@ -156,7 +166,7 @@ function envCheckOp() {
 			'extLoadedCheck' => $extLoadedCheck,
 		),
 	);
-	ajaxReturn( $ajaxReturn );
+	return ajaxReturn( $ajaxReturn );
 }
 
 /**
@@ -190,7 +200,7 @@ function configCheckOp() {
 		'msg' => $msg,
 		'data' => $dbInitData,
 	);
-	ajaxReturn( $ajaxReturn );
+	return ajaxReturn( $ajaxReturn );
 }
 
 /**
@@ -219,23 +229,23 @@ function configCheckOp() {
  */
 function dbCheckOp() {
 	global $adminInfo, $moduleSql;
-	$dbHost = $_POST['dbHost'];
-	$dbAccount = $_POST['dbAccount'];
-	$dbPassword = $_POST['dbPassword'];
-	$dbName = $_POST['dbName'];
-	$adminName = $_POST['adminName'];
-	$adminAccount = $_POST['adminAccount'];
-	$adminPassword = $_POST['adminPassword'];
-	$corpFullname = $_POST['fullname'];
-	$corpShortname = $_POST['shortname'];
-	$corpCode = strtolower( $_POST['qycode'] );
+	$dbHost = post( 'dbHost' );
+	$dbAccount = post( 'dbAccount' );
+	$dbPassword = post( 'dbPassword' );
+	$dbName = post( 'dbName' );
+	$adminName = post( 'adminName' );
+	$adminAccount = post( 'adminAccount' );
+	$adminPassword = post( 'adminPassword' );
+	$corpFullname = post( 'fullname' );
+	$corpShortname = post( 'shortname' );
+	$corpCode = strtolower( post( 'qycode' ) );
 	//企业代码为表前缀
 	$dbPre = $corpCode . '_';
 	//设置aeskey
 	$hostInfo = getHostInfo();
 
 	// 强制安装
-	$enforce = isset( $_POST['enforce'] ) ? $_POST['enforce'] : 0;
+	$enforce = post( 'enforce', 0 );
 
 	$aeskeyPath = PATH_ROOT . '/data/aes.key';
 	$aeskey = substr( md5( $_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $hostInfo . $dbName . $dbAccount . $dbPassword . $dbPre . time() ), 14, 10 ) . StringUtil::random( 33 );
@@ -260,72 +270,70 @@ function dbCheckOp() {
 	// 检查表单各项
 	if ( empty( $dbAccount ) ) { // 数据库用户名
 		$msg = lang( 'Dbaccount not empty' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'dbAccount' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'dbAccount' ) ) );
 	}
 	if ( empty( $dbPassword ) ) { // 数据库密码
 		$msg = lang( 'Dbpassword not empty' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'dbPassword' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'dbPassword' ) ) );
 	}
 	if ( empty( $adminAccount ) ) { // 管理员账号
 		$msg = lang( 'Adminaccount not empty' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminAccount' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminAccount' ) ) );
 	}
 	if ( !preg_match( "/^1\\d{10}/", $adminAccount ) ) {
 		$msg = lang( 'Mobile incorrect format' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminAccount' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminAccount' ) ) );
 	}
 	if ( !preg_match( "/^[a-zA-Z0-9]{5,32}$/", $adminPassword ) ) { // 管理员密码
 		$msg = lang( 'Adminpassword incorrect format' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminPassword' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'adminPassword' ) ) );
 	}
 	if ( !preg_match( "/^[a-zA-Z0-9]{4,20}/", $corpCode ) ) { // 企业代码
 		$msg = lang( 'Invalid corp code' );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'qycode' ) ) );
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'qycode' ) ) );
 	}
-
-	// 检查数据库连接正确性
-	$link = @mysql_connect( $dbHost, $dbAccount, $dbPassword );
-	if ( !$link ) {
-		$errno = mysql_errno();
-		$error = mysql_error();
-		if ( $errno == 1045 ) {
-			$msg = lang( 'Database errno 1045' );
-		} elseif ( $errno == 2003 ) {
-			$msg = lang( 'Database errno 2003' );
-		} else if ( $errno == 2002 ) {
-			$msg = lang( 'Database errno 2002' );
-		} else {
-			$msg = lang( 'Database connect error' );
-		}
-		$msg = lang( 'Database error info' ) . $msg;
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg ) );
-	} else {
-		if ( $enforce != '1' && $query = @mysql_query( "SHOW TABLES FROM {$dbName}" ) ) {
-			while ( $row = mysql_fetch_row( $query ) ) {
-				if ( $row[0] !== $dbPre . 'module' && preg_match( "/^$dbPre/", $row[0] ) ) {
-					ajaxReturn( array( 'isSuccess' => false,
-						'msg' => lang( 'Dbinfo forceinstall invalid' ),
-						'data' => array(
-							'type' => 'dbpre',
-				) ) );
-				}
+	try {
+		$conn = new PDO( "mysql:host={$dbHost};port={$port}", $dbAccount, $dbPassword );
+		$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
+		$conn->exec( $sql );
+	} catch (PDOException $e) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => '数据库创建失败:' . $e->getMessage(),
+			'data' => array( 'type' => 'dbName' ),
+				) );
+	}
+	$pdo = pdo( $dbHost, $port, $dbName, $dbAccount, $dbPassword );
+	if ( is_string( $pdo ) ) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => $pdo,
+			'data' => array( 'type' => 'dbAccount' ),
+				) );
+	}
+	if ( $enforce != '1' ) {
+		foreach ( $pdo->query( "SHOW TABLES FROM {$dbName}" ) as $table ) {
+			if ( isset( $table[0] ) && $table[0] != $dbPre . 'module' && preg_match( "/^{$dbPre}/", $table[0] ) ) {
+				return ajaxReturn( array(
+					'isSuccess' => false,
+					'msg' => lang( 'Dbinfo forceinstall invalid' ),
+					'data' => array( 'type' => 'dbpre', )
+						) );
 			}
 		}
 	}
-	// 判断数据库能否创建
-	if ( mysql_get_server_info() > '4.1' ) {
-		mysql_query( "CREATE DATABASE IF NOT EXISTS `{$dbName}` DEFAULT CHARACTER SET " . DBCHARSET, $link );
-	} else {
-		mysql_query( "CREATE DATABASE IF NOT EXISTS `{$dbName}`", $link );
-	}
-	@mysql_select_db( $dbName, $link );
 	$moduleSql = str_replace( '{dbpre}', $dbPre, $moduleSql );
-	mysql_query( $moduleSql );  // 提前创建module表，否则后续步骤不能初始化ibos
-	if ( mysql_errno() ) {
-		$msg = lang( 'Database errno ' . mysql_errno() );
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg ) );
+	try {
+		$pdo->query( $moduleSql );  // 提前创建module表，否则后续步骤不能初始化ibos
+	} catch (PDOException $e) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => $e->getMessage(),
+			'data' => array( 'type' => 'dbAccount' ),
+				) );
 	}
-	mysql_close( $link );
+	$pdo = NULL; //关闭pdo
 	$defaultConfigfile = CONFIG_PATH . 'configDefault.php';
 	// 获得用户输入的数据库配置数据，替换掉configDefault文件里的配置，用以生成config文件
 	$configDefault = file_get_contents( $defaultConfigfile );
@@ -364,7 +372,7 @@ function dbCheckOp() {
 	);
 	$administrator = str_replace( array_keys( $adminReplace ), array_values( $adminReplace ), $adminInfo );
 	file_put_contents( CONFIG_PATH . 'admin.php', $administrator );
-	ajaxReturn( array( 'isSuccess' => true, 'msg' => '' ) );
+	return ajaxReturn( array( 'isSuccess' => true, 'msg' => '' ) );
 }
 
 /**
@@ -386,7 +394,7 @@ function moduleCheckOp() {
 			'customModule' => $customModulesParams,
 		),
 	);
-	ajaxReturn( $ajaxReturn );
+	return ajaxReturn( $ajaxReturn );
 }
 
 /**
@@ -398,13 +406,14 @@ function moduleCheckOp() {
  */
 function handleInstallOp() {
 	global $sysModules;
-	$installModules = $_POST['modules']; // 要安装的模块
+	$installModules = post( 'modules' ); // 要安装的模块
 	$modules = explode( ',', $installModules );
 	$customModules = array_diff( $modules, $sysModules );
+
 	$installModuleArray = !empty( $customModules ) ?
 			array_merge( $sysModules, $customModules ) :
 			$sysModules;
-	$installingModule = isset( $_POST['installingModule'] ) ? $_POST['installingModule'] : "";
+	$installingModule = post( 'installingModule', '' );
 	//至少一个模块开始
 	if ( empty( $installingModule ) ) {
 		$installingModule = $installModuleArray[0];
@@ -419,29 +428,29 @@ function handleInstallOp() {
 					$nextModule = $installModuleArray[$index]; // 下一个要安装的模块
 					$nextModuleName = Module::getModuleName( $nextModule ); // 下一个要安装的模块名
 					$process = number_format( ($index / $moduleNums) * 100, 1 ) . '%'; // 完成度
-					ajaxReturn( array( 'isSuccess' => true,
+					return ajaxReturn( array( 'isSuccess' => true,
 						'msg' => '',
 						'data' => array(
 							'complete' => 0,
 							'process' => $process,
 							'nextModule' => $nextModule,
 							'nextModuleName' => $nextModuleName
-				) ) );
+						) ) );
 				} else {
-					ajaxReturn( array( 'isSuccess' => true,
+					return ajaxReturn( array( 'isSuccess' => true,
 						'msg' => '',
 						'data' => array(
 							'complete' => 1,
 							'process' => '100%',
-				) ) );
+						) ) );
 				}
 			}
 		}
 	} else {
-		ajaxReturn( array( 'isSuccess' => false,
+		return ajaxReturn( array( 'isSuccess' => false,
 			'msg' => $installingModule . lang( 'Install module failed' ),
 			'data' => array(
-	) ) );
+			) ) );
 	}
 }
 
@@ -454,48 +463,51 @@ function handleInstallOp() {
 function handleInstallAllOp() {
 	global $sysModules, $saasConfig;
 	//不带端口的域名
-	$dbHost = isset( $_POST['dbHost'] ) ? $_POST['dbHost'] : $saasConfig['dbHost'];
-	$dbPort = isset( $_POST['dbPort'] ) ? $_POST['dbPort'] : $saasConfig['dbPort'];
-	$dbAccount = isset( $_POST['dbAccount'] ) ? $_POST['dbAccount'] : $saasConfig['dbAccount'];
-	$dbPassword = isset( $_POST['dbPassword'] ) ? $_POST['dbPassword'] : $saasConfig['dbPassword'];
-	$dbName = isset( $_POST['dbName'] ) ? $_POST['dbName'] : $saasConfig['dbName'];
+	$dbHost = post( 'dbHost', $saasConfig['dbHost'] );
+	$dbPort = post( 'dbPort', $saasConfig['dbPort'] );
+	$dbAccount = post( 'dbAccount', $saasConfig['dbAccount'] );
+	$dbPassword = post( 'dbPassword', $saasConfig['dbPassword'] );
+	$dbName = post( 'dbName', $saasConfig['dbName'] );
 
-	$adminName = $_POST['adminName'];
-	$realName = empty($_POST['realName']) ? $adminName : $_POST['realName'];
-	$adminAccount = $_POST['adminAccount'];
-	$adminPassword = $_POST['adminPassword'];
+	$adminName = post( 'adminName' );
+	$realNameTemp = post( 'realName' );
+	$realName = empty( $realNameTemp ) ? $adminName : $realNameTemp;
+	$adminAccount = post( 'adminAccount' );
+	$adminPassword = post( 'adminPassword' );
+	$saltTemp = post( 'passwordsalt' );
+	$salt = empty( $saltTemp ) ? StringUtil::random( 6 ) : $saltTemp;
+	$passwordTemp = post( 'password' );
+	$password = empty( $passwordTemp ) ? md5( md5( $adminPassword ) . $salt ) : $passwordTemp;
 
-	$salt = empty($_POST['passwordsalt']) ? StringUtil::random( 6 ) : $_POST['passwordsalt'];
-	$password = empty($_POST['password']) ? md5( md5( $adminPassword ) . $salt ) : $_POST['password'] ;
-
-	$corpFullname = $_POST['fullname'];
-	$corpShortname = $_POST['shortname'];
-	$corpCode = strtolower( $_POST['qycode'] );
+	$corpFullname = post( 'fullname' );
+	$corpShortname = post( 'shortname' );
+	$corpCode = strtolower( post( 'qycode' ) );
+	$platformTemp = post( 'platform' );
+	$platform = !empty( $platformTemp ) ? $platformTemp : 'saas';
 	//企业代码为表前缀
 	$dbPre = $corpCode . '_';
-
-	$link = @mysql_connect( $saasConfig['db']['host'] . ':' . $saasConfig['db']['port']
-					, $saasConfig['db']['username'], $saasConfig['db']['password'] );
-	@mysql_select_db( $saasConfig['db']['dbname'], $link );
-	$query = @mysql_query( "SELECT * FROM `config` WHERE `corpcode` = '{$corpCode}' " );
-	if ( !empty( $query ) ) {
-		$corpRow = mysql_fetch_assoc( $query );
+	$pdo = null;
+	$corpRow = getCorpByCode( $corpCode, $pdo );
+	if ( !empty( $corpRow ) ) {
 		if ( !empty( $corpRow['installed'] ) ) {
 			$admin = json_decode( $corpRow['super'], true );
-			mysql_close( $link );
-			ajaxReturn( array( 'isSuccess' => false, 'msg' => '已经安装了，无法使用该企业代码安装' , 'data' => array(
-																										'installed' => 1,
-																										'aeskey' => $admin['aeskey']
-																										)
-			) );
+			$pdo = null;
+			return ajaxReturn( array( 'isSuccess' => false, 'msg' => '已经安装了，无法使用该企业代码安装', 'data' => array(
+					'installed' => 1,
+					'aeskey' => $admin['aeskey']
+				)
+					) );
 		} else {
 			if ( !empty( $corpRow ) && empty( $corpRow['installed'] ) ) {
-				@mysql_query( "DELETE FROM `config` WHERE (`corpcode`='{$corpCode}') " );
+				$query = $pdo->prepare( " DELETE FROM `config` WHERE (`corpcode` = :corpcode ) " );
+				$query->bindParam( ":corpcode", $corpCode, PDO::PARAM_STR );
+				$query->execute();
 			}
 		}
 	}
 
 	$_SERVER['HTTP_USER_AGENT'] = isset( $_SERVER['HTTP_USER_AGENT'] ) ? : '';
+
 	$aeskey = substr( md5( $_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time() ), 14, 10 ) . StringUtil::random( 33 );
 	$authkey = substr( md5( $_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time() ), 8, 6 ) . StringUtil::random( 10 );
 	$cookiepre = StringUtil::random( 4 );
@@ -532,7 +544,7 @@ function handleInstallAllOp() {
 		),
 	);
 	// 创建管理员账号信息文件,安装完成后删除此文件
-	
+
 	$admin = array( // 管理员账号替换信息
 		'username' => $adminName,
 		'isadministrator' => 1,
@@ -548,7 +560,7 @@ function handleInstallAllOp() {
 		'aeskey' => $aeskey,
 	);
 
-	$installModules = $_POST['modules']; // 要安装的模块
+	$installModules = post( 'modules' ); // 要安装的模块
 	$modules = explode( ',', $installModules );
 	$customModules = array_diff( $modules, $sysModules );
 	$moduleArray = !empty( $customModules ) ?
@@ -558,21 +570,22 @@ function handleInstallAllOp() {
 	$configString = addslashes( json_encode( $config ) );
 	$adminString = addslashes( json_encode( $admin ) );
 	$installtime = microtime( true );
-
-	@mysql_query( "INSERT INTO `config` ("
-					. "`corpcode`, "
-					. "`config`, "
-					. "`super`, "
-					. "`installtime`,"
-					. "`module`,"
-					. "`mobile` ) VALUES ("
-					. "'{$corpCode}', "
-					. "'{$configString}', "
-					. "'{$adminString}', "
-					. "'{$installtime}', "
-					. "'{$moduleString}', "
-					. "'{$adminAccount}')" );
-	@mysql_close( $link );
+	$query = $pdo->exec( "INSERT INTO `config` ("
+			. "`corpcode`, "
+			. "`config`, "
+			. "`super`, "
+			. "`installtime`,"
+			. "`module`,"
+			. "`mobile`,"
+			. "`platform` ) VALUES ("
+			. "'{$corpCode}', "
+			. "'{$configString}', "
+			. "'{$adminString}', "
+			. "'{$installtime}', "
+			. "'{$moduleString}', "
+			. "'{$adminAccount}', "
+			. "'{$platform}' )" );
+	$pdo = null;
 	$dbConfig = array(
 		'basePath' => PATH_ROOT . '/system',
 		'components' => array(
@@ -590,60 +603,119 @@ function handleInstallAllOp() {
 	foreach ( $moduleArray as $k => $module ) {
 		Module::install( $module ); // 执行安装模块
 	}
-	ajaxReturn( array( 'isSuccess' => true, 'msg' => '注册安装数据完成' ) );
+	return ajaxReturn( array( 'isSuccess' => true, 'msg' => '注册安装数据完成' ) );
+}
+
+function handleCheckSaasOp() {
+	global $saasConfig;
+	$corpCode = strtolower( post( 'qycode' ) );
+	$keepCode = $saasConfig['keepcode'];
+	if ( in_array( strtolower( $corpCode ), $keepCode ) ) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => '不允许使用保留企业代码',
+				) );
+	}
+	if ( !preg_match( '/^[a-zA-Z\d]{4,20}$/', $corpCode ) ) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => '企业代码只能是英文和数字的4~20位的组合'
+				) );
+	}
+	$res = CoApi::getInstance()->searchCorp( strtolower( $corpCode ), true );
+	if ( isset( $res['code'] ) && $res['code'] == '0' ) {
+		if ( !empty( $res['data'] ) ) {
+			return ajaxReturn( array(
+				'isSuccess' => false,
+				'msg' => '企业代码已被注册'
+					) );
+		}
+	}
+	$pdo = null;
+	$corpRow = getCorpByCode( $corpCode, $pdo );
+	if ( !empty( $corpRow ) ) {
+		if ( !empty( $corpRow['installed'] ) ) {
+			$admin = json_decode( $corpRow['super'], true );
+			$pdo = null;
+			return ajaxReturn( array(
+				'isSuccess' => false,
+				'msg' => '安装了SAAS',
+				'data' => array(
+					'hasSaas' => true,
+					'aeskey' => $admin['aeskey'],
+					'fullname' => $admin['fullname'],
+					'shortname' => $admin['shortname'],
+				)
+					) );
+		} else {
+			if ( !empty( $corpRow ) && empty( $corpRow['installed'] ) ) {
+				$query = $pdo->prepare( " DELETE FROM `config` WHERE (`corpcode` = :corpcode ) " );
+				$query->bindParam( ":corpcode", $corpCode, PDO::PARAM_STR );
+				$query->execute();
+				$pdo = null;
+			}
+		}
+	}
+	return ajaxReturn( array(
+		'isSuccess' => true,
+		'msg' => '没有安装SAAS，可以开始新的安装',
+		'data' => array(
+			'hasSaas' => false,
+		),
+			) );
 }
 
 function handleAfterInstallAllOp() {
 	global $saasConfig;
-	$corpCode = strtolower( $_POST['qycode'] );
-	$_POST['corp_code'] = $corpCode;
-
-	$corpRow = getCorpByCode( $corpCode, false );
+	$corpCode = strtolower( post( 'qycode' ) );
+	$pdo = null;
+	$corpRow = getCorpByCode( $corpCode, $pdo );
 	// 检查数据库连接正确性
-	$link = @mysql_connect( $saasConfig['db']['host'] . ':' . $saasConfig['db']['port']
-					, $saasConfig['db']['username'], $saasConfig['db']['password'] );
-	@mysql_select_db( $saasConfig['db']['dbname'], $link );
-	$query = @mysql_query( "SELECT * FROM `config` WHERE `corpcode` = '{$corpCode}' " );
-	if ( !empty( $query ) ) {
-		$corpRow = @mysql_fetch_assoc( $query );
+
+	if ( !empty( $corpRow ) ) {
 		$admin = json_decode( $corpRow['super'], true );
-		@mysql_close( $link );
 		$ibosApplication = PATH_ROOT . '/system/core/components/Application.php';
 		require_once ( $ibosApplication );
 		$commonConfig = require CONFIG_PATH . 'common.php';
-
-
 		Yii::createApplication( 'application\core\components\Application', $commonConfig );
-		Yii::app()->db->createCommand()
-				->insert( '{{user}}', array(
-					'username' => $admin['username'],
-					'isadministrator' => 1,
-					'password' => $admin['password'],
-					'createtime' => TIMESTAMP,
-					'salt' => $admin['salt'],
-					'realname' => $admin['realname'],
-					'mobile' => $admin['mobile'],
-					'email' => '',
-				) );
-		$newId = Yii::app()->db->createCommand()
-				->select( "last_insert_id()" )
-				->from( "{{user}}" )
-				->queryScalar();
-		$uid = intval( $newId );
-		Yii::app()->db->createCommand()
-				->insert( '{{user_count}}', array( 'uid' => $uid ) );
-		$ip = Yii::app()->request->userHostAddress;
-		Yii::app()->db->createCommand()
-				->insert( '{{user_status}}', array( 'uid' => $uid, 'regip' => $ip, 'lastip' => $ip ) );
-		Yii::app()->db->createCommand()
-				->insert( '{{user_profile}}', array( 'uid' => $uid, 'remindsetting' => '', 'bio' => '' ) );
+		//防止接口重复被调用导致n多个管理员的问题，嗯……这个情况吓我一跳
+		$user1 = Yii::app()->db->createCommand()
+				->select()
+				->from( '{{user}}' )
+				->where( " `uid` = 1 " )
+				->queryRow();
+		if ( empty( $user1 ) ) {
+			Yii::app()->db->createCommand()
+					->insert( '{{user}}', array(
+						'username' => $admin['username'],
+						'isadministrator' => 1,
+						'password' => $admin['password'],
+						'createtime' => TIMESTAMP,
+						'salt' => $admin['salt'],
+						'realname' => $admin['realname'],
+						'mobile' => $admin['mobile'],
+						'email' => '',
+					) );
+			$newId = Yii::app()->db->createCommand()
+					->select( "last_insert_id()" )
+					->from( "{{user}}" )
+					->queryScalar();
+			$uid = intval( $newId );
+			Yii::app()->db->createCommand()
+					->insert( '{{user_count}}', array( 'uid' => $uid ) );
+			$ip = Yii::app()->request->userHostAddress;
+			Yii::app()->db->createCommand()
+					->insert( '{{user_status}}', array( 'uid' => $uid, 'regip' => $ip, 'lastip' => $ip ) );
+			Yii::app()->db->createCommand()
+					->insert( '{{user_profile}}', array( 'uid' => $uid, 'remindsetting' => '', 'bio' => '' ) );
+		}
+
 		//aeskey存入表里
 		Yii::app()->db->createCommand()
 				->update( '{{setting}}'
 						, array( 'svalue' => $admin['aeskey'] )
 						, " `skey`= 'aeskey'" );
 		//更新Setting的unit
-		//@todo 请改成正确的地址
 		$systemurl = 'http://' . $corpCode . '.saas.ibos.cn';
 		$unit = StringUtil::utf8Unserialize(
 						Yii::app()->db->createCommand()
@@ -661,6 +733,7 @@ function handleAfterInstallAllOp() {
 		$unit['shortname'] = $admin['shortname'];
 		$unit['corpcode'] = $admin['corpcode'];
 		$unit['systemurl'] = $systemurl;
+		$unit['logourl'] = 'static/image/logo.png';
 		foreach ( $unitConfig as $value ) {
 			if ( !isset( $unit[$value] ) ) {
 				$unit[$value] = '';
@@ -688,7 +761,7 @@ function handleAfterInstallAllOp() {
 		}
 
 		// 安装演示数据
-		if ( isset( $_POST['extraData'] ) && $_POST['extraData'] == 1 ) {
+		if ( post( 'extraData' ) && post( 'extraData' ) == 1 ) {
 			$sqlData = file_get_contents( PATH_ROOT . '/install/data/installExtra.sql' );
 			$search = array( '{time}', '{time1}', '{time2}', '{date}', '{date+1}' );
 			$replace = array( time(), strtotime( '-1 hour' ), strtotime( '+1 hour' ), strtotime( date( 'Y-m-d' ) ), strtotime( '-1 day', strtotime( date( 'Y-m-d' ) ) ) );
@@ -704,21 +777,19 @@ function handleAfterInstallAllOp() {
 		// 角色默认权限
 		Role::model()->defaultAuth();
 		Cache::update();
-		// IBOS::app()->db->createCommand()->insert( "{{user_binding}}", array( `uid` = '{$uid}','value' => $guid ));
-		
+		// Ibos::app()->db->createCommand()->insert( "{{user_binding}}", array( `uid` = '{$uid}','value' => $guid ));
 		//重新打开config服务器
-		$link = @mysql_connect( $saasConfig['db']['host'] . ':' . $saasConfig['db']['port']
-						, $saasConfig['db']['username'], $saasConfig['db']['password'] );
-		@mysql_select_db( $saasConfig['db']['dbname'], $link );
 		//写入安装成功标识
 		$installcost = microtime( true ) - $corpRow['installtime'];
-		
 
-		@mysql_query( "UPDATE `config` SET "
-						. "`installcost`='{$installcost}', "
-						. "`installed`='1' WHERE ("
-						. "`corpcode`='{$corpCode}')" );
 
+		$query = $pdo->prepare( "UPDATE `config` SET "
+				. "`installcost`= :installcost, "
+				. "`installed`='1' WHERE ("
+				. "`corpcode`= :corpCode )" );
+		$query->bindParam( ":installcost", $installcost );
+		$query->bindParam( ":corpCode", $corpCode );
+		$query->execute();
 		//TODOO:: 写入apicenter corp的绑定信息, 放这不一定合理,因为走了很远的流程,关联很长 , update 已经放回worker了
 		// @mysql_query( "UPDATE `corp` SET "
 		// 				. "`systemurl`='http://{$corpCode}.saas.ibos.cn', "
@@ -726,7 +797,7 @@ function handleAfterInstallAllOp() {
 		// 				. "`code`='{$corpCode}')" );
 
 
-		@mysql_close( $link );
+		$pdo = null;
 		//发送短信
 		// TODO 更换短信内容
 		$sms = '尊敬的' . $admin['realname'] . '，您已成功开通了IBOS协同云，您的网址为：http://' . $corpCode . '.saas.ibos.cn， 管理员账号密码与酷办公账号密码一致。【酷办公】';
@@ -739,13 +810,14 @@ function handleAfterInstallAllOp() {
 		);
 
 		$res = Api::getInstance()->fetchResult( $url, $get );
-		ajaxReturn(
+		return ajaxReturn(
 				array( 'isSuccess' => true, 'msg' => '安装成功', 'data' => array(
 						'sms' => $res,
 						'aeskey' => $admin['aeskey']
-			) ) );
+					) ) );
 	} else {
-		ajaxReturn( array( 'isSuccess' => false, 'msg' => '请确认执行了handleInstallAll请求' ) );
+		$pdo = null;
+		return ajaxReturn( array( 'isSuccess' => false, 'msg' => '请确认执行了handleInstallAll请求' ) );
 	}
 }
 
@@ -814,7 +886,7 @@ function handleUpdateDataOp() {
 					, array( 'svalue' => serialize( $unit ) )
 					, " `skey`= 'unit'" );
 	@unlink( $adminfile );
-	$installModules = $_POST['modules'];
+	$installModules = post( 'modules' );
 	$modules = explode( ',', $installModules );
 	$customModules = array_diff( $modules, $sysModules );
 	$moduleArray = !empty( $customModules ) ?
@@ -853,7 +925,7 @@ function handleUpdateDataOp() {
 	// 角色默认权限
 	Role::model()->defaultAuth();
 	Cache::update();
-	ajaxReturn( array( 'isSuccess' => true, 'msg' => '' ) );
+	return ajaxReturn( array( 'isSuccess' => true, 'msg' => '' ) );
 }
 
 /**
@@ -863,27 +935,23 @@ function handleUpdateDataOp() {
  * @global string $lockfile lock文件
  */
 function InstallCheck() {
+	global $lockfile;
 	$checkInstall = checkInstallLock();
-	$ajaxReturn = array(
-		'isSuccess' => $checkInstall['isSuccess'],
-		'msg' => $checkInstall['msg'],
+	return ajaxReturn( array(
+		'isSuccess' => !$checkInstall,
+		'msg' => $checkInstall ? lang( 'Install locked' ) . $lockfile : '',
 		'data' => array(
 			'version' => VERSION . ' ' . VERSION_DATE
-		),
-	);
-	ajaxReturn( $ajaxReturn );
+		), ) );
 }
 
 function checkInstallLock() {
-	$isSuccess = true;
-	$msg = '';
 	global $lockfile;
 	if ( file_exists( $lockfile ) ) {
-		$isSuccess = false;
-		$msg = lang( 'Install locked' ) . $lockfile;
+		return true;
+	} else {
+		return false;
 	}
-
-	return array( 'isSuccess' => $isSuccess, 'msg' => $msg );
 }
 
 /**
@@ -897,7 +965,7 @@ function ajaxReturn( $ajaxReturn ) {
 
 function getDbConfig() {
 	if ( ENGINE === 'SAAS' ) {
-		$corpCode = $_POST['qycode'];
+		$corpCode = post( 'qycode' );
 		$corpRow = getCorpByCode( $corpCode );
 		$ibosConfig = !empty( $corpRow ) ? json_decode( $corpRow, true ) : array();
 	} else {
@@ -924,26 +992,60 @@ function getDbConfig() {
 	}
 }
 
-function getCorpByCode( $corpCode ) {
-	$saasConfigPath = PATH_ROOT . '/saas_config.php';
-	if ( file_exists( $saasConfigPath ) ) {
-		$saasConfig = require_once $saasConfigPath;
-	} else {
-		echo '需要配置SAAS环境';
-		die();
+function getCorpByCode( $corpCode, &$pdo = null ) {
+	global $saasConfig;
+	$pdo = pdo( $saasConfig['db']['host'], $saasConfig['db']['port']
+			, $saasConfig['db']['dbname'], $saasConfig['db']['username']
+			, $saasConfig['db']['password'] );
+	if ( is_string( $pdo ) ) {
+		return ajaxReturn( array(
+			'isSuccess' => false,
+			'msg' => $pdo,
+				) );
 	}
-	// 检查数据库连接正确性
-	$link = @mysql_connect( $saasConfig['db']['host'] . ':' . $saasConfig['db']['port']
-					, $saasConfig['db']['username'], $saasConfig['db']['password'] );
-	@mysql_select_db( $saasConfig['db']['dbname'], $link );
-	$query = @mysql_query( "SELECT * FROM `config` WHERE `corpcode` = '{$corpCode}' " );
-	if ( !empty( $query ) ) {
-		$return = @mysql_fetch_assoc( $query );
+	$query = $pdo->prepare( " SELECT * FROM `config` WHERE `corpcode` = :corpcode " );
+	$query->bindParam( ":corpcode", $corpCode, PDO::PARAM_STR );
+	$query->execute();
+	$corpRow = $query->fetch( PDO::FETCH_ASSOC );
+	return $corpRow;
+}
+
+function post( $param = NULL, $default = NULL ) {
+	if ( NULL === $param ) {
+		$temp = $_POST;
 	} else {
-		$return = false;
+		$temp = isset( $_POST[$param] ) ? $_POST[$param] : $default;
 	}
+	return addslashes( $temp );
+}
 
-	@mysql_close( $link );
+function get( $param = NULL, $default = NULL ) {
+	if ( NULL === $param ) {
+		$temp = $_GET;
+	} else {
+		$temp = isset( $_GET[$param] ) ? $_GET[$param] : $default;
+	}
+	return addslashes( $temp );
+}
 
-	return $return;
+function pdo( $host, $port, $dbname, $user, $password, $charset = 'utf8' ) {
+	$dsn = "mysql:host={$host};port={$port};dbname={$dbname}";
+	$options = array();
+	if ( version_compare( PHP_VERSION, '5.3.6', '<' ) ) {
+		if ( defined( 'PDO::MYSQL_ATTR_INIT_COMMAND' ) ) {
+			$options[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $charset;
+		}
+	} else {
+		$dsn .= ';charset=' . $charset;
+	}
+	static $db = NULL;
+	if ( NULL === $db ) {
+		try {
+			$db = new PDO( $dsn, $user, $password, $options );
+			$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		} catch (PDOException $e) {
+			return $e->getMessage();
+		}
+	}
+	return $db;
 }

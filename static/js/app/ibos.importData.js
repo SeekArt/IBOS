@@ -231,7 +231,7 @@
 				that.closefn && that.closefn();
 			});
 
-			if (Array.isArray(that.btns)) {
+			if ($.isArray(that.btns)) {
 				$.each(that.btns, function (i, e) {
 					var btn = new Button({
 						text: e.text,

@@ -15,11 +15,24 @@ var ArticleAdd = {
 		var af = "article_form";
 		$.formValidator.initConfig({ formID : af, errorFocus: true});
 		$("#subject").formValidator({ onFocus: U.lang("RULE.SUBJECT_CANNOT_BE_EMPTY") })
-		.regexValidator({
-			regExp:"notempty",
-			dataType:"enum",
-			onError: U.lang("RULE.SUBJECT_CANNOT_BE_EMPTY")
-		});
+			.regexValidator({
+				regExp:"notempty",
+				dataType:"enum",
+				onError: U.lang("RULE.SUBJECT_CANNOT_BE_EMPTY")
+			});
+
+		$('#publishScope').formValidator()
+			.functionValidator({
+				fun : function(){
+					if(!!$('#publishScope').val()){
+						return true;
+					}
+
+					Ui.tip(Ibos.l("ART.PUBLISH_RANGE_CANNOT_BE_EMPTY"), 'warning');
+					return false;
+				},
+				validateType:"functionValidator"
+			});
 
 		// 验证表单
 		var valiForm = function(){
@@ -43,12 +56,15 @@ var ArticleAdd = {
 			}
 		};
 
-		$("#"+af).submit(function(){
+		$("#"+af).on("form.submit", function(){
 			if($.data(this, "submiting")) {
 				return false;
 			}
-
-			valiForm() && $.data(this, "submiting", true);
+			if( valiForm() ){
+				$.data(this, "submiting", true);
+			}else{
+				return false;
+			}
 		});
 
 		Ibos.checkFormChange("#"+af);

@@ -197,7 +197,7 @@ class LocalFile implements FileOperationInterface {
 	 * @param type $downloadInfo
 	 */
 	public function download( $attach, $downloadInfo = array() ) {
-		$file = PATH_ROOT . '/' . File::getAttachUrl() . '/' . $attach['attachment'];
+		$file = PATH_ROOT . '/' . $attach['attachment'];
 		if ( file_exists( $file ) ) {
 			if ( IBOS::app()->browser->name == 'msie' || IBOS::app()->browser->getVersion() == '10.0' || IBOS::app()->browser->getVersion() == '11.0' ) {
 				$usingIe = true;

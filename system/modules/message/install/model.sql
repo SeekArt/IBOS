@@ -48,7 +48,7 @@ CREATE TABLE `{{notify_message}}` (
   `body` text NOT NULL COMMENT '内容',
   `ctime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
   `isread` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否已读',
-  `url` varchar(100) NOT NULL DEFAULT '' COMMENT '链接地址',
+  `url` varchar(200) NOT NULL DEFAULT '' COMMENT '链接地址',
   PRIMARY KEY (`id`),
   KEY `uid_read` (`uid`,`isread`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

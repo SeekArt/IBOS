@@ -301,7 +301,15 @@ $(document).ready(function() {
             deferLoading: 0,
             ajax: {
                 url: Ibos.app.url('dashboard/user/getuserlist'),
-                type: 'post'
+                type: 'post',
+                dataSrc: function(res) {
+                    if (res.isSuccess) {
+                        return res.data;
+                    } else {
+                        Ui.tip(res.msg, 'warning');
+                        return [];
+                    }
+                }
             },
             initComplete: function() {
                 $(this).find('[data-name]').label();
@@ -463,7 +471,7 @@ $(document).ready(function() {
     };
     var $tree = $("#utree");
     $tree.waiting(null, 'mini');
-    $.fn.zTree.init($tree, settings, Ibos.data.converToArray(Ibos.data.get('department', function(data){
+    $.fn.zTree.init($tree, settings, Ibos.data.converToArray(Ibos.data.get('department', function(data) {
         return data.id !== 'c_0';
     })));
     ztreeOpt.selectAuxiliaryNode(Ibos.app.g("auxiliaryId"));

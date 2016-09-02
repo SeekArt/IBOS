@@ -19,7 +19,7 @@ use application\modules\main\utils\ImportParent;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-3-24 17:06:34
- * @version $Id: Import.php 7339 2016-06-07 03:37:59Z tanghang $
+ * @version $Id: Import.php 7750 2016-08-03 09:26:25Z tanghang $
  */
 class Import extends ImportParent implements ImportInterface {
 
@@ -222,7 +222,7 @@ class Import extends ImportParent implements ImportInterface {
 						) );
 				$findpositionid = IBOS::app()->db->getLastInsertID();
 				$positionArray[$positionName] = $findpositionid;
-				$this->session->add( 'import_userTpl_roleArray', $positionArray );
+				$this->session->add( 'import_userTpl_positionArray', $positionArray );
 				return $findpositionid;
 			}
 		}

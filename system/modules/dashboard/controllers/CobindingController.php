@@ -55,36 +55,49 @@ class CobindingController extends CoController {
         $this->_coUser = IBOS::app()->user->getState( 'coUser' );
     }
 
-    /**
-     * 首页视图动作，新流程
-     */
-    public function actionIndex() {
-        // 尝试使用 accesstoken 自动登录
-        $loginRes = $this->login();
-        // 登录失败，跳转到 login 页面
-        if ( $loginRes['status'] === FALSE ) {
-            $loginRes['data']['isInstall'] = $this->_isInstall;
-            $this->render( 'login', $loginRes['data'] );
-        }
-        // 登录成功
-        else {
-            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-            $param['data'] = $loginRes['data'];
-            $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-            // 如果本地已经绑定了酷办公
-            if ( $this->isBinding ) {
-                $this->redirect( array( 'cosync/index' ) );
-            }
-            // IBOS 与酷办公未绑定,转到企业列表选择视图
-            else {
-                // $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-                // 根据用户的 accesstoken 获取对应用户所加入的企业列表信息
-                $corpListRes = $this->getCorpListByAccessToken( $this->_coUser['accesstoken'] );
-                $corpListRes['isInstall'] = $this->_isInstall;
-                $this->render( 'selectCorp', $corpListRes );
-            }
-        }
-    }
+	/**
+	 * 首页视图动作，新流程
+	 */
+	public function actionIndex() {
+		// 尝试使用 accesstoken 自动登录
+		$loginRes = $this->login();
+		// 登录失败，跳转到 login 页面
+		if ( $loginRes['status'] === FALSE ) {
+			$loginRes['data']['isInstall'] = $this->_isInstall;
+			$this->render( 'login', $loginRes['data'] );
+		}
+		// 登录成功
+		else {
+			$coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+			$param['data'] = $loginRes['data'];
+			$aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
+			// 如果本地已经绑定了酷办公
+			if ( $this->isBinding ) {
+				$this->redirect( array( 'cosync/index' ) );
+			}
+			// IBOS 与酷办公未绑定,转到企业列表选择视图
+			else {
+				// $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+				// 根据用户的 accesstoken 获取对应用户所加入的企业列表信息
+				$corpListRes = $this->getCorpListByAccessToken( $this->_coUser['accesstoken'] );
+				$corpListRes['isInstall'] = $this->_isInstall;
+				if ( !empty( $corpListRes['bindCorpid'] ) ) {
+					$corp = $corpListRes['corpList'][$corpListRes['bindCorpid']];
+					$data['corpid'] = $corp['corpid'];
+					$data['corptoken'] = $corp['corptoken'];
+					$data['corpshortname'] = $corp['corpshortname'];
+					$data['corpname'] = $corp['corpname'];
+					$data['corplogo'] = $corp['corplogo'];
+					$msg = '';
+					$isSuccess = $this->bindCorp( $data, $msg );
+					if ( true === $isSuccess ) {
+						return $this->redirect( $this->createUrl( 'cosync/index' ) );
+					}
+				}
+				$this->render( 'selectCorp', $corpListRes );
+			}
+		}
+	}
 
     /**
      * IBOS 后台酷办公登录操作
@@ -197,46 +210,52 @@ class CobindingController extends CoController {
         $this->render( 'login', $data );
     }
 
-    /**
-     * 根据用户 accesstoken 获取用户企业列表
-     * 在新流程的 Index 动作中被用到
-     * @param  string $accesstoken 用户的 accesstoken
-     * @return array              渲染视图需要的参数
-     */
-    protected function getCorpListByAccessToken( $accesstoken ) {
-        // 根据 accesstoken 获取用户的企业列表信息
-        $corpArr = CoApi::getInstance()->getCorpListByAccessToken( $accesstoken );
-        // 获取用户企业列表失败
-        if ( $corpArr['code'] != CodeApi::SUCCESS ) {
-            $this->error( $corpArr['message'], $this->createUrl( 'cobinding/login' ), array(), 3 );
-        }
-        // 当用户的企业列表不为空时
-        if ( !empty( $corpArr['data'] ) ) {
-            $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-            // 接口调用成功 & 返回的 data 不为空，筛选需要的数据并返回
-            foreach ( $corpArr['data'] as $corp ) {
-                $corpList[] = array(
-                    'corpid' => $corp['corpid'],
-                    'corptoken' => $corp['corptoken'],
-                    'corplogo' => $corp['logo'],
-                    'corpname' => $corp['name'],
-                    'corpshortname' => $corp['shortname'],
-                    // 'corpcode'		=> $corp['code'],
-                    'systemUrl' => $corp['systemurl'],
-                    'isBindOther' => (!empty( $corp['aeskey'] ) && $corp['aeskey'] !== $aeskey ) ? 1 : 0,
-                    'isSuperAdmin' => $corp['role'] == 2 ? 1 : 0,
-                );
-            }
-            $result['corpList'] = $corpList;
-        } else {
-            $result['corpList'] = array();
-        }
-        // 如果用户选择新建企业，使用当前 IBOS 的数据作为新企业的默认数据
-        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
-        $result['createCorpInfo']['corpname'] = $unit['fullname'];
-        $result['createCorpInfo']['corpshortname'] = $unit['shortname'];
-        return $result;
-    }
+	/**
+	 * 根据用户 accesstoken 获取用户企业列表
+	 * 在新流程的 Index 动作中被用到
+	 * @param  string $accesstoken 用户的 accesstoken
+	 * @return array              渲染视图需要的参数
+	 */
+	protected function getCorpListByAccessToken( $accesstoken ) {
+		// 根据 accesstoken 获取用户的企业列表信息
+		$corpArr = CoApi::getInstance()->getCorpListByAccessToken( $accesstoken );
+		// 获取用户企业列表失败
+		if ( $corpArr['code'] != CodeApi::SUCCESS ) {
+			$this->error( $corpArr['message'], $this->createUrl( 'cobinding/login' ), array(), 3 );
+		}
+		$currentHost = $_SERVER['HTTP_HOST'];
+		// 当用户的企业列表不为空时
+		if ( !empty( $corpArr['data'] ) ) {
+			$aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
+			// 接口调用成功 & 返回的 data 不为空，筛选需要的数据并返回
+			foreach ( $corpArr['data'] as $corp ) {
+				if ( strpos( $corp['systemurl'], $currentHost ) !== false ) {
+					$result['bindCorpid'] = $corp['corpid'];
+				} else {
+					$result['bindCorpid'] = 0;
+				}
+				$corpList[$corp['corpid']] = array(
+					'corpid' => $corp['corpid'],
+					'corptoken' => $corp['corptoken'],
+					'corplogo' => $corp['logo'],
+					'corpname' => $corp['name'],
+					'corpshortname' => $corp['shortname'],
+					// 'corpcode'		=> $corp['code'],
+					'systemUrl' => $corp['systemurl'],
+					'isBindOther' => (!empty( $corp['aeskey'] ) && $corp['aeskey'] !== $aeskey ) ? 1 : 0,
+					'isSuperAdmin' => $corp['role'] == 2 ? 1 : 0,
+				);
+			}
+			$result['corpList'] = $corpList;
+		} else {
+			$result['corpList'] = array();
+		}
+		// 如果用户选择新建企业，使用当前 IBOS 的数据作为新企业的默认数据
+		$unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+		$result['createCorpInfo']['corpname'] = $unit['fullname'];
+		$result['createCorpInfo']['corpshortname'] = $unit['shortname'];
+		return $result;
+	}
 
     /**
      * 获取手机验证码 ajax 请求接口
@@ -673,46 +692,56 @@ class CobindingController extends CoController {
         }
     }
 
-    /**
-     * 根据用户选择的企业，准备进行绑定
-     * 在新流程的 index 动作中被使用到
-     * @return array array( 'status' => TRUE|FALSE, 'data' => array() )
-     */
-    public function actionReadyBinding() {
-        $corpid = Env::getRequest( 'corpid' );
-        $corptoken = Env::getRequest( 'corptoken' );
-        $corpshortname = Env::getRequest( 'corpshortname' );
-        $corpname = Env::getRequest( 'corpname' );
-        $corplogo = Env::getRequest( 'corplogo' );
-        // $corpcode 	= Env::getRequest( 'corpcode' );
-        // 是否前台安装步骤结束时的绑定调用判断
-        // $isInstall = Env::getRequest( 'isInstall' );
-        $bindRes = $this->corpBinding( $corptoken );
-        if ( $bindRes['code'] != CodeApi::SUCCESS ) {
-            $this->ajaxReturn( array(
-                'isSuccess' => FALSE,
-                'msg' => $bindRes['message'],
-            ) );
-        } else {
-            Setting::model()->updateSettingValueByKey( 'cobinding', 1 );
-            $coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
-            $coinfo = array(
-                'accesstoken' => $this->_coUser['accesstoken'],
-                'guid' => $this->_coUser['guid'],
-                'mobile' => $this->_coUser['mobile'],
-                'corpid' => $corpid,
-                'corptoken' => $corptoken,
-                'corpshortname' => $corpshortname,
-                'corpname' => $corpname,
-                'corplogo' => $corplogo,
-            );
-            Setting::model()->updateSettingValueByKey( 'coinfo', serialize( $coinfo ) );
-            $this->ajaxReturn( array(
-                'isSuccess' => TRUE,
-                'isInstall' => $this->_isInstall,
-            ) );
-        }
-    }
+	/**
+	 * 根据用户选择的企业，准备进行绑定
+	 * 在新流程的 index 动作中被使用到
+	 * @return array array( 'status' => TRUE|FALSE, 'data' => array() )
+	 */
+	public function actionReadyBinding() {
+		$data['corpid'] = Env::getRequest( 'corpid' );
+		$data['corptoken'] = Env::getRequest( 'corptoken' );
+		$data['corpshortname'] = Env::getRequest( 'corpshortname' );
+		$data['corpname'] = Env::getRequest( 'corpname' );
+		$data['corplogo'] = Env::getRequest( 'corplogo' );
+		// $corpcode 	= Env::getRequest( 'corpcode' );
+		// 是否前台安装步骤结束时的绑定调用判断
+		// $isInstall = Env::getRequest( 'isInstall' );
+		$msg = '';
+		$isSuccess = $this->bindCorp( $data, $msg );
+		if ( true === $isSuccess ) {
+			return $this->ajaxReturn( array(
+						'isSuccess' => true,
+						'isInstall' => $this->_isInstall,
+					) );
+		} else {
+			return $this->ajaxReturn( array(
+						'isSuccess' => false,
+						'msg' => $msg,
+					) );
+		}
+	}
+
+	private function bindCorp( $data, &$msg ) {
+		$bindRes = $this->corpBinding( $data['corptoken'] );
+		if ( $bindRes['code'] == CodeApi::SUCCESS ) {
+			Setting::model()->updateSettingValueByKey( 'cobinding', 1 );
+			$param = array(
+				'accesstoken' => $this->_coUser['accesstoken'],
+				'guid' => $this->_coUser['guid'],
+				'mobile' => $this->_coUser['mobile'],
+				'corpid' => $data['corpid'],
+				'corptoken' => $data['corptoken'],
+				'corpshortname' => $data['corpshortname'],
+				'corpname' => $data['corpname'],
+				'corplogo' => $data['corplogo'],
+			);
+			Setting::model()->updateSettingValueByKey( 'coinfo', serialize( $param ) );
+			return true;
+		} else {
+			$msg = $bindRes['message'];
+			return false;
+		}
+	}
 
     /**
      * 绑定酷办公企业操作

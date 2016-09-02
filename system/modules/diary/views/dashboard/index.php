@@ -116,7 +116,7 @@ use application\modules\dashboard\model\Stamp;
 														<td>
 															<div class="stamp-slot" data-node-type="stampSlot">
 																<div class="stamp-item ui-draggable" data-node-type="stampItem" data-stamp-id="<?php echo $stampId; ?>">
-																	<img src="<?php echo util\File::fileName( 'data/stamp/' . Stamp::model()->fetchIconById( $stampId ) ); ?>" alt="" width="60" height="24">
+																	<img src="<?php echo util\File::fileName(  Stamp::model()->fetchIconById( $stampId ) ); ?>" alt="" width="60" height="24">
 																</div>
 															</div>
 															<input type="hidden" name="stampdetails[<?php echo $score; ?>]" value="<?php echo $stampId; ?>">
@@ -142,7 +142,7 @@ use application\modules\dashboard\model\Stamp;
 												<div id="stamp_item_box" class="stamp-item-box">
 													<?php foreach ( $diffStampIds as $key => $diffStampId ): ?>
 														<div class="stamp-item" data-node-type="stampItem" data-stamp-id="<?php echo $diffStampId; ?>">
-															<img src="<?php echo util\File::fileName( 'data/stamp/' . Stamp::model()->fetchIconById( $diffStampId ) ); ?>" alt=""  width="60" height="24">
+															<img src="<?php echo util\File::fileName(  Stamp::model()->fetchIconById( $diffStampId ) ); ?>" alt=""  width="60" height="24">
 														</div>    
 													<?php endforeach; ?>
 												</div>

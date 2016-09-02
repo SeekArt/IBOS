@@ -358,7 +358,7 @@ var Comment = (function() {
 				$textarea.blink();
 				return false;
 			}
-
+			params = JSON.parse($elem.attr("data-param"));
 			$elem.button("loading");
 
 			params = $.extend({

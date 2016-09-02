@@ -24,8 +24,8 @@ use application\modules\vote\components\Vote;
                 <div class="art">
                     <div class="art-container">
                         <a href="javascript:" title="<?php echo $lang['Close']; ?>" class="art-close" onclick="window.location.href = document.referrer;"></a>
-                        <h1 class="art-title"><?php echo $data['subject']; ?></h1>
-                        <div class="art-ct mb message-content">
+                        <h1 class="art-title ellipsis"><?php echo $data['subject']; ?></h1>
+                        <div class="art-ct mb message-content text-break">
 							<?php if ( $data['type'] == 0 ): ?>
 								<?php echo $data['content']; ?>
 							<?php elseif ( $data['type'] == 1 ): ?>

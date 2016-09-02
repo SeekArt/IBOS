@@ -28,20 +28,20 @@ class Module extends Model {
         return '{{module}}';
     }
 
-    /**
-     * 获得模块名称
-     * @staticvar null $modules 所有模块缓存
-     * @param string $moduleName 模块标识
-     * @return string 
-     */
-    public function fetchNameByModule( $moduleName ) {
-        static $modules = null;
-        if ( !$modules ) {
-            $modules = $this->fetchAllEnabledModule();
-        }
-        $module = isset( $modules[$moduleName] ) ? $modules[$moduleName] : $this->fetchByAttributes( array( 'module' => $moduleName ) );
-        return is_array( $module ) ? $module['name'] : '';
-    }
+	/**
+	 * 获得模块名称
+	 * @staticvar null $modules 所有模块缓存
+	 * @param string $moduleName 模块标识
+	 * @return string 
+	 */
+	public function fetchNameByModule( $moduleName ) {
+		static $modules = null;
+		if ( !$modules ) {
+			$modules = $this->fetchAllEnabledModule();
+		}
+		$module = isset( $modules[$moduleName] ) ? $modules[$moduleName] : $this->fetchByAttributes( array( 'module' => $moduleName ) );
+		return (is_array( $module ) && isset( $module['name']) ) ? $module['name'] : '';
+	}
 
     /**
      * 查找所有非系统模块

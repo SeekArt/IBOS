@@ -245,6 +245,9 @@ class Attach {
 		foreach ( $data as $id => &$val ) {
 			$val['date'] = Convert::formatDate( $val['dateline'], 'u' );
 			$val['filetype'] = StringUtil::getFileExt( $val['filename'] );
+            if($val['filetype'] == "rar"){
+                $val['read'] = false;
+            }
 			$val['origsize'] = $val['filesize'];
 			$val['filesize'] = Convert::sizeCount( $val['filesize'] );
 //			if ( $getRealAddress ) {

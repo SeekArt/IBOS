@@ -119,10 +119,14 @@ Login.autoLogin = function(){
 	if (U.getCookie("lastautologin") == 1){
 		$("[name='autologin']").label("check");
 	}
-
-	// 记住 “自动登录” 的勾选状态
+	
 	$("#login_form").on("submit", function(){
+		var qycode = document.loginForm.qycode.value;
 		if($.formValidator.pageIsValid()){
+			// 跳转子域名登录
+			document.loginForm.action = 'http://' + qycode + '.saas.ibos.cn/?r=user/default/login';
+			U.setCookie("corp_code", qycode);
+			// 记住 “自动登录” 的勾选状态
 			U.setCookie("lastautologin", +$("[name='autologin']").prop('checked'));
 		}
 	});

@@ -23,6 +23,7 @@ use application\core\utils\Env;
 use application\core\utils\File;
 use application\core\utils\IBOS;
 use application\core\utils\WebSite;
+use application\modules\dashboard\utils\Wx;
 use application\modules\department\model\DepartmentBinding;
 use application\modules\main\model\Setting;
 use application\modules\user\model\UserBinding;
@@ -30,16 +31,8 @@ use CJSON;
 
 class WxApi extends Api {
 
-	// 刷新ACCESS_TOKEN
-	const REFRESH_TOKEN_URL = 'https://qyapi.weixin.qq.com/cgi-bin/gettoken';
-	// 上传媒体文件地址
-	const MEDIA_UPLOAD_URL = 'https://qyapi.weixin.qq.com/cgi-bin/media/upload';
 	// 授权验证URL
 	const OAUTH_URL = 'https://open.weixin.qq.com/connect/oauth2/authorize';
-	// 创建菜单URL
-	const CREATE_MENU_URL = 'https://qyapi.weixin.qq.com/cgi-bin/menu/create';
-	// 删除菜单URL
-	const DEL_MENU_URL = 'https://qyapi.weixin.qq.com/cgi-bin/menu/delete';
 
 	public static function getInstance( $className = __CLASS__ ) {
 		return parent::getInstance( $className );
@@ -54,6 +47,20 @@ class WxApi extends Api {
 
 	public function getAeskey() {
 		return Setting::model()->fetchSettingValueByKey( 'aeskey' );
+	}
+
+	/**
+	 * 目前只是为了微信文件上传下载接口用到
+	 * 这个接口微信那边说可能会以后会验证ip，嗯……
+	 * 陈说这个做成本地的，不要官网转发（这锅我不背呢）
+	 * 如果以后上传下载不可用了，这个应该删除（我真不背锅）
+	 * @param string $aeskey
+	 */
+	public function getAccesstoken( $aeskey ) {
+		$route = 'Api/Wxsync/fetchAccesstoken';
+		$url = WebSite::getInstance()->build( $route, array( 'aeskey' => $aeskey ) );
+		$accesstoken = $this->fetchResult( $url );
+		return $accesstoken;
 	}
 
 	/**
@@ -90,6 +97,26 @@ class WxApi extends Api {
 			'res' => $res,
 				), 'wxqy_push', 'message.core.wx.WxApi' );
 		return $this->getSendIsSuccess( $res );
+	}
+
+	public function getDeptList( $id = 0 ) {
+		$return = WebSite::getInstance()->fetch( 'Api/Wxsync/getDeptList', array(
+			'aeskey' => Wx::getInstance()->getAeskey(),
+			'id' => $id,
+				) );
+		if ( is_array( $return ) ) {
+			return array(
+				'isSuccess' => false,
+				'msg' => $return['error'],
+			);
+		} else {
+			$res = CJSON::decode( $return, true );
+			return array(
+				'isSuccess' => true,
+				'msg' => '',
+				'data' => $res,
+			);
+		}
 	}
 
 	/**
@@ -161,7 +188,7 @@ EOT;
 						break;
 					case '60102'://userid存在
 						$msg = '';
-						$this->setBind( $user['uid'], '9527:' . $user['userid'] );
+						$this->setBind( $user['uid'], 'exist:' . $user['userid'] );
 						break;
 					default :
 						$msg = Code::getErrmsg( $res['errcode'] );
@@ -183,7 +210,7 @@ EOT;
 	private function setBind( $uid, $errmsg ) {
 		list($msg, $userid) = explode( ':', $errmsg );
 		UserBinding::model()->deleteAll( sprintf( "`uid` = '%s' AND `app` = 'wxqy' ", $uid ) );
-		UserBinding::model()->add( array( 'uid' => $uid, 'bindvalue' => $userid, 'app' => 'wxqy' ) );
+		UserBinding::model()->add( array( 'uid' => $uid, 'bindvalue' => trim( $userid ), 'app' => 'wxqy' ) );
 	}
 
 	/**
@@ -203,10 +230,10 @@ EOT;
 	 * @param integer $status 0获取全部员工，1获取已关注成员列表，2获取禁用成员列表，4获取未关注成员列表。status可叠加
 	 * @return array
 	 */
-	public function getDeptUser( $url, $departmentId = 1, $status = 0 ) {
+	public function getDeptUser( $url, $departmentId = 1, $fetchChild = 1, $status = 0 ) {
 		$res = $this->fetchResult( $url, array(
 			'department_id' => $departmentId,
-			'fetch_child' => 1,
+			'fetch_child' => $fetchChild,
 			'status' => $status
 				) );
 		if ( !is_array( $res ) ) {

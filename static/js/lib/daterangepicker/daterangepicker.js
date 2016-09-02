@@ -140,6 +140,8 @@
             this.timePicker12Hour = true;
             this.singleDatePicker = false;
             this.ranges = {};
+            // 拓展，忽略旧值，每次对时间的更新都触发notify
+            this.ignoredOld = false;
 
             this.opens = 'right';
             if (this.element.hasClass('pull-right'))
@@ -282,6 +284,10 @@
 
             if (typeof options.timePicker12Hour === 'boolean') {
                 this.timePicker12Hour = options.timePicker12Hour;
+            }
+
+            if (typeof options.ignoredOld === 'boolean') {
+                this.ignoredOld = options.ignoredOld;
             }
 
             // update day names order to firstDay
@@ -498,7 +504,7 @@
             this.startDate = start;
             this.endDate = end;
 
-            if (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
+            if (this.ignoredOld || !this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
                 this.notify();
 
             this.updateCalendars();
@@ -612,7 +618,7 @@
             this.element.removeClass('active');
             this.container.hide();
 
-            if (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
+            if (this.ignoredOld || !this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
                 this.notify();
 
             this.oldStartDate = this.startDate.clone();

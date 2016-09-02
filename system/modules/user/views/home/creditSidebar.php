@@ -31,10 +31,21 @@
 				if(is_array($extcredits)):
 				 foreach ( $extcredits as $ext ): ?>
 					<?php if ( !empty( $ext ) ): ?>
-						<tr>
-							<td><?php echo $ext['name']; ?></td>
-							<td class="integral-info"><?php echo $ext['value']; ?></td>
-						</tr>
+<!--						<tr>-->
+<!--							<td>--><?php //echo $ext['name']; ?><!--</td>-->
+<!--							<td class="integral-info">--><?php //echo $ext['value']; ?><!--</td>-->
+<!--						</tr>-->
+						 <?php if($ext['value'] == 0):?>
+							 <tr>
+								 <td><?php echo $ext['name']?></td>
+								 <td class="integral-info"><?php echo $ext['initial']?></td>
+							 </tr>
+							 <?php else:?>
+							 <tr>
+								 <td><?php echo $ext['name']?></td>
+								 <td class="integral-info"><?php echo $ext['value']; ?></td>
+							 </tr>
+							 <?php endif;?>
 					<?php endif; ?>
 				<?php endforeach; 
 				endif; ?>

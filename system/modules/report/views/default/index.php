@@ -71,7 +71,7 @@ use application\modules\main\utils\Main;
                                         </a>
                                         <div class="rps-content">
                                             <h4><a href="javascript:;" data-action="showReportDetail" data-param='{"id": "<?php echo $report['repid']; ?>", "fromController": "<?php echo $this->id; ?>"}' title="<?php echo $report['subject']; ?>"><?php echo $report['cutSubject']; ?></a></h4>
-                                            <p class="xcm mb">
+                                            <p class="xcm mb text-break">
                                                 <?php echo $report['content']; ?>
                                             </p>
                                             <div class="rp-list-item-desc clearfix">

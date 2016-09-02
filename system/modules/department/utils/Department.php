@@ -11,7 +11,7 @@
  * 部门模块函数库类
  *
  * @package application.modules.department.utils
- * @version $Id: Department.php 7627 2016-07-21 08:50:44Z tanghang $
+ * @version $Id: Department.php 7750 2016-08-03 09:26:25Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -27,10 +27,10 @@ class Department {
 
 	const TOP_DEPT_ID = 0; //顶级部门的部门id
 
-	public static function loadDepartment() {
+	public static function loadDepartment( $deptidMixed = NULL, $param = array() ) {
 		static $alldepartment = NULL;
 		if ( $alldepartment === NULL ) {
-			$alldepartment = DepartmentModel\Department::model()->findDeptmentIndexByDeptid();
+			$alldepartment = DepartmentModel\Department::model()->findDeptmentIndexByDeptid( $deptidMixed , $param );
 		}
 		return $alldepartment;
 	}

@@ -8,7 +8,6 @@ use application\modules\diary\utils\Diary;
     <span class="fsl log-title">上交时间</span>
     <div class="statistics-area">
         <div id="hand_in_time" class="statistics-content">
-            <div class="statistics-pic"></div>
         </div>
     </div>
 </div>
@@ -16,7 +15,6 @@ use application\modules\diary\utils\Diary;
     <span class="fsl log-title">日志得分</span>
     <div class="statistics-area">
         <div id="log_score" class="statistics-content">
-            <div class="statistics-pic"></div>
         </div>
     </div>
 </div>
@@ -24,7 +22,6 @@ use application\modules\diary\utils\Diary;
     <span class="fsl log-title">图章分布</span>
     <div class="statistics-area">
         <div id="seal_distribute" class="statistics-content">
-            <div class="statistics-pic"></div>
         </div>
     </div>
 </div>

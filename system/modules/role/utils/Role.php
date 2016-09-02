@@ -17,6 +17,9 @@ use application\modules\role\model\NodeRelated;
 use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
+use application\modules\role\model\AuthItem;
+use CHttpException;
+use Guzzle\Common\Exception\InvalidArgumentException;
 
 class Role {
 
@@ -130,6 +133,59 @@ class Role {
 		}
 		$viewPurv = max( $purvs );
 		return $viewPurv;
+	}
+
+
+	/**
+	 * 判断当前用户是否有访问某个路由的权限
+	 *
+	 * @param $routes
+	 * @return bool
+	 * @throws CHttpException
+	 */
+	public static function checkRouteAccess($routes) {
+		// 创建对应的控制器
+		$ca = IBOS::app()->createController($routes);
+
+		// 找不到对应的控制器。有可能是路由有误
+		if (empty($ca) || count($ca) != 2) {
+			throw new \CHttpException(404, 'Oops. Not found.');
+		}
+
+		list($controller, $actionId) = $ca;
+
+		// 备注：某些控制器在 init 方法下面做权限验证。会让用户跳转到特定的页面，而当前方法只需要知道用户是否有访问路由的权限
+		// 所以，如果遇到上面的情况，可以将非权限验证的代码放在 initBase 中
+		if (method_exists($controller, 'initBase')) {
+			$controller->initBase();
+		} else {
+			$controller->init();
+		}
+
+		$module = $controller->getModule()->getId();
+		// step1
+		if (!$controller->filterNotAuthModule($module)) {
+			$routes = strtolower($controller->getUniqueId() . '/' . $actionId);
+			if ($controller->isFilterRoute) {
+				$check = false;
+				// step2：是否使用config里的配置路由去验证
+				// 当useConfig被设置成true时，只有在config里设置的才会验证
+				// 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
+				if (!$controller->useConfig) {
+					$check = !$controller->filterRoutes($routes) ? true : false;
+				} else {
+					$check = AuthItem::model()->checkIsInByRoute($routes) ? true : false;
+				}
+				if (true === $check) {
+					// step3
+					if (!Ibos::app()->user->checkAccess($routes, Auth::getParams($routes))) {
+						// 没有权限
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 }

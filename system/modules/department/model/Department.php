@@ -81,28 +81,24 @@ class Department extends Model {
 
 	/**
 	 * 返回deptids取得所有子分类id字符串,逗号分割
-	 * @param integer $deptids 逗号分割的deptid，也有可能是单个的部门
+	 * @param mixed $deptidX 数组或者逗号分割的deptid
 	 * @param boolean $connect 返回是否需要连接上原来部门id
 	 * @return string 逗号分割的字符串，部门id
 	 */
-	public function fetchChildIdByDeptids( $deptids, $connect = false ) {
+	public function fetchChildIdByDeptids( $deptidX, $connect = false ) {
 		static $departArr = NULL;
 		if ( NULL === $departArr ) {
 			$departArr = DepartmentUtil::loadDepartment();
 		}
-		$deptidArr = explode( ',', $deptids );
-		$childDepartment = array();
-		$childDeptIds = '';
-		foreach ( $deptidArr as $deptid ) {
-			$childDepartment = array_merge( $childDepartment, $this->fetchChildDeptByDeptid( $deptid, $departArr ) );
+		$deptidArray = is_array( $deptidX ) ? $deptidX : explode( ',', $deptidX );
+		$childDeptidString = '';
+		foreach ( $deptidArray as $deptid ) {
+			$childDeptidString .= implode( ',', $this->fetchChildDeptByDeptid( $deptid, $departArr, false ) );
 		}
-		foreach ( $childDepartment as $department ) {
-			$childDeptIds.=$department['deptid'] . ',';
+		if ( true === $connect ) {
+			$childDeptidString .= ',' . implode( ',', $deptidArray );
 		}
-		if ( $connect ) {
-			$childDeptIds = $deptids . ',' . $childDeptIds;
-		}
-		return util\StringUtil::filterStr( $childDeptIds );
+		return util\StringUtil::filterStr( $childDeptidString );
 	}
 
 	/**
@@ -243,7 +239,7 @@ class Department extends Model {
 		return array_unique( array_merge( $deptidArray, $deptidRelatedArray ) );
 	}
 
-	public function findDeptmentIndexByDeptid( $deptMixed = NULL ) {
+	public function findDeptmentIndexByDeptid( $deptMixed = NULL, $param = array() ) {
 		if ( NULL === $deptMixed ) {
 			$condition = 1;
 		} else if ( empty( $deptMixed ) ) {
@@ -252,11 +248,15 @@ class Department extends Model {
 			$deptString = is_array( $deptMixed ) ? implode( ',', $deptMixed ) : $deptMixed;
 			$condition = " FIND_IN_SET( `deptid`, '{$deptString}' )";
 		}
-		$deptArray = IBOS::app()->db->createCommand()
+		$query = IBOS::app()->db->createCommand()
 				->select()
 				->from( $this->tableName() )
-				->where( $condition )
-				->queryAll();
+				->where( $condition );
+		if ( isset( $param['order'] ) ) {
+			$query->order( $param['order'] );
+		}
+
+		$deptArray = $query->queryAll();
 		$return = array();
 		if ( !empty( $deptArray ) ) {
 			foreach ( $deptArray as $dept ) {

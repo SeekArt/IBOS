@@ -228,9 +228,9 @@
 	</p>
 	<p class="clearfix lhf">
 	<span class="pull-left">已绑定人数</span>
-	<span class="pull-right xcbu xwb">0</span>
+	<span class="pull-right xcbu xwb"><%= data.bindCount %></span>
 	</p>
-	<a href="javascript:location.reload();" class="btn btn-block btn-primary btn-large">确定</button>
+	<a href="javascript:location.reload();" class="btn btn-block btn-primary btn-large">确定</a>
 	</div>
 </script>
 <script type="text/template" id="result_error_tpl">

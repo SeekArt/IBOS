@@ -19,6 +19,8 @@ namespace application\core\controllers;
 use application\core\utils\IBOS;
 use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
+use application\modules\role\model\AuthItem;
+use application\modules\role\utils\Auth;
 use CController;
 use CJSON;
 
@@ -334,6 +336,47 @@ class Controller extends CController {
      */
     public function filterRoutes( $routes ) {
         return false;
+    }
+
+    /**
+     * 当前用户是否有访问某个路由的权限
+     *
+     * @return bool
+     */
+    public function checkRouteAccess($routes) {
+        // 创建对应的控制器
+        $ca = IBOS::app()->createController($routes);
+        list($controller, $actionId) = $ca;
+
+        if (method_exists($controller, 'initBase')) {
+            $controller->initBase();
+        } else {
+            $controller->init();
+        }
+        $module = $controller->getModule()->getId();
+        // step1
+        if (!$controller->filterNotAuthModule($module)) {
+            $routes = strtolower($controller->getUniqueId() . '/' . $actionId);
+            if ($controller->isFilterRoute) {
+                $check = false;
+                // step2：是否使用config里的配置路由去验证
+                // 当useConfig被设置成true时，只有在config里设置的才会验证
+                // 当useConfig被设置成false时，将会通过filterRoutes去过滤不需要验证的route
+                if (!$controller->useConfig) {
+                    $check = !$controller->filterRoutes($routes) ? true : false;
+                } else {
+                    $check = AuthItem::model()->checkIsInByRoute($routes) ? true : false;
+                }
+                if (true === $check) {
+                    // step3
+                    if (!IBOS::app()->user->checkAccess($routes, Auth::getParams($routes))) {
+                        // 没有权限
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

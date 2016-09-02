@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 7468 2016-06-29 10:36:42Z Aeolus $
+ *	@version $Id: common.css 8018 2016-08-25 06:43:45Z tanghang $
  *	@modified 2013-03-22  
  */
 
@@ -1710,7 +1710,10 @@ a.progressCancel:hover {
 .o-binding-remove,
 .o-binding-forbidden,
 .o-sync-progress,
-.o-sync-success{
+.o-sync-success,
+.o-wx-unbinding,
+.o-tip-success,
+.o-tip-failure{
 	display: block;
 	background-image: url(../image/binding_guide.png);
 }
@@ -1758,6 +1761,7 @@ a.progressCancel:hover {
 	background-position: -508px -192px;
 }
 .o-back-arrow{
+	display: inline-block;
 	width: 9px;
 	height: 16px;
 	background-position: -490px -244px;
@@ -1807,6 +1811,18 @@ a.progressCancel:hover {
 	height: 72px;
 	background-position: -484px -120px;
 	margin: 40px auto 20px;
+}
+.o-tip-success,
+.o-tip-failure {
+	position: relative;
+	top: 2px;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-position: -528px -244px;
+}
+.o-tip-failure {
+	background-position: -544px -244px;
 }
 .ml12{
 	margin-left: 12px;

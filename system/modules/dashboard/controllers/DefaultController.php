@@ -73,12 +73,22 @@ class DefaultController extends BaseController {
 				if ( IBOS::app()->user->uid != 1 ) {
 					MainUtil::checkLicenseLimit( true );
 				}
-				$refer = IBOS::app()->user->getReturnUrl();
-				if ( $refer == $this->createUrl( 'default/index' ) || $refer === '/' ) {
-					$refer = $this->createUrl( 'index/index' );
+				$refer = '';
+				$httpRefer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+				$httpPath = parse_url($httpRefer);
+				if (isset($httpPath['query'])) {
+					parse_str($httpPath['query'], $arr);
+					if (isset($arr['refer'])) {
+						$refer = $arr['refer'];
+					}
 				}
-				$redirectUrl = $this->createUrl( $defaultUrl, array_filter( array( 'refer' => urldecode( $refer ) ) ) );
-				$this->success( IBOS::lang( 'Login succeed' )
+
+				if (empty($refer)) {
+                	$redirectUrl = $this->createUrl( $defaultUrl );
+				} else {
+					$redirectUrl = IBOS::app()->getBaseUrl() . $refer;
+				}
+                $this->success( IBOS::lang( 'Login succeed' )
 						, $redirectUrl );
 			} else {
 				// 记录登录错误日志
@@ -242,7 +252,7 @@ EOT;
 					'isShow' => true,
 				), 'optimize/cache' => array(
 					'lang' => 'Performance optimization',
-					'isShow' => ENGINE === 'SAAS' ? false : true,
+					'isShow' => false,
 				), 'date/index' => array(
 					'lang' => 'Date setup',
 					'isShow' => true,

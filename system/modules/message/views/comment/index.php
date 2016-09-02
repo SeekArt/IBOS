@@ -58,7 +58,7 @@ use application\core\utils\StringUtil;
 									<div class="msg-box" id="msgbox_<?php echo $comment['cid']; ?>">
 										<span class="msg-box-arrow"><i></i></span>
 										<div class="msg-box-body">
-											<p class="xcm mbm">
+											<p class="xcm mbm text-break">
 												<?php echo $comment['content']; ?>
 											</p>
 											<p class="tcm mb">

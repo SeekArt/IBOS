@@ -99,12 +99,7 @@ class BaseController extends Controller {
 	 * @return void
 	 */
 	public function init() {
-		$this->useConfig = true;
-		$this->errorParam = array( 'autoJump' => false, 'jumpLinksOptions' => array( '首页' => $this->createUrl( 'index/index' ), ) );
-		$this->user = IBOS::app()->user->isGuest ? array() : User::model()->fetchByUid( IBOS::app()->user->uid, true );
-		$this->_adminType = $this->checkAdministrator( $this->user );
-		$this->_sessionLimit = (int) ( TIMESTAMP - $this->_sessionLife );
-		$this->_cookieLimit = (int) ( TIMESTAMP - $this->_cookieLife );
+		$this->initBase();
 		$this->checkAccess();
 	}
 
@@ -139,6 +134,18 @@ class BaseController extends Controller {
 	protected function userLogin() {
 		IBOS::app()->user->loginUrl = array( $this->loginUrl );
 		IBOS::app()->user->loginRequired();
+	}
+
+	/**
+	 * 初始化后台管理所需标识
+	 */
+	public function initBase() {
+		$this->useConfig = true;
+		$this->errorParam = array('autoJump' => false, 'jumpLinksOptions' => array('首页' => $this->createUrl('index/index'),));
+		$this->user = IBOS::app()->user->isGuest ? array() : User::model()->fetchByUid(IBOS::app()->user->uid, true);
+		$this->_adminType = $this->checkAdministrator($this->user);
+		$this->_sessionLimit = (int)(TIMESTAMP - $this->_sessionLife);
+		$this->_cookieLimit = (int)(TIMESTAMP - $this->_cookieLife);
 	}
 
 	/**
@@ -235,7 +242,7 @@ class BaseController extends Controller {
 			$requestUrl = IBOS::app()->getRequest()->getUrl();
 			$loginUrl = IBOS::app()->getUrlManager()->createUrl( $this->loginUrl );
 			if ( strpos( $requestUrl, $loginUrl ) !== 0 ) {
-				$this->userLogin();
+				return $this->userLogin();
 			}
 		}
 	}

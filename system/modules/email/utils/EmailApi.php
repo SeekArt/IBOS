@@ -83,7 +83,7 @@ class EmailApi {
 				->leftJoin( '{{user}} u', 'b.fromid = u.uid' );
 		switch ( $type ) {
 			case "inbox":
-				$command->where( "`toid`='{$uid}' AND `fid`= 1 AND `isdel` = 0" );
+				$command->where( "`toid`='{$uid}' AND `fid`= 1 AND `isdel` = 0 AND `isweb` != 1" );
 				break;
 			case "unread":
 				$command->where( "`toid`='{$uid}' AND (`isread`='' OR `isread` = 0) AND `isdel`= 0 AND `fid` = 1" );

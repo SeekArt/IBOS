@@ -69,13 +69,23 @@ use application\modules\dashboard\model\LoginTemplate;
 									<a href="javascript:;" data-action="followWx" class="scan-link xcbu">查看详情</a>
 								</div>
 							<?php endif; ?>
+							<?php
+							$host = $_SERVER['HTTP_HOST'];
+							$demoUsername = $demoPassword = '';
+							if ( $host == 'demo.ibos.com.cn' ) {
+								$array = array( '钟汉唐', '郑洁', '郑洁', '彭君华', '彭君华' );
+								$index = rand( 0, 4 );
+								$demoUsername = $array[$index];
+								$demoPassword = '123456';
+							}
+							?>
 							<div class="fill" id="login_panel">
 								<div class="login-item">
 									<div class="input-group" id="account_wrap">
 										<span class="input-group-addon addon-icon input-large">
 											<i class="o-lg-user"></i>
 										</span>
-										<input type="text" tabIndex="101" id="account" class="input-large lg-acc-input" name="username" />
+										<input type="text" tabIndex="101" id="account" class="input-large lg-acc-input" name="username" value = "<?php echo $demoUsername; ?>"/>
 									</div>
 								</div>
 								<div class="login-item">
@@ -83,7 +93,7 @@ use application\modules\dashboard\model\LoginTemplate;
 										<span class="input-group-addon addon-icon input-large">
 											<i class="o-lg-lock"></i>
 										</span>
-										<input type="password" id="password" tabIndex="102" class="input-large" name="password"/>
+										<input type="password" id="password" tabIndex="102" class="input-large" name="password" value = "<?php echo $demoPassword; ?>"/>
 									</div>
 									<div>
 										<?php if ( $account['autologin'] !== '-1' ): ?>

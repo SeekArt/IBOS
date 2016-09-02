@@ -367,3 +367,5 @@ INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('money', '金额', ''
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('tel', '电话号码', '');
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('zipcode', '邮政编码', '');
 INSERT INTO `{{regular}}` (`type`, `desc`, `regex`) VALUES('email', 'Email', '');
+UPDATE `{{setting}}` SET `skey`='creditsformulaexp', `svalue`='<span data-type=\"entry\" data-value=\"经验\" class=\"entry disabled\">经验</span><span data-type=\"operator\" data-value=\"+\" class=\"operator\">+</span><span data-type=\"entry\" data-value=\"金钱\" class=\"entry disabled\">金钱</span><span data-type=\"operator\" data-value=\"*\" class=\"operator\">*</span><span data-type=\"number\" data-value=\"2\" class=\"number\">2</span><span data-type=\"operator\" data-value=\"+\" class=\"operator\">+</span><span data-type=\"entry\" data-value=\"贡献\" class=\"entry disabled\">贡献</span><span data-type=\"operator\" data-value=\"*\" class=\"operator\">*</span><span data-type=\"number\" data-value=\"3\" class=\"number\">3</span>' WHERE (`skey`='creditsformulaexp');
+

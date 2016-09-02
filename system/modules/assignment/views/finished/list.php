@@ -24,8 +24,8 @@ use application\modules\main\utils\Main;
 
 					<div class="search pull-right">
 						<input type="text" placeholder="<?php echo $lang['Enter the user or task name']; ?>" name="keyword" id="mn_search" nofocus value="<?php if ( Env::getRequest( 'param' ) == 'search' ) { echo Main::getCookie( 'keyword' ); }; ?>">
-						<input type="hidden" name="search" value="1">
 						<a href="javascript:;">search</a>
+						<input type="hidden" name="search" value="1">
 					</div>
 				</form>
 			</div>
@@ -53,16 +53,16 @@ use application\modules\main\utils\Main;
 										</td>
 										<td width="36">
 											<span class="avatar-circle avatar-circle-small">
-												<img src="<?php echo $assignment['charge']['avatar_small']; ?>">
+												<img src="<?php echo $assignment['designee']['avatar_small']; ?>">
 											</span>
 										</td>
 										<td>
 											<a class="xcm" target="_blank" href="<?php echo $this->createUrl( 'default/show', array( 'assignmentId' => $assignment['assignmentid'] ) ) ?>"><?php echo $assignment['subject']; ?></a>
 											<div class="fss">
 												<?php if ( $assignment['designeeuid'] == IBOS::app()->user->uid ): ?>
-													<?php echo $lang['Arrange to']; ?> <span class="ilsep"><?php echo $assignment['charge']['realname']; ?></span>
+													<?php echo $lang['Arrange to']; ?> <span class="ilsep"><?php echo $assignment['designee']['realname']; ?></span>
 												<?php else: ?>
-													<?php echo $lang['The originator']; ?> <span class="ilsep"><?php echo $assignment['designee']['realname'] ?></span>
+													<?php echo $lang['The originator']; ?> <span class="ilsep"><?php echo $assignment['designee']['realname']; ?></span>
 												<?php endif; ?>
 												<?php echo $assignment['st'] ?> -- <?php echo $assignment['et'] ?>
 											</div>

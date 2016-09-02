@@ -17,7 +17,6 @@
 
 namespace application\modules\user\model;
 
-use application\core\utils as util;
 use application\core\model\Model;
 use application\core\utils\Convert;
 use application\core\utils\IBOS;
@@ -75,16 +74,20 @@ class UserBinding extends Model {
         return $rs;
     }
 
-    /**
-     * 获取指定用户指定app的绑定值
-     * @param integer $uid 用户ID
-     * @param string $app 绑定类型
-     * @return string
-     */
-    public function fetchBindValue( $uid, $app ) {
-        $rs = $this->fetch( array( 'select' => 'bindvalue', 'condition' => sprintf( "uid = %d AND app ='%s'", $uid, $app ) ) );
-        return isset( $rs['bindvalue'] ) ? $rs['bindvalue'] : '';
-    }
+	/**
+	 * 获取指定用户指定app的绑定值
+	 * @param integer $uid 用户ID
+	 * @param string $app 绑定类型
+	 * @return string
+	 */
+	public function fetchBindValue( $uid, $app ) {
+		$uid = IBOS::app()->db->createCommand()
+				->select( 'uid' )
+				->from( $this->tableName() )
+				->where( " `uid` = '{$uid}' AND `app` = '{$app}' " )
+				->queryScalar();
+		return $uid ? $uid : 0;
+	}
 
     /**
      * 根据绑定值,绑定类型查找UID

@@ -21,6 +21,8 @@
      */
     var URL = window.UEDITOR_HOME_URL || getUEBasePath();
 
+    var PLATFORM = window.PLATFORM = G.PLATFORM;
+
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
      */
@@ -30,7 +32,7 @@
         UEDITOR_HOME_URL: URL
 
         // 服务器统一请求接口路径
-        , serverUrl: URL + "php/controller.php"
+        , serverUrl: Ibos.app.url('main/editor/index')
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的从新定义
         , toolbars: [[
@@ -352,14 +354,15 @@
     }
 
     function getConfigFilePath() {
+        // var configPath = document.getElementsByTagName('script'),
+        //     confUrl = configPath[ configPath.length - 1 ].src,
+        //     index = confUrl.indexOf("app");
 
-        var configPath = document.getElementsByTagName('script'),
-            confUrl = configPath[ configPath.length - 1 ].src,
-            index = confUrl.indexOf("main");
 
-        if( ~index ) {
-            confUrl = confUrl.slice(0, index) + "lib/ueditor/editor_config.js?xxx";
-        }
+        // if( ~index ) {
+
+        // }
+        var confUrl = G.STATIC_URL + "/js/lib/ueditor/editor_config.js?xxx";
 
         return confUrl;
 
@@ -445,10 +448,13 @@ UEDITOR_CONFIG.mode = {
             'directionalityltr', 'directionalityrtl', 'indent', '|',
             'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
             'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
-            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'pagebreak', 'template', 'background', '|',
+            'simpleupload', 'insertimage', 'emotion', 'attachment', 'map', 'insertframe', 'insertcode', 'pagebreak', 'template', 'background', '|',
             'horizontal', 'date', 'time', 'spechars', 'wordimage', '|',
             'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
-            'print', 'preview', 'searchreplace', 'help', 'drafts'
+            'print', 'preview', 'searchreplace', 'drafts'
         ]
     ]
 };
+if( "saas" != PLATFORM ){
+    UEDITOR_CONFIG.mode.full[0].push("scrawl", "insertvideo", "music", "gmap", "help");
+}

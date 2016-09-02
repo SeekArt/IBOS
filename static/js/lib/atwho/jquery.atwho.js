@@ -16,11 +16,7 @@
 
 (function() {
   (function(factory) {
-    if (typeof define === 'function' && define.amd) {
-      return define(['jquery'], factory);
-    } else {
-      return factory(window.jQuery);
-    }
+    factory(window.jQuery);
   })(function($) {
     "use strict";
     var Caret, Mirror, methods, pluginName;
@@ -302,11 +298,7 @@
   var __slice = [].slice;
 
   (function(factory) {
-    if (typeof define === 'function' && define.amd) {
-      return define(['jquery'], factory);
-    } else {
-      return factory(window.jQuery);
-    }
+    factory(window.jQuery);
   })(function($) {
     var $CONTAINER, Api, App, Controller, DEFAULT_CALLBACKS, DEFAULT_TPL, KEY_CODE, Model, View;
     App = (function() {

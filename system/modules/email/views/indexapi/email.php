@@ -25,7 +25,7 @@ use application\core\utils\StringUtil;
 						<span class="<?php if ( !$email['isread'] ): ?>xwb<?php endif; ?> fss"><?php echo $email['realname']; ?></span>
 					</td>
 					<td width="20">
-						<?php if ( $email['ismark'] ): ?><a href="javascript:;" data-act="mark" class="o-mark"></a><?php endif; ?>
+						<?php if ( $email['ismark'] ): ?><i class="o-mark"></i><?php endif; ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

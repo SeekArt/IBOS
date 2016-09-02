@@ -32,8 +32,8 @@
                                     <td>
                                         <div class="fill" data-node-type="oldPlan">
                                             <div class="bamboo-pgb pull-right">
-                                                <span class="cbtn pull-right ml"></span>
-                                                <span data-node-type="starProgress" data-value="<?php echo $diaryRecord['schedule']; ?>"></span>
+                                                <span class="pull-left xcn fss" id="processbar_info_<?php echo $diaryRecord['recordid']; ?>"><?php echo $diaryRecord['schedule'] * 10 . "%"; ?></span>
+                                                <span data-node-type="starProgress" data-id="<?php echo $diaryRecord['schedule']; ?>"></span>
                                                 <input type="hidden" name="originalPlan[<?php echo $diaryRecord['recordid']; ?>]" value="<?php echo $diaryRecord['schedule']; ?>">
                                             </div>
                                             <span class="da-detail-num" data-toggle="badge"><?php echo $key + 1; ?>.</span> <?php echo $diaryRecord['content']; ?>

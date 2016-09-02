@@ -32,7 +32,7 @@ class CoApi extends Api {
     // API 中心获取用户信息接口链接
     const API_USER_GET_INFO = 'http://api.ibos.cn/v2/users/view';
     // API 中心查询企业接口链接
-    const API_CORP_SEARCH = 'http://api.ibos.cn/v2/corp/search';
+    const API_CORP_SEARCH = 'http://api.ibos.cn/v3/corp/search';
     // API 中心获取企业信息接口链接
     const API_CORP_GET_INFO = 'http://api.ibos.cn/v2/corp/view';
     // API 中心获取企业列表信息接口链接

@@ -2,9 +2,8 @@
 
 namespace application\modules\main\components;
 
-use application\core\utils\Convert;
+use application\core\utils\File;
 use application\core\utils\IBOS;
-use application\core\utils\Image;
 use application\modules\main\model\Setting as SettingModel;
 use CJSON;
 
@@ -13,15 +12,18 @@ use CJSON;
  */
 class EditorUploader {
 
-	private $fileField;   //文件域名
-	private $file;  //文件上传对象
-	private $config;   //配置信息
-	private $oriName;  //原始文件名
+	private $fileField; //文件域名
+	private $file; //文件上传对象
+	private $base64; //文件上传对象
+	private $config; //配置信息
+	private $oriName; //原始文件名
 	private $fileName; //新文件名
 	private $fullName; //完整文件名,即从当前配置目录开始的URL
+	private $filePath; //完整文件名,即从当前配置目录开始的URL
 	private $fileSize; //文件大小
 	private $fileType; //文件类型
-	private $stateInfo;   //上传状态信息,
+	private $stateInfo; //上传状态信息,
+	private $type; //文件类型，普通文件还是图片
 	private $stateMap = array( //上传状态映射表，国际化用户需考虑此处数据的国际化
 		"SUCCESS", //上传成功标记，在UEditor中内不可改变，否则flash判断会出错
 		"文件大小超出 upload_max_filesize 限制",
@@ -29,119 +31,149 @@ class EditorUploader {
 		"文件未被完整上传",
 		"没有文件被上传",
 		"上传文件为空",
-		"POST" => "文件大小超出 post_max_size 限制",
-		"SIZE" => "文件大小超出网站限制",
-		"TYPE" => "不允许的文件类型",
-		"DIR" => "目录创建失败",
-		"IO" => "输入输出错误",
-		"UNKNOWN" => "未知错误",
-		"MOVE" => "文件保存时出错"
+		"ERROR_TMP_FILE" => "临时文件错误",
+		"ERROR_TMP_FILE_NOT_FOUND" => "找不到临时文件",
+		"ERROR_SIZE_EXCEED" => "文件大小超出网站限制",
+		"ERROR_TYPE_NOT_ALLOWED" => "文件类型不允许",
+		"ERROR_CREATE_DIR" => "目录创建失败",
+		"ERROR_DIR_NOT_WRITEABLE" => "目录没有写权限",
+		"ERROR_FILE_MOVE" => "文件保存时出错",
+		"ERROR_FILE_NOT_FOUND" => "找不到上传文件",
+		"ERROR_WRITE_CONTENT" => "写入文件内容错误",
+		"ERROR_UNKNOWN" => "未知错误",
+		"ERROR_DEAD_LINK" => "链接不可用",
+		"ERROR_HTTP_LINK" => "链接不是http链接",
+		"ERROR_HTTP_CONTENTTYPE" => "链接contentType不正确",
+		"INVALID_URL" => "非法 URL",
+		"INVALID_IP" => "非法 IP"
 	);
 
 	/**
 	 * 构造函数
 	 * @param string $fileField 表单名称
 	 * @param array $config  配置项
-	 * @param bool $base64  是否解析base64编码，可省略。若开启，则$fileField代表的是base64编码的字符串表单名
+	 * @param string $type  base64编码或者上传类型
 	 */
-	public function __construct( $fileField, $config, $base64 = false ) {
+	public function __construct( $fileField, $config, $type = 'upload' ) {
 		$this->fileField = $fileField;
 		$this->config = $config;
+		$this->type = isset( $this->config['type'] ) ? $this->config['type'] : '';
 		$this->stateInfo = $this->stateMap[0];
-		$this->upFile( $base64 );
+		if ( $type == "remote" ) {
+			$this->saveRemote();
+		} else if ( $type == "base64" ) {
+			$this->upBase64();
+		} else {
+			$this->upFile();
+		}
+	}
+
+	private function saveRemote() {
+		return false; // 暂时不支持
+	}
+
+	// 暂时不支持saas版
+	private function upBase64() {
+		$base64Data = $_POST[$this->fileField];
+		$img = base64_decode( $base64Data );
+		$this->oriName = "";
+		$this->fileSize = strlen( $img );
+		$this->fileType = '.png';
+		$this->fileName = time() . rand( 1, 10000 ) . $this->fileType;
+		$this->fullName = $this->getFolder() . '/' . $this->fileName;
+		//检查文件大小是否超出限制
+		if ( !$this->checkSize() ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_SIZE_EXCEED" );
+			return;
+		}
+		if ( !file_put_contents( $this->fullName, $img ) ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_WRITE_CONTENT" );
+			return;
+		} else { //移动成功
+			$this->stateInfo = $this->stateMap[0];
+		}
+	}
+
+	/**
+	 * 获取文件扩展名
+	 * @return string
+	 */
+	private function getFileExt() {
+		return strtolower( strrchr( $this->oriName, '.' ) );
 	}
 
 	/**
 	 * 上传文件的主处理方法
-	 * @param $base64
 	 * @return mixed
 	 */
-	private function upFile( $base64 ) {
-		//处理base64上传
-		if ( "base64" == $base64 ) {
-			$content = $_POST[$this->fileField];
-			$this->base64ToImage( $content );
-			return;
-		}
-
+	private function upFile() {
 		//处理普通上传
-		$file = $this->file = $_FILES[$this->fileField];
-		if ( !$file ) {
-			$this->stateInfo = $this->getStateInfo( 'POST' );
+		$this->file = $_FILES[$this->fileField];
+		if ( !$this->file ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_FILE_NOT_FOUND" );
 			return;
 		}
 		if ( $this->file['error'] ) {
-			$this->stateInfo = $this->getStateInfo( $file['error'] );
+			$this->stateInfo = $this->getStateInfo( $this->file['error'] );
 			return;
-		}
-		if ( !is_uploaded_file( $file['tmp_name'] ) ) {
-			$this->stateInfo = $this->getStateInfo( "UNKNOWN" );
+		} else if ( !file_exists( $this->file['tmp_name'] ) ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_TMP_FILE_NOT_FOUND" );
+			return;
+		} else if ( !is_uploaded_file( $this->file['tmp_name'] ) ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_TMPFILE" );
 			return;
 		}
 
-		$this->oriName = $file['name'];
-		$this->fileSize = $file['size'];
+		$this->oriName = $this->file['name'];
+		$this->fileSize = $this->file['size'];
 		$this->fileType = $this->getFileExt();
-
+		$this->fullName = $this->getFolder() . '/' . $this->getName();
 		if ( !$this->checkSize() ) {
-			$this->stateInfo = $this->getStateInfo( "SIZE" );
+			$this->stateInfo = $this->getStateInfo( "ERROR_SIZE_EXCEED" );
 			return;
 		}
 		if ( !$this->checkType() ) {
-			$this->stateInfo = $this->getStateInfo( "TYPE" );
+			$this->stateInfo = $this->getStateInfo( "ERROR_TYPE_NOT_ALLOWED" );
 			return;
 		}
-		$this->fullName = $this->getFolder() . '/' . $this->getName();
-		$isSuccess = false;
-		if ( $this->stateInfo == $this->stateMap[0] ) {
-			$url = IBOS::engine()->io()->file()->uploadFile( $this->fullName, $file["tmp_name"] );
-			if ( false === $url ) {
-				$this->stateInfo = $this->getStateInfo( "MOVE" );
-			} else {
-				$this->fullName = $url;
-				$isSuccess = true;
-			}
-		}
-		if ( true === $isSuccess ) {
-			if ( $this->config['water'] ) {
-				$waterModule = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'watermodule' ) );
-				if ( in_array( 'baidu', $waterModule ) ) {
-					$waterConfig = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'waterconfig' ) );
-					if ( $waterConfig['watermarktype'] == 'text' ) {
-						$textConfig = $waterConfig['watermarktext'];
-						$size = ( $textConfig['size'] > 0 && $textConfig['size'] <= 48 ) ? $textConfig['size'] : 16; //文字水印大小限制在1-48
-						$fontPath = !empty( $textConfig['fontpath'] ) ? $textConfig['fontpath'] : 'msyh.ttf'; //字体默认是微软雅黑
-						$rgb = Convert::hexColorToRGB( $textConfig['color'] );
-						Image::waterMarkString( $textConfig['text'], $size, $this->fullName
-								, $this->fullName, $waterConfig['watermarkposition'], $waterConfig['watermarkquality']
-								, $rgb, $fontPath );
-					} else {
-						$pathinfo = pathinfo( $waterConfig['watermarkimg'] );
-						Image::water( $this->fullName, $pathinfo['dirname'] . '/' . $pathinfo['filename'] . '_water.' . $pathinfo['extension'], $this->fullName
-								, $waterConfig['watermarkposition'], $waterConfig['watermarktrans']
-								, $waterConfig['watermarkquality'] );
-					}
-				}
-			}
+
+		$isSuccess = $this->handleUpload();
+		if ( true === $isSuccess && $this->type == 'image' ) {
+			$this->handleWater();
 		}
 	}
 
-	/**
-	 * 处理base64编码的图片上传
-	 * @param $base64Data
-	 * @return mixed
-	 */
-	private function base64ToImage( $base64Data ) {
-		$img = base64_decode( $base64Data );
-		$this->fileName = time() . rand( 1, 10000 ) . ".png";
-		$this->fullName = $this->getFolder() . '/' . $this->fileName;
-		if ( !file_put_contents( $this->fullName, $img ) ) {
-			$this->stateInfo = $this->getStateInfo( "IO" );
-			return;
+	private function handleUpload() {
+		$url = Ibos::engine()->io()->file()->uploadFile( $this->fullName, $this->file["tmp_name"] );
+		if ( false === $url ) {
+			$this->stateInfo = $this->getStateInfo( "ERROR_FILE_MOVE" );
+			return false;
+		} else {
+			$this->fullName = $this->type == 'image' ? File::imageName( $this->fullName ) : File::fileName( $this->fullName );
+			return true;
 		}
-		$this->oriName = "";
-		$this->fileSize = strlen( $img );
-		$this->fileType = ".png";
+	}
+
+	private function handleWater() {
+		if ( $this->config['water'] ) {
+			$waterModule = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'watermodule' ) );
+			if ( in_array( 'baidu', $waterModule ) ) {
+				$waterConfig = CJSON::decode( SettingModel::model()->fetchSettingValueByKey( 'waterconfig' ) );
+				if ( $waterConfig['watermarktype'] == 'text' ) {
+					$textConfig = $waterConfig['watermarktext'];
+					$size = ( $textConfig['size'] > 0 && $textConfig['size'] <= 48 ) ? $textConfig['size'] : 16; //文字水印大小限制在1-48
+					$fontPath = !empty( $textConfig['fontpath'] ) ? $textConfig['fontpath'] : 'msyh.ttf'; //字体默认是微软雅黑
+
+					File::waterString( $textConfig['text'], $size, $this->fullName
+							, $this->fullName, $waterConfig['watermarkposition'], $waterConfig['watermarktrans'], $waterConfig['watermarkquality']
+							, $textConfig['color'], $fontPath );
+				} else {
+					File::waterPic( $this->fullName, $waterConfig['watermarkimg'], $this->fullName
+							, $waterConfig['watermarkposition'], $waterConfig['watermarktrans']
+							, $waterConfig['watermarkquality'], $waterConfig['watermarkminheight'], $waterConfig['watermarkminwidth'] );
+				}
+			}
+		}
 	}
 
 	/**
@@ -190,14 +222,6 @@ class EditorUploader {
 	 */
 	private function checkSize() {
 		return $this->fileSize <= ( $this->config["maxSize"] * 1024 );
-	}
-
-	/**
-	 * 获取文件扩展名
-	 * @return string
-	 */
-	private function getFileExt() {
-		return strtolower( strrchr( $this->file["name"], '.' ) );
 	}
 
 	/**

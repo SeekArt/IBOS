@@ -238,7 +238,7 @@ ReportType.typeTable = {
 					var $item = $.tmpl(that.template, res).hide().replaceAll($row).fadeIn();
 					that.$el.trigger("updateType", { id: id, data: res, $item: $item });
 				}
-				Ui.tip(data.msg, hasSuccess ? "" : "danger");
+				Ui.tip(res.msg, hasSuccess ? "" : "danger");
 			});
 		}
 	},

@@ -35,53 +35,59 @@ class Article {
     //草稿
     const TYPE_DRAFT = 'draft';
 
-    /**
-     * 列表查询条件组合
-     * @param string $type 全部、未读、已读、未审核、草稿 这几种类型
-     * @param string $catid 分类id 包括当前分类及它的子类以','号分割的字符串
-     * @param string $condition 其他的查询条件
-     * @return array $condition 组合好的查询条件
-     */
-    public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
-        $user = User::model()->fetchByUid( $uid );
-        $upDeptid = Department::model()->queryDept( $user['deptid'] );
-        $typeWhere = self::joinTypeCondition( $type, $uid, $catid );
-        if ( !empty( $condition ) ) {
-            $condition .=" AND " . $typeWhere;
-        } else {
-            $condition = $typeWhere;
-        }
-        //加上阅读权限判断
-        $allDeptId = array_filter( array_unique( explode( ',', $upDeptid . $user['alldeptid'] ) ) );
-        $deptCondition = '';
-        if ( count( $allDeptId ) > 0 ) {
-            foreach ( $allDeptId as $deptId ) {
-                $deptCondition .= "FIND_IN_SET('$deptId',deptid) OR ";
-            }
-            $deptCondition = substr( $deptCondition, 0, -4 );
-        } else {
-            $deptCondition = "FIND_IN_SET('',deptid)";
-        }
-        // $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
-        $scopeCondition = " ( ((deptid='alldept' OR "
-                . "{$deptCondition} OR "
-                . "FIND_IN_SET('{$user['allposid']}',positionid) OR "
-                . "FIND_IN_SET('{$uid}',uid) OR "
-                . "FIND_IN_SET('{$user['allroleid']}',roleid)) OR "
-                . "(author='{$uid}') OR (approver='{$uid}')) ";
+	/**
+	 * 列表查询条件组合
+	 * @param string $type 全部、未读、已读、未审核、草稿 这几种类型
+	 * @param string $catid 分类id 包括当前分类及它的子类以','号分割的字符串
+	 * @param string $condition 其他的查询条件
+	 * @return array $condition 组合好的查询条件
+	 */
+	public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
+		$user = User::model()->fetchByUid( $uid );
+		$upDeptid = Department::model()->queryDept( $user['deptid'] );
+		$typeWhere = self::joinTypeCondition( $type, $uid, $catid );
+		if ( !empty( $condition ) ) {
+			$condition .=" AND " . $typeWhere;
+		} else {
+			$condition = $typeWhere;
+		}
+		//加上阅读权限判断
+		$allDeptId = array_filter( array_unique( explode( ',', $upDeptid . "," . $user['alldeptid'] ) ) );
+		$deptCondition = '';
+		$deptConditionArray = array();
+		if ( count( $allDeptId ) > 0 ) {
+			foreach ( $allDeptId as $deptId ) {
+				$deptConditionArray[] = "FIND_IN_SET('$deptId',deptid)";
+			}
+			$deptCondition = implode( ' OR ', $deptConditionArray );
+		} else {
+			$deptCondition = "FIND_IN_SET('',deptid)";
+		}
+		// $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
+		$scopeCondition = " ( ((deptid='alldept' OR "
+				. "{$deptCondition} OR "
+				. "FIND_IN_SET('{$user['allposid']}',positionid) OR "
+				. "FIND_IN_SET('{$uid}',uid) OR "
+				. "FIND_IN_SET('{$user['allroleid']}',roleid)) OR "
+				. "(author='{$uid}') OR (approver='{$uid}')) ";
 
-        // 如果新闻当前状态为：未审核
-        // 审核人可以看到所有属于他的所有未审核新闻
-        if (self::TYPE_NOTALLOW === $type) {
-            $scopeCondition .= " OR {$typeWhere} ";
-        }
-        $scopeCondition .= " ) ";
-        $condition.=" AND " . $scopeCondition;
-        if ( !empty( $catid ) ) {
-            $condition.=" AND catid IN ($catid)";
-        }
-        return $condition;
-    }
+		// 如果新闻当前状态为：未审核
+		// 审核人可以看到所有属于他的所有未审核新闻
+		if ( self::TYPE_NOTALLOW === $type ) {
+			$scopeCondition .= " OR {$typeWhere} ";
+		}
+		$scopeCondition .= " ) ";
+		$condition.=" AND " . $scopeCondition;
+		if ( !empty( $catid ) ) {
+			$condition.=" AND catid IN ($catid)";
+		}
+
+		// 只有对应步骤的审核人才能看到未审核新闻
+		if ( self::TYPE_NOTALLOW === $type ) {
+			$condition .= " AND (approver IN (0, {$uid})) ";
+		}
+		return $condition;
+	}
 
     /**
      * 获取类型条件
@@ -141,23 +147,26 @@ class Article {
         return $condition . $newCondition;
     }
 
-    /**
-     * 判断信息中心的阅读权限
-     * @param integer $uid 用户访问uid
-     * @param array $data 文章数据
-     * @return boolean
-     */
-    public static function checkReadScope( $uid, $data ) {
-        if ( $data['deptid'] == 'alldept' ) {
-            return true;
-        }
-        if ( $uid == $data['author'] ) {
-            return true;
-        }
-        //如果都为空，返回true
-        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
-            return true;
-        }
+	/**
+	 * 判断信息中心的阅读权限
+	 * @param integer $uid 用户访问uid
+	 * @param array $data 文章数据
+	 * @return boolean
+	 */
+	public static function checkReadScope( $uid, $data ) {
+		if ( $data['deptid'] == 'alldept' ) {
+			return true;
+		}
+		if ( $uid == $data['author'] ) {
+			return true;
+		}
+		//如果都为空，返回true
+		if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
+			return true;
+		}
+		if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) ) {
+			return true;
+		}
         //得到用户的部门id,如果该id存在于文章部门范围之内,返回true
         $user = User::model()->fetch( array( 'select' => array( 'deptid', 'positionid' ), 'condition' => 'uid=:uid', 'params' => array( ':uid' => $uid ) ) );
         $departRelated = DepartmentRelated::model()->fetchAllDeptIdByUid( $uid );
@@ -166,9 +175,11 @@ class Article {
         if ( StringUtil::findIn( $user['deptid'] . ',' . implode( ',', $departRelated ), $childDeptid . ',' . $data['deptid'] ) ) {
             return true;
         }
-        //取得文章岗位范围Id与用户岗位相比较
+		//取得文章岗位范围Id与用户岗位相比较,话说写这个有什么用呢？因为无论审核人在不在这个文章发布的岗位发布范围内，他作为审核人肯定可以查看审核啦！因此这段代码可以说写了也没有什么用。
         if ( StringUtil::findIn( $data['positionid'], $user['positionid'] ) ) {
             return true;
+		}else{
+		    return true;
         }
         if ( StringUtil::findIn( $data['uid'], $uid ) ) {
             return true;

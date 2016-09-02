@@ -227,9 +227,9 @@ Class FileOperationApi extends System {
 			// 如果是文件夹，找深层文件
 			if ( $s['type'] == 1 ) {
 				$fid = File::model()->addDir( $targetFid, $s['name'], $fileAttr->uid, $fileAttr->belongType, $fileAttr->cloudid );
-				$allSubs = File::model()->fetchAllSubByIdpath( $s['fid'] );
+				$allSubs = File::model()->fetchNoDelSubByIdpath( $s['fid'] );
 				$subs = FileData::hanldleLevelChild( $allSubs, $s['fid'] );
-				$this->insertCopyData( $fileAttr, $subs, $fid );
+				$this->insertSingleCopyData( $fileAttr, $subs, $fid );
 			} else {
 				File::model()->copy( $targetFid, $s, $fileAttr->uid, $fileAttr->belongType, $fileAttr->cloudid );
 			}
@@ -255,7 +255,21 @@ Class FileOperationApi extends System {
 		}
 		return true;
 	}
-
+    /*
+     * 文件柜递归添加复制数据
+     */
+    private function insertSingleCopyData( FileAttr $fileAttr, $files, $targetFid ) {
+        foreach ( $files as $f ) {
+            // 如果是文件夹，找深层文件
+            if ( $f['type'] == 1 ) {
+                $fid = File::model()->addDir( $targetFid, $f['name'], $fileAttr->uid, $fileAttr->belongType, $fileAttr->cloudid );
+                $this->insertCopyData( $fileAttr, $f['child'], $fid );
+            } else {
+                File::model()->copy($targetFid, $f, $fileAttr->uid, $fileAttr->belongType, $fileAttr->cloudid);
+            }
+        }
+        return true;
+    }
 	/**
 	 * 剪切
 	 * @param FileAttr $fileAttr 文件属性对象

@@ -6471,10 +6471,17 @@ input.xcgn{ color: #7CB81C; } /*Green*/
   border-bottom-right-radius: 4px;
 }
 
-.ellipsis{
+.ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.text-break {
+  display: inline-block;
+  width: auto;
+  word-spacing: normal;
+  word-break: break-word;
 }
 
 .o16,

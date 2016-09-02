@@ -18,7 +18,7 @@ use Exception;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-3-24 17:07:27
- * @version $Id: ImportParent.php 7288 2016-05-30 04:05:21Z tanghang $
+ * @version $Id: ImportParent.php 8018 2016-08-25 06:43:45Z tanghang $
  */
 class ImportParent {
 
@@ -275,7 +275,6 @@ class ImportParent {
 				$pass = $this->handleCheck();
 				if ( $pass ) {
 					$successCount ++;
-					$this->error[$i]['text'] .='成功！';
 				} else {
 					$failData[] = $shiftRow;
 					if ( isset( $this->import->update[$i] ) ) {
@@ -286,6 +285,8 @@ class ImportParent {
 					}
 					$failCount ++;
 				}
+				$this->error[$i]['text'] .=
+						true === $this->error[$i]['status'] ? '成功！' : '失败！';
 			}
 			if ( !empty( $this->import->insert ) || !empty( $this->import->update ) ) {
 				$this->handleData();
@@ -342,6 +343,9 @@ class ImportParent {
 			$this->error[$i]['status'] = false;
 			return false;
 		}
+		if ( false === $this->error[$i]['status'] ) {
+			return false;
+		}
 		return true;
 	}
 
@@ -363,7 +367,8 @@ class ImportParent {
 	private function checkRequired( $data, $dataFieldName ) {
 		$i = $this->import->i;
 		if ( empty( $data ) ) {
-			$this->error[$i]['status'] .= $dataFieldName . '必填;';
+			$this->error[$i]['status'] = false;
+			$this->error[$i]['text'] .= $dataFieldName . '必填;';
 		}
 	}
 

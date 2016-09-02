@@ -19,8 +19,8 @@ use application\core\utils\IBOS;
 					<?php }else if(  is_array( $voteData['vote']['remainTime'] )){ ?>
 						<?php echo IBOS::lang( 'Distance vote end time' , 'vote.default' ); ?><?php echo $voteData['vote']['remainTime']['day']; ?><?php echo IBOS::lang( 'Day','date' ); ?><?php echo $voteData['vote']['remainTime']['hour']; ?><?php echo IBOS::lang('Hour', 'date' ); ?><?php echo $voteData['vote']['remainTime']['minute']; ?><?php echo IBOS::lang('Min', 'date' ); ?><?php echo $voteData['vote']['remainTime']['second']; ?><?php echo IBOS::lang ('Sec', 'date' ); ?>
 					<?php } ?>
-				<?php }else if($voteStatus==0){ ?>
-					<?php echo IBOS::lang( 'Closed' , 'vote.default' ); ?>
+				<?php }else if($voteStatus==2){ ?>
+					<?php echo Ibos::lang( 'Closed' , 'vote.default' ); ?>
 				<?php } ?>
 				| <?php if($voteData['vote']['ismulti']==0){ echo IBOS::lang( 'Single select' , 'vote.default' );}else{echo IBOS::lang( 'Multi select' , 'vote.default' ).' | '.IBOS::lang( 'Max select number' ,'vote.default' ).$voteData['vote']['maxselectnum'].IBOS::lang( 'Item' ,'vote.default' );} ?>
 			</div>
@@ -28,7 +28,7 @@ use application\core\utils\IBOS;
 	</div>
 	<div class="vote-body" id="vote_text">
 		<!--如果投票状态为有效且用户已经投票，显示用户投票数据，提示用户已投票-->
-		<?php if(($voteStatus==1||$voteStatus==0) && $userHasVote==true){ ?>
+		<?php if(($voteStatus==1||$voteStatus==2) && $userHasVote==true){ ?>
 			<?php foreach ( $voteData['voteItemList'] as $voteItem ) { ?>
 				<div class="vote-item clearfix">
 					<label>
@@ -90,7 +90,7 @@ use application\core\utils\IBOS;
 			<?php } ?>
 		<?php } ?>
 		<!--如果投票状态为已结束且用户未投票，显示用户投票数据-->
-		<?php if($voteStatus==0 && $userHasVote==false){ ?>
+		<?php if($voteStatus==2 && $userHasVote==false){ ?>
 			<?php foreach ( $voteData['voteItemList'] as $voteItem ) { ?>
 				<div class="vote-item clearfix">
 					<label>

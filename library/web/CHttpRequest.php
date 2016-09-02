@@ -7,6 +7,7 @@
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
+use application\core\utils\Ibos;
 
 
 /**

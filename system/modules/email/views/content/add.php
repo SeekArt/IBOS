@@ -176,6 +176,7 @@ use application\core\utils\Env;
                 </div>
             </div>
             <input type="hidden" name="op" value="<?php echo $op; ?>" >
+            <input type="hidden" name="backurl" value="<?php echo $backurl; ?>" >
             <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" >
         </form>
     </div>

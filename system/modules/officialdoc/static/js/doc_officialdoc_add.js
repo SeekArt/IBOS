@@ -13,10 +13,23 @@ $(function() {
 		onError: Ibos.l("RULE.SUBJECT_CANNOT_BE_EMPTY")
 	});
 
-	//选人框
+	// 选人框
 	$("#publishScope, #ccScope").userSelect({
 		data: Ibos.data.get()
 	});
+	// 发布范围不能为空
+	$('#publishScope').formValidator()
+			.functionValidator({
+				fun : function(){
+					if(!!$('#publishScope').val()){
+						return true;
+					}
+
+					Ui.tip(Ibos.l("DOC.PUBLISH_RANGE_CANNOT_BE_EMPTY"), 'warning');
+					return false;
+				},
+				validateType:"functionValidator"
+			});
 
 	// 初始化编辑器
 	// 操作栏扩展分页按钮

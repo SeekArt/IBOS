@@ -19,6 +19,7 @@ L.DOC = {
 	HAS_REMINDED: "已提醒",
 	SEE_MORE_SIGN_PERSON : "查看更多签收人员",
 	SEE_MORE_NOSIGN_PERSON : "查看更多未签收人员",
+	PUBLISH_RANGE_CANNOT_BE_EMPTY: "发布范围不能为空",
 
 
 	MOVETO: "移到至",

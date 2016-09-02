@@ -7,7 +7,7 @@ $(function() {
     }
 
      // 投票项数验证，至少两条有效数据
-    $("#article_form").on("submit", function() {
+    $("#article_form").on("submit", function(ev) {
         var isVoteEnabled = $("#voteStatus").prop("checked"),
                 $items;
         if (isVoteEnabled) {
@@ -23,5 +23,6 @@ $(function() {
                 return false;
             }
         }
+        $(this).trigger("form.submit");
     });
 });

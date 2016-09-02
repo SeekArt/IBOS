@@ -2191,7 +2191,7 @@ Ibos.core = {
 		    	_show = function() {
 		    		var notification = new Notification(title, {
 		  		    "icon": icon,
-		  		    "body": content,
+		  		    "body": content
 		    		});
 		    		notification.onclick = function() {
 		    			window.focus();

@@ -1063,7 +1063,7 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 .cmt-item{ padding-top: 20px; padding-bottom: 20px; border-top: 1px solid #EBEFF6;}
 /* @Todo: 考虑用负margin代表伪类; */
 .cmt-item:first-child{ border-top: 0 none;}
-.cmt-body{ margin-left: 80px; }
+.cmt-body{ margin-left: 80px; word-break: normal; word-wrap: break-word; }
 
 /*.cmt-sub { min-height: 65px; }*/
 .cmt-sub .cmt-body{ margin-left: 40px; padding-top: 5px;}

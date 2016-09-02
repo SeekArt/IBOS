@@ -76,7 +76,7 @@ class Org {
 		}
 		if ( NULL === $type || is_array( $type ) && in_array( 'department', $type ) ) {
 			//生成部门文件
-			$departments = DepartmentModel::model()->findDepartmentByDeptid();
+			$departments = DepartmentModel::model()->findDeptmentIndexByDeptid( NULL , array( 'order' => 'pid ASC, sort ASC' ) );
 			$departmentArray = array();
 			$unit = IBOS::app()->setting->get( 'setting/unit' );
 			$departmentArray['c_0'] = array( 'id' => 'c_0', 'text' => $unit['fullname'], 'type' => 'department', );

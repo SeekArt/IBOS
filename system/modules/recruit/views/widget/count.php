@@ -2,7 +2,6 @@
 	<span class="fsl log-title">招聘过程</span>
 	<div class="statistics-area">
 		<div id="tendency_pic" class="statistics-content">
-			<div class="statistics-pic"></div>
 		</div>
 	</div>
 </div>
@@ -11,7 +10,6 @@
 		<span class="fsl log-title">性别比例</span>
 		<div class="half-statistics-area">
 			<div id="sex_ratio" class="half-statistics-content">
-				<div class="half-statistics-pic"></div>
 			</div>
 		</div>
 	</div>
@@ -19,7 +17,6 @@
 		<span class="fsl log-title">年龄结构</span>
 		<div class="half-statistics-area">
 			<div id="age_structure" class="half-statistics-content">
-				<div class="half-statistics-pic"></div>
 			</div>
 		</div>
 	</div>
@@ -29,7 +26,6 @@
 		<span class="fsl log-title">学历分布</span>
 		<div class="half-statistics-area">
 			<div id="education_distribute" class="half-statistics-content">
-				<div class="half-statistics-pic"></div>
 			</div>
 		</div>
 	</div>
@@ -37,7 +33,6 @@
 		<span class="fsl log-title">工作年限</span>
 		<div class="half-statistics-area">
 			<div id="entry_time" class="half-statistics-content">
-				<div class="half-statistics-pic"></div>
 			</div>
 		</div>
 	</div>

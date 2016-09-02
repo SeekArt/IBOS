@@ -10,7 +10,7 @@
 /**
  * 工作日志模块------工作日志默认控制器，继承DiaryBaseController
  * @package application.modules.diary.controllers
- * @version $Id: DefaultController.php 7193 2016-05-23 06:09:26Z php_lxy $
+ * @version $Id: DefaultController.php 8197 2016-09-01 10:22:14Z tanghang $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -466,9 +466,11 @@ class DefaultController extends BaseController {
             Calendars::model()->deleteALL( "`calendarid` IN(select `cid` from {{calendar_record}} where `did`={$diaryId})" );
             CalendarRecord::model()->deleteAll( "did = {$diaryId}" );
         }
-        //删除原来计划，插入新计划
-        DiaryRecord::model()->deleteAll( 'plantime=:plantime AND uid=:uid AND planflag=:planflag', array(
-            ':plantime' => strtotime( $_POST['plantime'] ), ':uid' => $uid, ':planflag' => 1 ) );
+		//更新下一计划时间
+		Diary::model()->modify( $diaryId, array( 'nextdiarytime' => strtotime( $_POST['plantime'] ) ) );
+		//删除原来计划，插入新计划
+		DiaryRecord::model()->deleteAll( 'diaryid=:diaryid AND uid=:uid AND planflag=:planflag', array(
+			':diaryid' => $diaryId, ':uid' => $uid, ':planflag' => 1 ) );
         if ( !isset( $_POST['plan'] ) ) {
             $this->error( IBOS::lang( 'Please fill out at least one work plan' ), $this->createUrl( 'default/edit', array( 'diaryid' => $diaryId ) ) );
         }
@@ -702,30 +704,36 @@ class DefaultController extends BaseController {
         }
     }
 
-    /**
-     * 根据是否安装了日程模块取出一天的开始工作时间
-     * @param type $isInstallCalendar
-     */
-    private function getWorkTime( $isInstallCalendar ) {
-        if ( $isInstallCalendar ) {  // 若已安装日程，取出配置的开始工作时间
-            $workingTime = IBOS::app()->setting->get( 'setting/calendarworkingtime' );
-            $workingTimeArr = explode( ',', $workingTime );
-            $start = floor( $workingTimeArr[0] - 0.5 ); // 向下0.5取整
-            $end = ceil( $workingTimeArr[1] + 0.5 ); //向上0.5取整
-            if ( $start < 0 ) {
-                $start = 0;
+	/**
+	 * 根据是否安装了日程模块取出一天的开始工作时间
+	 * @param type $isInstallCalendar
+	 */
+	private function getWorkTime( $isInstallCalendar ) {
+		if ( $isInstallCalendar ) {  // 若已安装日程，取出配置的开始工作时间
+			$workingTime = IBOS::app()->setting->get( 'setting/calendarworkingtime' );
+			$workingTimeArr = explode( ',', $workingTime );
+//			$start = floor( $workingTimeArr[0] - 0.5 ); // 向下0.5取整
+//			$end = ceil( $workingTimeArr[1] + 0.5 ); //向上0.5取整
+            if(is_integer($workingTimeArr[0])){
+                $start = $workingTimeArr[0];
+            }else{
+                $start = floor($workingTimeArr[0]);
             }
-            if ( $end > 24 ) {
-                $end = 24;
-            }
-            $workTime['start'] = intval( $start );
-            $workTime['cell'] = intval( ( $end - $start ) * 2 ); // 格数，每格表示半小时
-        } else {
-            $workTime['start'] = 6;
-            $workTime['cell'] = 28;
-        }
-        return $workTime;
-    }
+            $end = $workingTimeArr[1];
+			if ( $start < 0 ) {
+				$start = 0;
+			}
+			if ( $end > 24 ) {
+				$end = 24;
+			}
+			$workTime['start'] = intval( $start);
+			$workTime['cell'] = intval( ( $end - $start ) * 2 ); // 格数，每格表示半小时
+		} else {
+			$workTime['start'] = 6;
+			$workTime['cell'] = 28;
+		}
+		return $workTime;
+	}
 
     /**
      * 处理计划输出时间格式

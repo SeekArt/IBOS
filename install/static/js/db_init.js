@@ -8,7 +8,7 @@
         account: /^1\d{10}$/,
         ADpassword: /^.{5,32}$/, //5到32位数字或者字母组成
         ADname: rNoEmpty,
-        shortname: /^.{4,8}$/,
+        shortname: /^.{2,10}$/,
         fullname: rNoEmpty,
         qycode: /^[a-zA-Z0-9]{4,20}$/,
         mobile: /^1\d{10}$/

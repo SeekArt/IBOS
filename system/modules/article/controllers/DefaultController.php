@@ -59,7 +59,7 @@ class DefaultController extends BaseController {
 			) );
 			$catid = intval( util\Env::getRequest( 'catid' ) );
 			$childCatIds = '';
-			if ( !empty( $catid ) ) {
+			if ( isset($catid) ) {
 				$this->catid = $catid;
 				$childCatIds = model\ArticleCategory::model()->fetchCatidByPid( $this->catid, true );
 			}
@@ -87,7 +87,7 @@ class DefaultController extends BaseController {
 		$uid = util\IBOS::app()->user->uid;
 		$catid = intval( util\Env::getRequest( 'catid' ) );
 		$childCatIds = '';
-		if ( !empty( $catid ) ) {
+        if ( isset($catid) ) {
 			$this->catid = $catid;
 			$childCatIds = model\ArticleCategory::model()->fetchCatidByPid( $this->catid, true );
 		}
@@ -97,6 +97,8 @@ class DefaultController extends BaseController {
 		$condition = ArticleUtil::joinListCondition( $type, $uid, $childCatIds, $this->condition );
 		NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
 		$this->ajaxReturn( array(
+			'isSuccess' => true,
+			'msg' => '调用成功',
 			'data' => $this->handleArticleListDataByCondition( $condition ),
 			'draw' => util\Env::getRequest( 'draw' ),
 			'recordsFiltered' => model\Article::model()->count( $condition ),
@@ -170,7 +172,8 @@ class DefaultController extends BaseController {
 			$urlArr = parse_url( $data['url'] );
 			$url = isset( $urlArr['scheme'] ) ? $data['url'] : 'http://' . $data['url'];
 			header( 'Location: ' . $url );
-			exit;
+            NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+            exit;
 		}
 		$params = array(
 			'data' => $data,
@@ -823,7 +826,13 @@ class DefaultController extends BaseController {
 								}
 							}
 							Notify::model()->sendNotify( $nextApproval['uids'], 'article_verify_message', $config, $uid );
-							model\Article::model()->updateAllStatusAndApproverByPks( $artId, $uid, 2 );
+							// 审核人为下一个审核该新闻的用户（当前审核已通过）
+							if (isset($nextApproval['uids']) && isset($nextApproval['uids'][0])) {
+								$approver = $nextApproval['uids'][0];
+							} else {
+								$approval = $uid;
+							}
+							model\Article::model()->updateAllStatusAndApproverByPks( $artId, $approver, 2 );
 						}
 					}
 				}
@@ -894,8 +903,8 @@ class DefaultController extends BaseController {
 				'{subject}' => $art['subject'],
 				'{category}' => $categoryName,
 				'{content}' => $reason,
-				'{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/index', array( 'type' => 'notallow', 'catid' => 0 ) )
-			);
+                '{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show',array('articleid'=>$artId) )
+            );
 			Notify::model()->sendNotify( $art['author'], 'article_back_message', $config, $uid );
 			model\ArticleBack::model()->addBack( $artId, $uid, $reason, TIMESTAMP ); // 添加一条退回记录
 		}

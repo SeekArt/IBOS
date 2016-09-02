@@ -125,7 +125,7 @@ use application\core\utils\StringUtil;
                         </div>
                     </div>
                 </div>
-                <div class="ctb xcm bdbs editor-content" style="min-height: 400px;">
+                <div class="ctb xcm bdbs editor-content text-break" style="min-height: 400px;">
                     <?php if ( $email['isweb'] ): ?>
                         <div id="mainFrameContainer">
                             <iframe onload="setScale()" style="width:100%;" src="<?php
@@ -152,7 +152,7 @@ use application\core\utils\StringUtil;
                                         </div>
                                         <span class="fss">
                                             <a target="_blank" href="<?php echo $fileInfo['downurl']; ?>"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
-                                            <?php if ( isset( $fileInfo['officereadurl'] ) ): ?>
+                                            <?php if ( $fileInfo['filetype'] != 'rar' ): ?>
                                                 <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $fileInfo['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
                                                     <?php echo $lang['Read']; ?>
                                                 </a>

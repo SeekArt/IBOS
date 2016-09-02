@@ -442,14 +442,13 @@ function syncUser( $msgData, $msgPlatform ) {
 }
 
 function ibosSync( $msgPlatform ) {
-	Setting::model();
-	$corpid = Setting::model()->fetchSettingValueByKey( 'corpid' );
-	if ( !empty( $corpid ) ) {
-		define( 'CORPID', $corpid );
+	$coinfo = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'coinfo' ) );
+	if ( !empty( $coinfo['corpid'] ) ) {
+		define( 'CORPID', $coinfo['corpid'] );
 		$pidArray = createPidOrder();
 		$per = 50;
 		$times = 10;
-		$everyPid = floor( count( $pidArray ) / $times );
+		$everyPid = floor( count( $pidArray ) / $times ) + 1;
 		$array = array_chunk( $pidArray, $everyPid );
 		$pid = array_shift( $array );
 		set_time_limit( 0 );
@@ -575,8 +574,8 @@ function sendSyncUser( $msgPlatform, $limit, $offset ) {
 	$res = Api::getInstance()->fetchResult( $url, CJSON::encode( $post ), 'post' );
 	if ( is_string( $res ) ) {
 		$array = CJSON::decode( $res );
-		!empty( $array['data']['bind'] ) && userBind( $array['data']['bind'] );
-		!empty( $array['data']['delete'] ) && userDelete( $array['data']['delete'] );
+		!empty( $array['data']['bind'] ) && userBind( $msgPlatform, $array['data']['bind'] );
+		!empty( $array['data']['delete'] ) && userDelete( $msgPlatform, $array['data']['delete'] );
 	}
 	return $userArray;
 }

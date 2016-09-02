@@ -9,47 +9,62 @@ var IbosCoLogin = {
         this.formValidate();
     },
     elem: {
-    // dialog
-    register_dialog: $("#ibosco_register_dialog"),
-    login_dialog: $("#ibosco_login_dialog"),
-    isBinding_login: $('[data-action="loginCorp"]'),
-	// button
-	next_reg_state: $("#next_reg_state"),
-	reg_and_bind: $("#reg_and_bind"),
-	login_and_bind: $("#login_and_bind"),
-	// tab
-	user_reg_verify: $("#user_reg_verify"),
-	user_reg_info: $("#user_reg_info"),
-	// input register
-	inputMobile: $("#inputMobile"),
-	inputMobileVerify: $("#inputMobileVerify"),
-	// input login
-	mobile: $("#mobile"),
-	password: $("#password"),
-	// develop user info
-	user_name: $("#user_name"),
-	user_password: $("#user_password"),
-	user_invite: $("#user_invite")
+        // dialog
+        register_dialog: $("#ibosco_register_dialog"),
+        login_dialog: $("#ibosco_login_dialog"),
+        isBinding_login: $('[data-action="loginCorp"]'),
+        // button
+        next_reg_state: $("#next_reg_state"),
+        reg_and_bind: $("#reg_and_bind"),
+        login_and_bind: $("#login_and_bind"),
+        // tab
+        user_reg_verify: $("#user_reg_verify"),
+        user_reg_info: $("#user_reg_info"),
+        // input register
+        inputMobile: $("#inputMobile"),
+        inputMobileVerify: $("#inputMobileVerify"),
+        // input login
+        mobile: $("#mobile"),
+        password: $("#password"),
+        // develop user info
+        user_name: $("#user_name"),
+        user_password: $("#user_password"),
+        user_invite: $("#user_invite")
     },
     op: {
         getMobileVerifyCode: function(param) {
             var url = Ibos.app.url('dashboard/cobinding/sendverifycode');
+            if (Ibos.app.g('page') === 'wxbind') {
+                url = Ibos.app.url('dashboard/wxbinding/sendcode');
+            }
             return $.post(url, param, $.noop, "json");
         },
         checkverifycode: function(param) {
             var url = Ibos.app.url('dashboard/cobinding/checkverifycode');
+            if (Ibos.app.g('page') === 'wxbind') {
+                url = Ibos.app.url('dashboard/wxbinding/checkcode');
+            }
             return $.post(url, param, $.noop, "json");
         },
         checkmobile: function(param) {
             var url = Ibos.app.url('dashboard/cobinding/checkmobile');
+            if (Ibos.app.g('page') === 'wxbind') {
+                url = Ibos.app.url('dashboard/wxbinding/checkmobile');
+            }
             return $.post(url, param, $.noop, "json");
         },
         registercouser: function(param) {
             var url = Ibos.app.url('dashboard/cobinding/registercouser');
+            if (Ibos.app.g('page') === 'wxbind') {
+                url = Ibos.app.url('dashboard/wxbinding/register');
+            }
             return $.post(url, param, $.noop, "json");
         },
         loginbypassword: function(param) {
             var url = Ibos.app.url('dashboard/cobinding/loginbypassword');
+            if (Ibos.app.g('page') === 'wxbind') {
+                url = Ibos.app.url('dashboard/wxbinding/login');
+            }
             return $.post(url, param, $.noop, "json");
         }
     },
@@ -101,7 +116,7 @@ var IbosCoLogin = {
     formValidate: function() {
         var that = this,
             elem = that.elem;
-        
+
         $.formValidator.initConfig({
             formID: "ibosco_register_form",
             errorFocus: true,
@@ -114,7 +129,7 @@ var IbosCoLogin = {
         }).regexValidator({
             regExp: "mobile",
             dataType: "enum",
-            onError:  function(text){
+            onError: function(text) {
                 return $.trim(text) ? Ibos.l("RULE.MOBILE_INVALID_FORMAT") : "手机号码不能为空";
             }
         });
@@ -125,7 +140,7 @@ var IbosCoLogin = {
         }).regexValidator({
             regExp: "\\d{4}",
             dataType: "number",
-            onError: function(text){
+            onError: function(text) {
                 return $.trim(text) ? "验证码格式错误" : "验证码不能为空";
             }
         });
@@ -142,7 +157,7 @@ var IbosCoLogin = {
         }).regexValidator({
             regExp: "mobile",
             dataType: "enum",
-            onError: function(text){
+            onError: function(text) {
                 return $.trim(text) ? Ibos.l("RULE.MOBILE_INVALID_FORMAT") : "手机号码不能为空";
             }
         });
@@ -164,24 +179,15 @@ var IbosCoLogin = {
             reg_verify = that.elem.user_reg_verify,
             reg_info = that.elem.user_reg_info;
 
-        if( !$.formValidator.pageIsValid("1") ) return;
+        if (!$.formValidator.pageIsValid("1")) return;
         that.op.checkverifycode({
             mobile: inputMobile.val(),
             verifyCode: inputMobileVerify.val()
         }).done(function(res) {
             if (res.isSuccess) {
                 // 跳转到信息页
-                that.op.checkmobile({
-                    mobile: inputMobile.val()
-                }).done(function(res) {
-                    if (res.isSuccess) {
-                        reg_verify.hide();
-                        reg_info.show();
-                    } else {
-                        Ui.tip(res.msg, "warning");
-                        return false;
-                    }
-                }, 'json');
+                reg_verify.hide();
+                reg_info.show();
             } else {
                 Ui.tip(res.msg, "danger");
                 return false;
@@ -210,7 +216,7 @@ var IbosCoLogin = {
         }).done(function(res) {
             if (res.isSuccess) {
                 Ui.tip(Ibos.l("CO.CO_REG_SUCCESS"));
-                $(IbosCoLogin).trigger("regsuccess", {res: res});
+                $(IbosCoLogin).trigger("regsuccess", { res: res });
             } else {
                 Ui.tip(res.msg, "danger");
                 return false;
@@ -223,14 +229,14 @@ var IbosCoLogin = {
             mobile = that.elem.mobile,
             password = that.elem.password;
 
-        if( !$.formValidator.pageIsValid("2") ) return;
+        if (!$.formValidator.pageIsValid("2")) return;
         that.op.loginbypassword({
             mobile: mobile.val(),
             password: password.val()
         }).done(function(res) {
             if (res.isSuccess) {
                 Ui.tip(Ibos.l("CO.LOGIN_SUCCESS"));
-                $(IbosCoLogin).trigger("loginsuccess", {res: res});
+                $(IbosCoLogin).trigger("loginsuccess", { res: res });
             } else {
                 Ui.tip(res.msg, "danger");
                 return false;
@@ -303,27 +309,42 @@ $(function() {
                 return false;
             }
 
-            IbosCoLogin.op.getMobileVerifyCode({
-                mobile: $('#inputMobile').val()
+            // 手机验证
+            IbosCoLogin.op.checkmobile({
+                mobile: elem.inputMobile.val()
             }).done(function(res) {
                 if (res.isSuccess) {
-                    $this.html(loading_text);
-                    var wait = document.getElementById('mobile_counting'),
-                        time = --wait.innerHTML,
-                        interval = setInterval(function() {
-                            var time = --wait.innerHTML;
-                            if (time === 0) {
-                                $this.html('发送验证码');
-                                that.verifyCodeLock = false;
-                                clearInterval(interval);
+                    if (res.data.hasMobile) {
+                        Ui.tip('此手机已注册过账号，请登录！', 'warning');
+                        return false;
+                    } else {
+                        IbosCoLogin.op.getMobileVerifyCode({
+                            mobile: elem.inputMobile.val()
+                        }).done(function(res) {
+                            if (res.isSuccess) {
+                                $this.html(loading_text);
+                                var wait = document.getElementById('mobile_counting'),
+                                    time = --wait.innerHTML,
+                                    interval = setInterval(function() {
+                                        var time = --wait.innerHTML;
+                                        if (time === 0) {
+                                            $this.html('发送验证码');
+                                            that.verifyCodeLock = false;
+                                            clearInterval(interval);
+                                        }
+                                    }, 1000);
+                                that.verifyCodeLock = true;
+                            } else {
+                                $this.button('发送验证码');
+                                $('#send_mobile_status').html(res.msg);
                             }
-                        }, 1000);
-                    that.verifyCodeLock = true;
+                        });
+                    }
                 } else {
-                    $this.button('发送验证码');
-                    $('#send_mobile_status').html(res.msg);
+                    Ui.tip(res.msg, 'warning');
+                    return false;
                 }
-            });
+            }, 'json');
         },
         // 已绑定登录
         "loginCorp": function(param, elem) {
@@ -333,9 +354,7 @@ $(function() {
             }).done(function(res) {
                 if (res.isSuccess) {
                     Ui.tip(Ibos.l("CO.LOGIN_SUCCESS"));
-                    window.location.href = Ibos.app.url('dashboard/cobinding/index', {
-                        isInstall: Ibos.app.g('isInstall')
-                    });
+                    $(IbosCoLogin).trigger("loginsuccess", { res: res });
                 } else {
                     Ui.tip(res.msg, "danger");
                     return false;

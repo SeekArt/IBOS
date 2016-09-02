@@ -129,6 +129,8 @@ class OfficialdocController extends BaseController {
 		}
 		NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
 		$this->ajaxReturn( array(
+			'isSuccess' => true,
+			'msg' => '调用成功',
 			'data' => $this->handleDocListDataByCondition( $condition ),
 			'draw' => Env::getRequest( 'draw' ),
 			'recordsFiltered' => Officialdoc::model()->count( $condition ),
@@ -369,7 +371,8 @@ class OfficialdocController extends BaseController {
 					'doc' => $officialdoc,
 					'author' => $user['realname'],
 						), true ),
-				'{url}' => IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $docId ) ),
+                '{orgContent}' => StringUtil::filterCleanHtml( $officialdoc['content'] ),
+				'{url}' => Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $docId ) ),
 				'id' => $docId,
 			);
 			if ( count( $uidArr ) > 0 ) {
@@ -882,8 +885,9 @@ class OfficialdocController extends BaseController {
 				'{subject}' => $doc['subject'],
 				'{category}' => $categoryName,
 				'{content}' => $reason,
-				'{url}' => $this->createUrl( 'officialdoc/index', array( 'type' => 'notallow', 'catid' => 0 ) )
-			);
+				//'{url}' => $this->createUrl( 'officialdoc/index', array( 'type' => 'notallow', 'catid' => 0 ) )
+                '{url}' => $this->createUrl( 'officialdoc/show', array('docid'=>$docId) )
+            );
 			Notify::model()->sendNotify( $doc['author'], 'official_back_message', $config, $uid );
 			OfficialdocBack::model()->addBack( $docId, $uid, $reason, TIMESTAMP ); // 添加一条退回记录
 		}

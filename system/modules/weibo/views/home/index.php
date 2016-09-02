@@ -105,7 +105,7 @@ use application\core\utils\Module;
                 <!--顶部tab S-->
                 <div class="wb-per-hd clearfix mpanel">
                     <div class="search pull-right">
-                        <input type="text" name="feedkey" placeholder="搜索" nofocus id="mn_search" />
+                        <input type="text" name="feedkey" placeholder="搜索" nofocus id="mn_search" value="<?php echo $feedkey; ?>" />
                         <a href="javascript:;"></a>
                     </div>
                     <ul class="nav nav-skid">

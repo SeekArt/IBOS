@@ -69,6 +69,12 @@
 			$display.on("click", function(){
 				$me.focus();
 			});
+
+			$me.on("addEmotion", function() {
+				triggerChange();
+				$me.focus();
+			});
+
 			triggerChange();
 		});
 	};

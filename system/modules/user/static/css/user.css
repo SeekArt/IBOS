@@ -507,7 +507,7 @@
 }
 .profile-info-table td:first-child{border-left: 0;}
 
-.profile-info-table td:last-child{border-right: 0};
+.profile-info-table td:last-child{border-right: 0}
 
 .adjust-box-header{
 	height: 59px;

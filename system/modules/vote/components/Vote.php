@@ -136,7 +136,7 @@ abstract class Vote {
                     'voteStatus' => $voteStatus,
                     'attachUrl' => IBOS::app()->setting->get( 'setting/attachurl' )
                 );
-                if ( $voteStatus == 2 ) {
+                if ( $voteStatus == 0 ) {
                     $partView = null;
                 } else {
                     $partView = $currentController->renderPartial( $selectView, $data, true );

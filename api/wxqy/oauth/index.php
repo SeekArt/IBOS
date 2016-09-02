@@ -18,9 +18,9 @@ require_once '../../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 Yii::createApplication( 'application\core\components\Application', $mainConfig );
 
-$signature = Env::getRequest( 'signature' );
+$signature = IBOS::app()->getRequest()->getQuery( 'signature' );
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-$userId = Env::getRequest( 'userid' );
+$userId = IBOS::app()->getRequest()->getQuery( 'userid' );
 $text = '详见 <a href = "http://doc.ibos.com.cn/article/detail/id/329" target="_blank" >传送门</a>';
 if ( strcmp( $signature, md5( $aeskey . $userId ) ) != 0 ) {
     Env::iExit( "签名错误:" . $text );
@@ -44,7 +44,6 @@ if ( !empty( $userId ) ) {
             Env::iExit( $resArr['msg'] );
         }
     } else {
-        file_put_contents( 'wx_userid.txt', var_export( $userId, true ) );
         Env::iExit( '用户绑定失败：' . $text );
     }
 }

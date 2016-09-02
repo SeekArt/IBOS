@@ -92,7 +92,7 @@
                 key;
 
             if (ids) {
-                if (!Array.isArray(ids)) { ids = [ids]; }
+                if (!$.isArray(ids)) { ids = [ids]; }
                 var i = 0,
                     id,
                     len = ids.length;
@@ -298,7 +298,7 @@
             getText: getText,
 
             includes: function(ids) {
-                if (!Array.isArray(ids)) {
+                if (!$.isArray(ids)) {
                     return console.error("param must be an Array");
                 }
                 return this.getItem.apply(this, ids);

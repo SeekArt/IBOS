@@ -3,7 +3,7 @@
 /**
  * main模块的默认控制器
  *
- * @version $Id: DefaultController.php 7561 2016-07-15 08:19:44Z tanghang $
+ * @version $Id: DefaultController.php 8018 2016-08-25 06:43:45Z tanghang $
  * @package application.modules.main.controllers
  */
 
@@ -170,7 +170,7 @@ class DefaultController extends Controller {
 					$unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
 					$data['fullname'] = $unit['fullname'];
 					$data['shortname'] = $unit['shortname'];
-					$data['pageUrl'] = $this->getPageUrl();
+					$data['pageUrl'] = $unit['systemurl'];
 				} else {
 					$data['swfConfig'] = Attach::getUploadConfig( $uid );
 					$data['uid'] = $uid;
@@ -451,29 +451,6 @@ class DefaultController extends Controller {
 		IBOS::app()->user->setState( 'avatar_big', $avatarArray['avatar_big'] );
 		IBOS::app()->user->setState( 'avatar_middle', $avatarArray['avatar_middle'] );
 		IBOS::app()->user->setState( 'avatar_small', $avatarArray['avatar_small'] );
-	}
-
-	/**
-	 * 获取系统url
-	 */
-	private function getPageUrl() {
-		$pageURL = 'http';
-		if ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) {
-			$pageURL .= "s";
-		}
-		$pageURL .= "://";
-		$thisPage = $_SERVER["REQUEST_URI"];
-		// 只取 ? 前面的内容
-		if ( strpos( $thisPage, "?" ) !== false ) {
-			$thisPageParams = explode( "?", $thisPage );
-			$thisPage = reset( $thisPageParams );
-		}
-		if ( $_SERVER["SERVER_PORT"] != "80" ) {
-			$pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $thisPage;
-		} else {
-			$pageURL .= $_SERVER["SERVER_NAME"] . $thisPage;
-		}
-		return $pageURL;
 	}
 
 	/**

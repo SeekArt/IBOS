@@ -53,7 +53,15 @@ ArticleIndex.baseTable = (function() {
         deferLoading: 0,
         ajax: {
             url: Ibos.app.url('article/default/getarticlelist'),
-            type: 'post'
+            type: 'post',
+            dataSrc: function(res) {
+                if (res.isSuccess) {
+                    return res.data;
+                } else {
+                    Ui.tip(res.msg, 'warning');
+                    return [];
+                }
+            }
         },
         initComplete: function() {
             $(this).find('[data-name]').label();
@@ -92,7 +100,7 @@ ArticleIndex.baseTable = (function() {
                 "data": "subject",
                 "orderable": false,
                 "render": function(data, type, row) {
-                    return '<a href="' + Ibos.app.url('article/default/show', { articleid: row.articleid }) + '" class="art-list-title" target="_self">' + row.subject + '</a>';
+                    return '<a href="' + Ibos.app.url('article/default/show', { articleid: row.articleid }) + '" class="art-list-title" target="_self">' + row.subject + '</a>' + (row.istop == 1 ? '<span class="o-art-top"></span>' : '');
                 }
             },
             // 最后修改
@@ -127,7 +135,15 @@ ArticleIndex.approvalTable = (function() {
         deferLoading: 0, // 每个文件加上这一行
         ajax: {
             url: Ibos.app.url('article/default/getarticlelist'),
-            type: 'post'
+            type: 'post',
+            dataSrc: function(res) {
+                if (res.isSuccess) {
+                    return res.data;
+                } else {
+                    Ui.tip(res.msg, 'warning');
+                    return [];
+                }
+            }
         },
         // --- Callback
         initComplete: function() {
@@ -206,11 +222,11 @@ ArticleIndex.approvalTable = (function() {
         ]
     }));
 })();
-
+Ibos.local.remove('catid');
 ArticleIndex.tableConfig = {
     curModule: 'baseTable', // ['baseTable', 'approvalTable']
     curType: 'done', // ['done', 'new', 'old', 'notallow', 'draft']
-    catid: window.localStorage.getItem('catid') || 1,
+    catid: Ibos.local.get('catid') || Ibos.app.g("catId"),
     search: function(val) {
         var table = ArticleIndex[this.curModule],
             param = {
@@ -220,16 +236,16 @@ ArticleIndex.tableConfig = {
         table.ajax.url(Ibos.app.url('article/default/getarticlelist', param));
         table.search(val).draw();
     },
-    draw: function(bool){
+    draw: function(bool) {
         var table = ArticleIndex[this.curModule];
         table.draw(bool);
     },
     ajaxSearch: function(param) {
         var table = ArticleIndex[this.curModule];
         param = $.extend({
-                type: this.curType,
-                catid: this.catid
-            }, param);
+            type: this.curType,
+            catid: this.catid
+        }, param);
 
         table.ajax.url(Ibos.app.url('article/default/getarticlelist', param)).load();
     }
@@ -263,14 +279,14 @@ $(function() {
             if (type === 'notallow') {
                 if (tableConfig.curModule !== 'approvalTable') {
                     tableConfig.curModule = 'approvalTable';
-                    article_base.fadeOut(300, function(){
+                    article_base.stop(true, true).fadeOut(100, function(){
                         article_approval.fadeIn();
                     });
                 }
             } else {
                 if (tableConfig.curModule === 'approvalTable') {
                     tableConfig.curModule = 'baseTable';
-                    article_approval.fadeOut(300, function(){
+                    article_approval.stop(true, true).fadeOut(100, function(){
                         article_base.fadeIn();
                     });
                 }
@@ -281,8 +297,7 @@ $(function() {
         },
         // 移动新闻
         "moveArticle": function(param) {
-            Ui.ajaxDialog(Ibos.app.url("article/default/move"), $.extend({},
-                {
+            Ui.ajaxDialog(Ibos.app.url("article/default/move"), $.extend({}, {
                     id: "d_art_move",
                     title: U.lang("ART.MOVETO"),
                     cancel: true,
@@ -301,7 +316,7 @@ $(function() {
                         });
                     }
                 },
-            param));
+                param));
         },
         // 高亮新闻
         "highlightArticle": function() {
@@ -395,7 +410,7 @@ $(function() {
             var aids = U.getCheckedValue("article[]");
             Ui.confirm(U.lang("ART.SURE_DEL_ARTICLE"), function() {
                 Article.op.removeArticles(aids).done(function(res) {
-                        res.isSuccess && tableConfig.draw(false);
+                    res.isSuccess && tableConfig.draw(false);
                     Ui.tip(res.msg, res.isSuccess ? "" : "warning");
                 });
             });

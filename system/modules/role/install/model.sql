@@ -70,3 +70,17 @@ CREATE TABLE `{{role_related}}` (
 INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('1', '管理员');
 INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('2', '编辑人员');
 INSERT INTO `{{role}}` ( `roleid`, `rolename` ) VALUES ('3', '普通成员');
+
+-- INSERT INTO `{{auth_item}}` (`name`, `type`, `description`, `bizrule`, `data`) VALUES ('article/default/move', '0', '', 'return UserUtil::checkDataPurv($purvId);', 's:0:\"\";');
+-- INSERT INTO `{{auth_item}}` (`name`, `type`, `description`, `bizrule`, `data`) VALUES ('officialdoc/officialdoc/move', '0', '', 'return UserUtil::checkDataPurv($purvId);', 's:0:\"\";');
+
+INSERT INTO `{{auth_item_child}}` (`parent`, `child`) VALUES ('1', 'article/default/move');
+INSERT INTO `{{auth_item_child}}` (`parent`, `child`) VALUES ('1', 'officialdoc/officialdoc/move');
+
+UPDATE `{{node}}` SET  `routes`='article/default/edit,article/default/move' WHERE (`node`='edit' AND `module`='article');
+UPDATE `{{node}}` SET `routes`='officialdoc/officialdoc/edit,officialdoc/officialdoc/move' WHERE (`node`='edit' AND `module`='officialdoc');
+
+
+
+
+

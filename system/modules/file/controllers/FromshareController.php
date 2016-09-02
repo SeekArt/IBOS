@@ -142,7 +142,7 @@ class FromShareController extends BaseController {
         foreach ( $depts as $d ) {
             $deptCon[] = " FIND_IN_SET('{$d}', fs.`todeptids`) ";
         }
-        $con = implode( ' OR ', array_filter( $deptCon ) ) . ' OR ';
+        $con = "(".implode( ' OR ', array_filter( $deptCon ) ) . ' OR ';
         if ( !empty( $user['allposid'] ) ) {
             foreach ( explode( ',', $user['allposid'] ) as $p ) {
                 $posCon[] = " FIND_IN_SET( '{$p}', fs.`toposids` )";
@@ -155,7 +155,7 @@ class FromShareController extends BaseController {
             }
             $con .= implode( ' OR ', array_filter( $roleCon ) ) . ' OR ';
         }
-        $con .= " FIND_IN_SET({$uid}, fs.`touids`) ";
+        $con .= " FIND_IN_SET({$uid}, fs.`touids`) )";
         return $con;
     }
 

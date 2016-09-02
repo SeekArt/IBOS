@@ -139,6 +139,11 @@ use application\modules\user\model\User;
                     <td>
                         <div class="fill">
                             <span class="da-detail-num"><?php echo $key4 + 1; ?>.</span><?php echo $tomorrowPlan['content']; ?>
+                            <?php if ( !empty( $tomorrowPlan['timeremind'] ) && $this->id == 'default' ): ?>
+                                <div class="da-remind-bar pull-right">
+                                    <i class="o-clock"></i> <?php echo $tomorrowPlan['timeremind'] ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

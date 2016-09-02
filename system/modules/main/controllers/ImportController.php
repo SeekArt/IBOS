@@ -4,6 +4,7 @@ namespace application\modules\main\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
+use application\core\utils\File;
 use application\core\utils\IBOS;
 use PHPExcel_IOFactory;
 
@@ -17,7 +18,7 @@ use PHPExcel_IOFactory;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-3-23 16:54:42
- * @version $Id: ImportController.php 7277 2016-05-27 07:20:32Z tanghang $
+ * @version $Id: ImportController.php 8033 2016-08-25 11:18:00Z tanghang $
  */
 class ImportController extends Controller {
 
@@ -103,7 +104,11 @@ class ImportController extends Controller {
 				$tplFieldArray = $tplArray[$tplConfig['fieldline'] - 1];
 				$this->session->add( 'import_tplFieldArray', array_filter( $tplFieldArray ) );
 			}
-
+			if ( ENGINE == 'SAAS' ) {
+				$filePath = 'data/attachment/' . CORP_CODE . '/temp/' . md5( $file ) . '.' . $pathinfo['extension'];
+				Ibos::engine()->io()->file()->downloadLocal( $file, $filePath );
+				$file = $filePath;
+			}
 			$objPHPExcel = $this->createPHPExcel( $file );
 			if ( $sheet >= $objPHPExcel->getSheetCount() ) {
 				return $this->ajaxReturn( array(

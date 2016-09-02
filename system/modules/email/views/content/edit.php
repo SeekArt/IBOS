@@ -102,7 +102,7 @@
 									<li data-value="1"><a href="javascript:;"><?php echo $lang['Important mail']; ?></a></li>
 									<li data-value="2"><a href="javascript:;"><?php echo $lang['Urgent mail']; ?></a></li>
 								</ul>
-								<input type="hidden" name="emailbody[important]" id="mal_level" value="<?php echo $email['important']; ?>">
+								<input type="hidden" name="emailbody[important]" id="mal_level_val" value="<?php echo $email['important']; ?>">
 							</div>
 							<div class="controls">
 								<input type="text" name="emailbody[subject]" placeholder="<?php echo $lang['Email subject tips']; ?>" id="mal_title" value="<?php echo $email['subject']; ?>">

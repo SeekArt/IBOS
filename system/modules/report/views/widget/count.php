@@ -7,7 +7,6 @@ use application\core\utils\StringUtil;
 	<span class="fsl log-title">总结得分</span>
 	<div class="statistics-area">
 		<div id="log_score" class="statistics-content">
-			<div class="statistics-pic"></div>
 		</div>
 	</div>
 </div>
@@ -15,7 +14,6 @@ use application\core\utils\StringUtil;
 	<span class="fsl log-title">图章分布</span>
 	<div class="statistics-area">
 		<div id="seal_distribute" class="statistics-content">
-			<div class="statistics-pic"></div>
 		</div>
 	</div>
 </div>

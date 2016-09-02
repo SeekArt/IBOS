@@ -12,7 +12,7 @@
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.email.model
- * @version $Id: Email.php 7645 2016-07-22 10:13:03Z gzhyj $
+ * @version $Id: Email.php 8197 2016-09-01 10:22:14Z tanghang $
  */
 
 namespace application\modules\email\model;
@@ -819,7 +819,9 @@ class Email extends Model {
         switch ($op) {
             case 'inbox':
                 // 内部收件箱
-                $condition .= "  {$emailAlias}.`toid` = {$uid} ";
+                //$param['condition'] .= "e.toid ='{$uid}' AND e.fid ='1' AND e.isdel ='0' AND e.isweb = '0'";
+                //$condition .= "  {$emailAlias}.`toid` = {$uid} ";
+                $condition .= "{$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`fid` = 1 AND {$emailAlias}.`isdel` = 0 AND {$emailAlias}.`isweb` = 0";
                 break;
             case 'todo':
                 // 代办邮件
@@ -878,7 +880,7 @@ class Email extends Model {
         $posWhereJoin = $allPos ? ' OR ' : ' AND ';
         $posWhere = '';
         if ($pos == 'content' || !empty($pos)) {
-            if ($pos == 'subject' || $allPos) {  //标题
+            if (($pos == 'subject' || $allPos) && $keyword ) {  //标题
                 $posWhere .= $posWhereJoin . "eb.subject LIKE '%{$keyword}%'";
             }
             if ($pos == 'content' || $allPos) {  //邮件正文
@@ -952,8 +954,8 @@ class Email extends Model {
      * @param int $aid 存储表id（archiveId）
      * @return CDbCommand 返回 CDbCommand 对象
      */
-    public function normalSearch($uid, $op, $keyword, $aid = 0) {
-        $command = $this->commonSearch($uid, $op, $aid)
+    public function normalSearch($uid, $op, $keyword, $aid = 0,$fid = 0) {
+        $command = $this->commonSearch($uid, $op, $aid,$fid)
                         ->andWhere("`eb`.`subject` LIKE :keyword", array(":keyword" => '%' . $keyword . '%'));
         return $command;
     }

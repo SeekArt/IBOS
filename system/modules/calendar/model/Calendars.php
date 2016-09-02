@@ -41,7 +41,8 @@ class Calendars extends Model {
 	 * @return array 日程相关数据数组
 	 */
 	public function getCommonCalendarList( $startTime, $endTime, $uid ) {
-		$condition = '`isalldayevent` = 0 AND `instancetype` != 1 AND uid = :uid AND endtime BETWEEN :starttime AND :endtime AND (endtime-starttime) < 24*60*60';
+		//$condition = '`isalldayevent` = 0 AND `instancetype` != 1 AND uid = :uid AND endtime BETWEEN :starttime AND :endtime AND (endtime-starttime) < 24*60*60';
+        $condition = '`instancetype` != 1 AND uid = :uid AND endtime BETWEEN :starttime AND :endtime AND (endtime-starttime) <= 24*60*60';
 		$params = array( ':uid' => $uid, ':starttime' => $startTime, ':endtime' => $endTime );
 		$comCalendar = $this->findAll(
 				array(
@@ -59,6 +60,7 @@ class Calendars extends Model {
 		$result['issort'] = TRUE;
 		$result["start"] = "/Date(" . $startTime . "000" . ")/";
 		$result["end"] = "/Date(" . $endTime . "000" . ")/";
+		$result['events'] = array();
 		foreach ( $comCalendar as $calendar ) {
 			$result['events'][] = array(
 				'id' => $calendar['calendarid'], //周期性事务ID做特别标识，方便实例

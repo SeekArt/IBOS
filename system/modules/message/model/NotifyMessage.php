@@ -99,6 +99,40 @@ class NotifyMessage extends Model {
     }
 
     /**
+     * 获取指定用户未读流程结束消息的总数
+     *
+     * @param $uid
+     * @return int
+     */
+    public function countFlowCompleteByUid($uid) {
+        $count = $this->count('uid = :uid AND isread = :isread AND node = :node AND url LIKE :url', array(
+            ':uid' => $uid,
+            ':isread' => 0,
+            ':node' => 'workflow_turn_notice',
+            ':url' => '%workflow/preview/print%',
+        ));
+
+        return (int)$count;
+    }
+
+    /**
+     * 获取指定用户未读被委托记录消息的总数
+     *
+     * @param $uid
+     * @return int
+     */
+    public function countEntrustRecordByUid($uid) {
+        $count = $this->count('uid = :uid AND isread = :isread AND node = :node AND title LIKE :title', array(
+            ':uid' => $uid,
+            ':isread' => 0,
+            ':node' => 'workflow_entrust_notice',
+            ':title' => '%工作流委托提醒%',
+        ));
+
+        return (int)$count;
+    }
+
+    /**
      * 更改指定用户的消息从未读为已读
      * @param integer $uid 用户ID
      * @return mixed 更改失败返回false，更改成功返回影响消息ID

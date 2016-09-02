@@ -26,6 +26,33 @@ class ListController extends BaseController {
         // 设置列表显示条数
         if ( isset( $_GET['pagesize'] ) ) {
             $this->setListPageSize( $_GET['pagesize'] );
+            $fid = IBOS::app()->session['fid'];
+            $op = IBOS::app()->session['op'];
+            switch($op){
+                case 'folder':
+                    $this->success(IBOS::lang('My folders'), $this->createUrl('list/index',array('op'=>'folder','fid'=>$fid)));
+                    break;
+                case 'inbox':
+                    $this->success(IBOS::lang('Inbox'),$this->createUrl('list/index',array('op'=>'inbox')));
+                    break;
+                case 'todo':
+                    $this->success(IBOS::lang('Todo email'), $this->createUrl('list/index',array('op'=>'todo')));
+                    break;
+                case 'draft':
+                    $this->success(IBOS::lang('Drafts'), $this->createUrl('list/index',array('op'=>'draft')));
+                    break;
+                case 'send':
+                    $this->success(IBOS::lang('Has been sent'), $this->createUrl('list/index',array('op'=>'send')));
+                    break;
+                case 'archive':
+                    $this->success(IBOS::lang('Archived'), $this->createUrl('list/index',array('op'=>'archive')));
+                    break;
+                case 'del':
+                    $this->success(IBOS::lang('Deleted'), $this->createUrl('list/index',array('op'=>'del')));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -93,7 +120,7 @@ class ListController extends BaseController {
         } elseif ("advanced_search" === $type) {
             $command = Email::model()->advancedSearch($uid, $op, $search);
         } else {
-            return $this->error(Ibos::lang("Invalid params"), $this->createUrl('email/list'));
+            return $this->error(IBOS::lang("Invalid params"), $this->createUrl('email/list'));
         }
 
         $conditionStr = $command->getWhere();
