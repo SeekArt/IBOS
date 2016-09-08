@@ -1,4 +1,12 @@
+.idea
 assets/
 protected/runtime/
 themes/classic/views/
 /nbproject/private/
+/data/attachment
+/data/backup
+/data/runtime
+/data/temp
+data/aes.key
+data/install.lock
+!system/config
