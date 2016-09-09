@@ -24,7 +24,6 @@ require './include/installVar.php';
 require './include/installFunction.php';
 $yii = PATH_ROOT . '/library/yii.php';
 require_once ( $yii );
-Yii::setPathOfAlias( 'application', PATH_ROOT . '/system' );
 
 if ( get( 'p' ) == 'phpinfo' ) {
 	phpinfo();
@@ -37,6 +36,11 @@ if ( !in_array( $option, array( 'envCheck', 'configCheck', 'dbCheck', 'moduleChe
 			'handleCheckSaas', 'handleUpdateData' ) ) ) {
 	$option = '';
 }
+//环境检查要提前，不然没有zend解密的话，就无法创建yii应用
+if ( $option == 'envCheck' ) {
+	envCheckOp();
+}
+Yii::setPathOfAlias( 'application', PATH_ROOT . '/system' );
 if ( in_array( ENGINE, array( 'LOCAL', 'SAE' ) ) ) {
 	$extData = post( 'extData' );
 	$extraData = isset( $extData ) && !empty( $extData ) ? 1 : 0;
@@ -73,10 +77,6 @@ if ( in_array( ENGINE, array( 'LOCAL', 'SAE' ) ) ) {
 //必须参数[op]，值如下
 //返回json，格式为isSuccess,msg,data
 switch ( 1 ) {
-	//检查环境需求
-	case $option == 'envCheck':
-		envCheckOp();
-		break;
 	//检查是否有配置
 	case $option == 'configCheck':
 		configCheckOp();
@@ -117,7 +117,6 @@ switch ( 1 ) {
 		break;
 	//处理数据更新
 	case $option == 'handleUpdateData':
-		file_put_contents( PATH_ROOT . '/data/install.lock', '' );
 		// 初始化ibos，执行各个已安装模块有extention.php的安装文件，更新缓存
 		$commonConfig = require CONFIG_PATH . 'common.php';
 		Yii::createApplication( 'application\core\components\Application', $commonConfig );
@@ -668,6 +667,7 @@ function handleCheckSaasOp() {
 function handleAfterInstallAllOp() {
 	global $saasConfig;
 	$corpCode = strtolower( post( 'qycode' ) );
+	$coGuid = post( 'guid' );
 	$pdo = null;
 	$corpRow = getCorpByCode( $corpCode, $pdo );
 	// 检查数据库连接正确性
@@ -708,6 +708,10 @@ function handleAfterInstallAllOp() {
 					->insert( '{{user_status}}', array( 'uid' => $uid, 'regip' => $ip, 'lastip' => $ip ) );
 			Yii::app()->db->createCommand()
 					->insert( '{{user_profile}}', array( 'uid' => $uid, 'remindsetting' => '', 'bio' => '' ) );
+			if ( !empty( $coGuid ) ) {
+				Yii::app()->db->createCommand()
+						->insert( '{{user_binding}}', array( 'uid' => $uid, 'bindvalue' => $coGuid, 'app' => 'co' ) );
+			}
 		}
 
 		//aeskey存入表里
@@ -925,6 +929,7 @@ function handleUpdateDataOp() {
 	// 角色默认权限
 	Role::model()->defaultAuth();
 	Cache::update();
+	file_put_contents( PATH_ROOT . '/data/install.lock', '' );
 	return ajaxReturn( array( 'isSuccess' => true, 'msg' => '' ) );
 }
 
