@@ -85,7 +85,7 @@ class Local extends Engine {
 
 	protected function preinit() {
 		// 检查安装
-		if ( !is_file( PATH_ROOT . '/data/install.lock' ) ) {
+		if ( !is_file( PATH_ROOT . '/data/install.lock' )  && !defined( 'INSTALL_PAGE' ) ) {
 			header( 'Location:./install/' );
 			exit();
 		}
