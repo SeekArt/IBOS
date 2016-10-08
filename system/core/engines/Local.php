@@ -20,7 +20,6 @@ namespace application\core\engines;
 use application\core\components\Engine;
 use application\core\engines\local\LocalIo;
 use application\core\utils\Ibos;
-use CMap;
 
 class Local extends Engine {
 
@@ -85,7 +84,7 @@ class Local extends Engine {
 
 	protected function preinit() {
 		// 检查安装
-		if ( !is_file( PATH_ROOT . '/data/install.lock' ) ) {
+		if ( !is_file( PATH_ROOT . '/data/install.lock' ) && !defined( 'INSTALL_PAGE' ) ) {
 			header( 'Location:./install/' );
 			exit();
 		}

@@ -181,21 +181,26 @@ class Officialdoc extends Model {
             return null;
         }
         //发布范围uid
-        if ( $doc['deptid'] == 'alldept' || (empty( $doc['deptid'] ) && empty( $doc['positionid'] ) && empty( $doc['uid'] ) ) ) {
+        if ( $doc['deptid'] == 'alldept' || (empty( $doc['deptid'] ) && empty( $doc['positionid'] ) && empty( $doc['uid'] ) && empty($doc['roleid'])) ) {
             $uids = User::model()->fetchUidA( false );
         } else {
+            //需要签收的用户都要考虑辅助岗位，辅助部门和辅助角色的问题
             $uids = array();
             if ( !empty( $doc['deptid'] ) ) {
                 $deptids = Department::model()->fetchChildIdByDeptids( $doc['deptid'], true );
-                $uids = array_merge( $uids, User::model()->fetchAllUidByDeptids( $deptids, false ) );
+                $uids = array_merge( $uids, User::model()->fetchAllUidByDeptids( $deptids, false, true ) );
             }
             if ( !empty( $doc['positionid'] ) ) {
-                $uids = array_merge( $uids, User::model()->fetchAllUidByPositionIds( $doc['positionid'], false ) );
+                $uids = array_merge( $uids, User::model()->fetchAllUidByPositionIds( $doc['positionid'], false, true ) );
             }
             if ( !empty( $doc['uid'] ) ) {
                 $uids = array_merge( $uids, explode( ',', $doc['uid'] ) );
             }
+            if(!empty($doc['roleid'])){
+                $uids = array_merge($uids,User::model()->fetchAllUidByRoleids($doc['roleid'],false, true));
+            }
         }
+
         return array_unique( $uids );
     }
 

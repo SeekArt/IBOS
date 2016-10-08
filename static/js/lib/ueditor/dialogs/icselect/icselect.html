@@ -55,7 +55,7 @@
 			var G = parent.G;
 			(function() {
 				var refreshCheck = function(field, check) {
-					$.trim("field") !== "" && ($G('control_select_check').innerHTML = "<option></option>" + fcUtil.createOptionTpl(field, check));
+					$.trim("field") !== "" && ($G('control_select_check').innerHTML =  fcUtil.createOptionTpl(field, check));
 				}
 				var tpl = '<ic data-id="<%=id%>" data-type="select" data-title="<%=title%>" data-select-check="<%=check%>" data-width="<%=width%>" data-size="<%=size%>" data-select-field="<%=field%>" contenteditable="false" >';
 				tpl += '<select name="data_<%=id%>" title="<%=title%>" style="width:<%=width%>px;" size="<%=size%>" >';
@@ -68,7 +68,7 @@
 					$G('control_select_title').value = oldData.title;
 					$G('control_select_width').value = oldData.width;
 					$G('control_select_size').value = oldData.size;
-					$G('control_select_field').value = fcUtil.splitVal(field);
+					$G('control_select_field').value = fcUtil.splitVal(field).slice(2);
 					// 还原默认值的可选项
 					refreshCheck(field, check);
 				}
@@ -84,10 +84,13 @@
 						alert(editor.getLang("fc.noOptionTip"));
 						return false;
 					}
+					field = fcUtil.joinVal(field);
+
+					field = field.split("`")[0] == " " ? "" + field : " `" + field;
 					// 将选项值格式化
 					data = {
 						title: title,
-						field: fcUtil.joinVal(field),
+						field: field,
 						check: $G('control_select_check').value || "",
 						size: Number($G('control_select_size').value) || 1,
 						width: Number($G('control_select_width').value) || 200,
@@ -121,7 +124,7 @@
 					var val = this.value;
 					clearTimeout(timer);
 					timer = setTimeout(function(){
-						refreshCheck(fcUtil.joinVal(val));
+						refreshCheck( ' `' + fcUtil.joinVal(val) );
 					}, 200)
 				}
 			})();

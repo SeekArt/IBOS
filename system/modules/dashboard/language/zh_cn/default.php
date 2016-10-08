@@ -4,7 +4,7 @@
  * 后台模块语言包文件
  * @package application.modules.dashboard.language.zh cn
  * @link http://www.ibos.com.cn/
- * @version $Id: default.php 7310 2016-05-31 03:32:33Z tanghang $
+ * @version $Id: default.php 8391 2016-09-13 09:14:12Z tanghang $
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author banyan <banyan@ibos.com.cn>
  */
@@ -816,6 +816,8 @@ return array(
 	'Binding wechat' => '绑定企业号',
 	'Wechat binding' => '企业号绑定',
 	'Wechat corp' => '微信企业号',
+	'Binding wechat and install now' => '绑定微信企业号，即刻开启微信办公！',
+	'Binding wechat and enjoy it' => '绑定微信企业号，体验IBOS微办公！',
 	'Already app' => '已开启的应用',
 	'Department and user sync' => '部门及用户同步',
 	'How to binding wechat' => '如何绑定企业号？',
@@ -838,8 +840,12 @@ return array(
 	'Wechat binding failure' => '绑定失败，请确保CorpID和CorpSecret填写正确，再重试！',
 	'Wechat binding success' => '绑定成功！',
 	'Return binding page' => '返回绑定页面',
-	'IBOS not sync wechat' => 'IBOS未同步企业号',
+	'IBOS not sync wechat' => 'IBOS待同步',
+	'Wechat not sync IBOS' => '企业号待同步',
 	'Wechat not bind IBOS' => '企业号未绑定IBOS',
+	'Wechat member' => '企业号成员',
+	'Wechat app list center' => '企业号应用中心',
+	'Data loading and wait' => '数据加载中，请稍候...',
 	// 系统背景设置
 	'System background setting' => '系统背景设置',
 	// 组织架构

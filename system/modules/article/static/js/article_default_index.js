@@ -263,7 +263,6 @@ $(function() {
         article_approval = $('#article_approval');
 
     tableConfig.ajaxSearch();
-    window.localStorage.clear();
 
     Ibos.evt.add({
         // 列表切换

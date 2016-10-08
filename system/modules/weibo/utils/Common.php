@@ -9,7 +9,7 @@
  */
 /**
  * @package application.modules.weibo.components
- * @version $Id: Common.php 7563 2016-07-16 03:29:19Z tanghang $
+ * @version $Id: Common.php 8404 2016-09-14 03:20:09Z tanghang $
  * @author banyan <banyan@ibos.com.cn>
  */
 
@@ -43,13 +43,13 @@ class Common {
 			$file = $attachUrl . '/' . $attachment;
 			$imgext = Attach::getCommonImgExt();
 			if ( File::fileExists( $file ) ) {
-				$info = Image::getImageInfo( File::imageName( $file ) );
+				$info = Image::getImageInfo( $file );
 				$infoCorrect = is_array( $info ) && in_array( $info['type'], $imgext );
 				$sizeCorrect = $infoCorrect && ($info['width'] > $width || $info['height'] > $height);
 				if ( $infoCorrect && $sizeCorrect ) {
 					$returnUrl = self::makeThumb( $attach, $width, $height );
 				} else {
-					$returnUrl = $file;
+					$returnUrl = File::imageName( $file );
 				}
 			} else {
 				$returnUrl = File::imageName( $file );

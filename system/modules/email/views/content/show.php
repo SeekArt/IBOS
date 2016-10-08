@@ -101,9 +101,7 @@ use application\core\utils\StringUtil;
                             <i class="caret"></i>
                         </a>
                         <h1 class="mal-title">
-                            <span class="<?php
-                            echo $email['important'] == '1' ? 'xcgn' : $email['important'] == '2' ? 'xcr' : ''
-                            ?>"><?php echo $email['subject'] ?></span>
+                            <span class="<?php echo $email['important'] == '1' ? 'xcgn' : ($email['important'] == '2' ? 'xcr' : ''); ?>"><?php echo $email['subject'] ?></span>
                             <a href="javascript:;" title="<?php echo $lang['Click to mark this message']; ?>" <?php if ( $email['ismark'] ): ?>class="o-mark"<?php else: ?>class="o-unmark"<?php endif; ?> data-click="toggleMark" data-param="{&quot;url&quot;: &quot;<?php
                             echo $this->createUrl( 'api/mark', array( 'op' => 'todo', 'emailids' => $email['emailid'] ) );
                             ?>&quot;}"></a>

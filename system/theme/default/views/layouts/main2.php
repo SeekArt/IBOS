@@ -61,7 +61,7 @@ use application\modules\user\utils\User;
 					<div class="logo">
 						<?php $unit = Ibos::app()->setting->get( 'setting/unit' ); ?>
 						<a href="<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>"><img src="<?php
-							if ( !empty( $unit['logourl'] ) ): echo File::imageName( $unit['logourl'] );
+							if ( !empty( $unit['logourl'] ) ): echo $unit['logourl'];
 							else:
 								?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
 					</div>
@@ -134,19 +134,18 @@ use application\modules\user\utils\User;
 								<li rel="unread_comment" ><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/comment/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_message"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/pm/index' ); ?>" class="anchor">查看消息</a></li>
 								<li rel="unread_atme"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/mention/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="user"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="diary"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="report"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="calendar"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="workflow"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="article"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="officialdoc"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="email"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="unread_notify"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="user"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=user' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="diary"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=diary' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="report"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=report' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="calendar"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=calendar' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="article"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=article' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="officialdoc"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=officialdoc' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="email"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=email' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="assignment"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=assignment' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="message"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/detail&module=message' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
-								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
-								<li rel="car"><span></span>，<a href="" class="anchor">查看消息</a></li>
-								<li rel="assets"><span></span>，<a href="" class="anchor">查看消息</a></li>
-							</ul>
+								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li>
 						</div>
 					</div>
 				</div>
@@ -262,11 +261,12 @@ use application\modules\user\utils\User;
 			</div>
 		</div>
 
-		<script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>' defer asnyc="true"></script>
-		<script src='<?php echo STATICURL; ?>/js/main.js?<?php echo VERHASH; ?>'></script>
 		<!--数据包-->
 		<?php echo File::getOrgJs() ?>
 		<script src='<?php echo STATICURL; ?>/js/app/ibos.userData.js?<?php echo VERHASH; ?>'></script>
 		<script src='<?php echo STATICURL; ?>/js/app/ibos.userSelect.js?<?php echo VERHASH; ?>'></script>
+
+		<script src='<?php echo STATICURL; ?>/js/src/application.js?<?php echo VERHASH; ?>' defer asnyc="true"></script>
+		<script src='<?php echo STATICURL; ?>/js/main.js?<?php echo VERHASH; ?>'></script>
 	</body>
 </html>

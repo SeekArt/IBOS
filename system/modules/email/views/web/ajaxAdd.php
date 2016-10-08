@@ -1,7 +1,11 @@
 <div id="add_form_wrap">
 	<form id="add_form" action="<?php echo $this->createUrl( 'web/add' ); ?>" method="post" class="form-horizontal">
-		<?php if ( isset( $errMsg ) ): ?>
-			<div class="alert alert-danger"><?php echo $errMsg; ?></div>
+		<?php if ( !empty( $errMsg ) ): ?>
+			<div class="alert alert-danger">
+				<?php foreach ($errMsg as $msg): ?>
+					<span><?php echo $msg; ?></span>
+				<?php endforeach; ?>
+			</div>
 		<?php endif; ?>
 		<table class="table table-condensed">
 			<tr>

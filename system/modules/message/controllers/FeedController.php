@@ -52,6 +52,9 @@ class FeedController extends BaseController {
                     if ( isset( $scope['p'] ) ) {
                         $d['positionid'] = implode( ',', $scope['p'] );
                     }
+                    if(isset($scope['r'])){
+                        $d['roleid'] = implode(',',$scope['r']);
+                    }
                 }
             }
             // 应用分享到微博，原资源链接

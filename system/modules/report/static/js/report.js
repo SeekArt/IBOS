@@ -269,6 +269,7 @@ $(function(){
 					                $parentRow = $stampBtn.closest("div");
 
 										$("#preview_stamp_" + param.id).html(stamp);
+										$('#report_stamp_' + param.id).attr('src', data.path);
 										$parentRow.find(".preview_stamp_small").html(smallStamp);
 										$.extend($commentBtn.data("param"), { "stamp": data.value });
 									});

@@ -78,7 +78,7 @@ use application\modules\main\utils\Main;
                                         </span>
                                     </a>
                                     <div class="das-content">
-                                        <p class="xcm mb">
+                                        <p class="xcm mb text-break">
                                             <a href="javascript:;" data-action="showDiaryDetail" data-param='{"id": "<?php echo $diary['diaryid']; ?>", "fromController": "<?php echo $this->id; ?>", "isShowDiarytime": "1"}'><?php echo $diary['content']; ?></a>
                                         </p>
                                         <div class="da-list-item-desc">

@@ -12,7 +12,7 @@
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.email.model
- * @version $Id: Email.php 8197 2016-09-01 10:22:14Z tanghang $
+ * @version $Id: Email.php 8536 2016-09-28 01:30:57Z tanghang $
  */
 
 namespace application\modules\email\model;
@@ -67,7 +67,32 @@ class Email extends Model {
         $order = 'emailid DESC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
-
+    /*
+     * 如果是已删除的状态的上一封和下一封
+     */
+    public function fetchNextDel($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
+        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d',  $uid,$issend,$isdel,$id);
+        $order = 'emailid DESC';
+        return $this->getSiblingsByCondition($condition, $order, $archiveId);
+    }
+    public function fetchPrevDel($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
+        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid,$issend,$isdel ,$id);
+        $order = 'emailid ASC';
+        return $this->getSiblingsByCondition($condition, $order, $archiveId);
+    }
+    /*
+     * 如果是已发送的状态的上一封和下一封
+     */
+    public function fetchNextSend($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
+        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d',  $uid,$issend,$isdel,$id);
+        $order = 'emailid DESC';
+        return $this->getSiblingsByCondition($condition, $order, $archiveId);
+    }
+    public function fetchPrevSend($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
+        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid,$issend,$isdel ,$id);
+        $order = 'emailid ASC';
+        return $this->getSiblingsByCondition($condition, $order, $archiveId);
+    }
     /**
      * 查找一条完整的email数据
      * @param integer $id 邮件索引ID
@@ -789,6 +814,7 @@ class Email extends Model {
         return $bodyIdList;
     }
 
+
     /**
      * 通用搜索
      *
@@ -798,6 +824,9 @@ class Email extends Model {
      * @return CDbCommand 返回 CDbCommand 对象
      */
     public function commonSearch($uid, $op, $aid = 0) {
+		if($op == 'folder'){
+            $fid = Ibos::app()->session['fid'];
+        }
         // 参数处理
         $uid = (int)$uid;
         $aid = (int)$aid;
@@ -828,8 +857,8 @@ class Email extends Model {
                 $condition .= "  {$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`ismark` = 1 ";
                 break;
             case 'del':
-                // 已删除邮件
-                $condition .= "  {$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`isdel` = 1 ";
+                // 已删除邮件,这个isdel我看到数据库删除的时候对应的值是3
+                $condition .= "  {$emailAlias}.`toid` = {$uid} AND {$emailAlias}.`isdel` = 3 ";
                 break;
             case "draft":
                 // 草稿箱
@@ -839,12 +868,19 @@ class Email extends Model {
                 // 已发送
                 $condition .= "  {$emailbodyAlias}.`fromid` = {$uid} AND {$emailbodyAlias}.`issend` = 1 ";
                 break;
+            case "web":
+                //外部邮件
+                $condition .= "{$emailAlias}.`isweb` = 1";
+                break;
+			 case "folder":
+                $condition .= "{$emailAlias}.`fid` = {$fid}";
+                break;
             default:
                 break;
         }
 
         return $command->andWhere($condition);
-        }
+    }
 
     // 获取高级搜索需要的条件
     public function getAdvancedSearchCondition($search) {

@@ -174,6 +174,11 @@ class UserController extends OrganizationBaseController {
 				if ( !empty( $_POST['auxiliarypos'] ) ) {
 					$posIds = StringUtil::getId( $_POST['auxiliarypos'] );
 					$this->handleAuxiliaryPosition( $newId, $posIds, $_POST['positionid'] );
+                    for ($i=0;$i<count($posIds);$i++){
+                        $auNumber = Position::model()->getPositionUserNumById($posIds[$i]);//拿到修改之前的岗位人数
+                        $auNumber = $auNumber + 1;
+                        Position::model()->updatePositionNum($posIds[$i],$auNumber);//修改之前的岗位数
+                    }
 				}
 				//岗位
 				if(isset($_POST['positionid'])){
@@ -281,7 +286,22 @@ class UserController extends OrganizationBaseController {
 				$posIds = StringUtil::getId( $_POST['auxiliarypos'] );
 				$this->handleAuxiliaryPosition( $uid, $posIds, $_POST['positionid'] );
 			}
-			//岗位的修改
+
+			// 辅助角色
+			if ( isset( $_POST['auxiliaryrole'] ) ) {
+				$roleIds = explode( ',', $_POST['auxiliaryrole'] );
+				$this->handleAuxiliaryRole( $uid, $roleIds, $_POST['roleid'] );
+			}
+			$data = User::model()->create();
+			User::model()->checkUnique( $data );
+			if ( $data['status'] != User::USER_STATUS_NORMAL ) {
+				$canDisabled = User::model()->checkCanDisabled( $uid );
+				if ( false === $canDisabled ) {
+					return $this->error( Ibos::lang( 'make sure at least one admin' ) );
+				}
+			}
+			User::model()->updateByUid( $uid, $data );
+            //岗位的修改
             if(!isset($_POST['positionid'])){
                 $number = Position::model()->getPositionUserNumById($positionid);//拿到修改之前的岗位人数
                 $number = $number-1;
@@ -303,20 +323,13 @@ class UserController extends OrganizationBaseController {
                     Position::model()->updatePositionNum($_POST['positionid'],$afterNum);//通过post过来岗位ID来得到对应的人数加一
                 }
             }
-			// 辅助角色
-			if ( isset( $_POST['auxiliaryrole'] ) ) {
-				$roleIds = explode( ',', $_POST['auxiliaryrole'] );
-				$this->handleAuxiliaryRole( $uid, $roleIds, $_POST['roleid'] );
-			}
-			$data = User::model()->create();
-			User::model()->checkUnique( $data );
-			if ( $data['status'] != User::USER_STATUS_NORMAL ) {
-				$canDisabled = User::model()->checkCanDisabled( $uid );
-				if ( false === $canDisabled ) {
-					return $this->error( Ibos::lang( 'make sure at least one admin' ) );
-				}
-			}
-			User::model()->updateByUid( $uid, $data );
+            if(isset($_POST['auxiliarypos'])){
+                for ($i=0;$i<count($posIds);$i++){
+                    $auNumber = Position::model()->getPositionUserNumById($posIds[$i]);//拿到修改之前的岗位人数
+                    $auNumber = $auNumber + 1;
+                    Position::model()->updatePositionNum($posIds[$i],$auNumber);//修改之前的岗位数
+                }
+            }
 			// 直属下属
 			User::model()->updateAll( array( 'upuid' => 0 ), "`upuid`={$uid}" ); // 先把旧的下属upuid清0
 			$subUids = StringUtil::getId( $_POST['subordinate'] );

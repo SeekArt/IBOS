@@ -63,7 +63,10 @@ class CoApi extends Api {
     const API_BIND_CO = 'http://api.ibos.cn/v2/corp/bindingco';
     // API 中心解绑酷办公接口
     const API_UNBIND_CO = 'http://api.ibos.cn/v2/corp/unbundingoa';
-
+    // API 中心判断当前ibos是否绑定酷办公企业接口
+    const API_WHETHER_BIND = 'http://api.ibos.cn/v2/corp/whetherbind';
+    // API 中心判断当前ibos是否绑定酷办公企业接口（不需要登录用户）
+    const API_JUDGE_BIND = 'http://api.ibos.cn/v2/corp/judgebind';
     /**
      * 签名的参数名称
      */
@@ -213,6 +216,31 @@ class CoApi extends Api {
         );
         $result = $this->fetchResult(self::API_CORP_GET_ALL, $param);
         return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 判断ibos绑定状态
+     * @param $accesstoken
+     * @param $post
+     * @return type
+     */
+    public function whetherBind($accesstoken, $post) {
+        $postJson = json_encode($post);
+        $result = $this->fetchResult(self::API_WHETHER_BIND . '?accesstoken=' . $accesstoken, $postJson, 'post');
+        return $this->returnJsonDecode($result);
+    }
+
+    /**
+     * 去验证是否绑定
+     * @param $post
+     * @return type
+     */
+    public function judgeBind($post) {
+        $postJson = json_encode($post);
+        $param = $this->returnSignParam();
+        $url = $this->buildUrl(self::API_JUDGE_BIND, $param);
+        $res = $this->fetchResult($url, $postJson, 'post');
+        return $this->returnJsonDecode($res);
     }
 
     /**
@@ -409,7 +437,7 @@ class CoApi extends Api {
 
     /**
      * 返回签名数组
-     * @param type $arr
+     * @param type|array $arr
      * @return array
      */
     public function returnSignParam($arr = array()) {
@@ -425,8 +453,8 @@ class CoApi extends Api {
     /**
      * 获取签名
      * @param type $param
-     * @param type $method
-     * @param type $key
+     * @param type|string $method
+     * @param type|string $key
      * @return type
      */
     public function getSignature($param, $method = 'md5', $key = self::IBOS_KEY) {
@@ -457,8 +485,8 @@ class CoApi extends Api {
 
     /**
      * 获取用户列表差异
-     * @param  [type] $post [description]
-     * @return [type]       [description]
+     * @param  [type] $post
+     * @return type
      */
     public function getDiffUsers($post) {
         $postJson = json_encode($post);
@@ -520,8 +548,9 @@ class CoApi extends Api {
 
     /**
      * 解除绑定
-     * @param array $post 需要 POST 的数据
+     * @param $corptoken
      * @return array
+     * @internal param array $post 需要 POST 的数据
      */
     public function unbindingCo($corptoken) {
         $postJson = json_encode(array());
@@ -581,10 +610,11 @@ class CoApi extends Api {
         }
         return $arg;
     }
-	
-	/**
+
+    /**
      * 获取酷办公用户列表
-     * @return [type]       [description]
+     * @param $post
+     * @return type
      */
     public function getCoUsers($post) {
         $postJson = json_encode($post);
@@ -606,9 +636,10 @@ class CoApi extends Api {
     }
 
     /**
-    * 获取酷办公部门列表
-    * @return [type]       [description]
-    */
+     * 获取酷办公部门列表
+     * @param $post
+     * @return type
+     */
     public function getCoDept($post) {
         $postJson = json_encode($post);
         $url = $this->buildUrl(self::CO_URL . '/api/syncapi/trans');

@@ -11,7 +11,7 @@ use application\core\utils\StringUtil;
 <!-- Mainer -->
 <div class="mc clearfix">
     <!-- Sidebar -->
-    <?php echo $this->widget( 'application\modules\diary\widgets\DiaryReviewSidebar', array(), true ); ?>
+	<?php echo $this->widget( 'application\modules\diary\widgets\DiaryReviewSidebar', array(), true ); ?>
     <!-- Mainer right -->
     <div class="mcr">
         <div class="mc-header">
@@ -19,7 +19,7 @@ use application\core\utils\StringUtil;
                 <div class="mc-overview pull-right">
                     <ul class="mc-overview-list">
                         <li class="po-da-clock">
-                            <?php echo $lang['Submit time']; ?>：<?php echo $diary['addtime']; ?>
+							<?php echo $lang['Submit time']; ?>：<?php echo $diary['addtime']; ?>
                         </li>
                     </ul>
                 </div>
@@ -45,17 +45,17 @@ use application\core\utils\StringUtil;
                 </div>
                 <div class="btn-group pull-right">
                     <a <?php if ( !empty( $prevAndNextPK['prevPK'] ) ): ?>
-                            href="<?php echo $this->createUrl( 'review/show', array( 'diaryid' => $prevAndNextPK['prevPK'] ) ); ?>" class="btn"
-                        <?php else: ?>
-                            href="javascript:;" class="btn disabled"
-                        <?php endif; ?>>
+							href="<?php echo $this->createUrl( 'review/show', array( 'diaryid' => $prevAndNextPK['prevPK'] ) ); ?>" class="btn"
+						<?php else: ?>
+							href="javascript:;" class="btn disabled"
+						<?php endif; ?>>
                         <i class="glyphicon-chevron-left"></i>
                     </a>
                     <a <?php if ( !empty( $prevAndNextPK['nextPK'] ) ): ?>
-                            href="<?php echo $this->createUrl( 'review/show', array( 'diaryid' => $prevAndNextPK['nextPK'] ) ); ?>" class="btn"
-                        <?php else: ?>
-                            href="javascript:;" class="btn disabled"
-                        <?php endif; ?>>
+							href="<?php echo $this->createUrl( 'review/show', array( 'diaryid' => $prevAndNextPK['nextPK'] ) ); ?>" class="btn"
+						<?php else: ?>
+							href="javascript:;" class="btn disabled"
+						<?php endif; ?>>
                         <i class="glyphicon-chevron-right"></i>
                     </a>
                 </div>
@@ -70,89 +70,89 @@ use application\core\utils\StringUtil;
                         </span>
                     </div>
                     <!-- 原计划 -->
-                    <?php if ( count( $data['originalPlanList'] ) > 0 ) { ?>
-                        <?php foreach ( $data['originalPlanList'] as $key => $originalPlan ) { ?>
-                            <tr class="da-detail-row">
-                                <?php if ( $key == 0 ) { ?>
-                                    <th rowspan="<?php echo count( $data['originalPlanList'] ); ?>" width="68" class="sep"><?php echo $lang['Original plan']; ?></th>
-                                <?php } ?>
-                                <td class="sep" width="3"></td>
-                                <td>
-                                    <div class="fill">
-                                        <div class="bamboo-pgb pull-right">
-                                            <span class="pull-left fss xcn"><?php echo ($originalPlan['schedule'] * 10) . "%" ?></span>
-                                            <span data-toggle="bamboo-pgb" data-value="<?php echo $originalPlan['schedule']; ?>"></span>
-                                        </div>
-                                        <span class="da-detail-num"><?php echo $key + 1; ?>.</span> <?php echo $originalPlan['content']; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    <?php } ?>
+					<?php if ( count( $data['originalPlanList'] ) > 0 ) { ?>
+						<?php foreach ( $data['originalPlanList'] as $key => $originalPlan ) { ?>
+							<tr class="da-detail-row">
+								<?php if ( $key == 0 ) { ?>
+									<th rowspan="<?php echo count( $data['originalPlanList'] ); ?>" width="68" class="sep"><?php echo $lang['Original plan']; ?></th>
+								<?php } ?>
+								<td class="sep" width="3"></td>
+								<td>
+									<div class="fill">
+										<div class="bamboo-pgb pull-right">
+											<span class="pull-left fss xcn"><?php echo ($originalPlan['schedule'] * 10) . "%" ?></span>
+											<span data-toggle="bamboo-pgb" data-value="<?php echo $originalPlan['schedule']; ?>"></span>
+										</div>
+										<span class="da-detail-num"><?php echo $key + 1; ?>.</span> <?php echo $originalPlan['content']; ?>
+									</div>
+								</td>
+							</tr>
+						<?php } ?>
+					<?php } ?>
 
-                    <?php if ( count( $data['outsidePlanList'] ) > 0 ): ?>
-                        <!-- 计划外 -->
-                        <?php foreach ( $data['outsidePlanList'] as $key2 => $outsidePlan ): ?>
-                            <tr class="da-detail-row">
-                                <?php if ( $key2 == 0 ): ?>
-                                    <th rowspan="<?php echo count( $data['outsidePlanList'] ); ?>" width="68"  class="sep"><?php echo $lang['Unplanned']; ?></th>
-                                <?php endif; ?>
-                                <td class="sep" width="3"></td>
-                                <td>
-                                    <div class="fill">
-                                        <div class="bamboo-pgb pull-right">
-                                            <span class="pull-left fss xcn"><?php echo ($outsidePlan['schedule'] * 10) . "%" ?></span>
-                                            <span data-toggle="bamboo-pgb" data-value="<?php echo $outsidePlan['schedule']; ?>"></span>
-                                        </div>
-                                        <span class="da-detail-num"><?php echo count( $data['originalPlanList'] ) + $key2 + 1; ?>.</span> <?php echo $outsidePlan['content']; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+					<?php if ( count( $data['outsidePlanList'] ) > 0 ): ?>
+						<!-- 计划外 -->
+						<?php foreach ( $data['outsidePlanList'] as $key2 => $outsidePlan ): ?>
+							<tr class="da-detail-row">
+								<?php if ( $key2 == 0 ): ?>
+									<th rowspan="<?php echo count( $data['outsidePlanList'] ); ?>" width="68"  class="sep"><?php echo $lang['Unplanned']; ?></th>
+								<?php endif; ?>
+								<td class="sep" width="3"></td>
+								<td>
+									<div class="fill">
+										<div class="bamboo-pgb pull-right">
+											<span class="pull-left fss xcn"><?php echo ($outsidePlan['schedule'] * 10) . "%" ?></span>
+											<span data-toggle="bamboo-pgb" data-value="<?php echo $outsidePlan['schedule']; ?>"></span>
+										</div>
+										<span class="da-detail-num"><?php echo count( $data['originalPlanList'] ) + $key2 + 1; ?>.</span> <?php echo $outsidePlan['content']; ?>
+									</div>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
 
                     <!-- 工作总结 -->
                     <tr>
                         <th class="sep" width="68"><?php echo $lang['Work']; ?><br /><?php echo $lang['Summary']; ?></th>
                         <td class="sep" width="3"></td>
                         <td class="summary-td">
-                            <div class="fill editor-content" style="width: 660px; min-height: 180px">
+                            <div class="fill editor-content text-break" style="width: 660px; min-height: 180px">
                                 <p class="summary"><?php echo $diary['content']; ?>
                                 </p>
                             </div>
                         </td>
                     </tr>
                     <!-- 附件 -->
-                    <?php if ( isset( $attach ) ): ?>
-                        <tr>
-                            <th class="sep" width="68"><?php echo $lang['Attachment']; ?><br />(<?php echo count( $attach ); ?>个)</th>
-                            <td class="sep" width="3"></td>
-                            <td>
-                                <?php foreach ( $attach as $key => $value ): ?>
-                                    <div class="cti">
-                                        <i class="atti">
-                                            <img src="<?php echo $value['iconsmall']; ?>" alt="You are always gonna be my love">
-                                        </i>
-                                        <div class="attc">
-                                            <div>
-                                                <?php echo $value['filename']; ?><span class="tcm">(<?php echo $value['filesize']; ?>)</span>
-                                            </div>
-                                            <span class="fss">
-                                                <a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
-                                                <?php if ( isset( $value['officereadurl'] ) ): ?>
-                                                    <a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
-                                                        <?php echo $lang['Read']; ?>
-                                                    </a>
-                                                <?php endif; ?>
-                                                <!-- 转存到文件柜，等实现文件柜功能再开启 -->
-                                                <!--<a href="#">转存到文件柜</a>-->
-                                            </span>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
+					<?php if ( isset( $attach ) ): ?>
+						<tr>
+							<th class="sep" width="68"><?php echo $lang['Attachment']; ?><br />(<?php echo count( $attach ); ?>个)</th>
+							<td class="sep" width="3"></td>
+							<td>
+								<?php foreach ( $attach as $key => $value ): ?>
+									<div class="cti">
+										<i class="atti">
+											<img src="<?php echo $value['iconsmall']; ?>" alt="You are always gonna be my love">
+										</i>
+										<div class="attc">
+											<div>
+												<?php echo $value['filename']; ?><span class="tcm">(<?php echo $value['filesize']; ?>)</span>
+											</div>
+											<span class="fss">
+												<a href="<?php echo $value['downurl']; ?>" target="_blank"><?php echo $lang['Download']; ?></a>&nbsp;&nbsp;
+												<?php if ( isset( $value['officereadurl'] ) ): ?>
+													<a href="javascript:;" data-action="viewOfficeFile" data-param='{"href": "<?php echo $value['officereadurl']; ?>"}' title="<?php echo $lang['Read']; ?>">
+														<?php echo $lang['Read']; ?>
+													</a>
+												<?php endif; ?>
+												<!-- 转存到文件柜，等实现文件柜功能再开启 -->
+												<!--<a href="#">转存到文件柜</a>-->
+											</span>
+										</div>
+									</div>
+								<?php endforeach; ?>
+							</td>
+						</tr>
+					<?php endif; ?>
                     </tbody>
                 </table>
                 <!-- 计划的日期 -->
@@ -170,64 +170,64 @@ use application\core\utils\StringUtil;
                     <table class="da-detail-table">
                         <tbody>
                             <!-- 计划 -->
-                            <?php foreach ( $data['tomorrowPlanList'] as $key3 => $tomorrowPlan ): ?>
-                                <tr class="da-detail-row">
-                                    <?php if ( $key3 == 0 ): ?>
-                                        <th class="sep" width="68" rowspan="<?php echo count( $data['tomorrowPlanList'] ); ?>"><?php echo $lang['Work']; ?><br /><?php echo $lang['Plan']; ?></th>
-                                    <?php endif; ?>
-                                    <td class="sep" width="3"></td>
-                                    <td>
-                                        <div class="fill posr">
-                                            <span class="da-detail-num"><?php echo $key3 + 1; ?>.</span> <?php echo $tomorrowPlan['content']; ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
+							<?php foreach ( $data['tomorrowPlanList'] as $key3 => $tomorrowPlan ): ?>
+								<tr class="da-detail-row">
+									<?php if ( $key3 == 0 ): ?>
+										<th class="sep" width="68" rowspan="<?php echo count( $data['tomorrowPlanList'] ); ?>"><?php echo $lang['Work']; ?><br /><?php echo $lang['Plan']; ?></th>
+									<?php endif; ?>
+									<td class="sep" width="3"></td>
+									<td>
+										<div class="fill posr">
+											<span class="da-detail-num"><?php echo $key3 + 1; ?>.</span> <?php echo $tomorrowPlan['content']; ?>
+										</div>
+									</td>
+								</tr>
+							<?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
                 <div class="cti bdbs">
                     <h4><?php echo $lang['Review']; ?></h4>
                     <div id="comment" class="comment">
-                        <?php
-                        $sourceUrl = Ibos::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) );
-                        $this->widget( 'application\modules\diary\widgets\DiaryComment', array(
-                            'module' => 'diary',
-                            'table' => 'diary',
-                            'attributes' => array(
-                                'rowid' => $diary['diaryid'],
-                                'moduleuid' => Ibos::app()->user->uid,
-                                'touid' => $diary['uid'],
-                                'module_rowid' => $diary['diaryid'],
-                                'module_table' => 'diary',
-                                'api' => 'reviewSubordinate',
-                                'allowComment' => 1,
-                                'showStamp' => $this->issetStamp(),
-                                'url' => $sourceUrl,
-                                'detail' => Ibos::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
-                    ) ) );
-                        ?>
+						<?php
+						$sourceUrl = Ibos::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) );
+						$this->widget( 'application\modules\diary\widgets\DiaryComment', array(
+							'module' => 'diary',
+							'table' => 'diary',
+							'attributes' => array(
+								'rowid' => $diary['diaryid'],
+								'moduleuid' => Ibos::app()->user->uid,
+								'touid' => $diary['uid'],
+								'module_rowid' => $diary['diaryid'],
+								'module_table' => 'diary',
+								'api' => 'reviewSubordinate',
+								'allowComment' => 1,
+								'showStamp' => $this->issetStamp(),
+								'url' => $sourceUrl,
+								'detail' => Ibos::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
+					) ) );
+						?>
                     </div>
                 </div>
-                <?php if ( !empty( $readers ) ): ?>
-                    <div class="cti">
-                        <h4><?php echo $lang['Read'] ?><?php echo $lang['Personnel'] ?></h4>
-                        <div>
-                            <div class="da-reviews-count">
-                                <?php echo $lang['View'] ?>
-                                <strong><?php echo count( $readers ); ?></strong>
-                                <?php echo $lang['People'] ?>
-                            </div>
-                            <div class="da-reviews-avatar">
-                                <?php foreach ( $readers as $reader ): ?>
-                                    <a href="<?php echo Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
-                                        <img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
-                                    </a>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
+				<?php if ( !empty( $readers ) ): ?>
+					<div class="cti">
+						<h4><?php echo $lang['Read'] ?><?php echo $lang['Personnel'] ?></h4>
+						<div>
+							<div class="da-reviews-count">
+								<?php echo $lang['View'] ?>
+								<strong><?php echo count( $readers ); ?></strong>
+								<?php echo $lang['People'] ?>
+							</div>
+							<div class="da-reviews-avatar">
+								<?php foreach ( $readers as $reader ): ?>
+									<a href="<?php echo Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
+										<img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				<?php endif; ?>
                 <input type="hidden" id="relatedid" name="relatedid" value="<?php echo $diary['diaryid']; ?>">
                 <input type="hidden" id="relatedmodule" name="relatedmodule" value="<?php echo 'diary'; ?>">
             </div>
@@ -242,35 +242,35 @@ use application\core\utils\StringUtil;
 <script src='<?php echo $assetUrl; ?>/js/diary.js?<?php echo VERHASH; ?>'></script>
 <script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script>
-    (function () {
-        var $comment = $('#comment');
-        Diary.initCommentEmotion($comment);
-        //给日志内容图片<img>创建一个父级<a>以创建预览大图
-        $(".da-detail-table img").each(function (index, elem) {
-            $(elem).wrap("<a data-lightbox='diary' href='" + elem.src + "' title='" + elem.title + "'></a>");
-        });
+	(function () {
+		var $comment = $('#comment');
+		Diary.initCommentEmotion($comment);
+		//给日志内容图片<img>创建一个父级<a>以创建预览大图
+		$(".da-detail-table img").each(function (index, elem) {
+			$(elem).wrap("<a data-lightbox='diary' href='" + elem.src + "' title='" + elem.title + "'></a>");
+		});
 
-        // 图章
-        var arr = <?php echo $this->getStamp(); ?>,
-                $stampBtn = $comment.find("[data-toggle='stampPicker']");
+		// 图章
+		var arr = <?php echo $this->getStamp(); ?>,
+				$stampBtn = $comment.find("[data-toggle='stampPicker']");
 
-        Ibosapp.stampPicker($stampBtn, arr, 1);
+		Ibosapp.stampPicker($stampBtn, arr, 1);
 
-        $stampBtn.on("stampChange", function (evt, data) {
-            var $commentBtn = $comment.find("[data-act='addcomment']");
+		$stampBtn.on("stampChange", function (evt, data) {
+			var $commentBtn = $comment.find("[data-act='addcomment']");
 			var stamp = '<img src="' + data.stamp + '" width="150px" height="90px" />',
-                    smallStamp = '<img src="' + data.path + '" width="60px" height="24px" />',
-                    $parentRow = $stampBtn.parents("div").eq(0);
+					smallStamp = '<img src="' + data.path + '" width="60px" height="24px" />',
+					$parentRow = $stampBtn.parents("div").eq(0);
 
-            $("#preview_stamp").html(stamp);
-            $parentRow.find(".preview_stamp_small").html(smallStamp);
-            $.extend($commentBtn.data("param"), {stamp: data.value});
-        });
+			$("#preview_stamp").html(stamp);
+			$parentRow.find(".preview_stamp_small").html(smallStamp);
+			$.extend($commentBtn.data("param"), {stamp: data.value});
+		});
 
-        $("[data-toggle='bamboo-pgb']").each(function () {
-            return $(this).studyplay_star({
-                Enabled: false
-            });
-        });
-    })();
+		$("[data-toggle='bamboo-pgb']").each(function () {
+			return $(this).studyplay_star({
+				Enabled: false
+			});
+		});
+	})();
 </script>

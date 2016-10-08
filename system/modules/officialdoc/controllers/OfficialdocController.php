@@ -313,7 +313,7 @@ class OfficialdocController extends BaseController {
 	}
 
 	/**
-	 * 保存文章
+	 * 保存公文
 	 */
 	private function save() {
 		$uid = Ibos::app()->user->uid;
@@ -357,10 +357,10 @@ class OfficialdocController extends BaseController {
 		$categoryName = OfficialdocCategory::model()->fetchCateNameByCatid( $officialdoc['catid'] );
 		if ( $data['status'] == '1' ) {
 			$publishScope = array(
-				'deptid' => $officialdoc['deptid'],
-				'positionid' => $officialdoc['positionid'],
-				'uid' => $officialdoc['uid'],
-				'roleid' => $officialdoc['roleid']
+				'deptid' => $officialdoc['deptid'].','.$data['ccdeptid'],
+				'positionid' => $officialdoc['positionid'].','.$data['ccpositionid'],
+				'uid' => $officialdoc['uid'].','.$data['ccuid'],
+				'roleid' => $officialdoc['roleid'].','.$data['ccroleid']
 			);
 			$uidArr = OfficialdocUtil::getScopeUidArr( $publishScope );
 			$config = array(
@@ -626,7 +626,7 @@ class OfficialdocController extends BaseController {
 	}
 
 	/**
-	 * 加载签收情况
+	 * 加载未签收情况
 	 * @return void
 	 */
 	private function getUnSign() {
@@ -639,7 +639,11 @@ class OfficialdocController extends BaseController {
 			// 未签收uid
 			$unSignedTempUids = array_diff( $uids, $signedUids );
 			$unSignedUids = User::model()->findNotDisabledUid( $unSignedTempUids );
-			$unSignedUsersTemp = User::model()->fetchAllByUids( $unSignedUids );
+            $unSignedUsersTemp = array();
+            for ($i=0;$i<count($unSignedUids);$i++){
+                $uid = $unSignedUids[$i];
+                $unSignedUsersTemp[$uid] = User::model()->fetchByUid( $uid );
+            }
 			$unSignedUsers = UserUtil::handleUserGroupByDept( $unSignedUsersTemp );
 			$params = array(
 				'unsignUids' => CJSON::encode( $unSignedUids ),
@@ -809,7 +813,13 @@ class OfficialdocController extends BaseController {
 								}
 							}
 							Notify::model()->sendNotify( $nextApproval['uids'], 'officialdoc_verify_message', $config, $uid );
-							Officialdoc::model()->updateAllStatusByDocids( $docid, 2, $uid );
+                            //审核人为下一个审核该公文的用户（当前审核已通过）
+                            if(isset($nextApproval['uids']) && isset($nextApproval['uids'][0])){
+                                $approver = $nextApproval['uids'][0];
+                            }else{
+                                $approval = $uid;
+                            }
+							Officialdoc::model()->updateAllStatusByDocids( $docid, 2, $approver);
 						}
 					}
 				}
@@ -851,8 +861,34 @@ class OfficialdocController extends BaseController {
 					'positionid' => $publishScope['positionid'],
 					'roleid' => $publishScope['roleid'],
 				);
+                //更新积分
 				WbfeedUtil::pushFeed( $doc['author'], 'officialdoc', 'officialdoc', $doc['docid'], $data );
 			}
+			//下面的代码主要是审核全部完成后，应该给接收公文的用户发送推送消息
+            $category = OfficialdocCategory::model()->fetchByPk($doc['catid']);
+            $user = User::model()->fetchByPk($doc['author']);
+            $publishScope = array(
+                'deptid' => $doc['deptid'].','.$doc['ccdeptid'],
+                'positionid' => $doc['positionid'].','.$doc['ccpositionid'],
+                'uid' => $doc['uid'].','.$doc['ccuid'],
+                'roleid' => $doc['roleid'].','.$doc['ccroleid']
+            );
+            $uidArr = OfficialdocUtil::getScopeUidArr( $publishScope );
+            $config = array(
+                '{sender}' => $user['realname'],
+                '{category}' => $category['name'],
+                '{subject}' => $doc['subject'],
+                '{content}' => $this->renderPartial( 'remindcontent', array(
+                    'doc' => $doc,
+                    'author' => $user['realname'],
+                ), true ),
+                '{orgContent}' => StringUtil::filterCleanHtml( $doc['content'] ),
+                '{url}' => Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $docid ) ),
+                'id' => $docid,
+            );
+            if ( count( $uidArr ) > 0 ) {
+                Notify::model()->sendNotify( $uidArr, 'officialdoc_message', $config );
+            }
 			//更新积分
 			UserUtil::updateCreditByAction( 'addofficialdoc', $doc['author'] );
 		}

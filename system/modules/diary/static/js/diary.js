@@ -388,7 +388,8 @@ $(function(){
 											smallStamp = '<img src="'+ data.path + '" width="60px" height="24px" />',
 											$parentRow = $stampBtn.closest("div");
 
-										$("#preview_stamp_"+ param.id ).html(stamp);
+										$("#preview_stamp_" + param.id ).html(stamp);
+                                        $('#diary_stamp_' + param.id).attr('src', data.path);
 										$parentRow.find(".preview_stamp_small").html(smallStamp);
                                         $.extend($commentBtn.data("param"), {stamp: data.value});
 									});

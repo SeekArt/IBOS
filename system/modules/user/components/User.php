@@ -12,7 +12,7 @@
  *
  * @package application.modules.user.components
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: User.php 7405 2016-06-20 03:58:42Z tanghang $
+ * @version $Id: User.php 8391 2016-09-13 09:14:12Z tanghang $
  */
 
 namespace application\modules\user\components;
@@ -217,5 +217,11 @@ class User extends CWebUser {
 		//默认是false
 		return false;
 	}
-
+	/**
+	 * 默认设置user组件的param属性，用来临时存一些参数，保持参数到<del>比赛结束</del>退出登录
+	 * @return array
+	 */
+	public function getParam() {
+		return array();
+	}
 }

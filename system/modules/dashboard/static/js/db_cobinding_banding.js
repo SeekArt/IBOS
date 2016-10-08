@@ -81,6 +81,10 @@ $(function() {
                 } else {
                     Ui.tip(res.message, "danger");
 
+                    if( res.cobinding === false ){
+                        document.location.href = Ibos.app.url("dashboard/cobinding/index");
+                    }
+
                     that.getsynclist(null);
                     return false;
                 }
