@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\AttachmentN;
 use application\modules\main\model\Setting;
@@ -51,7 +51,7 @@ class UnitController extends BaseController {
 			if ( !empty( $_FILES['logo']['name'] ) ) {
 				!empty( $unit['logourl'] ) && File::deleteFile( $unit['logourl'] );
 				$postData['logourl'] = $this->imgUpload( 'logo' );
-				$postData['logourl'] = IBOS::engine()->io()->file()->thumbnail( $postData['logourl'], $postData['logourl'], 120, 40 );
+				$postData['logourl'] = Ibos::engine()->io()->file()->thumbnail( $postData['logourl'], $postData['logourl'], 120, 40 );
 			} else {
 				if ( !empty( $_POST['logourl'] ) ) {
 					$postData['logourl'] = $_POST['logourl'];
@@ -69,7 +69,7 @@ class UnitController extends BaseController {
 			}
 			Setting::model()->updateSettingValueByKey( 'unit', $postData );
 			Cache::update( 'setting' );
-			$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 		} else {
 
 			$unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );

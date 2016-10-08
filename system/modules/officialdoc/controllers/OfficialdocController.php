@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\controllers;
 use application\core\model\Log;
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\message\model\Notify;
@@ -64,10 +64,10 @@ class OfficialdocController extends BaseController {
 		$routes = array( 'default', 'getSign', 'search', 'getUnSign', 'getVersion',
 			'getRcType', 'prewiew', 'remind' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
+			$this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
 		}
 		if ( $option == 'default' ) {
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$catid = intval( Env::getRequest( 'catid' ) );
 			$childCatIds = '';
 			if ( !empty( $catid ) ) {
@@ -87,11 +87,11 @@ class OfficialdocController extends BaseController {
 			//     'categorySelectOptions' => $this->getCategoryOption(),
 			//     'isApprover' => $isApprover
 			// );
-			$this->setPageTitle( IBOS::lang( 'Officialdoc' ) );
+			$this->setPageTitle( Ibos::lang( 'Officialdoc' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => IBOS::lang( 'Information center' ) ),
-				array( 'name' => IBOS::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
-				array( 'name' => IBOS::lang( 'Officialdoc list' ) )
+				array( 'name' => Ibos::lang( 'Information center' ) ),
+				array( 'name' => Ibos::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
+				array( 'name' => Ibos::lang( 'Officialdoc list' ) )
 			) );
 
 			//未签收数
@@ -111,7 +111,7 @@ class OfficialdocController extends BaseController {
 	 * @return
 	 */
 	public function actionGetDocList() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$type = Env::getRequest( 'type' );
 		$catid = intval( Env::getRequest( 'catid' ) );
 		$childCatIds = '';
@@ -127,7 +127,7 @@ class OfficialdocController extends BaseController {
 		} else {
 			$condition = OfficialdocUtil::joinListCondition( $type, $uid, $childCatIds, $this->_condition );
 		}
-		NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+		NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
 		$this->ajaxReturn( array(
 			'isSuccess' => true,
 			'msg' => '调用成功',
@@ -182,28 +182,28 @@ class OfficialdocController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'save', 'checkIsAllowPublish' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
+			$this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
 		}
 		if ( $option == 'default' ) {
 			if ( !empty( $_GET['catid'] ) ) {
 				$this->catId = $_GET['catid'];
 			}
 			// 是否是免审人能直接发布
-			$allowPublish = OfficialdocCategory::model()->checkIsAllowPublish( $this->catId, IBOS::app()->user->uid );
+			$allowPublish = OfficialdocCategory::model()->checkIsAllowPublish( $this->catId, Ibos::app()->user->uid );
 			$aitVerify = OfficialdocCategory::model()->fetchIsProcessByCatid( $this->catId );
 			$params = array(
 				'categoryOption' => $this->getCategoryOption(),
-				'dashboardConfig' => IBOS::app()->setting->get( 'setting/docconfig' ),
+				'dashboardConfig' => Ibos::app()->setting->get( 'setting/docconfig' ),
 				'uploadConfig' => Attach::getUploadConfig(),
 				'RCData' => RcType::model()->fetchAll(),
 				'allowPublish' => $allowPublish,
 				'aitVerify' => $aitVerify
 			);
-			$this->setPageTitle( IBOS::lang( 'Add officialdoc' ) );
+			$this->setPageTitle( Ibos::lang( 'Add officialdoc' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => IBOS::lang( 'Information center' ) ),
-				array( 'name' => IBOS::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
-				array( 'name' => IBOS::lang( 'Add officialdoc' ) )
+				array( 'name' => Ibos::lang( 'Information center' ) ),
+				array( 'name' => Ibos::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
+				array( 'name' => Ibos::lang( 'Add officialdoc' ) )
 			) );
 			$this->render( 'add', $params );
 		} else {
@@ -218,7 +218,7 @@ class OfficialdocController extends BaseController {
 	 * @return boolean
 	 */
 	protected function checkIsAllowPublish() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$catid = intval( Env::getRequest( 'catid' ) );
 			$uid = intval( Env::getRequest( 'uid' ) );
 			$isAllow = OfficialdocCategory::model()->checkIsAllowPublish( $catid, $uid );
@@ -237,12 +237,12 @@ class OfficialdocController extends BaseController {
 		$routes = array( 'default', 'update', 'top', 'highLight', 'move', 'verify',
 			'back' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
+			$this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
 		}
 		if ( $option == 'default' ) {
 			$docid = Env::getRequest( 'docid' );
 			if ( empty( $docid ) ) {
-				$this->error( IBOS::lang( 'Parameters error', 'error' ) );
+				$this->error( Ibos::lang( 'Parameters error', 'error' ) );
 			}
 			$data = Officialdoc::model()->fetch( 'docid=:docid', array( ':docid' => $docid ) );
 			if ( !empty( $data ) ) {
@@ -250,12 +250,12 @@ class OfficialdocController extends BaseController {
 				$data['publishScope'] = StringUtil::joinSelectBoxValue( $data['deptid'], $data['positionid'], $data['uid'], $data['roleid'] );
 				$data['ccScope'] = StringUtil::joinSelectBoxValue( $data['ccdeptid'], $data['ccpositionid'], $data['ccuid'], $data['ccroleid'] );
 				// 是否是免审人能直接发布
-				$allowPublish = OfficialdocCategory::model()->checkIsAllowPublish( $data['catid'], IBOS::app()->user->uid );
+				$allowPublish = OfficialdocCategory::model()->checkIsAllowPublish( $data['catid'], Ibos::app()->user->uid );
 				$aitVerify = OfficialdocCategory::model()->fetchIsProcessByCatid( $data['catid'] );
 				$params = array(
 					'data' => $data,
 					'categoryOption' => $this->getCategoryOption(),
-					'dashboard' => IBOS::app()->setting->get( 'setting/docconfig' ),
+					'dashboard' => Ibos::app()->setting->get( 'setting/docconfig' ),
 					'uploadConfig' => Attach::getUploadConfig(),
 					'RCData' => RcType::model()->fetchAll(),
 					'allowPublish' => $allowPublish,
@@ -264,11 +264,11 @@ class OfficialdocController extends BaseController {
 				if ( !empty( $data['attachmentid'] ) ) {
 					$params['attach'] = Attach::getAttach( $data['attachmentid'] );
 				}
-				$this->setPageTitle( IBOS::lang( 'Edit officialdoc' ) );
+				$this->setPageTitle( Ibos::lang( 'Edit officialdoc' ) );
 				$this->setPageState( 'breadCrumbs', array(
-					array( 'name' => IBOS::lang( 'Information center' ) ),
-					array( 'name' => IBOS::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
-					array( 'name' => IBOS::lang( 'Edit officialdoc' ) )
+					array( 'name' => Ibos::lang( 'Information center' ) ),
+					array( 'name' => Ibos::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
+					array( 'name' => Ibos::lang( 'Edit officialdoc' ) )
 				) );
 				$this->render( 'edit', $params );
 			}
@@ -282,7 +282,7 @@ class OfficialdocController extends BaseController {
 	 * @return void
 	 */
 	public function actionDel() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docids = trim( Env::getRequest( 'docids' ), ',' );
 			// 删除附件
 			$attachmentIdArr = Officialdoc::model()->fetchAidsByDocids( $docids );
@@ -300,14 +300,14 @@ class OfficialdocController extends BaseController {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => true,
-							'info' => IBOS::lang( 'Del succeed', 'message' ),
-							'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+							'info' => Ibos::lang( 'Del succeed', 'message' ),
+							'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
 			} else {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => false,
-							'info' => IBOS::lang( 'Parameters error', 'error' ),
-							'msg' => IBOS::lang( 'Parameters error', 'error' ) ) );
+							'info' => Ibos::lang( 'Parameters error', 'error' ),
+							'msg' => Ibos::lang( 'Parameters error', 'error' ) ) );
 			}
 		}
 	}
@@ -316,7 +316,7 @@ class OfficialdocController extends BaseController {
 	 * 保存文章
 	 */
 	private function save() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$data = $_POST;
 		$data['subject'] = CHtml::encode( $data['subject'] );
 		$data['docNo'] = CHtml::encode( $data['docNo'] );
@@ -384,12 +384,12 @@ class OfficialdocController extends BaseController {
 				$publishScope = array( 'deptid' => $officialdoc['deptid'], 'positionid' => $officialdoc['positionid'],
 					'uid' => $officialdoc['uid'] );
 				$data = array(
-					'title' => IBOS::lang( 'Feed title', '', array(
+					'title' => Ibos::lang( 'Feed title', '', array(
 						'{subject}' => $officialdoc['subject'],
-						'{url}' => IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $docId ) )
+						'{url}' => Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $docId ) )
 					) ),
 					'body' => $officialdoc['subject'],
-					'actdesc' => IBOS::lang( 'Post officialdoc' ),
+					'actdesc' => Ibos::lang( 'Post officialdoc' ),
 					'userid' => $publishScope['uid'],
 					'deptid' => $publishScope['deptid'],
 					'positionid' => $publishScope['positionid'],
@@ -406,12 +406,12 @@ class OfficialdocController extends BaseController {
 		 * 日志记录
 		 */
 		$log = array(
-			'user' => IBOS::app()->user->username,
-			'ip' => IBOS::app()->setting->get( 'clientip' ),
+			'user' => Ibos::app()->user->username,
+			'ip' => Ibos::app()->setting->get( 'clientip' ),
 			'isSuccess' => 1
 		);
 		Log::write( $log, 'action', 'module.officialdoc.officialdoc.add' );
-		$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'officialdoc/index' ) );
+		$this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'officialdoc/index' ) );
 	}
 
 	/**
@@ -458,7 +458,7 @@ class OfficialdocController extends BaseController {
 	private function update() {
 		if ( Env::submitCheck( 'formhash' ) ) {
 			$docid = $_POST['docid'];
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$data = $_POST;
 			$data['subject'] = CHtml::encode( $data['subject'] );
 			$data['docNo'] = CHtml::encode( $data['docNo'] );
@@ -509,7 +509,7 @@ class OfficialdocController extends BaseController {
 
 			OfficialdocBack::model()->deleteAll( "docid = {$docid}" );
 
-			$this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'officialdoc/index' ) );
+			$this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'officialdoc/index' ) );
 		}
 	}
 
@@ -537,11 +537,11 @@ class OfficialdocController extends BaseController {
 			$this->sign();
 			exit();
 		}
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$docid = intval( Env::getRequest( 'docid' ) );
 		$version = Env::getRequest( 'version' );
 		if ( empty( $docid ) ) {
-			$this->error( IBOS::lang( 'Parameters error', 'error' ) );
+			$this->error( Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$officialDoc = Officialdoc::model()->fetchByPk( $docid );
 		if ( $version ) {  //如果是查看历史版本，合并历史版本数据
@@ -552,7 +552,7 @@ class OfficialdocController extends BaseController {
 		if ( !empty( $officialDoc ) ) {
 			//如果这篇文章状态是待审核时：如果当前读者是作者本人，可以查看，否者，提示该文章未通过审核
 			if ( !OfficialdocUtil::checkReadScope( $uid, $officialDoc ) ) {
-				$this->error( IBOS::lang( 'You do not have permission to read the officialdoc' ), $this->createUrl( 'officialdoc/index' ) );
+				$this->error( Ibos::lang( 'You do not have permission to read the officialdoc' ), $this->createUrl( 'officialdoc/index' ) );
 			}
 			//改这个addReader的顺序的时候，同时更新了主表的readers的字段，所以为了获取最新数据，必须把这行提前
 			$data = ICOfficialdoc::getShowData( $officialDoc );
@@ -565,7 +565,7 @@ class OfficialdocController extends BaseController {
 			$params = array(
 				'data' => $data,
 				'signInfo' => $signInfo,
-				'dashboardConfig' => IBOS::app()->setting->get( 'setting/docconfig' ),
+				'dashboardConfig' => Ibos::app()->setting->get( 'setting/docconfig' ),
 				'needSign' => $needSign
 			);
 			if ( $data['rcid'] ) {
@@ -587,16 +587,16 @@ class OfficialdocController extends BaseController {
 			$readersString = implode( ',', array_unique( array_filter( $readersArray ) ) );
 			Officialdoc::model()->updateAll( array( 'readers' => $readersString ), " `docid` = '{$docid}' " );
 			$params['data']['readers'] = $readersString;
-			$this->setPageTitle( IBOS::lang( 'Show officialdoc' ) );
+			$this->setPageTitle( Ibos::lang( 'Show officialdoc' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => IBOS::lang( 'Information center' ) ),
-				array( 'name' => IBOS::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
-				array( 'name' => IBOS::lang( 'Show officialdoc' ) )
+				array( 'name' => Ibos::lang( 'Information center' ) ),
+				array( 'name' => Ibos::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
+				array( 'name' => Ibos::lang( 'Show officialdoc' ) )
 			) );
-			NotifyMessage::model()->setReadByUrl( IBOS::app()->user->uid, IBOS::app()->getRequest()->getUrl() );
+			NotifyMessage::model()->setReadByUrl( Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl() );
 			$this->render( 'show', $params );
 		} else {
-			$this->error( IBOS::lang( 'No permission or officialdoc not exists' ), $this->createUrl( 'officialdoc/index' ) );
+			$this->error( Ibos::lang( 'No permission or officialdoc not exists' ), $this->createUrl( 'officialdoc/index' ) );
 		}
 	}
 
@@ -605,7 +605,7 @@ class OfficialdocController extends BaseController {
 	 * @return void
 	 */
 	private function getSign() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docid = Env::getRequest( 'docid' );
 			$signedInfos = OfficialdocReader::model()->fetchSignedByDocId( $docid );
 			$signedUsersTemp = array();
@@ -630,7 +630,7 @@ class OfficialdocController extends BaseController {
 	 * @return void
 	 */
 	private function getUnSign() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docid = Env::getRequest( 'docid' );
 			// 此公文所有需签收的uid
 			$uids = Officialdoc::model()->fetchAllUidsByDocId( $docid );
@@ -656,18 +656,18 @@ class OfficialdocController extends BaseController {
 	 * 签收提醒
 	 */
 	private function remind() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docid = Env::getRequest( 'docid' );
 			$docTitle = Env::getRequest( 'docTitle' );
 			$getUids = Env::getRequest( 'uids' );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$doc = Officialdoc::model()->fetchByPk( $docid );
 			if ( empty( $getUids ) ) {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => false,
-							'info' => IBOS::lang( 'No user to remind' ),
-							'msg' => IBOS::lang( 'No user to remind' ) ) );
+							'info' => Ibos::lang( 'No user to remind' ),
+							'msg' => Ibos::lang( 'No user to remind' ) ) );
 			}
 
 			// 发送系统提醒
@@ -684,8 +684,8 @@ class OfficialdocController extends BaseController {
 			$this->ajaxReturn(
 					array(
 						'isSuccess' => true,
-						'info' => IBOS::lang( 'Remind succeed' ),
-						'msg' => IBOS::lang( 'Remind succeed' ) ) );
+						'info' => Ibos::lang( 'Remind succeed' ),
+						'msg' => Ibos::lang( 'Remind succeed' ) ) );
 		}
 	}
 
@@ -694,7 +694,7 @@ class OfficialdocController extends BaseController {
 	 * @param array $datas
 	 */
 	private function handleShowData( $datas ) {
-		$user = User::model()->fetchByUid( IBOS::app()->user->uid );
+		$user = User::model()->fetchByUid( Ibos::app()->user->uid );
 		$self = array();
 		foreach ( $datas as $deptid => $data ) {
 			if ( $deptid == $user['deptid'] ) {
@@ -714,7 +714,7 @@ class OfficialdocController extends BaseController {
 	 * @return void
 	 */
 	private function getVersion() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docid = Env::getRequest( 'docid' );
 			$versionData = OfficialdocVersion::model()->fetchAllByDocid( $docid );
 			$this->ajaxReturn( $versionData );
@@ -725,11 +725,11 @@ class OfficialdocController extends BaseController {
 	 * 签收处理
 	 */
 	private function sign() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docid = Env::getRequest( 'docid' );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			OfficialdocReader::model()->updateSignByDocid( $docid, $uid );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Sign for success' ),
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Sign for success' ),
 				'signtime' => date( 'Y年m月d日 H:i', TIMESTAMP ) ) );
 		}
 	}
@@ -758,16 +758,16 @@ class OfficialdocController extends BaseController {
 	 * 审核公文
 	 */
 	private function verify() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
-			$uid = IBOS::app()->user->uid;
+		if ( Ibos::app()->request->isAjaxRequest ) {
+			$uid = Ibos::app()->user->uid;
 			$docids = trim( Env::getRequest( 'docids' ), ',' );
 			$ids = explode( ',', $docids );
 			if ( empty( $ids ) ) {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => false,
-							'info' => IBOS::lang( 'Parameters error', 'error' ),
-							'msg' => IBOS::lang( 'Parameters error', 'error' ) ) );
+							'info' => Ibos::lang( 'Parameters error', 'error' ),
+							'msg' => Ibos::lang( 'Parameters error', 'error' ) ) );
 			}
 			$sender = User::model()->fetchRealnameByUid( $uid );
 			foreach ( $ids as $docid ) {
@@ -784,8 +784,8 @@ class OfficialdocController extends BaseController {
 						$this->ajaxReturn(
 								array(
 									'isSuccess' => false,
-									'info' => IBOS::lang( 'You do not have permission to verify the official' ),
-									'msg' => IBOS::lang( 'You do not have permission to verify the official' ), ) );
+									'info' => Ibos::lang( 'You do not have permission to verify the official' ),
+									'msg' => Ibos::lang( 'You do not have permission to verify the official' ), ) );
 					}
 					if ( !empty( $nextApproval ) ) {
 						if ( $nextApproval['step'] == 'publish' ) { // 已完成标识
@@ -815,8 +815,8 @@ class OfficialdocController extends BaseController {
 				}
 			}
 			$this->ajaxReturn( array( 'isSuccess' => true,
-				'info' => IBOS::lang( 'Verify succeed', 'message' ),
-				'msg' => IBOS::lang( 'Verify succeed', 'message' ), ) );
+				'info' => Ibos::lang( 'Verify succeed', 'message' ),
+				'msg' => Ibos::lang( 'Verify succeed', 'message' ), ) );
 		}
 	}
 
@@ -840,12 +840,12 @@ class OfficialdocController extends BaseController {
 					'roleid' => $doc['roleid'],
 				);
 				$data = array(
-					'title' => IBOS::lang( 'Feed title', '', array(
+					'title' => Ibos::lang( 'Feed title', '', array(
 						'{subject}' => $doc['subject'],
-						'{url}' => IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $doc['docid'] ) )
+						'{url}' => Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $doc['docid'] ) )
 					) ),
 					'body' => $doc['content'],
-					'actdesc' => IBOS::lang( 'Post officialdoc' ),
+					'actdesc' => Ibos::lang( 'Post officialdoc' ),
 					'userid' => $publishScope['uid'],
 					'deptid' => $publishScope['deptid'],
 					'positionid' => $publishScope['positionid'],
@@ -862,14 +862,14 @@ class OfficialdocController extends BaseController {
 	 * 退回
 	 */
 	private function back() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$docIds = trim( Env::getRequest( 'docids' ), ',' );
 		$reason = StringUtil::filterCleanHtml( Env::getRequest( 'reason' ) );
 		$ids = explode( ',', $docIds );
 		if ( empty( $ids ) ) {
 			$this->ajaxReturn( array( 'isSuccess' => false,
-				'info' => IBOS::lang( 'Parameters error', 'error' ),
-				'msg' => IBOS::lang( 'Parameters error', 'error' ), ) );
+				'info' => Ibos::lang( 'Parameters error', 'error' ),
+				'msg' => Ibos::lang( 'Parameters error', 'error' ), ) );
 		}
 		$sender = User::model()->fetchRealnameByUid( $uid );
 		foreach ( $ids as $docId ) {
@@ -877,8 +877,8 @@ class OfficialdocController extends BaseController {
 			$categoryName = OfficialdocCategory::model()->fetchCateNameByCatid( $doc['catid'] );
 			if ( !$this->checkIsApprovaler( $doc, $uid ) ) {
 				$this->ajaxReturn( array( 'isSuccess' => false,
-					'info' => IBOS::lang( 'You do not have permission to verify the official' ),
-					'msg' => IBOS::lang( 'You do not have permission to verify the official' ) ) );
+					'info' => Ibos::lang( 'You do not have permission to verify the official' ),
+					'msg' => Ibos::lang( 'You do not have permission to verify the official' ) ) );
 			}
 			$config = array(
 				'{sender}' => $sender,
@@ -892,8 +892,8 @@ class OfficialdocController extends BaseController {
 			OfficialdocBack::model()->addBack( $docId, $uid, $reason, TIMESTAMP ); // 添加一条退回记录
 		}
 		$this->ajaxReturn( array( 'isSuccess' => true,
-			'info' => IBOS::lang( 'Operation succeed', 'message' ),
-			'msg' => IBOS::lang( 'Operation succeed', 'message' ),
+			'info' => Ibos::lang( 'Operation succeed', 'message' ),
+			'msg' => Ibos::lang( 'Operation succeed', 'message' ),
 		) );
 	}
 
@@ -901,7 +901,7 @@ class OfficialdocController extends BaseController {
 	 * 移动文章
 	 */
 	private function move() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docids = Env::getRequest( 'docids' );
 			$catid = Env::getRequest( 'catid' );
 			if ( !empty( $docids ) && !empty( $catid ) ) {
@@ -917,7 +917,7 @@ class OfficialdocController extends BaseController {
 	 * 置顶操作
 	 */
 	private function top() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docids = Env::getRequest( 'docids' );
 			$topEndTime = Env::getRequest( 'topEndTime' );
 			if ( !empty( $topEndTime ) ) {
@@ -926,15 +926,15 @@ class OfficialdocController extends BaseController {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => true,
-							'info' => IBOS::lang( 'Top succeed' ),
-							'msg' => IBOS::lang( 'Top succeed' ) ) );
+							'info' => Ibos::lang( 'Top succeed' ),
+							'msg' => Ibos::lang( 'Top succeed' ) ) );
 			} else {
 				Officialdoc::model()->updateTopStatus( $docids, 0, '', '' );
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => true,
-							'info' => IBOS::lang( 'Unstuck success' ),
-							'msg' => IBOS::lang( 'Unstuck success' ) ) );
+							'info' => Ibos::lang( 'Unstuck success' ),
+							'msg' => Ibos::lang( 'Unstuck success' ) ) );
 			}
 		}
 	}
@@ -943,7 +943,7 @@ class OfficialdocController extends BaseController {
 	 * 高亮操作
 	 */
 	private function highLight() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$docids = trim( Env::getRequest( 'docids' ), ',' );
 			$highLight = array();
 			$highLight['endTime'] = Env::getRequest( 'highlightEndTime' );
@@ -958,15 +958,15 @@ class OfficialdocController extends BaseController {
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => true,
-							'info' => IBOS::lang( 'Unhighlighting success' ),
-							'msg' => IBOS::lang( 'Unhighlighting success' ) ) );
+							'info' => Ibos::lang( 'Unhighlighting success' ),
+							'msg' => Ibos::lang( 'Unhighlighting success' ) ) );
 			} else {
 				Officialdoc::model()->updateHighlightStatus( $docids, 1, $data['highlightstyle'], $data['highlightendtime'] );
 				$this->ajaxReturn(
 						array(
 							'isSuccess' => true,
-							'info' => IBOS::lang( 'Highlight succeed' ),
-							'msg' => IBOS::lang( 'Highlight succeed' ) ) );
+							'info' => Ibos::lang( 'Highlight succeed' ),
+							'msg' => Ibos::lang( 'Highlight succeed' ) ) );
 			}
 		}
 	}
@@ -976,7 +976,7 @@ class OfficialdocController extends BaseController {
 	 * @return void
 	 */
 	private function getRcType() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$typeid = Env::getRequest( 'typeid' );
 			$rcType = RcType::model()->fetchByPk( $typeid );
 			$this->ajaxReturn( $rcType );
@@ -987,11 +987,11 @@ class OfficialdocController extends BaseController {
 	 * 预览
 	 */
 	private function prewiew() {
-		$this->setPageTitle( IBOS::lang( 'Preview officialdoc' ) );
+		$this->setPageTitle( Ibos::lang( 'Preview officialdoc' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Information center' ) ),
-			array( 'name' => IBOS::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
-			array( 'name' => IBOS::lang( 'Preview officialdoc' ) )
+			array( 'name' => Ibos::lang( 'Information center' ) ),
+			array( 'name' => Ibos::lang( 'Officialdoc' ), 'url' => $this->createUrl( 'officialdoc/index' ) ),
+			array( 'name' => Ibos::lang( 'Preview officialdoc' ) )
 		) );
 		$this->render( 'prewiew', array( 'content' => $_POST['content'] ) );
 	}

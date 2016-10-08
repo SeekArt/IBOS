@@ -6,7 +6,7 @@ use application\core\model\Model;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Database;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\utils\Email as EmailUtil;
 
@@ -30,7 +30,7 @@ class EmailBody extends Model {
      * @return boolean 已经存在返回true，否则返回false
      */
     public static function isExist($sendtime, $fromwebmail) {
-        $result = IBOS::app()->db->createCommand()
+        $result = Ibos::app()->db->createCommand()
                 ->select('bodyid')
                 ->from('{{email_body}}')
                 ->where('`sendtime` = ' . $sendtime . ' AND `fromwebmail` = ' . "'" . $fromwebmail . "'")
@@ -48,7 +48,7 @@ class EmailBody extends Model {
      */
     public function delBody($bodyIds, $archiveId = 0) {
         $table = sprintf('{{%s}}', $this->getTableName($archiveId));
-        $bodys = IBOS::app()->db->createCommand()
+        $bodys = Ibos::app()->db->createCommand()
                 ->select('attachmentid')
                 ->from($table)
                 ->where("FIND_IN_SET(bodyid,'{$bodyIds}')")
@@ -58,7 +58,7 @@ class EmailBody extends Model {
         if (!empty($attachId)) {
             Attach::delAttach($attachId);
         }
-        return IBOS::app()->db->createCommand()->delete($table, "FIND_IN_SET(bodyid,'{$bodyIds}')");
+        return Ibos::app()->db->createCommand()->delete($table, "FIND_IN_SET(bodyid,'{$bodyIds}')");
     }
 
     /**
@@ -102,7 +102,7 @@ class EmailBody extends Model {
         $source = intval($source);
         $target = intval($target);
         if ($source != $target) {
-            $db = IBOS::app()->db->createCommand();
+            $db = Ibos::app()->db->createCommand();
             $text = sprintf("REPLACE INTO {{%s}} SELECT * FROM {{%s}} WHERE bodyid IN ('%s')", $this->getTableName($target), $this->getTableName($source), implode(',', $bodyIds));
             $db->setText($text)->execute();
             return $db->delete(sprintf('{{$s}}', $this->getTableName($source)), "FIND_IN_SET(bodyid,'" . implode(',', $bodyIds) . ")");
@@ -172,7 +172,7 @@ class EmailBody extends Model {
         $field = 'eb.bodyid, fromid, toids, copytoids, secrettoids, subject, content, sendtime, attachmentid, issend, ';
         $field .= 'important, size, fromwebmail, towebmail, issenderdel, isneedreceipt, emailid, toid, isread, isdel, ';
         $field .= 'fid, isreceipt, ismark, isweb';
-        $email = IBOS::app()->db->createCommand()
+        $email = Ibos::app()->db->createCommand()
                 ->select($field)
                 ->from('{{' . $bodyTable . '}} eb')
                 ->leftJoin('{{' . $mainTable . '}} e', 'eb.bodyid = e.bodyid')
@@ -191,7 +191,7 @@ class EmailBody extends Model {
         $mainTable = Email::model()->tableName();
         $bodyTable = $this->tableName();
         $sql = sprintf("UPDATE {$bodyTable} SET issenderdel = 1 WHERE %s", $condition);
-        return IBOS::app()->db->createCommand($sql)->query() ? TRUE : FALSE;
+        return Ibos::app()->db->createCommand($sql)->query() ? TRUE : FALSE;
     }
 
 }

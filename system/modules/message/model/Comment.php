@@ -46,7 +46,7 @@ class Comment extends Model {
         $add = $this->escapeData($data);
         if ($add['content'] === '') {
             // 评论内容不可为空
-            $this->addError('comment', util\IBOS::lang('Required comment content', 'message.default'));
+            $this->addError('comment', util\Ibos::lang('Required comment content', 'message.default'));
             return false;
         }
         $add['isdel'] = 0;
@@ -71,24 +71,24 @@ class Comment extends Model {
             $pk = $table::model()->getTableSchema()->primaryKey;
             $table::model()->updateCounters(array('commentcount' => 1), "`{$pk}` = {$add['rowid']}");
             // 给模块UID添加一个未读的评论数 原作者
-            if (util\IBOS::app()->user->uid != $add['moduleuid'] && $add['moduleuid'] != '') {
+            if (util\Ibos::app()->user->uid != $add['moduleuid'] && $add['moduleuid'] != '') {
                 !$notCount && UserData::model()->updateKey('unread_comment', 1, true, $add['moduleuid']);
             }
             // 回复发送提示信息
-            if (!empty($add['touid']) && $add['touid'] != util\IBOS::app()->user->uid && $add['touid'] != $add['moduleuid']) {
+            if (!empty($add['touid']) && $add['touid'] != util\Ibos::app()->user->uid && $add['touid'] != $add['moduleuid']) {
                 !$notCount && UserData::model()->updateKey('unread_comment', 1, true, $add['touid']);
             }
             // 加积分操作
             if ($add['table'] == 'feed') {
-                if (util\IBOS::app()->user->uid != $add['uid']) {
-                    UserUtil::updateCreditByAction('addcomment', util\IBOS::app()->user->uid);
+                if (util\Ibos::app()->user->uid != $add['uid']) {
+                    UserUtil::updateCreditByAction('addcomment', util\Ibos::app()->user->uid);
                     UserUtil::updateCreditByAction('getcomment', $data['moduleuid']);
                 }
                 Feed::model()->cleanCache($add['rowid']);
             }
             // 发送提醒，这里在数据库的值(notify_node的comment)暂时设为0，不需要发送
-            if ($add['touid'] != util\IBOS::app()->user->uid || $add['moduleuid'] != util\IBOS::app()->user->uid && $add['moduleuid'] != '') {
-                $author = User::model()->fetchByUid(util\IBOS::app()->user->uid);
+            if ($add['touid'] != util\Ibos::app()->user->uid || $add['moduleuid'] != util\Ibos::app()->user->uid && $add['moduleuid'] != '') {
+                $author = User::model()->fetchByUid(util\Ibos::app()->user->uid);
                 $config['{name}'] = $author['realname'];
                 $sourceInfo = Source::getCommentSource($add, $forApi);
                 $config['{url}'] = $sourceInfo['source_url'];
@@ -168,7 +168,7 @@ class Comment extends Model {
                 UserUtil::updateCreditByAction('delcomment', $uid);
             }
         }
-        $this->addError('deletecomment', $res != false ? util\IBOS::lang('Operation succeed', 'message') : util\IBOS::lang('Operation failure', 'message') );
+        $this->addError('deletecomment', $res != false ? util\Ibos::lang('Operation succeed', 'message') : util\Ibos::lang('Operation failure', 'message') );
         return $res;
     }
 
@@ -189,13 +189,13 @@ class Comment extends Model {
                 ->limit($limit)
                 ->offset($offset)
                 ->queryAll();
-        $uid = util\IBOS::app()->user->uid;
-        $isAdministrator = util\IBOS::app()->user->isadministrator;
+        $uid = util\Ibos::app()->user->uid;
+        $isAdministrator = util\Ibos::app()->user->isadministrator;
         foreach ($list as $k => &$v) {
             if (!empty($v['tocid']) && $isReply) {
                 $replyInfo = $this->getCommentInfo($v['tocid'], false);
 //				$v['replyInfo'] = "<a class='anchor' data-toggle='usercard' data-param='uid={$replyInfo['user_info']['uid']}' href='{$replyInfo['user_info']['space_url']}' target='_blank'>" . $replyInfo['user_info']['realname'] . '</a>' . '：' . $replyInfo['content'];
-                $v['replyInfo'] = util\IBOS::lang('Reply comment', 'message.default', array(
+                $v['replyInfo'] = util\Ibos::lang('Reply comment', 'message.default', array(
                             '{param}' => "uid=" . $replyInfo['user_info']['uid'],
                             '{space_url}' => $replyInfo['user_info']['space_url'],
                             '{realname}' => $replyInfo['user_info']['realname'],
@@ -227,7 +227,7 @@ class Comment extends Model {
     public function getCommentInfo($id, $source = true) {
         $id = intval($id);
         if (empty($id)) {
-            $this->addError('get', util\IBOS::lang('Parameters error', 'error'));  // 错误的参数
+            $this->addError('get', util\Ibos::lang('Parameters error', 'error'));  // 错误的参数
             return false;
         }
         $info = util\Cache::get('comment_info_' . $id);
@@ -265,7 +265,7 @@ class Comment extends Model {
         $add['module'] = $data['module'];
         $add['table'] = $data['table'];
         $add['rowid'] = intval($data['rowid']);
-        $add['uid'] = util\IBOS::app()->user->uid;
+        $add['uid'] = util\Ibos::app()->user->uid;
         $add['moduleuid'] = intval($data['moduleuid']);
         $add['content'] = $data['content'];
         $add['tocid'] = isset($data['tocid']) ? intval($data['tocid']) : 0;

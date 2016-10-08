@@ -17,7 +17,7 @@
 namespace application\modules\officialdoc\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\officialdoc\core\OfficialdocCategory as ICOfficialdocCategory;
@@ -56,7 +56,7 @@ class BaseController extends Controller {
             'categoryData' => $this->getCategoryOption(),
             'catid' => $catid
         );
-        $noSignCount = Officialdoc::model()->countNoSignByUid( IBOS::app()->user->uid );
+        $noSignCount = Officialdoc::model()->countNoSignByUid( Ibos::app()->user->uid );
         $params['noSignCount'] = $noSignCount;
         return $this->renderPartial( $sidebarAlias, $params, true );
     }

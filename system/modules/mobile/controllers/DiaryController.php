@@ -20,7 +20,7 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
@@ -47,7 +47,7 @@ class DiaryController extends BaseController {
 		//$type= Env::getRequest( 'type' );
 
 		if ( !$uid ) {
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 		}
 
 		$datas = Diary::model()->fetchAllByPage( "uid=" . $uid );
@@ -71,7 +71,7 @@ class DiaryController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'show', 'showdiary', 'getsubordinates', 'personal', 'getStampIcon' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+			$this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
 		}
 		$date = 'today';
 		if ( array_key_exists( 'date', $_GET ) ) {
@@ -87,7 +87,7 @@ class DiaryController extends BaseController {
 			$time = strtotime( $date );
 		}
 
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$getSubUidArr = Env::getRequest( 'subUidArr' );  //是否有传递下属人员过来，用于前一天、后一天
 		$user = Env::getRequest( 'user' );  //是否是点击某个部门
 		if ( !empty( $getSubUidArr ) ) {
@@ -145,7 +145,7 @@ class DiaryController extends BaseController {
 		$params['datas'] = $params['data'];
 
 		$params['dateWeekDay'] = DiaryUtil::getDateAndWeekDay( $date );
-		$params['dashboardConfig'] = IBOS::app()->setting->get( 'setting/diaryconfig' );
+		$params['dashboardConfig'] = Ibos::app()->setting->get( 'setting/diaryconfig' );
 		$params['subUidArr'] = $subUidArr;
 		//上一天和下一天
 		$params['prevAndNextDate'] = array(
@@ -177,7 +177,7 @@ class DiaryController extends BaseController {
 			$time = strtotime( $date );
 			$date = date( 'Y-m-d', $time );
 		}
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		//关注了哪些人
 		$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
 		$auidArr = Convert::getSubByKey( $attentions, 'auid' );
@@ -249,7 +249,7 @@ class DiaryController extends BaseController {
 			$this->ajaxReturn( array(), $dataType );
 		}
 		$diary = array();
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( !empty( $diaryid ) ) {
 			$diary = Diary::model()->fetchByPk( $diaryid );
 		} else {
@@ -305,12 +305,12 @@ class DiaryController extends BaseController {
 			'table' => 'diary',
 			'attributes' => array(
 				'rowid' => $diary['diaryid'],
-				'moduleuid' => IBOS::app()->user->uid,
+				'moduleuid' => Ibos::app()->user->uid,
 				'limit' => $limit,
 				'offset' => $offset,
 			),
 		);
-		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\diary\widgets\DiaryComment', $arr );
+		$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\diary\widgets\DiaryComment', $arr );
 		$list = $widget->getCommentList();
 		return $list;
 	}
@@ -322,7 +322,7 @@ class DiaryController extends BaseController {
 	public function actionAddComment() {
 		// 返回结果集默认值
 		$return = array( 'isSuccess' => false );
-		if ( IBOS::app()->request->isPostRequest ) {
+		if ( Ibos::app()->request->isPostRequest ) {
 			$post = $_POST;
 			// 安全过滤
 			foreach ( $post as $key => $val ) {
@@ -335,18 +335,18 @@ class DiaryController extends BaseController {
 				$this->ajaxReturn( $return, Mobile::dataType() );
 			}
 			$content = StringUtil::filterDangerTag( $post['content'] );
-			$sourceUrl = IBOS::app()->urlManager->createUrl( 'mobile/diary/show', array( 'id' => $post['diaryid'] ) );
+			$sourceUrl = Ibos::app()->urlManager->createUrl( 'mobile/diary/show', array( 'id' => $post['diaryid'] ) );
 			$data = array_merge( $post, array(
 				'module' => 'diary',
 				'table' => 'diary',
 				'rowid' => $post['diaryid'],
-				'moduleuid' => IBOS::app()->user->uid,
+				'moduleuid' => Ibos::app()->user->uid,
 				'content' => $content,
 				'data' => '',
 				'ctime' => TIMESTAMP,
 				'isdel' => 0,
 				'url' => $sourceUrl,
-				'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $content ), 50 ) ), 'diary.default' ),
+				'detail' => Ibos::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $content ), 50 ) ), 'diary.default' ),
 				'uid' => Env::getRequest( 'uid' ),
 				'tocid' => Env::getRequest( 'tocid' ),
 				'touid' => Env::getRequest( 'touid' ),
@@ -392,11 +392,11 @@ class DiaryController extends BaseController {
 		if ( array_key_exists( 'diaryDate', $_GET ) ) {
 			$todayDate = $_GET['diaryDate'];
 			if ( strtotime( $todayDate ) > strtotime( date( 'Y-m-d' ) ) ) {
-				$this->error( IBOS::lang( 'No new permissions' ), $this->createUrl( 'default/index' ) );
+				$this->error( Ibos::lang( 'No new permissions' ), $this->createUrl( 'default/index' ) );
 			}
 		}
 		$todayTime = strtotime( $todayDate );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( Diary::model()->checkDiaryisAdd( $todayTime, $uid ) ) {
 			$this->ajaxReturn( array( "msg" => "今天已经提交过日志！" ), $dataType );
 		}
@@ -410,7 +410,7 @@ class DiaryController extends BaseController {
 				$outsidePlanList[] = $diaryRecord;
 			}
 		}
-		$dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+		$dashboardConfig = Ibos::app()->setting->get( 'setting/diaryconfig' );
 		// 检测是否已安装日程模块，用于添加日志时“来自日程”的计划功能
 //		$isInstallCalendar = ModuleUtil::getIsInstall( 'calendar' );
 //		$workStart = $this->getWorkStart( $isInstallCalendar );
@@ -440,7 +440,7 @@ class DiaryController extends BaseController {
 	 * @return void
 	 */
 	function actionSave() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$originalPlan = $planOutside = '';
 		if ( array_key_exists( 'originalPlan', $_POST ) ) {
 			$originalPlan = $_POST['originalPlan'];
@@ -485,7 +485,7 @@ class DiaryController extends BaseController {
 	 * @return void
 	 */
 	function actionEdit() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
 		$diaryId = Env::getRequest( 'id' );
 		$diary = array(
@@ -522,9 +522,9 @@ class DiaryController extends BaseController {
 			$isDiaryRecord = DiaryRecord::model()->addRecord( $plan, $diaryId, strtotime( $_POST['plantime'] ), $uid, 'new' );
 		}
 		if ( $isDiary && $isDiaryRecord ) {
-			$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Edit success' ) );
+			$message = array( 'isSuccess' => true, 'data' => Ibos::lang( 'Edit success' ) );
 		} else {
-			$message = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Edit fail' ) );
+			$message = array( 'isSuccess' => false, 'data' => Ibos::lang( 'Edit fail' ) );
 		}
 		$this->ajaxReturn( $message, Mobile::dataType() );
 	}
@@ -538,9 +538,9 @@ class DiaryController extends BaseController {
 		$diary = Diary::model()->deleteAll( "diaryid = {$diaryId}" );
 		$diaryRecord = DiaryRecord::model()->deleteAll( "diaryid = {$diaryId}" );
 		if ( $diary > 0 && $diaryRecord > 0 ) {
-			$message = array( 'isSuccess' => true, 'data' => IBOS::lang( 'Del success' ) );
+			$message = array( 'isSuccess' => true, 'data' => Ibos::lang( 'Del success' ) );
 		} else {
-			$message = array( 'isSuccess' => false, 'data' => IBOS::lang( 'Del fail' ) );
+			$message = array( 'isSuccess' => false, 'data' => Ibos::lang( 'Del fail' ) );
 		}
 		$this->ajaxReturn( $message, Mobile::dataType() );
 	}

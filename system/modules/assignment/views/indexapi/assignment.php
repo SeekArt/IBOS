@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 ?>
@@ -17,7 +17,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                         </span>
                     </td>
                     <td>
-                        <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $charge['assignmentid'] ) ); ?>" class="xcm">
+                        <a href="<?php echo Ibos::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $charge['assignmentid'] ) ); ?>" class="xcm">
                             <?php echo StringUtil::cutStr( $charge['subject'], 40 ); ?>
                         </a>
                         <div class="fss">
@@ -46,7 +46,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
         </table>
         <div class="mbox-base">
             <div class="fill-hn xac">
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/unfinished/index' ); ?>" class="link-more">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'assignment/unfinished/index' ); ?>" class="link-more">
                     <i class="cbtn o-more"></i>
                     <span class="ilsep"><?php echo $lang['Show more assignment']; ?></span>
                 </a>
@@ -67,7 +67,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                         </span>
                     </td>
                     <td>
-                        <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $designee['assignmentid'] ) ); ?>" class="xcm">
+                        <a href="<?php echo Ibos::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $designee['assignmentid'] ) ); ?>" class="xcm">
                             <?php echo StringUtil::cutStr( $designee['subject'], 40 ); ?>
                         </a>
                         <div class="fss">
@@ -96,7 +96,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
         </table>
         <div class="mbox-base">
             <div class="fill-hn xac">
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'assignment/unfinished/index' ); ?>" class="link-more">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'assignment/unfinished/index' ); ?>" class="link-more">
                     <i class="cbtn o-more"></i>
                     <span class="ilsep"><?php echo $lang['Show more assignment']; ?></span>
                 </a>

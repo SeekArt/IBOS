@@ -10,7 +10,7 @@
 
 namespace application\core\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CHtml;
 use CLinkPager;
 
@@ -68,31 +68,31 @@ class Page extends CLinkPager {
         // 总页数
         $this->itemCount = parent::getPageCount();
         // 生成翻页样式之前要加入的文本
-        $this->header = IBOS::lang( 'page_header', 'page' );
+        $this->header = Ibos::lang( 'page_header', 'page' );
         // 翻页数字按钮li父节点的html属性
-        $this->htmlOptions['id'] = IBOS::lang( 'htmlOptions_id', 'page' );
-        $this->htmlOptions['class'] = IBOS::lang( 'htmlOptions_class', 'page' );
+        $this->htmlOptions['id'] = Ibos::lang( 'htmlOptions_id', 'page' );
+        $this->htmlOptions['class'] = Ibos::lang( 'htmlOptions_class', 'page' );
         // 上一页和下一页按钮的父节点的html属性 
-        $this->pervNextHtmlOption['id'] = IBOS::lang( 'pervNextHtmlOption_id', 'page' );
-        $this->pervNextHtmlOption['class'] = IBOS::lang( 'pervNextHtmlOption_class', 'page' );
+        $this->pervNextHtmlOption['id'] = Ibos::lang( 'pervNextHtmlOption_id', 'page' );
+        $this->pervNextHtmlOption['class'] = Ibos::lang( 'pervNextHtmlOption_class', 'page' );
         // 生成翻页样式之后要加入的文本
         $this->setFooter();
         // 上一页按钮文本
-        $this->prevPageLabel = IBOS::lang( 'prevpage_label', 'page' );
+        $this->prevPageLabel = Ibos::lang( 'prevpage_label', 'page' );
         // 下一页按钮文本
-        $this->nextPageLabel = IBOS::lang( 'nextpage_label', 'page' );
+        $this->nextPageLabel = Ibos::lang( 'nextpage_label', 'page' );
         // 首页按钮文本
-        $this->firstPageLabel = IBOS::lang( 'firstpage_label', 'page' );
+        $this->firstPageLabel = Ibos::lang( 'firstpage_label', 'page' );
         // 首页按钮class样式名
-        $this->firstPageCssClass = IBOS::lang( 'firstpage_cssclass', 'page' );
+        $this->firstPageCssClass = Ibos::lang( 'firstpage_cssclass', 'page' );
         // 末页按钮文本
-        $this->lastPageLabel = IBOS::lang( 'lastpage_label', 'page' );
+        $this->lastPageLabel = Ibos::lang( 'lastpage_label', 'page' );
         // 末页按钮class样式名
-        $this->lastPageCssClass = IBOS::lang( 'lastpage_cssclass', 'page' );
+        $this->lastPageCssClass = Ibos::lang( 'lastpage_cssclass', 'page' );
         // 隐藏按钮的css样式名
-        $this->hiddenPageCssClass = IBOS::lang( 'hiddenpage_cssclass', 'page' );
+        $this->hiddenPageCssClass = Ibos::lang( 'hiddenpage_cssclass', 'page' );
         // 已选择按钮样式
-        $this->selectedPageCssClass = IBOS::lang( 'selected_cssclass', 'page' );
+        $this->selectedPageCssClass = Ibos::lang( 'selected_cssclass', 'page' );
         // 翻页css样式文件 等于false 表示不发布
         $this->cssFile = false;
         // 上一页链接class类样式值
@@ -183,7 +183,7 @@ class Page extends CLinkPager {
      */
     public function setCurrentUrl( $value = null ) {
         if ( is_null( $value ) ) {
-            $currentUrl = (string) IBOS::app()->getRequest()->getUrl();
+            $currentUrl = (string) Ibos::app()->getRequest()->getUrl();
             if ( strpos( $currentUrl, '?page=' ) !== false ) {
                 $splitArray = explode( '?page=', $currentUrl );
                 $this->currentUrl = $splitArray[0];
@@ -204,7 +204,7 @@ class Page extends CLinkPager {
      */
     public function setFooter( $value = null ) {
         if ( is_null( $value ) ) {
-            $this->footer = IBOS::lang( 'page_footer', 'page', array(
+            $this->footer = Ibos::lang( 'page_footer', 'page', array(
                         'currentUrl' => $this->currentUrl,
                         'currentPage' => $this->currentPage,
                         'itemCount' => $this->itemCount,

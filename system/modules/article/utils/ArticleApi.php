@@ -3,7 +3,7 @@
 namespace application\modules\article\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\article\model\Article;
 use application\modules\article\model\ArticleReader;
 
@@ -27,11 +27,11 @@ class ArticleApi {
 	public function renderIndex() {
 		$data = array(
 			'articles' => $this->loadNewArticle(),
-			'lang' => IBOS::getLangSource( 'article.default' ),
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'article' )
+			'lang' => Ibos::getLangSource( 'article.default' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'article' )
 		);
 		$viewAlias = 'application.modules.article.views.indexapi.article';
-		$return['article/article'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+		$return['article/article'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
 		return $return;
 	}
 
@@ -40,9 +40,9 @@ class ArticleApi {
 	 * @return integer
 	 */
 	public function loadNew() {
-		$uid = IBOS::app()->user->uid;
-		$allDeptId = IBOS::app()->user->alldeptid . '';
-		$allPosId = IBOS::app()->user->allposid . '';
+		$uid = Ibos::app()->user->uid;
+		$allDeptId = Ibos::app()->user->alldeptid . '';
+		$allPosId = Ibos::app()->user->allposid . '';
 
 		$deptCondition = '';
 		$deptIdArr = explode( ',', $allDeptId );
@@ -70,7 +70,7 @@ class ArticleApi {
 	public function loadSetting() {
 		return array(
 			'name' => 'article/article',
-			'title' => IBOS::lang( 'Information center', 'article.default' ),
+			'title' => Ibos::lang( 'Information center', 'article.default' ),
 			'style' => 'in-article'
 		);
 	}
@@ -81,9 +81,9 @@ class ArticleApi {
 	 * @return array
 	 */
 	private function loadNewArticle( $num = 3 ) {
-		$uid = IBOS::app()->user->uid;
-		$allDeptId = IBOS::app()->user->alldeptid . '';
-		$allPosId = IBOS::app()->user->allposid . '';
+		$uid = Ibos::app()->user->uid;
+		$allDeptId = Ibos::app()->user->alldeptid . '';
+		$allPosId = Ibos::app()->user->allposid . '';
 
 		$deptCondition = '';
 		$deptIdArr = explode( ',', $allDeptId );

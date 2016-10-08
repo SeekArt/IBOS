@@ -18,7 +18,7 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Credit extends Model {
 
@@ -36,7 +36,7 @@ class Credit extends Model {
 	 */
 	public function alterAutoIncrementValue( $value ) {
 		$sql = "ALTER table ".$this->tableName()." auto_increment =".$value;
-		IBOS::app()->db->createCommand()->setText( $sql )->execute();
+		Ibos::app()->db->createCommand()->setText( $sql )->execute();
 	}
 	
 

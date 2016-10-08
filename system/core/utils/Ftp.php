@@ -80,7 +80,7 @@ class Ftp {
      * @return void
      */
     public function __construct( $config = array() ) {
-        $ftp = IBOS::app()->setting->get( 'setting/ftp' );
+        $ftp = Ibos::app()->setting->get( 'setting/ftp' );
         $this->setError( 0 );
         $this->_config = !$config ? $ftp : $config;
         $this->_enabled = false;
@@ -95,7 +95,7 @@ class Ftp {
                 $this->_config['port'] = intval( $this->_config['port'] );
                 $this->_config['ssl'] = intval( $this->_config['ssl'] );
                 $this->_config['host'] = $this->clear( $this->_config['host'] );
-                $autoKey = md5( IBOS::app()->setting->get( 'config/security/authkey' ) );
+                $autoKey = md5( Ibos::app()->setting->get( 'config/security/authkey' ) );
                 $this->_config['password'] = StringUtil::authCode( $this->_config['password'], 'DECODE', $autoKey );
                 $this->_config['timeout'] = intval( $this->_config['timeout'] );
                 $this->_enabled = true;
@@ -122,7 +122,7 @@ class Ftp {
                 if ( !$this->ftpChdir( $dirName ) ) {
                     $this->setError( self::FTP_ERR_CHDIR );
                 }
-                $attachDir = IBOS::app()->setting->get( 'setting/attachdir' );
+                $attachDir = Ibos::app()->setting->get( 'setting/attachdir' );
                 $this->ftpPut( 'index.htm', $attachDir . '/index.htm', FTP_BINARY );
             } else {
                 $this->setError( self::FTP_ERR_MKDIR );

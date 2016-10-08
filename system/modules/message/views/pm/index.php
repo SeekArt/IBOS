@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 ?>
@@ -32,7 +32,7 @@ use application\core\utils\StringUtil;
 						<?php foreach ( $list as $row ): ?>
 							<li class="main-list-item curp" id="pm_<?php echo $row['listid']; ?>" data-url="id=<?php echo $row['listid']; ?>&type=<?php echo $row['type']; ?>">
 								<div class="avatar-box pull-left posr">
-									<?php if($row['lastmessage']['touid'][0] == IBOS::app()->user->uid): ?>
+									<?php if($row['lastmessage']['touid'][0] == Ibos::app()->user->uid): ?>
 									<a href="<?php echo $row['lastmessage']['user']['space_url']; ?>" class="avatar-circle" data-toggle="usercard" data-param='uid=<?php echo $row['lastmessage']['user']['uid']; ?>'>
 										<img class="mbm" src="<?php echo $row['lastmessage']['user']['avatar_middle']; ?>">
 									</a>
@@ -46,7 +46,7 @@ use application\core\utils\StringUtil;
 								<div class="main-list-item-body">
 									<div>
 										<p class="mb">
-											<?php if($row['lastmessage']['fromuid']==IBOS::app()->user->uid){ ?>
+											<?php if($row['lastmessage']['fromuid']==Ibos::app()->user->uid){ ?>
 											<?php echo $lang['Me'],$lang['To'];?> <strong><?php echo( $row['touserinfo'][$row['lastmessage']['touid'][0]]['realname']); ?></strong> <?php echo $lang['Say']; ?>
 											<?php }else{ ?>
 											<strong><?php echo $row['lastmessage']['user']['realname']; ?></strong> <?php echo $lang['To'],$lang['Me'],$lang['Say']; ?>
@@ -105,7 +105,7 @@ use application\core\utils\StringUtil;
 </div>
 <script>
 	Ibos.app.setPageParam({
-		'dataUid': '<?php echo StringUtil::wrapId( IBOS::app()->user->uid ) ?>'
+		'dataUid': '<?php echo StringUtil::wrapId( Ibos::app()->user->uid ) ?>'
 	})
 	
 </script>

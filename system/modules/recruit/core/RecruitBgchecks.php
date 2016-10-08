@@ -16,7 +16,7 @@
 
 namespace application\modules\recruit\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\recruit\model\ResumeDetail as RDModel;
 
 class RecruitBgchecks {
@@ -60,7 +60,7 @@ class RecruitBgchecks {
         }
         $bgcheckArr['entrytime'] = strtotime( $bgcheckArr['entrytime'] );
         $bgcheckArr['quittime'] = strtotime( $bgcheckArr['quittime'] );
-        $bgcheckArr['uid'] = IBOS::app()->user->uid;
+        $bgcheckArr['uid'] = Ibos::app()->user->uid;
         return $bgcheckArr;
     }
 

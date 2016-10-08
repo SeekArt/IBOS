@@ -10,7 +10,7 @@
 namespace application\core\components;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use CJSON;
@@ -166,7 +166,7 @@ class Upload {
      * @return boolean
      */
     protected function checkDirType( $module ) {
-        $modules = IBOS::app()->getEnabledModule();
+        $modules = Ibos::app()->getEnabledModule();
         return !array_key_exists( $module, $modules ) ? 'temp' : $module;
     }
 

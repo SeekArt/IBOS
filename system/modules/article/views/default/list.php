@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\utils\Main;
 ?>
 
@@ -44,14 +44,14 @@ use application\modules\main\utils\Main;
                 <li data-action="typeSelect" data-type="notallow">
                     <a href="javascript:;">
                         <i class="o-art-uncensored"></i>
-                        <?php echo IBOS::lang('No verify'); ?>
+                        <?php echo Ibos::lang('No verify'); ?>
                         <?php if ($notallowCount != 0): ?><span class="bubble"><?php echo $notallowCount; ?></span><?php endif; ?>
                     </a>
                 </li>
                 <li data-action="typeSelect" data-type="draft">
                     <a href="javascript:;">
                         <i class="o-art-draft"></i>
-                        <?php echo IBOS::lang('Draft'); ?>
+                        <?php echo Ibos::lang('Draft'); ?>
                         <?php if ($draftCount != 0): ?><span class="bubble"><?php echo $draftCount; ?></span><?php endif; ?>
                     </a>
                 </li>
@@ -63,32 +63,32 @@ use application\modules\main\utils\Main;
                     <button class="btn btn-primary pull-left" onclick="location.href = '<?php echo $this->createUrl('default/add'); ?>&catid='+ (Ibos.local.get('catid') || 0);">新建</button>
                     <div class="btn-group" id="art_more" style="display:none;">
                         <button class="btn dropdown-toggle" data-toggle="dropdown">
-                            <?php echo IBOS::lang('More Operating'); ?>
+                            <?php echo Ibos::lang('More Operating'); ?>
                             <i class="caret"></i>
                         </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="javascript:;" data-action="moveArticle">
                                     <i class="o-menu-move"></i>
-                                    <?php echo IBOS::lang('Move'); ?>
+                                    <?php echo Ibos::lang('Move'); ?>
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript:;" data-action="topArticle">
                                     <i class="o-menu-top"></i>
-                                    <?php echo IBOS::lang('Top'); ?>
+                                    <?php echo Ibos::lang('Top'); ?>
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript:;" data-action="highlightArticle">
                                     <i class="o-menu-light"></i>
-                                    <?php echo IBOS::lang('Highlight'); ?>
+                                    <?php echo Ibos::lang('Highlight'); ?>
                                 </a>
                             </li>
                             <li>
                                 <a href="javascript:;" data-action="removeArticles">
                                     <i class="o-menu-trash"></i>
-                                    <?php echo IBOS::lang('Delete'); ?>
+                                    <?php echo Ibos::lang('Delete'); ?>
                                 </a>
                             </li>
                         </ul>
@@ -115,9 +115,9 @@ use application\modules\main\utils\Main;
                                 <th width="32">
                                     <i class="i-lt o-art-list"></i>
                                 </th>
-                                <th><?php echo IBOS::lang('Title'); ?></th>
-                                <th width="120"><?php echo IBOS::lang('Last update'); ?></th>
-                                <th width="80"><?php echo IBOS::lang('View'); ?></th>
+                                <th><?php echo Ibos::lang('Title'); ?></th>
+                                <th width="120"><?php echo Ibos::lang('Last update'); ?></th>
+                                <th width="80"><?php echo Ibos::lang('View'); ?></th>
                             </tr>
                         </thead>
                     </table>
@@ -146,7 +146,7 @@ use application\modules\main\utils\Main;
                                     <input type="checkbox" data-name="approval[]">
                                 </label>
                             </th>
-                            <th><?php echo IBOS::lang( 'Title'); ?></th>
+                            <th><?php echo Ibos::lang( 'Title'); ?></th>
                             <th width="110">审核流程</th>
                             <th width="110">发布者</th>
                             <th width="70">操作</th>
@@ -164,13 +164,13 @@ use application\modules\main\utils\Main;
     <form id="mn_search_advance_form" action="<?php echo $this->createUrl('default/index', array('param' => 'search')); ?>" method="post">
         <div class="form-horizontal form-compact">
             <div class="control-group">
-                <label for="" class="control-label"><?php echo IBOS::lang('Keyword'); ?></label>
+                <label for="" class="control-label"><?php echo Ibos::lang('Keyword'); ?></label>
                 <div class="controls">
                     <input type="text" id="keyword" name="search[keyword]">
                 </div>
             </div>
             <div class="control-group">
-                <label for="" class="control-label"><?php echo IBOS::lang('Start time'); ?></label>
+                <label for="" class="control-label"><?php echo Ibos::lang('Start time'); ?></label>
                 <div class="controls">
                     <div class="datepicker" id="date_start">
                         <a href="javascript:;" class="datepicker-btn"></a>
@@ -179,7 +179,7 @@ use application\modules\main\utils\Main;
                 </div>
             </div>
             <div class="control-group">
-                <label for="" class="control-label"><?php echo IBOS::lang('End time'); ?></label>
+                <label for="" class="control-label"><?php echo Ibos::lang('End time'); ?></label>
                 <div class="controls">
                     <div class="datepicker" id="date_end">
                         <a href="javascript:;" class="datepicker-btn"></a>
@@ -196,7 +196,7 @@ use application\modules\main\utils\Main;
 <div id="dialog_art_top" class="form-horizontal form-compact" style="width: 400px; display:none;">
     <form action="javascript:;">
         <div class="control-group">
-            <label class="control-label" id="test"><?php echo IBOS::lang('Expired time'); ?></label>
+            <label class="control-label" id="test"><?php echo Ibos::lang('Expired time'); ?></label>
             <div class="controls">
                 <div class="datepicker" id="date_time_top">
                     <a href="javascript:;" class="datepicker-btn"></a>
@@ -210,7 +210,7 @@ use application\modules\main\utils\Main;
 <div id="dialog_art_highlight" class="form-horizontal form-compact" style="width: 400px; display:none;">
     <form action="javascript:;">
         <div class="control-group">
-            <label class="control-label" id="test"><?php echo IBOS::lang('Expired time'); ?></label>
+            <label class="control-label" id="test"><?php echo Ibos::lang('Expired time'); ?></label>
             <div class="controls">
                 <div class="datepicker" id="date_time_highlight">
                     <a href="javascript:;" class="datepicker-btn"></a>

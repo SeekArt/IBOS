@@ -19,7 +19,7 @@ namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class Syscache extends Model {
@@ -98,7 +98,7 @@ class Syscache extends Model {
 
     public function fetchAllCacheA( $cacheA = array() ) {
         if ( empty( $cacheA ) ) {
-            $cacheA = IBOS::app()->db->createCommand()
+            $cacheA = Ibos::app()->db->createCommand()
                     ->select( 'name' )
                     ->from( Syscache::model()->tableName() )
                     ->queryColumn();

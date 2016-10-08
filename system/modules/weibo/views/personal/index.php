@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 
 <!-- private css -->
@@ -19,14 +19,14 @@ use application\core\utils\IBOS;
 		<!--导航 S-->
 		<div>
 			<ul class="nav nav-tabs nav-tabs-large nav-justified">
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
 				<li class="active">
-					<a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
+					<a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
 				</li>
 				<?php if ( $this->getIsMe() ): ?>
-					<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
+					<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
 				<?php endif; ?>
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
 			</ul>
 		</div>
 		<!--导航 E-->
@@ -131,7 +131,7 @@ use application\core\utils\IBOS;
 <script>
 	var params = {
 		uid: '<?php echo $this->getUid(); ?>',
-		wbnums: '<?php echo IBOS::app()->setting->get( 'setting/wbnums' ); ?>',
+		wbnums: '<?php echo Ibos::app()->setting->get( 'setting/wbnums' ); ?>',
 		firstId: '<?php echo $firstId; ?>',
 		loadId: '<?php echo $lastId; ?>',
 		maxId: '<?php echo $firstId; ?>',
@@ -141,7 +141,7 @@ use application\core\utils\IBOS;
 		feedtype: '<?php echo $feedtype; ?>',
 		feedkey: '<?php echo $feedkey; ?>',
 		inHome: 0,
-		submitInterval: <?php echo intval( IBOS::app()->setting->get( 'setting/wbpostfrequency' ) ) * 1000; ?>
+		submitInterval: <?php echo intval( Ibos::app()->setting->get( 'setting/wbpostfrequency' ) ) * 1000; ?>
 	};
 	Ibos.app.setPageParam(params);
 	$("#mn_search").search(function(val) {

@@ -34,7 +34,7 @@ class Cloud extends Api {
 	 * 缓存设置
 	 */
 	public function __construct() {
-		$setting = IBOS::app()->setting->get( 'setting/iboscloud' );
+		$setting = Ibos::app()->setting->get( 'setting/iboscloud' );
 		$this->setSetting( $setting );
 	}
 

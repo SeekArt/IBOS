@@ -36,15 +36,15 @@ class HomeController extends BaseController {
         $data['activeUser'] = UserData::model()->fetchActiveUsers();
         // DEBUG::如果有关注分组需求，这里应获得我关注的人分组
         // 模块动态列表
-        $data['movements'] = util\IBOS::app()->setting->get( 'setting/wbmovement' );
+        $data['movements'] = util\Ibos::app()->setting->get( 'setting/wbmovement' );
         // 可用的动态模块列表
         $data['enableMovementModule'] = WbCommonUtil::getMovementModules();
         // 上传配置
         $data['uploadConfig'] = util\Attach::getUploadConfig();
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\IBOS::lang( 'Enterprise weibo' ) ),
-            array( 'name' => util\IBOS::lang( 'Index' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => util\IBOS::lang( 'List' ) )
+            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ) ),
+            array( 'name' => util\Ibos::lang( 'Index' ), 'url' => $this->createUrl( 'home/index' ) ),
+            array( 'name' => util\Ibos::lang( 'List' ) )
         ) );
         $var['type'] = isset( $_GET['type'] ) ? util\StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
         $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\StringUtil::filterCleanHtml( $_GET['feedtype'] ) : 'all';
@@ -67,7 +67,7 @@ class HomeController extends BaseController {
             unset( $data['loadId'] );
             $data['nums'] = WbCore\WbConst::DEF_LIST_FEED_NUMS;
         } else {
-            $return = array( 'status' => -1, 'msg' => util\IBOS::lang( 'Loading ID isnull' ) );
+            $return = array( 'status' => -1, 'msg' => util\Ibos::lang( 'Loading ID isnull' ) );
             $data['loadId'] = intval( $data['loadId'] );
             $data['nums'] = 5;
         }
@@ -75,9 +75,9 @@ class HomeController extends BaseController {
         // 查看是否有更多数据
         if ( empty( $content['html'] ) || (empty( $data['loadId'] ) && intval( $data['loadcount'] ) != 2) ) {
             // 没有更多的
-            $return = array( 'status' => 0, 'msg' => util\IBOS::lang( 'Weibo is not new' ) );
+            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
         } else {
-            $return = array( 'status' => 1, 'msg' => util\IBOS::lang( 'Weibo success load' ) );
+            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
             $return['data'] = $content['html'];
             $return['loadId'] = $content['lastId'];
             $return['firstId'] = ( empty( $data['page'] ) && empty( $data['loadId'] ) ) ? $content['firstId'] : 0;
@@ -98,9 +98,9 @@ class HomeController extends BaseController {
         }
         $content = $this->getData( $_REQUEST );
         if ( empty( $content['html'] ) ) { //没有最新的
-            $return = array( 'status' => 0, 'msg' => util\IBOS::lang( 'Weibo is not new' ) );
+            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
         } else {
-            $return = array( 'status' => 1, 'msg' => util\IBOS::lang( 'Weibo success load' ) );
+            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
             $return['html'] = $content['html'];
             $return['maxId'] = intval( $content['firstId'] );
             $return['count'] = intval( $content['count'] );
@@ -210,7 +210,7 @@ class HomeController extends BaseController {
         if ( !isset( $var['new'] ) ) {
             $pages->route = 'home/index';
             // 替换url
-            $currentUrl = (string) util\IBOS::app()->getRequest()->getUrl();
+            $currentUrl = (string) util\Ibos::app()->getRequest()->getUrl();
             $replaceUrl = str_replace( 'weibo/home/loadmore', 'weibo/home/index', $currentUrl );
             $data['pageData'] = $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages, 'currentUrl' => $replaceUrl ), true );
         }

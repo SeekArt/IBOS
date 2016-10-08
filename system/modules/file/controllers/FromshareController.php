@@ -18,7 +18,7 @@ namespace application\modules\file\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\file\model\File;
 use application\modules\file\model\FileReader;
 use application\modules\file\model\FileShare;
@@ -43,7 +43,7 @@ class FromShareController extends BaseController {
             'pid' => 0,
             'idpath' => File::TOP_IDPATH
         );
-        $this->setPageTitle( IBOS::lang( 'From share' ) );
+        $this->setPageTitle( Ibos::lang( 'From share' ) );
         $this->render( 'index', $params );
     }
 
@@ -57,7 +57,7 @@ class FromShareController extends BaseController {
         $fileCon = $this->getFileCondition( $pid );
         if ( $pid ) { // 某个文件夹
             if ( !FileCheck::getInstance()->isReadable( $pid, $this->uid ) ) {
-                $this->error( IBOS::lang( 'No read permission' ) );
+                $this->error( Ibos::lang( 'No read permission' ) );
             }
         } else if ( $fromuid ) { // 某个用户
             FileReader::model()->record( $fromuid, $this->uid );
@@ -93,7 +93,7 @@ class FromShareController extends BaseController {
         $breadCrumbs = FileOffice::getBreadCrumb( $pid );
         $shareCon = $this->getShareCondition( $touid );
         foreach ( $breadCrumbs as $k => $bread ) {
-            $record = IBOS::app()->db->createCommand()
+            $record = Ibos::app()->db->createCommand()
                     ->from( "{{file_share fs}}" )
                     ->where( "fs.`fid`={$bread['fid']} AND " . $shareCon )
                     ->queryRow();

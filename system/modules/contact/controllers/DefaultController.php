@@ -10,7 +10,7 @@ namespace application\modules\contact\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\contact\model\Contact;
 
 class DefaultController extends BaseController {
@@ -21,10 +21,10 @@ class DefaultController extends BaseController {
 	public function actionIndex() {
 		$op = Env::getRequest( 'op' );
 		$op = in_array( $op, array( 'dept', 'letter' ) ) ? $op : 'letter';
-		$this->setPageTitle( IBOS::lang( 'Contact' ) );
+		$this->setPageTitle( Ibos::lang( 'Contact' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Contact' ), 'url' => $this->createUrl( 'defalut/index' ) ),
-			array( 'name' => IBOS::lang( 'Company contact' ) )
+			array( 'name' => Ibos::lang( 'Contact' ), 'url' => $this->createUrl( 'defalut/index' ) ),
+			array( 'name' => Ibos::lang( 'Company contact' ) )
 		) );
 		$view = $op == 'letter' ? 'letter' : 'dept';
 		$this->render( $view );

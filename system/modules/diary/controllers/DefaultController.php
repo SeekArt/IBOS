@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -52,10 +52,10 @@ class DefaultController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'show', 'showdiary', 'getreaderlist', 'getcommentlist', 'getAjaxSidebar' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
         }
         if ( $option == 'default' ) {
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             //是否搜索
             if ( Env::getRequest( 'param' ) == 'search' ) {
                 $this->search();
@@ -69,13 +69,13 @@ class DefaultController extends BaseController {
                 'commentCount' => Diary::model()->countCommentByReview( $uid ),
                 'user' => User::model()->fetchByUid( $uid ),
                 'diaryIsAdd' => Diary::model()->checkDiaryisAdd( strtotime( date( 'Y-m-d' ) ), $uid ),
-                'dashboardConfig' => IBOS::app()->setting->get( 'setting/diaryconfig' )
+                'dashboardConfig' => Ibos::app()->setting->get( 'setting/diaryconfig' )
             );
-            $this->setPageTitle( IBOS::lang( 'My diary' ) );
+            $this->setPageTitle( Ibos::lang( 'My diary' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Diary list' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Diary list' ) )
             ) );
             $this->render( 'index', $params );
         } else {
@@ -92,20 +92,20 @@ class DefaultController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'save', 'planFromSchedule' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
         }
         if ( $option == 'default' ) {
             $todayDate = date( 'Y-m-d' );
             if ( array_key_exists( 'diaryDate', $_GET ) ) {
                 $todayDate = $_GET['diaryDate'];
                 if ( strtotime( $todayDate ) > strtotime( date( 'Y-m-d' ) ) ) {
-                    $this->error( IBOS::lang( 'No new permissions' ), $this->createUrl( 'default/index' ) );
+                    $this->error( Ibos::lang( 'No new permissions' ), $this->createUrl( 'default/index' ) );
                 }
             }
             $todayTime = strtotime( $todayDate );
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             if ( Diary::model()->checkDiaryisAdd( $todayTime, $uid ) ) {
-                $this->error( IBOS::lang( 'Do not repeat to add' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'Do not repeat to add' ), $this->createUrl( 'default/index' ) );
             }
             //取得今日的工作计划
             $diaryRecordList = DiaryRecord::model()->fetchAllByPlantime( $todayTime );
@@ -117,7 +117,7 @@ class DefaultController extends BaseController {
                     $outsidePlanList[] = $diaryRecord;
                 }
             }
-            $dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+            $dashboardConfig = Ibos::app()->setting->get( 'setting/diaryconfig' );
             // 检测是否已安装日程模块，用于添加日志时“来自日程”的计划功能
             $isInstallCalendar = Module::getIsEnabled( 'calendar' );
             $workTime = $this->getWorkTime( $isInstallCalendar );
@@ -138,11 +138,11 @@ class DefaultController extends BaseController {
                 $params['defaultShareList'] = $data['shareInfo'];
                 $params['deftoid'] = StringUtil::wrapId( $data['deftoid'] );
             }
-            $this->setPageTitle( IBOS::lang( 'Add Diary' ) );
+            $this->setPageTitle( Ibos::lang( 'Add Diary' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Add Diary' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Add Diary' ) )
             ) );
             $this->render( 'add', $params );
         } else {
@@ -156,8 +156,8 @@ class DefaultController extends BaseController {
      */
     private function save() {
         //判断是否是POST请求，不是的话非法访问，则要做相应的错误处理
-        if ( IBOS::app()->request->isPostRequest ) {
-            $uid = IBOS::app()->user->uid;
+        if ( Ibos::app()->request->isPostRequest ) {
+            $uid = Ibos::app()->user->uid;
             $realname = User::model()->fetchRealnameByUid( $uid );
             $originalPlan = $planOutside = array();
             if ( array_key_exists( 'originalPlan', $_POST ) ) {
@@ -174,7 +174,7 @@ class DefaultController extends BaseController {
                     DiaryRecord::model()->modify( $key, array( 'schedule' => $value ) );
                 }
             }
-            $date = $_POST['todayDate'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['todayDate'] ) );
+            $date = $_POST['todayDate'] . ' ' . Ibos::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['todayDate'] ) );
             //保存最新计划
             $shareUidArr = isset( $_POST['shareuid'] ) ? StringUtil::getId( $_POST['shareuid'] ) : array();
             $diary = array(
@@ -205,12 +205,12 @@ class DefaultController extends BaseController {
                 $supUid = UserUtil::getSupUid( $uid );
                 if ( intval( $supUid ) > 0 ) {
                     $data = array(
-                        'title' => IBOS::lang( 'Feed title', '', array(
-                            '{subject}' => $realname . ' ' . $date . ' ' . IBOS::lang( 'Work diary' ),
-                            '{url}' => IBOS::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) )
+                        'title' => Ibos::lang( 'Feed title', '', array(
+                            '{subject}' => $realname . ' ' . $date . ' ' . Ibos::lang( 'Work diary' ),
+                            '{url}' => Ibos::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) )
                         ) ),
                         'body' => StringUtil::cutStr( $diary['content'], 140 ),
-                        'actdesc' => IBOS::lang( 'Post diary' ),
+                        'actdesc' => Ibos::lang( 'Post diary' ),
                         'userid' => $supUid,
                         'deptid' => '',
                         'positionid' => '',
@@ -225,18 +225,18 @@ class DefaultController extends BaseController {
             if ( !empty( $upUid ) ) {
                 $config = array(
                     '{sender}' => User::model()->fetchRealnameByUid( $uid ),
-                    '{title}' => IBOS::lang( 'New diary title', '', array( '{sub}' => $realname, '{date}' => $date ) ),
+                    '{title}' => Ibos::lang( 'New diary title', '', array( '{sub}' => $realname, '{date}' => $date ) ),
                     '{content}' => $this->renderPartial( 'remindcontent', array(
                         'realname' => $realname,
                         'date' => $date,
-                        'lang' => IBOS::getLangSources(),
+                        'lang' => Ibos::getLangSources(),
                         'originalPlan' => array_values( $originalPlanContent ),
                         'planOutside' => array_values( $planOutside ),
                         'content' => StringUtil::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
-                        'plantime' => $_POST['plantime'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
+                        'plantime' => $_POST['plantime'] . ' ' . Ibos::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
                         'plan' => array_values( $plan )
                             ), true ),
-                    '{url}' => IBOS::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) ),
+                    '{url}' => Ibos::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) ),
                     'id' => $diaryId,
                 );
                 Notify::model()->sendNotify( $upUid, 'diary_message', $config, $uid );
@@ -247,15 +247,15 @@ class DefaultController extends BaseController {
              * @TODO 日志创建统计
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' )
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get( 'clientip' )
             );
             Log::write( $log, 'action', 'module.diary.default.save' );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
         } else {
             //15-7-27 下午2:22
             //不是post类型过来的请求都跳转回到日志添加页面
-            IBOS::app()->request->redirect( IBOS::app()->createUrl( 'diary/default/add' ) );
+            Ibos::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/add' ) );
         }
     }
 
@@ -264,9 +264,9 @@ class DefaultController extends BaseController {
      * @return void
      */
     private function setShare() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $postDeftoid = $_POST['deftoid'];
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             if ( empty( $postDeftoid ) ) {
                 DiaryShare::model()->delDeftoidByUid( $uid );
             } else {
@@ -286,17 +286,17 @@ class DefaultController extends BaseController {
         $diaryid = Env::getRequest( 'diaryid' );
         $diaryDate = Env::getRequest( 'diarydate' );
         if ( empty( $diaryid ) && empty( $diaryDate ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
         }
         $diary = array();
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( !empty( $diaryid ) ) {
             $diary = Diary::model()->fetchByPk( $diaryid );
         } else {
             $diary = Diary::model()->fetch( 'diarytime=:diarytime AND uid=:uid', array( ':diarytime' => strtotime( $diaryDate ), ':uid' => $uid ) );
         }
         if ( empty( $diary ) ) {
-            $this->error( IBOS::lang( 'File does not exists', 'error' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'File does not exists', 'error' ), $this->createUrl( 'default/index' ) );
         }
         // 日志权限判断
         if ( $diary['uid'] != $uid ) {
@@ -305,7 +305,7 @@ class DefaultController extends BaseController {
             } else if ( in_array( $uid, explode( ',', $diary['shareuid'] ) ) ) {
                 $this->redirect( $this->createUrl( 'share/show', array( 'diaryid' => $diaryid ) ) );
             } else {
-                $this->error( IBOS::lang( 'You do not have permission to view the log' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'You do not have permission to view the log' ), $this->createUrl( 'default/index' ) );
             }
         }
         //增加阅读记录
@@ -318,7 +318,7 @@ class DefaultController extends BaseController {
             'prevAndNextPK' => Diary::model()->fetchPrevAndNextPKByPK( $diary['diaryid'] ),
             'data' => $data,
             'isInstallCalendar' => Module::getIsEnabled( 'calendar' ),
-            'dashboardConfig' => IBOS::app()->setting->get( 'setting/diaryconfig' )
+            'dashboardConfig' => Ibos::app()->setting->get( 'setting/diaryconfig' )
         );
         //附件
         if ( !empty( $diary['attachmentid'] ) ) {
@@ -335,11 +335,11 @@ class DefaultController extends BaseController {
         if ( !empty( $diary['stamp'] ) ) {
             $params['stampUrl'] = Stamp::model()->fetchStampById( $diary['stamp'] );
         }
-        $this->setPageTitle( IBOS::lang( 'Show Diary' ) );
+        $this->setPageTitle( Ibos::lang( 'Show Diary' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Show Diary' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Show Diary' ) )
         ) );
         $this->render( 'show', $params );
     }
@@ -352,33 +352,33 @@ class DefaultController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'update', 'setShare' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
         }
         if ( $option == 'default' ) {
             $diaryid = intval( Env::getRequest( 'diaryid' ) );
             if ( empty( $diaryid ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
             }
             $diary = Diary::model()->fetchByPk( $diaryid );
             if ( empty( $diary ) ) {
-                $this->error( IBOS::lang( 'No data found', 'error' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'No data found', 'error' ), $this->createUrl( 'default/index' ) );
             }
             // 权限判断
-            if ( !ICDiary::checkReadScope( IBOS::app()->user->uid, $diary ) ) {
-                $this->error( IBOS::lang( 'You do not have permission to edit the log' ), $this->createUrl( 'default/index' ) );
+            if ( !ICDiary::checkReadScope( Ibos::app()->user->uid, $diary ) ) {
+                $this->error( Ibos::lang( 'You do not have permission to edit the log' ), $this->createUrl( 'default/index' ) );
             }
             //日志是否被锁定，锁定则不能修改
-            $dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+            $dashboardConfig = Ibos::app()->setting->get( 'setting/diaryconfig' );
             if ( !empty( $dashboardConfig['lockday'] ) ) {
                 $isLock = (time() - $diary['addtime']) > $dashboardConfig['lockday'] * 24 * 60 * 60;
                 if ( $isLock ) {
-                    $this->error( IBOS::lang( 'The diary is locked' ), $this->createUrl( 'default/index' ) );
+                    $this->error( Ibos::lang( 'The diary is locked' ), $this->createUrl( 'default/index' ) );
                 }
             }
             // 日志是否开启评阅后锁定，评阅后则锁定不能修改
             if ( $dashboardConfig['reviewlock'] == 1 ) {
                 if ( $diary['isreview'] == 1 ) {
-                    $this->error( IBOS::lang( 'The diary is locked' ), $this->createUrl( 'default/index' ) );
+                    $this->error( Ibos::lang( 'The diary is locked' ), $this->createUrl( 'default/index' ) );
                 }
             }
             //取得原计划和计划外内容,下一次计划内容
@@ -401,14 +401,14 @@ class DefaultController extends BaseController {
             }
             //取得默认共享人员
             if ( $dashboardConfig['sharepersonnel'] ) {
-                $shareData = DiaryShare::model()->fetchShareInfoByUid( IBOS::app()->user->uid );
+                $shareData = DiaryShare::model()->fetchShareInfoByUid( Ibos::app()->user->uid );
                 $params['defaultShareList'] = $shareData['shareInfo'];
             }
-            $this->setPageTitle( IBOS::lang( 'Edit Diary' ) );
+            $this->setPageTitle( Ibos::lang( 'Edit Diary' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Edit Diary' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Edit Diary' ) )
             ) );
             $this->render( 'edit', $params );
         } else {
@@ -423,17 +423,17 @@ class DefaultController extends BaseController {
     private function update() {
         //15-7-27 下午2:24
         //判断是否是post类型请求
-        if ( !IBOS::app()->request->isPostRequest ) {
+        if ( !Ibos::app()->request->isPostRequest ) {
             //不是post请求跳到工作日志页面
-            IBOS::app()->request->redirect( IBOS::app()->createUrl( 'diary/default/index' ) );
+            Ibos::app()->request->redirect( Ibos::app()->createUrl( 'diary/default/index' ) );
         }
 
         $diaryId = $_POST['diaryid'];
         $diary = Diary::model()->fetchByPk( $diaryId );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         // 权限判断
         if ( !ICDiary::checkReadScope( $uid, $diary ) ) {
-            $this->error( IBOS::lang( 'You do not have permission to edit the log' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'You do not have permission to edit the log' ), $this->createUrl( 'default/index' ) );
         }
         //如果原计划存在，修改原计划的值
         if ( isset( $_POST['originalPlan'] ) ) {
@@ -472,32 +472,32 @@ class DefaultController extends BaseController {
 		DiaryRecord::model()->deleteAll( 'diaryid=:diaryid AND uid=:uid AND planflag=:planflag', array(
 			':diaryid' => $diaryId, ':uid' => $uid, ':planflag' => 1 ) );
         if ( !isset( $_POST['plan'] ) ) {
-            $this->error( IBOS::lang( 'Please fill out at least one work plan' ), $this->createUrl( 'default/edit', array( 'diaryid' => $diaryId ) ) );
+            $this->error( Ibos::lang( 'Please fill out at least one work plan' ), $this->createUrl( 'default/edit', array( 'diaryid' => $diaryId ) ) );
         }
         $plan = array_filter( $_POST['plan'], create_function( '$v', 'return !empty($v["content"]);' ) );
         DiaryRecord::model()->addRecord( $plan, $diaryId, strtotime( $_POST['plantime'] ), $uid, 'new' );
         // 给直属上司发修改日志提醒
-        $date = date( 'Y-m-d', $diary['addtime'] ) . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( $diary['addtime'] );
+        $date = date( 'Y-m-d', $diary['addtime'] ) . ' ' . Ibos::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( $diary['addtime'] );
         $realname = User::model()->fetchRealnameByUid( $uid );
         $upUid = UserUtil::getSupUid( $uid );
         if ( !empty( $upUid ) ) {
             $config = array(
                 '{sender}' => User::model()->fetchRealnameByUid( $uid ),
-                '{title}' => IBOS::lang( 'Edit diary title', '', array( '{sub}' => $realname, '{date}' => $date ) ),
+                '{title}' => Ibos::lang( 'Edit diary title', '', array( '{sub}' => $realname, '{date}' => $date ) ),
                 '{content}' => $this->renderPartial( 'remindcontent', array(
                     'realname' => $realname,
                     'date' => $date,
-                    'lang' => IBOS::getLangSources(),
+                    'lang' => Ibos::getLangSources(),
                     'content' => StringUtil::cutStr( strip_tags( $_POST['diaryContent'] ), 200 ),
-                    'plantime' => $_POST['plantime'] . ' ' . IBOS::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
+                    'plantime' => $_POST['plantime'] . ' ' . Ibos::lang( 'Weekday', 'date' ) . DateTime::getWeekDay( strtotime( $_POST['plantime'] ) ),
                     'plan' => array_values( $plan )
                         ), true ),
-                '{url}' => IBOS::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) ),
+                '{url}' => Ibos::app()->urlManager->createUrl( 'diary/review/show', array( 'diaryid' => $diaryId ) ),
                 'id' => $diaryId,
             );
             Notify::model()->sendNotify( $upUid, 'diary_message', $config, $uid );
         }
-        $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'default/index' ) );
+        $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'default/index' ) );
     }
 
     /**
@@ -505,11 +505,11 @@ class DefaultController extends BaseController {
      * @return void
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $diaryids = Env::getRequest( 'diaryids' );
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             if ( empty( $diaryids ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Select at least one' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Select at least one' ) ) );
             }
             $pk = '';
             if ( strpos( $diaryids, ',' ) ) {
@@ -522,7 +522,7 @@ class DefaultController extends BaseController {
             foreach ( $diarys as $diary ) {
                 // 权限判断
                 if ( !ICDiary::checkReadScope( $uid, $diary ) ) {
-                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'You do not have permission to delete the log' ) ) );
+                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'You do not have permission to delete the log' ) ) );
                 }
             }
             //删除附件
@@ -540,7 +540,7 @@ class DefaultController extends BaseController {
             DiaryRecord::model()->deleteAll( "diaryid IN ({$diaryids})" );
             // 删除评分
             DiaryStats::model()->deleteAll( "diaryid IN ({$diaryids})" );
-            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
         }
     }
 
@@ -552,17 +552,17 @@ class DefaultController extends BaseController {
         $diaryid = intval( $_GET['diaryid'] );
         $isShowDiarytime = Env::getRequest( 'isShowDiarytime' );
         $fromController = Env::getRequest( 'fromController' );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( empty( $diaryid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'default/index' ) );
         }
         $diary = Diary::model()->fetchByPk( $diaryid );
         if ( empty( $diary ) ) {
-            $this->error( IBOS::lang( 'No data found', 'error' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'No data found', 'error' ), $this->createUrl( 'default/index' ) );
         }
         // 权限判断
         if ( !ICDiary::checkScope( $uid, $diary ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'You do not have permission to view the log' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'You do not have permission to view the log' ) ) );
         }
         //增加阅读记录
         Diary::model()->addReaderuidByPK( $diary, $uid );
@@ -593,7 +593,7 @@ class DefaultController extends BaseController {
         // 日期个性化
         $diary['addtime'] = Convert::formatDate( $diary['addtime'], 'u' );
         $params = array(
-            'lang' => IBOS::getLangSource( 'diary.default' ),
+            'lang' => Ibos::getLangSource( 'diary.default' ),
             'diaryid' => $diaryid,
             'diary' => $diary,
             'uid' => $uid,
@@ -617,7 +617,7 @@ class DefaultController extends BaseController {
      * @return void
      */
     private function getreaderlist() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $diaryId = Env::getRequest( 'diaryid' );
             $record = Diary::model()->fetch( array(
                 'select' => 'readeruid',
@@ -631,12 +631,12 @@ class DefaultController extends BaseController {
                 $readerUidArr = explode( ',', trim( $readerUids, ',' ) );
                 $users = User::model()->fetchAllByUids( $readerUidArr );
                 foreach ( $users as $user ) {
-                    $htmlStr.='<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $user['uid'] ) ) . '">
+                    $htmlStr.='<a href="' . Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $user['uid'] ) ) . '">
 								<img class="img-rounded" src="' . $user['avatar_small'] . '" title="' . $user['realname'] . '" />
 							</a>';
                 }
             } else {
-                $htmlStr .= '<div><li align="middle">' . IBOS::lang( 'Has not reader' ) . '</li>';
+                $htmlStr .= '<div><li align="middle">' . Ibos::lang( 'Has not reader' ) . '</li>';
             }
             $htmlStr.='</div></table>';
             echo $htmlStr;
@@ -648,7 +648,7 @@ class DefaultController extends BaseController {
      * @return void
      */
     private function getcommentlist() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $diaryid = Env::getRequest( 'diaryid' );
             $records = Comment::model()->fetchAll(
                     array(
@@ -676,7 +676,7 @@ class DefaultController extends BaseController {
 								</li>';
                 }
             } else {
-                $htmlStr .= '<li align="middle">' . IBOS::lang( 'Has not comment' ) . '</li>';
+                $htmlStr .= '<li align="middle">' . Ibos::lang( 'Has not comment' ) . '</li>';
             }
             $htmlStr .= '</ul></div>';
             echo $htmlStr;
@@ -687,8 +687,8 @@ class DefaultController extends BaseController {
      * 从日程中读取数据作为这天的原计划
      */
     private function planFromSchedule() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
-            $uid = IBOS::app()->user->uid;
+        if ( Ibos::app()->request->isAjaxRequest ) {
+            $uid = Ibos::app()->user->uid;
             $todayDate = $_GET['todayDate'];
             $st = intval( strtotime( $todayDate ) );
             $et = $st + 24 * 60 * 60 - 1;
@@ -710,7 +710,7 @@ class DefaultController extends BaseController {
 	 */
 	private function getWorkTime( $isInstallCalendar ) {
 		if ( $isInstallCalendar ) {  // 若已安装日程，取出配置的开始工作时间
-			$workingTime = IBOS::app()->setting->get( 'setting/calendarworkingtime' );
+			$workingTime = Ibos::app()->setting->get( 'setting/calendarworkingtime' );
 			$workingTimeArr = explode( ',', $workingTime );
 //			$start = floor( $workingTimeArr[0] - 0.5 ); // 向下0.5取整
 //			$end = ceil( $workingTimeArr[1] + 0.5 ); //向上0.5取整

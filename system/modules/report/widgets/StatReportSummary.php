@@ -16,7 +16,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\report\model\Report;
 use application\modules\report\model\ReportStats;
 use application\modules\statistics\utils\StatCommon;
@@ -49,7 +49,7 @@ class StatReportSummary extends StatReportBase {
      * @param array $time 时间范围
      */
     protected function renderPersonal( $time, $typeid ) {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $data = array(
             'title' => $this->handleTitleByTypeid( $typeid ),
             'total' => Report::model()->countReportTotalByUid( $uid, $time['start'], $time['end'], $typeid ),

@@ -192,7 +192,7 @@ class OrgIO {
                     $newId = User::model()->add( $userData, true );
                     if ( $newId ) {
                         UserCount::model()->add( array( 'uid' => $newId ) );
-                        $ip = IBOS::app()->setting->get( 'clientip' );
+                        $ip = Ibos::app()->setting->get( 'clientip' );
                         UserStatus::model()->add(
                                 array(
                                     'uid' => $newId,
@@ -237,7 +237,7 @@ class OrgIO {
                 'isSuccess' => true,
                 'successCount' => $successCount,
                 'errorCount' => count( $err ),
-                'url' => IBOS::app()->createUrl(
+                'url' => Ibos::app()->createUrl(
                         'dashboard/user/import', array(
                     'op' => 'downError',
                         )
@@ -317,7 +317,7 @@ class OrgIO {
      */
     private static function findDeptAWithFormat() {
         $return = array();
-        $list = IBOS::app()->db->createCommand()
+        $list = Ibos::app()->db->createCommand()
                 ->select( 'deptid,deptname,pid' )
                 ->from( Department::model()->tableName() )
                 ->queryAll();

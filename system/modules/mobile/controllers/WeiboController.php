@@ -6,7 +6,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\message\model\Comment;
@@ -88,16 +88,16 @@ class WeiboController extends BaseController {
 		$table = isset( $_GET['table'] ) ? StringUtil::filterCleanHtml( $_GET['table'] ) : 'feed';
 		// 所属模块名称
 		$module = isset( $_GET['module'] ) ? StringUtil::filterCleanHtml( $_GET['module'] ) : 'weibo';   // 当前动态产生所属的应用
-		$data = Feed::model()->put( IBOS::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
+		$data = Feed::model()->put( Ibos::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
 		if ( !$data ) {
 			$return['isSuccess'] = false;
 			$return['data'] = Feed::model()->getError( 'putFeed' );
 			$this->ajaxReturn( $return );
 		}
-		UserUtil::updateCreditByAction( 'addweibo', IBOS::app()->user->uid );
+		UserUtil::updateCreditByAction( 'addweibo', Ibos::app()->user->uid );
 		// 微博来源设置
 		$data['from'] = Env::getFromClient( $data['from'], $data['module'] );
-		//$lang = IBOS::getLangSources();
+		//$lang = Ibos::getLangSources();
 		$return['data'] = $data; // $this->renderPartial( 'feedlist', array( 'list' => array( $data ), 'lang' => $lang ), true );
 		// 动态ID
 		$return['feedid'] = $data['feedid'];
@@ -127,9 +127,9 @@ class WeiboController extends BaseController {
 			$module = $_GET['module'];
 			// 添加积分
 			if ( $module == 'weibo' ) {
-				UserUtil::updateCreditByAction( 'forwardweibo', IBOS::app()->user->uid );
+				UserUtil::updateCreditByAction( 'forwardweibo', Ibos::app()->user->uid );
 				//微博被转发
-				$suid = IBOS::app()->db->createCommand()
+				$suid = Ibos::app()->db->createCommand()
 						->select( 'uid' )
 						->from( '{{feed}}' )
 						->where( sprintf( "feedid = %d AND isdel = 0", $map['feedid'] ) )
@@ -147,10 +147,10 @@ class WeiboController extends BaseController {
 		$feedid = intval( Env::getRequest( 'feedid' ) );
 		$feedInfo = Feed::model()->get( $feedid );
 		if ( !$feedInfo ) {
-			$this->error( IBOS::lang( 'Weibo not exists' ) );
+			$this->error( Ibos::lang( 'Weibo not exists' ) );
 		}
 		if ( $feedInfo ['isdel'] == '1' ) {
-			$this->error( IBOS::lang( 'No relate weibo' ) );
+			$this->error( Ibos::lang( 'No relate weibo' ) );
 			exit();
 		}
 		if ( $feedInfo['from'] == '1' ) {
@@ -175,12 +175,12 @@ class WeiboController extends BaseController {
 			$v["attach_url"] = File::getAttachUrl() . '/' . $_tmp[$$attachid[0]]["attachment"]; //?TODO:: 可能多个附件
 		}
 		// 赞功能
-		$diggArr = FeedDigg::model()->checkIsDigg( $feedid, IBOS::app()->user->uid );
+		$diggArr = FeedDigg::model()->checkIsDigg( $feedid, Ibos::app()->user->uid );
 		$data = array(
 			'diggArr' => $diggArr,
 			'fd' => $feedInfo,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'user' ),
-			'moduleAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'user' ),
+			'moduleAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
 		);
 		$this->ajaxReturn( $data, 'JSONP' );
 	}
@@ -202,7 +202,7 @@ class WeiboController extends BaseController {
 				'moduleuid' => $moduleuid
 			)
 		);
-		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment', $properties );
+		$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment', $properties );
 		$list = $widget->getCommentList();
 		foreach ( $list as &$v ) {
 			unset( $v["user_info"] );
@@ -219,7 +219,7 @@ class WeiboController extends BaseController {
 	 * 设置赞与被赞
 	 */
 	public function actionDigg() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$feedId = intval( Env::getRequest( 'feedId' ) );
 		// 是否已赞
 		$alreadyDigg = FeedDigg::model()->getIsExists( $feedId, $uid );
@@ -313,7 +313,7 @@ class WeiboController extends BaseController {
 		}
 		if ( !empty( $data ) ) {
 			$fids = Convert::getSubByKey( $data, 'fid' );
-			$list = Follow::model()->getFollowStateByFids( IBOS::app()->user->uid, $fids );
+			$list = Follow::model()->getFollowStateByFids( Ibos::app()->user->uid, $fids );
 		} else {
 			$list = array();
 		}
@@ -478,7 +478,7 @@ class WeiboController extends BaseController {
 		foreach ( $data as $key => $val ) {
 			$data[$key] = StringUtil::filterCleanHtml( $data[$key] );
 		}
-		$data['uid'] = IBOS::app()->user->uid;
+		$data['uid'] = Ibos::app()->user->uid;
 		// 评论所属与评论内容
 		$data['content'] = StringUtil::filterDangerTag( $data['content'] );
 		// 判断资源是否被删除

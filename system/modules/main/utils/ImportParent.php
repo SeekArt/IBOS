@@ -2,7 +2,7 @@
 
 namespace application\modules\main\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\utils\Import;
 use CDbCriteria;
@@ -52,7 +52,7 @@ class ImportParent {
 			$this->import->i = 0;
 			$this->import->importData = array();
 			$this->tpl = $tpl;
-			$this->session = IBOS::app()->session;
+			$this->session = Ibos::app()->session;
 		}
 	}
 
@@ -201,7 +201,7 @@ class ImportParent {
 				list($tablePrefix, $fieldName ) = explode( '.', $field );
 				$table = $tableMap[$tablePrefix];
 				$pk = $pkMap[$tablePrefix];
-				$row = IBOS::app()->db->createCommand()
+				$row = Ibos::app()->db->createCommand()
 						->select( '*' )
 						->from( $table )
 						->where( " `{$fieldName}` = '{$data}' " )
@@ -418,7 +418,7 @@ class ImportParent {
 				$formatData[$i][$table][$fieldName] = $value;
 			}
 		}
-		$connection = IBOS::app()->db;
+		$connection = Ibos::app()->db;
 		$transaction = $connection->beginTransaction();
 		try {
 			foreach ( $formatData as $i => $dataArray ) {

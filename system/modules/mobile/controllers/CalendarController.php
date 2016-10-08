@@ -3,7 +3,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\controllers\ScheduleController;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -31,7 +31,7 @@ class CalendarController extends ScheduleController {
 	public function actionShow() {
 		$id = Env::getRequest( 'id' );
 		$ret = Calendars::model()->fetchByPk($id);
-		$ret['editable'] = ($ret['uid'] == IBOS::app()->user->uid)&&($ret['uid'] ==$ret['upuid']);
+		$ret['editable'] = ($ret['uid'] == Ibos::app()->user->uid)&&($ret['uid'] ==$ret['upuid']);
 		$this->ajaxReturn( $ret);
 	}
     /**

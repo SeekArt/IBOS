@@ -17,7 +17,7 @@
 namespace application\modules\file\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDynamic;
@@ -31,7 +31,7 @@ class DefaultController extends BaseController {
 	 * 文件柜首页
 	 */
 	public function actionIndex() {
-		$this->setPageTitle( IBOS::lang( 'Folder page' ) );
+		$this->setPageTitle( Ibos::lang( 'Folder page' ) );
 		$userSize = FileData::getUserSize( $this->uid ) . 'm'; // 单位M
 		$params = array(
 			'userSize' => implode( '', StringUtil::ConvertBytes( $userSize ) ), // 用户容量
@@ -68,7 +68,7 @@ class DefaultController extends BaseController {
 		foreach ( $dynamic as &$d ) {
 			$user = User::model()->fetchByUid( $d['uid'] );
 			$d['avatar'] = $user['avatar_middle'];
-			$d['content'] = IBOS::lang( 'Realname', '', array( '{realname}' => $user['realname'] ) ) . $d['content'];
+			$d['content'] = Ibos::lang( 'Realname', '', array( '{realname}' => $user['realname'] ) ) . $d['content'];
 		}
 		return $dynamic;
 	}

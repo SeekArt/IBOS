@@ -17,7 +17,7 @@
 namespace application\modules\calendar\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
 use application\modules\user\utils as UserUtil;
 use CDbCriteria;
@@ -52,7 +52,7 @@ class Calendars extends Model {
 				)
 		);
 		// 判断当前用户对日程用户的日程处理权限 0查看 1编辑 FALSE当前用户没有权限操作该用户的日程
-		$editAble = UserUtil\User::checkUserCalendarPermission( IBOS::app()->user->uid, $uid );
+		$editAble = UserUtil\User::checkUserCalendarPermission( Ibos::app()->user->uid, $uid );
 		if ( $editAble === FALSE ) {
 			return FALSE;
 		}
@@ -90,7 +90,7 @@ class Calendars extends Model {
 	 * @return array
 	 */
 	public function listCalendar( $st, $et, $uid ) {
-		$curUid = IBOS::app()->user->uid;
+		$curUid = Ibos::app()->user->uid;
 		// $result = $this->getCalendarViewFormat( $showDate, $viewType );
 		//获取某段时间内的日程安排
 		$list['calendar'] = Calendars::model()->listCalendarByRange( $st, $et, $uid );
@@ -300,7 +300,7 @@ class Calendars extends Model {
 	public function fetchLoopsAndPage( $conditions = '', $pageSize = null ) {
 
 		$pages = new CPagination( $this->countByCondition( $conditions ) );
-		$pageSize = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$pageSize = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pages->setPageSize( intval( $pageSize ) );
 		$offset = $pages->getOffset();
 		$limit = $pages->getLimit();

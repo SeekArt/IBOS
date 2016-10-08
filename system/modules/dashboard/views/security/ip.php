@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 
 <div class="ct">

@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -16,8 +16,8 @@ class BackgroundController extends BaseController {
 	 */
 	public function actionIndex(){
 		$data = array(
-			'skin' => IBOS::app()->setting->get( 'setting/skin' ),
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'dashboard' ),
+			'skin' => Ibos::app()->setting->get( 'setting/skin' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'dashboard' ),
 		);
 		$this->render( 'index', $data );
 	}

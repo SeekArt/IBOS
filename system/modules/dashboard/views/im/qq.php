@@ -1,9 +1,9 @@
 <?php
 
 use application\core\utils\DateTime;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
-$rtxIsOpen = IBOS::app()->setting->get( 'setting/im/rtx/open' );
+$rtxIsOpen = Ibos::app()->setting->get( 'setting/im/rtx/open' );
 ?>
 <div class="ct">
 	<div class="clearfix">

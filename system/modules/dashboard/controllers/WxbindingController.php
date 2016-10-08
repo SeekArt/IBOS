@@ -17,7 +17,7 @@
 
 namespace application\modules\dashboard\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\WebSite;
 use CJSON;
 
@@ -27,8 +27,8 @@ class WxbindingController extends WxController {
 	 * 获取企业号绑定视图
 	 */
 	public function actionIndex() {
-		$unit = IBOS::app()->setting->get( 'setting/unit' );
-		$aeskey = IBOS::app()->setting->get( 'setting/aeskey' );
+		$unit = Ibos::app()->setting->get( 'setting/unit' );
+		$aeskey = Ibos::app()->setting->get( 'setting/aeskey' );
 		$params = array(
 			'fullname' => $unit['fullname'],
 			'shortname' => $unit['shortname'],
@@ -37,8 +37,8 @@ class WxbindingController extends WxController {
 			'aeskey' => $aeskey,
 			'isBinding' => $this->isBinding,
 		);
-		$currentUid = IBOS::app()->user->uid;
-		$loginWebUid = IBOS::app()->cache->get( $currentUid . 'loginWeb' );
+		$currentUid = Ibos::app()->user->uid;
+		$loginWebUid = Ibos::app()->cache->get( $currentUid . 'loginWeb' );
 		if ( !$loginWebUid ) {
 			$view = 'login';
 		} else {
@@ -78,7 +78,7 @@ class WxbindingController extends WxController {
 	}
 
 	public function actionLogin() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$mobile = $request->getPost( 'mobile' );
 		$password = $request->getPost( 'password' );
 		$res = WebSite::getInstance()->fetch( 'Api/Api/login', array(
@@ -88,20 +88,20 @@ class WxbindingController extends WxController {
 		$ajaxReturn = $this->ajaxReturnArray( $res );
 		if ( true === $ajaxReturn['isSuccess'] ) {
 			$uid = $ajaxReturn['data']['uid'];
-			$currentUid = IBOS::app()->user->uid;
-			IBOS::app()->cache->set( $currentUid . 'loginWeb', $uid );
+			$currentUid = Ibos::app()->user->uid;
+			Ibos::app()->cache->set( $currentUid . 'loginWeb', $uid );
 		}
 		return $this->ajaxReturn( $ajaxReturn );
 	}
 
 	public function actionLogout() {
-		$currentUid = IBOS::app()->user->uid;
-		IBOS::app()->cache->set( $currentUid . 'loginWeb', null );
+		$currentUid = Ibos::app()->user->uid;
+		Ibos::app()->cache->set( $currentUid . 'loginWeb', null );
 		return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
 	}
 
 	public function actionRegister() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$mobile = $request->getPost( 'mobile' );
 		$password = $request->getPost( 'password' );
 		$username = $request->getPost( 'realname' );
@@ -113,14 +113,14 @@ class WxbindingController extends WxController {
 		$ajaxReturn = $this->ajaxReturnArray( $res );
 		if ( true === $ajaxReturn['isSuccess'] ) {
 			$uid = $ajaxReturn['data']['uid'];
-			$currentUid = IBOS::app()->user->uid;
-			IBOS::app()->cache->set( $currentUid . 'loginWeb', $uid );
+			$currentUid = Ibos::app()->user->uid;
+			Ibos::app()->cache->set( $currentUid . 'loginWeb', $uid );
 		}
 		return $this->ajaxReturn( $ajaxReturn );
 	}
 
 	public function actionSendCode() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$mobile = $request->getPost( 'mobile' );
 		$res = WebSite::getInstance()->fetch( 'Api/Api/sendCode', array(
 			'mobile' => $mobile,
@@ -130,7 +130,7 @@ class WxbindingController extends WxController {
 	}
 
 	public function actionCheckCode() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$mobile = $request->getPost( 'mobile' );
 		$code = $request->getPost( 'code' );
 		$res = WebSite::getInstance()->fetch( 'Api/Api/checkCode', array(
@@ -142,7 +142,7 @@ class WxbindingController extends WxController {
 	}
 
 	public function actionCheckMobile() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$mobile = $request->getPost( 'mobile' );
 		$res = WebSite::getInstance()->fetch( 'Api/Api/checkMobile', array(
 			'mobile' => $mobile,

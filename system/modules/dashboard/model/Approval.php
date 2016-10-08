@@ -18,7 +18,7 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\article\model\ArticleCategory;
 use application\modules\officialdoc\model\OfficialdocCategory;
@@ -187,7 +187,7 @@ class Approval extends Model {
 
     // public function fetchApprovalidIndexByLevelNByUid($uid) {
 
-    //     $rows = IBOS::app()->db->createCommand()
+    //     $rows = Ibos::app()->db->createCommand()
     //             ->select('level,level1,level2,level3,level4,level5,id')
     //             ->from($this->tableName())
     //             ->where(array(
@@ -216,7 +216,7 @@ class Approval extends Model {
      * @return string
      */
     public function getFreeUidById($id) {
-        $uidString = IBOS::app()->db->createCommand()
+        $uidString = Ibos::app()->db->createCommand()
                 ->select('free')
                 ->from($this->tableName())
                 ->where(" `id` = '{$id}' ")

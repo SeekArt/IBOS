@@ -17,7 +17,7 @@
 
  namespace application\modules\recruit\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CWidget;
  
 class StatRecruitBase extends CWidget {
@@ -73,7 +73,7 @@ class StatRecruitBase extends CWidget {
 	 * @return type
 	 */
 	protected function createComponent( $class, $properties = array() ) {
-		return IBOS::createComponent( array_merge( array( 'class' => $class ), $properties ) );
+		return Ibos::createComponent( array_merge( array( 'class' => $class ), $properties ) );
 	}
 
 }

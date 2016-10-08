@@ -2,7 +2,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class StatReportSidebar extends StatReportBase {
 
@@ -29,7 +29,7 @@ class StatReportSidebar extends StatReportBase {
             'inPersonal' => $id == 'stats' && $action == 'personal',
             'inReview' => $id == 'stats' && $action == 'review',
             'hasSub' => $this->getHasSub(),
-            'lang' => IBOS::getLangSource( 'report.default' )
+            'lang' => Ibos::getLangSource( 'report.default' )
         );
         $this->render( self::VIEW, $data );
     }

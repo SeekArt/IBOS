@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/email.css?<?php echo VERHASH; ?>">
@@ -127,7 +127,7 @@ use application\core\utils\IBOS;
                     <?php if (!in_array($op, array('send', 'draft'))): ?>
                         <div class="band band-primary">
                             <?php if ($unreadCount > 0): ?>
-                                <?php echo IBOS::lang('New unread messages', '', array('{count}' => $unreadCount)) ?>,<a href="javascript:;" data-param="{&quot;url&quot;:&quot;<?php echo $this->createUrl('api/setAllRead'); ?>&quot;}" data-click="markReadAll" class="anchor ilsep"><?php echo $lang['Set all read']; ?></a>
+                                <?php echo Ibos::lang('New unread messages', '', array('{count}' => $unreadCount)) ?>,<a href="javascript:;" data-param="{&quot;url&quot;:&quot;<?php echo $this->createUrl('api/setAllRead'); ?>&quot;}" data-click="markReadAll" class="anchor ilsep"><?php echo $lang['Set all read']; ?></a>
                             <?php else: ?>
                                 <?php echo $lang['No unread mail']; ?>
                             <?php endif; ?>

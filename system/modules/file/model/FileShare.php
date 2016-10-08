@@ -19,7 +19,7 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 use CDbCriteria;
 use CPagination;
@@ -40,7 +40,7 @@ class FileShare extends Model {
 	 * @return array
 	 */
 	public function fetchFidsByCondition( $condition ) {
-		$record = IBOS::app()->db->createCommand()
+		$record = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file_share}} fs" )
 				->leftJoin( "{{file}} f", "f.`fid`=fs.`fid`" )
@@ -57,7 +57,7 @@ class FileShare extends Model {
 	 * @return array
 	 */
 	public function getIndexList( $condition = '', $pageSize = null ) {
-		$count = IBOS::app()->db->createCommand()
+		$count = Ibos::app()->db->createCommand()
 				->select( "count(fs.fromuid)" )
 				->from( "{{file_share}} fs" )
 				->leftJoin( "{{file}} f", "f.`fid`=fs.`fid`" )
@@ -68,7 +68,7 @@ class FileShare extends Model {
 		$pages = new CPagination( $count );
 		$limit = is_null( $pageSize ) ? File::PAGESIZE : $pageSize;
 		$pages->setPageSize( intval( $limit ) );
-		$datas = IBOS::app()->db->createCommand()
+		$datas = Ibos::app()->db->createCommand()
 				->select( "fs.fromuid, MAX(fs.uptime) AS uptime, fr.viewtime" )
 				->from( "{{file_share}} fs" )
 				->leftJoin( "{{file}} f", "f.`fid`=fs.`fid`" )
@@ -92,7 +92,7 @@ class FileShare extends Model {
 	 */
 	public function getList( $condition = '', $order = null, $pageSize = null ) {
 		$order = "f.type DESC, " . (is_null( $order ) ? "f.addtime DESC" : $order);
-		$count = IBOS::app()->db->createCommand()
+		$count = Ibos::app()->db->createCommand()
 				->select( "count(fs.fid)" )
 				->from( "{{file_share}} fs" )
 				->leftJoin( "{{file}} f", "f.`fid` = fs.`fid`" )
@@ -105,7 +105,7 @@ class FileShare extends Model {
 		$criteria->order = $order;
 		$pages->applyLimit( $criteria );
 		$pages->setPageSize( intval( $limit ) );
-		$datas = IBOS::app()->db->createCommand()
+		$datas = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fd", "f.`fid` = fd.`fid`" )

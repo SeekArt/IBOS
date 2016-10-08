@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File as FileUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\file\core\FileAttr;
 use application\modules\file\core\FileCloud;
 use application\modules\file\core\FileLocal;
@@ -53,12 +53,12 @@ class BaseController extends Controller {
 	public $search = 0;
 
 	public function init() {
-		$this->uid = IBOS::app()->user->uid;
-		$cloudOpen = IBOS::app()->setting->get( 'setting/filecloudopen' );
+		$this->uid = Ibos::app()->user->uid;
+		$cloudOpen = Ibos::app()->setting->get( 'setting/filecloudopen' );
 		if ( !$cloudOpen ) {
 			$this->cloudid = 0;
 		} else {
-			$this->cloudid = IBOS::app()->setting->get( 'setting/filecloudid' );
+			$this->cloudid = Ibos::app()->setting->get( 'setting/filecloudid' );
 		}
 		parent::init();
 	}
@@ -177,7 +177,7 @@ class BaseController extends Controller {
 		if ( !is_null( $pid ) ) {
 			$attr['pid'] = $pid;
 		}
-		return IBOS::createComponent( $attr );
+		return Ibos::createComponent( $attr );
 	}
 
 	/**
@@ -192,7 +192,7 @@ class BaseController extends Controller {
 		if ( $res ) {
 			$this->ajaxReturn( $return );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Upload failed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Upload failed' ) ) );
 		}
 	}
 
@@ -203,13 +203,13 @@ class BaseController extends Controller {
 		$pid = intval( Env::getRequest( 'pid' ) );
 		$dirname = Env::getRequest( 'name' );
 		if ( FileCheck::getInstance()->isExist( $dirname, $pid, $this->uid, $this->cloudid, $this->belongType ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The samename folder exist' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The samename folder exist' ) ) );
 		}
 		$fid = FileOperationApi::getInstance()->mkDir( $this->getFileAttr( $pid ), $dirname );
 		if ( $fid ) {
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Create succeed' ), 'fid' => $fid ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Create succeed' ), 'fid' => $fid ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Create failed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Create failed' ) ) );
 		}
 	}
 
@@ -221,16 +221,16 @@ class BaseController extends Controller {
 		$type = strtolower( Env::getRequest( 'type' ) );
 		$name = Env::getRequest( 'name' ) . '.' . $type;
 		if ( !in_array( $type, array( 'doc', 'ppt', 'xls' ) ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'File type error' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'File type error' ) ) );
 		}
 		if ( FileCheck::getInstance()->isExist( $name, $pid, $this->uid, $this->cloudid, $this->belongType ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The samename file exist' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The samename file exist' ) ) );
 		}
 		$res = FileOperationApi::getInstance()->mkOffice( $this->getFileAttr( $pid ), $this->getCore(), $name, $type, $this->module->getId() );
 		if ( $res ) {
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Create succeed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Create succeed' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Create failed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Create failed' ) ) );
 		}
 	}
 
@@ -242,17 +242,17 @@ class BaseController extends Controller {
 		$newName = htmlspecialchars( strtolower( trim( Env::getRequest( 'name' ) ) ) );
 		$file = File::model()->fetchByPk( $fid );
 		if ( $file['uid'] != $this->uid ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Can not edit other\'s file' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Can not edit other\'s file' ) ) );
 		}
 		$sameNameFile = File::model()->fetchByNameWidthPid( $newName, $file['pid'], $this->uid );
 		if ( !empty( $sameNameFile ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The samename file exist' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The samename file exist' ) ) );
 		}
 		$res = FileOperationApi::getInstance()->rename( $fid, $newName );
 		if ( $res ) {
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Operation failure', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Operation failure', 'message' ) ) );
 		}
 	}
 
@@ -272,7 +272,7 @@ class BaseController extends Controller {
 		$sourceFids = trim( Env::getRequest( 'sourceFids' ), ',' ); // 操作的文件id
 		$targetFid = intval( Env::getRequest( 'targetFid' ) ); // 目标文件夹
 		FileOperationApi::getInstance()->copy( $this->getFileAttr(), $sourceFids, $targetFid );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -282,7 +282,7 @@ class BaseController extends Controller {
 		$sourceFids = trim( Env::getRequest( 'sourceFids' ), ',' ); // 操作的文件id
 		$targetFid = intval( Env::getRequest( 'targetFid' ) ); // 目标文件夹
 		FileOperationApi::getInstance()->cut( $this->getFileAttr(), $sourceFids, $targetFid );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -292,7 +292,7 @@ class BaseController extends Controller {
 	protected function recycle() {
 		$fids = Env::getRequest( 'fids' );
 		FileOperationApi::getInstance()->recycle( $fids );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -302,7 +302,7 @@ class BaseController extends Controller {
 		$fid = Env::getRequest( 'fid' );
 		$mark = intval( Env::getRequest( 'mark' ) );
 		FileOperationApi::getInstance()->mark( $fid, $mark );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**

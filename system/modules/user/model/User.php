@@ -20,7 +20,7 @@ namespace application\modules\user\model;
 use application\core\model\Model;
 use application\core\utils as util;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\department\model\DepartmentRelated;
 use application\modules\department\model\Department;
 use application\modules\position\model\PositionRelated;
@@ -166,7 +166,7 @@ class User extends Model {
         if (empty($uidX) && NULL !== $uidX) {
             return array();
         }
-        $query = IBOS::app()->db->createCommand()
+        $query = Ibos::app()->db->createCommand()
             ->select($this->select)
             ->from($this->tableName());
         $conditionArray = array(
@@ -194,7 +194,7 @@ class User extends Model {
      * @return array
      */
     public function findRealnameIndexByUid($uidX) {
-        $realName = IBOS::app()->db->createCommand()
+        $realName = Ibos::app()->db->createCommand()
             ->select('uid,realname')
             ->from($this->tableName())
             ->where($this->uid_find_in_set($uidX))
@@ -215,7 +215,7 @@ class User extends Model {
      */
     public function fetchUidA($returnDisabled = false) {
         $condition = $returnDisabled ? 1 : $this->status_not_disabled();
-        $uidA = IBOS::app()->db->createCommand()
+        $uidA = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where($condition)
@@ -229,7 +229,7 @@ class User extends Model {
      * @return array
      */
     public function findThreeByUid($uidX) {
-        $return = IBOS::app()->db->createCommand()
+        $return = Ibos::app()->db->createCommand()
             ->select('uid,realname,mobile,deptid')
             ->from($this->tableName())
             ->where($this->uid_find_in_set($uidX))
@@ -243,7 +243,7 @@ class User extends Model {
      * @return array
      */
     public function findNotDisabledUid($uidX) {
-        $uidArray = IBOS::app()->db->createCommand()
+        $uidArray = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(array(
@@ -261,7 +261,7 @@ class User extends Model {
      * @return type
      */
     public function fetchAllUidsByStatus($status) {
-        $uidArray = IBOS::app()->db->createCommand()
+        $uidArray = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(" `status` = '{$status}' ")
@@ -278,13 +278,13 @@ class User extends Model {
     public function findAllDeptidByUid($uid, $onlyRelated = false) {
         $main = NULL;
         if (false === $onlyRelated) {
-            $main = IBOS::app()->db->createCommand()
+            $main = Ibos::app()->db->createCommand()
                 ->select('deptid')
                 ->from($this->tableName())
                 ->where($this->uid_eq($uid))
                 ->queryScalar();
         }
-        $related = IBOS::app()->db->createCommand()
+        $related = Ibos::app()->db->createCommand()
             ->select('deptid')
             ->from(DepartmentRelated::model()->tableName())
             ->where($this->uid_eq($uid))
@@ -302,13 +302,13 @@ class User extends Model {
     public function findAllPositionidByUid($uid, $onlyRelated = false) {
         $main = NULL;
         if (false === $onlyRelated) {
-            $main = IBOS::app()->db->createCommand()
+            $main = Ibos::app()->db->createCommand()
                 ->select('positionid')
                 ->from($this->tableName())
                 ->where($this->uid_eq($uid))
                 ->queryScalar();
         }
-        $related = IBOS::app()->db->createCommand()
+        $related = Ibos::app()->db->createCommand()
             ->select('positionid')
             ->from(PositionRelated::model()->tableName())
             ->where($this->uid_eq($uid))
@@ -326,13 +326,13 @@ class User extends Model {
     public function findAllRoleidByUid($uid, $onlyRelated = false) {
         $main = NULL;
         if (false === $onlyRelated) {
-            $main = IBOS::app()->db->createCommand()
+            $main = Ibos::app()->db->createCommand()
                 ->select('roleid')
                 ->from($this->tableName())
                 ->where($this->uid_eq($uid))
                 ->queryScalar();
         }
-        $related = IBOS::app()->db->createCommand()
+        $related = Ibos::app()->db->createCommand()
             ->select('roleid')
             ->from(RoleRelated::model()->tableName())
             ->where($this->uid_eq($uid))
@@ -351,12 +351,12 @@ class User extends Model {
         if (NULL !== $uidX) {
             $condition = $this->uid_find_in_set($uidX);
         }
-        $deptRelated = IBOS::app()->db->createCommand()
+        $deptRelated = Ibos::app()->db->createCommand()
             ->select('uid,deptid')
             ->from(DepartmentRelated::model()->tableName())
             ->where($condition)
             ->queryAll();
-        $deptMain = IBOS::app()->db->createCommand()
+        $deptMain = Ibos::app()->db->createCommand()
             ->select('uid,deptid')
             ->from($this->tableName())
             ->where($condition)
@@ -384,12 +384,12 @@ class User extends Model {
         if (NULL !== $uidX) {
             $condition = $this->uid_find_in_set($uidX);
         }
-        $PositionRelated = IBOS::app()->db->createCommand()
+        $PositionRelated = Ibos::app()->db->createCommand()
             ->select('uid,positionid')
             ->from(PositionRelated::model()->tableName())
             ->where($condition)
             ->queryAll();
-        $positionMain = IBOS::app()->db->createCommand()
+        $positionMain = Ibos::app()->db->createCommand()
             ->select('uid,positionid')
             ->from($this->tableName())
             ->where($condition)
@@ -417,12 +417,12 @@ class User extends Model {
         if (NULL !== $uidX) {
             $condition = $this->uid_find_in_set($uidX);
         }
-        $roleRelated = IBOS::app()->db->createCommand()
+        $roleRelated = Ibos::app()->db->createCommand()
             ->select('uid,roleid')
             ->from(RoleRelated::model()->tableName())
             ->where($condition)
             ->queryAll();
-        $roleMain = IBOS::app()->db->createCommand()
+        $roleMain = Ibos::app()->db->createCommand()
             ->select('uid,roleid')
             ->from($this->tableName())
             ->where($condition)
@@ -446,7 +446,7 @@ class User extends Model {
      * @return array
      */
     public function fetchSubUidByUid($uid) {
-        $uidArray = IBOS::app()->db->createCommand()
+        $uidArray = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(array(
@@ -464,7 +464,7 @@ class User extends Model {
      * @return array 用户数据
      */
     public function findByRealname($name) {
-        $user = IBOS::app()->db->createCommand()
+        $user = Ibos::app()->db->createCommand()
             ->select()
             ->from($this->tableName())
             ->where(" `realname` = ':name' ", array(':name' => $name))
@@ -479,7 +479,7 @@ class User extends Model {
      */
     public function findUidByRealnameX($realnameX) {
         $realnameString = is_array($realnameX) ? implode(',', $realnameX) : $realnameX;
-        $uidArray = IBOS::app()->db->createCommand()
+        $uidArray = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(" FIND_IN_SET( `realname`, '{$realnameString}') ")
@@ -516,7 +516,7 @@ class User extends Model {
      * @return string
      */
     public function fetchRealnameByUid($uid) {
-        $realname = IBOS::app()->db->createCommand()
+        $realname = Ibos::app()->db->createCommand()
             ->select('realname')
             ->from($this->tableName())
             ->where($this->uid_eq($uid))
@@ -531,7 +531,7 @@ class User extends Model {
      * @return string
      */
     public function fetchRealnamesByUids($uidX, $glue = ',') {
-        $realnameArray = IBOS::app()->db->createCommand()
+        $realnameArray = Ibos::app()->db->createCommand()
             ->select('realname')
             ->from($this->tableName())
             ->where($this->uid_find_in_set($uidX))
@@ -545,7 +545,7 @@ class User extends Model {
      */
     public function checkCanDisabled($uidX) {
         $uidArray = is_array($uidX) ? $uidX : explode(',', $uidX);
-        $adminArray = IBOS::app()->db->createCommand()
+        $adminArray = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(" isadministrator = 1 ")
@@ -600,7 +600,7 @@ class User extends Model {
      * 查找部门内符合条件的人
      */
     public function fetchAllFitDeptUser($dept) {
-        $uidArray = util\IBOS::app()->db->createCommand()
+        $uidArray = util\Ibos::app()->db->createCommand()
             ->select('u.uid')
             ->from('{{user}} u')
             ->leftJoin('{{department_related}} dr', 'u.uid = dr.uid')
@@ -621,7 +621,7 @@ class User extends Model {
      * 没设部门主管的情况下查找其他有权限的人
      */
     public function fetchAllOtherManager($dept) {
-        $list = util\IBOS::app()->db->createCommand()
+        $list = util\Ibos::app()->db->createCommand()
             ->select('u.uid')
             ->from('{{user}} u')
             ->leftJoin('{{department_related}} dr', 'u.uid = dr.uid')
@@ -643,7 +643,7 @@ class User extends Model {
         static $positionidArray = array();
         if (!isset($positionidArray[$positionid])) :
             $condition = " `u`.`positionid`= '{$positionid}' ";
-            $query = IBOS::app()->db->createCommand();
+            $query = Ibos::app()->db->createCommand();
             if (true === $related):
                 $query = $query->leftJoin(PositionRelated::model()->tableName() . ' prpr'//自行百度prpr，我真的没有想歪
                     , " `prpr`.`uid` = `u`.`uid` ");
@@ -679,7 +679,7 @@ class User extends Model {
     public function fetchUidByRoleId($roleid, $returnDisabled = true, $related = false) {
         if (!isset($RoleidArray[$roleid])) {
             $condition = " `u`.`roleid` = '{$roleid}'";
-            $query = IBOS::app()->db->createCommand();
+            $query = Ibos::app()->db->createCommand();
             if (true === $related):
                 $query = $query->leftJoin(RoleRelated::model()->tableName() . ' rr'
                     , " `rr`.`uid` = `u`.`uid` ");
@@ -784,7 +784,7 @@ class User extends Model {
         static $deptidArray = array();
         if (!isset($deptidArray[$deptid])) {
             $condition = " `u`.`deptid` = '{$deptid}'";
-            $query = IBOS::app()->db->createCommand();
+            $query = Ibos::app()->db->createCommand();
             if (true === $related):
                 $query = $query->leftJoin(DepartmentRelated::model()->tableName() . ' dr'
                     , " `dr`.`uid` = `u`.`uid` ");
@@ -848,7 +848,7 @@ class User extends Model {
      * @return array
      */
     public function fetchAllCredit() {
-        $uid = IBOS::app()->db->createCommand()
+        $uid = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from($this->tableName())
             ->where(" `status` != 2 ")
@@ -1032,7 +1032,7 @@ class User extends Model {
      * @return array  用户uid数组
      */
     public function fetchUnbind($limit = NULL) {
-        $query = util\IBOS::app()->db->createCommand()
+        $query = util\Ibos::app()->db->createCommand()
             ->select('u.uid')
             ->from('{{user}} u')
             ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
@@ -1049,7 +1049,7 @@ class User extends Model {
      *查询跟酷办公关联但已禁用的用户id
      */
     public function fetchDeletebind() {
-        $list = util\IBOS::app()->db->createCommand()
+        $list = util\Ibos::app()->db->createCommand()
             ->select('u.uid')
             ->from('{{user}} u')
             ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
@@ -1063,7 +1063,7 @@ class User extends Model {
      * @return array  用户uid数组
      */
     public function CountUnbind() {
-        $list = util\IBOS::app()->db->createCommand()
+        $list = util\Ibos::app()->db->createCommand()
             ->select('count(uid)')
             ->from('{{user}}')
             ->where("status != " . self::USER_STATUS_ABANDONED . " and uid not in (select uid from {{user_binding}} where app='co' )")->queryColumn();
@@ -1074,7 +1074,7 @@ class User extends Model {
      *查询跟酷办公关联但已禁用的用户id总数
      */
     public function CountDelete() {
-        $list = util\IBOS::app()->db->createCommand()
+        $list = util\Ibos::app()->db->createCommand()
             ->select('count(u.uid)')
             ->from('{{user}} u')
             ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')
@@ -1088,7 +1088,7 @@ class User extends Model {
      * @return array  用户uid数组
      */
     public function fetchPartUnbind($start, $length) {
-        $list = util\IBOS::app()->db->createCommand()
+        $list = util\Ibos::app()->db->createCommand()
             ->select('u.uid')
             ->from('{{user}} u')
             ->leftJoin('{{user_binding}} b', 'u.uid = b.uid')

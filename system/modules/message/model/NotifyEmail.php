@@ -17,8 +17,8 @@ class NotifyEmail extends Model {
 	}
 
 	public function formatEmailNotify( $data ) {
-		$baseUrl = util\IBOS::app()->setting->get( 'siteurl' );
-		$fullName = util\IBOS::app()->setting->get( 'setting/unit/fullname' );
+		$baseUrl = util\Ibos::app()->setting->get( 'siteurl' );
+		$fullName = util\Ibos::app()->setting->get( 'setting/unit/fullname' );
 		$user = User::model()->fetchByUid( $data['uid'] );
 		$named = $user['realname'] . ($user['gender'] == 1 ? ' 先生' : ' 女士');
 		$body = $data['body'];

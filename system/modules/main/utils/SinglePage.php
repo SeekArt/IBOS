@@ -16,7 +16,7 @@
 
 namespace application\modules\main\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class SinglePage {
 
@@ -28,7 +28,7 @@ class SinglePage {
      */
     public static function parse( $html, $replace ) {
         // 加载parser类库
-        IBOS::import( 'application\extensions\simple_html_dom', true );
+        Ibos::import( 'application\extensions\simple_html_dom', true );
         $doc = \application\extensions\str_get_html( $html );
         if ( !$doc ) {
             return null;
@@ -48,7 +48,7 @@ class SinglePage {
      */
     public static function getTplEditorContent( $file ) {
         // 加载parser类库
-        IBOS::import( 'application\extensions\simple_html_dom', true );
+        Ibos::import( 'application\extensions\simple_html_dom', true );
         $doc = \application\extensions\str_get_html( $file );
         if ( !$doc ) {
             return null;
@@ -89,7 +89,7 @@ class SinglePage {
             foreach ( $files as $file ) {
                 $info = pathinfo( $file );
                 $filename = $info['filename'];
-                $ret[$filename] = IBOS::lang( 'Page_' . $filename );
+                $ret[$filename] = Ibos::lang( 'Page_' . $filename );
             }
         }
         return $ret;

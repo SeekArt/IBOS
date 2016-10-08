@@ -15,7 +15,7 @@
 namespace application\extensions\ThinkImage\Driver;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use Exception;
 
 class ImageGd {
@@ -75,7 +75,7 @@ class ImageGd {
             $this->img = imagecreatefromstring( $this->gif->image() );
         } else {
             if ( !LOCAL ) {
-                $imgname = IBOS::engine()->io()->file()->fetchTemp( File::fileName( $imgname ), $this->info['type'] );
+                $imgname = Ibos::engine()->io()->file()->fetchTemp( File::fileName( $imgname ), $this->info['type'] );
             }
             $fun = "imagecreatefrom{$this->info['type']}";
             $this->img = $fun( $imgname );
@@ -111,10 +111,10 @@ class ImageGd {
         } else {
 			$fun = "image{$type}";
             if ( !LOCAL ) {
-                $temp = IBOS::engine()->io()->file()->fetchTemp( File::fileName( $imgname ), $this->info['type'] );
+                $temp = Ibos::engine()->io()->file()->fetchTemp( File::fileName( $imgname ), $this->info['type'] );
                 $fun( $this->img, $temp );
                 $content = file_get_contents( $temp );
-                IBOS::engine()->io()->file()->createFile( $imgname, $content );
+                Ibos::engine()->io()->file()->createFile( $imgname, $content );
             } else {
                 $fun( $this->img, $imgname );
             }

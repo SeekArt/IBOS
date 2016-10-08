@@ -97,7 +97,7 @@ class Upgrade {
      * @return array array(需要更新的文件列表, 不需要更新的文件列表)(仅仅返回要修改的文件，不在返回数组里面的是新增的文件)
      */
     public static function compareBasefile( $upgradeFileList ) {
-        $ibosFiles = @file( IBOS::getPathOfAlias( 'application.ibosfiles' ) . '.md5' );
+        $ibosFiles = @file( Ibos::getPathOfAlias( 'application.ibosfiles' ) . '.md5' );
         /**
          * 如果没有md5文件也更新，毕竟只是为了显示差异文件
          */
@@ -243,7 +243,7 @@ class Upgrade {
         } elseif ( $type == 'ftp' ) {
             $ftpConf = Env::getRequest( 'ftp' );
             $ftpConf['on'] = 1;
-            $ftpConf['password'] = StringUtil::authcode( $ftpConf['password'], 'ENCODE', md5( IBOS::app()->setting->get( 'config/security/authkey' ) ) );
+            $ftpConf['password'] = StringUtil::authcode( $ftpConf['password'], 'ENCODE', md5( Ibos::app()->setting->get( 'config/security/authkey' ) ) );
             $ftp = Ftp::getInstance( $ftpConf );
             $ftp->connect();
             $ftp->upload( $srcFile, $desFile );
@@ -261,11 +261,11 @@ class Upgrade {
      */
     public static function getStepName( $step ) {
         $stepNameArr = array(
-            '1' => IBOS::lang( 'Upgrade get file' ),
-            '2' => IBOS::lang( 'Upgrade download' ),
-            '3' => IBOS::lang( 'Upgrade compare' ),
-            '4' => IBOS::lang( 'Upgradeing' ),
-            'dbupdate' => IBOS::lang( 'Upgrade db' )
+            '1' => Ibos::lang( 'Upgrade get file' ),
+            '2' => Ibos::lang( 'Upgrade download' ),
+            '3' => Ibos::lang( 'Upgrade compare' ),
+            '4' => Ibos::lang( 'Upgradeing' ),
+            'dbupdate' => Ibos::lang( 'Upgrade db' )
         );
         return $stepNameArr[$step];
     }

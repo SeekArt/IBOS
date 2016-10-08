@@ -18,7 +18,7 @@ namespace application\modules\calendar\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
 use application\modules\user\utils\User as UserUtil;
@@ -48,8 +48,8 @@ Class BaseController extends Controller {
 
     public function init() {
         $uid = intval( Env::getRequest( 'uid' ) );
-        $this->uid = $uid ? $uid : IBOS::app()->user->uid;
-        $this->upuid = IBOS::app()->user->uid;
+        $this->uid = $uid ? $uid : Ibos::app()->user->uid;
+        $this->upuid = Ibos::app()->user->uid;
         parent::init();
     }
 
@@ -60,9 +60,9 @@ Class BaseController extends Controller {
     protected function getSidebar() {
         $sidebarAlias = 'application.modules.calendar.views.sidebar';
         $params = array(
-            'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
-            'hasShareUid' => CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid ),
-            'lang' => IBOS::getLangSource( 'calendar.default' ),
+            'hasSubUid' => UserUtil::hasSubUid( Ibos::app()->user->uid ),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid( Ibos::app()->user->uid ),
+            'lang' => Ibos::getLangSource( 'calendar.default' ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
         return $sidebarView;
@@ -75,8 +75,8 @@ Class BaseController extends Controller {
     protected function getSubSidebar() {
         $sidebarAlias = 'application.modules.calendar.views.subsidebar';
         $params = array(
-            'deptArr' => UserUtil::getManagerDeptSubUserByUid( IBOS::app()->user->uid ),
-            'hasShareUid' => CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid ),
+            'deptArr' => UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
+            'hasShareUid' => CalendarUtil::getShareUidsByUid( Ibos::app()->user->uid ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
         return $sidebarView;
@@ -89,12 +89,12 @@ Class BaseController extends Controller {
 	protected function getShareSidebar() {
         $sidebarAlias = 'application.modules.calendar.views.sharesidebar';
 		// 根据 uid 数组返回用户信息数组
-		$shareUids = CalendarUtil::getShareUidsByUid( IBOS::app()->user->uid );
+		$shareUids = CalendarUtil::getShareUidsByUid( Ibos::app()->user->uid );
 		$shareUidInfos = UserUtil::getUserInfoByUids( $shareUids );
 		// 根据用户信息数组按部门进行重新排列形成可用于输出生成侧栏菜单的数组
         $params = array(
             'deptArr' => UserUtil::handleUserGroupByDept( $shareUidInfos ),
-            'hasSubUid' => UserUtil::hasSubUid( IBOS::app()->user->uid ),
+            'hasSubUid' => UserUtil::hasSubUid( Ibos::app()->user->uid ),
         );
 		$sidebarView = $this->renderPartial( $sidebarAlias, $params, TRUE );
 		return $sidebarView;
@@ -147,7 +147,7 @@ Class BaseController extends Controller {
      * @return integer 实例事务的ID
      */
     protected function createSubCalendar( $masterid, $mastertime, $starttime, $endtime, $subject, $category, $status = 0 ) {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $rows = Calendars::model()->fetchByPk( $masterid );
         unset( $rows['calendarid'] );
         $rows['masterid'] = $masterid;
@@ -226,7 +226,7 @@ Class BaseController extends Controller {
      * @return boolean
      */
     protected function checkIsMe() {
-        if ( $this->uid != IBOS::app()->user->uid ) {
+        if ( $this->uid != Ibos::app()->user->uid ) {
             return false;
         } else {
             return true;
@@ -238,7 +238,7 @@ Class BaseController extends Controller {
      * @return boolean
      */
     protected function checkAddPermission() {
-        if ( !$this->checkIsMe() && (!UserUtil::checkIsSub( IBOS::app()->user->uid, $this->uid ) || !CalendarUtil::getIsAllowAdd() ) ) {
+        if ( !$this->checkIsMe() && (!UserUtil::checkIsSub( Ibos::app()->user->uid, $this->uid ) || !CalendarUtil::getIsAllowAdd() ) ) {
             return false;
         } else {
             return true;
@@ -250,7 +250,7 @@ Class BaseController extends Controller {
      * @return boolean
      */
     protected function checkEditPermission() {
-        if ( !$this->checkIsMe() && !UserUtil::checkIsSub( IBOS::app()->user->uid, $this->uid ) ) {
+        if ( !$this->checkIsMe() && !UserUtil::checkIsSub( Ibos::app()->user->uid, $this->uid ) ) {
             return false;
         } else {
             return true;
@@ -262,7 +262,7 @@ Class BaseController extends Controller {
      * @return boolean
      */
     protected function checkTaskPermission() {
-        if ( !$this->checkIsMe() && (!UserUtil::checkIsSub( IBOS::app()->user->uid, $this->uid ) || !CalendarUtil::getIsAllowEidtTask() ) ) {
+        if ( !$this->checkIsMe() && (!UserUtil::checkIsSub( Ibos::app()->user->uid, $this->uid ) || !CalendarUtil::getIsAllowEidtTask() ) ) {
             return false;
         } else {
             return true;

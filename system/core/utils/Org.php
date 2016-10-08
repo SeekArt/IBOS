@@ -38,7 +38,7 @@ class Org {
 	public static function hookSyncUser( $uid, $pwd = '', $syncFlag = 1 ) {
 		$type = '';
 		$imCfg = array();
-		foreach ( IBOS::app()->setting->get( 'setting/im' ) as $imType => $config ) {
+		foreach ( Ibos::app()->setting->get( 'setting/im' ) as $imType => $config ) {
 			if ( $config['open'] == '1' ) {
 				$type = $imType;
 				$imCfg = $config;
@@ -47,7 +47,7 @@ class Org {
 		}
 		if ( !empty( $type ) && !empty( $imCfg ) && $imCfg['syncuser'] == '1' ) {
 			MainUtil::setCookie( 'hooksyncuser', 1, 30 );
-			MainUtil::setCookie( 'syncurl', IBOS::app()->createUrl( 'dashboard/organizationApi/syncUser', array( 'type' => $type, 'uid' => $uid, 'pwd' => $pwd, 'flag' => $syncFlag ) ), 30 );
+			MainUtil::setCookie( 'syncurl', Ibos::app()->createUrl( 'dashboard/organizationApi/syncUser', array( 'type' => $type, 'uid' => $uid, 'pwd' => $pwd, 'flag' => $syncFlag ) ), 30 );
 		}
 	}
 
@@ -78,7 +78,7 @@ class Org {
 			//生成部门文件
 			$departments = DepartmentModel::model()->findDeptmentIndexByDeptid( NULL , array( 'order' => 'pid ASC, sort ASC' ) );
 			$departmentArray = array();
-			$unit = IBOS::app()->setting->get( 'setting/unit' );
+			$unit = Ibos::app()->setting->get( 'setting/unit' );
 			$departmentArray['c_0'] = array( 'id' => 'c_0', 'text' => $unit['fullname'], 'type' => 'department', );
 			if ( !empty( $departments ) ) {
 				foreach ( $departments as $department ) {

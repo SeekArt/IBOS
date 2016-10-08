@@ -17,7 +17,7 @@
 
 namespace application\core\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\extensions\Tree;
 use application\modules\department\model\Department;
 use application\modules\message\utils\Expression;
@@ -96,7 +96,7 @@ class StringUtil {
 	 */
 	public static function authCode( $string, $operation = 'DECODE', $key = '', $expiry = 0 ) {
 		$ckeyLength = 4;
-		$key = md5( $key != '' ? $key : IBOS::app()->setting->get( 'authkey' )  );
+		$key = md5( $key != '' ? $key : Ibos::app()->setting->get( 'authkey' )  );
 		$keya = md5( substr( $key, 0, 16 ) );
 		$keyb = md5( substr( $key, 16, 16 ) );
 		$keyc = $ckeyLength ? ($operation == 'DECODE' ?
@@ -375,7 +375,7 @@ class StringUtil {
 	 */
 	public static function getSubIp( $ip = '' ) {
 		if ( empty( $ip ) ) {
-			$ip = $clientIp = IBOS::app()->setting->get( 'clientip' );
+			$ip = $clientIp = Ibos::app()->setting->get( 'clientip' );
 		}
 		$reg = '/(\d+\.)(\d+\.)(\d+)\.(\d+)/';
 		return preg_replace( $reg, "$1$2*.*", $ip );
@@ -805,7 +805,7 @@ class StringUtil {
 	 */
 	public static function parseForApi( $html ) {
 		$html = self::filterDangerTag( $html );
-		$html = str_replace( array( '[SITE_URL]', '&nbsp;' ), array( IBOS::app()->setting->get( 'siteurl' ), ' ' ), $html );
+		$html = str_replace( array( '[SITE_URL]', '&nbsp;' ), array( Ibos::app()->setting->get( 'siteurl' ), ' ' ), $html );
 		//@提到某人处理
 		$html = preg_replace_callback( "/@([\w\x{2e80}-\x{9fff}\-]+)/u", "self::parseWapAtByUname", $html );
 		return $html;
@@ -849,7 +849,7 @@ class StringUtil {
 	public static function parseHtml( $html ) {
 		$html = htmlspecialchars_decode( $html );
 		//链接替换
-		$html = str_replace( '[SITE_URL]', IBOS::app()->setting->get( 'siteurl' ), $html );
+		$html = str_replace( '[SITE_URL]', Ibos::app()->setting->get( 'siteurl' ), $html );
 		// 外网链接地址处理
 		$html = preg_replace_callback( '/((?:https?|ftp):\/\/(?:www\.)?(?:[a-zA-Z0-9][a-zA-Z0-9\-]*\.)?[a-zA-Z0-9][a-zA-Z0-9\-]*(?:\.[a-zA-Z0-9]+)+(?:\:[0-9]*)?(?:\/[^\x{2e80}-\x{9fff}\s<\'\"“”‘’,，。]*)?)/u', 'self::parseUrl', $html );
 		//表情处理
@@ -905,13 +905,13 @@ class StringUtil {
 	 */
 	private static function parseTheme( $data ) {
 		// 如果话题被锁定，则不带链接
-		$lock = IBOS::app()->db->createCommand()
+		$lock = Ibos::app()->db->createCommand()
 				->select( 'lock' )
 				->from( '{{feed_topic}}' )
 				->where( sprintf( "topicname = '%s'", $data[1] ) )
 				->queryScalar();
 		if ( !$lock ) {
-			return "<a class='wb-source' href=" . IBOS::app()->urlManager->createUrl( 'weibo/topic/detail', array( 'k' => urlencode( $data[1] ) ) ) . ">" . $data[0] . "</a>";
+			return "<a class='wb-source' href=" . Ibos::app()->urlManager->createUrl( 'weibo/topic/detail', array( 'k' => urlencode( $data[1] ) ) ) . ">" . $data[0] . "</a>";
 		} else {
 			return $data[0];
 		}
@@ -951,7 +951,7 @@ class StringUtil {
 
 	public static function replaceUrl( $content ) {
 		//$content = preg_replace_callback('/((?:https?|ftp):\/\/(?:[a-zA-Z0-9][a-zA-Z0-9\-]*)*(?:\/[^\x{2e80}-\x{9fff}\s<\'\"“”‘’,，。]*)?)/u', '_parse_url', $content);
-		$content = str_replace( '[SITE_URL]', IBOS::app()->setting->get( 'siteurl' ), $content );
+		$content = str_replace( '[SITE_URL]', Ibos::app()->setting->get( 'siteurl' ), $content );
 		$content = preg_replace_callback( '/((?:https?|mailto|ftp):\/\/([^\x{2e80}-\x{9fff}\s<\'\"“”‘’，。}]*)?)/u', 'self::parseUrl', $content );
 		return $content;
 	}

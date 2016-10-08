@@ -5,7 +5,7 @@ namespace application\modules\main\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use PHPExcel_IOFactory;
 
 /**
@@ -45,13 +45,13 @@ class ImportController extends Controller {
 	 * 初始化导入参数，写入session
 	 */
 	public function initImport() {
-		$request = IBOS::app()->request;
+		$request = Ibos::app()->request;
 		$file = $request->getPost( 'url' );
 		$tpl = $request->getPost( 'tpl' );
 		$module = $request->getPost( 'module' );
 		$sheet = $request->getPost( 'sheet' );
 		$init = $request->getPost( 'init' );
-		$this->session = IBOS::app()->session;
+		$this->session = Ibos::app()->session;
 		if ( $init ) {
 			$this->session->remove( 'import_dataArray_all' );
 			$this->session->remove( 'import_sheetNames' );
@@ -89,7 +89,7 @@ class ImportController extends Controller {
 			if ( !in_array( $pathinfo['extension'], array_keys( $this->supportFormat ) ) ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
-							'msg' => IBOS::lang( 'not support format' ),
+							'msg' => Ibos::lang( 'not support format' ),
 							'data' => array(),
 						) );
 			}
@@ -113,7 +113,7 @@ class ImportController extends Controller {
 			if ( $sheet >= $objPHPExcel->getSheetCount() ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
-							'msg' => IBOS::lang( 'sheet error' ),
+							'msg' => Ibos::lang( 'sheet error' ),
 							'data' => array(),
 						) );
 			}
@@ -123,7 +123,7 @@ class ImportController extends Controller {
 			if ( empty( $dataArray[$tplConfig['fieldline'] - 1] ) ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
-							'msg' => IBOS::lang( 'sheet data error' ),
+							'msg' => Ibos::lang( 'sheet data error' ),
 							'data' => array(),
 						) );
 			}
@@ -147,7 +147,7 @@ class ImportController extends Controller {
 		);
 		return $this->ajaxReturn( array(
 					'isSuccess' => true,
-					'msg' => IBOS::lang( 'success' ),
+					'msg' => Ibos::lang( 'success' ),
 					'data' => $ajaxReturn,
 				) );
 	}
@@ -157,13 +157,13 @@ class ImportController extends Controller {
 	 * @return array ajax
 	 */
 	public function actionSettingColumns() {
-		$this->session = IBOS::app()->session;
+		$this->session = Ibos::app()->session;
 		$sheet = $this->session->get( 'import_sheet' );
 		$allArray = $this->session->get( 'import_dataArray_all' );
 		if ( empty( $allArray[$sheet] ) ) {
 			return array(
 				'isSuccess' => false,
-				'msg' => IBOS::lang( 'last step has not finished yet' ),
+				'msg' => Ibos::lang( 'last step has not finished yet' ),
 				'data' => array(),
 			);
 		}
@@ -174,7 +174,7 @@ class ImportController extends Controller {
 		$rule = $obj->getFieldRule( $tplFieldArray );
 		$ajaxReturn = array(
 			'isSuccess' => true,
-			'msg' => IBOS::lang( 'success' ),
+			'msg' => Ibos::lang( 'success' ),
 			'data' => array(
 				'fieldArray' => $this->session->get( 'import_fieldArray' ),
 				'tplFieldArray' => $tplFieldArray,
@@ -190,11 +190,11 @@ class ImportController extends Controller {
 	 * @return array ajax
 	 */
 	public function actionImport() {
-		$request = IBOS::app()->request;
+		$request = Ibos::app()->request;
 		$op = $request->getPost( 'op' );
 		$per = $request->getPost( 'per', 10 );
 		$times = $request->getPost( 'times' );
-		$this->session = IBOS::app()->session;
+		$this->session = Ibos::app()->session;
 		$tpl = $this->session->get( 'import_tpl' );
 		if ( $op == 'start' ) {
 			$this->session->remove( 'import_fail_data' );
@@ -211,7 +211,7 @@ class ImportController extends Controller {
 			if ( empty( $fieldRelationFilter ) ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
-							'msg' => IBOS::lang( 'not exists import relation' ),
+							'msg' => Ibos::lang( 'not exists import relation' ),
 							'data' => array(),
 						) );
 			}
@@ -221,7 +221,7 @@ class ImportController extends Controller {
 			$this->session->add( 'import_dataArray_first', true );
 			return $this->ajaxReturn( array(
 						'isSuccess' => true,
-						'msg' => IBOS::lang( 'success' ),
+						'msg' => Ibos::lang( 'success' ),
 						'data' => array(
 							'op' => 'continue',
 							'queue' => array( array(
@@ -247,7 +247,7 @@ class ImportController extends Controller {
 			if ( NULL === $obj ) {
 				return $this->ajaxReturn( array(
 							'isSuccess' => false,
-							'msg' => IBOS::lang( 'not exists file' ),
+							'msg' => Ibos::lang( 'not exists file' ),
 						) );
 			} else {
 				$ajaxReturn = $obj->setData( $dataArray )
@@ -285,14 +285,14 @@ class ImportController extends Controller {
 	 * 导出错误的数据
 	 */
 	public function actionExportError() {
-		$this->session = IBOS::app()->session;
+		$this->session = Ibos::app()->session;
 		$failArray = $this->session->get( 'import_fail_data' );
 		if ( empty( $failArray ) ) {
 			Env::iExit( '没有错误' );
 		}
 		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
 		$tplConfig = $this->getTplConfig( $this->session->get( 'import_tpl' ) );
-		$module = IBOS::app()->getRequest()->getPost( 'module' );
+		$module = Ibos::app()->getRequest()->getPost( 'module' );
 		$tplPath = $this->getTplPath( $module );
 		$tplPHPExcel = PHPExcel_IOFactory::load( $tplPath . '/' . $tplConfig['filename'] );
 		$fieldRelation = $this->session->get( 'import_fieldRelation' );
@@ -321,7 +321,7 @@ class ImportController extends Controller {
 	 * 下载模版
 	 */
 	public function actionDownloadTpl() {
-		$request = IBOS::app()->getRequest();
+		$request = Ibos::app()->getRequest();
 		$module = $request->getParam( 'module' );
 		$tpl = $request->getParam( 'tpl' );
 		$obj = $this->createModuleObj( $module, $tpl );

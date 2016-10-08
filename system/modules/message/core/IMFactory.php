@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 
@@ -74,7 +74,7 @@ class IMFactory extends CApplicationComponent {
      */
     private function chkInstance( $adapter ) {
         if ( !$adapter instanceof IM ) {
-            throw new CException( IBOS::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $adapter ) ) ) );
+            throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $adapter ) ) ) );
         }
     }
 

@@ -19,7 +19,7 @@ namespace application\modules\file\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\file\core\FileOperationApi;
 use application\modules\file\model\File;
@@ -44,7 +44,7 @@ class PersonalController extends BaseController {
 			'idpath' => File::TOP_IDPATH,
 			'uploadConfig' => Attach::getUploadConfig()
 		);
-		$this->setPageTitle( IBOS::lang( 'Personal folder' ) );
+		$this->setPageTitle( Ibos::lang( 'Personal folder' ) );
 		$this->render( 'index', $params );
 	}
 
@@ -91,16 +91,16 @@ class PersonalController extends BaseController {
 	 * 删除（删除到回收站/彻底删除）
 	 */
 	public function actionDel() {
-		if ( IBOS::app()->request->getIsAjaxRequest() ) {
+		if ( Ibos::app()->request->getIsAjaxRequest() ) {
 			$fids = StringUtil::filterStr( Env::getRequest( 'fids' ) );
 			$files = File::model()->fetchAllByFids( $fids );
 			foreach ( $files as $f ) { // 安全判断
 				if ( $f['uid'] != $this->uid ) {
-					$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to delete files', '', array( '{file}' => $f['name'] ) ) ) );
+					$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to delete files', '', array( '{file}' => $f['name'] ) ) ) );
 				}
 			}
 			FileOperationApi::getInstance()->recycle( $fids );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		}
 	}
 
@@ -122,7 +122,7 @@ class PersonalController extends BaseController {
 	protected function getCondition( $pid ) {
 		$con = array(
 			'dirCon' => "f.`pid` = {$pid}",
-			'uidCon' => "f.`uid` = " . IBOS::app()->user->uid,
+			'uidCon' => "f.`uid` = " . Ibos::app()->user->uid,
 			'personalCon' => "f.`belong` = {$this->belongType}",
 			'cloudCon' => "f.`cloudid` = {$this->cloudid}",
 			'delCon' => "f.`isdel` = 0",
@@ -136,14 +136,14 @@ class PersonalController extends BaseController {
 	 * 检查用户容量使用情况
 	 */
 	protected function checkUserSize() {
-		$userSize = FileData::getUserSize( IBOS::app()->user->uid );
-		$usedSize = File::model()->getUsedSize( IBOS::app()->user->uid, $this->cloudid );
+		$userSize = FileData::getUserSize( Ibos::app()->user->uid );
+		$usedSize = File::model()->getUsedSize( Ibos::app()->user->uid, $this->cloudid );
 		$attach = new CommonAttach( 'Filedata', 'file' );
 		$attachSize = $attach->getAttachSize();
 		//如果是比较数字大小，只要让其中一边是数字即可，另一边是字符串无所谓
 		if ( ($usedSize + $attachSize + 0) > implode( '', StringUtil::ConvertBytes( $userSize . 'm' ) ) ) {
 			header( 'HTTP/1.1 500' );
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Capacity overflow', '', array( '{size}' => $userSize ) ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Capacity overflow', '', array( '{size}' => $userSize ) ) ) );
 		}
 	}
 

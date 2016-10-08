@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!-- load css -->
@@ -209,6 +209,6 @@ use application\core\utils\IBOS;
 	Ibos.app.s({
 		"pid": <?php echo $pid; ?>,
 		"cabinetType": "myshare",
-		"isAdministrator": <?php echo IBOS::app()->user->isadministrator; ?>
+		"isAdministrator": <?php echo Ibos::app()->user->isadministrator; ?>
 	})
 </script>

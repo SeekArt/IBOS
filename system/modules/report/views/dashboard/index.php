@@ -1,11 +1,11 @@
 <?php 
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 
 ?>
-<link rel="stylesheet" href="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'report' ); ?>/css/dbreport.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'report' ); ?>/css/dbreport.css?<?php echo VERHASH; ?>">
 <div class="ct">
 	<div class="clearfix">
 		<h1 class="mt"><?php echo $lang['Work report']; ?></h1>
@@ -118,7 +118,7 @@ use application\modules\dashboard\model\Stamp;
 		</form>
 	</div>
 </div>
-<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'report' ); ?>/js/report_dashboard_index.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'report' ); ?>/js/report_dashboard_index.js?<?php echo VERHASH; ?>"></script>
 <script>
 	Ibos.app.setPageParam({
 		AUTO_REVIEW: "<?php echo $config['autoreview']; ?>"

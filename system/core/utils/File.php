@@ -28,7 +28,7 @@ class File {
 	 * @return object
 	 */
 	public static function getUpload( $fileArea, $module = 'temp' ) {
-		return IBOS::engine()->io()->upload( $fileArea, $module );
+		return Ibos::engine()->io()->upload( $fileArea, $module );
 	}
 
 	/**
@@ -36,7 +36,7 @@ class File {
 	 * @return string
 	 */
 	public static function getAttachUrl() {
-		return rtrim( IBOS::app()->setting->get( 'setting/attachurl' ), DIRECTORY_SEPARATOR );
+		return rtrim( Ibos::app()->setting->get( 'setting/attachurl' ), DIRECTORY_SEPARATOR );
 	}
 
 	/**
@@ -46,7 +46,7 @@ class File {
 	 * @return void
 	 */
 	public static function download( $attach, $downloadInfo = array() ) {
-		return IBOS::engine()->io()->file()->download( $attach, $downloadInfo );
+		return Ibos::engine()->io()->file()->download( $attach, $downloadInfo );
 	}
 
 	/**
@@ -55,19 +55,19 @@ class File {
 	 * @return string 
 	 */
 	public static function fileName( $fileName, $suffix = false ) {
-		return IBOS::engine()->io()->file()->fileName( $fileName, $suffix );
+		return Ibos::engine()->io()->file()->fileName( $fileName, $suffix );
 	}
 
 	public static function imageName( $fileName, $suffix = false ) {
-		return IBOS::engine()->io()->file()->imageName( $fileName, $suffix );
+		return Ibos::engine()->io()->file()->imageName( $fileName, $suffix );
 	}
 
 	public static function getImgHost( $fileName ) {
-		return IBOS::engine()->io()->file()->getImgHost( $fileName );
+		return Ibos::engine()->io()->file()->getImgHost( $fileName );
 	}
 
 	public static function getHost( $fileName ) {
-		return IBOS::engine()->io()->file()->getHost( $fileName );
+		return Ibos::engine()->io()->file()->getHost( $fileName );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class File {
 	 * @return array 成功读取图片信息， false 读取失败
 	 */
 	public static function imageSize( $image ) {
-		return IBOS::engine()->io()->file()->imageSize( $image );
+		return Ibos::engine()->io()->file()->imageSize( $image );
 	}
 
 	/**
@@ -85,7 +85,7 @@ class File {
 	 * @return integer 返回文件大小的字节数，如果出错返回 false 并生成一条 E_WARNING 级的错误。 
 	 */
 	public static function fileSize( $file ) {
-		return IBOS::engine()->io()->file()->fileSize( $file );
+		return Ibos::engine()->io()->file()->fileSize( $file );
 	}
 
 	/**
@@ -94,7 +94,7 @@ class File {
 	 * @return type
 	 */
 	public static function fileExists( $file ) {
-		return IBOS::engine()->io()->file()->fileExists( $file );
+		return Ibos::engine()->io()->file()->fileExists( $file );
 	}
 
 	/**
@@ -104,7 +104,7 @@ class File {
 	 * @return type
 	 */
 	public static function createFile( $fileName, $content ) {
-		return IBOS::engine()->io()->file()->createFile( $fileName, $content );
+		return Ibos::engine()->io()->file()->createFile( $fileName, $content );
 	}
 
 	/**
@@ -113,15 +113,15 @@ class File {
 	 * @return type
 	 */
 	public static function readFile( $fileName ) {
-		return IBOS::engine()->io()->file()->readFile( $fileName );
+		return Ibos::engine()->io()->file()->readFile( $fileName );
 	}
 
 	public static function waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath ) {
-		return IBOS::engine()->io()->file()->waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath );
+		return Ibos::engine()->io()->file()->waterString( $text, $size, $from, $to, $position, $alpha, $quality, $color, $fontPath );
 	}
 
 	public static function waterPic( $from, $pic, $to, $position, $alpha, $quality, $hight, $wight ) {
-		return IBOS::engine()->io()->file()->waterPic( $from, $pic, $to, $position, $alpha, $quality, $hight, $wight );
+		return Ibos::engine()->io()->file()->waterPic( $from, $pic, $to, $position, $alpha, $quality, $hight, $wight );
 	}
 
 	/**
@@ -129,7 +129,7 @@ class File {
 	 * @return type
 	 */
 	public static function getTempPath() {
-		return IBOS::engine()->io()->file()->getTempPath();
+		return Ibos::engine()->io()->file()->getTempPath();
 	}
 
 	/**
@@ -138,7 +138,7 @@ class File {
 	 * @return boolean
 	 */
 	public static function clearDir( $dir ) {
-		return IBOS::engine()->io()->file()->clearDir( $dir );
+		return Ibos::engine()->io()->file()->clearDir( $dir );
 	}
 
 	/**
@@ -147,11 +147,11 @@ class File {
 	 * @return boolean
 	 */
 	public static function deleteFile( $fileName ) {
-		return IBOS::engine()->io()->file()->deleteFile( $fileName );
+		return Ibos::engine()->io()->file()->deleteFile( $fileName );
 	}
 
 	public static function copyFile( $from, $to, $deleteSrc = false ) {
-		return IBOS::engine()->io()->file()->copyFile( $from, $to, $deleteSrc );
+		return Ibos::engine()->io()->file()->copyFile( $from, $to, $deleteSrc );
 	}
 
 	/**
@@ -159,7 +159,7 @@ class File {
 	 * @param string $srcDir 目标文件夹路径
 	 */
 	public static function clearDirs( $srcDir, $except = array() ) {
-		return IBOS::engine()->io()->file()->clearDirs( $srcDir, $except );
+		return Ibos::engine()->io()->file()->clearDirs( $srcDir, $except );
 	}
 
 	/**
@@ -379,7 +379,7 @@ class File {
 			if ( LOCAL ) {
 				$state = @copy( $file, $copyToPath . $name );
 			} else {
-				$state = IBOS::engine()->io()->file()->moveFile( $file, $copyToPath . $name );
+				$state = Ibos::engine()->io()->file()->moveFile( $file, $copyToPath . $name );
 			}
 			return $state;
 		} else {
@@ -455,7 +455,7 @@ class File {
 		header( "Accept-Ranges: bytes" );
 		header( "Accept-Length: " . strlen( $output ) );
 		header( "Content-Length: " . strlen( $output ) );
-		header( "Content-Disposition: attachment; filename= IBOS" . urlencode( IBOS::lang( 'Workflow', 'workflow.default' ) ) .
+		header( "Content-Disposition: attachment; filename= IBOS" . urlencode( Ibos::lang( 'Workflow', 'workflow.default' ) ) .
 				"(" . date( "Y-m-d", TIMESTAMP ) . ").zip" );
 		echo $output;
 	}
@@ -467,11 +467,11 @@ class File {
 		} else {
 			$typeArray = is_array( $type ) ? $type : explode( ',', $type );
 		}
-		return IBOS::engine()->io()->file()->getOrgJs( $typeArray );
+		return Ibos::engine()->io()->file()->getOrgJs( $typeArray );
 	}
 
 	public static function setOrgJs( $type, $value ) {
-		return IBOS::engine()->io()->file()->setOrgJs( $type, $value );
+		return Ibos::engine()->io()->file()->setOrgJs( $type, $value );
 	}
 
 }

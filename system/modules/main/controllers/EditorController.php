@@ -11,14 +11,14 @@ namespace application\modules\main\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\components\EditorUploader;
 use application\modules\main\model\Setting;
 
 Class EditorController extends Controller {
 
 	public function actionIndex() {
-		$request = IBOS::app()->request;
+		$request = Ibos::app()->request;
 		$action = $request->getQuery( 'action' );
 		if ( !in_array( $action, array( 'uploadimage', 'listimage', 'uploadfile', 'config' ) ) ) {
 			$action = 'uploadfile';

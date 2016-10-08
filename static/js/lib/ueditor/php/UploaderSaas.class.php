@@ -3,7 +3,7 @@
 include 'saasindex.php';
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\components\CommonAttach;
 
 class Uploader {
@@ -33,7 +33,7 @@ class Uploader {
 		$upload->upload();
 		if ( !$upload->getIsUpoad() ) {
 			$this->stateInfo = '上传失败';
-			$this->getController()->ajaxReturn( array( 'msg' => IBOS::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
+			$this->getController()->ajaxReturn( array( 'msg' => Ibos::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
 		} else {
 			$info = $upload->getUpload()->getAttach();
 			$this->stateInfo = 'SUCCESS';

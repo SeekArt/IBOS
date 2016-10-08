@@ -2,7 +2,7 @@
 
 namespace application\modules\calendar\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -16,11 +16,11 @@ class CalendarApi {
     public function renderIndex() {
         $data = array(
             'schedules' => $this->loadNewSchedules(),
-            'lant' => IBOS::getLangSource( 'calendar.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'calendar' )
+            'lant' => Ibos::getLangSource( 'calendar.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'calendar' )
         );
         $viewAlias = 'application.modules.calendar.views.indexapi.schedule';
-        $return['calendar/calendar'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+        $return['calendar/calendar'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
         return $return;
     }
 
@@ -31,7 +31,7 @@ class CalendarApi {
     public function loadSetting() {
         return array(
             'name' => 'calendar/calendar',
-            'title' => IBOS::lang( 'Calendar arrangement', 'calendar.default' ),
+            'title' => Ibos::lang( 'Calendar arrangement', 'calendar.default' ),
             'style' => 'in-calendar'
         );
     }
@@ -49,7 +49,7 @@ class CalendarApi {
      * @return array
      */
     private function loadNewSchedules() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $st = time();
         $schedules = Calendars::model()->fetchNewSchedule( $uid, $st );
         if ( !empty( $schedules ) ) {

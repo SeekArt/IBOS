@@ -19,7 +19,7 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils\StringUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class UserCount extends Model {
 
@@ -51,7 +51,7 @@ class UserCount extends Model {
         }
         if ( !empty( $sql ) ) {
             $sqlText = 'UPDATE %s SET %s WHERE uid IN (%s)';
-            return IBOS::app()->db->createCommand()
+            return Ibos::app()->db->createCommand()
                             ->setText( sprintf( $sqlText, $this->tableName(), implode( ',', $sql ), StringUtil::iImplode( $uids ) ) )
                             ->execute();
         }

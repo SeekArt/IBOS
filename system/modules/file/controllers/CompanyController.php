@@ -19,7 +19,7 @@ namespace application\modules\file\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\file\core\FileOperationApi;
 use application\modules\file\model\File;
@@ -45,7 +45,7 @@ class CompanyController extends BaseController {
             'uploadConfig' => Attach::getUploadConfig(),
             'isManager' => FileCheck::getInstance()->isManager( $this->uid )
         );
-        $this->setPageTitle( IBOS::lang( 'Company folder' ) );
+        $this->setPageTitle( Ibos::lang( 'Company folder' ) );
         $this->render( 'index', $params );
     }
 
@@ -137,12 +137,12 @@ class CompanyController extends BaseController {
         $op = Env::getRequest( 'op' );
         $allowOps = array( 'upload', 'mkDir', 'mkOffice' );
         if ( !in_array( $op, $allowOps ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Request tainting', 'error' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Request tainting', 'error' ) ) );
         }
         $pid = intval( Env::getRequest( 'pid' ) );
         $access = FileDirAccess::model()->fetchByAttributes( array( 'fid' => $pid ) );
         if ( FileCheck::getInstance()->getAccess( $access, $this->uid ) != FileCheck::WRITEABLED ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No write permission' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No write permission' ) ) );
         }
         $this->$op();
     }
@@ -151,17 +151,17 @@ class CompanyController extends BaseController {
      * 删除（删除到回收站/彻底删除）
      */
     public function actionDel() {
-        if ( IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( Ibos::app()->request->getIsAjaxRequest() ) {
             $fids = StringUtil::filterStr( Env::getRequest( 'fids' ) );
             $files = File::model()->fetchAllByFids( $fids );
             foreach ( $files as $f ) {
                 $access = FileDirAccess::model()->fetchByAttributes( array( 'fid' => $f['fid'] ) );
                 if ( FileCheck::getInstance()->getAccess( $access, $this->uid ) != FileCheck::WRITEABLED ) {
-                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to delete files', '', array( '{file}' => $f['name'] ) ) ) );
+                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to delete files', '', array( '{file}' => $f['name'] ) ) ) );
                 }
             }
             FileOperationApi::getInstance()->recycle( $fids );
-            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
         }
     }
 
@@ -172,7 +172,7 @@ class CompanyController extends BaseController {
         $op = Env::getRequest( 'op' );
         $allowOps = array( 'copy', 'cut', 'rename', 'download', 'setAccess', 'getAccessView' );
         if ( !in_array( $op, $allowOps ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Request tainting', 'error' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Request tainting', 'error' ) ) );
         }
         $this->$op();
     }
@@ -181,10 +181,10 @@ class CompanyController extends BaseController {
      * 获取权限
      */
     protected function getAccessView() {
-        if ( IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( Ibos::app()->request->getIsAjaxRequest() ) {
             $fid = intval( Env::getRequest( 'fid' ) );
             $access = FileDirAccess::model()->fetchByAttributes( array( 'fid' => $fid ) );
-            $params = array( 'rScope' => '', 'wScope' => '', 'lang' => IBOS::getLangSource( 'file.default' ) );
+            $params = array( 'rScope' => '', 'wScope' => '', 'lang' => Ibos::getLangSource( 'file.default' ) );
             if ( !empty( $access ) ) {
                 $params['rScope'] = StringUtil::joinSelectBoxValue( $access['rdeptids'], $access['rposids'], $access['ruids'], $access['rroleids'] );
                 $params['wScope'] = StringUtil::joinSelectBoxValue( $access['wdeptids'], $access['wposids'], $access['wuids'], $access['wroleids'] );
@@ -199,7 +199,7 @@ class CompanyController extends BaseController {
      * 设置权限
      */
     protected function setAccess() {
-        if ( IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( Ibos::app()->request->getIsAjaxRequest() ) {
             $fid = intval( Env::getRequest( 'fid' ) );
             $rScope = StringUtil::handleSelectBoxData( $_POST['rScope'] );
             $wScope = StringUtil::handleSelectBoxData( $_POST['wScope'] );
@@ -220,7 +220,7 @@ class CompanyController extends BaseController {
             } else {
                 FileDirAccess::model()->updateByPk( $record['id'], $data );
             }
-            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\vote\components\Vote;
@@ -192,18 +192,18 @@ use application\modules\vote\components\Vote;
 								<?php if ( $data['commentstatus'] && $dashboardConfig['articlecommentenable'] ): ?>
 									<div id="comment" class="comment fill-zn tab-pane active">
 										<?php
-										$sourceUrl = IBOS::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $data['articleid'] ) );
+										$sourceUrl = Ibos::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $data['articleid'] ) );
 										$this->widget( 'application\modules\article\core\ArticleComment', array(
 											'module' => 'article',
 											'table' => 'article',
 											'attributes' => array(
 												'rowid' => $data['articleid'],
-												'moduleuid' => IBOS::app()->user->uid,
+												'moduleuid' => Ibos::app()->user->uid,
 												'touid' => $data['author'],
 												'module_rowid' => $data['articleid'],
 												'module_table' => 'article',
 												'url' => $sourceUrl,
-												'detail' => IBOS::lang( 'Comment my article', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
+												'detail' => Ibos::lang( 'Comment my article', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
 									) ) );
 										?>
 									</div>
@@ -253,7 +253,7 @@ use application\modules\vote\components\Vote;
     </ul>
     <% } %>
     <% } else { %>
-	<?php echo IBOS::lang( 'Temporarily no' ); ?>
+	<?php echo Ibos::lang( 'Temporarily no' ); ?>
     <% } %>
     </div>
 </script>

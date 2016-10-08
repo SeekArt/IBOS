@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\utils\StatCommon;
 
 class StatDiaryHeader extends StatDiaryBase {
@@ -34,7 +34,7 @@ class StatDiaryHeader extends StatDiaryBase {
         $data = array(
             'module' => $module,
             'timeRoute' => $timeRoute,
-            'lang' => IBOS::getLangSources( array( 'diary.default' ) ),
+            'lang' => Ibos::getLangSources( array( 'diary.default' ) ),
             'time' => StatCommon::getCommonTimeScope()
         );
         $this->render( self::VIEW, $data );

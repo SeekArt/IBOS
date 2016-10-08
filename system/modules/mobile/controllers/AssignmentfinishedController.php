@@ -4,7 +4,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\user\model\User;
 
@@ -36,14 +36,14 @@ class AssignmentFinishedController extends BaseController {
 	 * 已完成的任务列表页
 	 */
 	public function actionIndex() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$offset = isset( $_GET['offset'] ) ? intval( $_GET['offset'] ) : 0;
 		//是否搜索
 		if ( Env::getRequest( 'param' ) == 'search' ) {
 			$this->search( $offset );
 		}
 		$condition = "(`status` = 2 OR `status` = 3) AND (`designeeuid` = {$uid} OR `chargeuid` = {$uid} OR FIND_IN_SET({$uid}, `participantuid`))";
-		$result = IBOS::app()->db->createCommand()
+		$result = Ibos::app()->db->createCommand()
 				->select( '*' )
 				->from( '{{assignment}}' )
 				->where( $condition )
@@ -68,7 +68,7 @@ class AssignmentFinishedController extends BaseController {
 	 * @return void
 	 */
 	private function search( $offset ) {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		// 关键字
 		$keyword = Env::getRequest( 'keyword' );
 		if ( !empty( $keyword ) ) {
@@ -85,7 +85,7 @@ class AssignmentFinishedController extends BaseController {
 			$this->_condition .= ')';
 		}
 		$condition = "(`status` = 2 OR `status` = 3) AND (`designeeuid` = {$uid} OR `chargeuid` = {$uid} OR FIND_IN_SET({$uid}, `participantuid`)) and ";
-		$result = IBOS::app()->db->createCommand()
+		$result = Ibos::app()->db->createCommand()
 				->select( '*' )
 				->from( '{{assignment}}' )
 				->where( $condition . $this->_condition )

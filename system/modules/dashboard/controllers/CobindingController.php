@@ -19,7 +19,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\model\Log;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core\co\CoApi;
@@ -52,7 +52,7 @@ class CobindingController extends CoController {
         if ( $isInstall == 1 ) {
             $this->_isInstall = 1;
         }
-        $this->_coUser = IBOS::app()->user->getState( 'coUser' );
+        $this->_coUser = Ibos::app()->user->getState( 'coUser' );
     }
 
 	/**
@@ -202,7 +202,7 @@ class CobindingController extends CoController {
      * 退出登录
      */
     public function actionLogout() {
-        IBOS::app()->user->setState( 'coUser', NULL );
+        Ibos::app()->user->setState( 'coUser', NULL );
         $data = array(
             'op' => 'noBinding',
             'isInstall' => $this->_isInstall,
@@ -393,7 +393,7 @@ class CobindingController extends CoController {
     // 		Setting::model()->updateSettingValueByKey( 'coinfo', serialize( $coinfo ) );
     // 		// 如果是新注册用户，需要显示提示页
     // 		if ( $verifyLoginRes['data']['isNew'] == 1 ) {
-    // 			$uid = IBOS::app()->setting->get( 'session/uid' );
+    // 			$uid = Ibos::app()->setting->get( 'session/uid' );
     // 			$userInfo = UserModel::model()->findByPk( $uid );
     // 			$post = array( 'passwordciphertext' => $userInfo->password, 'salt' => $userInfo->salt );
     // 			$syncRes = CoApi::getInstance()->syncPassword( $verifyLoginRes['data']['accesstoken'], $post );
@@ -422,8 +422,8 @@ class CobindingController extends CoController {
     // 		 * 日志记录
     // 		 */
     // 		$log = array(
-    // 			'user'		=> IBOS::app()->user->username,
-    // 			'ip'		=> IBOS::app()->setting->get( 'clientip' ),
+    // 			'user'		=> Ibos::app()->user->username,
+    // 			'ip'		=> Ibos::app()->setting->get( 'clientip' ),
     // 			'isSuccess'	=> 0,
     // 			'msg'		=> $verifyLoginRes['message'],
     // 		);
@@ -463,7 +463,7 @@ class CobindingController extends CoController {
                 'guid' => $tokenRes['data']['guid'],
                 'mobile' => $mobile,
             );
-            IBOS::app()->user->setState( 'coUser', $coUser );
+            Ibos::app()->user->setState( 'coUser', $coUser );
             $coinfo['accesstoken'] = $tokenRes['data']['accesstoken'];
             Setting::model()->updateSettingValueByKey( 'coinfo', serialize( $coinfo ) );
             $this->ajaxReturn( array(
@@ -475,8 +475,8 @@ class CobindingController extends CoController {
              * 日志记录
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' ),
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get( 'clientip' ),
                 'isSuccess' => 0,
                 'msg' => $tokenRes['message'],
             );
@@ -511,8 +511,8 @@ class CobindingController extends CoController {
     // 		 * 日志记录
     // 		 */
     // 		$log = array(
-    // 			'user'		=> IBOS::app()->user->username,
-    // 			'ip'		=> IBOS::app()->setting->get( 'clientip' ),
+    // 			'user'		=> Ibos::app()->user->username,
+    // 			'ip'		=> Ibos::app()->setting->get( 'clientip' ),
     // 			'isSuccess'	=> 0,
     // 			'msg'		=> $res['message'],
     // 		);
@@ -679,8 +679,8 @@ class CobindingController extends CoController {
              * 日志记录
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' ),
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get( 'clientip' ),
                 'isSuccess' => 0,
                 'msg' => $createCorpRes['message'],
             );

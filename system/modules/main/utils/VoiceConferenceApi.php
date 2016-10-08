@@ -2,7 +2,7 @@
 
 namespace application\modules\main\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Setting;
 
 class VoiceConferenceApi {
@@ -13,11 +13,11 @@ class VoiceConferenceApi {
      */
     public function renderIndex() {
         $data = array(
-            'lant' => IBOS::getLangSource('main.default'),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl('main')
+            'lant' => Ibos::getLangSource('main.default'),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl('main')
         );
         $viewAlias = 'application.modules.main.views.indexapi.voiceConference';
-        $return['main/voiceConference'] = IBOS::app()->getController()->renderPartial($viewAlias, $data, true);
+        $return['main/voiceConference'] = Ibos::app()->getController()->renderPartial($viewAlias, $data, true);
         return $return;
     }
 
@@ -37,7 +37,7 @@ class VoiceConferenceApi {
     public function loadSetting() {
         return array(
             'name' => 'main/voiceConference',
-            'title' => IBOS::lang('会议', 'main.default'),
+            'title' => Ibos::lang('会议', 'main.default'),
             'style' => 'in-main'
         );
     }

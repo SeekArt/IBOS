@@ -2,7 +2,7 @@
 
 use application\core\model\Log;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\utils\Main;

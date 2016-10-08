@@ -19,7 +19,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\article\model as model;
 use application\modules\mobile\components\Article;
 use application\modules\mobile\utils\Mobile;
@@ -77,9 +77,9 @@ class NewsController extends BaseController {
 
 	public function actionRead() {
 		$data['articleid'] = Env::getRequest( 'articleid' );
-		$data['uid'] = IBOS::app()->user->uid;
+		$data['uid'] = Ibos::app()->user->uid;
 		$data['addtime'] = TIMESTAMP;
-		$data['readername'] = User::model()->fetchRealnameByUid( IBOS::app()->user->uid );
+		$data['readername'] = User::model()->fetchRealnameByUid( Ibos::app()->user->uid );
 		$artReader = model\ArticleReader::model()->add( $data );
 		if($artReader > 0){
 			$message = array( 'isSuccess' => true) ;

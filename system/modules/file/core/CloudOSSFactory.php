@@ -16,7 +16,7 @@
 
 namespace application\modules\file\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 
@@ -38,7 +38,7 @@ class CloudOSSFactory extends CApplicationComponent {
      */
     private function chkInstance( $disk ) {
         if ( !$disk instanceof CloudOSS ) {
-            throw new CException( IBOS::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $disk ) ) ) );
+            throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $disk ) ) ) );
         }
     }
 

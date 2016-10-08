@@ -16,7 +16,7 @@
 
 namespace application\modules\message\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Env;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
@@ -29,7 +29,7 @@ class NotifyController extends BaseController {
      * @return void
      */
     public function actionIndex() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $pageCount = NotifyMessage::model()->fetchPageCountByUid( $uid );
         $pages = Page::create( $pageCount );
         $list = NotifyMessage::model()->fetchAllNotifyListByUid( $uid, 'ctime DESC', $pages->getLimit(), $pages->getOffset() );
@@ -45,12 +45,12 @@ class NotifyController extends BaseController {
             'list' => $list,
             'pages' => $pages,
             'unreadCount' => $unreadCount,
-            'modules' => IBOS::app()->getEnabledModule()
+            'modules' => Ibos::app()->getEnabledModule()
         );
-        $this->setPageTitle( IBOS::lang( 'Notify' ) );
+        $this->setPageTitle( Ibos::lang( 'Notify' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'Notify' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'Notify' ) )
         ) );
         $this->render( 'index', $data );
     }
@@ -60,9 +60,9 @@ class NotifyController extends BaseController {
      * @return void
      */
     public function actionDetail() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $module = Env::getRequest( 'module' );
-        $pageCount = IBOS::app()->db->createCommand()
+        $pageCount = Ibos::app()->db->createCommand()
                 ->select( 'count(id)' )
                 ->from( '{{notify_message}}' )
                 ->where( "uid={$uid} AND module = '{$module}'" )
@@ -75,11 +75,11 @@ class NotifyController extends BaseController {
             'pages' => $pages,
         );
         NotifyMessage::model()->setReadByModule( $uid, $module );
-        $this->setPageTitle( IBOS::lang( 'Detail notify' ) );
+        $this->setPageTitle( Ibos::lang( 'Detail notify' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'Notify' ), 'url' => $this->createUrl( 'notify/index' ) ),
-            array( 'name' => IBOS::lang( 'Detail notify' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'Notify' ), 'url' => $this->createUrl( 'notify/index' ) ),
+            array( 'name' => Ibos::lang( 'Detail notify' ) )
         ) );
         $this->render( 'detail', $data );
     }
@@ -102,8 +102,8 @@ class NotifyController extends BaseController {
      * @return void 
      */
     public function actionSetAllRead() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
-            $uid = IBOS::app()->user->uid;
+        if ( Ibos::app()->request->isAjaxRequest ) {
+            $uid = Ibos::app()->user->uid;
             $res = NotifyMessage::model()->setRead( $uid );
             $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
         }
@@ -115,7 +115,7 @@ class NotifyController extends BaseController {
      */
     public function actionSetIsRead() {
         $module = StringUtil::filterCleanHtml( Env::getRequest( 'module' ) );
-        $res = NotifyMessage::model()->setReadByModule( IBOS::app()->user->uid, $module );
+        $res = NotifyMessage::model()->setReadByModule( Ibos::app()->user->uid, $module );
         $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
     }
 
@@ -124,11 +124,11 @@ class NotifyController extends BaseController {
      * @return void 
      */
     public function actionDigg() {
-        $this->setPageTitle( IBOS::lang( 'My digg' ) );
+        $this->setPageTitle( Ibos::lang( 'My digg' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'Notify' ), 'url' => $this->createUrl( 'notify/index' ) ),
-            array( 'name' => IBOS::lang( 'My digg' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'Notify' ), 'url' => $this->createUrl( 'notify/index' ) ),
+            array( 'name' => Ibos::lang( 'My digg' ) )
         ) );
         $this->render( 'digg' );
     }

@@ -5,7 +5,7 @@ namespace application\modules\message\model;
 use application\core\model\Model;
 use application\core\model\Source;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
@@ -98,7 +98,7 @@ class FeedDigg extends Model {
     public function addDigg( $feedId, $uid ) {
         $data ['feedid'] = $feedId;
         $data ['uid'] = $uid;
-        $data['uid'] = !$data['uid'] ? IBOS::app()->user->uid : $data['uid'];
+        $data['uid'] = !$data['uid'] ? Ibos::app()->user->uid : $data['uid'];
         if ( !$data['uid'] ) {
             $this->addError( 'addDigg', '未登录不能赞' );
             return false;
@@ -121,7 +121,7 @@ class FeedDigg extends Model {
             $config['{sourceContent}'] = str_replace( '◆', '', $config['{sourceContent}'] );
             $config['{sourceContent}'] = StringUtil::cutStr( $config ['{sourceContent}'], 34 );
             $config['{url}'] = $feed['source_url'];
-            $config['{content}'] = IBOS::app()->getController()->renderPartial( 'application.modules.message.views.remindcontent', array(
+            $config['{content}'] = Ibos::app()->getController()->renderPartial( 'application.modules.message.views.remindcontent', array(
                 'recentFeeds' => Feed::model()->getRecentFeeds(),
                     ), true );
             Notify::model()->sendNotify( $feed['uid'], 'message_digg', $config );
@@ -141,7 +141,7 @@ class FeedDigg extends Model {
     public function delDigg( $feedId, $uid ) {
         $data['feedid'] = $feedId;
         $data['uid'] = $uid;
-        $data['uid'] = !$data['uid'] ? IBOS::app()->user->uid : $data['uid'];
+        $data['uid'] = !$data['uid'] ? Ibos::app()->user->uid : $data['uid'];
         if ( !$data['uid'] ) {
             $this->addError( 'delDigg', '未登录不能取消赞' );
             return false;

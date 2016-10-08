@@ -4,7 +4,7 @@ namespace application\modules\weibo\controllers;
 
 use application\core\utils as util;
 use application\core\utils\StringUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
 use application\modules\message\model\UserData;
@@ -23,10 +23,10 @@ class PersonalController extends HomeBaseController {
      */
     public function actionIndex() {
         $data = array(
-            'movements' => util\IBOS::app()->setting->get( 'setting/wbmovement' ),
+            'movements' => util\Ibos::app()->setting->get( 'setting/wbmovement' ),
             'colleagues' => $this->getRelation( 'colleague' ),
-            'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'weibo' )
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' )
         );
         // 如果查看的不是自己，显示共同关注 与 我关注的人也关注TA 两个选项
         if ( !$this->getIsMe() ) {
@@ -34,7 +34,7 @@ class PersonalController extends HomeBaseController {
             $data['secondfollow'] = $this->getRelation( 'secondfollow' );
         }
         // 模块动态列表
-        $var['movements'] = util\IBOS::app()->setting->get( 'setting/wbmovement' );
+        $var['movements'] = util\Ibos::app()->setting->get( 'setting/wbmovement' );
         // 可用的动态模块列表
         $var['enableMovementModule'] = WbCommonUtil::getMovementModules();
         $var['type'] = isset( $_GET['type'] ) ? util\StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
@@ -46,11 +46,11 @@ class PersonalController extends HomeBaseController {
         $var['nums'] = isset( $_GET['page'] ) ? WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS : 10;
         $user = $this->getUser();
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\IBOS::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\IBOS::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
-            array( 'name' => util\IBOS::lang( 'List' ) )
+            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
+            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
+            array( 'name' => util\Ibos::lang( 'List' ) )
         ) );
-        NotifyMessage::model()->setReadByUrl( IBOS::app()->user->uid, IBOS::app()->getRequest()->getUrl() );
+        NotifyMessage::model()->setReadByUrl( Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl() );
         $this->render( 'index', array_merge( $data, $var, $this->getData( $var ) ), false, array( 'user.default' ) );
     }
 
@@ -66,7 +66,7 @@ class PersonalController extends HomeBaseController {
             unset( $data['loadId'] );
             $data['nums'] = WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS;
         } else {
-            $return = array( 'status' => -1, 'msg' => util\IBOS::lang( 'Loading ID isnull' ) );
+            $return = array( 'status' => -1, 'msg' => util\Ibos::lang( 'Loading ID isnull' ) );
             $data['loadId'] = intval( $data['loadId'] );
             $data['nums'] = 5;
         }
@@ -74,9 +74,9 @@ class PersonalController extends HomeBaseController {
         // 查看是否有更多数据
         if ( empty( $content['html'] ) || (empty( $data['loadId'] ) && intval( $data['loadcount'] ) != 2) ) {
             // 没有更多的
-            $return = array( 'status' => 0, 'msg' => util\IBOS::lang( 'Weibo is not new' ) );
+            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
         } else {
-            $return = array( 'status' => 1, 'msg' => util\IBOS::lang( 'Weibo success load' ) );
+            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
             $return['data'] = $content['html'];
             $return['loadId'] = $content['lastId'];
             $return['firstId'] = ( empty( $data['page'] ) && empty( $data['loadId'] ) ) ? $content['firstId'] : 0;
@@ -97,9 +97,9 @@ class PersonalController extends HomeBaseController {
         }
         $content = $this->getData( $_REQUEST );
         if ( empty( $content['html'] ) ) { //没有最新的
-            $return = array( 'status' => 0, 'msg' => util\IBOS::lang( 'Weibo is not new' ) );
+            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
         } else {
-            $return = array( 'status' => 1, 'msg' => util\IBOS::lang( 'Weibo success load' ) );
+            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
             $return['html'] = $content['html'];
             $return['maxId'] = intval( $content['firstId'] );
             $return['count'] = intval( $content['count'] );
@@ -148,10 +148,10 @@ class PersonalController extends HomeBaseController {
         $feedid = intval( util\Env::getRequest( 'feedid' ) );
         $feedInfo = Feed::model()->get( $feedid );
         if ( !$feedInfo ) {
-            $this->error( util\IBOS::lang( 'Weibo not exists' ) );
+            $this->error( util\Ibos::lang( 'Weibo not exists' ) );
         }
         if ( $feedInfo ['isdel'] == '1' ) {
-            $this->error( util\IBOS::lang( 'No relate weibo' ) );
+            $this->error( util\Ibos::lang( 'No relate weibo' ) );
             exit();
         }
         if ( $feedInfo['from'] == '1' ) {
@@ -187,12 +187,12 @@ class PersonalController extends HomeBaseController {
             }
         }
         // 赞功能
-        $diggArr = FeedDigg::model()->checkIsDigg( $feedid, util\IBOS::app()->user->uid );
+        $diggArr = FeedDigg::model()->checkIsDigg( $feedid, util\Ibos::app()->user->uid );
         $data = array(
             'diggArr' => $diggArr,
             'fd' => $feedInfo,
-            'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
             'colleagues' => $this->getRelation( 'colleague' ),
         );
         // 如果查看的不是自己，显示共同关注 与 我关注的人也关注TA 两个选项
@@ -201,9 +201,9 @@ class PersonalController extends HomeBaseController {
             $data['secondfollow'] = $this->getRelation( 'secondfollow' );
         }
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\IBOS::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $feedInfo['user_info']['realname'] . util\IBOS::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
-            array( 'name' => util\IBOS::lang( 'Detail' ) )
+            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
+            array( 'name' => $feedInfo['user_info']['realname'] . util\Ibos::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
+            array( 'name' => util\Ibos::lang( 'Detail' ) )
         ) );
         $this->render( 'detail', $data, false, array( 'user.default' ) );
     }
@@ -221,16 +221,16 @@ class PersonalController extends HomeBaseController {
         $data = array(
             'count' => $count[$user['uid']],
             'list' => $list,
-            'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
             'limit' => WbCore\WbConst::DEF_LIST_FEED_NUMS
         );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\IBOS::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\IBOS::lang( 'sbs fans' ), 'url' => $this->createUrl( 'personal/follower', array( 'uid' => $user['uid'] ) ) ),
-            array( 'name' => util\IBOS::lang( 'List' ) )
+            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
+            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs fans' ), 'url' => $this->createUrl( 'personal/follower', array( 'uid' => $user['uid'] ) ) ),
+            array( 'name' => util\Ibos::lang( 'List' ) )
         ) );
-        NotifyMessage::model()->setReadByUrl( IBOS::app()->user->uid, IBOS::app()->getRequest()->getUrl() );
+        NotifyMessage::model()->setReadByUrl( Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl() );
         $this->render( 'follower', $data, false, array( 'user.default' ) );
     }
 
@@ -244,14 +244,14 @@ class PersonalController extends HomeBaseController {
         $data = array(
             'count' => $count[$user['uid']],
             'list' => $list,
-            'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
             'limit' => WbCore\WbConst::DEF_LIST_FEED_NUMS
         );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\IBOS::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\IBOS::lang( 'sbs follow' ), 'url' => $this->createUrl( 'personal/following', array( 'uid' => $user['uid'] ) ) ),
-            array( 'name' => util\IBOS::lang( 'List' ) )
+            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
+            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs follow' ), 'url' => $this->createUrl( 'personal/following', array( 'uid' => $user['uid'] ) ) ),
+            array( 'name' => util\Ibos::lang( 'List' ) )
         ) );
         $this->render( 'following', $data, false, array( 'user.default' ) );
     }
@@ -271,7 +271,7 @@ class PersonalController extends HomeBaseController {
         }
         if ( !empty( $data ) ) {
             $fids = util\Convert::getSubByKey( $data, 'fid' );
-            $followStates = Follow::model()->getFollowStateByFids( util\IBOS::app()->user->uid, $fids );
+            $followStates = Follow::model()->getFollowStateByFids( util\Ibos::app()->user->uid, $fids );
             foreach ( $followStates as $uid => &$followState ) {
                 $followState['user'] = User::model()->fetchByUid( $uid );
             }
@@ -305,7 +305,7 @@ class PersonalController extends HomeBaseController {
                 );
                 break;
             case 'bothfollow': // 互相关注
-                $uidArray = Follow::model()->getBothFollow( $this->getUid(), util\IBOS::app()->user->uid );
+                $uidArray = Follow::model()->getBothFollow( $this->getUid(), util\Ibos::app()->user->uid );
                 if ( !empty( $data ) ) {
                     $uidString = implode( ',', $uidArray );
                     $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
@@ -320,7 +320,7 @@ class PersonalController extends HomeBaseController {
                 }
                 break;
             case 'secondfollow': // 第二关注(我关注的人也关注TA)
-                $uidArray = Follow::model()->getSecondFollow( util\IBOS::app()->user->uid, $this->getUid() );
+                $uidArray = Follow::model()->getSecondFollow( util\Ibos::app()->user->uid, $this->getUid() );
                 if ( !empty( $data ) ) {
                     $uidString = implode( ',', $uidArray );
                     $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
@@ -351,7 +351,7 @@ class PersonalController extends HomeBaseController {
     protected function getData( $var ) {
         $data = array();
         $type = isset( $var['new'] ) ? 'new' . $var['type'] : $var['type'];
-        $where = 'isdel = 0 AND uid = ' . $this->getUid() . ($this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\IBOS::app()->user->uid ));
+        $where = 'isdel = 0 AND uid = ' . $this->getUid() . ($this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ));
         switch ( $type ) {
             case 'all': // 当前用户的全部微博
                 $pages = util\Page::create( WbCore\WbConst::MAX_VIEW_FEED_NUMS, WbCore\WbConst::DEF_LIST_FEED_NUMS );
@@ -393,7 +393,7 @@ class PersonalController extends HomeBaseController {
                 break;
             case 'newmovement':
                 if ( $var['maxId'] > 0 ) {
-                    $where = sprintf( 'isdel = 0 AND %s AND feedid > %d AND uid = %d', WbfeedUtil::getViewCondition( util\IBOS::app()->user->uid ), intval( $var['maxId'] ), $this->uid );
+                    $where = sprintf( 'isdel = 0 AND %s AND feedid > %d AND uid = %d', WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ), intval( $var['maxId'] ), $this->uid );
                     $list = Feed::model()->getList( $where );
                     $count = Feed::model()->count( $where );
                     $data['count'] = count( $list );
@@ -401,7 +401,7 @@ class PersonalController extends HomeBaseController {
                 break;
             case 'newall': // 当前用户最新微博
                 if ( $var['maxId'] > 0 ) {
-                    $where = sprintf( 'isdel = 0 %s AND feedid > %d AND uid = %d', ( $this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\IBOS::app()->user->uid ) ), intval( $var['maxId'] ), $this->getUid() );
+                    $where = sprintf( 'isdel = 0 %s AND feedid > %d AND uid = %d', ( $this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ) ), intval( $var['maxId'] ), $this->getUid() );
                     $list = Feed::model()->getList( $where );
                     $count = Feed::model()->count( $where );
                     $data['count'] = count( $list );
@@ -415,7 +415,7 @@ class PersonalController extends HomeBaseController {
         if ( !isset( $var['new'] ) ) {
             $pages->route = 'personal/index';
             // 替换url
-            $currentUrl = (string) util\IBOS::app()->getRequest()->getUrl();
+            $currentUrl = (string) util\Ibos::app()->getRequest()->getUrl();
             $replaceUrl = str_replace( 'weibo/personal/loadmore', 'weibo/personal/index', $currentUrl );
             $data['pageData'] = $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages, 'currentUrl' => $replaceUrl ), true );
         }

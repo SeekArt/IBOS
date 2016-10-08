@@ -2,7 +2,7 @@
 
 namespace application\core\modules;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CEvent;
 use CWebModule;
 
@@ -15,8 +15,8 @@ class Module extends CWebModule {
         $module = $this->getId();
 		defined( 'MODULE_NAME' ) || define( 'MODULE_NAME', $module );
         $this->controllerNamespace = 'application\modules\\' . $module . '\controllers';
-        if ( IBOS::app()->hasEventHandler( 'onInitModule' ) ) {
-            IBOS::app()->onInitModule( new CEvent( IBOS::app() ) );
+        if ( Ibos::app()->hasEventHandler( 'onInitModule' ) ) {
+            Ibos::app()->onInitModule( new CEvent( Ibos::app() ) );
         }
         parent::init();
     }

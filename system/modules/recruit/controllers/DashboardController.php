@@ -18,7 +18,7 @@ namespace application\modules\recruit\controllers;
 
 use application\core\model\Regular;
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -26,7 +26,7 @@ class DashboardController extends BaseController {
 
     public function getAssetUrl( $module = '' ) {
         $module = 'dashboard';
-        return IBOS::app()->assetManager->getAssetsUrl( $module );
+        return Ibos::app()->assetManager->getAssetsUrl( $module );
     }
 
     /**
@@ -34,7 +34,7 @@ class DashboardController extends BaseController {
      */
     public function actionIndex() {
         //取得所有配置
-        $config = IBOS::app()->setting->get( 'setting/recruitconfig' );
+        $config = Ibos::app()->setting->get( 'setting/recruitconfig' );
         $result = array();
         $allFieldRuleType = Regular::model()->fetchAllFieldRuleType();
 //        echo '<pre>';print_r($result['regular']);die;
@@ -46,7 +46,7 @@ class DashboardController extends BaseController {
                 $regular = Regular::model()->fetchFieldRuleByType( $fieldRule );
             } else if ( $fieldRule == 'notrequirement' ) {
                 $regular['type'] = 'notrequirement';
-                $regular['desc'] = IBOS::lang( 'Not requirement' );
+                $regular['desc'] = Ibos::lang( 'Not requirement' );
             } else {
                 $regular['type'] = $regular['desc'] = $fieldRule;
             }
@@ -54,7 +54,7 @@ class DashboardController extends BaseController {
             $result[$configName]['regulardesc'] = $regular['desc'];
         }
         //给“无要求”加一个数组，给页面读取
-        $notRequirementRegulars = array( array( 'type' => 'notrequirement', 'desc' => IBOS::lang( 'Not requirement' ) ) );
+        $notRequirementRegulars = array( array( 'type' => 'notrequirement', 'desc' => Ibos::lang( 'Not requirement' ) ) );
         //系统规则
         $sysRegulars = Regular::model()->fetchAll();
         //将无要求和系统规则合并成新数组
@@ -126,7 +126,7 @@ class DashboardController extends BaseController {
         //修改数据库setting
         Setting::model()->updateSettingValueByKey( 'recruitconfig', $data );
         Cache::update( 'setting' );
-        $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+        $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
     }
 
 }

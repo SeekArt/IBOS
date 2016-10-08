@@ -20,7 +20,7 @@ namespace application\modules\message\core\wx\callback;
 use application\core\utils\Api;
 use application\core\utils\Attach;
 use application\core\utils\File as FileUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\file\core\FileCloud;
 use application\modules\message\core\wx\Callback;
@@ -54,9 +54,9 @@ class File extends Callback {
 	 * @return string
 	 */
 	protected function handleByText() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$condition = "f.name LIKE '%" . $this->getMessage() . "%' AND f.uid = {$uid} AND belong = 0 AND f.type = 0 AND f.isdel=0";
-		$lists = IBOS::app()->db->createCommand()
+		$lists = Ibos::app()->db->createCommand()
 				->select( '*' )
 				->from( '{{file}} f' )
 				->leftJoin( '{{file_detail}} fd', 'f.fid = fd.fid' )

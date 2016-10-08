@@ -1,7 +1,7 @@
 <?php
 namespace application\modules\calendar\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class TaskApi{
 	
@@ -12,11 +12,11 @@ class TaskApi{
     public function renderIndex() {
         $data = array(
             'taskList' => $this->loadNewTask(),
-            'lant' => IBOS::getLangSource( 'calendar.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'calendar' )
+            'lant' => Ibos::getLangSource( 'calendar.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'calendar' )
         );
         $viewAlias = 'application.modules.calendar.views.indexapi.task';
-        $return['calendar/task'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+        $return['calendar/task'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
         return $return;
     }
 
@@ -27,7 +27,7 @@ class TaskApi{
     public function loadSetting() {
         return array(
             'name' => 'calendar/task',
-            'title' => IBOS::lang( 'Task', 'calendar.default' ),
+            'title' => Ibos::lang( 'Task', 'calendar.default' ),
             'style' => 'in-calendar'
         );
     }
@@ -44,8 +44,8 @@ class TaskApi{
 	 * 获取最新的5条待办
 	 */
 	public function LoadNewTask(){
-		$uid = IBOS::app()->user->uid;
-		$task = IBOS::app()->db->createCommand()
+		$uid = Ibos::app()->user->uid;
+		$task = Ibos::app()->db->createCommand()
 				->select( "*" )
 				->from( "{{tasks}}" )
 				->where( "uid = {$uid} order by addtime desc limit 5")

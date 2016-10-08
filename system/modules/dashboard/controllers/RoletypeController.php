@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\Page;
@@ -61,7 +61,7 @@ class RoletypeController extends OrganizationBaseController {
                     $param = 'role/edit'; //找不到就默认去角色管理
                     break;
             endswitch;
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( $param, array( 'op' => 'member', 'id' => $newId ) ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( $param, array( 'op' => 'member', 'id' => $newId ) ) );
         } else {
             $authItem = Auth::loadAuthItem();
             $this->filterAuth( $authItem );
@@ -94,7 +94,7 @@ class RoletypeController extends OrganizationBaseController {
             CacheUtil::update( 'role' );
             Org::update();
             CacheUtil::clear();
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $role = Role::model()->fetchByPk( $id );
             // 关联角色的权限节点
@@ -121,7 +121,7 @@ class RoletypeController extends OrganizationBaseController {
      * @return void
      */
     public function actionDel() {
-        if ( IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( Ibos::app()->request->getIsAjaxRequest() ) {
             $id = Env::getRequest( 'id' );
             $ids = explode( ',', trim( $id, ',' ) );
             foreach ( $ids as $roleId ) {
@@ -129,7 +129,7 @@ class RoletypeController extends OrganizationBaseController {
                 Role::model()->deleteByPk( $roleId );
                 $isInstallCrm = Module::getIsEnabled( 'crm' );
                 // 删除角色对应授权
-                IBOS::app()->authManager->removeAuthItem( $roleId );
+                Ibos::app()->authManager->removeAuthItem( $roleId );
                 // 删除辅助角色关联
                 RoleRelated::model()->deleteAll( 'roleid = :roleid', array( ':roleid' => $roleId ) );
                 // 删除节点与角色关联表
@@ -158,7 +158,7 @@ class RoletypeController extends OrganizationBaseController {
             if ( Env::submitCheck( 'postsubmit' ) ) {
                 $member = Env::getRequest( 'member' );
                 RoleUtil::setRole( $id, $member );
-                $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+                $this->success( Ibos::lang( 'Save succeed', 'message' ) );
             } else {
                 // 该角色下人员
                 $uids = User::model()->fetchUidByRoleId( $id, false, true );
@@ -207,7 +207,7 @@ class RoletypeController extends OrganizationBaseController {
         // 更新关联节点数据
         NodeRelated::model()->deleteAllByRoleId( $roleId );
         // 创建认证对象
-        $auth = IBOS::app()->authManager;
+        $auth = Ibos::app()->authManager;
         $role = $auth->getAuthItem( $roleId );
         if ( $role === null ) {
             // 为该角色创建认证项目

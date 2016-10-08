@@ -4,7 +4,7 @@ namespace application\modules\email\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailFolder;
@@ -48,11 +48,11 @@ class FolderController extends BaseController {
             'userSize' => $userSize,
             'total' => Convert::sizeCount(array_sum(array($total, $inbox, $web, $sent, $deleted)))
         );
-        $this->setPageTitle(IBOS::lang('Folder setting'));
+        $this->setPageTitle(Ibos::lang('Folder setting'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-            array('name' => IBOS::lang('Folder setting'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+            array('name' => Ibos::lang('Folder setting'))
         ));
         $this->render('index', $data);
     }
@@ -80,7 +80,7 @@ class FolderController extends BaseController {
         } else {
             $this->ajaxReturn(array(
                 'isSuccess' => false,
-                'msg' => IBOS::lang('Save failed', 'message')));
+                'msg' => Ibos::lang('Save failed', 'message')));
         }
     }
 
@@ -101,7 +101,7 @@ class FolderController extends BaseController {
         } else {
             $this->ajaxReturn(array(
                 'isSuccess' => false,
-                'msg' => IBOS::lang('Save failed', 'message')));
+                'msg' => Ibos::lang('Save failed', 'message')));
         }
     }
 
@@ -122,7 +122,7 @@ class FolderController extends BaseController {
         if ($deleted) {
             $this->ajaxReturn(array('isSuccess' => true));
         } else {
-            $this->ajaxReturn(array('isSuccess' => false, 'errorMsg' => IBOS::lang('Del failed', 'message')));
+            $this->ajaxReturn(array('isSuccess' => false, 'errorMsg' => Ibos::lang('Del failed', 'message')));
         }
     }
 

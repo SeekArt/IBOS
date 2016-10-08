@@ -3,7 +3,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Cache;
 use application\modules\main\model\Setting;
 use application\modules\dashboard\model\Credit;
@@ -84,7 +84,7 @@ class CreditController extends BaseController {
                 }
             }
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $credits = Credit::model()->fetchAll();
             $data = array(
@@ -95,7 +95,7 @@ class CreditController extends BaseController {
                 // 允许的积分条目最大数
                 'maxId' => self::MAX_RULE_ID,
                 // 积分变动提示
-                'changeRemind' => IBOS::app()->setting->get( 'setting/creditremind' )
+                'changeRemind' => Ibos::app()->setting->get( 'setting/creditremind' )
             );
             $this->render( 'setup', $data );
         }
@@ -113,17 +113,17 @@ class CreditController extends BaseController {
             if ( $formulaCheckCorrect ) {
                 Setting::model()->updateSettingValueByKey( 'creditsformula', $formula );
             } else {
-                $this->error( IBOS::lang( 'Credits formula invalid' ) );
+                $this->error( Ibos::lang( 'Credits formula invalid' ) );
             }
             // 积分表达式
             $formulaExp = $_POST['creditsFormulaExp'];
             if ( trim( $formulaExp ) == "" ) {
-                $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+                $this->success( Ibos::lang( 'Save succeed', 'message' ) );
                 return;
             }
             Setting::model()->updateSettingValueByKey( 'creditsformulaexp', $formulaExp );
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $credits = Credit::model()->fetchAll();
             $data = array(
@@ -169,7 +169,7 @@ class CreditController extends BaseController {
             foreach ( $rulesParam as $ruleId => $updateValue ) {
                 CreditRule::model()->modify( $ruleId, $updateValue );
             }
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $rules = CreditRule::model()->fetchAll();
             $credits = Credit::model()->fetchAll();
@@ -186,7 +186,7 @@ class CreditController extends BaseController {
      * @return void
      */
     private function addCredit() {
-        if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
             $attributes = array(
                 'name' => Env::getRequest( 'name' ),
                 'initial' => Env::getRequest( 'initial' ),
@@ -206,13 +206,13 @@ class CreditController extends BaseController {
      * @return void
      */
     private function actiondelCredit() {
-        if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
             $id = Env::getRequest( 'id' );
             $affected = Credit::model()->deleteByPk( $id );
             if ( $affected ) {
-                $this->ajaxReturn( array( 'IsSuccess' => true, 'msg' => IBOS::lang( 'Delete credit success' ) ) );
+                $this->ajaxReturn( array( 'IsSuccess' => true, 'msg' => Ibos::lang( 'Delete credit success' ) ) );
             } else {
-                $this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => IBOS::lang( 'Delete credit failed' ) ) );
+                $this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => Ibos::lang( 'Delete credit failed' ) ) );
             }
         }
     }

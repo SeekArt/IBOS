@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 ?>
 <!-- private css -->
@@ -206,13 +206,13 @@ use application\core\utils\Org;
                             'table' => 'diary',
                             'attributes' => array(
                                 'rowid' => $diary['diaryid'],
-                                'moduleuid' => IBOS::app()->user->uid,
+                                'moduleuid' => Ibos::app()->user->uid,
                                 'touid' => $diary['uid'],
                                 'module_rowid' => $diary['diaryid'],
                                 'module_table' => 'diary',
                                 'allowComment' => 0,
                                 'showStamp' => 0,
-                                'url' => IBOS::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) )
+                                'url' => Ibos::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) )
                     ) ) );
                         ?>
                     </div>
@@ -228,7 +228,7 @@ use application\core\utils\Org;
                             </div>
                             <div class="da-reviews-avatar">
                                 <?php foreach ( $readers as $reader ): ?>
-                                    <a href="<?php echo IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
+                                    <a href="<?php echo Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
                                         <img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
                                     </a>
                                 <?php endforeach; ?>

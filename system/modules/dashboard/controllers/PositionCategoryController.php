@@ -18,7 +18,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\position\components\PositionCategory as ICPositionCategory;
 use application\modules\position\model\PositionCategory;
 use application\modules\position\model\Position;
@@ -47,7 +47,7 @@ class PositioncategoryController extends OrganizationBaseController {
      * @return void
      */
     public function actionIndex() {
-        if (IBOS::app()->request->getIsAjaxRequest()) {
+        if (Ibos::app()->request->getIsAjaxRequest()) {
             $data = $this->_category->getData();
             $this->ajaxReturn($this->_category->getAjaxCategory($data), 'json');
         }
@@ -67,7 +67,7 @@ class PositioncategoryController extends OrganizationBaseController {
                 'pId' => $pid,
                 'name' => $name,
                 'target' => '_self',
-                'url' => IBOS::app()->urlManager->createUrl("dashboard/position/index") . '&catid=' . $id,
+                'url' => Ibos::app()->urlManager->createUrl("dashboard/position/index") . '&catid=' . $id,
                 'open' => true
             );
             $this->ajaxReturn(array('isSuccess' => true, 'data' => $data), 'json');
@@ -94,7 +94,7 @@ class PositioncategoryController extends OrganizationBaseController {
             'pId' => $pid,
             'name' => $name,
             'target' => '_self',
-            'url' => IBOS::app()->urlManager->createUrl("dashboard/position/index") . '&catid=' . $catid,
+            'url' => Ibos::app()->urlManager->createUrl("dashboard/position/index") . '&catid=' . $catid,
             'open' => true
         );
         $this->ajaxReturn(array('isSuccess' => !!$ret, 'data' => $data), 'json');
@@ -110,11 +110,11 @@ class PositioncategoryController extends OrganizationBaseController {
         $category = PositionCategory::model()->fetchByPk($catid);
         $supCategoryNum = PositionCategory::model()->countByAttributes(array('pid' => '0'));
         if (!empty($category) && $category['pid'] == '0' && $supCategoryNum == '1') {
-            $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('Leave at least a Category')), 'json');
+            $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('Leave at least a Category')), 'json');
         }
         $ret = $this->_category->delete($catid);
         Position::model()->updateAll( array( 'catid' => 1 ), '`catid` = ' . $catid );
-        $msg = $ret ? IBOS::lang('Operation succeed', 'message') : IBOS::lang('Operation failure', 'message');
+        $msg = $ret ? Ibos::lang('Operation succeed', 'message') : Ibos::lang('Operation failure', 'message');
         $this->ajaxReturn(array('isSuccess' => !!$ret, 'msg' => $msg), 'json');
     }
 

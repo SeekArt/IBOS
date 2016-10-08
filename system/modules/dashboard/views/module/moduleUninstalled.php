@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <div class="ct">
 	<div class="clearfix">
@@ -40,7 +40,7 @@ use application\core\utils\IBOS;
 									<tr>
 										<td>
 											<?php if ( $module['icon'] ): ?>
-												<img src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $id ) . '/image/icon.png'; ?>">
+												<img src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $id ) . '/image/icon.png'; ?>">
 											<?php else: ?>
 
 											<?php endif; ?>

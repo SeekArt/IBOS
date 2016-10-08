@@ -18,7 +18,7 @@ namespace application\modules\dashboard\utils;
 
 use application\core\utils\Cache;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\System;
 use application\core\utils\WebSite;
 use application\modules\dashboard\model\Nav;
@@ -69,7 +69,7 @@ class Wx extends System {
 	 * @return type
 	 */
 	public function getSiteUrl() {
-		return rtrim( IBOS::app()->setting->get( 'siteurl' ), '/' );
+		return rtrim( Ibos::app()->setting->get( 'siteurl' ), '/' );
 	}
 
 	/**
@@ -82,7 +82,7 @@ class Wx extends System {
 	public function getBindingSrc( $aeskey = null, $domain = null, $isInstall = false ) {
 		$aeskey = array( 'aeskey' => is_null( $aeskey ) ? $this->getAeskey() : $aeskey );
 		$domain = array( 'domain' => is_null( $domain ) ? $this->getSiteUrl() : $domain );
-		$siteroot = array( 'siteroot' => $isInstall ? '' : IBOS::app()->setting->get( 'siteroot' ) );
+		$siteroot = array( 'siteroot' => $isInstall ? '' : Ibos::app()->setting->get( 'siteroot' ) );
 		$param = array_merge( $aeskey, $siteroot, $domain );
 		return WebSite::getInstance()->build( self::BINDING_ROUTE, $param );
 	}

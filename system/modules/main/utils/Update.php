@@ -3,7 +3,7 @@
 namespace application\modules\main\utils;
 
 use application\core\model\Module as ModuleModel;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\modules\main\model\Setting;
@@ -54,12 +54,12 @@ class Update {
 			$uid = $settingConfigArray['uid'] ? $settingConfigArray['uid'] : 1;
 			$total = 0;
 			if ( $position == '0' ) {
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->delete( '{{cache_user_detail}}'
 								, " `uid` IN ( SELECT `uid` FROM {{user}}"
 								. " WHERE `status` = '0' AND"
 								. " `uid` >= {$uid} )" );
-				$count = IBOS::app()->db->createCommand()
+				$count = Ibos::app()->db->createCommand()
 						->select( 'count(uid)' )
 						->from( '{{user}}' )
 						->where( " `uid` NOT IN ( SELECT `uid` FROM {{cache_user_detail}} ) " )
@@ -74,14 +74,14 @@ class Update {
 					) );
 			$setOffset = true === $cacheOver ? '0' : $offset;
 			if ( true === $cacheOver ) {
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->update( '{{setting}}', array(
 							'svalue' => '0',
 								), " `skey` = 'cacheuserstatus' " );
 			}
 			$maxUid = self::findMaxUidFromCache();
 			$setUid = true === $cacheOver ? '1' : $maxUid + 1;
-			IBOS::app()->db->createCommand()
+			Ibos::app()->db->createCommand()
 					->update( '{{setting}}', array(
 						'svalue' => CJSON::encode( array(
 							'limit' => $limit,
@@ -106,7 +106,7 @@ class Update {
 		$typeName = array( '用户', '部门', '角色', '岗位', '岗位分类' );
 		$total = 0;
 		if ( $position == '0' ) {
-			LOCAL && IBOS::app()->assetManager->republicAll();
+			LOCAL && Ibos::app()->assetManager->republicAll();
 			$total = count( $type );
 		}
 
@@ -165,7 +165,7 @@ class Update {
 	}
 
 	public static function findMaxUidFromCache() {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->select( 'uid' )
 						->from( '{{cache_user_detail}}' )
 						->limit( 1 )
@@ -178,7 +178,7 @@ class Update {
 	 * @param boolean $updateFromMax 是否从最大的uid开始更新，如果true，则之前的数据不会被更新。默认false
 	 */
 	public static function refreshCache( $updateFromMax = false ) {
-		IBOS::app()->db->createCommand()
+		Ibos::app()->db->createCommand()
 				->update( '{{setting}}', array(
 					'svalue' => '1',
 						), " `skey` = 'cacheuserstatus' " );
@@ -186,7 +186,7 @@ class Update {
 			$maxUid = self::findMaxUidFromCache();
 			$settingConfig = Setting::model()->fetchSettingValueByKey( 'cacheuserconfig' );
 			$settingConfigArray = CJSON::decode( $settingConfig );
-			IBOS::app()->db->createCommand()
+			Ibos::app()->db->createCommand()
 					->update( '{{setting}}', array(
 						'svalue' => CJSON::encode( array(
 							'limit' => $settingConfigArray['limit'],

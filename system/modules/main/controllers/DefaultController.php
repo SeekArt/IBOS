@@ -14,7 +14,7 @@ use application\core\model\Module;
 use application\core\utils\Attach;
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module as ModuleUtil;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -57,11 +57,11 @@ class DefaultController extends Controller {
 			'modules' => $modules,
 			'widgetModule' => $moduleSetting,
 			'moduleSetting' => CJSON::encode( $moduleSetting ),
-			'menus' => MenuPersonal::model()->fetchMenuByUid( IBOS::app()->user->uid )
+			'menus' => MenuPersonal::model()->fetchMenuByUid( Ibos::app()->user->uid )
 		);
-		$this->setPageTitle( IBOS::lang( 'Home office' ) );
+		$this->setPageTitle( Ibos::lang( 'Home office' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Home office' ) )
+			array( 'name' => Ibos::lang( 'Home office' ) )
 		) );
 		$this->render( 'index', $data );
 	}
@@ -94,7 +94,7 @@ class DefaultController extends Controller {
 	 * 快捷方式到更新缓存
 	 */
 	public function actionUpdate() {
-		if ( IBOS::app()->getRequest()->getIsPostRequest() ) {
+		if ( Ibos::app()->getRequest()->getIsPostRequest() ) {
 			if ( LOCAL ) {
 				@set_time_limit( 0 );
 			}
@@ -107,8 +107,8 @@ class DefaultController extends Controller {
 						) );
 			}
 			$offset = Env::getRequest( 'offset' );
-			$isGuest = IBOS::app()->user->isGuest;
-			$uid = $isGuest ? 0 : IBOS::app()->user->uid;
+			$isGuest = Ibos::app()->user->isGuest;
+			$uid = $isGuest ? 0 : Ibos::app()->user->uid;
 			$update = Main::getCookie( $uid . '_update_lock' );
 			if ( $offset == '0' && empty( $update ) ) {
 				Main::setCookie( $uid . '_update_lock', 1 );
@@ -117,7 +117,7 @@ class DefaultController extends Controller {
 			$method = $op . 's';
 			if ( $op == 'data' && $offset == '0' ) {
 				//这里操作的时候，会强制把用户数据状态改成需要更新
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->update( '{{setting}}', array(
 							'svalue' => '1',
 								), " `skey` = 'cacheuserstatus' " );
@@ -136,7 +136,7 @@ class DefaultController extends Controller {
 		$operation = Env::getRequest( 'op' );
 		if ( !in_array( $operation, array( 'neverGuideAgain', 'checkIsGuided', 'companyInit', 'addUser', 'modifyPassword', 'modifyProfile', 'uploadAvatar' ) ) ) {
 			$res['isSuccess'] = false;
-			$res['msg'] = IBOS::lang( 'Parameters error', 'error' );
+			$res['msg'] = Ibos::lang( 'Parameters error', 'error' );
 			$this->ajaxReturn( $res );
 		} else {
 			$this->$operation();
@@ -147,7 +147,7 @@ class DefaultController extends Controller {
 	 * 不再提醒
 	 */
 	private function neverGuideAgain() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		User::model()->modify( $uid, array( 'newcomer' => 0 ) );
 	}
 
@@ -155,9 +155,9 @@ class DefaultController extends Controller {
 	 * 检查用户是否引导过
 	 */
 	private function checkIsGuided() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			// 检查该uid是否引导过
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$isadministrator = $uid == 1 ? true : false;
 			$user = User::model()->fetchByAttributes( array( 'uid' => $uid ) );
 			$newcomer = $user['newcomer'];
@@ -184,7 +184,7 @@ class DefaultController extends Controller {
 				} else {
 					$data['preg'] = "^[A-Za-z0-9\!\@\#\$\%\^\&\*\.\~]{" . $account['minlength'] . ",32}$";
 				}
-				$data['lang'] = IBOS::getLangSource( 'main.default' );
+				$data['lang'] = Ibos::getLangSource( 'main.default' );
 				$data['assetUrl'] = $this->getAssetUrl();
 				$guideView = $this->renderPartial( $guideAlias, $data, true );
 				$this->ajaxReturn( array( 'isNewcommer' => true, 'guideView' => $guideView, 'isadministrator' => $isadministrator ) );
@@ -196,7 +196,7 @@ class DefaultController extends Controller {
 	 * 填写公司资料
 	 */
 	private function companyInit() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			// 添加公司资料
 			$postData = array();
 			$keys = array(
@@ -222,17 +222,17 @@ class DefaultController extends Controller {
 			$depts = Env::getRequest( 'depts' );
 			$isSuccess = $this->handleDept( $depts );
 			if ( $isSuccess ) {
-				$uid = IBOS::app()->user->uid;
+				$uid = Ibos::app()->user->uid;
 				User::model()->modify( $uid, array( 'newcomer' => 0 ) ); // 改成非新人，表示引导过
 				$deptCache = DepartmentUtil::loadDepartment();
-				$posCache = IBOS::app()->setting->get( 'cache/position' );
+				$posCache = Ibos::app()->setting->get( 'cache/position' );
 				$selectFormat = "<option value='\$deptid' \$selected>\$spacer\$deptname</option>";
 				$res['isSuccess'] = true;
 				$res['depts'] = StringUtil::getTree( $deptCache, $selectFormat );
 				$res['positions'] = $posCache;
 			} else {
 				$res['isSuccess'] = false;
-				$res['msg'] = IBOS::lang( 'Add department fail' );
+				$res['msg'] = Ibos::lang( 'Add department fail' );
 			}
 			$this->ajaxReturn( $res );
 		}
@@ -308,10 +308,10 @@ class DefaultController extends Controller {
 	 * 添加用户
 	 */
 	private function addUser() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$fields = array( 'username', 'password', 'realname', 'mobile', 'deptid', 'positionid', 'email' );
 			if ( empty( $_POST['username'] ) || empty( $_POST['password'] ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Username or password not empty' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Username or password not empty' ) ) );
 			}
 			foreach ( $fields as $field ) {
 				if ( isset( $_POST[$field] ) && !empty( $_POST[$field] ) ) {
@@ -333,7 +333,7 @@ class DefaultController extends Controller {
 			$newId = User::model()->add( $userData, true );
 			if ( $newId ) {
 				UserCount::model()->add( array( 'uid' => $newId ) );
-				$ip = IBOS::app()->setting->get( 'clientip' );
+				$ip = Ibos::app()->setting->get( 'clientip' );
 				UserStatus::model()->add(
 						array(
 							'uid' => $newId,
@@ -347,7 +347,7 @@ class DefaultController extends Controller {
 				$res['isSuccess'] = true;
 			} else {
 				$res['isSuccess'] = false;
-				$res['msg'] = IBOS::lang( 'Add user failed' );
+				$res['msg'] = Ibos::lang( 'Add user failed' );
 			}
 			$this->ajaxReturn( $res );
 		}
@@ -357,8 +357,8 @@ class DefaultController extends Controller {
 	 * 修改密码
 	 */
 	private function modifyPassword() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
-			$uid = IBOS::app()->user->uid;
+		if ( Ibos::app()->request->isAjaxRequest ) {
+			$uid = Ibos::app()->user->uid;
 			$user = User::model()->fetchByAttributes( array( 'uid' => $uid ) );
 			if ( Env::getRequest( 'checkOrgPass' ) ) {
 				$originalpass = Env::getRequest( 'originalpass' );
@@ -369,15 +369,15 @@ class DefaultController extends Controller {
 			if ( $data['originalpass'] == '' ) {
 				// 没有填写原来的密码
 				$res['isSuccess'] = false;
-				$res['msg'] = IBOS::lang( 'Original password require' );
+				$res['msg'] = Ibos::lang( 'Original password require' );
 			} else if ( strcasecmp( md5( md5( $data['originalpass'] ) . $user['salt'] ), $user['password'] ) !== 0 ) {
 				// 密码跟原来的对不上
 				$res['isSuccess'] = false;
-				$res['msg'] = IBOS::lang( 'Password is not correct' );
+				$res['msg'] = Ibos::lang( 'Password is not correct' );
 			} else if ( !empty( $data['newpass'] ) && strcasecmp( $data['newpass'], $data['newpass_confirm'] ) !== 0 ) {
 				// 两次密码不一致
 				$res['isSuccess'] = false;
-				$res['msg'] = IBOS::lang( 'Confirm password is not correct' );
+				$res['msg'] = Ibos::lang( 'Confirm password is not correct' );
 			} else {
 				$password = md5( md5( $data['newpass'] ) . $user['salt'] );
 				User::model()->updateByUid( $uid, array( 'password' => $password, 'lastchangepass' => TIMESTAMP ) );
@@ -401,8 +401,8 @@ class DefaultController extends Controller {
 	 * 填写个人资料
 	 */
 	private function modifyProfile() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
-			$uid = IBOS::app()->user->uid;
+		if ( Ibos::app()->request->isAjaxRequest ) {
+			$uid = Ibos::app()->user->uid;
 			// 生成头像
 			if ( !empty( $_POST['src'] ) ) {
 				$this->cropImg();
@@ -437,7 +437,7 @@ class DefaultController extends Controller {
 	 * 生成头像
 	 */
 	private function cropImg() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		// 临时头像地址
 		$params = $_POST;
 		$params['w'] = 0;
@@ -445,19 +445,19 @@ class DefaultController extends Controller {
 		$params['x'] = 0;
 		$params['y'] = 0;
 		$params['uid'] = $uid;
-		$avatarArray = IBOS::engine()->io()->file()->createAvatar( $params['src'], $params );
+		$avatarArray = Ibos::engine()->io()->file()->createAvatar( $params['src'], $params );
 		UserProfile::model()->updateAll( $avatarArray, "uid = {$uid}" );
 		UserUtil::wrapUserInfo( $uid, true, true, true );
-		IBOS::app()->user->setState( 'avatar_big', $avatarArray['avatar_big'] );
-		IBOS::app()->user->setState( 'avatar_middle', $avatarArray['avatar_middle'] );
-		IBOS::app()->user->setState( 'avatar_small', $avatarArray['avatar_small'] );
+		Ibos::app()->user->setState( 'avatar_big', $avatarArray['avatar_big'] );
+		Ibos::app()->user->setState( 'avatar_middle', $avatarArray['avatar_middle'] );
+		Ibos::app()->user->setState( 'avatar_small', $avatarArray['avatar_small'] );
 	}
 
 	/**
 	 * 模块引导
 	 */
 	public function actionModuleGuide() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$id = StringUtil::filterCleanHtml( Env::getRequest( 'id' ) );
 		$op = Env::getRequest( 'op' );
 		if ( $op == 'checkHasGuide' ) {
@@ -481,7 +481,7 @@ class DefaultController extends Controller {
 	public function actionGetCert() {
 		$certAlias = 'application.modules.main.views.default.cert';
 		$params = array(
-			'lang' => IBOS::getLangSource( 'main.default' )
+			'lang' => Ibos::getLangSource( 'main.default' )
 		);
 		$certView = $this->renderPartial( $certAlias, $params, true );
 		echo $certView;
@@ -494,7 +494,7 @@ class DefaultController extends Controller {
 	public function actionUnAuthorized() {
 		$certAlias = 'application.modules.main.views.default.unauthorized';
 		$params = array(
-			'lang' => IBOS::getLangSource( 'main.default' )
+			'lang' => Ibos::getLangSource( 'main.default' )
 		);
 		$certView = $this->renderPartial( $certAlias, $params, true );
 		echo $certView;
@@ -506,7 +506,7 @@ class DefaultController extends Controller {
 	public function actionPersonalMenu() {
 		if ( Env::submitCheck( 'personalMenu' ) ) {
 			$ids = Env::getRequest( 'mod' );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			MenuPersonal::model()->deleteAll( "uid = {$uid}" );
 			if ( !empty( $ids ) ) {
 				$common = implode( ',', $ids );
@@ -543,7 +543,7 @@ class DefaultController extends Controller {
 	 */
 	public function actionRestoreMenu() {
 		if ( Env::submitCheck( 'restoreMenu' ) ) {
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			MenuPersonal::model()->deleteAll( "uid = {$uid}" );
 			$this->ajaxReturn( array( 'isSuccess' => true ) );
 		}

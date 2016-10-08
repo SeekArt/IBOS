@@ -16,7 +16,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\core\ChartFactory;
 use application\modules\statistics\utils\StatCommon;
 
@@ -39,7 +39,7 @@ class StatReportCount extends StatReportBase {
         $scoreCounter = $this->createComponent( 'application\modules\report\components\ReportScoreTimeCounter', $properties );
         $stampCounter = $this->createComponent( 'application\modules\report\components\ReportStampCounter', $properties );
         $data = array(
-            'statAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'statistics' ),
+            'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'statistics' ),
             'score' => $factory->createChart( $scoreCounter, 'application\modules\report\components\ReportLineChart' ),
             'stamp' => $factory->createChart( $stampCounter, 'application\modules\report\components\ReportBarChart' )
         );

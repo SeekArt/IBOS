@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Url;
 use application\modules\main\utils\Main;
@@ -11,20 +11,20 @@ use application\modules\main\utils\Main;
     <div class="mtw-portal-nav-wrap">
         <ul class="portal-nav clearfix">
             <li class="active">
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'main/default/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'main/default/index' ); ?>">
                     <i class="o-portal-office"></i>
                     办公门户
                 </a>
             </li>
             <li>
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/home/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/home/index' ); ?>">
                     <i class="o-portal-personal"></i>
                     个人门户
                 </a>
             </li>
             <?php if ( Module::getIsEnabled( 'app' ) ): ?>
                 <li >
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'app/default/index' ); ?>">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'app/default/index' ); ?>">
                         <i class="o-portal-app"></i>
                         常用工具
                     </a>
@@ -32,7 +32,7 @@ use application\modules\main\utils\Main;
             <?php endif; ?>
         </ul>
     </div>
-    <span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
+    <span class="pull-right"><?php echo Ibos::app()->setting->get( 'lunar' ); ?></span>
 </div>
 <div>
     <!-- 常用菜单 -->
@@ -42,9 +42,9 @@ use application\modules\main\utils\Main;
                 <?php foreach ( $menus['commonMenu'] as $index => $menu ): ?>
                     <?php if ( !$menu['iscustom'] ): ?>
                         <li data-module="<?php echo $menu['module']; ?>">
-                            <a href="<?php echo IBOS::app()->urlManager->createUrl( $menu['url'] ); ?>" title="<?php echo $menu['description']; ?>" <?php if ( $menu['openway'] == 0 ): ?>target="_blank"<?php endif; ?>>
+                            <a href="<?php echo Ibos::app()->urlManager->createUrl( $menu['url'] ); ?>" title="<?php echo $menu['description']; ?>" <?php if ( $menu['openway'] == 0 ): ?>target="_blank"<?php endif; ?>>
                                 <div class="posr">
-                                    <img width="64" height="64" class="mbs" src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
+                                    <img width="64" height="64" class="mbs" src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
                                     <span class="bubble" data-bubble="<?php echo $menu['module']; ?>"></span>
                                 </div>
                                 <div class="cm-menu-title"><?php echo $menu['name']; ?></div>
@@ -93,12 +93,12 @@ use application\modules\main\utils\Main;
                 <?php foreach ( $menus['commonMenu'] as $index => $menu ): ?>
                     <?php if ( !$menu['iscustom'] ): ?>
                         <li>
-                            <div class="in-menu-item" data-mod="<?php echo $menu['id']; ?>" data-href="<?php echo IBOS::app()->urlManager->createUrl( $menu['url'] ); ?>" data-title="<?php echo $menu['name']; ?>" 
-                                 data-desc="<?php echo $menu['description']; ?>" data-src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
+                            <div class="in-menu-item" data-mod="<?php echo $menu['id']; ?>" data-href="<?php echo Ibos::app()->urlManager->createUrl( $menu['url'] ); ?>" data-title="<?php echo $menu['name']; ?>" 
+                                 data-desc="<?php echo $menu['description']; ?>" data-src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
                                 <a href="javascript:;" class="o-mu-plus" data-action="addToCommonMenu"></a>
                                 <a href="javascript:;" class="o-mu-minus" data-action="removeFromCommonMenu"></a>
                                 <div title="<?php echo $menu['description']; ?>">
-                                    <img width="64" height="64" src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
+                                    <img width="64" height="64" src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
                                 </div>
                                 <p class="in-mu-title xac fss"><?php echo $menu['name']; ?></p>
                             </div>
@@ -131,12 +131,12 @@ use application\modules\main\utils\Main;
             <?php if ( !empty( $menus['notUsedMenu'] ) ): ?>
                 <?php foreach ( $menus['notUsedMenu'] as $index => $menu ): ?>
                     <?php if ( !$menu['iscustom'] ): ?>
-                        <div class="in-menu-item" data-mod="<?php echo $menu['id']; ?>" data-href="<?php echo IBOS::app()->urlManager->createUrl( $menu['url'] ); ?>" data-title="<?php echo $menu['name']; ?>"
-                             data-desc="<?php echo $menu['description']; ?>" data-src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
+                        <div class="in-menu-item" data-mod="<?php echo $menu['id']; ?>" data-href="<?php echo Ibos::app()->urlManager->createUrl( $menu['url'] ); ?>" data-title="<?php echo $menu['name']; ?>"
+                             data-desc="<?php echo $menu['description']; ?>" data-src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
                             <a href="javascript:;" class="o-mu-plus" data-action="addToCommonMenu"></a>
                             <a href="javascript:;" class="o-mu-minus" data-action="removeFromCommonMenu"></a>
                             <div title="<?php echo $menu['description']; ?>">
-                                <img width="64" height="64" src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
+                                <img width="64" height="64" src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png'; ?>">
                             </div>
                             <p class="in-mu-title xac fss"><?php echo $menu['name']; ?></p>
                         </div>
@@ -158,7 +158,7 @@ use application\modules\main\utils\Main;
     <div class="fill-sn clearfix">
         <div class="pull-right">
             <!--管理员，设置通用菜单按钮-->
-            <?php if ( IBOS::app()->user->uid == 1 ): ?>
+            <?php if ( Ibos::app()->user->uid == 1 ): ?>
                 <a href="javascript:;" class="btn" style="" data-action="setDefaultMent"><?php echo $lang['Set as default menu']; ?></a>
             <?php endif; ?>
             <a href="javascript:;" class="btn" data-action="restoreDefaultMenu"><?php echo $lang['Restore default settings']; ?></a>
@@ -212,7 +212,7 @@ use application\modules\main\utils\Main;
 <script>
     Ibos.app.s({
         "guideNextTime": <?php
-            if ( Main::getCookie( 'guideNextTime' ) == md5( IBOS::app()->user->uid ) ) {
+            if ( Main::getCookie( 'guideNextTime' ) == md5( Ibos::app()->user->uid ) ) {
                 echo 1;
             } else {
                 echo 0;

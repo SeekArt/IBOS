@@ -18,7 +18,7 @@
 namespace application\modules\assignment\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
@@ -96,7 +96,7 @@ class Assignment extends Model {
 		}
 		$count = $this->count( $criteria );
 		$pages = new CPagination( $count );
-		$everyPage = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$everyPage = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pages->setPageSize( intval( $everyPage ) );
 		$pages->applyLimit( $criteria );
 		$datas = $this->fetchAll( $criteria );

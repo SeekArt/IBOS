@@ -33,7 +33,7 @@ class FeedController extends BaseController {
             foreach ( $_POST as $key => $val ) {
                 $_POST[$key] = util\StringUtil::filterCleanHtml( $_POST[$key] );
             }
-            $uid = util\IBOS::app()->user->uid;
+            $uid = util\Ibos::app()->user->uid;
             $user = User::model()->fetchByUid( $uid );
             // 可见
             if ( isset( $_POST['view'] ) ) {
@@ -71,7 +71,7 @@ class FeedController extends BaseController {
             $table = isset( $_POST['table'] ) ? util\StringUtil::filterCleanHtml( $_POST['table'] ) : 'feed';
             // 所属模块名称
             $module = isset( $_POST['module'] ) ? util\StringUtil::filterCleanHtml( $_POST['module'] ) : 'weibo';   // 当前动态产生所属的应用
-            $data = Feed::model()->put( util\IBOS::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
+            $data = Feed::model()->put( util\Ibos::app()->user->uid, $module, $type, $d, $d['rowid'], $table );
             if ( !$data ) {
                 $return['isSuccess'] = false;
                 $return['data'] = Feed::model()->getError( 'putFeed' );
@@ -80,10 +80,10 @@ class FeedController extends BaseController {
             if ( !empty( $d['attach_id'] ) ) {
                 util\Attach::updateAttach( $d['attach_id'] );
             }
-            UserUtil::updateCreditByAction( 'addweibo', util\IBOS::app()->user->uid );
+            UserUtil::updateCreditByAction( 'addweibo', util\Ibos::app()->user->uid );
             // 微博来源设置
             $data['from'] = util\Env::getFromClient( $data['from'], $data['module'] );
-            $lang = util\IBOS::getLangSources();
+            $lang = util\Ibos::getLangSources();
             $return['data'] = $this->renderPartial( 'feedlist', array( 'list' => array( $data ), 'lang' => $lang ), true );
             // 动态ID
             $return['feedid'] = $data['feedid'];
@@ -100,7 +100,7 @@ class FeedController extends BaseController {
         $feedId = intval( util\Env::getRequest( 'feedid' ) );
         $result = FeedDigg::model()->fetchUserList( $feedId, 5 );
         $uids = util\Convert::getSubByKey( $result, 'uid' );
-        $followStates = Follow::model()->getFollowStateByFids( util\IBOS::app()->user->uid, $uids );
+        $followStates = Follow::model()->getFollowStateByFids( util\Ibos::app()->user->uid, $uids );
         $this->renderPartial( 'alldigglist', array( 'list' => $result, 'followstates' => $followStates, 'feedid' => $feedId ) );
     }
 
@@ -126,7 +126,7 @@ class FeedController extends BaseController {
      * 设置赞与被赞
      */
     public function actionSetDigg() {
-        $uid = util\IBOS::app()->user->uid;
+        $uid = util\Ibos::app()->user->uid;
         $feedId = intval( util\Env::getRequest( 'feedid' ) );
         // 是否已赞
         $alreadyDigg = FeedDigg::model()->getIsExists( $feedId, $uid );
@@ -166,7 +166,7 @@ class FeedController extends BaseController {
     public function actionRemoveFeed() {
         if ( util\Env::submitCheck( 'formhash' ) ) {
             // 删除失败
-            $return = array( 'isSuccess' => false, 'data' => util\IBOS::lang( 'Del failed', 'message' ) );
+            $return = array( 'isSuccess' => false, 'data' => util\Ibos::lang( 'Del failed', 'message' ) );
             $feedId = intval( $_POST['feedid'] );
             $feed = Feed::model()->getFeedInfo( $feedId );
             // 不存在时
@@ -174,16 +174,16 @@ class FeedController extends BaseController {
                 $this->ajaxReturn( $return );
             }
             // 非作者时
-            if ( $feed['uid'] != util\IBOS::app()->user->uid ) {
+            if ( $feed['uid'] != util\Ibos::app()->user->uid ) {
                 // 没有管理权限不可以删除
-                if ( !util\IBOS::app()->user->isadministrator ) {
+                if ( !util\Ibos::app()->user->isadministrator ) {
                     $this->ajaxReturn( $return );
                 }
             }
             // 执行删除操作
-            $return = Feed::model()->doEditFeed( $feedId, 'delFeed', util\IBOS::app()->user->uid );
+            $return = Feed::model()->doEditFeed( $feedId, 'delFeed', util\Ibos::app()->user->uid );
             // 删除失败或删除成功的消息
-            $return['msg'] = ($return['isSuccess']) ? util\IBOS::lang( 'Del succeed', 'message' ) : util\IBOS::lang( 'Del failed', 'message' );
+            $return['msg'] = ($return['isSuccess']) ? util\Ibos::lang( 'Del succeed', 'message' ) : util\Ibos::lang( 'Del failed', 'message' );
             $this->ajaxReturn( $return );
         }
     }
@@ -220,16 +220,16 @@ class FeedController extends BaseController {
                 $module = $post['module'];
                 // 添加积分
                 if ( $module == 'weibo' ) {
-                    UserUtil::updateCreditByAction( 'forwardweibo', util\IBOS::app()->user->uid );
+                    UserUtil::updateCreditByAction( 'forwardweibo', util\Ibos::app()->user->uid );
                     //微博被转发
-                    $suid = util\IBOS::app()->db->createCommand()
+                    $suid = util\Ibos::app()->db->createCommand()
                             ->select( 'uid' )
                             ->from( '{{feed}}' )
                             ->where( sprintf( "feedid = %d AND isdel = 0", $map['feedid'] ) )
                             ->queryScalar();
                     $suid && UserUtil::updateCreditByAction( 'forwardedweibo', $suid );
                 }
-                $lang = util\IBOS::getLangSources();
+                $lang = util\Ibos::getLangSources();
                 $return['data'] = $this->renderPartial( 'feedlist', array( 'list' => array( $return['data'] ), 'lang' => $lang ), true );
             }
             $this->ajaxReturn( $return );
@@ -249,18 +249,18 @@ class FeedController extends BaseController {
         $list = array();
         // 仅自己可见
         if ( $feed['view'] == '1' ) {
-            $list['users'] = util\IBOS::lang( 'My self' );
+            $list['users'] = util\Ibos::lang( 'My self' );
         } else if ( !empty( $feed['userid'] ) ) {
             $list['users'] = User::model()->fetchRealnamesByUids( $feed['userid'] );
         }
         if ( !empty( $feed['deptid'] ) ) {
             if ( $feed['deptid'] == 'alldept' || $feed['view'] == '0' ) {
-                $list['dept'] = util\IBOS::lang( 'All dept' );
+                $list['dept'] = util\Ibos::lang( 'All dept' );
             } else {
                 // 仅自己部门可见，取出自己的部门ID
                 if ( $feed['view'] == '2' ) {
-                    $alldowndeptid = Department::model()->fetchChildIdByDeptids( util\IBOS::app()->user->alldeptid );
-                    $deptIds = util\StringUtil::filterStr( util\IBOS::app()->user->alldeptid . ',' . $alldowndeptid );
+                    $alldowndeptid = Department::model()->fetchChildIdByDeptids( util\Ibos::app()->user->alldeptid );
+                    $deptIds = util\StringUtil::filterStr( util\Ibos::app()->user->alldeptid . ',' . $alldowndeptid );
                 } else {
                     $deptIds = $feed['deptid'];
                 }

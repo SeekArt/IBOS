@@ -1,13 +1,13 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!doctype html>
 <html lang="en">
 	<head>
         <meta charset=<?php echo CHARSET; ?> />
-        <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
+        <title><?php echo Ibos::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico?<?php echo VERHASH; ?>">
 		<link rel="apple-touch-icon-precomposed" href="<?php echo STATICURL; ?>/image/common/ios_icon.png">
         <meta name="generator" content="IBOS <?php echo VERSION; ?>" />
@@ -16,7 +16,7 @@ use application\core\utils\IBOS;
 		<!-- IE 8 以下跳转至浏览器升级页 -->
 		<!--[if lt IE 8]>
 			<script>
-				window.location.href = "<?php echo IBOS::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
+				window.location.href = "<?php echo Ibos::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
 			</script>
 		<![endif]-->
 		<!-- load css -->
@@ -29,7 +29,7 @@ use application\core\utils\IBOS;
 			<div class="wrap" id="mainer">
 				<div class="mtw">
 					<h2 class="mt pull-left"><?php echo $pageTitle; ?></h2>
-					<span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
+					<span class="pull-right"><?php echo Ibos::app()->setting->get( 'lunar' ); ?></span>
 				</div>
 				
 				<!-- Mainer -->

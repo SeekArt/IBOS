@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <div class="ct">
 	<div class="clearfix">
@@ -37,8 +37,8 @@ use application\core\utils\IBOS;
 									</td>
 									<td>
 										<?php if ( $menu['iscustom'] ): ?>
-											<a href="<?php echo $this->createUrl( 'quicknav/edit', array( 'id' => $menu['id'] ) ); ?>" class="cbtn o-edit" title="<?php echo IBOS::lang('edit'); ?>"></a>
-											<a href="javascript:;" class="cbtn o-trash" title="<?php echo IBOS::lang('delete'); ?>" data-action="removeQuicknav" data-param='{"id": <?php echo $menu['id']; ?>}'></a>
+											<a href="<?php echo $this->createUrl( 'quicknav/edit', array( 'id' => $menu['id'] ) ); ?>" class="cbtn o-edit" title="<?php echo Ibos::lang('edit'); ?>"></a>
+											<a href="javascript:;" class="cbtn o-trash" title="<?php echo Ibos::lang('delete'); ?>" data-action="removeQuicknav" data-param='{"id": <?php echo $menu['id']; ?>}'></a>
 										<?php endif; ?>
 									</td>
 								</tr>

@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
@@ -103,11 +103,11 @@ use application\core\utils\IBOS;
 </script>
 <script type="text/javascript">
     var _ib = _ib || [];
-    _ib.push(['authkey', '<?php echo IBOS::app()->setting->get( 'config/security/authkey' ); ?>']);
+    _ib.push(['authkey', '<?php echo Ibos::app()->setting->get( 'config/security/authkey' ); ?>']);
     _ib.push(['ip', '<?php echo Env::getClientIp(); ?>']);
     _ib.push(['from', '<?php echo $from; ?>']);
     _ib.push(['to', '<?php echo $to; ?>']);
-    _ib.push(['fullname', '<?php echo IBOS::app()->setting->get( 'setting/unit/fullname' ); ?>']);
+    _ib.push(['fullname', '<?php echo Ibos::app()->setting->get( 'setting/unit/fullname' ); ?>']);
     _ib.push(['type', 'upgrade']);
     (function () {
         var ib = document.createElement('script');

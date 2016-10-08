@@ -20,7 +20,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
@@ -53,7 +53,7 @@ class DepartmentController extends OrganizationBaseController {
 			Department::model()->modify( $newId, array( 'sort' => $newId ) );
 			$newId && Org::update();
 			Cache::update( 'setting' );
-			$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
 		} else {
 			$dept = DepartmentUtil::loadDepartment();
 			$param = array(
@@ -89,7 +89,7 @@ class DepartmentController extends OrganizationBaseController {
 			//不再组织架构这里单独处理总公司，只保留全局设置的
 		} else {
 			if ( $deptId == $pid ) {
-				$this->error( IBOS::lang( 'update failed, up dept cannot be itself' ) );
+				$this->error( Ibos::lang( 'update failed, up dept cannot be itself' ) );
 			}
 			$this->dealWithBranch();
 			$this->dealWithSpecialParams();
@@ -99,7 +99,7 @@ class DepartmentController extends OrganizationBaseController {
 			$editStatus && Org::update();
 			Cache::update( 'setting' );
 		}
-		return $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'user/index' ) );
+		return $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'user/index' ) );
 	}
 
 	/**
@@ -107,11 +107,11 @@ class DepartmentController extends OrganizationBaseController {
 	 * @return void
 	 */
 	public function actionDel() {
-		if ( IBOS::app()->request->getIsAjaxRequest() ) {
+		if ( Ibos::app()->request->getIsAjaxRequest() ) {
 			$delId = Env::getRequest( 'id' );
 			if ( Department::model()->countChildByDeptId( $delId ) ) {
 				$delStatus = false;
-				$msg = IBOS::lang( 'Remove the child department first' );
+				$msg = Ibos::lang( 'Remove the child department first' );
 			} else {
 				$delStatus = Department::model()->remove( $delId );
 				// 删除辅助部门关联
@@ -122,7 +122,7 @@ class DepartmentController extends OrganizationBaseController {
 					User::model()->updateByUids( $relatedIds, array( 'deptid' => 0 ) );
 				}
 				$delStatus && Org::update();
-				$msg = IBOS::lang( 'Operation succeed', 'message' );
+				$msg = Ibos::lang( 'Operation succeed', 'message' );
 			}
 			return $this->ajaxReturn( array( 'isSuccess' => !!$delStatus, 'msg' => $msg ), 'json' );
 		}
@@ -142,9 +142,9 @@ class DepartmentController extends OrganizationBaseController {
 				$batchSetRes = DepartmentUtil::updateDepartmentUserList( $id, $uids );
 				if ( $batchSetRes ) {
 					Org::update();
-					$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+					$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 				} else {
-					$this->error( IBOS::lang( 'Save failed', 'message' ) );
+					$this->error( Ibos::lang( 'Save failed', 'message' ) );
 				}
 			} else {
 				// 该部门下人员
@@ -234,7 +234,7 @@ class DepartmentController extends OrganizationBaseController {
 			if ( $pid == 0 || Department::model()->getIsBranch( $pid ) ) {
 				// do nothing
 			} else {
-				$this->error( IBOS::lang( 'Incorrect branch setting' ) );
+				$this->error( Ibos::lang( 'Incorrect branch setting' ) );
 			}
 		}
 	}
@@ -267,12 +267,12 @@ class DepartmentController extends OrganizationBaseController {
 			Org::update();
 			$this->ajaxReturn( array(
 				'isSuccess' => TRUE,
-				'msg' => IBOS::lang( 'Save succeed', 'message' ),
+				'msg' => Ibos::lang( 'Save succeed', 'message' ),
 			) );
 		} else {
 			$this->ajaxReturn( array(
 				'isSuccess' => FALSE,
-				'msg' => IBOS::lang( 'Save failed', 'message' ),
+				'msg' => Ibos::lang( 'Save failed', 'message' ),
 			) );
 		}
 	}

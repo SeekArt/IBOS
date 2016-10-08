@@ -2,7 +2,7 @@
 
 namespace application\modules\report\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\message\utils\MessageApi;
 use application\modules\report\model\Report;
@@ -17,7 +17,7 @@ class ReportApi extends MessageApi {
      * @return array
      */
     public function loadSetting() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $subUidArr = User::model()->fetchSubUidByUid( $uid );
         $subReports = Report::model()->fetchAll( "FIND_IN_SET({$uid}, `toid`)" );
         if ( count( $subUidArr ) > 0 || !empty( $subReports ) ) {
@@ -61,7 +61,7 @@ class ReportApi extends MessageApi {
     public function renderIndex() {
         $return = array();
         $viewAlias = 'application.modules.report.views.indexapi.report';
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         // 自己的总结计划
         $reports = Report::model()->fetchAllRepByUids( $uid );
         if ( !empty( $reports ) ) {
@@ -77,15 +77,15 @@ class ReportApi extends MessageApi {
         $data = array(
             'reports' => $reports,
             'subReports' => $subReports,
-            'lang' => IBOS::getLangSource( 'report.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'report' )
+            'lang' => Ibos::getLangSource( 'report.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'report' )
         );
         foreach ( $this->_indexTab as $tab ) {
             $data['tab'] = $tab;
             if ( $tab == 'reportPersonal' ) {
-                $return[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+                $return[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
             } else if ( $tab == 'reportAppraise' && ( count( $subUidArr ) > 0 || !empty( $subReports ) ) ) {
-                $return[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+                $return[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
             }
         }
         return $return;
@@ -96,7 +96,7 @@ class ReportApi extends MessageApi {
      * @return integer
      */
     public function loadNew() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         //获取所有直属下属id
         $uidArr = User::model()->fetchSubUidByUid( $uid );
         if ( !empty( $uidArr ) ) {

@@ -17,7 +17,7 @@
 namespace application\core\components;
 
 use application\core\model\Module;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\role\model\AuthItem;
 use application\modules\role\utils\Auth;
 use CAction;

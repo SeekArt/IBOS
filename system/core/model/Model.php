@@ -18,7 +18,7 @@
 namespace application\core\model;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use CActiveRecord;
 use CException;
@@ -47,7 +47,7 @@ class Model extends CActiveRecord {
      * Cache::update将更新当前系统设置的缓存类型（默认file）以及syscache表的数据，这里的更新是真实数据更新
      * 其中XXX对应了core\cache\provider里定义好的缓存类型，setting是这里面单独拿出来的，剩下的都是cache
      * ps，这个文件夹下的每种缓存值也对应了syscache表的数据
-     * pps，当前系统的缓存类型可以使用IBOS::app()->setting->get( 'setting' )或者里面写cache调用，对应syscache表
+     * pps，当前系统的缓存类型可以使用Ibos::app()->setting->get( 'setting' )或者里面写cache调用，对应syscache表
      * ppps，本类中调用afterSave的方法将使用$isAfter控制是否执行afterSave防止多次调用Cache::update，默认是调用，如果有出现多次调用的，请关闭
      * 野生的缓存需要调用本类里面的方法使用
      *
@@ -353,7 +353,7 @@ class Model extends CActiveRecord {
 
         // 验证数据
         if ( empty( $data ) || !is_array( $data ) ) {
-            throw new CException( IBOS::lang( 'Data type invalid', 'error' ) );
+            throw new CException( Ibos::lang( 'Data type invalid', 'error' ) );
         }
         // 对比过滤表单数据
         $fields = $this->getAttributes();
@@ -431,7 +431,7 @@ class Model extends CActiveRecord {
         if ( empty( $pk ) ) {
             $modelPk = $this->getPrimaryKey();
             if ( !$modelPk ) {
-                throw new CException( IBOS::lang( 'Cache must have a primary key', 'error' ) );
+                throw new CException( Ibos::lang( 'Cache must have a primary key', 'error' ) );
             }
             $pk = $modelPk;
         }

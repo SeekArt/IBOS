@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 ?>
 <!-- Sidebar -->
@@ -11,21 +11,21 @@ use application\core\utils\Org;
             <li>
                 <a href="<?php echo $this->createUrl( 'schedule/index' ); ?>">
                     <i class="o-cal-personal"></i>
-                    <?php echo IBOS::lang( 'Personal' ); ?>
+                    <?php echo Ibos::lang( 'Personal' ); ?>
                 </a>
             </li>
             <?php if ( $hasSubUid ): ?>
                 <li>
                     <a href="<?php echo $this->createUrl( 'schedule/subschedule' ); ?>">
                         <i class="o-cal-underling"></i>
-                        <?php echo IBOS::lang( 'Subordinate' ); ?>
+                        <?php echo Ibos::lang( 'Subordinate' ); ?>
                     </a>
                 </li>
             <?php endif; ?>
             <li class="active">
                 <a href="<?php echo $this->createUrl( 'schedule/shareschedule' ); ?>">
                     <i class="o-cal-shareme"></i>
-                    <?php echo IBOS::lang( 'Share' ); ?>
+                    <?php echo Ibos::lang( 'Share' ); ?>
                 </a>
                 <div>
                     <ul class="mng-list" id="mng_list">

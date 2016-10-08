@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
@@ -16,11 +16,11 @@ use application\core\utils\IBOS;
             <div class="mc-header">
                 <div class="mc-header-info clearfix">
                     <div class="usi-terse">
-                        <a href="<?php echo IBOS::app()->user->space_url; ?>" class="avatar-box">
-                            <span class="avatar-circle"><img class="mbm" src="<?php echo IBOS::app()->user->avatar_middle; ?>" alt="<?php echo IBOS::app()->user->realname; ?>"></span>
+                        <a href="<?php echo Ibos::app()->user->space_url; ?>" class="avatar-box">
+                            <span class="avatar-circle"><img class="mbm" src="<?php echo Ibos::app()->user->avatar_middle; ?>" alt="<?php echo Ibos::app()->user->realname; ?>"></span>
                         </a>
-                        <span class="usi-terse-user"><?php echo IBOS::app()->user->realname; ?></span>
-                        <span class="usi-terse-group"><?php echo IBOS::app()->user->deptname; ?></span>
+                        <span class="usi-terse-user"><?php echo Ibos::app()->user->realname; ?></span>
+                        <span class="usi-terse-group"><?php echo Ibos::app()->user->deptname; ?></span>
                     </div>
                 </div>
             </div>

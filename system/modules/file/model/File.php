@@ -20,7 +20,7 @@ use application\core\model\Model;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File as FileUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Image;
 use application\core\utils\StringUtil;
 use CDbCriteria;
@@ -75,7 +75,7 @@ class File extends Model {
 	 */
 	public function fetchList( $condition = '', $order = null, $pageSize = null ) {
 		$order = "f.type DESC, " . (is_null( $order ) ? "f.addtime DESC" : $order);
-		$count = IBOS::app()->db->createCommand()
+		$count = Ibos::app()->db->createCommand()
 				->select( "count(f.fid)" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fd", "f.`fid` = fd.`fid`" )
@@ -87,7 +87,7 @@ class File extends Model {
 		$criteria->order = $order;
 		$pages->applyLimit( $criteria );
 		$pages->setPageSize( intval( $limit ) );
-		$datas = IBOS::app()->db->createCommand()
+		$datas = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fd", "f.`fid` = fd.`fid`" )
@@ -106,7 +106,7 @@ class File extends Model {
 	 * @return array
 	 */
 	public function fetchFidsByCondition( $condition ) {
-		$record = IBOS::app()->db->createCommand()
+		$record = Ibos::app()->db->createCommand()
 				->select( "f.fid" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fd", "f.fid=fd.fid" )
@@ -161,7 +161,7 @@ class File extends Model {
 		$sourceFileName = explode( '/', $imagePath );
 		$sourceFileName[count( $sourceFileName ) - 1] = $thumbName;
 		$thumb = implode( '/', $sourceFileName );
-		$imgUrl = IBOS::engine()->io()->file()->thumbnail( $imagePath, $thumb, $thumbWidth, $thumbHeight );
+		$imgUrl = Ibos::engine()->io()->file()->thumbnail( $imagePath, $thumb, $thumbWidth, $thumbHeight );
 		return $imgUrl;
 	}
 
@@ -267,7 +267,7 @@ class File extends Model {
 		$fid = intval( $fid );
 		if ( $fid ) {
 			$condition = "f.`idpath` LIKE '%\/{$fid}\/%'";
-			$records = IBOS::app()->db->createCommand()
+			$records = Ibos::app()->db->createCommand()
 					->select( "*,f.fid AS fid" )
 					->from( "{{file}} f" )
 					->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
@@ -284,7 +284,7 @@ class File extends Model {
         $fid = intval($fid);
         if($fid){
             $condition = "f.`idpath` LIKE '%\/{$fid}\/%' AND f.`isdel`=0";
-            $records = IBOS::app()->db->createCommand()
+            $records = Ibos::app()->db->createCommand()
                 ->select( "*,f.fid AS fid" )
                 ->from( "{{file}} f" )
                 ->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
@@ -301,7 +301,7 @@ class File extends Model {
 	public function countSizeByFid( $fid ) {
 		$fid = intval( $fid );
 		$condition = "f.`idpath` LIKE '%\/{$fid}\/%'";
-		$size = IBOS::app()->db->createCommand()
+		$size = Ibos::app()->db->createCommand()
 				->select( "sum(f.size)" )
 				->from( "{{file}} f" )
 				->where( $condition )
@@ -316,7 +316,7 @@ class File extends Model {
 	 * @return array
 	 */
 	public function fetchFirstSubByPid( $pid, $uid ) {
-		$records = IBOS::app()->db->createCommand()
+		$records = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
@@ -345,7 +345,7 @@ class File extends Model {
 	 * @return array
 	 */
 	public function fetchByFid( $fid ) {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->select( "*,f.fid AS fid" )
 						->from( "{{file}} f" )
 						->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
@@ -360,7 +360,7 @@ class File extends Model {
 	 */
 	public function fetchAllByFids( $fids ) {
 		$fids = is_array( $fids ) ? implode( ',', $fids ) : $fids;
-		$records = IBOS::app()->db->createCommand()
+		$records = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file}} f" )
 				->leftJoin( "{{file_detail}} fdt", "f.`fid` = fdt.`fid`" )
@@ -379,7 +379,7 @@ class File extends Model {
 	 * @return array
 	 */
 	public function fetchWithShare( $fid ) {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->select( "*,f.fid AS fid" )
 						->from( "{{file}} f" )
 						->leftJoin( "{{file_share}} fs", "f.`fid` = fs.`fid`" )
@@ -404,7 +404,7 @@ class File extends Model {
 	 */
 	public function getUsedSize( $uid, $cloudid ) {
 		$where = array( 'and', "uid={$uid}", 'isdel=0', 'belong=0', "cloudid={$cloudid}" );
-		$count = IBOS::app()->db->createCommand()
+		$count = Ibos::app()->db->createCommand()
 				->select( 'SUM(size) AS sum' )
 				->from( "{{file}}" )
 				->where( $where )

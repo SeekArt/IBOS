@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Image;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
@@ -41,7 +41,7 @@ class QuicknavController extends BaseController {
 			if ( $menu['iscustom'] ) {
 				$menus[$k]['icon'] = $menu['icon'];
 			} else {
-				$menus[$k]['icon'] = IBOS::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png';
+				$menus[$k]['icon'] = Ibos::app()->assetManager->getAssetsUrl( $menu['module'] ) . '/image/icon.png';
 			}
 		}
 		$this->render( 'index', array( 'menus' => $menus ) );
@@ -51,7 +51,7 @@ class QuicknavController extends BaseController {
 	 * 删除
 	 */
 	public function actionDel() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$id = intval( Env::getRequest( 'id' ) );
 			MenuCommon::model()->deleteByPk( $id );
 			$this->ajaxReturn( array( 'isSuccess' => true ) );
@@ -82,7 +82,7 @@ class QuicknavController extends BaseController {
 			$data['disabled'] = 0;
 			$data['openway'] = 0;
 			MenuCommon::model()->add( $data );
-			$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'quicknav/index' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'quicknav/index' ) );
 		} else {
 			$this->render( 'add' );
 		}
@@ -144,14 +144,14 @@ class QuicknavController extends BaseController {
 				'icon' => File::imageName( $this->_iconPath . $saveName ),
 			);
 			MenuCommon::model()->modify( $id, $data );
-			$this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'quicknav/index' ) );
+			$this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'quicknav/index' ) );
 		} else {
 			$op = Env::getRequest( 'op' );
 			if ( empty( $op ) ) {
 				$id = intval( Env::getRequest( 'id' ) );
 				$menu = MenuCommon::model()->fetchByPk( $id );
 				if ( empty( $menu ) ) {
-					$this->error( IBOS::lang( 'Quicknav not fount tip' ), $this->createUrl( 'quicknav/index' ) );
+					$this->error( Ibos::lang( 'Quicknav not fount tip' ), $this->createUrl( 'quicknav/index' ) );
 				}
 				$menu['icon'] = File::imageName( $menu['icon'] );
 				$this->render( 'edit', array( 'menu' => $menu ) );
@@ -172,7 +172,7 @@ class QuicknavController extends BaseController {
 		$hexColor = Env::getRequest( 'quicknavcolor' );
 		$tempFile = $this->getTempByHex( $hexColor );
 		if ( !$tempFile ) {
-			$this->error( IBOS::lang( 'Quicknav add faild' ), $this->createUrl( 'quicknav/index' ) );
+			$this->error( Ibos::lang( 'Quicknav add faild' ), $this->createUrl( 'quicknav/index' ) );
 		}
 		$outputFile = $this->_iconPath . $saveName;
 		// 生成水印
@@ -200,7 +200,7 @@ class QuicknavController extends BaseController {
 		$upload = new CommonAttach( 'Filedata' );
 		$upload->upload();
 		if ( !$upload->getIsUpoad() ) {
-			$this->ajaxReturn( array( 'msg' => IBOS::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
+			$this->ajaxReturn( array( 'msg' => Ibos::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
 		} else {
 			$info = $upload->getUpload()->getAttach();
 			$file = File::getAttachUrl() . '/' . $info['type'] . '/' . $info['attachment'];
@@ -208,7 +208,7 @@ class QuicknavController extends BaseController {
 			$tempSize = File::imageSize( $fileUrl );
 			//判断宽和高是否符合要求
 			if ( $tempSize[0] < 64 || $tempSize[1] < 64 ) {
-				$this->ajaxReturn( array( 'msg' => IBOS::lang( 'Icon size error' ), 'isSuccess' => false ) );
+				$this->ajaxReturn( array( 'msg' => Ibos::lang( 'Icon size error' ), 'isSuccess' => false ) );
 			}
 			$this->ajaxReturn( array(
 				'path' => $file,
@@ -231,7 +231,7 @@ class QuicknavController extends BaseController {
 			$disabled = 0;
 		}
 		MenuCommon::model()->modify( $id, array( 'disabled' => $disabled ) );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -246,7 +246,7 @@ class QuicknavController extends BaseController {
 			$openway = 0;
 		}
 		MenuCommon::model()->modify( $id, array( 'openway' => $openway ) );
-		$this->ajaxReturn( array( 'openway' => $openway, 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'openway' => $openway, 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**

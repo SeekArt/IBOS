@@ -3,7 +3,7 @@
 namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
@@ -63,7 +63,7 @@ class ApiController extends BaseController {
         if (!empty($id)) {
             $status = Email::model()->recall($id, $this->uid);
         }
-        $errorMsg = !$status ? IBOS::lang('Operation failure', 'message') : '';
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
         $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg));
     }
 
@@ -78,7 +78,7 @@ class ApiController extends BaseController {
         if (!empty($id)) {
             $status = EmailBody::model()->delBody($id, $this->archiveId);
         }
-        $errorMsg = !$status ? IBOS::lang('Operation failure', 'message') : '';
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
         $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg));
     }
 
@@ -93,7 +93,7 @@ class ApiController extends BaseController {
         if (!empty($id)) {
             $status = Email::model()->completelyDelete(explode(',', $id), $this->uid, $this->archiveId);
         }
-        $errorMsg = !$status ? IBOS::lang('Operation failure', 'message') : '';
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
         $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg));
     }
 
@@ -154,7 +154,7 @@ class ApiController extends BaseController {
                 $status = Email::model()->setField('ismark', $ismark, $condition);
                 break;
             case 'sendreceipt': // 发送回执
-                $fromInfo = IBOS::app()->db->createCommand()
+                $fromInfo = Ibos::app()->db->createCommand()
                         ->select('eb.bodyid,eb.subject,eb.fromid')
                         ->from('{{email_body}} eb')
                         ->leftJoin('{{email}} e', 'e.bodyid = eb.bodyid')
@@ -162,8 +162,8 @@ class ApiController extends BaseController {
                         ->queryRow();
                 if ($fromInfo) {
                     $config = array(
-                        '{reader}' => IBOS::app()->user->realname,
-                        '{url}' => IBOS::app()->urlManager->createUrl('email/content/show', array('id' => $id)),
+                        '{reader}' => Ibos::app()->user->realname,
+                        '{url}' => Ibos::app()->urlManager->createUrl('email/content/show', array('id' => $id)),
                         '{title}' => $fromInfo['subject'],
                         'id' => $fromInfo['bodyid'],
                     );
@@ -178,7 +178,7 @@ class ApiController extends BaseController {
                 }
                 break;
         }
-        $errorMsg = !$status ? IBOS::lang('Operation failure', 'message') : '';
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
         $this->ajaxReturn(array_merge(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg), $extends));
     }
 

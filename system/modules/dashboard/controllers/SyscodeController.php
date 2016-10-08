@@ -3,7 +3,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Syscode;
 
 class SyscodeController extends BaseController {
@@ -28,7 +28,7 @@ class SyscodeController extends BaseController {
             if ( !is_null( $removeId ) ) {
                 Syscode::model()->deleteById( $removeId );
             }
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $record = Syscode::model()->fetchAllByAllPid();
             $data = array( 'data' => $record );

@@ -30,7 +30,7 @@ class Cache {
 	 */
 
 	public static function check() {
-		return IBOS::app()->cache->getIsInitialized();
+		return Ibos::app()->cache->getIsInitialized();
 	}
 
 	/**
@@ -41,17 +41,17 @@ class Cache {
 	 * @return boolean
 	 */
 	public static function set( $key, $value, $ttl = null ) {
-		return IBOS::app()->cache->set( $key, $value, $ttl );
+		return Ibos::app()->cache->set( $key, $value, $ttl );
 	}
 
 	//@see \CCache
 	public static function get( $id ) {
-		return IBOS::app()->cache->get( $id );
+		return Ibos::app()->cache->get( $id );
 	}
 
 	//@see \CCache
 	public static function mget( $ids ) {
-		return IBOS::app()->cache->mget( $ids );
+		return Ibos::app()->cache->mget( $ids );
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Cache {
 	 * @return boolean
 	 */
 	public static function rm( $key ) {
-		return IBOS::app()->cache->delete( $key );
+		return Ibos::app()->cache->delete( $key );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Cache {
 	 * @return boolean
 	 */
 	public static function clear() {
-		return IBOS::app()->cache->flush();
+		return Ibos::app()->cache->flush();
 	}
 
 	/**
@@ -93,10 +93,10 @@ class Cache {
 			$cacheData = Syscache::model()->fetchAllCache( $caches );
 			foreach ( $cacheData as $cacheName => $data ) {
 				if ( $cacheName == 'setting' ) {
-					IBOS::app()->setting->set( 'setting', $data );
+					Ibos::app()->setting->set( 'setting', $data );
 				} else {
 					//TODO::这里要修改缓存路径
-					IBOS::app()->setting->set( 'cache/' . $cacheName, $data );
+					Ibos::app()->setting->set( 'cache/' . $cacheName, $data );
 				}
 			}
 		}
@@ -123,14 +123,14 @@ class Cache {
 		$updateList = empty( $cacheName ) ? array() : (is_array( $cacheName ) ? $cacheName : array( $cacheName ));
 		if ( !$updateList ) {
 			// 更新所有缓存
-			$cacheDir = IBOS::getPathOfAlias( self::CACHE_ALIAS );
+			$cacheDir = Ibos::getPathOfAlias( self::CACHE_ALIAS );
 			$cacheDirHandle = dir( $cacheDir );
 			while ( $entry = $cacheDirHandle->read() ) {
 				$isProviderFile = preg_match( "/^([\_\w]+)\.php$/", $entry, $matches ) && substr( $entry, -4 ) == '.php' && is_file( $cacheDir . '/' . $entry );
 				if ( !in_array( $entry, array( '.', '..' ) ) && $isProviderFile ) {
 					$class = $nameSpace . '\\' . basename( $matches[0], '.php' );
 					if ( class_exists( $class ) ) {
-						IBOS::app()->attachBehavior( 'onUpdateCache', array( 'class' => $class ) );
+						Ibos::app()->attachBehavior( 'onUpdateCache', array( 'class' => $class ) );
 					}
 				}
 			}
@@ -139,13 +139,13 @@ class Cache {
 			foreach ( $updateList as $entry ) {
 				$owner = $nameSpace . '\\' . ucfirst( $entry );
 				if ( class_exists( $owner ) ) {
-					IBOS::app()->attachBehavior( 'onUpdateCache', array( 'class' => $owner ) );
+					Ibos::app()->attachBehavior( 'onUpdateCache', array( 'class' => $owner ) );
 				}
 			}
 		}
 		// 发起更新缓存行为
-		if ( IBOS::app()->hasEventHandler( 'onUpdateCache' ) ) {
-			IBOS::app()->raiseEvent( 'onUpdateCache', new CEvent( IBOS::app() ) );
+		if ( Ibos::app()->hasEventHandler( 'onUpdateCache' ) ) {
+			Ibos::app()->raiseEvent( 'onUpdateCache', new CEvent( Ibos::app() ) );
 		}
 	}
 

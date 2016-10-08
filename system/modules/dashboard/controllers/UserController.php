@@ -22,7 +22,7 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\OrgIO;
 use application\core\utils\PHPExcel;
@@ -64,7 +64,7 @@ class UserController extends OrganizationBaseController {
 	 * @return void
 	 */
 	public function actionIndex() {
-		$data['unit'] = IBOS::app()->setting->get( 'setting/unit' );
+		$data['unit'] = Ibos::app()->setting->get( 'setting/unit' );
 		$data['unit']['fullname'] = isset( $data['unit']['fullname'] ) ? $data['unit']['fullname'] : '';
 		// 获取分支部门的deptid
 		$deptList = Department::model()->fetchAll( 'isbranch = 1' );
@@ -156,7 +156,7 @@ class UserController extends OrganizationBaseController {
 			$newId = User::model()->add( $data, true );
 			if ( $newId ) {
 				UserCount::model()->add( array( 'uid' => $newId ) );
-				$ip = IBOS::app()->setting->get( 'clientip' );
+				$ip = Ibos::app()->setting->get( 'clientip' );
 				UserStatus::model()->add(
 						array(
 							'uid' => $newId,
@@ -198,14 +198,14 @@ class UserController extends OrganizationBaseController {
 					Org::hookSyncUser( $newId, $origPass, 1 );
 				}
 				CacheUtil::update();
-				$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
+				$this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
 			} else {
-				$this->error( IBOS::lang( 'Add user failed' ), $this->createUrl( 'user/index' ) );
+				$this->error( Ibos::lang( 'Add user failed' ), $this->createUrl( 'user/index' ) );
 			}
 		} else {
 			$deptid = "";
 			$manager = "";
-			$account = IBOS::app()->setting->get( 'setting/account' );
+			$account = Ibos::app()->setting->get( 'setting/account' );
 			if ( $account['mixed'] ) {
 				$preg = "[0-9]+[A-Za-z]+|[A-Za-z]+[0-9]+";
 			} else {
@@ -313,7 +313,7 @@ class UserController extends OrganizationBaseController {
 			if ( $data['status'] != User::USER_STATUS_NORMAL ) {
 				$canDisabled = User::model()->checkCanDisabled( $uid );
 				if ( false === $canDisabled ) {
-					return $this->error( IBOS::lang( 'make sure at least one admin' ) );
+					return $this->error( Ibos::lang( 'make sure at least one admin' ) );
 				}
 			}
 			User::model()->updateByUid( $uid, $data );
@@ -327,16 +327,16 @@ class UserController extends OrganizationBaseController {
 				Org::update();
 			}
 			CacheUtil::update();
-			$this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'user/index' ) );
 		} else {
 			if ( empty( $user ) ) {
-				$this->error( IBOS::lang( 'Request param' ), $this->createUrl( 'user/index' ) );
+				$this->error( Ibos::lang( 'Request param' ), $this->createUrl( 'user/index' ) );
 			}
 			$user["auxiliarydept"] = DepartmentRelated::model()->fetchAllDeptIdByUid( $user['uid'] );
 			$user["auxiliarypos"] = PositionRelated::model()->fetchAllPositionIdByUid( $user['uid'] );
 			$user["auxiliaryrole"] = RoleRelated::model()->fetchAllRoleIdByUid( $user['uid'] );
 			$user['subordinate'] = User::model()->fetchSubUidByUid( $user['uid'] ); // 获取所有直属下属uid
-			$account = IBOS::app()->setting->get( 'setting/account' );
+			$account = Ibos::app()->setting->get( 'setting/account' );
 			if ( $account['mixed'] ) {
 				$preg = "[0-9]+[A-Za-z]+|[A-Za-z]+[0-9]+";
 			} else {
@@ -394,7 +394,7 @@ class UserController extends OrganizationBaseController {
 		}
 		$param = array(
 			'upUsers' => $upUsers,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'dashboard' )
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'dashboard' )
 		);
 		$op = Env::getRequest( 'op' );
 		if ( in_array( $op, array( 'getUsers', 'setUpuid' ) ) ) {
@@ -486,7 +486,7 @@ class UserController extends OrganizationBaseController {
 //          }
 //          // 邮件格式
 //          $emailPreg = "/^[_.0-9a-z-a-z-]+@([0-9a-z][0-9a-z-]+.)+[a-z]{2,4}$/";
-//          $ip = IBOS::app()->setting->get( 'clientip' );
+//          $ip = Ibos::app()->setting->get( 'clientip' );
 //          foreach ( $reader->sheets[0]['cells'] as $k => $row ) {
 //              //以下数组下标跟导入表的每一列位置对应，如导入出现问题，请检查位置与格式！
 //              $salt = StringUtil::random( 6 );
@@ -587,10 +587,10 @@ class UserController extends OrganizationBaseController {
 //      $error = Cache::model()->fetchArrayByPk( 'userimportfail' );
 //      Cache::model()->delete( "`cachekey` = 'userimportfail'" );
 //      $fieldArr = array(
-//          IBOS::lang( 'Line' ),
-//          IBOS::lang( 'Username' ),
-//          IBOS::lang( 'Realname' ),
-//          IBOS::lang( 'Error reason' ),
+//          Ibos::lang( 'Line' ),
+//          Ibos::lang( 'Username' ),
+//          Ibos::lang( 'Realname' ),
+//          Ibos::lang( 'Error reason' ),
 //      );
 //      $str = implode( ',', $fieldArr ) . "\n";
 //      foreach ( $error as $line => $row ) {
@@ -598,7 +598,7 @@ class UserController extends OrganizationBaseController {
 //          $str .= implode( ',', $param ) . "\n"; //用引文逗号分开
 //      }
 //      $outputStr = iconv( 'utf-8', 'gbk//ignore', $str );
-//      $filename = IBOS::lang( 'Import error record' ) . '.csv';
+//      $filename = Ibos::lang( 'Import error record' ) . '.csv';
 //      File::exportCsv( $filename, $outputStr );
 //  }
 	/**
@@ -617,10 +617,10 @@ class UserController extends OrganizationBaseController {
 		}
 		$filename = $filename = date( 'Y-m-d' ) . '用户导入错误信息.xls';
 		$fieldArr = array(
-			IBOS::lang( 'Line' ),
-			IBOS::lang( 'Username' ),
-			IBOS::lang( 'Realname' ),
-			IBOS::lang( 'Error reason' ),
+			Ibos::lang( 'Line' ),
+			Ibos::lang( 'Username' ),
+			Ibos::lang( 'Realname' ),
+			Ibos::lang( 'Error reason' ),
 		);
 		PHPExcel::exportToExcel( $filename, $fieldArr, $return );
 	}
@@ -652,7 +652,7 @@ class UserController extends OrganizationBaseController {
 		if ( false === $canDisabled ) {
 			return $this->ajaxReturn( array(
 						'isSuccess' => false,
-						'msg' => IBOS::lang( 'make sure at least one admin' )
+						'msg' => Ibos::lang( 'make sure at least one admin' )
 					) );
 		}
 		$return = User::model()->updateByUids( $uidArr, $attributes );

@@ -16,7 +16,7 @@
 
 namespace application\modules\officialdoc\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\model\DepartmentRelated;
@@ -48,12 +48,12 @@ class Officialdoc {
 //    public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
 //        $typeWhere = self::joinTypeCondition( $type, $uid, $catid );
 //        $condition = !empty( $condition ) ? $condition .= " AND " . $typeWhere : $typeWhere;
-//        $allCcDeptId = IBOS::app()->user->alldeptid . '';
-//        $allDeptId = IBOS::app()->user->alldeptid . '';
+//        $allCcDeptId = Ibos::app()->user->alldeptid . '';
+//        $allDeptId = Ibos::app()->user->alldeptid . '';
 //        $allupdeptid = Department::model()->queryDept( $allDeptId );
 //        $allDeptId .= ',' . $allupdeptid . '';
-//        $allPosId = IBOS::app()->user->allposid . '';
-//        $allRoleid = IBOS::app()->user->allroleid;
+//        $allPosId = Ibos::app()->user->allposid . '';
+//        $allRoleid = Ibos::app()->user->allroleid;
 //        $deptCondition = '';
 //        $deptIdArr = explode( ',', trim( $allDeptId, ',' ) );
 //        if ( count( $deptIdArr ) > 0 ) {
@@ -197,7 +197,7 @@ class Officialdoc {
 			return true;
 		}
 		//如果是审核人
-//		$dashboardConfig = IBOS::app()->setting->get( 'setting/docconfig' );
+//		$dashboardConfig = Ibos::app()->setting->get( 'setting/docconfig' );
 //		$approver = $dashboardConfig['doccommentenable'];
 //		if ( StringUtil::findIn( $uid, $approver ) ) {
 //			return true;

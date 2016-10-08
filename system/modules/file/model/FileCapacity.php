@@ -17,7 +17,7 @@
 namespace application\modules\file\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class FileCapacity extends Model {
 
@@ -36,7 +36,7 @@ class FileCapacity extends Model {
      */
     public function fetchSizeByUid( $uid ) {
         $size = 0;
-        $record = IBOS::app()->db->createCommand()
+        $record = Ibos::app()->db->createCommand()
                 ->select( "size" )
                 ->from( "{{file_capacity}}" )
                 ->where( sprintf( "FIND_IN_SET(%d, `uids`)", $uid ) )
@@ -63,7 +63,7 @@ class FileCapacity extends Model {
         }
         if ( isset( $deptSql ) ) {
             $where = implode( ' OR ', $deptSql );
-            $record = IBOS::app()->db->createCommand()
+            $record = Ibos::app()->db->createCommand()
                     ->select( "size" )
                     ->from( "{{file_capacity}}" )
                     ->where( $where )
@@ -91,7 +91,7 @@ class FileCapacity extends Model {
         }
         if ( isset( $posSql ) ) {
             $where = implode( ' OR ', $posSql );
-            $record = IBOS::app()->db->createCommand()
+            $record = Ibos::app()->db->createCommand()
                     ->select( "size" )
                     ->from( "{{file_capacity}}" )
                     ->where( $where )
@@ -115,7 +115,7 @@ class FileCapacity extends Model {
             }
             if ( isset( $roleSql ) ) {
                 $where = implode( ' OR ', $roleSql );
-                $record = IBOS::app()->db->createCommand()
+                $record = Ibos::app()->db->createCommand()
                         ->select( 'size' )
                         ->from( $this->tableName() )
                         ->where( $where )

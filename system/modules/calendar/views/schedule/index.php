@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\utils\Calendar;
 ?>
 <!-- private css -->
@@ -173,10 +173,10 @@ use application\modules\calendar\utils\Calendar;
 	Ibos.app.s({
 		calSettings : {
 			// 日程开始时间
-			minTime: <?php echo Calendar::getSetupStartTime( IBOS::app()->user->uid ); ?>,
+			minTime: <?php echo Calendar::getSetupStartTime( Ibos::app()->user->uid ); ?>,
 			// 日程结束时间
-			maxTime: <?php echo Calendar::getSetupEndTime( IBOS::app()->user->uid ); ?>,
-			hiddenDays: [<?php echo Calendar::getSetupHiddenDays( IBOS::app()->user->uid ); ?>],
+			maxTime: <?php echo Calendar::getSetupEndTime( Ibos::app()->user->uid ); ?>,
+			hiddenDays: [<?php echo Calendar::getSetupHiddenDays( Ibos::app()->user->uid ); ?>],
 			uid: Ibos.app.g('uid'),
 			addable: true,	
 			editable: true

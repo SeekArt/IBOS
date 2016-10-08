@@ -17,7 +17,7 @@
 
 namespace application\core\components;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 
 abstract class PlugManager extends CApplicationComponent {
@@ -34,9 +34,9 @@ abstract class PlugManager extends CApplicationComponent {
      * @param string $moduleName 模块名
      */
     public function setInit( $moduleName ) {
-        $installedModule = IBOS::app()->getEnabledModule();
+        $installedModule = Ibos::app()->getEnabledModule();
         if ( isset( $installedModule[$moduleName] ) ) {
-            IBOS::app()->getModule( $moduleName );
+            Ibos::app()->getModule( $moduleName );
             $this->_init = true;
         }
     }

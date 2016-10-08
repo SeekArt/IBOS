@@ -33,7 +33,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\WebSite;
 use application\modules\dashboard\utils\Wx;
@@ -53,12 +53,12 @@ class WxsyncController extends WxController {
 		}
 		//获取已经同步的人员
 		$wxUsers = $this->getDeptUser();
-		$userCount = IBOS::app()->db->createCommand()
+		$userCount = Ibos::app()->db->createCommand()
 				->select( 'count(uid)' )
 				->from( '{{user}}' )
 				->where( " `status` = '0' " )
 				->queryScalar();
-		$total = IBOS::app()->db->createCommand()
+		$total = Ibos::app()->db->createCommand()
 				->select( 'count(uid)' )
 				->from( '{{user_binding}}' )
 				->where( " `app` = 'wxqy' " )
@@ -67,8 +67,8 @@ class WxsyncController extends WxController {
 			'bindCount' => $total,
 			'localCount' => $userCount - $total,
 			'wxCount' => max( count( $wxUsers ) - $total, 0 ),
-			'unit' => IBOS::app()->setting->get( 'setting/unit' ),
-			'aeskey' => IBOS::app()->setting->get( 'setting/aeskey' ),
+			'unit' => Ibos::app()->setting->get( 'setting/unit' ),
+			'aeskey' => Ibos::app()->setting->get( 'setting/aeskey' ),
 			'wxqy' => array(
 				'name' => $this->wxqyInfo['name'],
 				'logo' => $this->wxqyInfo['logo'],
@@ -122,19 +122,19 @@ class WxsyncController extends WxController {
 						) );
 			}
 		}
-		$deptCount = IBOS::app()->db->createCommand()
+		$deptCount = Ibos::app()->db->createCommand()
 				->select( 'count(deptid)' )
 				->from( '{{department}}' )
 				->where( $this->deptid_not_in_binding() )
 				->queryScalar();
-		$userCount = IBOS::app()->db->createCommand()
+		$userCount = Ibos::app()->db->createCommand()
 				->select( 'count(uid)' )
 				->from( '{{user}}' )
 				->where( $this->uid_not_in_binding() )
 				->andWhere( " `status` = 0 " )
 				->queryScalar();
 		$sendMail = Env::getRequest( 'status' );
-		$dept = IBOS::app()->db->createCommand()
+		$dept = Ibos::app()->db->createCommand()
 				->select( 'deptid,bindvalue' )
 				->from( '{{department_binding}}' )
 				->where( " `app` = 'wxqy' " )
@@ -159,7 +159,7 @@ class WxsyncController extends WxController {
 			'wxdeptinit' => 1,
 			'wxuserinit' => 1,
 		);
-		IBOS::app()->user->setState( 'wxqy', $wxqy );
+		Ibos::app()->user->setState( 'wxqy', $wxqy );
 		$ajaxReturn = array(
 			'isSuccess' => true,
 			'data' => array(
@@ -177,7 +177,7 @@ class WxsyncController extends WxController {
 	 * @param integer $level
 	 */
 	private function createConditionByDeptLevel( $level = 0 ) {
-		$sqlString = IBOS::app()->db->createCommand()
+		$sqlString = Ibos::app()->db->createCommand()
 				->select( 'deptid' )
 				->from( '{{department}}' )
 				->where( " `pid` IN ( <string> )" )
@@ -191,7 +191,7 @@ class WxsyncController extends WxController {
 
 	private function getPerDept( $level ) {
 		$deptidCondition = $this->createConditionByDeptLevel( $level );
-		$return = IBOS::app()->db->createCommand()
+		$return = Ibos::app()->db->createCommand()
 				->select( 'deptname,deptid,pid,sort' )
 				->from( '{{department}}' )
 				->where( " `deptid` IN( {$deptidCondition} )" )
@@ -203,7 +203,7 @@ class WxsyncController extends WxController {
 	}
 
 	private function handleDept() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		$id = $wxqy['id'];
 		$level = $wxqy['deptlevel'];
 		$i = 10;
@@ -274,8 +274,8 @@ class WxsyncController extends WxController {
 		}
 		$wxqy['deptrelated'] = $related;
 		//这个count只是用来告诉用户还有多少个，别无他用
-		IBOS::app()->user->setState( 'wxqy', $wxqy );
-		$connection = IBOS::app()->db;
+		Ibos::app()->user->setState( 'wxqy', $wxqy );
+		$connection = Ibos::app()->db;
 		$transaction = $connection->beginTransaction();
 		try {
 			foreach ( $bindArray as $oaDeptid => $wxDeptid ) {
@@ -302,12 +302,12 @@ class WxsyncController extends WxController {
 	}
 
 	private function handleUser() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		$id = $wxqy['id'];
 		$deptidRelated = $wxqy['deptrelated'];
 		$errorUidString = implode( ',', array_keys( $wxqy['error'] ) );
 		$errorUidCondition = !empty( $errorUidString ) ? " `uid` NOT IN ( {$errorUidString} )" : 1;
-		$uidArray = IBOS::app()->db->createCommand()
+		$uidArray = Ibos::app()->db->createCommand()
 				->select( 'uid' )
 				->from( '{{user}}' )
 				->where( $this->uid_not_in_binding() )
@@ -361,9 +361,9 @@ class WxsyncController extends WxController {
 					$wxqy['success'][$user['uid']] = $user['mobile'];
 				}
 			}
-			IBOS::app()->user->setState( 'wxqy', $wxqy );
+			Ibos::app()->user->setState( 'wxqy', $wxqy );
 			if ( !empty( $bindArray ) ) {
-				$connection = IBOS::app()->db;
+				$connection = Ibos::app()->db;
 				$transaction = $connection->beginTransaction();
 				try {
 					foreach ( $bindArray as $uid => $bindValue ) {
@@ -400,7 +400,7 @@ class WxsyncController extends WxController {
 	}
 
 	private function handleWxdept() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		$wxdept = $wxqy['wxdept'];
 		$wxdeptinit = $wxqy['wxdeptinit'];
 		if ( $wxdeptinit == 1 ) {
@@ -438,7 +438,7 @@ class WxsyncController extends WxController {
 				$temp2[$dept['id']] = $dept;
 			}
 			$wxqy['wxdept'] = $temp2;
-			IBOS::app()->user->setState( 'wxqy', $wxqy );
+			Ibos::app()->user->setState( 'wxqy', $wxqy );
 			return $this->ajaxReturn( array(
 						'isSuccess' => true,
 						'msg' => '正在同步微信部门到IBOS……',
@@ -447,7 +447,7 @@ class WxsyncController extends WxController {
 							),
 				) ) );
 		}
-		$deptList = IBOS::app()->db->createCommand()
+		$deptList = Ibos::app()->db->createCommand()
 				->select( 'deptid,pid' )
 				->from( '{{department}}' )
 				->queryAll();
@@ -468,7 +468,7 @@ class WxsyncController extends WxController {
 				$deptid = $deptidRelated[$dept['id']];
 				//如果绑定过了的部门记录里，pid的值不一样，则更新pid
 				if ( $pid != 0 && empty( $deptListRelated[$deptid] ) ) {
-					IBOS::app()->db->createCommand()
+					Ibos::app()->db->createCommand()
 							->update( '{{department}}', array(
 								'pid' => $pid,
 									), " `deptid` = '{$deptid}' " );
@@ -476,13 +476,13 @@ class WxsyncController extends WxController {
 				continue;
 			} else {
 				// 不存在绑定关系，则创建，先找pid，找不到就设置为0！
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->insert( '{{department}}', array(
 							'deptname' => $dept['name'],
 							'pid' => $pid,
 						) );
-				$deptid = IBOS::app()->db->getLastInsertID();
-				IBOS::app()->db->createCommand()
+				$deptid = Ibos::app()->db->getLastInsertID();
+				Ibos::app()->db->createCommand()
 						->insert( '{{department_binding}}', array(
 							'deptid' => $deptid,
 							'bindvalue' => $dept['id'],
@@ -493,7 +493,7 @@ class WxsyncController extends WxController {
 			}
 		}
 		$wxqy['deptrelated'] = $related;
-		IBOS::app()->user->setState( 'wxqy', $wxqy );
+		Ibos::app()->user->setState( 'wxqy', $wxqy );
 		return $this->ajaxReturn(
 						array(
 							'isSuccess' => true,
@@ -505,7 +505,7 @@ class WxsyncController extends WxController {
 	}
 
 	private function handleWxuser() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		//此时的部门列表已经被处理过了
 		//有权限的最顶级的部门已经被设置为parentid = 0
 		$wxuserinit = $wxqy['wxuserinit'];
@@ -519,7 +519,7 @@ class WxsyncController extends WxController {
 				}
 			}
 			$wxqy['topdept'] = $topDept;
-			IBOS::app()->user->setState( 'wxqy', $wxqy );
+			Ibos::app()->user->setState( 'wxqy', $wxqy );
 			return $this->ajaxReturn( array(
 						'isSuccess' => true,
 						'msg' => '正在同步微信用户到IBOS……',
@@ -531,7 +531,7 @@ class WxsyncController extends WxController {
 		}
 		$topDept = $wxqy['topdept'];
 		$deptidRelated = array_flip( $wxqy['deptrelated'] );
-		$userBinding = IBOS::app()->db->createCommand()
+		$userBinding = Ibos::app()->db->createCommand()
 				->select( 'uid,bindvalue' )
 				->from( '{{user_binding}}' )
 				->where( " `app` = 'wxqy' " )
@@ -541,17 +541,17 @@ class WxsyncController extends WxController {
 			$userRelated[$row['uid']] = $row['bindvalue'];
 		}
 		unset( $userBinding );
-		$ip = IBOS::app()->setting->get( 'clientip' );
+		$ip = Ibos::app()->setting->get( 'clientip' );
 		if ( !empty( $topDept ) ) {
 			$dept = array_shift( $topDept );
 			$wxqy['topdept'] = $topDept;
-			IBOS::app()->user->setState( 'wxqy', $wxqy );
+			Ibos::app()->user->setState( 'wxqy', $wxqy );
 			$userArray = $this->getFullDeptUser( $dept['id'], 1 );
 			if ( !empty( $userArray ) ) {
 				foreach ( $userArray as $user ) {
 					if ( !in_array( $user['userid'], array_values( $userRelated ) ) ) {
 						$salt = StringUtil::random( 6 );
-						IBOS::app()->db->createCommand()
+						Ibos::app()->db->createCommand()
 								->insert( '{{user}}', array(
 									'username' => $user['userid'],
 									'deptid' => $deptidRelated[$dept['id']],
@@ -566,22 +566,22 @@ class WxsyncController extends WxController {
 									'salt' => $salt,
 									'guid' => StringUtil::createGuid(),
 								) );
-						$uid = IBOS::app()->db->getLastInsertID();
-						IBOS::app()->db->createCommand()
+						$uid = Ibos::app()->db->getLastInsertID();
+						Ibos::app()->db->createCommand()
 								->insert( '{{user_count}}', array(
 									'uid' => $uid,
 								) );
-						IBOS::app()->db->createCommand()
+						Ibos::app()->db->createCommand()
 								->insert( '{{user_status}}', array(
 									'uid' => $uid,
 									'regip' => $ip,
 									'lastip' => $ip,
 								) );
-						IBOS::app()->db->createCommand()
+						Ibos::app()->db->createCommand()
 								->insert( '{{user_profile}}', array(
 									'uid' => $uid,
 								) );
-						IBOS::app()->db->createCommand()
+						Ibos::app()->db->createCommand()
 								->insert( '{{user_binding}}', array(
 									'uid' => $uid,
 									'bindvalue' => $user['userid'],
@@ -590,7 +590,7 @@ class WxsyncController extends WxController {
 						$diff = array_diff( $user['department'], array( $dept['id'] ) );
 						if ( !empty( $diff ) ) {
 							foreach ( $diff as $wxRelatedDeptid ) {
-								IBOS::app()->db->createCommand()
+								Ibos::app()->db->createCommand()
 										->insert( '{{department_related}}', array(
 											'uid' => $uid,
 											'deptid' => $deptidRelated[$wxRelatedDeptid],
@@ -620,11 +620,11 @@ class WxsyncController extends WxController {
 	}
 
 	private function handleSending() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		$success = count( $wxqy['success'] );
 		$error = count( $wxqy['error'] );
 		$downloadlink = $this->createUrl( 'wxsync/downerror' );
-		$bindCount = IBOS::app()->db->createCommand()
+		$bindCount = Ibos::app()->db->createCommand()
 				->select( 'count(*)' )
 				->from( '{{user_binding}}' )
 				->where( " `app` = 'wxqy' " )
@@ -648,7 +648,7 @@ class WxsyncController extends WxController {
 			$wxqy['successSending']+= 1;
 			$url = $this->createUrlByType( 'sendInvition' );
 			$res = WxApi::getInstance()->sendInvition( $url, $userid );
-			IBOS::app()->user->setState( 'wxqy', $wxqy );
+			Ibos::app()->user->setState( 'wxqy', $wxqy );
 			//这里不需要管到底发送成功与否，因为……这个邀请一个星期发一次的。。。失败了也没辙
 			$ajaxReturn = $this->ajaxReturn(
 					array(
@@ -671,7 +671,7 @@ class WxsyncController extends WxController {
 								'tpl' => 'half',
 							) ) );
 			} else {
-				IBOS::app()->user->setState( 'wxqy', NULL );
+				Ibos::app()->user->setState( 'wxqy', NULL );
 				$ajaxReturn = $this->ajaxReturn(
 						array(
 							'isSuccess' => true,
@@ -718,7 +718,7 @@ class WxsyncController extends WxController {
 	 * 下载导入错误文件
 	 */
 	public function actionDownerror() {
-		$wxqy = IBOS::app()->user->wxqy;
+		$wxqy = Ibos::app()->user->wxqy;
 		$error = $wxqy['error'];
 		$header = array( 'uid', '真实姓名', '错误原因' );
 		$body = array();
@@ -726,7 +726,7 @@ class WxsyncController extends WxController {
 			$body[] = array( $uid, iconv( 'utf-8', 'gbk', $row['realname'] ), iconv( 'utf-8', 'gbk', $row['msg'] ) );
 		}
 		Convert::exportCsv( '导入用户错误记录' . TIMESTAMP, $header, $body );
-		IBOS::app()->user->setState( 'wxqy', NULL );
+		Ibos::app()->user->setState( 'wxqy', NULL );
 	}
 
 }

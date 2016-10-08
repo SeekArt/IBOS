@@ -5,7 +5,7 @@ namespace application\modules\user\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\main\components\CommonAttach;
 use application\modules\message\model\UserData;
@@ -31,18 +31,18 @@ class InfoController extends Controller {
 			2 => 'o-pm-offline',
 		);
 		if ( empty( $user ) ) {
-			$this->error( IBOS::lang( 'Request tainting', 'error' ) );
+			$this->error( Ibos::lang( 'Request tainting', 'error' ) );
 		} else {
 			$weiboExists = Module::getIsEnabled( 'weibo' );
 			$data = array(
 				'user' => $user,
 				'status' => $styleMap[$onlineStatus],
-				'lang' => IBOS::getLangSources(),
+				'lang' => Ibos::getLangSources(),
 				'weibo' => $weiboExists,
 			);
 			if ( $weiboExists ) {
 				$data['userData'] = UserData::model()->getUserData( $user['uid'] );
-				$data['states'] = Follow::model()->getFollowState( IBOS::app()->user->uid, $user['uid'] );
+				$data['states'] = Follow::model()->getFollowState( Ibos::app()->user->uid, $user['uid'] );
 			}
 			$content = $this->renderPartial( 'userCard', $data, true );
 			echo $content;
@@ -62,14 +62,14 @@ class InfoController extends Controller {
 			if ( !isset( $params ) && empty( $params ) ) {
 				return;
 			}
-			$avatarArray = IBOS::engine()->io()->file()->createAvatar( $params['src'], $params );
-			$uid = IBOS::app()->user->uid;
+			$avatarArray = Ibos::engine()->io()->file()->createAvatar( $params['src'], $params );
+			$uid = Ibos::app()->user->uid;
 			UserProfile::model()->updateAll( $avatarArray, "uid = {$uid}" );
 			UserUtil::wrapUserInfo( $uid, true, true, true );
-			IBOS::app()->user->setState( 'avatar_big', $avatarArray['avatar_big'] );
-			IBOS::app()->user->setState( 'avatar_middle', $avatarArray['avatar_middle'] );
-			IBOS::app()->user->setState( 'avatar_small', $avatarArray['avatar_small'] );
-			return $this->success( IBOS::lang( 'Upload avatar succeed' ), $this->createUrl( 'home/personal', array( 'op' => 'avatar' ) ) );
+			Ibos::app()->user->setState( 'avatar_big', $avatarArray['avatar_big'] );
+			Ibos::app()->user->setState( 'avatar_middle', $avatarArray['avatar_middle'] );
+			Ibos::app()->user->setState( 'avatar_small', $avatarArray['avatar_small'] );
+			return $this->success( Ibos::lang( 'Upload avatar succeed' ), $this->createUrl( 'home/personal', array( 'op' => 'avatar' ) ) );
 		}
 	}
 
@@ -81,7 +81,7 @@ class InfoController extends Controller {
 		$upload = new CommonAttach( 'Filedata' );
 		$upload->upload();
 		if ( !$upload->getIsUpoad() ) {
-			return $this->ajaxReturn( array( 'msg' => IBOS::lang( 'Save failed', 'message' ), 'IsSuccess' => false ) );
+			return $this->ajaxReturn( array( 'msg' => Ibos::lang( 'Save failed', 'message' ), 'IsSuccess' => false ) );
 		} else {
 			$info = $upload->getUpload()->getAttach();
 			$file = File::getAttachUrl() . '/' . $info['type'] . '/' . $info['attachment'];
@@ -89,7 +89,7 @@ class InfoController extends Controller {
 			$tempSize = File::imageSize( $fileUrl );
 			//判断宽和高是否符合头像要求
 			if ( $tempSize[0] < 180 || $tempSize[1] < 180 ) {
-				$this->ajaxReturn( array( 'msg' => IBOS::lang( 'Avatar size error' ), 'IsSuccess' => false ), 'json' );
+				$this->ajaxReturn( array( 'msg' => Ibos::lang( 'Avatar size error' ), 'IsSuccess' => false ), 'json' );
 			}
 			return $this->ajaxReturn( array( 'data' => $file, 'file' => $fileUrl, 'IsSuccess' => true ) );
 		}

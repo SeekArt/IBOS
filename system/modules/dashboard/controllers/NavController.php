@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\Nav;
 use application\modules\dashboard\model\Page;
@@ -30,7 +30,7 @@ class NavController extends BaseController {
                 }
             }
             Cache::update( 'nav' );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $navs = Nav::model()->fetchAllByAllPid();
             $this->render( 'index', array( 'navs' => $navs ) );

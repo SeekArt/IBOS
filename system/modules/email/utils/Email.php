@@ -19,7 +19,7 @@ namespace application\modules\email\utils;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email as EmailModel;
 use application\modules\user\model\User;
@@ -35,9 +35,9 @@ class Email {
      */
     public static function getUserSize( $uid ) {
         $user = User::model()->fetchByUid( $uid );
-        $userSize = IBOS::app()->setting->get( 'setting/emaildefsize' );
+        $userSize = Ibos::app()->setting->get( 'setting/emaildefsize' );
         if ( !empty( $user['allposid'] ) ) {
-            $role = IBOS::app()->setting->get( 'setting/emailroleallocation' );
+            $role = Ibos::app()->setting->get( 'setting/emailroleallocation' );
             if ( !empty( $role ) ) {
                 $sizes = array();
                 foreach ( explode( ',', $user['allposid'] ) as $posId ) {
@@ -99,7 +99,7 @@ class Email {
             $queryArchiveId = 0;
             $folder = 0;
         } elseif ( $folder == 'all' ) {//全部邮件（包含归档）
-            $ids = IBOS::app()->setting->get( 'setting/emailtableids' );
+            $ids = Ibos::app()->setting->get( 'setting/emailtableids' );
             $queryArchiveId = $ids;
             $folder = 0;
         } elseif ( strpos( $folder, 'archive_' ) !== false ) { //某一个归档

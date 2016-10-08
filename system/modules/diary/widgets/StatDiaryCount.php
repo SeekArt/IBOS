@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\core\ChartFactory;
 use application\modules\statistics\utils\StatCommon;
 
@@ -40,7 +40,7 @@ class StatDiaryCount extends StatDiaryBase {
         $scoreCounter = $this->createComponent( 'application\modules\diary\components\ScoreTimeCounter', $properties );
         $stampCounter = $this->createComponent( 'application\modules\diary\components\StampCounter', $properties );
         $data = array(
-            'statAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'statistics' ),
+            'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'statistics' ),
             'time' => $factory->createChart( $timeCounter, 'application\modules\diary\components\LineChart' ),
             'score' => $factory->createChart( $scoreCounter, 'application\modules\diary\components\LineChart' ),
             'stamp' => $factory->createChart( $stampCounter, 'application\modules\diary\components\BarChart' )

@@ -18,7 +18,7 @@
 namespace application\modules\vote\utils;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\vote\model\Vote;
 use application\modules\vote\model\VoteItem;
 use application\modules\vote\model\VoteItemCount;
@@ -44,12 +44,12 @@ class VoteUtil {
      * 判断用户是否投过票
      * @param string $relatedModule 关联模块名称
      * @param integer $relatedId  关联模块id
-     * @param integer $uid  访问当前投票用户UID,如果不填，则默认IBOS::app()->user->uid
+     * @param integer $uid  访问当前投票用户UID,如果不填，则默认Ibos::app()->user->uid
      * @return boolean true为已投，false为没投过票
      */
     public static function checkVote( $relatedModule, $relatedId, $uid = 0 ) {
         $result = false;
-        $uid = empty( $uid ) ? IBOS::app()->user->uid : $uid;
+        $uid = empty( $uid ) ? Ibos::app()->user->uid : $uid;
         $condition = 'relatedmodule=:relatedmodule AND relatedid=:relatedid';
         $params = array(
             ':relatedmodule' => $relatedModule,

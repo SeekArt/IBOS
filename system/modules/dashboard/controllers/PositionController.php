@@ -20,7 +20,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
@@ -46,10 +46,10 @@ class PositionController extends OrganizationBaseController {
      */
     public function actionIndex() {
         $category = StringUtil::getTree( PositionUtil::loadPositionCategory(), $this->selectFormat );
-        $this->setPageTitle(IBOS::lang('Position manager'));
+        $this->setPageTitle(Ibos::lang('Position manager'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Organization'), 'url' => $this->createUrl('department/index')),
-            array('name' => IBOS::lang('Position manager'))
+            array('name' => Ibos::lang('Organization'), 'url' => $this->createUrl('department/index')),
+            array('name' => Ibos::lang('Position manager'))
         ));
         $this->render('index', array( 'category' => $category ), false, array('category'));
     }
@@ -124,7 +124,7 @@ class PositionController extends OrganizationBaseController {
             CacheUtil::update('position');
             //$newId为真才执行后面的判断
             $newId && Org::update();
-            $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('position/edit', array('op' => 'member', 'id' => $newId)));
+            $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('position/edit', array('op' => 'member', 'id' => $newId)));
         } else {
             // 分类ID （如果有）
             $catid = intval(Env::getRequest('catid'));
@@ -159,7 +159,7 @@ class PositionController extends OrganizationBaseController {
                     UserUtil::setPosition($id, $_POST['member']);
                 }
                 Org::update();
-                $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('position/index'));
+                $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('position/index'));
             } else {
                 $pos = Position::model()->fetchByPk($id);
                 $data['id'] = $id;
@@ -178,14 +178,14 @@ class PositionController extends OrganizationBaseController {
      * @return void
      */
     public function actionDel() {
-        if (IBOS::app()->request->getIsAjaxRequest()) {
+        if (Ibos::app()->request->getIsAjaxRequest()) {
             $id = Env::getRequest('id');
             $ids = explode(',', trim($id, ','));
             foreach ($ids as $positionId) {
                 // 删除岗位
                 Position::model()->deleteByPk($positionId);
                 // 删除岗位对应授权
-                IBOS::app()->authManager->removeAuthItem($positionId);
+                Ibos::app()->authManager->removeAuthItem($positionId);
                 // 删除岗位职责
                 PositionResponsibility::model()->deleteAll('`positionid` = :positionid', array(':positionid' => $positionId));
                 // 删除辅助岗位关联
@@ -216,7 +216,7 @@ class PositionController extends OrganizationBaseController {
             if (Env::submitCheck('postsubmit')) {
                 $member = Env::getRequest('member');
                 UserUtil::setPosition($id, $member);
-                $this->success(IBOS::lang('Save succeed', 'message'));
+                $this->success(Ibos::lang('Save succeed', 'message'));
             } else {
                 // 该岗位下人员
                 $uids = User::model()->fetchAllUidByPositionIds($id, false, true);
@@ -265,12 +265,12 @@ class PositionController extends OrganizationBaseController {
             Org::update();
             $this->ajaxReturn(array(
                 'isSuccess' => TRUE,
-                'msg' => IBOS::lang('Save succeed', 'message'),
+                'msg' => Ibos::lang('Save succeed', 'message'),
             ));
         } else {
             $this->ajaxReturn(array(
                 'isSuccess' => FALSE,
-                'msg' => IBOS::lang('Save failed', 'message'),
+                'msg' => Ibos::lang('Save failed', 'message'),
             ));
         }
     }

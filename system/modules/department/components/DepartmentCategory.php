@@ -17,7 +17,7 @@
 namespace application\modules\department\components;
 
 use application\core\components\Category;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\department\model\Department;
 
 class DepartmentCategory extends Category {
@@ -33,7 +33,7 @@ class DepartmentCategory extends Category {
 			$row['pId'] = $row['pid'];
 			$row['name'] = $row['deptname'];
 			$row['target'] = '_self';
-			$row['url'] = IBOS::app()->urlManager->createUrl( "dashboard/user/index" ) . '&deptid=' . $row['deptid'];
+			$row['url'] = Ibos::app()->urlManager->createUrl( "dashboard/user/index" ) . '&deptid=' . $row['deptid'];
 			$row['open'] = true;
 		}
 		// merge一下返回重新排序的数组以适应zTree,也顺便对返回值做一个强制转换

@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\model\Module;
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\message\model\Notify;
 
@@ -26,7 +26,7 @@ class NotifyController extends BaseController {
                 }
             }
             Cache::update( 'NotifyNode' );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $nodeList = Notify::model()->getNodeList();
             foreach ( $nodeList as &$node ) {

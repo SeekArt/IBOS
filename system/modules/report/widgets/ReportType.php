@@ -2,7 +2,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\report\model\ReportType as MreportType;
 
 class ReportType extends StatReportBase {
@@ -17,7 +17,7 @@ class ReportType extends StatReportBase {
         $data = array(
             'type' => $this->getType(),
             'uid' => implode( ',', $this->getUid() ),
-            'lang' => IBOS::getLangSource( 'report.default' ),
+            'lang' => Ibos::getLangSource( 'report.default' ),
             'reportTypes' => MreportType::model()->fetchSysType()
         );
         $this->render( self::VIEW, $data );

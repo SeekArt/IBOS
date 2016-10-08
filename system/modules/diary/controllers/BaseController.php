@@ -18,7 +18,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\model\Diary;
 use application\modules\diary\utils\Diary as DiaryUtil;
@@ -54,7 +54,7 @@ class BaseController extends Controller {
      */
     public function getUnreviews() {
         //获取所有直属下属id
-        $uidArr = User::model()->fetchSubUidByUid(IBOS::app()->user->uid);
+        $uidArr = User::model()->fetchSubUidByUid(Ibos::app()->user->uid);
         $count = 0;
         foreach ($uidArr as $subUid) {
             $diarys = Diary::model()->fetchAll('uid=:uid AND isreview=:isreview', array(':uid' => $subUid, ':isreview' => 0));
@@ -71,7 +71,7 @@ class BaseController extends Controller {
      * @return void
      */
     protected function getAjaxSidebar() {
-        if (IBOS::app()->request->isAjaxRequest) {
+        if (Ibos::app()->request->isAjaxRequest) {
             $sidebarView = $this->getSidebarData();
             $this->ajaxReturn($sidebarView);
         }
@@ -82,7 +82,7 @@ class BaseController extends Controller {
      * @return array
      */
     protected function getSidebarData() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $ym = date('Ym');
         if (array_key_exists('ym', $_GET)) {
             $ym = $_GET['ym'];
@@ -119,10 +119,10 @@ class BaseController extends Controller {
         $monthName = array("一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二");
         $monthStr = $monthName[$month - 1];
         $params = array(
-            'statModule' => IBOS::app()->setting->get('setting/statmodules'),
+            'statModule' => Ibos::app()->setting->get('setting/statmodules'),
             'calendar' => $this->getSidebarData(),
             'currentDateInfo' => array('year' => date('Y'), 'month' => $month, 'monthStr' => $monthStr),
-            'dashboardConfig' => IBOS::app()->setting->get('setting/diaryconfig')
+            'dashboardConfig' => Ibos::app()->setting->get('setting/diaryconfig')
         );
         $sidebarView = $this->renderPartial($sidebarAlias, $params, true);
         return $sidebarView;

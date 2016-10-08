@@ -4,7 +4,7 @@ use application\core\utils as util;
 use application\modules\dashboard\model\Stamp;
 
 ?>
-<link rel="stylesheet" href="<?php echo util\IBOS::app()->assetManager->getAssetsUrl( 'diary' ); ?>/css/dbdiary.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo util\Ibos::app()->assetManager->getAssetsUrl( 'diary' ); ?>/css/dbdiary.css?<?php echo VERHASH; ?>">
 <div class="ct">
 	<div class="clearfix">
 		<h1 class="mt"><?php echo $lang['Work diary']; ?></h1>
@@ -166,7 +166,7 @@ use application\modules\dashboard\model\Stamp;
 		</form>
 	</div>
 </div>
-<script src="<?php echo util\IBOS::app()->assetManager->getAssetsUrl( 'diary' ); ?>/js/diary_dashboard_index.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo util\Ibos::app()->assetManager->getAssetsUrl( 'diary' ); ?>/js/diary_dashboard_index.js?<?php echo VERHASH; ?>"></script>
 <script>
 	Ibos.app.setPageParam({
 		AUTO_REVIEW: "<?php echo $config['autoreview']; ?>"

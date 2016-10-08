@@ -18,7 +18,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\model\MessageContent;
 use application\modules\message\model\NotifyMessage;
 use application\modules\mobile\utils\Mobile;
@@ -32,9 +32,9 @@ class MsgController extends BaseController {
      */
     public function actionIndex() {
         //$this->ajaxReturn( this->getList($type,$catid,$search),Mobile::dataType());
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $list = NotifyMessage::model()->fetchAllNotifyListByUid( $uid, 'ctime DESC' );
-        $module = IBOS::app()->getEnabledModule();
+        $module = Ibos::app()->getEnabledModule();
         $datas = array();
         if ( !empty( $list ) ) {
             $i = 0;
@@ -58,7 +58,7 @@ class MsgController extends BaseController {
     }
 
     public function actionList() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $module = $_GET["module"];
         $list = NotifyMessage::model()->fetchAllDetailByTimeLine( $uid, $module );
         //$list = NotifyMessage::model()->fetchAllNotifyListByUid( $uid, 'ctime DESC' );
@@ -72,7 +72,7 @@ class MsgController extends BaseController {
     }
 
     public function actionShow() {
-        $message = MessageContent::model()->fetchAllMessageByListId( Env::getRequest( 'id' ), IBOS::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ), 10 );
+        $message = MessageContent::model()->fetchAllMessageByListId( Env::getRequest( 'id' ), Ibos::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ), 10 );
         $message['data'] = array_reverse( $message['data'] );
         foreach ( $message['data'] as $key => $value ) {
             $tmpuser = User::model()->fetchByUid( $value['fromuid'] );

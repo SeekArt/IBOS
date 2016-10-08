@@ -20,7 +20,7 @@ namespace application\modules\vote\components;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\vote\components\VotePlugManager;
 use application\modules\vote\model\Vote as VoteModel;
@@ -47,7 +47,7 @@ abstract class Vote {
                 foreach ( $voteitemidArray as $voteitemid ) {
                     $voteItemCount = new VoteItemCount();
                     $voteItemCount->itemid = $voteitemid;
-                    $voteItemCount->uid = IBOS::app()->user->uid;
+                    $voteItemCount->uid = Ibos::app()->user->uid;
                     $voteItemCount->save();
                 }
                 $voteData = VoteModel::model()->fetchVote( $relatedModule, $relatedId );
@@ -103,10 +103,10 @@ abstract class Vote {
      * @return string
      */
     public static function getView( $view ) {
-        $currentController = IBOS::app()->getController();
+        $currentController = Ibos::app()->getController();
         $basePath = 'application.modules.vote.views.default.';
 
-        $relatedModule = IBOS::getCurrentModuleName();
+        $relatedModule = Ibos::getCurrentModuleName();
         $relatedId = Env::getRequest( $relatedModule . 'id' );
 
         if ( $view == 'articleView' ) {
@@ -134,7 +134,7 @@ abstract class Vote {
                     'votePeopleNumber' => $votePeopleNumber,
                     'userHasVote' => $userHasVote,
                     'voteStatus' => $voteStatus,
-                    'attachUrl' => IBOS::app()->setting->get( 'setting/attachurl' )
+                    'attachUrl' => Ibos::app()->setting->get( 'setting/attachurl' )
                 );
                 if ( $voteStatus == 0 ) {
                     $partView = null;

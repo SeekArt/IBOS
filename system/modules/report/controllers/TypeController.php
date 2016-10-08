@@ -18,7 +18,7 @@ namespace application\modules\report\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\report\core\ReportType as ICReportType;
 use application\modules\report\model\Report;
 use application\modules\report\model\ReportRecord;
@@ -30,29 +30,29 @@ class TypeController extends BaseController {
      * 添加汇报类型
      */
     public function actionAdd() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $typeData = Env::getRequest( 'typeData' );
             $type = ICReportType::handleSaveData( $typeData );
             if ( empty( $type['sort'] ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Sort can not be empty' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Sort can not be empty' ) ) );
             }
             if ( empty( $type['typename'] ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Typename can not be empty' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Typename can not be empty' ) ) );
             }
             $typeid = ReportType::model()->add( $type, true );
             if ( $typeid ) {
                 $return = ReportType::model()->fetchByPk( $typeid );
                 if ( $return['intervaltype'] == 5 ) {
-                    $return['intervalTypeName'] = $return['intervals'] . IBOS::lang( 'Day' );
+                    $return['intervalTypeName'] = $return['intervals'] . Ibos::lang( 'Day' );
                 } else {
                     $return['intervalTypeName'] = ICReportType::handleShowInterval( $typeData['intervaltype'] );
                 }
-                $return['url'] = IBOS::app()->urlManager->createUrl( 'report/default/index', array( 'typeid' => $typeid ) );
+                $return['url'] = Ibos::app()->urlManager->createUrl( 'report/default/index', array( 'typeid' => $typeid ) );
                 $return['isSuccess'] = true;
-                $return['msg'] = IBOS::lang( 'Add succeed' );
+                $return['msg'] = Ibos::lang( 'Add succeed' );
             } else {
                 $return['isSuccess'] = false;
-                $return['msg'] = IBOS::lang( 'Add failed' );
+                $return['msg'] = Ibos::lang( 'Add failed' );
             }
             $this->ajaxReturn( $return );
         }
@@ -62,23 +62,23 @@ class TypeController extends BaseController {
      * 编辑汇报类型
      */
     public function actionEdit() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $typeid = intval( Env::getRequest( 'typeid' ) );
             $typeData = Env::getRequest( 'typeData' );
             $type = ICReportType::handleSaveData( $typeData );
             if ( empty( $typeid ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Parameters error', 'error' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Parameters error', 'error' ) ) );
             }
             ReportType::model()->modify( $typeid, $type );
             $return = ReportType::model()->fetchByPk( $typeid );
             if ( $return['intervaltype'] == 5 ) {
-                $return['intervalTypeName'] = $return['intervals'] . IBOS::lang( 'Day' );
+                $return['intervalTypeName'] = $return['intervals'] . Ibos::lang( 'Day' );
             } else {
                 $return['intervalTypeName'] = ICReportType::handleShowInterval( $typeData['intervaltype'] );
             }
-            $return['url'] = IBOS::app()->urlManager->createUrl( 'report/default/index', array( 'typeid' => $typeid ) );
+            $return['url'] = Ibos::app()->urlManager->createUrl( 'report/default/index', array( 'typeid' => $typeid ) );
             $return['isSuccess'] = true;
-            $return['msg'] = IBOS::lang( 'Update succeed', 'message' );
+            $return['msg'] = Ibos::lang( 'Update succeed', 'message' );
             $this->ajaxReturn( $return );
         }
     }
@@ -87,10 +87,10 @@ class TypeController extends BaseController {
      * 删除汇报类型
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $typeid = intval( Env::getRequest( 'typeid' ) );
             if ( empty( $typeid ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Parameters error', 'error' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Parameters error', 'error' ) ) );
             }
             $removeSuccess = ReportType::model()->remove( $typeid );
             if ( $removeSuccess ) {
@@ -104,10 +104,10 @@ class TypeController extends BaseController {
                     Report::model()->deleteAll( "repid IN('{$reports['repids']}')" );
                 }
                 $return['isSuccess'] = true;
-                $return['msg'] = IBOS::lang( 'Del succeed', 'message' );
+                $return['msg'] = Ibos::lang( 'Del succeed', 'message' );
             } else {
                 $return['isSuccess'] = false;
-                $return['msg'] = IBOS::lang( 'Del failed', 'message' );
+                $return['msg'] = Ibos::lang( 'Del failed', 'message' );
             }
             $this->ajaxReturn( $return );
         }

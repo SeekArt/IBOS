@@ -4,7 +4,7 @@ namespace application\modules\diary\widgets;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\model\Diary;
 use application\modules\diary\model\DiaryStats;
@@ -19,10 +19,10 @@ class DiaryComment extends ICComment {
         $var['loadmore'] = Env::getRequest( 'loadmore' );
         $var['inAjax'] = intval( Env::getRequest( 'inajax' ) );
         $var['module'] = $this->getModule();
-        $var['assetUrl'] = IBOS::app()->assetManager->getAssetsUrl( 'message' );
-        $var['getUrl'] = IBOS::app()->urlManager->createUrl( 'diary/comment/getcommentlist' );
-        $var['addUrl'] = IBOS::app()->urlManager->createUrl( 'diary/comment/addcomment' );
-        $var['delUrl'] = IBOS::app()->urlManager->createUrl( 'diary/comment/delcomment' );
+        $var['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl( 'message' );
+        $var['getUrl'] = Ibos::app()->urlManager->createUrl( 'diary/comment/getcommentlist' );
+        $var['addUrl'] = Ibos::app()->urlManager->createUrl( 'diary/comment/addcomment' );
+        $var['delUrl'] = Ibos::app()->urlManager->createUrl( 'diary/comment/delcomment' );
         $this->setParseView( 'comment', self::COMMENT_LIST_VIEW );
         $this->setAttributes( $var );
     }
@@ -43,8 +43,8 @@ class DiaryComment extends ICComment {
         // 总条数
         $attr['count'] = Comment::model()->countByAttributes( $map );
         $list = $this->getCommentList();
-        $isAdministrator = IBOS::app()->user->isadministrator;
-        $uid = IBOS::app()->user->uid;
+        $isAdministrator = Ibos::app()->user->isadministrator;
+        $uid = Ibos::app()->user->uid;
         foreach ( $list as &$cm ) {
             // 删除权限
             $cm['isCommentDel'] = $isAdministrator || $uid === $cm['uid'];
@@ -59,7 +59,7 @@ class DiaryComment extends ICComment {
                     ) );
         }
         $attr['comments'] = $list;
-        $attr['lang'] = IBOS::getLangSources( array( 'message.default' ) );
+        $attr['lang'] = Ibos::getLangSources( array( 'message.default' ) );
         $attr['url'] = isset( $attr['url'] ) ? $attr['url'] : '';
         $attr['detail'] = isset( $attr['detail'] ) ? $attr['detail'] : '';
         $content = $this->render( $this->getParseView( 'comment' ), $attr, true );

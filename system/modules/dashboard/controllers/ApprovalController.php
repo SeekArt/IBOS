@@ -17,7 +17,7 @@
 
 namespace application\modules\dashboard\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Env;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
@@ -57,7 +57,7 @@ class ApprovalController extends BaseController {
                 $newData['uids'] = $data["level{$level}"];
                 ApprovalStep::model()->add( $newData );
             }
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'approval/index' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'approval/index' ) );
         } else {
             $this->render( 'add' );
         }
@@ -83,7 +83,7 @@ class ApprovalController extends BaseController {
                 $newData['uids'] = $data["level{$level}"];
                 ApprovalStep::model()->add( $newData );
             }
-            $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'approval/index' ) );
+            $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'approval/index' ) );
         } else {
             $id = Env::getRequest( 'id' );
             $approval = Approval::model()->fetchByPk( $id );
@@ -109,15 +109,15 @@ class ApprovalController extends BaseController {
      * 删除
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $id = Env::getRequest( 'id' );
             $delRet = Approval::model()->deleteApproval( $id );
             if ( $delRet ) {
                 $ret['isSuccess'] = true;
-                $ret['msg'] = IBOS::lang( 'Del succeed', 'message' );
+                $ret['msg'] = Ibos::lang( 'Del succeed', 'message' );
             } else {
                 $ret['isSuccess'] = false;
-                $ret['msg'] = IBOS::lang( 'Del failed', 'message' );
+                $ret['msg'] = Ibos::lang( 'Del failed', 'message' );
             }
             $this->ajaxReturn( $ret );
         }

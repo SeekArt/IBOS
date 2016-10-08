@@ -17,7 +17,7 @@
 namespace application\modules\recruit\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
@@ -42,7 +42,7 @@ class ResumeBgchecks extends Model {
     public function fetchAllByPage( $condition = '', $pageSize = 0 ) {
         $count = empty( $condition ) ? $this->count() : $this->countBySearchCondition( $condition );
         $pagination = new CPagination( $count );
-        $pageSize = empty( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+        $pageSize = empty( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
         $pagination->setPageSize( $pageSize );
 
         $offset = $pagination->getOffset();

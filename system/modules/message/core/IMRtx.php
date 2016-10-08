@@ -19,7 +19,7 @@ namespace application\modules\message\core;
 
 use application\core\utils\StringUtil;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\message\utils\RtxDept as RtxDeptUtil;
@@ -112,7 +112,7 @@ class IMRtx extends IM {
         //读取配置信息
         $config = $this->getConfig();
         //获取部门信息,不去读取缓存
-        $depts = IBOS::app()->db->createCommand()
+        $depts = Ibos::app()->db->createCommand()
                 ->select( array( 'deptid', 'deptname', 'pid' ) )
                 ->from( '{{department}}' )
                 ->queryAll();
@@ -134,7 +134,7 @@ class IMRtx extends IM {
         }
         //=====添加用户到组织架构=====
         //获取用户
-        $users = IBOS::app()->db->createCommand()
+        $users = Ibos::app()->db->createCommand()
                 ->select( array( 'uid', 'deptid', 'username' ) )
                 ->from( '{{user}} u' )
                 ->where( '`status` = 0' )
@@ -245,7 +245,7 @@ EOT;
             $names = Convert::iIconv( implode( ';', $userNames ), CHARSET, 'gbk' );
             $message = $this->formatContent( strip_tags( $this->getMessage(), '<a>' ) );
             try {
-                $res = $this->obj->SendIM( Convert::iIconv( IBOS::app()->user->username, CHARSET, 'gbk' ), '', $names, $message, $this->GUID() );
+                $res = $this->obj->SendIM( Convert::iIconv( Ibos::app()->user->username, CHARSET, 'gbk' ), '', $names, $message, $this->GUID() );
                 return $res;
             } catch (Exception $exc) {
 
@@ -263,7 +263,7 @@ EOT;
         if ( !empty( $users ) ) {
             $userNames = Convert::getSubByKey( $users, 'username' );
             $names = Convert::iIconv( implode( ';', $userNames ), CHARSET, 'gbk' );
-            $title = Convert::iIconv( IBOS::lang( 'System notify', 'default' ), CHARSET, 'gbk' );
+            $title = Convert::iIconv( Ibos::lang( 'System notify', 'default' ), CHARSET, 'gbk' );
             $message = $this->formatContent( strip_tags( $this->getMessage(), '<a>' ) );
             try {
                 return $this->obj->SendNotify( $names, $title, 0, $message );
@@ -301,7 +301,7 @@ EOT;
             $url = parse_url( $this->getUrl() );
             $str = '';
             if ( !isset( $url['scheme'] ) && !isset( $url['host'] ) ) {
-                $str .= IBOS::app()->setting->get( 'siteurl' );
+                $str .= Ibos::app()->setting->get( 'siteurl' );
             }
             //这里获取到的url地址有错误
             //去掉问号（?）之前的字符
@@ -317,7 +317,7 @@ EOT;
      */
     private function makeOrgstructXml() {
         $deptArr = DepartmentUtil::loadDepartment();
-        $unit = IBOS::app()->setting->get( 'setting/unit' );
+        $unit = Ibos::app()->setting->get( 'setting/unit' );
         $str = "<?xml version=\"1.0\" encoding=\"gb2312\" ?>";
         $str .= '<enterprise name="' . $unit['fullname'] . '" postcode="' .
                 $unit['zipcode'] . '" address="' . $unit['address'] . '" phone="' .
@@ -371,7 +371,7 @@ EOT;
      */
     private function getUserlistByDept( $deptId ) {
         $str = '';
-        $querys = IBOS::app()->db->createCommand()
+        $querys = Ibos::app()->db->createCommand()
                 ->select( 'uid' )
                 ->from( '{{user}} u' )
                 ->where( '`status` = 0 AND deptid = ' . intval( $deptId ) )
@@ -391,7 +391,7 @@ EOT;
     private function addUserToRtx() {
         //添加用户到组织架构中
         //获取用户
-        $querys = IBOS::app()->db->createCommand()
+        $querys = Ibos::app()->db->createCommand()
                 ->select( 'uid' )
                 ->from( '{{user}} u' )
                 ->where( '`status` = 0' )
@@ -422,7 +422,7 @@ EOT;
 
                 //添加到部门（没有设置部门信息RTX会默认放到：顶级部门架构）
                 //在部门架构下的用户无法在rtx客户端中显示，必须是属于某一个部门
-                $queryDeptName = IBOS::app()->db->createCommand()
+                $queryDeptName = Ibos::app()->db->createCommand()
                         ->select( 'deptname' )
                         ->from( '{{department}}' )
                         ->where( '`deptid` =' . $user['deptid'] )

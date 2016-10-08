@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <div class="ct">
 	<div class="clearfix">
@@ -71,8 +71,8 @@ use application\core\utils\IBOS;
 												<input type="text" data-type='url' name="navs[<?php echo $key; ?>][url]" class="input-small span9 <?php if($nav['type'] == 0): ?>mark<?php endif; ?>" value="<?php if($nav['type'] == 0): ?><?php echo $nav['url']; ?><?php endif; ?>">
 											</div>
 											<div class="single-page <?php if($nav['type'] == 0): ?>hidden<?php endif; ?>">
-												<a class="dib" href="<?php echo IBOS::app()->urlManager->createUrl("main/page/edit", array( 'pageid' => $nav['pageid'] )); ?>" target="_blank" data-pageid="<?php echo $nav['pageid']; ?>">修改内容</a>
-												<a class="dib mls" href="<?php echo IBOS::app()->urlManager->createUrl('main/page/index', array( 'pageid' => $nav['pageid'], 'name' => $nav['name'] )); ?>" target="_blank">预览</a>
+												<a class="dib" href="<?php echo Ibos::app()->urlManager->createUrl("main/page/edit", array( 'pageid' => $nav['pageid'] )); ?>" target="_blank" data-pageid="<?php echo $nav['pageid']; ?>">修改内容</a>
+												<a class="dib mls" href="<?php echo Ibos::app()->urlManager->createUrl('main/page/index', array( 'pageid' => $nav['pageid'], 'name' => $nav['name'] )); ?>" target="_blank">预览</a>
 												<input type="hidden" data-type="pageid" value="<?php echo $nav['pageid']; ?>">
 											</div>
 										<?php endif; ?>
@@ -131,8 +131,8 @@ use application\core\utils\IBOS;
 								 							<input type="text" data-type='url' class="input-small span9 <?php if($subVal['type'] == 0): ?>mark<?php endif; ?>" value="<?php if($subVal['type'] == 0): ?><?php echo $subVal['url']; ?><?php endif; ?>">	
 								 						</div>
 								 						<div class="single-page <?php if($subVal['type'] == 0): ?>hidden<?php endif; ?>">
-															<a class="dib" href="<?php echo IBOS::app()->urlManager->createUrl("main/page/edit", array( 'pageid' => $subVal['pageid'] )); ?>" target="_blank" data-pageid="<?php echo $subVal['pageid']; ?>">修改内容</a>
-															<a class="dib mls" href="<?php echo IBOS::app()->urlManager->createUrl('main/page/index', array( 'pageid' => $subVal['pageid'], 'name' => $subVal['name'] )); ?>" target="_blank">预览</a>
+															<a class="dib" href="<?php echo Ibos::app()->urlManager->createUrl("main/page/edit", array( 'pageid' => $subVal['pageid'] )); ?>" target="_blank" data-pageid="<?php echo $subVal['pageid']; ?>">修改内容</a>
+															<a class="dib mls" href="<?php echo Ibos::app()->urlManager->createUrl('main/page/index', array( 'pageid' => $subVal['pageid'], 'name' => $subVal['name'] )); ?>" target="_blank">预览</a>
 															<input type="hidden" data-type="pageid" value="<?php echo $subVal['pageid']; ?>">
 														</div>
 								 					<?php endif; ?>				

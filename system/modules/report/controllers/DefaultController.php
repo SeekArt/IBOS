@@ -18,7 +18,7 @@ namespace application\modules\report\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
@@ -47,10 +47,10 @@ class DefaultController extends BaseController {
      */
     public function getSidebar() {
         $sidebarAlias = 'application.modules.report.views.sidebar';
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $params = array(
-            'statModule' => IBOS::app()->setting->get('setting/statmodules'),
-            'lang' => IBOS::getLangSource('report.default'),
+            'statModule' => Ibos::app()->setting->get('setting/statmodules'),
+            'lang' => Ibos::getLangSource('report.default'),
             'reportTypes' => ReportType::model()->fetchAllTypeByUid($uid)
         );
         $sidebarView = $this->renderPartial($sidebarAlias, $params);
@@ -62,7 +62,7 @@ class DefaultController extends BaseController {
      */
     public function actionIndex() {
         $typeid = Env::getRequest('typeid');
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $op = Env::getRequest('op');
         if (!in_array($op,
                         array('default', 'showDetail', 'getReaderList', 'getCommentList'))) {
@@ -71,7 +71,7 @@ class DefaultController extends BaseController {
         if ($op == 'default') {
             //是否搜索
             //post类型的请求
-            if (Env::getRequest('param') == 'search' && IBOS::app()->request->isPostRequest) {
+            if (Env::getRequest('param') == 'search' && Ibos::app()->request->isPostRequest) {
                 $this->search();
             }
             if (empty($typeid)) {
@@ -90,12 +90,12 @@ class DefaultController extends BaseController {
                 'commentCount' => Report::model()->count("uid='{$uid}' AND isreview=1"),
                 'user' => User::model()->fetchByUid($uid),
             );
-            $this->setPageTitle(IBOS::lang('My report'));
+            $this->setPageTitle(Ibos::lang('My report'));
             $this->setPageState('breadCrumbs',
                     array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Work report'), 'url' => $this->createUrl('default/index')),
-                array('name' => IBOS::lang('My report list'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('default/index')),
+                array('name' => Ibos::lang('My report list'))
             ));
             $this->render('index', $params);
         } else {
@@ -116,7 +116,7 @@ class DefaultController extends BaseController {
             if (!$typeid) {
                 $typeid = 1;
             }
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             // 获取直属uid
             $upUid = UserUtil::getSupUid($uid);
             // 总结和计划日期
@@ -145,12 +145,12 @@ class DefaultController extends BaseController {
                 'orgPlanList' => $orgPlanList,
                 'isInstallCalendar' => Module::getIsEnabled('calendar')
             );
-            $this->setPageTitle(IBOS::lang('Add report'));
+            $this->setPageTitle(Ibos::lang('Add report'));
             $this->setPageState('breadCrumbs',
                     array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Work report'), 'url' => $this->createUrl('default/index')),
-                array('name' => IBOS::lang('Add report'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('default/index')),
+                array('name' => Ibos::lang('Add report'))
             ));
             $this->render('add', $params);
         } else {
@@ -164,7 +164,7 @@ class DefaultController extends BaseController {
     private function save() {
         if (Env::submitCheck('formhash')) {
             $postData = $_POST;
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $postData['uid'] = $uid;
             $postData['subject'] = CHtml::encode($_POST['subject']);
             $toidArr = StringUtil::getId($postData['toid']);
@@ -224,14 +224,14 @@ class DefaultController extends BaseController {
                         $userid = $userid . ',' . $supUid;
                     }
                     $data = array(
-                        'title' => IBOS::lang('Feed title', '',
+                        'title' => Ibos::lang('Feed title', '',
                                 array(
                             '{subject}' => $postData['subject'],
-                            '{url}' => IBOS::app()->urlManager->createUrl('report/review/show',
+                            '{url}' => Ibos::app()->urlManager->createUrl('report/review/show',
                                     array('repid' => $repid))
                         )),
                         'body' => StringUtil::cutStr($_POST['content'], 140),
-                        'actdesc' => IBOS::lang('Post report'),
+                        'actdesc' => Ibos::lang('Post report'),
                         'userid' => trim($userid, ','),
                         'deptid' => '',
                         'positionid' => '',
@@ -245,7 +245,7 @@ class DefaultController extends BaseController {
                     $config = array(
                         '{sender}' => User::model()->fetchRealnameByUid($uid),
                         '{subject}' => $reportData['subject'],
-                        '{url}' => IBOS::app()->urlManager->createUrl('report/review/show',
+                        '{url}' => Ibos::app()->urlManager->createUrl('report/review/show',
                                 array('repid' => $repid))
                     );
                     Notify::model()->sendNotify($toidArr, 'report_message',
@@ -255,24 +255,24 @@ class DefaultController extends BaseController {
                  * 日志记录
                  */
                 $log = array(
-                    'user' => IBOS::app()->user->username,
-                    'ip' => IBOS::app()->setting->get('clientip'),
+                    'user' => Ibos::app()->user->username,
+                    'ip' => Ibos::app()->setting->get('clientip'),
                     'isSuccess' => 1
                 );
                 Log::write($log, 'action', 'module.report.default.save');
-                $this->success(IBOS::lang('Save succeed', 'message'),
+                $this->success(Ibos::lang('Save succeed', 'message'),
                         $this->createUrl('default/index'));
             } else {
                 /**
                  * 日志记录
                  */
                 $log = array(
-                    'user' => IBOS::app()->user->username,
-                    'ip' => IBOS::app()->setting->get('clientip'),
+                    'user' => Ibos::app()->user->username,
+                    'ip' => Ibos::app()->setting->get('clientip'),
                     'isSuccess' => 0
                 );
                 Log::write($log, 'action', 'module.report.default.save');
-                $this->error(IBOS::lang('Save faild', 'message'),
+                $this->error(Ibos::lang('Save faild', 'message'),
                         $this->createUrl('default/index'));
             }
         }
@@ -284,24 +284,24 @@ class DefaultController extends BaseController {
     public function actionEdit() {
         $op = Env::getRequest('op');
         $repid = intval(Env::getRequest('repid'));
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if (empty($op) || !in_array($op, array('getEditData', 'update'))) {
             $op = 'getEditData';
         }
         if ($op == 'getEditData') {
             if (empty($repid)) {
-                $this->error(IBOS::lang('Parameters error', 'error'),
+                $this->error(Ibos::lang('Parameters error', 'error'),
                         $this->createUrl('default/index'));
             }
             $report = Report::model()->fetchByPk($repid);
             $reportType = ReportType::model()->fetchByPk($report['typeid']);
             if (empty($report)) {
-                $this->error(IBOS::lang('No data found', 'error'),
+                $this->error(Ibos::lang('No data found', 'error'),
                         $this->createUrl('default/index'));
             }
             // 检查该总结是否属于该用户
             if ($report['uid'] != $uid) {
-                $this->error(IBOS::lang('Request tainting', 'error'),
+                $this->error(Ibos::lang('Request tainting', 'error'),
                         $this->createUrl('default/index'));
             }
             // 获取直属uid
@@ -335,12 +335,12 @@ class DefaultController extends BaseController {
             } else {
                 $params['nextPlanDate'] = array('planBegindate' => 0, 'planEnddate' => 0);
             }
-            $this->setPageTitle(IBOS::lang('Edit report'));
+            $this->setPageTitle(Ibos::lang('Edit report'));
             $this->setPageState('breadCrumbs',
                     array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Work report'), 'url' => $this->createUrl('default/index')),
-                array('name' => IBOS::lang('Edit report'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('default/index')),
+                array('name' => Ibos::lang('Edit report'))
             ));
             $this->render('edit', $params);
         } else {
@@ -355,7 +355,7 @@ class DefaultController extends BaseController {
         if (Env::submitCheck('formhash')) {
             $repid = $_POST['repid'];
             $typeid = $_POST['typeid'];
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             // 获取要更新的数据
             $editRepData = array(
                 'uid' => $uid,
@@ -415,7 +415,7 @@ class DefaultController extends BaseController {
             $attachmentid = trim($_POST['attachmentid'], ',');
             Attach::updateAttach($attachmentid);
 
-            $this->success(IBOS::lang('Update succeed', 'message'),
+            $this->success(Ibos::lang('Update succeed', 'message'),
                     $this->createUrl('default/index'));
         }
     }
@@ -424,11 +424,11 @@ class DefaultController extends BaseController {
      * 删除总结与计划
      */
     public function actionDel() {
-        if (IBOS::app()->request->isAjaxRequest) {
+        if (Ibos::app()->request->isAjaxRequest) {
             $repids = Env::getRequest('repids');
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             if (empty($repids)) {
-                $this->error(IBOS::lang('Parameters error', 'error'),
+                $this->error(Ibos::lang('Parameters error', 'error'),
                         $this->createUrl('default/index'));
             }
             $pk = '';
@@ -442,7 +442,7 @@ class DefaultController extends BaseController {
             foreach ($reports as $report) {
                 // 权限判断
                 if ($report['uid'] != $uid) {
-                    $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('You do not have permission to delete the report')));
+                    $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('You do not have permission to delete the report')));
                 }
             }
             //删除附件
@@ -461,10 +461,10 @@ class DefaultController extends BaseController {
                 ReportRecord::model()->deleteAll("repid IN('{$repids}')");
                 // 删除评分
                 ReportStats::model()->deleteAll("repid IN ({$repids})");
-                $this->ajaxReturn(array('isSuccess' => true, 'msg' => IBOS::lang('Del succeed',
+                $this->ajaxReturn(array('isSuccess' => true, 'msg' => Ibos::lang('Del succeed',
                             'message')));
             } else {
-                $this->ajaxReturn(array('isSuccess' => false, 'msg' => IBOS::lang('Del failed',
+                $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('Del failed',
                             'message')));
             }
         }
@@ -475,14 +475,14 @@ class DefaultController extends BaseController {
      */
     public function actionShow() {
         $repid = Env::getRequest('repid');
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if (empty($repid)) {
-            $this->error(IBOS::lang('Parameters error', 'error'),
+            $this->error(Ibos::lang('Parameters error', 'error'),
                     $this->createUrl('default/index'));
         }
         $report = Report::model()->fetchByPk($repid);
         if (empty($report)) {
-            $this->error(IBOS::lang('File does not exists', 'error'),
+            $this->error(Ibos::lang('File does not exists', 'error'),
                     $this->createUrl('default/index'));
         }
         // 检查该总结是否属于该用户
@@ -491,7 +491,7 @@ class DefaultController extends BaseController {
                 $this->redirect($this->createUrl('review/show',
                                 array('repid' => $repid)));
             } else {
-                $this->error(IBOS::lang('Request tainting', 'error'),
+                $this->error(Ibos::lang('Request tainting', 'error'),
                         $this->createUrl('default/index'));
             }
         }
@@ -535,12 +535,12 @@ class DefaultController extends BaseController {
             $params['nextSubject'] = ICReport::handleShowSubject($reportType,
                             $firstPlan['begindate'], $firstPlan['enddate'], 1);
         }
-        $this->setPageTitle(IBOS::lang('Show report'));
+        $this->setPageTitle(Ibos::lang('Show report'));
         $this->setPageState('breadCrumbs',
                 array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Work report'), 'url' => $this->createUrl('default/index')),
-            array('name' => IBOS::lang('Show report'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('default/index')),
+            array('name' => Ibos::lang('Show report'))
         ));
         $this->render('show', $params);
     }

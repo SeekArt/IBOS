@@ -16,7 +16,7 @@
 namespace application\core\model;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Module extends Model {
 
@@ -87,7 +87,7 @@ class Module extends Model {
     }
 
 	public function findAllEnabledModuleArray() {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->select()
 						->from( $this->tableName() )
 						->where( " `disabled` = '0' " )

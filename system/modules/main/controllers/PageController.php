@@ -12,7 +12,7 @@ namespace application\modules\main\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Page;
 use application\modules\main\utils\SinglePage;
 
@@ -28,18 +28,18 @@ Class PageController extends Controller {
 	public function actionIndex() {
 		$pageid = intval( Env::getRequest( 'pageid' ) );
 		if ( empty( $pageid ) ) {
-			$this->error( IBOS::lang( 'Parameters error' ) );
+			$this->error( Ibos::lang( 'Parameters error' ) );
 		}
 		$name = Env::getRequest( 'name' );
-		$pageTitle = empty( $name ) ? IBOS::lang( 'Single page' ) : $name;
+		$pageTitle = empty( $name ) ? Ibos::lang( 'Single page' ) : $name;
 		$page = Page::model()->fetchByPk( $pageid );
 		if ( empty( $page ) ) {
-			$this->error( IBOS::lang( 'Page not fount' ) );
+			$this->error( Ibos::lang( 'Page not fount' ) );
 		}
 		$this->checkTplIsExist( $page['template'] );
 		$params = array(
 			'page' => $page,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'main' ),
 			'pageTitle' => $pageTitle,
 			'breadCrumbs' => $this->getBreadCrumbs( $pageTitle )
 		);
@@ -49,7 +49,7 @@ Class PageController extends Controller {
 		$replace = $jsLoaded . $page['content'];
 		$ret = SinglePage::parse( $html, $replace );
 		if ( !$ret ) {
-			$this->error( IBOS::lang( 'Template illegal' ) );
+			$this->error( Ibos::lang( 'Template illegal' ) );
 		}
 		echo $ret;
 	}
@@ -60,7 +60,7 @@ Class PageController extends Controller {
 	public function actionEdit() {
 		$pageid = intval( Env::getRequest( 'pageid' ) );
 		if ( empty( $pageid ) ) {
-			$this->error( IBOS::lang( 'Parameters error' ) );
+			$this->error( Ibos::lang( 'Parameters error' ) );
 		}
 		if ( Env::getRequest( 'op' ) == 'switchTpl' ) {
 			// 切换模板
@@ -72,14 +72,14 @@ Class PageController extends Controller {
 			$page = Page::model()->fetchByPk( $pageid );
 		}
 		if ( empty( $page ) ) {
-			$this->error( IBOS::lang( 'Page not fount' ) );
+			$this->error( Ibos::lang( 'Page not fount' ) );
 		}
 		$this->checkTplIsExist( $page['template'] );
 		$name = Env::getRequest( 'name' );
-		$pageTitle = empty( $name ) ? IBOS::lang( 'Single page' ) : $name;
+		$pageTitle = empty( $name ) ? Ibos::lang( 'Single page' ) : $name;
 		$params = array(
 			'page' => $page,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'main' ),
 			'pageTitle' => $pageTitle,
 			'breadCrumbs' => $this->getBreadCrumbs($pageTitle)
 		);
@@ -90,7 +90,7 @@ Class PageController extends Controller {
 		$replace = $jsLoaded . $editor;
 		$ret = SinglePage::parse( $html, $replace );
 		if ( !$ret ) {
-			$this->error( IBOS::lang( 'Template illegal' ) );
+			$this->error( Ibos::lang( 'Template illegal' ) );
 		}
 		echo $ret;
 	}
@@ -119,10 +119,10 @@ Class PageController extends Controller {
 		$name = Env::getRequest( 'name' );
 		$tpl = Env::getRequest( 'tpl' );
 		$content = Env::getRequest( 'content' );
-		$pageTitle = empty( $name ) ? IBOS::lang( 'Single page' ) : $name;
+		$pageTitle = empty( $name ) ? Ibos::lang( 'Single page' ) : $name;
 		$params = array(
 			'content' => $content,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'main' ),
 			'pageTitle' => $pageTitle,
 			'breadCrumbs' => $this->getBreadCrumbs($pageTitle)
 		);
@@ -133,7 +133,7 @@ Class PageController extends Controller {
 		$replace = $jsLoaded . $content;
 		$ret = SinglePage::parse( $html, $replace );
 		if ( !$ret ) {
-			$this->error( IBOS::lang( 'Template illegal' ) );
+			$this->error( Ibos::lang( 'Template illegal' ) );
 		}
 		echo $ret;
 	}
@@ -148,7 +148,7 @@ Class PageController extends Controller {
 		$tpls = SinglePage::getAllTpls();
 		$params = array(
 			'page' => $page,
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'main' ),
 			'tpls' => $tpls
 		);
 		$alias = 'application.modules.main.views.page.editor';
@@ -163,7 +163,7 @@ Class PageController extends Controller {
 	private function getLoadedHtlm() {
 		$alias = 'application.modules.main.views.page.loaded';
 		$params = array(
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'main' )
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'main' )
 		);
 		$viewHtml = $this->renderPartial( $alias, $params, true );
 		return $viewHtml;
@@ -189,7 +189,7 @@ Class PageController extends Controller {
 		$file = File::fileName( $this->_tplPath . $tpl . $this->_suffix );
 		$ret = File::fileExists( $file );
 		if ( !$ret ) {
-			$this->error( IBOS::lang( 'Template not fount', '', array( '{file}' => $tpl . $this->_suffix ) ) );
+			$this->error( Ibos::lang( 'Template not fount', '', array( '{file}' => $tpl . $this->_suffix ) ) );
 		}
 	}
 

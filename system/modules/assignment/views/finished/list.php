@@ -1,7 +1,7 @@
 <?php 
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\utils\Main;
 ?>
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/daterangepicker/daterangepicker-ibos.css?<?php echo VERHASH; ?>">
@@ -47,7 +47,7 @@ use application\modules\main\utils\Main;
 
 									<tr data-id="<?php echo $assignment['assignmentid']; ?>">
 										<td width="22">
-											<?php if ( $assignment['designeeuid'] == IBOS::app()->user->uid || $assignment['chargeuid'] == IBOS::app()->user->uid ): ?>
+											<?php if ( $assignment['designeeuid'] == Ibos::app()->user->uid || $assignment['chargeuid'] == Ibos::app()->user->uid ): ?>
 												<a href="javascript:;" class="am-checkbox am-checkbox-ret" data-id="<?php echo $assignment['assignmentid']; ?>" title="<?php echo $lang['Unfinish'] ?>"></a>
 											<?php endif; ?>
 										</td>
@@ -59,7 +59,7 @@ use application\modules\main\utils\Main;
 										<td>
 											<a class="xcm" target="_blank" href="<?php echo $this->createUrl( 'default/show', array( 'assignmentId' => $assignment['assignmentid'] ) ) ?>"><?php echo $assignment['subject']; ?></a>
 											<div class="fss">
-												<?php if ( $assignment['designeeuid'] == IBOS::app()->user->uid ): ?>
+												<?php if ( $assignment['designeeuid'] == Ibos::app()->user->uid ): ?>
 													<?php echo $lang['Arrange to']; ?> <span class="ilsep"><?php echo $assignment['designee']['realname']; ?></span>
 												<?php else: ?>
 													<?php echo $lang['The originator']; ?> <span class="ilsep"><?php echo $assignment['designee']['realname']; ?></span>

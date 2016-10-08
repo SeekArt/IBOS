@@ -17,7 +17,7 @@
 namespace application\modules\article\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\article\core\ArticleCategory;
@@ -104,7 +104,7 @@ class BaseController extends Controller {
             'articleapprover', 'articlecommentenable', 'articlevoteenable', 'articlemessageenable'
         );
         foreach ( $fields as $field ) {
-            $result[$field] = IBOS::app()->setting->get( 'setting/' . $field );
+            $result[$field] = Ibos::app()->setting->get( 'setting/' . $field );
         }
         return $result;
     }

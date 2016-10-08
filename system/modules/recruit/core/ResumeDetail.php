@@ -16,7 +16,7 @@
 
 namespace application\modules\recruit\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\position\utils\Position;
 use application\modules\recruit\model\Resume;
@@ -120,7 +120,7 @@ class ResumeDetail {
      */
     public static function handleAge( $birthday ) {
         if ( $birthday == 0 ) {
-            $age = IBOS::lang( 'Unknown' );
+            $age = Ibos::lang( 'Unknown' );
         } else {
             $age = intval( date( 'Y', time() ) ) - intval( date( 'Y', $birthday ) );
         }
@@ -133,11 +133,11 @@ class ResumeDetail {
      * @return string 返回性别
      */
     public static function handleGender( $gender ) {
-        $sex = IBOS::lang( 'Unknown' );
+        $sex = Ibos::lang( 'Unknown' );
         if ( $gender == 1 ) {
-            $sex = IBOS::lang( 'Male' );
+            $sex = Ibos::lang( 'Male' );
         } else if ( $gender == 2 ) {
-            $sex = IBOS::lang( 'Female' );
+            $sex = Ibos::lang( 'Female' );
         }
         return $sex;
     }
@@ -149,18 +149,18 @@ class ResumeDetail {
      */
     public static function handleWorkyears( $workyears ) {
         $workyearsArr = array(
-            'empty' => IBOS::lang( 'Unknown' ),
-            '0' => IBOS::lang( 'Graduates' ),
-            '1' => IBOS::lang( 'More than one year' ),
-            '2' => IBOS::lang( 'More than two years' ),
-            '3' => IBOS::lang( 'More than three years' ),
-            '5' => IBOS::lang( 'More than five years' ),
-            '10' => IBOS::lang( 'More than a decade' )
+            'empty' => Ibos::lang( 'Unknown' ),
+            '0' => Ibos::lang( 'Graduates' ),
+            '1' => Ibos::lang( 'More than one year' ),
+            '2' => Ibos::lang( 'More than two years' ),
+            '3' => Ibos::lang( 'More than three years' ),
+            '5' => Ibos::lang( 'More than five years' ),
+            '10' => Ibos::lang( 'More than a decade' )
         );
         if ( in_array( $workyears, array_keys( $workyearsArr ) ) ) {
             $year = $workyearsArr[$workyears];
         } else {
-            $year = IBOS::lang( 'Unknown' );
+            $year = Ibos::lang( 'Unknown' );
         }
         return $year;
     }
@@ -172,19 +172,19 @@ class ResumeDetail {
      */
     public static function handleEdu( $education ) {
         $eduArr = array(
-            'EMPTY' => IBOS::lang( 'Unknown' ),
-            'JUNIOR_HIGH' => IBOS::lang( 'Junior high school' ),
-            'SENIOR_HIGH' => IBOS::lang( 'Senior middle school' ),
-            'TECHNICAL_SECONDARY' => IBOS::lang( 'Secondary' ),
-            'COLLEGE' => IBOS::lang( 'College' ),
-            'BACHELOR_DEGREE' => IBOS::lang( 'Undergraduate course' ),
-            'MASTER' => IBOS::lang( 'Master' ),
-            'DOCTOR' => IBOS::lang( 'Doctor' )
+            'EMPTY' => Ibos::lang( 'Unknown' ),
+            'JUNIOR_HIGH' => Ibos::lang( 'Junior high school' ),
+            'SENIOR_HIGH' => Ibos::lang( 'Senior middle school' ),
+            'TECHNICAL_SECONDARY' => Ibos::lang( 'Secondary' ),
+            'COLLEGE' => Ibos::lang( 'College' ),
+            'BACHELOR_DEGREE' => Ibos::lang( 'Undergraduate course' ),
+            'MASTER' => Ibos::lang( 'Master' ),
+            'DOCTOR' => Ibos::lang( 'Doctor' )
         );
         if ( in_array( $education, array_keys( $eduArr ) ) ) {
             $edu = $eduArr[$education];
         } else {
-            $edu = IBOS::lang( 'Unknown' );
+            $edu = Ibos::lang( 'Unknown' );
         }
         return $edu;
     }
@@ -195,11 +195,11 @@ class ResumeDetail {
      * @return string
      */
     public static function handleMaritalstatus( $marriage ) {
-        $marry = IBOS::lang( 'Unknown' );
+        $marry = Ibos::lang( 'Unknown' );
         if ( $marriage == 0 ) {
-            $marry = IBOS::lang( 'Unmarried' );
+            $marry = Ibos::lang( 'Unmarried' );
         } else if ( $marriage == 1 ) {
-            $marry = IBOS::lang( 'Married' );
+            $marry = Ibos::lang( 'Married' );
         }
         return $marry;
     }
@@ -212,11 +212,11 @@ class ResumeDetail {
     public static function handleResumeStatus( $status ) {
         $statusArr = array(
             0 => '-',
-            1 => IBOS::lang( 'Interview center' ),
-            2 => IBOS::lang( 'Hire' ),
-            3 => IBOS::lang( 'Entry' ),
-            4 => IBOS::lang( 'To be arranged' ),
-            5 => IBOS::lang( 'Eliminate' )
+            1 => Ibos::lang( 'Interview center' ),
+            2 => Ibos::lang( 'Hire' ),
+            3 => Ibos::lang( 'Entry' ),
+            4 => Ibos::lang( 'To be arranged' ),
+            5 => Ibos::lang( 'Eliminate' )
         );
         return $statusArr[$status];
     }

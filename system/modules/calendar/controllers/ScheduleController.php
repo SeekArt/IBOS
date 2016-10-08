@@ -17,7 +17,7 @@
 namespace application\modules\calendar\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\model\CalendarSetup;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -39,18 +39,18 @@ Class ScheduleController extends BaseController {
         } else {
             // 权限判断
             if ( !$this->checkIsMe() ) {
-                $this->error( IBOS::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
+                $this->error( Ibos::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
             }
             $data = array(
                 'user' => User::model()->fetchByUid( $this->uid )
             );
-            $this->setPageTitle( IBOS::lang( 'Personal schedule' ) );
+            $this->setPageTitle( Ibos::lang( 'Personal schedule' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
-                array( 'name' => IBOS::lang( 'Personal schedule' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
+                array( 'name' => Ibos::lang( 'Personal schedule' ) )
             ) );
-            NotifyMessage::model()->setReadByUrl( $this->uid, IBOS::app()->getRequest()->getUrl() );
+            NotifyMessage::model()->setReadByUrl( $this->uid, Ibos::app()->getRequest()->getUrl() );
             $this->render( 'index', $data );
         }
     }
@@ -65,7 +65,7 @@ Class ScheduleController extends BaseController {
         } elseif ( $op == 'list' ) {
             $this->getList();
         } else {
-            $workTime = IBOS::app()->setting->get( 'setting/calendarworkingtime' );
+            $workTime = Ibos::app()->setting->get( 'setting/calendarworkingtime' );
             $workingtime = explode( ',', $workTime );
             $setting = array(
                 'worktimestart' => $workingtime[0],
@@ -80,25 +80,25 @@ Class ScheduleController extends BaseController {
                     $firstDept = reset( $deptArr );
                     $uid = $firstDept['user'][0]['uid'];
                 } else {
-                    $this->error( IBOS::lang( 'You do not subordinate' ), $this->createUrl( 'schedule/index' ) );
+                    $this->error( Ibos::lang( 'You do not subordinate' ), $this->createUrl( 'schedule/index' ) );
                 }
             } else {
                 $uid = $getUid;
             }
             // 权限判断
-            if ( !UserUtil::checkIsSub( IBOS::app()->user->uid, $uid ) ) {
-                $this->error( IBOS::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
+            if ( !UserUtil::checkIsSub( Ibos::app()->user->uid, $uid ) ) {
+                $this->error( Ibos::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
             }
             $data = array(
                 'setting' => $setting,
                 'user' => User::model()->fetchByUid( $uid ),
                 'supUid' => UserUtil::getSupUid( $this->uid ) //获取上司uid
             );
-            $this->setPageTitle( IBOS::lang( 'Subordinate schedule' ) );
+            $this->setPageTitle( Ibos::lang( 'Subordinate schedule' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
-                array( 'name' => IBOS::lang( 'Subordinate schedule' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
+                array( 'name' => Ibos::lang( 'Subordinate schedule' ) )
             ) );
             $this->render( 'subschedule', $data );
         }
@@ -126,12 +126,12 @@ Class ScheduleController extends BaseController {
                     $tempOrz2 = current( $tempOrz1['users'] );
                     $uid = $tempOrz2['uid'];
                 } else {
-                    $this->error( IBOS::lang( 'You do not share personnel' ), $this->createUrl( 'schedule/index' ) );
+                    $this->error( Ibos::lang( 'You do not share personnel' ), $this->createUrl( 'schedule/index' ) );
                 }
             }
             // 权限判断
-            if ( !UserUtil::checkIsSharingToMe( IBOS::app()->user->uid, $uid ) ) {
-                $this->error( IBOS::lang( 'No permission to view shareschedule' ), $this->createUrl( 'schedule/index' ) );
+            if ( !UserUtil::checkIsSharingToMe( Ibos::app()->user->uid, $uid ) ) {
+                $this->error( Ibos::lang( 'No permission to view shareschedule' ), $this->createUrl( 'schedule/index' ) );
             }
             $workTime = CalendarSetup::model()->getWorkTimeByUid( $uid );
             $setting = array(
@@ -142,11 +142,11 @@ Class ScheduleController extends BaseController {
                 'setting' => $setting,
                 'user' => User::model()->fetchByUid( $uid ),
             );
-            $this->setPageTitle( IBOS::lang( 'Share' ) );
+            $this->setPageTitle( Ibos::lang( 'Share' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
-                array( 'name' => IBOS::lang( 'Share' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Calendar arrangement' ), 'url' => $this->createUrl( 'schedule/index' ) ),
+                array( 'name' => Ibos::lang( 'Share' ) )
                     )
             );
             $this->render( 'shareschedule', $data );
@@ -157,32 +157,32 @@ Class ScheduleController extends BaseController {
      * 添加日程
      */
     public function actionAdd() {
-        if ( !IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( !Ibos::app()->request->getIsAjaxRequest() ) {
             /**
              * 日志记录
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' ),
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get( 'clientip' ),
                 'isSuccess' => 0,
-                'msg' => IBOS::lang( 'Parameters error', 'error' )
+                'msg' => Ibos::lang( 'Parameters error', 'error' )
             );
             Log::write( $log, 'action', 'module.calendar.schedule.add' );
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
         }
         // 权限判断
-        if ( !$this->checkAddPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid ) ) {
+        if ( !$this->checkAddPermission() && !CalendarUtil::isShareToMeForEdit( Ibos::app()->user->uid, $this->uid ) ) {
             /**
              * 日志记录
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get( 'clientip' ),
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get( 'clientip' ),
                 'isSuccess' => 0,
-                'msg' => IBOS::lang( 'No permission to add schedule' )
+                'msg' => Ibos::lang( 'No permission to add schedule' )
             );
             Log::write( $log, 'action', 'module.calendar.schedule.add' );
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to add schedule' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to add schedule' ) ) );
         }
         //操作后的某个日程的开始时间
         $getStartTime = Env::getRequest( 'CalendarStartTime' );
@@ -223,7 +223,7 @@ Class ScheduleController extends BaseController {
                 $config = array(
                     '{sender}' => User::model()->fetchRealnameByUid( $this->upuid ),
                     '{subject}' => $title,
-                    '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/schedule/index' )
+                    '{url}' => Ibos::app()->urlManager->createUrl( 'calendar/schedule/index' )
                 );
                 Notify::model()->sendNotify( $this->uid, 'add_calendar_message', $config, $this->upuid );
             }
@@ -233,8 +233,8 @@ Class ScheduleController extends BaseController {
         }
         //日志记录
         $log = array(
-            'user' => IBOS::app()->user->username,
-            'ip' => IBOS::app()->setting->get( 'clientip' ),
+            'user' => Ibos::app()->user->username,
+            'ip' => Ibos::app()->setting->get( 'clientip' ),
             'isSuccess' => $ret['isSuccess'] ? 1 : 0
         );
         Log::write( $log, 'action', 'module.calendar.schedule.add' );
@@ -245,12 +245,12 @@ Class ScheduleController extends BaseController {
      * 编辑日程
      */
     public function actionEdit() {
-        if ( !IBOS::app()->request->getIsAjaxRequest() ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
+        if ( !Ibos::app()->request->getIsAjaxRequest() ) {
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
         }
         // 权限判断
-        if ( !$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to edit schedule' ) ) );
+        if ( !$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( Ibos::app()->user->uid, $this->uid ) ) {
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to edit schedule' ) ) );
         }
         $op = Env::getRequest( 'op' );
         if ( empty( $op ) ) {
@@ -284,12 +284,12 @@ Class ScheduleController extends BaseController {
      * 删除日程
      */
     public function actionDel() {
-        if ( !IBOS::app()->request->getIsAjaxRequest() ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
+        if ( !Ibos::app()->request->getIsAjaxRequest() ) {
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'schedule/index' ) );
         }
         // 权限判断
-        if ( !$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( IBOS::app()->user->uid, $this->uid ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to del schedule' ) ) );
+        if ( !$this->checkEditPermission() && !CalendarUtil::isShareToMeForEdit( Ibos::app()->user->uid, $this->uid ) ) {
+            $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to del schedule' ) ) );
         }
         $getCalendarId = Env::getRequest( 'calendarId' );
         $calendarId = $this->checkCalendarid( $getCalendarId );
@@ -323,16 +323,16 @@ Class ScheduleController extends BaseController {
 
             $startTime = isset( $interval[0] ) ? $interval[0] : '8';
             $endTime = isset( $interval[1] ) ? $interval[1] : '18';
-            CalendarSetup::model()->updataSetup( IBOS::app()->user->uid, $startTime, $endTime, $hiddenDays, $viewSharing, $editSharing );
+            CalendarSetup::model()->updataSetup( Ibos::app()->user->uid, $startTime, $endTime, $hiddenDays, $viewSharing, $editSharing );
             $this->ajaxReturn( array( 'isSuccess' => true ) );
         } else {
             $alias = 'application.modules.calendar.views.schedule.setup';
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $data['workTime'] = CalendarSetup::model()->getWorkTimeByUid( $uid );
             $data['hiddenDays'] = CalendarSetup::model()->getHiddenDaysByUid( $uid );
             // 获取分享权限人员的字符串，包括日程查看权限与编辑权限 $data['sharingPersonnel']['viewSharing'] && $data['sharingPersonnel']['editSharing']
             $data['sharingPersonnel'] = CalendarSetup::model()->getSharingPersonnelByUid( $uid );
-            $data['lang'] = IBOS::getLangSource( 'calendar.default' );
+            $data['lang'] = Ibos::getLangSource( 'calendar.default' );
             $view = $this->renderPartial( $alias, $data, true );
             $this->ajaxReturn( array( 'isSuccess' => true, 'view' => $view ) );
         }
@@ -399,7 +399,7 @@ Class ScheduleController extends BaseController {
         $endTime = Env::getRequest( 'endDate' );
         $result = Calendars::model()->getCommonCalendarList( strtotime( $startTime ), strtotime( $endTime ), $this->uid );
         if ( $result === FALSE ) {
-            $this->error( IBOS::lang( 'No permission to view shareschedule' ), $this->createUrl( 'schedule/index' ) );
+            $this->error( Ibos::lang( 'No permission to view shareschedule' ), $this->createUrl( 'schedule/index' ) );
         }
         $this->ajaxReturn( $result );
     }
@@ -493,7 +493,7 @@ Class ScheduleController extends BaseController {
      * @return void
      */
     protected function getsubordinates() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $uid = $_GET['uid'];
             $getItem = Env::getRequest( 'item' );
             $item = empty( $getItem ) ? 5 : $getItem;
@@ -519,7 +519,7 @@ Class ScheduleController extends BaseController {
                 $htmlStr.='<li class="mng-item view-all" data-uid="' . $uid . '" sub-nums="' . $subNums . '">
                                                 <a href="javascript:;">
                                                    <i class="o-cal-allsub"></i>
-                                                    ' . IBOS::lang( 'View all subordinate' ) . '
+                                                    ' . Ibos::lang( 'View all subordinate' ) . '
                                                 </a>
                                             </li>';
             }

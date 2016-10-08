@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
@@ -156,13 +156,13 @@ use application\modules\user\model\User;
     <h4><?php echo $lang['Review']; ?></h4>
     <div id="load_comment_<?php echo $diary['diaryid']; ?>" data-id="<?php echo $diary['diaryid']; ?>" >
         <?php
-        $sourceUrl = IBOS::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) );
+        $sourceUrl = Ibos::app()->urlManager->createUrl( 'diary/default/show', array( 'diaryid' => $diary['diaryid'] ) );
         $this->widget( 'application\modules\diary\widgets\DiaryComment', array(
             'module' => 'diary',
             'table' => 'diary',
             'attributes' => array(
                 'rowid' => $diary['diaryid'],
-                'moduleuid' => IBOS::app()->user->uid,
+                'moduleuid' => Ibos::app()->user->uid,
                 'touid' => $diary['uid'],
                 'module_rowid' => $diary['diaryid'],
                 'module_table' => "diary",
@@ -170,7 +170,7 @@ use application\modules\user\model\User;
                 'allowComment' => $allowComment,
                 'showStamp' => $fromController == 'review' && $this->issetStamp(),
                 'url' => $sourceUrl,
-                'detail' => IBOS::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
+                'detail' => Ibos::lang( 'Comment my diray', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( StringUtil::filterCleanHtml( $diary['content'] ), 50 ) ) )
     ) ) );
         ?>
     </div>
@@ -186,7 +186,7 @@ use application\modules\user\model\User;
             </div>
             <div class="da-reviews-avatar">
                 <?php foreach ( $readers as $reader ): ?>
-                    <a href="<?php echo IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>"><img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/></a>
+                    <a href="<?php echo Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>"><img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/></a>
                 <?php endforeach; ?>
             </div>
         </div>

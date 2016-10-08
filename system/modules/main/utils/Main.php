@@ -17,7 +17,7 @@
 namespace application\modules\main\utils;
 
 use application\core\model\Module;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
 class Main {
@@ -31,9 +31,9 @@ class Main {
 	 * @param boolean $httpOnly 安全属性
 	 */
 	public static function setCookie( $var, $value = '', $life = 0, $prefix = 1, $httpOnly = false ) {
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 		// 写入全局设置组件
-		IBOS::app()->setting->set( 'cookie/' . $var, $value );
+		Ibos::app()->setting->set( 'cookie/' . $var, $value );
 		$config = $global['config']['cookie'];
 		// 写入全局cookie数组
 		$var = ($prefix ? $config['cookiepre'] : '') . $var;
@@ -61,7 +61,7 @@ class Main {
 	 * @return mixed
 	 */
 	public static function getCookie( $var, $prefix = 1 ) {
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 		$config = $global['config']['cookie'];
 		$var = ($prefix ? $config['cookiepre'] : '') . $var;
 		if ( array_key_exists( $var, $_COOKIE ) ) {
@@ -76,12 +76,12 @@ class Main {
 	 * @return void
 	 */
 	public static function clearCookies() {
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 		foreach ( $global['cookie'] as $key => &$value ) {
 			self::setCookie( $key );
 			$value = '';
 		}
-		IBOS::app()->setting->copyFrom( $global );
+		Ibos::app()->setting->copyFrom( $global );
 	}
 
 	/**
@@ -89,15 +89,15 @@ class Main {
 	 * @return string
 	 */
 	public static function getIncentiveWord() {
-		$useIncentiveword = IBOS::app()->params->incentiveword;
+		$useIncentiveword = Ibos::app()->params->incentiveword;
 		if ( true === $useIncentiveword ) {
-			$words = IBOS::getLangSource( 'incentiveword' );
+			$words = Ibos::getLangSource( 'incentiveword' );
 			$luckyOne = array_rand( $words );
 			$source = $words[$luckyOne];
-			return IBOS::lang( 'Custom title', 'main.default' ) . $source[array_rand( $source )];
+			return Ibos::lang( 'Custom title', 'main.default' ) . $source[array_rand( $source )];
 		} else {
 			$title = ' ';
-			$unit = IBOS::app()->setting->get( 'setting/unit' );
+			$unit = Ibos::app()->setting->get( 'setting/unit' );
 			if ( !empty( $unit ) && isset( $unit['shortname'] ) ) {
 				$title = $unit['shortname'] . '- IBOS协同办公平台';
 			}
@@ -180,7 +180,7 @@ class Main {
 		$modules = Module::model()->fetchAllEnabledModule();
 		$params = array();
 		foreach ( $modules as $moduleName => $module ) {
-			$params[$moduleName]['assetUrl'] = IBOS::app()->assetManager->getAssetsUrl( $module['module'] );
+			$params[$moduleName]['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl( $module['module'] );
 		}
 		return $params;
 	}

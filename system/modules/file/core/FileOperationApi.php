@@ -19,7 +19,7 @@ namespace application\modules\file\core;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File as FileUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\extensions\Zip;
@@ -129,7 +129,7 @@ Class FileOperationApi extends System {
 	 * @throws CException
 	 */
 	public function download( FileCore $core, $fids, $downloadName = '' ) {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$fids = is_array( $fids ) ? $fids : explode( ',', $fids );
 		$attachDir = FileUtil::getAttachUrl() . '/';
 		$output = '';

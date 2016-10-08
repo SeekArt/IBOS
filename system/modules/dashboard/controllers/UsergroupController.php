@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\utils\Dashboard;
 use application\modules\user\model\UserGroup;
 
@@ -36,7 +36,7 @@ class UsergroupController extends BaseController {
                 if ( !$v['title'] ) {
                     unset( $groupNewAdd[$k] );
                 } elseif ( !$v['creditshigher'] ) {
-                    $this->error( IBOS::lang( 'Usergroups update creditshigher invalid' ) );
+                    $this->error( Ibos::lang( 'Usergroups update creditshigher invalid' ) );
                 } else {
                     $groupNewAdd[$k]['title'] = \CHtml::encode( $v['title'] );
                 }
@@ -57,7 +57,7 @@ class UsergroupController extends BaseController {
                 }
             }
             if ( empty( $orderArray ) || min( array_flip( $orderArray ) ) >= 0 ) {
-                $this->error( IBOS::lang( 'Usergroups update credits invalid' ) );
+                $this->error( Ibos::lang( 'Usergroups update credits invalid' ) );
             }
 
             ksort( $orderArray );
@@ -73,7 +73,7 @@ class UsergroupController extends BaseController {
                 $creditshigherNew = $rangeArray[$id]['creditshigher'];
                 $creditslowerNew = $rangeArray[$id]['creditslower'];
                 if ( $creditshigherNew == $creditslowerNew ) {
-                    $this->error( IBOS::lang( 'Usergroups update credits duplicate' ) );
+                    $this->error( Ibos::lang( 'Usergroups update credits duplicate' ) );
                 }
                 if ( in_array( $id, $groupNewKeys ) ) {
                     UserGroup::model()->modify( $id, array(
@@ -96,7 +96,7 @@ class UsergroupController extends BaseController {
                 UserGroup::model()->deleteById( $removeId );
             }
             Cache::update( array( 'UserGroup' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $groups = UserGroup::model()->fetchAll( array( 'order' => 'creditshigher' ) );
             $data = array( 'data' => $groups );

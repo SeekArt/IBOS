@@ -5,7 +5,7 @@ namespace application\modules\main\controllers;
 use application\core\controllers\Controller;
 use application\core\utils\Cloud;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class CallController extends Controller {
 
@@ -27,7 +27,7 @@ class CallController extends Controller {
 	public function actionUnidirec() {
 		$data = Env::getRequest( 'data' );
 		$user = $data[0];
-		$siteUrl = IBOS::app()->setting->get( 'siteurl' );
+		$siteUrl = Ibos::app()->setting->get( 'siteurl' );
 		$user['avatar'] = $siteUrl . $user['avatar'];
 		$this->redirect( Cloud::getInstance()->build( self::COMM_CALL_URL, array( 'data' => $user ) ) );
 	}

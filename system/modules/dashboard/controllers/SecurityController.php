@@ -6,7 +6,7 @@ use application\core\model\Log;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
@@ -37,7 +37,7 @@ class SecurityController extends BaseController {
             }
             Setting::model()->updateSettingValueByKey( 'account', $updateList );
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array();
             $account = Setting::model()->fetchSettingValueByKey( 'account' );
@@ -50,7 +50,7 @@ class SecurityController extends BaseController {
      * 渲染 log 视图动作
      */
     public function actionLog() {
-        $data['actions'] = IBOS::getLangSource( 'dashboard.actions' );
+        $data['actions'] = Ibos::getLangSource( 'dashboard.actions' );
         $data['archive'] = Log::getAllArchiveTableId();
         $this->render( 'log', $data );
     }
@@ -125,7 +125,7 @@ class SecurityController extends BaseController {
                     foreach ( $_POST['ip'] as $new ) {
                         if ( $new['ip1'] != '' && $new['ip2'] != '' && $new['ip3'] != '' && $new['ip4'] != '' ) {
                             $own = 0;
-                            $ip = explode( '.', IBOS::app()->setting->get( 'clientip' ) );
+                            $ip = explode( '.', Ibos::app()->setting->get( 'clientip' ) );
                             for ( $i = 1; $i <= 4; $i++ ) {
                                 if ( !is_numeric( $new['ip' . $i] ) || $new['ip' . $i] < 0 ) {
                                     $new['ip' . $i] = -1;
@@ -136,10 +136,10 @@ class SecurityController extends BaseController {
                                 $new['ip' . $i] = intval( $new['ip' . $i] );
                             }
                             if ( $own == 4 ) {
-                                $this->error( IBOS::lang( 'Ipban illegal' ) );
+                                $this->error( Ibos::lang( 'Ipban illegal' ) );
                             }
                             $expiration = TIMESTAMP + $new['validitynew'] * 86400;
-                            $new['admin'] = IBOS::app()->user->username;
+                            $new['admin'] = Ibos::app()->user->username;
                             $new['dateline'] = TIMESTAMP;
                             $new['expiration'] = $expiration;
                             IpBanned::model()->add( $new );
@@ -148,7 +148,7 @@ class SecurityController extends BaseController {
                 }
                 // 编辑处理
                 if ( isset( $_POST['expiration'] ) ) {
-                    $userName = IBOS::app()->user->username;
+                    $userName = Ibos::app()->user->username;
                     foreach ( $_POST['expiration'] as $id => $expiration ) {
                         IpBanned::model()->updateExpirationById( $id, strtotime( $expiration ), $userName );
                     }
@@ -158,11 +158,11 @@ class SecurityController extends BaseController {
                     IpBanned::model()->deleteByPk( $_POST['id'] );
                 }
             } else if ( $_POST['act'] == 'clear' ) { //清空
-                $command = IBOS::app()->db->createCommand();
+                $command = Ibos::app()->db->createCommand();
                 $command->delete( '{{ipbanned}}' );
             }
             Cache::update( array( 'setting', 'ipbanned' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array();
             $lists = IpBanned::model()->fetchAllOrderDateline();

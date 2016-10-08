@@ -3,7 +3,7 @@
 namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Cache;
 use application\modules\main\model\Setting;
 
@@ -22,11 +22,11 @@ class DateController extends BaseController {
                 Setting::model()->updateSettingValueByKey( $sKey, $sValue );
             }
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $date = Setting::model()->fetchSettingValueByKeys( 'dateformat,dateconvert,timeformat,timeoffset' );
             $data = array(
-                'timeZone' => IBOS::getLangSource( 'dashboard.timeZone' ),
+                'timeZone' => Ibos::getLangSource( 'dashboard.timeZone' ),
                 'date' => $date,
             );
             $this->render( 'index', $data );

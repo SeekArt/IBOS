@@ -18,7 +18,7 @@
 namespace application\modules\article\controllers;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -26,7 +26,7 @@ class DashboardController extends BaseController {
 
     public function getAssetUrl( $module = '' ) {
         $module = 'dashboard';
-        return IBOS::app()->assetManager->getAssetsUrl( $module );
+        return Ibos::app()->assetManager->getAssetsUrl( $module );
     }
 
     /**
@@ -40,7 +40,7 @@ class DashboardController extends BaseController {
             'articlecommentenable', 'articlevoteenable', 'articlemessageenable', 'articlethumbenable', 'articlethumbwh'
         );
         foreach ( $fields as $field ) {
-            $result[$field] = IBOS::app()->setting->get( 'setting/' . $field );
+            $result[$field] = Ibos::app()->setting->get( 'setting/' . $field );
         }
         //缩略图设置
         $thumbOperate = $result['articlethumbwh'];
@@ -77,7 +77,7 @@ class DashboardController extends BaseController {
             Setting::model()->updateAll( array( 'svalue' => $value ), 'skey=:skey', array( ':skey' => $key ) );
         }
         Cache::update( 'setting' );
-        $this->success( IBOS::lang( 'Update succeed' ), $this->createUrl( 'dashboard/index' ) );
+        $this->success( Ibos::lang( 'Update succeed' ), $this->createUrl( 'dashboard/index' ) );
     }
 
 }

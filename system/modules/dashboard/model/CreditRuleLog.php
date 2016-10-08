@@ -18,7 +18,7 @@
 namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class CreditRuleLog extends Model {
 
@@ -39,7 +39,7 @@ class CreditRuleLog extends Model {
     public function increase( $clid, $logArr ) {
         if ( $clid && !empty( $logArr ) && is_array( $logArr ) ) {
             $sqlText = 'UPDATE %s SET %s WHERE clid=%d';
-            return IBOS::app()->db->createCommand()
+            return Ibos::app()->db->createCommand()
                             ->setText( sprintf( $sqlText, $this->tableName(), implode( ',', $logArr ), $clid ) )
                             ->execute();
         }

@@ -1,21 +1,21 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <div class="clearfix">
 	<ul class="time-type-select" id="time_type_select">
 		<li <?php if ( $time['timestr'] == 'thisweek' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'thisweek', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['This week']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'thisweek', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['This week']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'lastweek' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'lastweek', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['Last week']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'lastweek', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['Last week']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'thismonth' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'thismonth', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['This month']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'thismonth', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['This month']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'lastmonth' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'lastmonth', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['Last month']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'lastmonth', 'module' => $module, 'type' => $type ) ); ?>"><?php echo $lang['Last month']; ?></a>
 		</li>
 	</ul>
 	<div class="span3">
@@ -35,13 +35,13 @@ use application\core\utils\IBOS;
 	<!-- 当按钮不可用时,<a>标签的href属性为href="javascript:void(0);",可用时为对应的地址值 -->
 	<div class="btn-group" id="range_select">
 		<?php if($time['timestr'] == 'custom'): ?>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'day' ) ); ?>" type="button" id="day_choose" class="btn time-choose-btn <?php if($type == 'day'): ?>active<?php endif; ?>">日</a>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'week' ) ); ?>" type="button" id="week_choose" class="btn time-choose-btn <?php if($type == 'week'): ?>active<?php endif; ?>">周</a>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'month' ) ); ?>" type="button" id="month_choose" class="btn time-choose-btn <?php if($type == 'month'): ?>active<?php endif; ?>">月</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'day' ) ); ?>" type="button" id="day_choose" class="btn time-choose-btn <?php if($type == 'day'): ?>active<?php endif; ?>">日</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'week' ) ); ?>" type="button" id="week_choose" class="btn time-choose-btn <?php if($type == 'week'): ?>active<?php endif; ?>">周</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'start' => date( 'Y-m-d', $time['start'] ), 'end' => date( 'Y-m-d', $time['end'] ), 'module' => $module, 'type' => 'month' ) ); ?>" type="button" id="month_choose" class="btn time-choose-btn <?php if($type == 'month'): ?>active<?php endif; ?>">月</a>
 		<?php else: ?>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'day' ) ); ?>" type="button" id="day_choose" class="btn time-choose-btn <?php if($type == 'day'): ?>active<?php endif; ?>">日</a>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'week' ) ); ?>" type="button" id="week_choose" class="btn time-choose-btn <?php if($type == 'week'): ?>active<?php endif; ?>">周</a>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'month' ) ); ?>" type="button" id="month_choose" class="btn time-choose-btn <?php if($type == 'month'): ?>active<?php endif; ?>">月</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'day' ) ); ?>" type="button" id="day_choose" class="btn time-choose-btn <?php if($type == 'day'): ?>active<?php endif; ?>">日</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'week' ) ); ?>" type="button" id="week_choose" class="btn time-choose-btn <?php if($type == 'week'): ?>active<?php endif; ?>">周</a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => $time['timestr'], 'module' => $module, 'type' => 'month' ) ); ?>" type="button" id="month_choose" class="btn time-choose-btn <?php if($type == 'month'): ?>active<?php endif; ?>">月</a>
 		<?php endif; ?>
 	</div>
 </div>

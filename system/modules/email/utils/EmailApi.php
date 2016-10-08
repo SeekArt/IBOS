@@ -2,7 +2,7 @@
 
 namespace application\modules\email\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class EmailApi {
 
@@ -15,12 +15,12 @@ class EmailApi {
 	public function renderIndex() {
 		$return = array( );
 		$viewAlias = 'application.modules.email.views.indexapi.email';
-		$data['lang'] = IBOS::getLangSource( 'email.default' );
-		$data['assetUrl'] = IBOS::app()->assetManager->getAssetsUrl( 'email' );
+		$data['lang'] = Ibos::getLangSource( 'email.default' );
+		$data['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl( 'email' );
 		foreach ( $this->_indexTab as $tab ) {
 			$data['emails'] = $this->loadEmail( $tab );
 			$data['tab'] = $tab;
-			$return[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+			$return[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
 		}
 		return $return;
 	}
@@ -32,22 +32,22 @@ class EmailApi {
 	public function loadSetting() {
 		return array(
 			'name' => 'email/email',
-			'title' => IBOS::lang( 'My email', 'email.default' ),
+			'title' => Ibos::lang( 'My email', 'email.default' ),
 			'style' => 'in-email',
 			'tab' => array(
 				array(
 					'name' => 'inbox',
-					'title' => IBOS::lang( 'Inbox', 'email.default' ),
+					'title' => Ibos::lang( 'Inbox', 'email.default' ),
 					'icon' => 'o-mal-inbox'
 				),
 				array(
 					'name' => 'unread',
-					'title' => IBOS::lang( 'Unread', 'email.default' ),
+					'title' => Ibos::lang( 'Unread', 'email.default' ),
 					'icon' => 'o-mal-unread'
 				),
 				array(
 					'name' => 'todo',
-					'title' => IBOS::lang( 'Todo', 'email.default' ),
+					'title' => Ibos::lang( 'Todo', 'email.default' ),
 					'icon' => 'o-mal-todo'
 				)
 			)
@@ -59,8 +59,8 @@ class EmailApi {
 	 * @return integer
 	 */
 	public function loadNew() {
-		$uid = IBOS::app()->user->uid;
-		$command = IBOS::app()->db->createCommand();
+		$uid = Ibos::app()->user->uid;
+		$command = Ibos::app()->db->createCommand();
 		$count = $command->select( 'count(emailid)' )
 				->from( '{{email}}' )
 				->where( "`toid`='{$uid}' AND `fid`= 1 AND `isdel` = 0 AND `isread` = 0" )
@@ -75,8 +75,8 @@ class EmailApi {
 	 * @return array
 	 */
 	private function loadEmail( $type = 'inbox', $num = 4 ) {
-		$uid = IBOS::app()->user->uid;
-		$command = IBOS::app()->db->createCommand();
+		$uid = Ibos::app()->user->uid;
+		$command = Ibos::app()->db->createCommand();
 		$command->select( 'emailid,b.bodyid,toid,isread,ismark,fromid,subject,content,sendtime,attachmentid,important,u.realname' )
 				->from( '{{email}} e' )
 				->leftJoin( '{{email_body}} b', 'e.bodyid = b.bodyid' )

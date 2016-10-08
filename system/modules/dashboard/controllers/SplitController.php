@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\utils\ArchiveSplit;
@@ -28,7 +28,7 @@ class SplitController extends BaseController {
         }
         // 检查模块是否已安装
         if ( !Module::getIsEnabled( $mod ) ) {
-            $this->error( IBOS::lang( 'Module not installed' ) );
+            $this->error( Ibos::lang( 'Module not installed' ) );
         }
         $operation = Env::getRequest( 'op' );
         if ( !in_array( $operation, array( 'manage', 'move', 'movechoose', 'droptable', 'addtable' ) ) ) {
@@ -77,7 +77,7 @@ class SplitController extends BaseController {
                 ArchiveSplit::updateTableIds( $tableDriver );
                 // 更新setting表
                 Cache::update( array( 'setting' ) );
-                $this->success( IBOS::lang( 'Archivessplit manage update succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
+                $this->success( Ibos::lang( 'Archivessplit manage update succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
             } else if ( $operation == 'movechoose' ) {
                 // 选择移动信息
                 $conditions = array(
@@ -107,7 +107,7 @@ class SplitController extends BaseController {
                 $detail = intval( Env::getRequest( 'detail' ) );
                 // 处理移动
                 if ( !$tableId ) {
-                    $this->error( IBOS::lang( 'Archivessplit no target table' ) );
+                    $this->error( Ibos::lang( 'Archivessplit no target table' ) );
                 }
                 $continue = false;
                 //要移动的总数
@@ -126,7 +126,7 @@ class SplitController extends BaseController {
                     $continue = true;
                 }
                 if ( $tableId == $sourceTableId ) {
-                    $this->error( IBOS::lang( 'Archivessplit source cannot be the target' ), $this->createUrl( 'split/index', array( 'op' => 'move', 'mod' => $mod ) ) );
+                    $this->error( Ibos::lang( 'Archivessplit source cannot be the target' ), $this->createUrl( 'split/index', array( 'op' => 'move', 'mod' => $mod ) ) );
                 }
                 if ( $continue ) {
                     $cronArchiveSetting = Setting::model()->fetchSettingValueByKeys( 'cronarchive', true );
@@ -160,7 +160,7 @@ class SplitController extends BaseController {
                     'detail' => $detail,
                     'mod' => $mod
                 );
-                $data['message'] = IBOS::lang( ucfirst( $mod ) . ' moving', '', array(
+                $data['message'] = Ibos::lang( ucfirst( $mod ) . ' moving', '', array(
                             '{count}' => $completed,
                             '{total}' => $readyToMove,
                             '{pertime}' => $_POST['pertime'],
@@ -176,11 +176,11 @@ class SplitController extends BaseController {
                 // 获取要删除的分表的信息
                 $statusInfo = $tableDriver['mainTable']::model()->getTableStatus( $tableId );
                 if ( !$tableId || !$statusInfo ) {
-                    $this->error( IBOS::lang( 'Archivessplit table no exists' ) );
+                    $this->error( Ibos::lang( 'Archivessplit table no exists' ) );
                 }
                 // 有数据的表不能删除
                 if ( $statusInfo['Rows'] > 0 ) {
-                    $this->error( IBOS::lang( 'Archivessplit drop table no empty error' ) );
+                    $this->error( Ibos::lang( 'Archivessplit drop table no empty error' ) );
                 }
                 $tableDriver['mainTable']::model()->dropTable( $tableId );
                 $tableDriver['bodyTable']::model()->dropTable( $tableId );
@@ -191,7 +191,7 @@ class SplitController extends BaseController {
                 Cache::save( $tableDriver['tableInfo'], $tableInfo );
                 // 更新setting表
                 Cache::update( array( 'setting' ) );
-                $this->success( IBOS::lang( 'Archivessplit drop table succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
+                $this->success( Ibos::lang( 'Archivessplit drop table succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
             } else if ( $operation == 'manage' ) { // 分表管理
                 $data['tableInfo'] = $tableInfo;
                 $data = array_merge( $data, ArchiveSplit::getTableStatus( $tableIds, $tableDriver ) );
@@ -208,11 +208,11 @@ class SplitController extends BaseController {
                 // 更新分表ID
                 ArchiveSplit::updateTableIds( $tableDriver );
                 Cache::update( array( 'setting' ) );
-                $this->success( IBOS::lang( 'Archivessplit table create succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
+                $this->success( Ibos::lang( 'Archivessplit table create succeed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
             } else if ( $operation == 'move' ) {
                 // 必须先关闭系统才能进行移动操作
-                if ( IBOS::app()->setting->get( 'setting/appclosed' ) !== '1' ) {
-                    $this->error( IBOS::lang( 'Archivessplit must be closed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
+                if ( Ibos::app()->setting->get( 'setting/appclosed' ) !== '1' ) {
+                    $this->error( Ibos::lang( 'Archivessplit must be closed' ), $this->createUrl( 'split/index', array( 'op' => 'manage', 'mod' => $mod ) ) );
                 }
                 // 获取可以搜索的表
                 $tableSelect = array();

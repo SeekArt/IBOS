@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/home.css?<?php echo VERHASH; ?>">
@@ -88,10 +88,10 @@ use application\core\utils\StringUtil;
                     </li>
                     <li>
                         <div class="card-radius">
-                            <?php $driverName = IBOS::app()->db->getDriverName(); ?>
+                            <?php $driverName = Ibos::app()->db->getDriverName(); ?>
                             <img src="<?php echo $assetUrl ?>/image/env/<?php echo $driverName; ?>.png" alt="<?php echo $driverName; ?>" title="<?php echo $driverName; ?>">
                             <p>
-                                <strong title="<?php echo IBOS::app()->db->getServerVersion(); ?>"><?php echo IBOS::app()->db->getServerVersion(); ?></strong>
+                                <strong title="<?php echo Ibos::app()->db->getServerVersion(); ?>"><?php echo Ibos::app()->db->getServerVersion(); ?></strong>
                             </p>
                             <p><?php echo $lang['Database']; ?></p>
                         </div>
@@ -150,7 +150,7 @@ use application\core\utils\StringUtil;
 
 <script>
     var _ib = _ib || [];
-    _ib.push(['authkey', '<?php echo IBOS::app()->setting->get( 'config/security/authkey' ); ?>']);
+    _ib.push(['authkey', '<?php echo Ibos::app()->setting->get( 'config/security/authkey' ); ?>']);
     _ib.push(['datasize', '<?php echo $dataSize . $dataUnit; ?>']);
     _ib.push(['system', '<?php echo $sys['operating_system']; ?>']);
 <?php if ( LOCAL ): ?>

@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/message.css?<?php echo VERHASH; ?>">
 <div class="mc clearfix">

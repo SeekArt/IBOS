@@ -17,7 +17,7 @@
 
 namespace application\core\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class RestController extends Controller {
 
@@ -53,7 +53,7 @@ class RestController extends Controller {
 		  } */
 		$this->_type = 'json';
 		// 请求方式检测
-		$method = strtolower( IBOS::app()->request->getRequestType() );
+		$method = strtolower( Ibos::app()->request->getRequestType() );
 		if ( !in_array( $method, $this->allowMethod ) ) {
 			// 请求方式非法 则用默认请求方法
 			$method = $this->defaultMethod;

@@ -6,7 +6,7 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
@@ -29,7 +29,7 @@ class ImController extends BaseController {
 	public function actionIndex() {
 		$type = Env::getRequest( 'type' );
 		$allowType = array( 'rtx', 'qq' );
-		if ( IBOS::app()->setting->get( 'setting/im/rtx/open' ) ) {
+		if ( Ibos::app()->setting->get( 'setting/im/rtx/open' ) ) {
 			$defaultType = 'rtx';
 		} else {
 			$defaultType = 'qq';
@@ -86,15 +86,15 @@ class ImController extends BaseController {
 			Setting::model()->updateSettingValueByKey( 'im', $im );
 			CacheUtil::update( array( 'setting' ) );
 			if ( $correct === true ) {
-				$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+				$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 			} else {
 				$updateList['open'] = 0;
 				if ( is_array( $correct ) ) {
-					$msg = isset( $correct[MessageCore\IM::ERROR_INIT] ) ? implode( ',', $correct[MessageCore\IM::ERROR_INIT] ) : IBOS::lang( 'Unknown error', 'error' );
+					$msg = isset( $correct[MessageCore\IM::ERROR_INIT] ) ? implode( ',', $correct[MessageCore\IM::ERROR_INIT] ) : Ibos::lang( 'Unknown error', 'error' );
 				} else {
-					$msg = IBOS::lang( 'Unknown error', 'error' );
+					$msg = Ibos::lang( 'Unknown error', 'error' );
 				}
-				$this->error( IBOS::lang( 'Binding error', '', array( '{err}' => $msg ) ) );
+				$this->error( Ibos::lang( 'Binding error', '', array( '{err}' => $msg ) ) );
 			}
 		} else {
 			$data = array(
@@ -111,7 +111,7 @@ class ImController extends BaseController {
 	public function actionSyncRtx() {
 		$pwd = Env::getRequest( 'pwd' );
 		if ( Message::getIsImOpen( 'rtx' ) ) {
-			$imCfg = IBOS::app()->setting->get( 'setting/im/rtx' );
+			$imCfg = Ibos::app()->setting->get( 'setting/im/rtx' );
 			$factory = new MessageCore\IMFactory();
 			$adapter = $factory->createAdapter( 'application\modules\message\core\IMRtx', $imCfg, array( 'pwd' => $pwd ) );
 			$res = $adapter->syncOrg();
@@ -204,7 +204,7 @@ class ImController extends BaseController {
 					$rec = Cache::model()->fetchByPk( 'deptrelate' );
 					$deptRelates = StringUtil::utf8Unserialize( $rec['cachevalue'] );
 					$userRelates = $userDeptRelates = array();
-					$ip = IBOS::app()->setting->get( 'clientip' );
+					$ip = Ibos::app()->setting->get( 'clientip' );
 					foreach ( $related['Item'] as $dr ) {
 						$dr = (array) $dr;
 						$id = (string) $dr['@attributes']['DeptID'];
@@ -229,7 +229,7 @@ class ImController extends BaseController {
 					$origpwd = Cache::model()->fetchByPk( 'initpwd' );
 					$userRelates = StringUtil::utf8Unserialize( $rec['cachevalue'] );
 					$userDeptRelates = StringUtil::utf8Unserialize( $userDeptRec['cachevalue'] );
-					$ip = IBOS::app()->setting->get( 'clientip' );
+					$ip = Ibos::app()->setting->get( 'clientip' );
 					foreach ( $datas as $user ) {
 						$user = (array) $user;
 						$salt = StringUtil::random( 6 );
@@ -308,7 +308,7 @@ class ImController extends BaseController {
 			$this->ajaxReturn( array( 'isSuccess' => false ) );
 		} else {
 			if ( Message::getIsImOpen( 'qq' ) ) {
-				$imCfg = IBOS::app()->setting->get( 'setting/im/qq' );
+				$imCfg = Ibos::app()->setting->get( 'setting/im/qq' );
 				$factory = new IMFactory();
 				$adapter = $factory->createAdapter( 'application\modules\message\core\IMQq', $imCfg );
 				$api = $adapter->getApi();
@@ -338,7 +338,7 @@ class ImController extends BaseController {
 	private function checkImUnique( $arr ) {
 		foreach ( $arr as $type ) {
 			if ( Message::getIsImOpen( $type ) ) {
-				$this->error( IBOS::lang( 'Binding unique error' ) );
+				$this->error( Ibos::lang( 'Binding unique error' ) );
 			}
 		}
 	}

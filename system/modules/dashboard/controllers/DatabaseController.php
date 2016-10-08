@@ -2,7 +2,7 @@
 
 namespace application\modules\dashboard\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Env;
 use application\core\utils\StringUtil;
 use application\core\utils\Database;
@@ -15,7 +15,7 @@ class DatabaseController extends BaseController {
     public function init() {
         parent::init();
         if (!LOCAL) {
-            die(IBOS::lang('Not compatible service', 'message'));
+            die(Ibos::lang('Not compatible service', 'message'));
         }
     }
 
@@ -38,7 +38,7 @@ class DatabaseController extends BaseController {
             }
         } else {
             $data = array();
-            $tablePrefix = IBOS::app()->setting->get('config/db/tableprefix');
+            $tablePrefix = Ibos::app()->setting->get('config/db/tableprefix');
             // 多卷备份重复执行操作
             if (Env::getRequest('setup') == '1') {
                 $status = Database::databaseBackup();
@@ -82,7 +82,7 @@ class DatabaseController extends BaseController {
                         }
                     }
                 }
-                $this->success(IBOS::lang('Database file delete succeed'));
+                $this->success(Ibos::lang('Database file delete succeed'));
             }
         } else {
             $this->render('restore', array('list' => Database::getBackupList()));
@@ -99,7 +99,7 @@ class DatabaseController extends BaseController {
             if (!empty($tables)) {
                 Database::optimize($tables);
             }
-            $this->success(IBOS::lang('Operation succeed', 'message'));
+            $this->success(Ibos::lang('Operation succeed', 'message'));
         } else {
             $list = Database::getOptimizeTable();
             $totalSize = 0;

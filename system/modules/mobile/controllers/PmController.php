@@ -19,7 +19,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
@@ -39,7 +39,7 @@ class PmController extends BaseController {
 	}
 
 	public function actionList() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		// 获取有多少个未读新对话
 		$unreadCount = MessageContent::model()->countUnreadList( $uid );
 		$pageCount = MessageContent::model()->countMessageListByUid( $uid, array( MessageContent::ONE_ON_ONE_CHAT, MessageContent::MULTIPLAYER_CHAT ) );
@@ -55,7 +55,7 @@ class PmController extends BaseController {
 	}
 
 	public function actionShow() {
-		$message = MessageContent::model()->fetchAllMessageByListId( Env::getRequest( 'id' ), IBOS::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ), 10 );
+		$message = MessageContent::model()->fetchAllMessageByListId( Env::getRequest( 'id' ), Ibos::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ), 10 );
 		$message['data'] = array_reverse( $message['data'] );
 		foreach ( $message['data'] as $key => $value ) {
 			$tmpuser = User::model()->fetchByUid( $value['fromuid'] );
@@ -77,19 +77,19 @@ class PmController extends BaseController {
 				'touid' => $touid,
 				'type' => 1
 			);
-			$res = MessageContent::model()->postMessage( $data, IBOS::app()->user->uid );
+			$res = MessageContent::model()->postMessage( $data, Ibos::app()->user->uid );
 
 			$message = array(
 				'listid' => $res,
 				'IsSuccess' => true
 			);
 		} else {
-			$res = MessageContent::model()->replyMessage( $id, $content, IBOS::app()->user->uid );
+			$res = MessageContent::model()->replyMessage( $id, $content, Ibos::app()->user->uid );
 
 			if ( $res ) {
-				$message = array( 'IsSuccess' => true, 'data' => IBOS::lang( 'Private message send success' ) );
+				$message = array( 'IsSuccess' => true, 'data' => Ibos::lang( 'Private message send success' ) );
 			} else {
-				$message = array( 'IsSuccess' => false, 'data' => IBOS::lang( 'Private message send fail' ) );
+				$message = array( 'IsSuccess' => false, 'data' => Ibos::lang( 'Private message send fail' ) );
 			}
 		}
 		$this->ajaxReturn( $message, Mobile::dataType() );
@@ -133,19 +133,19 @@ class PmController extends BaseController {
 					'touid' => $touid,
 					'type' => 1
 				);
-				$res = MessageContent::model()->postMessage( $data, IBOS::app()->user->uid );
+				$res = MessageContent::model()->postMessage( $data, Ibos::app()->user->uid );
 
 				$message = array(
 					'listid' => $res,
 					'IsSuccess' => true
 				);
 			} else {
-				$res = MessageContent::model()->replyMessage( $id, $content, IBOS::app()->user->uid );
+				$res = MessageContent::model()->replyMessage( $id, $content, Ibos::app()->user->uid );
 
 				if ( $res ) {
-					$message = array( 'IsSuccess' => true, 'data' => IBOS::lang( 'Private message send success' ) );
+					$message = array( 'IsSuccess' => true, 'data' => Ibos::lang( 'Private message send success' ) );
 				} else {
-					$message = array( 'IsSuccess' => false, 'data' => IBOS::lang( 'Private message send fail' ) );
+					$message = array( 'IsSuccess' => false, 'data' => Ibos::lang( 'Private message send fail' ) );
 				}
 			}
 			$this->ajaxReturn( $message, Mobile::dataType() );

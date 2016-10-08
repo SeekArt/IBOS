@@ -19,7 +19,7 @@ namespace application\modules\report\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\department\model\Department;
 use application\modules\report\core\Report as ICReport;
@@ -37,7 +37,7 @@ class ReviewController extends BaseController {
      * 侧栏视图
      */
     public function getSidebar( $getUid, $getUser ) {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( !empty( $getUid ) ) {
             $subUids = $getUid;
         } elseif ( !empty( $getUser ) ) {
@@ -48,8 +48,8 @@ class ReviewController extends BaseController {
         $deptArr = UserUtil::getManagerDeptSubUserByUid( $uid );
         $sidebarAlias = 'application.modules.report.views.review.sidebar';
         $params = array(
-            'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
-            'lang' => IBOS::getLangSource( 'report.default' ),
+            'statModule' => Ibos::app()->setting->get( 'setting/statmodules' ),
+            'lang' => Ibos::getLangSource( 'report.default' ),
             'deptArr' => $deptArr,
             'dashboardConfig' => $this->getReportConfig(),
             'reportTypes' => ReportType::model()->fetchAllTypeByUid( $subUids )
@@ -72,7 +72,7 @@ class ReviewController extends BaseController {
                 $this->search();
             }
             $typeid = intval( Env::getRequest( 'typeid' ) );
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $getSubUids = Env::getRequest( 'subUids' );  // 点击某个部门
             // 汇报类型条件
             $typeCondition = empty( $typeid ) ? 1 : "typeid = {$typeid}";
@@ -85,7 +85,7 @@ class ReviewController extends BaseController {
                 $subUidArr = explode( ',', $getSubUids );
                 foreach ( $subUidArr as $subUid ) {
                     if ( !UserUtil::checkIsSub( $uid, $subUid ) ) {
-                        $this->error( IBOS::lang( 'Have not permission' ), $this->createUrl( 'default/index' ) );
+                        $this->error( Ibos::lang( 'Have not permission' ), $this->createUrl( 'default/index' ) );
                     }
                 }
             }
@@ -99,11 +99,11 @@ class ReviewController extends BaseController {
                 'reportList' => ICReport::handelListData( $paginationData['data'] ),
                 'dashboardConfig' => $this->getReportConfig()
             );
-            $this->setPageTitle( IBOS::lang( 'Review subordinate report' ) );
+            $this->setPageTitle( Ibos::lang( 'Review subordinate report' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Subordinate report' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Subordinate report' ) )
             ) );
             $this->render( 'index', $params );
         } else {
@@ -116,7 +116,7 @@ class ReviewController extends BaseController {
      * @return void
      */
     private function personal() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $typeid = Env::getRequest( 'typeid' );
         $getUid = intval( Env::getRequest( 'uid' ) );
         $condition = "uid = '{$getUid}'";
@@ -133,7 +133,7 @@ class ReviewController extends BaseController {
         $this->_condition = ReportUtil::joinCondition( $this->_condition, $condition );
         $paginationData = Report::model()->fetchAllByPage( $this->_condition );
         $params = array(
-            'dashboardConfig' => IBOS::app()->setting->get( 'setting/reportconfig' ),
+            'dashboardConfig' => Ibos::app()->setting->get( 'setting/reportconfig' ),
             'typeid' => $typeid,
             'pagination' => $paginationData['pagination'],
             'reportList' => ICReport::handelListData( $paginationData['data'] ),
@@ -142,11 +142,11 @@ class ReviewController extends BaseController {
             'user' => User::model()->fetchByUid( $getUid ),
             'supUid' => UserUtil::getSupUid( $getUid ) //获取上司uid
         );
-        $this->setPageTitle( IBOS::lang( 'Review subordinate report' ) );
+        $this->setPageTitle( Ibos::lang( 'Review subordinate report' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Subordinate personal report' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Subordinate personal report' ) )
         ) );
         $this->render( 'personal', $params );
     }
@@ -156,13 +156,13 @@ class ReviewController extends BaseController {
      */
     public function actionShow() {
         $repid = intval( Env::getRequest( 'repid' ) );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( empty( $repid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'review/index' ) );
         }
         $report = Report::model()->fetchByPk( $repid );
         if ( empty( $report ) ) {
-            $this->error( IBOS::lang( 'No data found', 'error' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'No data found', 'error' ), $this->createUrl( 'review/index' ) );
         }
         // 增加阅读记录
         Report::model()->addReaderuid( $report, $uid );
@@ -172,7 +172,7 @@ class ReviewController extends BaseController {
         // 检查是否有权限
         $permission = ICReport::checkPermission( $report, $uid );
         if ( !$permission ) {
-            $this->error( IBOS::lang( 'You do not have permission to view the report' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'You do not have permission to view the report' ), $this->createUrl( 'review/index' ) );
         }
         // 取得原计划、计划外、下次计划
         $record = ReportRecord::model()->fetchAllRecordByRep( $report );
@@ -216,11 +216,11 @@ class ReviewController extends BaseController {
         if ( $dashboardConfig['stampenable'] && $dashboardConfig['autoreview'] ) {
             $this->changeIsreview( $repid );
         }
-        $this->setPageTitle( IBOS::lang( 'Show subordinate report' ) );
+        $this->setPageTitle( Ibos::lang( 'Show subordinate report' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Show subordinate report' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work report' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Show subordinate report' ) )
         ) );
         $this->render( 'show', $params );
     }
@@ -229,11 +229,11 @@ class ReviewController extends BaseController {
      * 编辑
      */
     public function actionEdit() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $op = Env::getRequest( 'op' );
             $routes = array( 'changeIsreview' );
             if ( !in_array( $op, $routes ) ) {
-                $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
             }
             if ( $op == 'changeIsreview' ) {
                 $repid = Env::getRequest( 'repid' );
@@ -250,7 +250,7 @@ class ReviewController extends BaseController {
     private function changeIsreview( $repid ) {
         $report = Report::model()->fetchByPk( $repid );
         // 判断是否是直属上司，只给直属上司自动评阅
-        if ( !empty( $report ) && UserUtil::checkIsUpUid( $report['uid'], IBOS::app()->user->uid ) ) {
+        if ( !empty( $report ) && UserUtil::checkIsUpUid( $report['uid'], Ibos::app()->user->uid ) ) {
             if ( $report['stamp'] == 0 ) {
                 $stamp = $this->getAutoReviewStamp();
                 Report::model()->modify( $repid, array( 'isreview' => 1, 'stamp' => $stamp ) );
@@ -266,7 +266,7 @@ class ReviewController extends BaseController {
      * @return void
      */
     private function getsubordinates() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $uid = $_GET['uid'];
             $getItem = Env::getRequest( 'item' );
             $item = empty( $getItem ) ? 5 : $getItem;
@@ -281,7 +281,7 @@ class ReviewController extends BaseController {
             foreach ( $users as $user ) {
                 if ( $num < $item ) {
                     $htmlStr.='<li class="mng-item">
-                                            <a href="' . IBOS::app()->urlManager->createUrl( $theUrl, array( 'op' => 'personal', 'uid' => $user['uid'] ) ) . '">
+                                            <a href="' . Ibos::app()->urlManager->createUrl( $theUrl, array( 'op' => 'personal', 'uid' => $user['uid'] ) ) . '">
                                                 <img src="' . $user['avatar_middle'] . '" alt="">
                                                 ' . $user['realname'] . '
                                             </a>
@@ -294,7 +294,7 @@ class ReviewController extends BaseController {
                 $htmlStr.='<li class="mng-item view-all" data-uid="' . $uid . '">
                                                 <a href="javascript:;">
                                                     <i class="o-da-allsub"></i>
-                                                    ' . IBOS::lang( 'View all subordinate' ) . '
+                                                    ' . Ibos::lang( 'View all subordinate' ) . '
                                                 </a>
                                             </li>';
             }
@@ -307,7 +307,7 @@ class ReviewController extends BaseController {
      * 获取图章icon
      */
     private function getStampIcon() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $repid = $_GET['repid'];
             $report = Report::model()->fetchByPk( $repid );
             if ( $report['stamp'] != 0 ) {

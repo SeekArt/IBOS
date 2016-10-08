@@ -3,7 +3,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\file\model\File;
 use application\modules\file\utils\FileData;
 use application\modules\file\controllers\FromShareController;

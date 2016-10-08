@@ -2,7 +2,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\diary\utils\Diary as DiaryUtil;
 use CWidget;
 
@@ -17,7 +17,7 @@ class DiaryReviewSidebar extends CWidget {
 	public function run() {
 		$data = array(
 			'hasSub' => DiaryUtil::checkIsHasSub(),
-			'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
+			'statModule' => Ibos::app()->setting->get( 'setting/statmodules' ),
 			'config' => DiaryUtil::getSetting(),
 			'id' => $this->getController()->getId(),
 		);

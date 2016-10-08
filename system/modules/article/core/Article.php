@@ -18,7 +18,7 @@ namespace application\modules\article\core;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\model\ArticleApproval;
 use application\modules\article\model\ArticleBack;
@@ -57,17 +57,17 @@ class Article {
         if ( $data['approver'] != 0 ) {
             $data['approver'] = User::model()->fetchRealnameByUid( $data['approver'] );
         } else {
-            $data['approver'] = IBOS::lang( 'None' );
+            $data['approver'] = Ibos::lang( 'None' );
         }
 
         $data['addtime'] = Convert::formatDate( $data['addtime'], 'u' );
         $data['uptime'] = empty( $data['uptime'] ) ? '' : Convert::formatDate( $data['uptime'], 'u' );
         $data['categoryName'] = ArticleCategory::model()->fetchCateNameByCatid( $data['catid'] );
         if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) && empty( $data['roleid'] ) ) {
-            $data['departmentNames'] = IBOS::lang( 'All' );
+            $data['departmentNames'] = Ibos::lang( 'All' );
             $data['positionNames'] = $data['uidNames'] = '';
         } else if ( $data['deptid'] == 'alldept' ) {
-            $data['departmentNames'] = IBOS::lang( 'All' );
+            $data['departmentNames'] = Ibos::lang( 'All' );
             $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
@@ -230,11 +230,11 @@ class Article {
         if ( empty( $list ) ) {
             return $list;
         }
-        if ( IBOS::app()->user->isadministrator ) {
+        if ( Ibos::app()->user->isadministrator ) {
             $list = self::grantPermission( $list, 1, self::getAllowType( 'edit' ) );
             return self::grantPermission( $list, 1, self::getAllowType( 'del' ) );
         }
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $user = User::model()->fetchByUid( $uid );
         // 编辑、删除权限，取主岗位和辅助岗位权限最大值
         $editPurv = RoleUtil::getMaxPurv( $uid, 'article/manager/edit' );

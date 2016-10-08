@@ -17,7 +17,7 @@ namespace application\modules\statistics\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
@@ -38,7 +38,7 @@ class DashboardController extends BaseController {
             }
             Setting::model()->updateSettingValueByKey( 'statmodules', $_POST['statmodules'] );
             Cache::update( 'setting' );
-            $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
         } else {
             $res = Setting::model()->fetchSettingValueByKey( 'statmodules' );
             $statModules = $res ? StringUtil::utf8Unserialize( $res ) : array();

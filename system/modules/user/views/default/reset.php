@@ -1,13 +1,13 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!doctype html>
 <html lang="en">
 	<head>
         <meta charset=<?php echo CHARSET; ?> />
-        <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
+        <title><?php echo Ibos::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico">
         <meta name="generator" content="IBOS <?php echo VERSION; ?>" />
 		<meta name="author" content="IBOS Team" />

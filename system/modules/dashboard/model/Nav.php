@@ -19,7 +19,7 @@ namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Nav extends Model {
 
@@ -48,7 +48,7 @@ class Nav extends Model {
      */
     public function fetchAllByAllPid() {
 
-        $all = IBOS::app()->db->createCommand()
+        $all = Ibos::app()->db->createCommand()
                 ->select('*')
                 ->from($this->tableName())
                 ->order(" pid ASC,sort ASC ")

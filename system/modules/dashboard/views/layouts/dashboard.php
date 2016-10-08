@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\utils\User;
 ?>
 <!doctype html>
@@ -23,16 +23,16 @@ use application\modules\user\utils\User;
 <?php $gAccount = User::getAccountSetting(); ?>
 			var G = {
 			VERHASH: '<?php echo VERHASH; ?>',
-					SITE_URL: '<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>',
+					SITE_URL: '<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>',
 					STATIC_URL: '<?php echo STATICURL; ?>',
-					cookiePre: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
-					cookiePath: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
-					cookieDomain: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
-					creditRemind: '<?php echo IBOS::app()->setting->get( 'setting/creditnames' ); ?>',
+					cookiePre: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
+					cookiePath: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
+					cookieDomain: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
+					creditRemind: '<?php echo Ibos::app()->setting->get( 'setting/creditnames' ); ?>',
 					formHash: '<?php echo FORMHASH ?>',
-<?php if ( !IBOS::app()->user->isGuest ): ?>
-				uid: '<?php echo IBOS::app()->user->uid; ?>',
-						contact: '<?php echo User::getJsConstantUids( IBOS::app()->user->uid ); ?>',
+<?php if ( !Ibos::app()->user->isGuest ): ?>
+				uid: '<?php echo Ibos::app()->user->uid; ?>',
+						contact: '<?php echo User::getJsConstantUids( Ibos::app()->user->uid ); ?>',
 <?php endif; ?>
 			password: {
 			minLength: "<?php echo $gAccount['minlength']; ?>",

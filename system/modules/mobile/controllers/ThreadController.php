@@ -3,7 +3,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\mobile\utils\Mobile;
 use application\modules\thread\controllers\OpController;
 use application\modules\thread\model\Thread;
@@ -32,7 +32,7 @@ class ThreadController extends OpController {
 	 * 工作主线列表页
 	 */
 	public function actionIndex() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$status = isset( $_GET['status'] ) ? intval( $_GET['status'] ) : 0;
 		$offset = isset( $_GET['offset'] ) ? intval( $_GET['offset'] ) : 0;
 
@@ -40,7 +40,7 @@ class ThreadController extends OpController {
 			$this->search( $offset );
 		}
 		$condition = " (`designeeuid`={$uid} OR `chargeuid`={$uid} OR FIND_IN_SET({$uid}, `participantuid`) ) AND `status`={$status}";
-		$ob =IBOS::app()->db->createCommand();
+		$ob =Ibos::app()->db->createCommand();
 
 		// 当查询已完成主线时，限制每次 10 条，查询进行中主线不做限制直接获取全部
 		if($status == 1) {
@@ -67,7 +67,7 @@ class ThreadController extends OpController {
 
 	private function mergeAttentionStatus($list) {
 		$result = array();
-		$attenThreadIds = ThreadAttention::model()->fetchThreadIdsByUid( IBOS::app()->user->uid );
+		$attenThreadIds = ThreadAttention::model()->fetchThreadIdsByUid( Ibos::app()->user->uid );
 
 		foreach ( $list as $thread ) {
 			$thread = array_merge($thread, array('isAttention' => in_array( $thread['threadid'], $attenThreadIds )));
@@ -93,7 +93,7 @@ class ThreadController extends OpController {
 	 */
 	public function actionEdit() {
 		$threadId = $_GET['id'];
-		if ( IBOS::app()->request->getIsPostRequest() ) {
+		if ( Ibos::app()->request->getIsPostRequest() ) {
 			$post = CJSON::decode( $_POST );
 			$this->beforeSave( $post ); // 空值判断
 			$this->beforeEdit( $threadId );
@@ -155,10 +155,10 @@ class ThreadController extends OpController {
 	 * @param integer $offset
 	 */
 	private function search( $offset ) {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$keyword = Env::getRequest( 'keyword' );
 		$this->_condition = " subject LIKE %{$keyword}% AND (`designeeuid`={$uid} OR `chargeuid`={$uid} OR FIND_IN_SET({$uid}, `participantuid`) )";
-		$result = IBOS::app()->db->createCommand()
+		$result = Ibos::app()->db->createCommand()
 				->select( '*' )
 				->from( '{{thread}}' )
 				->where( $this->_condition )
@@ -180,7 +180,7 @@ class ThreadController extends OpController {
 	 */
 	private function chkValid( $threadId ) {
 		if ( !$this->getThreadObj( $threadId )->chkValid() ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Thread empty' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Thread empty' ) ) );
 		}
 	}
 
@@ -190,14 +190,14 @@ class ThreadController extends OpController {
 	private function beforeSave( $postData ) {
 		$returnUrl = $this->createUrl( 'list/index' );
 		if ( empty( $postData['subject'] ) ) {
-			$this->error( IBOS::lang( 'Subject cannot be empty' ), $returnUrl );
+			$this->error( Ibos::lang( 'Subject cannot be empty' ), $returnUrl );
 		}
 		$settingObj = $this->getSettingObj();
 		if ( $settingObj->isRequireCharge() && empty( $postData['chargeuid'] ) ) {
-			$this->error( IBOS::lang( 'Head cannot be empty' ), $returnUrl );
+			$this->error( Ibos::lang( 'Head cannot be empty' ), $returnUrl );
 		}
 		if ( $settingObj->isRequireFinishtime() && empty( $postData['endtime'] ) ) {
-			$this->error( IBOS::lang( 'Finishtime connot be empty' ), $returnUrl );
+			$this->error( Ibos::lang( 'Finishtime connot be empty' ), $returnUrl );
 		}
 	}
 
@@ -208,8 +208,8 @@ class ThreadController extends OpController {
 	private function beforeEdit( $threadId ) {
 		$this->chkValid( $threadId );
 		// 检查权限
-		if ( !$this->getSettingObj()->chkEditAble( $threadId, IBOS::app()->user->uid ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to edit' ) ) );
+		if ( !$this->getSettingObj()->chkEditAble( $threadId, Ibos::app()->user->uid ) ) {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to edit' ) ) );
 		}
 	}
 
@@ -220,8 +220,8 @@ class ThreadController extends OpController {
 	private function beforeDel( $threadId ) {
 		$this->chkValid( $threadId );
 		// 检查权限
-		if ( !$this->getSettingObj()->chkDelAble( $threadId, IBOS::app()->user->uid ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to delete' ) ) );
+		if ( !$this->getSettingObj()->chkDelAble( $threadId, Ibos::app()->user->uid ) ) {
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to delete' ) ) );
 		}
 	}
 

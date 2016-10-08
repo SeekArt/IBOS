@@ -5,7 +5,7 @@ namespace application\modules\email\utils;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\Xml;
 use application\modules\email\extensions\mailer\EMailer;
@@ -193,7 +193,7 @@ class WebMail {
         if (!$is_unicode) {
             $body = Convert::iIconv($body, 'gb2312');
         }
-        $url = IBOS::app()->urlManager->createUrl('email/web/show', array(
+        $url = Ibos::app()->urlManager->createUrl('email/web/show', array(
             'webid' => self::$_web['webid'],
             'folder' => $folder,
             'id' => $id,
@@ -256,7 +256,7 @@ class WebMail {
                     continue;
 //					$href = "read_message.php?user=$user&folder=$folder_url&id=$id&part=" . $code;
                 } else {
-                    $href = IBOS::app()->urlManager->createUrl('email/web/show', array(
+                    $href = Ibos::app()->urlManager->createUrl('email/web/show', array(
                         'webid' => self::$_web['webid'],
                         'folder' => 'INBOX',
                         'id' => $id,
@@ -346,7 +346,7 @@ class WebMail {
                             $body[] = self::fetchBody($obj, $conn, 'INBOX', $id, $structure, $part);
                         } else if (($typeCode == 5) && (strcasecmp($disposition, "inline") == 0 )) {
 //if type is image and disposition is "inline" show
-                            $href = IBOS::app()->urlManager->createUrl('email/web/show', array(
+                            $href = Ibos::app()->urlManager->createUrl('email/web/show', array(
                                 'webid' => self::$_web['webid'],
                                 'folder' => 'INBOX',
                                 'id' => $id,
@@ -368,7 +368,7 @@ class WebMail {
                         }
                     } else {
                         if ($typeCode == 5) {
-                            $href = IBOS::app()->urlManager->createUrl('email/web/show', array(
+                            $href = Ibos::app()->urlManager->createUrl('email/web/show', array(
                                 'webid' => self::$_web['webid'],
                                 'folder' => 'INBOX',
                                 'id' => $id,
@@ -406,7 +406,7 @@ class WebMail {
             $fileExt = StringUtil::getFileExt($name);
             $fileType = Attach::attachType($fileExt);
             $size = Convert::sizeCount($bytes);
-            $href = IBOS::app()->urlManager->createUrl('email/web/show', array(
+            $href = Ibos::app()->urlManager->createUrl('email/web/show', array(
                 'webid' => self::$_web['webid'],
                 'folder' => 'INBOX',
                 'id' => $id,
@@ -1049,7 +1049,7 @@ EOT;
         $user = User::model()->fetchByUid($web['uid']);
         $password = StringUtil::authCode($web['password'], 'DECODE', $user['salt']);
 
-        $mailer = IBOS::createComponent('application\modules\email\extensions\mailer\EMailer');
+        $mailer = Ibos::createComponent('application\modules\email\extensions\mailer\EMailer');
         $mailer = new EMailer();
         $mailer->IsSMTP();
         $mailer->SMTPDebug = 0;
@@ -1077,7 +1077,7 @@ EOT;
                 if (LOCAL) {
                     $mailer->addAttachment($url, $attachment['filename']);
                 } else {
-                    $temp = IBOS::engine()->IO()->file()->fetchTemp($url);
+                    $temp = Ibos::engine()->IO()->file()->fetchTemp($url);
                     $mailer->addAttachment($temp, $attachment['filename']);
                 }
             }

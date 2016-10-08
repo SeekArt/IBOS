@@ -1,23 +1,23 @@
 <?php 
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <div class="clearfix">
 	<ul class="time-type-select" id="time_type_select">
 		<?php $uid = Env::getRequest( 'uid' ); ?>
 		<li <?php if ( $time['timestr'] == 'thisweek' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'thisweek', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['This week']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'thisweek', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['This week']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'lastweek' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'lastweek', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['Last week']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'lastweek', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['Last week']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'thismonth' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'thismonth', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['This month']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'thismonth', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['This month']; ?></a>
 		</li>
 		<li <?php if ( $time['timestr'] == 'lastmonth' ): ?> class="active"<?php endif; ?>>
-			<a href="<?php echo IBOS::app()->createUrl( $timeRoute, array( 'time' => 'lastmonth', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['Last month']; ?></a>
+			<a href="<?php echo Ibos::app()->createUrl( $timeRoute, array( 'time' => 'lastmonth', 'module' => $module, 'uid' => $uid ) ); ?>"><?php echo $lang['Last month']; ?></a>
 		</li>
 	</ul>
 	<div class="span3">

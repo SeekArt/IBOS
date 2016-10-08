@@ -17,7 +17,7 @@
 namespace application\modules\calendar\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -29,7 +29,7 @@ Class LoopController extends BaseController {
         parent::init();
         // 权限检查
         if (!$this->checkIsMe()) {
-            $this->error(IBOS::lang('No permission to view loop'), $this->createUrl('loop/index'));
+            $this->error(Ibos::lang('No permission to view loop'), $this->createUrl('loop/index'));
         }
     }
 
@@ -45,11 +45,11 @@ Class LoopController extends BaseController {
             'pages' => $loopList['pages'],
             'loopList' => $loops
         );
-        $this->setPageTitle(IBOS::lang('Periodic affairs'));
+        $this->setPageTitle(Ibos::lang('Periodic affairs'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
-            array('name' => IBOS::lang('Periodic affairs'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+            array('name' => Ibos::lang('Periodic affairs'))
         ));
         $this->render('index', $params);
     }
@@ -108,7 +108,7 @@ Class LoopController extends BaseController {
         $op = Env::getRequest('op');
         $editCalendarid = Env::getRequest('editCalendarid');  //编辑的(周期性事务)日程ID
         if (empty($editCalendarid)) {
-            $this->error(IBOS::lang('Parameters error', 'error'));
+            $this->error(Ibos::lang('Parameters error', 'error'));
         }
         if ($op == 'geteditdata') {
             $editData = Calendars::model()->fetchEditLoop($editCalendarid);
@@ -129,12 +129,12 @@ Class LoopController extends BaseController {
      * 删除周期性事务
      */
     public function actionDel() {
-        if (!IBOS::app()->request->getIsAjaxRequest()) {
-            $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
+        if (!Ibos::app()->request->getIsAjaxRequest()) {
+            $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
         }
         $delCalendarid = Env::getRequest('delCalendarid');
         if (empty($delCalendarid)) {
-            $this->error(IBOS::lang('Parameters error', 'error'));
+            $this->error(Ibos::lang('Parameters error', 'error'));
         }
         $delArr = explode(',', $delCalendarid);
         foreach ($delArr as $calendarid) {
@@ -149,8 +149,8 @@ Class LoopController extends BaseController {
      * @return array  返回处理过后的数据数组
      */
     private function beforeSave() {
-        if (!IBOS::app()->request->getIsAjaxRequest()) {
-            $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
+        if (!Ibos::app()->request->getIsAjaxRequest()) {
+            $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
         }
         $subject = Env::getRequest('subject');  //循环事务内容
         $starttime = Env::getRequest('starttime');  //循环开始时间

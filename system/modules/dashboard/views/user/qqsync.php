@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!doctype html>
@@ -17,7 +17,7 @@ use application\core\utils\IBOS;
 	</head>
 	<body>
 		<div style="padding: 20px; width: 400px;">
-			<form class="form-horizontal" method="post" action="<?php echo IBOS::app()->createUrl( 'dashboard/organizationApi/syncuser' ); ?>">
+			<form class="form-horizontal" method="post" action="<?php echo Ibos::app()->createUrl( 'dashboard/organizationApi/syncuser' ); ?>">
 				<div class="control-group">
 					<label class="control-label">确认同步</label>
 					<div class="controls">

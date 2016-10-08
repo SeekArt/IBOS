@@ -2,7 +2,7 @@
 
 namespace application\modules\main\model;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use CException;
 
@@ -36,7 +36,7 @@ class AttachmentN {
 			list($idType, $id) = explode( ':', $tableId );
 			if ( $idType == 'aid' ) {
 				$aid = StringUtil::iIntval( $id );
-				$tableId = IBOS::app()->db->createCommand()
+				$tableId = Ibos::app()->db->createCommand()
 						->select( 'tableid' )
 						->from( '{{attachment}}' )
 						->where( "aid='{$aid}'" )
@@ -65,7 +65,7 @@ class AttachmentN {
 	public function fetch( $tableId, $aid, $isImage = false ) {
 		$isImage = $isImage === false ? '' : ' AND isimage = 1';
 		$sqlText = sprintf( 'SELECT * FROM %s WHERE aid = %d %s', $this->getTable( $tableId ), $aid, $isImage );
-		return !empty( $aid ) ? IBOS::app()->db->createCommand()->setText( $sqlText )->queryRow() : array();
+		return !empty( $aid ) ? Ibos::app()->db->createCommand()->setText( $sqlText )->queryRow() : array();
 	}
 
 	/**
@@ -75,10 +75,10 @@ class AttachmentN {
 	 * @return integer 
 	 */
 	public function add( $tableId, $attrs, $returnId = false ) {
-		$rs = IBOS::app()->db->createCommand()
+		$rs = Ibos::app()->db->createCommand()
 				->insert( $this->getTable( $tableId ), $attrs );
 		if ( $returnId ) {
-			return IBOS::app()->db->getLastInsertID();
+			return Ibos::app()->db->getLastInsertID();
 		} else {
 			return $rs;
 		}
@@ -91,12 +91,12 @@ class AttachmentN {
 	 * @return integer
 	 */
 	public function deleteByPk( $tableId, $aid ) {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->delete( $this->getTable( $tableId ), "aid = {$aid}" );
 	}
 
 	public function updateData( $tableid, $aid, $data ) {
-		return IBOS::app()->db->createCommand()
+		return Ibos::app()->db->createCommand()
 						->update( $this->getTable( $tableid ), $data, "aid = {$aid}" );
 	}
 

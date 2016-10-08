@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\callback;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\model\Article;
 use application\modules\article\utils\Article as ArticleUtil;
@@ -47,7 +47,7 @@ class News extends Callback {
 	}
 
 	protected function handleByText() {
-		$condition = ArticleUtil::joinListCondition( 'normal_search', IBOS::app()->user->uid, 0, " subject LIKE '%{$this->message}%' " );
+		$condition = ArticleUtil::joinListCondition( 'normal_search', Ibos::app()->user->uid, 0, " subject LIKE '%{$this->message}%' " );
 		$criteria = array(
 			'condition' => $condition,
 			'order' => 'istop DESC,toptime ASC,addtime DESC',

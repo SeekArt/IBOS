@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\diary\model\DiaryAttention;
@@ -33,19 +33,19 @@ class Diary {
     public static function getDateAndWeekDay($dateStr) {
         list($year, $month, $day) = explode('-', $dateStr);
         $weekArray = array(
-            IBOS::lang('Day', 'date'),
-            IBOS::lang('One', 'date'),
-            IBOS::lang('Two', 'date'),
-            IBOS::lang('Three', 'date'),
-            IBOS::lang('Four', 'date'),
-            IBOS::lang('Five', 'date'),
-            IBOS::lang('Six', 'date')
+            Ibos::lang('Day', 'date'),
+            Ibos::lang('One', 'date'),
+            Ibos::lang('Two', 'date'),
+            Ibos::lang('Three', 'date'),
+            Ibos::lang('Four', 'date'),
+            Ibos::lang('Five', 'date'),
+            Ibos::lang('Six', 'date')
         );
         $weekday = $weekArray[date("w", strtotime($dateStr))];
         return array('year' => $year,
             'month' => $month,
             'day' => $day,
-            'weekday' => IBOS::lang('Weekday', 'date') . $weekday
+            'weekday' => Ibos::lang('Weekday', 'date') . $weekday
         );
     }
 
@@ -177,7 +177,7 @@ class Diary {
      * @return type
      */
     public static function getSetting() {
-        return IBOS::app()->setting->get('setting/diaryconfig');
+        return Ibos::app()->setting->get('setting/diaryconfig');
     }
 
     /**
@@ -186,7 +186,7 @@ class Diary {
      * @return boolean
      */
     public static function getIsAttention($attentionUid) {
-        $aUids = DiaryAttention::model()->fetchAuidByUid(IBOS::app()->user->uid);
+        $aUids = DiaryAttention::model()->fetchAuidByUid(Ibos::app()->user->uid);
         return in_array($attentionUid, $aUids);
     }
 
@@ -234,7 +234,7 @@ class Diary {
     public static function checkIsHasSub() {
         static $hasSub = null;
         if ($hasSub === null) {
-            $subUidArr = User::model()->fetchSubUidByUid(IBOS::app()->user->uid);
+            $subUidArr = User::model()->fetchSubUidByUid(Ibos::app()->user->uid);
             if (!empty($subUidArr)) {
                 $hasSub = true;
             } else {
@@ -250,7 +250,7 @@ class Diary {
      */
     public static function getOffTime() {
         if (Module::getIsEnabled("calendar")) {
-            $workTime = explode(',', IBOS::app()->setting->get("setting/calendarworkingtime"));
+            $workTime = explode(',', Ibos::app()->setting->get("setting/calendarworkingtime"));
             $offTime = $workTime[1];
             $ret = self::handleOffTime($offTime);
         } else {

@@ -14,7 +14,7 @@ class AnnouncementController extends BaseController {
             foreach ( $sort as $id => $value ) {
                 Announcement::model()->modify( $id, array( 'sort' => $value ) );
             }
-            $this->success( util\IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( util\Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array();
             $count = Announcement::model()->count( array( 'select' => 'id' ) );
@@ -30,10 +30,10 @@ class AnnouncementController extends BaseController {
         $formSubmit = util\Env::submitCheck( 'announcementSubmit' );
         if ( $formSubmit ) {
             $this->beforeSave();
-            $_POST['author'] = util\IBOS::app()->user->realname;
+            $_POST['author'] = util\Ibos::app()->user->realname;
             $data = Announcement::model()->create();
             $rs = Announcement::model()->add( $data );
-            $this->success( util\IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( util\Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $this->render( 'add' );
         }
@@ -46,7 +46,7 @@ class AnnouncementController extends BaseController {
             $this->beforeSave();
             $data = Announcement::model()->create();
             Announcement::model()->updateByPk( $id, $data );
-            $this->success( util\IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( util\Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array();
             if ( intval( $id ) ) {
@@ -63,13 +63,13 @@ class AnnouncementController extends BaseController {
             $ids = util\Env::getRequest( 'id' );
             $id = implode( ',', $ids );
             $this->announcementDelete( $id );
-            $this->success( util\IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( util\Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $id = util\Env::getRequest( 'id' );
             if ( $this->announcementDelete( $id ) ) {
-                $this->success( util\IBOS::lang( 'Del succeed', 'message' ) );
+                $this->success( util\Ibos::lang( 'Del succeed', 'message' ) );
             } else {
-                $this->error( util\IBOS::lang( 'Del failed', 'message' ) );
+                $this->error( util\Ibos::lang( 'Del failed', 'message' ) );
             }
         }
     }
@@ -80,7 +80,7 @@ class AnnouncementController extends BaseController {
         $_POST['starttime'] = strtotime( $_POST['starttime'] );
         $_POST['endtime'] = strtotime( $_POST['endtime'] );
         if ( $_POST['starttime'] > $_POST['endtime'] ) {
-            $this->error( util\IBOS::lang( 'Sorry, you did not enter the start time or the end time you input is not correct', 'error' ) );
+            $this->error( util\Ibos::lang( 'Sorry, you did not enter the start time or the end time you input is not correct', 'error' ) );
         }
     }
 

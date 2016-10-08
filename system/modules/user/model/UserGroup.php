@@ -19,7 +19,7 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class UserGroup extends Model {
 
@@ -90,7 +90,7 @@ class UserGroup extends Model {
 
     public function findUserGroupIndexByGid() {
         $return = $userGroupArray = array();
-        $userGroupArray = IBOS::app()->db->createCommand()
+        $userGroupArray = Ibos::app()->db->createCommand()
                 ->select()
                 ->from( $this->tableName() )
                 ->queryAll();

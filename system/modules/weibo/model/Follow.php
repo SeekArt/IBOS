@@ -4,7 +4,7 @@ namespace application\modules\weibo\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\model\Notify;
 use application\modules\message\model\UserData;
 use application\modules\user\model\User;
@@ -33,17 +33,17 @@ class Follow extends Model {
     public function doFollow( $uid, $fid ) {
         if ( intval( $uid ) <= 0 || $fid <= 0 ) {
             // 错误的参数
-            $this->addError( 'doFollow', IBOS::lang( 'Parameters error', 'error' ) );
+            $this->addError( 'doFollow', Ibos::lang( 'Parameters error', 'error' ) );
             return false;
         }
         if ( $uid == $fid ) {
             // 不能关注自己
-            $this->addError( 'doFollow', IBOS::lang( 'Following myself forbidden', 'message.default' ) );
+            $this->addError( 'doFollow', Ibos::lang( 'Following myself forbidden', 'message.default' ) );
             return false;
         }
         if ( !User::model()->fetchByUid( $fid ) ) {
             // 被关注的用户不存在
-            $this->addError( 'doFollow', IBOS::lang( 'Following people noexist', 'message.default' ) );
+            $this->addError( 'doFollow', Ibos::lang( 'Following people noexist', 'message.default' ) );
             return false;
         }
         // 获取双方的关注关系
@@ -58,24 +58,24 @@ class Follow extends Model {
             $user = User::model()->fetchByUid( $uid );
             $config = array(
                 '{user}' => $user['realname'],
-                '{url}' => IBOS::app()->urlManager->createUrl( 'weibo/personal/follower' )
+                '{url}' => Ibos::app()->urlManager->createUrl( 'weibo/personal/follower' )
             );
             // 通知
             Notify::model()->sendNotify( $fid, 'user_follow', $config );
             if ( $result ) {
                 // 关注成功
-                $this->addError( 'doFollow', IBOS::lang( 'Add follow success', 'message.default' ) );
+                $this->addError( 'doFollow', Ibos::lang( 'Add follow success', 'message.default' ) );
                 $this->_updateFollowCount( $uid, $fid, true );   // 更新统计
                 $followState['following'] = 1;
                 return $followState;
             } else {
                 // 关注失败
-                $this->addError( 'doFollow', IBOS::lang( 'Add follow fail', 'message.default' ) );
+                $this->addError( 'doFollow', Ibos::lang( 'Add follow fail', 'message.default' ) );
                 return false;
             }
         } else {
             // 已关注
-            $this->addError( 'doFollow', IBOS::lang( 'Following', 'message.default' ) );
+            $this->addError( 'doFollow', Ibos::lang( 'Following', 'message.default' ) );
             return false;
         }
     }
@@ -98,19 +98,19 @@ class Follow extends Model {
             // 已关注
             if ( $this->deleteAllByAttributes( $map ) ) {
                 // 操作成功
-                $this->addError( 'unFollow', IBOS::lang( 'Operation succeed', 'message' ) );
+                $this->addError( 'unFollow', Ibos::lang( 'Operation succeed', 'message' ) );
                 $this->_updateFollowCount( $uid, $fid, false ); // 更新统计
                 $followState['following'] = 0;
                 return $followState;
             } else {
                 // 操作失败
-                $this->addError( 'unFollow', IBOS::lang( 'Operation failure', 'message' ) );
+                $this->addError( 'unFollow', Ibos::lang( 'Operation failure', 'message' ) );
                 return false;
             }
         } else {
             // 未关注
             // 操作失败
-            $this->addError( 'unFollow', IBOS::lang( 'Operation failure', 'message' ) );
+            $this->addError( 'unFollow', Ibos::lang( 'Operation failure', 'message' ) );
             return false;
         }
     }

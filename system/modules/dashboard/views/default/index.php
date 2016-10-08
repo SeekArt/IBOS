@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!doctype html>
 <!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> -->
@@ -64,10 +64,10 @@ use application\core\utils\IBOS;
                 </form>
                 <div class="user-info pull-right">
                     <span class="user-name">
-                        <a href="<?php echo IBOS::app()->user->space_url; ?>" target="_blank"><img width="30" height="30" class="radius msep" src="<?php echo IBOS::app()->user->avatar_middle; ?>" title="<?php echo IBOS::app()->user->realname; ?>"></a>
-                        <strong><?php echo IBOS::app()->user->realname; ?></strong>
+                        <a href="<?php echo Ibos::app()->user->space_url; ?>" target="_blank"><img width="30" height="30" class="radius msep" src="<?php echo Ibos::app()->user->avatar_middle; ?>" title="<?php echo Ibos::app()->user->realname; ?>"></a>
+                        <strong><?php echo Ibos::app()->user->realname; ?></strong>
                     </span>
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( '/' ); ?>" target="_blank" class="msep cbtn o-homepage" title="<?php echo IBOS::lang( 'Return to home page' ); ?>"></a>
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( '/' ); ?>" target="_blank" class="msep cbtn o-homepage" title="<?php echo Ibos::lang( 'Return to home page' ); ?>"></a>
                     <a href="<?php echo $this->createUrl( 'default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="cbtn o-logout" title="<?php echo $lang['Logout']; ?>"></a>
                 </div>
             </div>
@@ -104,7 +104,7 @@ use application\core\utils\IBOS;
                                             <ul class="sub-sec-nav">
                                                 <?php foreach ( $moduleMenu as $id => $menu ): ?>
                                                     <li>
-                                                        <a href="<?php echo IBOS::app()->urlManager->createUrl( $menu['m'] . '/' . $menu['c'] . '/' . $menu['a'] ); ?>" target="main" title="<?php echo $menu['name']; ?>">
+                                                        <a href="<?php echo Ibos::app()->urlManager->createUrl( $menu['m'] . '/' . $menu['c'] . '/' . $menu['a'] ); ?>" target="main" title="<?php echo $menu['name']; ?>">
                                                             <?php echo $menu['name']; ?>
                                                         </a>
                                                     </li>

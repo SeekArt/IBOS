@@ -18,7 +18,7 @@
 namespace application\modules\position\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Position {
 
@@ -27,7 +27,7 @@ class Position {
      * @return array
      */
     public static function loadPosition() {
-        return IBOS::app()->setting->get( 'cache/position' );
+        return Ibos::app()->setting->get( 'cache/position' );
     }
 
     /**
@@ -35,7 +35,7 @@ class Position {
      * @return array
      */
     public static function loadPositionCategory() {
-        return IBOS::app()->setting->get( 'cache/positioncategory' );
+        return Ibos::app()->setting->get( 'cache/positioncategory' );
     }
 
     /**

@@ -5,7 +5,7 @@ namespace application\modules\message\model;
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Cloud;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Mail;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
@@ -106,7 +106,7 @@ class Notify extends Model {
             'node' => $nodeInfo['node'],
             'module' => $nodeInfo['module'],
             'url' => isset( $config['{url}'] ) ? $config['{url}'] : '',
-            'title' => IBOS::lang( $nodeInfo['titlekey'], '', $config ),
+            'title' => Ibos::lang( $nodeInfo['titlekey'], '', $config ),
             //比如查看id=1的日志，这里的id就是1
             'id' => isset( $config['id'] ) ? $config['id'] : '',
         );
@@ -114,7 +114,7 @@ class Notify extends Model {
             $data['body'] = $data['title'];
             $data['hasContent'] = false;
         } else {
-            $data['body'] = IBOS::lang( $nodeInfo['contentkey'], '', $config );
+            $data['body'] = Ibos::lang( $nodeInfo['contentkey'], '', $config );
             $data['hasContent'] = true;
         }
         return $data;
@@ -142,7 +142,7 @@ class Notify extends Model {
     protected function setPushByUser( $toIds, $data, $node, &$pushDatas ) {
         $isCloud = Cloud::getInstance()->isOpen();
         $uidString = implode( ',', $toIds );
-        $userInfo = IBOS::app()->db->createCommand()
+        $userInfo = Ibos::app()->db->createCommand()
                 ->select( 'u.uid,u.email,up.remindsetting,u.mobile' )
                 ->from( User::model()->tableName() . ' u' )
                 ->leftJoin( UserProfile::model()->tableName() . ' up', "u.uid = up.uid" )
@@ -174,7 +174,7 @@ class Notify extends Model {
             // 如果存在该节点并且用户允许推送至酷办公，发送之
 //            $this->setCoPush( array_keys( $pushToCO ), $data, $pushDatas );
             if ( !empty( $sendArray ) ) {
-                $connection = IBOS::app()->db;
+                $connection = Ibos::app()->db;
                 $transaction = $connection->beginTransaction();
                 try {
                     foreach ( $sendArray as $send ) {

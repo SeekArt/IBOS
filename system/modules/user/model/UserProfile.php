@@ -3,7 +3,7 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class UserProfile extends Model {
 
@@ -24,7 +24,7 @@ class UserProfile extends Model {
 			$condition = User::model()->uid_find_in_set( $uidX );
 		}
 		$return = array();
-		$userProfileArray = IBOS::app()->db->createCommand()
+		$userProfileArray = Ibos::app()->db->createCommand()
 				->select()
 				->from( $this->tableName() )
 				->where( $condition )
@@ -45,7 +45,7 @@ class UserProfile extends Model {
 		} else {
 			$condition = User::model()->uid_find_in_set( $uidX );
 		}
-		$userInfo = IBOS::app()->db->createCommand()
+		$userInfo = Ibos::app()->db->createCommand()
 				->select( '*' )
 				->from( '{{user}} u' )
 				->leftJoin( '{{user_profile}} up', " `u`.`uid` = `up`.`uid` " )

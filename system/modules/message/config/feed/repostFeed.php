@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 ?>
@@ -42,11 +42,11 @@ use application\core\utils\StringUtil;
                         <span>&nbsp;<?php echo Env::getFromClient( $sourceInfo['from'], $sourceInfo['module'] ); ?>&nbsp;</span>
                     </div>
                     <div class="wb-handle pull-right">
-                        <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $sourceInfo['uid'], 'feedid' => $sourceInfo['feedid'] ) ); ?>" target="_blank">
+                        <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $sourceInfo['uid'], 'feedid' => $sourceInfo['feedid'] ) ); ?>" target="_blank">
                             <i class="o-wbi-frow"></i>
                             转发( <?php echo $sourceInfo['repostcount']; ?> )
                         </a>
-                        <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $sourceInfo['uid'], 'feedid' => $sourceInfo['feedid'] ) ); ?>" target="_blank">
+                        <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $sourceInfo['uid'], 'feedid' => $sourceInfo['feedid'] ) ); ?>" target="_blank">
                             <i class="o-wbi-mess"></i>
                             评论( <?php echo $sourceInfo['commentcount']; ?> )
                         </a>

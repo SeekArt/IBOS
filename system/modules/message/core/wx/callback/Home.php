@@ -19,7 +19,7 @@ namespace application\modules\message\core\wx\callback;
 
 use application\core\utils\Attach;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Attachment;
 use application\modules\main\model\AttachmentN;
 use application\modules\message\core\wx\Callback;
@@ -60,7 +60,7 @@ class Home extends Callback {
             'from' => 6,
             'body' => $this->getMessage()
         );
-        Feed::model()->put( IBOS::app()->user->uid, 'weibo', 'post', $data );
+        Feed::model()->put( Ibos::app()->user->uid, 'weibo', 'post', $data );
         return $this->resText( '你已经成功发送该消息到企业微博' );
     }
 
@@ -70,7 +70,7 @@ class Home extends Callback {
      */
     protected function handleByImage() {
         $suffix = '.jpg';
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $file = $this->saveToLocal( $suffix );
         if ( is_file( $file ) ) {
             $aid = $this->saveAttach( $uid, $file, $suffix );

@@ -15,7 +15,7 @@ namespace application\modules\contact\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\PHPExcel;
 use application\core\utils\StringUtil;
 use application\modules\contact\model\Contact;
@@ -43,8 +43,8 @@ class BaseController extends Controller {
 		$dept = DepartmentUtil::loadDepartment();
 		$params = array(
 			'dept' => $dept,
-			'lang' => IBOS::getLangSource( 'contact.default' ),
-			'unit' => IBOS::app()->setting->get( 'setting/unit' )
+			'lang' => Ibos::getLangSource( 'contact.default' ),
+			'unit' => Ibos::app()->setting->get( 'setting/unit' )
 		);
 		$sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
 		return $sidebarView;
@@ -144,10 +144,10 @@ class BaseController extends Controller {
 	 * 异步请求入口
 	 */
 	protected function ajaxApi() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$op = Env::getRequest( 'op' );
 			if ( !in_array( $op, array( 'getProfile', 'changeConstant', 'export', 'printContact' ) ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, IBOS::lang( 'Request tainting', 'error' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, Ibos::lang( 'Request tainting', 'error' ) ) );
 			}
 			$this->$op();
 		}
@@ -166,15 +166,15 @@ class BaseController extends Controller {
 			$user['fax'] = $dept['fax'];
 		}
 		$user['birthday'] = !empty( $user['birthday'] ) ? date( 'Y-m-d', $user['birthday'] ) : '';
-		$cuids = Contact::model()->fetchAllConstantByUid( IBOS::app()->user->uid ); // 常联系人id数组
-		$this->ajaxReturn( array( 'isSuccess' => true, 'user' => $user, 'uid' => IBOS::app()->user->uid, 'cuids' => $cuids ) );
+		$cuids = Contact::model()->fetchAllConstantByUid( Ibos::app()->user->uid ); // 常联系人id数组
+		$this->ajaxReturn( array( 'isSuccess' => true, 'user' => $user, 'uid' => Ibos::app()->user->uid, 'cuids' => $cuids ) );
 	}
 
 	/**
 	 * 改变常联系人状态
 	 */
 	protected function changeConstant() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$cuid = intval( Env::getRequest( 'cuid' ) );
 		$status = Env::getRequest( 'status' );
 		if ( $status == 'mark' ) { // 标记为常联系人
@@ -192,12 +192,12 @@ class BaseController extends Controller {
 //	public function export() {
 //		$userDatas = $this->getUserData();
 //		$fieldArr = array(
-//			IBOS::lang( 'Real name' ),
-//			IBOS::lang( 'Position' ),
-//			IBOS::lang( 'Telephone' ),
-//			IBOS::lang( 'Cell phone' ),
-//			IBOS::lang( 'Email' ),
-//			IBOS::lang( 'QQ' )
+//			Ibos::lang( 'Real name' ),
+//			Ibos::lang( 'Position' ),
+//			Ibos::lang( 'Telephone' ),
+//			Ibos::lang( 'Cell phone' ),
+//			Ibos::lang( 'Email' ),
+//			Ibos::lang( 'QQ' )
 //		);
 //		$str = implode( ',', $fieldArr ) . "\n";
 //		foreach ( $userDatas as $user ) {
@@ -221,12 +221,12 @@ class BaseController extends Controller {
 	public function export() {
 		$userDatas = $this->getUserData();
 		$fieldArr = array(
-			IBOS::lang( 'Real name' ),
-			IBOS::lang( 'Position' ),
-			IBOS::lang( 'Telephone' ),
-			IBOS::lang( 'Cell phone' ),
-			IBOS::lang( 'Email' ),
-			IBOS::lang( 'QQ' )
+			Ibos::lang( 'Real name' ),
+			Ibos::lang( 'Position' ),
+			Ibos::lang( 'Telephone' ),
+			Ibos::lang( 'Cell phone' ),
+			Ibos::lang( 'Email' ),
+			Ibos::lang( 'QQ' )
 		);
 		$data = array();
 		if ( !empty( $userDatas ) ) {
@@ -252,9 +252,9 @@ class BaseController extends Controller {
 		$datas = $this->getUserData();
 		$params = array(
 			'datas' => $datas,
-			'lang' => IBOS::getLangSource( 'contact.default' ),
-			'uint' => IBOS::app()->setting->get( 'setting/unit' ),
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'contact' )
+			'lang' => Ibos::getLangSource( 'contact.default' ),
+			'uint' => Ibos::app()->setting->get( 'setting/unit' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'contact' )
 		);
 		$detailAlias = 'application.modules.contact.views.default.print';
 		$detailView = $this->renderPartial( $detailAlias, $params, true );

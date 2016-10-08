@@ -64,9 +64,9 @@ class AttachController extends Controller {
 		if ( !empty( $data ) ) {
 			return util\File::download( $data['attach'], $data['decodeArr'] );
 		}
-		$this->setPageTitle( util\IBOS::lang( 'Filelost' ) );
+		$this->setPageTitle( util\Ibos::lang( 'Filelost' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => util\IBOS::lang( 'Filelost' ) )
+			array( 'name' => util\Ibos::lang( 'Filelost' ) )
 		) );
 		$this->render( 'filelost' );
 	}
@@ -76,7 +76,7 @@ class AttachController extends Controller {
 	 */
 	public function actionOffice() {
 		if ( util\Env::submitCheck( 'formhash' ) ) {
-			$widget = util\IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\main\widgets\Office', array() );
+			$widget = util\Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\main\widgets\Office', array() );
 			echo $widget->handleRequest();
 		} else {
 			$data = $this->getData();
@@ -90,15 +90,15 @@ class AttachController extends Controller {
 		$id = util\Env::getRequest( 'id' );
 		$aidString = base64_decode( rawurldecode( $id ) );
 		if ( empty( $aidString ) ) {
-			$this->error( util\IBOS::lang( 'Parameters error', 'error' ), '', array( 'autoJump' => 0 ) );
+			$this->error( util\Ibos::lang( 'Parameters error', 'error' ), '', array( 'autoJump' => 0 ) );
 		}
 		// 解码
-		$salt = util\IBOS::app()->user->salt;
+		$salt = util\Ibos::app()->user->salt;
 		$decodeString = util\StringUtil::authCode( $aidString, 'DECODE', $salt );
 		$decodeArr = explode( '|', $decodeString );
 		$count = count( $decodeArr );
 		if ( $count < 3 ) {
-			$this->error( util\IBOS::lang( 'Data type invalid', 'error' ), '', array( 'autoJump' => 0 ) );
+			$this->error( util\Ibos::lang( 'Data type invalid', 'error' ), '', array( 'autoJump' => 0 ) );
 		} else {
 			$aid = $decodeArr[0];
 			$tableId = $decodeArr[1];

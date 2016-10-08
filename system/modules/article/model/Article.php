@@ -19,7 +19,7 @@ namespace application\modules\article\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\utils\Article as ArticleUtil;
 use CDbCriteria;
@@ -52,7 +52,7 @@ class Article extends Model {
 		}
 		$count = $this->count( $criteria );
 		$pages = new CPagination( $count );
-		$everyPage = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$everyPage = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pages->setPageSize( intval( $everyPage ) );
 		$pages->applyLimit( $criteria );
 		$datas = $this->fetchAll( $criteria );

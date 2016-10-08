@@ -18,7 +18,7 @@ namespace application\modules\officialdoc\core;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\dashboard\model\ApprovalStep;
@@ -63,7 +63,7 @@ class Officialdoc {
         if ( !empty( $officialDoc ) ) {
             $this->attributes = $officialDoc;
             //取得签收信息
-            $this->attributes['issign'] = OfficialdocReader::model()->fetchSignByDocid( $docid, IBOS::app()->user->uid );
+            $this->attributes['issign'] = OfficialdocReader::model()->fetchSignByDocid( $docid, Ibos::app()->user->uid );
         }
     }
 
@@ -132,7 +132,7 @@ class Officialdoc {
         if ( $data['approver'] != 0 ) {
             $data['approver'] = User::model()->fetchRealnameByUid( $data['approver'] );
         } else {
-            $data['approver'] = IBOS::lang( 'None' );
+            $data['approver'] = Ibos::lang( 'None' );
         }
 
         $data['addtime'] = Convert::formatDate( $data['addtime'], 'u' );
@@ -146,10 +146,10 @@ class Officialdoc {
                 empty( $data['positionid'] ) &&
                 empty( $data['uid'] ) &&
                 empty( $data['roleid'] ) ) {
-            $data['departmentNames'] = IBOS::lang( 'All' );
+            $data['departmentNames'] = Ibos::lang( 'All' );
             $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else if ( $data['deptid'] == 'alldept' ) {
-            $data['departmentNames'] = IBOS::lang( 'All' );
+            $data['departmentNames'] = Ibos::lang( 'All' );
             $data['positionNames'] = $data['uidNames'] = $data['roleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
@@ -175,10 +175,10 @@ class Officialdoc {
                 empty( $data['ccpositionid'] ) &&
                 empty( $data['ccuid'] ) &&
                 empty( $data['ccroleid'] ) ) {
-            $data['ccDepartmentNames'] = ''; //IBOS::lang( 'All' );
+            $data['ccDepartmentNames'] = ''; //Ibos::lang( 'All' );
             $data['ccPositionNames'] = $data['ccUidNames'] = $data['ccRoleNames'] = '';
         } else if ( $data['ccdeptid'] == 'alldept' ) {
-            $data['ccDepartmentNames'] = IBOS::lang( 'All' );
+            $data['ccDepartmentNames'] = Ibos::lang( 'All' );
             $data['ccPositionNames'] = $data['ccUidNames'] = $data['ccRoleNames'] = '';
         } else {
             //取得部门名称集以、号分隔
@@ -215,7 +215,7 @@ class Officialdoc {
         }
         $realnameArray = User::model()->findRealnameIndexByUid( $uidArray );
         $listDatas = array();
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $checkTime = 3 * 86400;
         // 所有已读新闻id
         $readDocIds = OfficialdocReader::model()->fetchReadArtIdsByUid( $uid );
@@ -349,11 +349,11 @@ class Officialdoc {
         if ( empty( $list ) ) {
             return $list;
         }
-        if ( IBOS::app()->user->isadministrator ) {
+        if ( Ibos::app()->user->isadministrator ) {
             $list = self::grantPermission( $list, 1, self::getAllowType( 'edit' ) );
             return self::grantPermission( $list, 1, self::getAllowType( 'del' ) );
         }
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $user = User::model()->fetchByUid( $uid );
         // 编辑、删除权限，取主岗位和辅助岗位权限最大值
         $editPurv = RoleUtil::getMaxPurv( $uid, 'officialdoc/manager/edit' );

@@ -3,7 +3,7 @@
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Tasks;
 use application\modules\file\core\FileCloud;
@@ -26,7 +26,7 @@ $type = Env::getRequest( 'type' );
 $param = Env::getRequest( 'param' );
 $config = @include PATH_ROOT . '/system/config/config.php';
 if ( empty( $config ) ) {
-	close( IBOS::Lang( 'Config not found', 'error' ) );
+	close( Ibos::Lang( 'Config not found', 'error' ) );
 } else {
 	define( 'IN_MOBILE', Env::checkInMobile() );
 	$global = array(
@@ -34,10 +34,10 @@ if ( empty( $config ) ) {
 		'config' => $config,
 		'timestamp' => time()
 	);
-	IBOS::app()->setting->copyFrom( $global );
+	Ibos::app()->setting->copyFrom( $global );
 // 加载系统缓存以初始化用户组件
 	LoadSysCache();
-	if ( !IBOS::app()->user->isGuest ) {
+	if ( !Ibos::app()->user->isGuest ) {
 		switch ( $type ) {
 			case 'attach':
 				$userId = Env::getRequest( 'userid' );
@@ -91,7 +91,7 @@ function completeTodo( $id ) {
  */
 function doquicklogin( $code ) {
 	$file = PATH_ROOT . './data/temp/login_' . $code . '.txt';
-	$uid = IBOS::app()->user->uid;
+	$uid = Ibos::app()->user->uid;
 	file_put_contents( $file, StringUtil::authCode( $uid, 'ENCODE', $code ) );
 	return close( '登录成功，请关闭窗口' );
 }
@@ -115,7 +115,7 @@ function doAttachDownload( $userId, $appId, $aid ) {
 
 	$attachs = Attach::getAttachData( $id );
 	$attach = array_shift( $attachs );
-	if ( $attach['uid'] != IBOS::app()->user->uid ) {
+	if ( $attach['uid'] != Ibos::app()->user->uid ) {
 		return close( '您没有权限下载此文件' );
 	}
 	$filepath = File::fileName( File::getAttachUrl() . '/' . $attach['attachment'] );
@@ -123,7 +123,7 @@ function doAttachDownload( $userId, $appId, $aid ) {
 		$core = new FileCloud( $cloud );
 		$url = $core->getRealUrl( $filepath );
 	} else {
-		$url = IBOS::app()->request->getHostInfo() . '/' . $filepath;
+		$url = Ibos::app()->request->getHostInfo() . '/' . $filepath;
 	}
 	if ( $isIphone ) {
 		header( 'Location:' . $url, true );

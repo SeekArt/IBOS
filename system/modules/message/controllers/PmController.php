@@ -3,7 +3,7 @@
 namespace application\modules\message\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\message\model\MessageContent;
@@ -17,7 +17,7 @@ class PmController extends BaseController {
      * @return void 
      */
     public function actionIndex() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         // 设置已读(右上角提示去掉)
         MessageUser::model()->setMessageIsRead( $uid, Env::getRequest( 'id' ), 1 );
         // 获取有多少个未读新对话
@@ -30,10 +30,10 @@ class PmController extends BaseController {
             'pages' => $pages,
             'unreadCount' => $unreadCount
         );
-        $this->setPageTitle( IBOS::lang( 'PM' ) );
+        $this->setPageTitle( Ibos::lang( 'PM' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'PM' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'PM' ) )
         ) );
         $this->render( 'index', $data );
     }
@@ -42,11 +42,11 @@ class PmController extends BaseController {
      * 私信详情页
      */
     public function actionDetail() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $message = MessageContent::model()->isInList( StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ), $uid, true );
         // 验证数据
         if ( empty( $message ) ) {
-            $this->error( IBOS::lang( 'Private message not exists' ) );
+            $this->error( Ibos::lang( 'Private message not exists' ) );
         }
         $message['user'] = MessageUser::model()->getMessageUsers( StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ), 'uid' );
         $message['to'] = array();
@@ -58,11 +58,11 @@ class PmController extends BaseController {
         MessageUser::model()->setMessageIsRead( $uid, Env::getRequest( 'id' ), 0 );
         $message['sinceid'] = MessageContent::model()->getSinceMessageId( $message['listid'], $message['messagenum'] );
         $this->setTitle( '与' . $message['to'][0]['user']['realname'] . '的私信对话' );
-        $this->setPageTitle( IBOS::lang( 'Detail pm' ) );
+        $this->setPageTitle( Ibos::lang( 'Detail pm' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'PM' ), 'url' => $this->createUrl( 'pm/index' ) ),
-            array( 'name' => IBOS::lang( 'Detail pm' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'PM' ), 'url' => $this->createUrl( 'pm/index' ) ),
+            array( 'name' => Ibos::lang( 'Detail pm' ) )
         ) );
         $this->render( 'detail', array( 'message' => $message, 'type' => intval( $_GET['type'] ) ) );
     }
@@ -72,14 +72,14 @@ class PmController extends BaseController {
      * @return void
      */
     public function actionLoadMessage() {
-        $message = MessageContent::model()->fetchAllMessageByListId( intval( $_POST['listid'] ), IBOS::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ) );
+        $message = MessageContent::model()->fetchAllMessageByListId( intval( $_POST['listid'] ), Ibos::app()->user->uid, intval( Env::getRequest( 'sinceid' ) ), intval( Env::getRequest( 'maxid' ) ) );
         foreach ( $message['data'] as $key => $value ) {
             $message['data'][$key]['fromuser'] = User::model()->fetchByUid( $value['fromuid'] );
         }
         $data = array(
             'type' => intval( $_POST['type'] ),
             'message' => $message,
-            'uid' => IBOS::app()->user->uid
+            'uid' => Ibos::app()->user->uid
         );
         $message['data'] = $message['data'] ? $this->renderPartial( 'message', $data, true ) : "";
         $this->ajaxReturn( $message );
@@ -94,13 +94,13 @@ class PmController extends BaseController {
         $_POST['id'] = intval( $_POST['id'] );
 
         if ( !$_POST['id'] || empty( $_POST['replycontent'] ) ) {
-            $this->ajaxReturn( array( 'IsSuccess' => false, 'data' => IBOS::lang( 'Message content cannot be empty' ) ) );
+            $this->ajaxReturn( array( 'IsSuccess' => false, 'data' => Ibos::lang( 'Message content cannot be empty' ) ) );
         }
-        $res = MessageContent::model()->replyMessage( $_POST['id'], $_POST['replycontent'], IBOS::app()->user->uid );
+        $res = MessageContent::model()->replyMessage( $_POST['id'], $_POST['replycontent'], Ibos::app()->user->uid );
         if ( $res ) {
-            $this->ajaxReturn( array( 'IsSuccess' => true, 'data' => IBOS::lang( 'Private message send success' ) ) );
+            $this->ajaxReturn( array( 'IsSuccess' => true, 'data' => Ibos::lang( 'Private message send success' ) ) );
         } else {
-            $this->ajaxReturn( array( 'IsSuccess' => false, 'data' => IBOS::lang( 'Private message send fail' ) ) );
+            $this->ajaxReturn( array( 'IsSuccess' => false, 'data' => Ibos::lang( 'Private message send fail' ) ) );
         }
     }
 
@@ -110,15 +110,15 @@ class PmController extends BaseController {
      */
     public function actionPost() {
         if ( Env::submitCheck( 'formhash' ) ) {
-            $return = array( 'data' => IBOS::lang( 'Operation succeed', 'message' ), 'IsSuccess' => true );
+            $return = array( 'data' => Ibos::lang( 'Operation succeed', 'message' ), 'IsSuccess' => true );
             // 后台再次安全验证
             if ( empty( $_POST['touid'] ) ) {
-                $return['data'] = IBOS::lang( 'Message receiver cannot be empty' );
+                $return['data'] = Ibos::lang( 'Message receiver cannot be empty' );
                 $return['IsSuccess'] = false;
                 $this->ajaxReturn( $return );
             }
             if ( trim( StringUtil::filterCleanHtml( $_POST['content'] ) ) == '' ) {
-                $return['data'] = IBOS::lang( 'Message content cannot be empty' );
+                $return['data'] = Ibos::lang( 'Message content cannot be empty' );
                 $return['IsSuccess'] = false;
                 $this->ajaxReturn( $return );
             }
@@ -131,7 +131,7 @@ class PmController extends BaseController {
                 $_POST['type'] = null;
             }
             $_POST['content'] = StringUtil::filterDangerTag( $_POST['content'] );
-            $res = MessageContent::model()->postMessage( $_POST, IBOS::app()->user->uid );
+            $res = MessageContent::model()->postMessage( $_POST, Ibos::app()->user->uid );
             if ( $res ) {
                 $this->ajaxReturn( $return );
             } else {
@@ -147,7 +147,7 @@ class PmController extends BaseController {
      * @return void 
      */
     public function actionSetAllRead() {
-        $res = MessageUser::model()->setMessageAllRead( IBOS::app()->user->uid );
+        $res = MessageUser::model()->setMessageAllRead( Ibos::app()->user->uid );
         if ( $res ) {
             $this->ajaxReturn( array( 'IsSuccess' => true ) );
         } else {
@@ -160,7 +160,7 @@ class PmController extends BaseController {
      * @return void
      */
     public function actionSetIsRead() {
-        $res = MessageUser::model()->setMessageIsRead( IBOS::app()->user->uid, Env::getRequest( 'id' ) );
+        $res = MessageUser::model()->setMessageIsRead( Ibos::app()->user->uid, Env::getRequest( 'id' ) );
         $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
     }
 
@@ -169,7 +169,7 @@ class PmController extends BaseController {
      * @return void
      */
     public function actionDelete() {
-        $res = MessageUser::model()->deleteMessageByListId( IBOS::app()->user->uid, StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ) );
+        $res = MessageUser::model()->deleteMessageByListId( Ibos::app()->user->uid, StringUtil::filterCleanHtml( Env::getRequest( 'id' ) ) );
         $this->ajaxReturn( array( 'IsSuccess' => !!$res ) );
     }
 

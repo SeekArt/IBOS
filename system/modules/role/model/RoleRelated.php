@@ -11,7 +11,7 @@ namespace application\modules\role\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
 class RoleRelated extends Model {
@@ -45,7 +45,7 @@ class RoleRelated extends Model {
 	public function fetchAllRoleIdByUid( $uid ) {
 		static $uids = array();
 		if ( !isset( $uids[$uid] ) ) {
-			$roleids = IBOS::app()->db->createCommand()
+			$roleids = Ibos::app()->db->createCommand()
 					->select( 'roleid' )
 					->from( $this->tableName() )
 					->where( " `uid` = '{$uid}' " )
@@ -72,7 +72,7 @@ class RoleRelated extends Model {
 		} else {
 			$condition = User::model()->uid_find_in_set( $uidX );
 		}
-		$related = IBOS::app()->db->createCommand()
+		$related = Ibos::app()->db->createCommand()
 				->select( 'uid,roleid' )
 				->from( $this->tableName() )
 				->where( $condition )

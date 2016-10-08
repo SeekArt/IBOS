@@ -4,7 +4,7 @@ namespace application\modules\weibo\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\StringUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class CommentController extends BaseController {
 
@@ -26,7 +26,7 @@ class CommentController extends BaseController {
                     'moduleuid' => $moduleuid
                 )
             );
-            $widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment', $properties );
+            $widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment', $properties );
             $list = $widget->fetchCommentList();
             $this->ajaxReturn( array( 'isSuccess' => true, 'data' => $list ) );
         }
@@ -38,7 +38,7 @@ class CommentController extends BaseController {
      */
     public function actionAddComment() {
         if ( Env::submitCheck( 'formhash' ) ) {
-            $widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment' );
+            $widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment' );
             return $widget->addComment();
         }
     }
@@ -47,7 +47,7 @@ class CommentController extends BaseController {
      * 删除一条评论
      */
     public function actionDelComment() {
-        $widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment' );
+        $widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\weibo\core\WeiboComment' );
         return $widget->delComment();
     }
 

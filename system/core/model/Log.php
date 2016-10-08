@@ -4,7 +4,7 @@ namespace application\core\model;
 
 use application\core\utils\Cache;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CJSON;
 
 class Log {
@@ -18,7 +18,7 @@ class Log {
      */
     public static function write( $msg, $level = 'action', $category = 'module' ) {
         $message = CJSON::encode( $msg );
-        $logger = IBOS::getLogger();
+        $logger = Ibos::getLogger();
         return $logger->log( $message, $level, $category );
     }
 
@@ -36,7 +36,7 @@ class Log {
         $list = array_map( function( $temp ) {
             $temp['logtime'] = date( 'Y-m-d H:i:s', $temp['logtime'] );
             return $temp;
-        }, IBOS::app()->db->createCommand()
+        }, Ibos::app()->db->createCommand()
                 ->select( '*' )
                 ->from( $table )
                 ->where( $condition )
@@ -55,7 +55,7 @@ class Log {
      */
     public static function countByTableId( $tableId = 0, $condition = '' ) {
         $table = self::getTableName( $tableId );
-        $count = IBOS::app()->db->createCommand()
+        $count = Ibos::app()->db->createCommand()
                 ->select( 'count(id)' )
                 ->from( $table )
                 ->where( $condition )
@@ -70,7 +70,7 @@ class Log {
     public static function getLogTableId() {
         $tableId = Cache::get( 'logtableid' );
         if ( $tableId === false ) {
-            $tableId = IBOS::app()->db->createCommand()
+            $tableId = Ibos::app()->db->createCommand()
                     ->select( 'svalue' )
                     ->from( '{{setting}}' )
                     ->where( "skey = 'logtableid'" )
@@ -97,7 +97,7 @@ class Log {
      */
     public static function getAllArchiveTableId() {
         $return = array();
-        $db = IBOS::app()->db->createCommand();
+        $db = Ibos::app()->db->createCommand();
         $prefix = $db->getConnection()->tablePrefix;
         $tables = $db->setText( "SHOW TABLES LIKE '" . str_replace( '_', '\_', $prefix . 'log_%' ) . "'" )
                 ->queryAll( false );

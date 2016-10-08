@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User as UserModel;
 
@@ -14,11 +14,11 @@ class RolesuperController extends BaseController {
 
     public function init() {
         parent::init();
-        $isadministrator = IBOS::app()->user->isadministrator;
+        $isadministrator = Ibos::app()->user->isadministrator;
         if ( empty( $isadministrator ) ) {
-            $this->error( IBOS::lang( 'Valid access', 'error' ), '', $this->errorParam );
+            $this->error( Ibos::lang( 'Valid access', 'error' ), '', $this->errorParam );
         }
-        $adminUidArray = IBOS::app()->db->createCommand()
+        $adminUidArray = Ibos::app()->db->createCommand()
                 ->select( 'uid' )
                 ->from( UserModel::model()->tableName() )
                 ->where( " `isadministrator` = '1' " )
@@ -47,14 +47,14 @@ class RolesuperController extends BaseController {
         $uidATemp = StringUtil::getUidAByUDPX( $u );
         $uidA = array_unique( $uidATemp );
         if ( count( $uidA ) > '3' ) {
-            $this->error( IBOS::lang( 'superadmin cannot beyond 3' ) );
+            $this->error( Ibos::lang( 'superadmin cannot beyond 3' ) );
         }
         if ( count( $uidA ) == '0' ) {
-            $this->error( IBOS::lang( 'superadmin must set at least one' ) );
+            $this->error( Ibos::lang( 'superadmin must set at least one' ) );
         }
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( !in_array( $uid, $uidA ) ) {
-            $this->error( IBOS::lang( 'superadmin setting must contain yourself' ) );
+            $this->error( Ibos::lang( 'superadmin setting must contain yourself' ) );
         }
         $uidS = implode( ',', $uidA );
         $where = sprintf( " FIND_IN_SET( `uid`, '%s' ) ", $uidS );
@@ -63,8 +63,8 @@ class RolesuperController extends BaseController {
         $this->ajaxReturn( array(
             'isSuccess' => !empty( $counter ),
             'msg' => !empty( $counter ) ?
-                    IBOS::lang( 'Edit success' ) :
-                    IBOS::lang( 'Edit failed' ),
+                    Ibos::lang( 'Edit success' ) :
+                    Ibos::lang( 'Edit failed' ),
         ) );
     }
 

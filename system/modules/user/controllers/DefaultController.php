@@ -11,7 +11,7 @@ namespace application\modules\user\controllers;
 use application\core\controllers\Controller;
 use application\core\model\Log;
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Announcement;
 use application\modules\dashboard\model\LoginTemplate;
@@ -41,8 +41,8 @@ class DefaultController extends Controller {
 	public function actionCheckLogin() {
 		$islogin = false;
 		$isAutologin = MainUtil::getCookie( 'autologin' );
-		$isGuest = util\IBOS::app()->user->isGuest;
-		$expires = util\IBOS::app()->user->getState( ICUser::AUTH_TIMEOUT_VAR );
+		$isGuest = util\Ibos::app()->user->isGuest;
+		$expires = util\Ibos::app()->user->getState( ICUser::AUTH_TIMEOUT_VAR );
 		if ( $isAutologin ) {
 			$islogin = true;
 		} else if ( !$isGuest && ( $expires == null || $expires > time() ) ) {
@@ -57,7 +57,7 @@ class DefaultController extends Controller {
 	 */
 	public function actionAjaxLogin() {
 		$account = UserUtil::getAccountSetting();
-		if ( util\IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+		if ( util\Ibos::app()->getRequest()->getIsAjaxRequest() ) {
 			// 用户名
 			$userName = util\Env::getRequest( 'username' );
 			// 密码
@@ -70,20 +70,20 @@ class DefaultController extends Controller {
 	 * 登陆处理动作
 	 */
 	public function actionLogin() {
-		if ( !util\IBOS::app()->user->isGuest ) {
-			$this->redirect( util\IBOS::app()->urlManager->createUrl( 'main/default/index' ) );
+		if ( !util\Ibos::app()->user->isGuest ) {
+			$this->redirect( util\Ibos::app()->urlManager->createUrl( 'main/default/index' ) );
 		}
 		$account = UserUtil::getAccountSetting();
 		if ( !util\Env::submitCheck( 'loginsubmit', 1 ) ) {
 			$corpid = Setting::model()->fetchSettingValueByKey( 'corpid' );
 			$cobinding = Setting::model()->fetchSettingValueByKey( 'cobinding' );
 			$announcement = Announcement::model()->fetchByTime( TIMESTAMP );
-			$qr = IBOS::app()->setting->get( 'setting/qrcode' );
+			$qr = Ibos::app()->setting->get( 'setting/qrcode' );
 			$qrcode = isset( $qr ) ? $qr : '';
 			$data = array(
 				'assetUrl' => $this->getAssetUrl( 'user' ),
-				'lang' => util\IBOS::getLangSources(),
-				'unit' => util\IBOS::app()->setting->get( 'setting/unit' ),
+				'lang' => util\Ibos::getLangSources(),
+				'unit' => util\Ibos::app()->setting->get( 'setting/unit' ),
 				'account' => $account,
 				'cookietime' => $account['cookietime'],
 				'announcement' => $announcement,
@@ -91,9 +91,9 @@ class DefaultController extends Controller {
 				'qrcode' => $qrcode,
 				'wxbinding' => !empty( $corpid ),
 				'cobinding' => !empty( $cobinding ),
-				'coUrl' => util\Api::getInstance()->buildUrl( CoApi::CO_URL . 'fastlogin', array( 'aeskey' => util\IBOS::app()->setting->get( 'setting/aeskey' ) ) ),
+				'coUrl' => util\Api::getInstance()->buildUrl( CoApi::CO_URL . 'fastlogin', array( 'aeskey' => util\Ibos::app()->setting->get( 'setting/aeskey' ) ) ),
 			);
-			$this->setTitle( util\IBOS::lang( 'Login page' ) );
+			$this->setTitle( util\Ibos::lang( 'Login page' ) );
 			$this->renderPartial( 'login', $data );
 		} else {
 			// 用户名
@@ -108,7 +108,7 @@ class DefaultController extends Controller {
 			 * 为了简单起见，直接把userName中含有单引号的都当做错误账号
 			 */
 			if ( preg_match( '/[\']+/', $userName ) ) {
-				$this->error( util\IBOS::lang( 'User not fount', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => 0 ) );
+				$this->error( util\Ibos::lang( 'User not fount', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => 0 ) );
 			}
 
 			// 密码
@@ -125,9 +125,9 @@ class DefaultController extends Controller {
 	 * 登出
 	 */
 	public function actionLogout() {
-		util\IBOS::app()->user->logout();
-		$loginUrl = util\IBOS::app()->urlManager->createUrl( 'user/default/login' );
-		$this->success( util\IBOS::lang( 'Logout succeed' ), $loginUrl );
+		util\Ibos::app()->user->logout();
+		$loginUrl = util\Ibos::app()->urlManager->createUrl( 'user/default/login' );
+		$this->success( util\Ibos::lang( 'Logout succeed' ), $loginUrl );
 	}
 
 	/**
@@ -141,12 +141,12 @@ class DefaultController extends Controller {
 	 */
 	protected function doLogin( $userName, $passWord, $account, $autoLogin = 0, $cookieTime = 0, $inajax = 0 ) {
 		if ( !$passWord || $passWord != \CHtml::encode( $passWord ) ) {
-			$this->error( util\IBOS::lang( 'Passwd illegal' ) );
+			$this->error( util\Ibos::lang( 'Passwd illegal' ) );
 		}
 
 		$errornum = $this->loginCheck( $account, $userName );
 		// 日志
-		$ip = util\IBOS::app()->setting->get( 'clientip' );
+		$ip = util\Ibos::app()->setting->get( 'clientip' );
 		// 开始验证
 		// 登录类型
 		if ( StringUtil::isMobile( $userName ) ) {
@@ -164,7 +164,7 @@ class DefaultController extends Controller {
 			if ( !empty( $corpcode ) ) {
 				MainUtil::setCookie( 'corp_code', $corpcode, 0, $cookieTime );
 			}
-			$user = util\IBOS::app()->user;
+			$user = util\Ibos::app()->user;
 			// 设置会话过期时间
 			if ( empty( $autoLogin ) ) {
 				$user->setState( $user::AUTH_TIMEOUT_VAR, TIMESTAMP + ($account['timeout'] ) );
@@ -198,17 +198,17 @@ class DefaultController extends Controller {
 				}
 
 				Login::getInstance()->sendWebLoginNotify( $user->uid );
-				$this->success( util\IBOS::lang( 'Login succeed', '', array( '{username}' => $user->realname ) ), $urlForward );
+				$this->success( util\Ibos::lang( 'Login succeed', '', array( '{username}' => $user->realname ) ), $urlForward );
 			} else {
 				$this->ajaxReturn( array( 'isSuccess' => true ) );
 			}
 		} else {
 			if ( $result === 0 ) {
-				$this->error( util\IBOS::lang( 'User not fount', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
+				$this->error( util\Ibos::lang( 'User not fount', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
 			} else if ( $result === -1 ) {
-				$this->error( util\IBOS::lang( 'User lock', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
+				$this->error( util\Ibos::lang( 'User lock', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
 			} else if ( $result === -2 ) {
-				$this->error( util\IBOS::lang( 'User disabled', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
+				$this->error( util\Ibos::lang( 'User disabled', '', array( '{username}' => $userName ) ), '', array(), array( 'error' => $result ) );
 			} else if ( $result === -3 ) {
 				FailedLogin::model()->updateFailed( $userName );
 				list($ip1, $ip2) = explode( '.', $ip );
@@ -223,7 +223,7 @@ class DefaultController extends Controller {
 				if ( $errornum ) {
 					$this->error( '登录失败，您还可以尝试' . ($errornum - 1) . '次' );
 				} else {
-					$this->error( util\IBOS::lang( 'User name or password is not correct' ), '', array(), array( 'error' => $result ) );
+					$this->error( util\Ibos::lang( 'User name or password is not correct' ), '', array(), array( 'error' => $result ) );
 				}
 			}
 		}
@@ -233,8 +233,8 @@ class DefaultController extends Controller {
 	 * 重置密码
 	 */
 	public function actionReset() {
-		if ( util\IBOS::app()->user->isGuest ) {
-			util\IBOS::app()->user->loginRequired();
+		if ( util\Ibos::app()->user->isGuest ) {
+			util\Ibos::app()->user->loginRequired();
 		}
 		if ( util\Env::submitCheck( 'formhash' ) ) {
 			$original = filter_input( INPUT_POST, 'originalpass', FILTER_SANITIZE_SPECIAL_CHARS );
@@ -242,26 +242,26 @@ class DefaultController extends Controller {
 			$newConfirm = filter_input( INPUT_POST, 'newpass_confirm', FILTER_SANITIZE_SPECIAL_CHARS );
 			if ( $original == '' ) {
 				// 没有填写原来的密码
-				$this->error( util\IBOS::lang( 'Original password require' ) );
-			} else if ( strcasecmp( md5( md5( $original ) . util\IBOS::app()->user->salt ), util\IBOS::app()->user->password ) !== 0 ) {
+				$this->error( util\Ibos::lang( 'Original password require' ) );
+			} else if ( strcasecmp( md5( md5( $original ) . util\Ibos::app()->user->salt ), util\Ibos::app()->user->password ) !== 0 ) {
 				// 密码跟原来的对不上
-				$this->error( util\IBOS::lang( 'Password is not correct' ) );
+				$this->error( util\Ibos::lang( 'Password is not correct' ) );
 			} else if ( !empty( $new ) && strcasecmp( $new, $newConfirm ) !== 0 ) {
 				// 两次密码不一致
-				$this->error( util\IBOS::lang( 'Confirm password is not correct' ) );
+				$this->error( util\Ibos::lang( 'Confirm password is not correct' ) );
 			} else {
-				$password = md5( md5( $new ) . util\IBOS::app()->user->salt );
-				$success = User::model()->updateByUid( util\IBOS::app()->user->uid, array( 'password' => $password, 'lastchangepass' => TIMESTAMP ) );
-				$success && util\IBOS::app()->user->logout();
-				$this->success( util\IBOS::lang( 'Reset success' ), $this->createUrl( 'default/login' ) );
+				$password = md5( md5( $new ) . util\Ibos::app()->user->salt );
+				$success = User::model()->updateByUid( util\Ibos::app()->user->uid, array( 'password' => $password, 'lastchangepass' => TIMESTAMP ) );
+				$success && util\Ibos::app()->user->logout();
+				$this->success( util\Ibos::lang( 'Reset success' ), $this->createUrl( 'default/login' ) );
 			}
 		} else {
-			$userName = util\IBOS::app()->user->realname;
+			$userName = util\Ibos::app()->user->realname;
 			$data = array(
 				'assetUrl' => $this->getAssetUrl( 'user' ),
 				'account' => UserUtil::getAccountSetting(),
-				'lang' => util\IBOS::getLangSources(),
-				'unit' => util\IBOS::app()->setting->get( 'setting/unit' ),
+				'lang' => util\Ibos::getLangSources(),
+				'unit' => util\Ibos::app()->setting->get( 'setting/unit' ),
 				'user' => $userName
 			);
 			$this->renderPartial( 'reset', $data );
@@ -290,7 +290,7 @@ class DefaultController extends Controller {
 		$return = 0;
 		if ( $account['errorlimit'] != 0 ) {
 			$login = FailedLogin::model()->fetchUsername( $username );
-			$ip = util\IBOS::app()->setting->get( 'clientip' );
+			$ip = util\Ibos::app()->setting->get( 'clientip' );
 			$errrepeat = intval( $account['errorrepeat'] );
 			$errTime = $account['errortime'] * 60;
 			$return = (!$login || (TIMESTAMP - $login['lastupdate'] > $errTime)) ? $errrepeat : max( 0, $errrepeat - $login['count'] );
@@ -311,7 +311,7 @@ class DefaultController extends Controller {
 				) );
 			}
 			if ( $return == 0 ) {
-				$this->error( util\IBOS::lang( 'Login check error', '', array( '{minute}' => $account['errortime'] ) ) );
+				$this->error( util\Ibos::lang( 'Login check error', '', array( '{minute}' => $account['errortime'] ) ) );
 			}
 		}
 		return $return;

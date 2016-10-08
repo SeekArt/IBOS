@@ -18,7 +18,7 @@ namespace application\modules\report\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\model\Setting;
@@ -27,7 +27,7 @@ class DashboardController extends BaseController {
 
     public function actionIndex() {
         //取出所有的配置信息
-        $config = IBOS::app()->setting->get( 'setting/reportconfig' );
+        $config = Ibos::app()->setting->get( 'setting/reportconfig' );
         $stampDetails = $config['stampdetails'];
         $stamps = array();
         if ( !empty( $stampDetails ) ) {
@@ -83,7 +83,7 @@ class DashboardController extends BaseController {
             }
             Setting::model()->modify( 'reportconfig', array( 'svalue' => serialize( $fieldArr ) ) );
             Cache::update( 'setting' );
-            $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+            $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
         }
     }
 

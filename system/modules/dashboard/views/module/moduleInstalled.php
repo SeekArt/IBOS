@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 ?>
 
@@ -39,7 +39,7 @@ use application\core\utils\Module;
 									<td>
 										<?php $config = CJSON::decode( $module['config'], true ); ?>
 										<?php if ( $config['param']['icon'] ): ?>
-											<img src="<?php echo IBOS::app()->assetManager->getAssetsUrl( $module['module'] ) . '/image/icon.png'; ?>">
+											<img src="<?php echo Ibos::app()->assetManager->getAssetsUrl( $module['module'] ) . '/image/icon.png'; ?>">
 										<?php else: ?>
 
 										<?php endif; ?>
@@ -83,9 +83,9 @@ use application\core\utils\Module;
 			}
 			$.post(url, status, function(data) {
 				if (data.IsSuccess) {
-					Ui.tip('<?php echo IBOS::lang( 'Operation succeed', 'message' ); ?>', 'success');
+					Ui.tip('<?php echo Ibos::lang( 'Operation succeed', 'message' ); ?>', 'success');
 				} else {
-					$.jGrowl('<?php echo IBOS::lang( 'Operation failure', 'message' ); ?>', 'danger');
+					$.jGrowl('<?php echo Ibos::lang( 'Operation failure', 'message' ); ?>', 'danger');
 				}
 			}, 'json');
 		});
@@ -95,17 +95,17 @@ use application\core\utils\Module;
 		$('[data-module-act="uninstall"]').on('click', function() {
 			var module = $(this).attr('module'), url = '<?php echo $this->createUrl( 'module/uninstall' ); ?>', self = $(this);
 			$.artDialog({
-				title: "<?php echo IBOS::lang( 'Confirm action', 'message' ); ?>",
+				title: "<?php echo Ibos::lang( 'Confirm action', 'message' ); ?>",
 				content: '<?php echo $lang['Confirm uninstall module']; ?>',
 				id: 'confirm_module_act',
 				lock: true,
 				ok: function() {
 					$.post(url, {module: module}, function(data) {
 						if (data.IsSuccess) {
-							$.jGrowl('<?php echo IBOS::lang( 'Operation succeed', 'message' ); ?>', {theme: 'success'});
+							$.jGrowl('<?php echo Ibos::lang( 'Operation succeed', 'message' ); ?>', {theme: 'success'});
 							self.parent().parent().remove();
 						} else {
-							$.jGrowl('<?php echo IBOS::lang( 'Operation failure', 'message' ); ?>', {theme: 'danger'});
+							$.jGrowl('<?php echo Ibos::lang( 'Operation failure', 'message' ); ?>', {theme: 'danger'});
 						}
 					}, 'json');
 				}

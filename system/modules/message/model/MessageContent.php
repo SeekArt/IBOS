@@ -3,7 +3,7 @@
 namespace application\modules\message\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\message\utils\Message as MessageUtil;
 use application\modules\user\model\User;
@@ -33,7 +33,7 @@ class MessageContent extends Model {
     public function fetchAllMessageListByUid( $uid, $type = 1, $limit = 10, $offset = 0 ) {
         $uid = intval( $uid );
         $type = is_array( $type ) ? ' IN (' . implode( ',', $type ) . ')' : "={$type}";
-        $list = IBOS::app()->db->createCommand()
+        $list = Ibos::app()->db->createCommand()
                 ->from( "{{message_user}} AS mu" )
                 ->join( '{{message_list}} AS ml', "`mu`.`listid`=`ml`.`listid`" )
                 ->where( "`mu`.`uid`={$uid} AND `ml`.`type`{$type} AND `mu`.`isdel` = 0 AND mu.messagenum > 0" )
@@ -124,24 +124,24 @@ class MessageContent extends Model {
         // 添加或更新私信list
         if ( false == $data['listid'] = $this->addMessageList( $data, $fromUid ) ) {
             // 私信发送失败
-            $this->addError( 'message', IBOS::lang( 'private message send fail', 'message.default' ) );
+            $this->addError( 'message', Ibos::lang( 'private message send fail', 'message.default' ) );
             return false;
         }
         // 存储私信成员
         if ( false === $this->addMessageUser( $data, $fromUid ) ) {
-            $this->addError( 'message', IBOS::lang( 'private message send fail', 'message.default' ) );
+            $this->addError( 'message', Ibos::lang( 'private message send fail', 'message.default' ) );
             return false;
         }
         // 存储内容
         if ( false == $this->addMessage( $data, $fromUid ) ) {
-            $this->addError( 'message', IBOS::lang( 'private message send fail', 'message.default' ) );
+            $this->addError( 'message', Ibos::lang( 'private message send fail', 'message.default' ) );
             return false;
         }
         $author = User::model()->fetchByUid( $fromUid );
         $config['name'] = $author['realname'];
         $config['content'] = $data['content'];
         $config['ctime'] = date( 'Y-m-d H:i:s', $data['mtime'] );
-        $config['source_url'] = IBOS::app()->urlManager->createUrl( 'message/pm/index' );
+        $config['source_url'] = Ibos::app()->urlManager->createUrl( 'message/pm/index' );
         // 推送私信
         MessageUtil::push( 'pm', $data['touid'], array( 'message' => $data['content'] ) );
         return $data['listid'];
@@ -178,7 +178,7 @@ class MessageContent extends Model {
      * @return integer 指定用户未读的私信对话数目
      */
     public function countUnreadList( $uid ) {
-        $unread = IBOS::app()->db->createCommand()
+        $unread = Ibos::app()->db->createCommand()
                 ->select( 'count(*)' )
                 ->from( '{{message_user}} AS mu' )
                 ->leftJoin( '{{message_list}} AS ml', '`mu`.`listid` = `ml`.`listid`' )
@@ -200,7 +200,7 @@ class MessageContent extends Model {
             $typeScope = implode( ',', $type );
             $condition .= " AND `type` IN ({$typeScope})";
         }
-        $unread = IBOS::app()->db->createCommand()
+        $unread = Ibos::app()->db->createCommand()
                 ->select( 'count(*)' )
                 ->from( '{{message_user}} AS mu' )
                 ->leftJoin( '{{message_list}} AS ml', '`mu`.`listid` = `ml`.`listid`' )
@@ -218,7 +218,7 @@ class MessageContent extends Model {
     public function countMessageListByUid( $uid, $type = 1 ) {
         $uid = intval( $uid );
         $type = is_array( $type ) ? ' IN (' . implode( ',', $type ) . ')' : "={$type}";
-        $count = IBOS::app()->db->createCommand()
+        $count = Ibos::app()->db->createCommand()
                 ->select( 'count(*)' )
                 ->from( "{{message_user}} AS mu" )
                 ->join( '{{message_list}} AS ml', "`mu`.`listid`=`ml`.`listid`" )
@@ -258,7 +258,7 @@ class MessageContent extends Model {
         $data['mtime'] = $time;
         $newMessageId = $this->addMessage( $data, $fromUid );
         unset( $data );
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         if ( !$newMessageId ) {
             return false;
         } else {

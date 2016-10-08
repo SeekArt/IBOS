@@ -2,7 +2,7 @@
 
 use application\core\model\Log;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\utils\Main;
@@ -20,9 +20,9 @@ use application\modules\user\utils\User as UserUtil;
 function dologin( $uid, $log = '' ) {
     //$config = @include PATH_ROOT . '/system/config/config.php';
     //if ( empty( $config ) ) {
-    //    throw new Exception( IBOS::Lang( 'Config not found', 'error' ) );
+    //    throw new Exception( Ibos::Lang( 'Config not found', 'error' ) );
     //} else {
-        $config = IBOS::engine()->getMainConfig();
+        $config = Ibos::engine()->getMainConfig();
 
         define( 'IN_MOBILE', Env::checkInMobile() );
         $global = array(
@@ -30,7 +30,7 @@ function dologin( $uid, $log = '' ) {
             'config' => $config,
             'timestamp' => time()
         );
-        IBOS::app()->setting->copyFrom( $global );
+        Ibos::app()->setting->copyFrom( $global );
         LoadSysCache();
 
         $saltkey = Main::getCookie( 'saltkey' );
@@ -44,9 +44,9 @@ function dologin( $uid, $log = '' ) {
         $loginType = 4;
         $identity = new UserIdentity( $curUser['mobile'], $curUser['password'], $loginType );
         $result = $identity->authenticate();
-        $ip = IBOS::app()->setting->get( 'clientip' );
+        $ip = Ibos::app()->setting->get( 'clientip' );
         if ( $result > 0 ) {
-            if ( IBOS::app()->user->isGuest || IBOS::app()->user->uid != $uid ) {
+            if ( Ibos::app()->user->isGuest || Ibos::app()->user->uid != $uid ) {
                 $identity->setId( $uid );
                 $identity->setPersistentStates( $curUser );
                 // 先删除cookie，否则初始化user组件会出错
@@ -57,10 +57,10 @@ function dologin( $uid, $log = '' ) {
                     @setcookie( $k, "", time() - 86400, $cookiePath, $cookieDomain, $secure, false );
                 }
                 // 是否允许多个账户同时登录
-                $account = IBOS::app()->setting->get( 'setting/account' );
-                $user = IBOS::app()->user;
+                $account = Ibos::app()->setting->get( 'setting/account' );
+                $user = Ibos::app()->user;
                 if ( $account['allowshare'] != 1 ) {
-                    $user->setStateKeyPrefix( IBOS::app()->setting->get( 'sid' ) );
+                    $user->setStateKeyPrefix( Ibos::app()->setting->get( 'sid' ) );
                 }
                 $loginStatus = $user->login( $identity );
                 if ( !empty( $log ) ) {
@@ -92,13 +92,13 @@ function dologin( $uid, $log = '' ) {
         } else {
             switch ( $result ) {
                 case 0:
-                    $msg = IBOS::lang( 'User not fount', 'user.default', array( '{username}' => $curUser['username'] ) );
+                    $msg = Ibos::lang( 'User not fount', 'user.default', array( '{username}' => $curUser['username'] ) );
                     break;
                 case -1:
-                    $msg = IBOS::lang( 'User lock', 'user.default', array( '{username}' => $curUser['username'] ) );
+                    $msg = Ibos::lang( 'User lock', 'user.default', array( '{username}' => $curUser['username'] ) );
                     break;
                 case -2:
-                    $msg = IBOS::lang( 'User disabled', 'user.default', array( '{username}' => $curUser['username'] ) );
+                    $msg = Ibos::lang( 'User disabled', 'user.default', array( '{username}' => $curUser['username'] ) );
                     break;
                 case -3:
                     FailedLogin::model()->updateFailed( $curUser['username'] );
@@ -111,7 +111,7 @@ function dologin( $uid, $log = '' ) {
                         'ip' => $ip
                     );
                     Log::write( $log, 'illegal', 'module.user.login' );
-                    $msg = IBOS::lang( 'User name or password is not correct', 'user.default' );
+                    $msg = Ibos::lang( 'User name or password is not correct', 'user.default' );
                     break;
             }
             return array(
@@ -131,9 +131,9 @@ function LoadSysCache() {
     foreach ( $caches as $cache ) {
         $value = $cache['type'] == '1' ? StringUtil::utf8Unserialize( $cache['value'] ) : $cache['value'];
         if ( $cache['name'] == 'setting' ) {
-            IBOS::app()->setting->set( 'setting', $value );
+            Ibos::app()->setting->set( 'setting', $value );
         } else {
-            IBOS::app()->setting->set( 'cache/' . $cache['name'], $value );
+            Ibos::app()->setting->set( 'cache/' . $cache['name'], $value );
         }
     }
 }

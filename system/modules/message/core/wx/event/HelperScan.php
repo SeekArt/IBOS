@@ -10,7 +10,7 @@
 
 namespace application\modules\message\core\wx\event;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\core\wx\WxApi;
 
 class HelperScan extends ScanEvent {
@@ -27,7 +27,7 @@ class HelperScan extends ScanEvent {
 			touch( $file );
 		}
 		$url = WxApi::getInstance()->createOauthUrl( WxApi::getInstance()->getHostInfo() . '/api/wxqy/callback.php?type=quicklogin&param=' . $result, $this->getAppId() );
-		return $this->resText( 'HI,' . IBOS::app()->user->realname . ",请<a href='{$url}'>点击确认登录</a>" );
+		return $this->resText( 'HI,' . Ibos::app()->user->realname . ",请<a href='{$url}'>点击确认登录</a>" );
 	}
 
 }

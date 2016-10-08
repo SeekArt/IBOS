@@ -18,7 +18,7 @@
 namespace application\modules\diary\components;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
 use application\modules\department\model\Department;
@@ -35,7 +35,7 @@ class Diary {
 	 * @return array
 	 */
 	public static function processDefaultListData( $data ) {
-		$dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+		$dashboardConfig = Ibos::app()->setting->get( 'setting/diaryconfig' );
 		//是否有锁定多少天前的日志
 		$lockday = $dashboardConfig['lockday'] ? intval( $dashboardConfig['lockday'] ) : 0;
 		$return = array();
@@ -75,7 +75,7 @@ class Diary {
 	 */
 	public static function processDefaultShowData( $diary ) {
 		//是否有锁定多少天前的日志
-		$dashboardConfig = IBOS::app()->setting->get( 'setting/diaryconfig' );
+		$dashboardConfig = Ibos::app()->setting->get( 'setting/diaryconfig' );
 		$lockday = $dashboardConfig['lockday'] ? intval( $dashboardConfig['lockday'] ) : 0;
 		$todayTime = (int) strtotime( date( 'Y-m-d', time() ) );  //今天的开始时间，即00:00
 		$diaryTime = (int) $diary['diarytime'];

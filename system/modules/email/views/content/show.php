@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 ?>
@@ -91,7 +91,7 @@ use application\core\utils\StringUtil;
                 <!-- Row 1 邮件头信息 -->
                 <div class="ctb bglb media bdbs">
                     <a data-toggle="usercard" data-param="uid=<?php echo $email['fromid']; ?>" href="<?php
-                    echo IBOS::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $email['fromid'] ) );
+                    echo Ibos::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $email['fromid'] ) );
                     ?>" class="pull-left avatar-circle" title="<?php echo $email['fromName'] ?>">
                         <img src="<?php echo Org::getDataStatic( $email['fromid'], 'avatar', 'middle' ) ?>" alt="<?php echo $email['fromName'] ?>">
                     </a>
@@ -225,7 +225,7 @@ use application\core\utils\StringUtil;
                     </div>
                 </div>
                 <?php
-                if ( $email['isneedreceipt'] && !$email['isreceipt'] && $email['fromid'] != IBOS::app()->user->uid ):
+                if ( $email['isneedreceipt'] && !$email['isreceipt'] && $email['fromid'] != Ibos::app()->user->uid ):
                     ?>
                     <div class="fill">
                         <div class="alert alert-main">

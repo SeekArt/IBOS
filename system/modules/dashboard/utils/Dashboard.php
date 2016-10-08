@@ -17,7 +17,7 @@
 namespace application\modules\dashboard\utils;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CException;
 
 class Dashboard {

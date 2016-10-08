@@ -19,7 +19,7 @@ namespace application\modules\statistics\utils;
 
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CJSON;
 
 class StatCommon {
@@ -31,7 +31,7 @@ class StatCommon {
 	public static function getStatisticsModules() {
 		static $statModules = array();
 		if ( empty( $statModules ) ) {
-			foreach ( IBOS::app()->getEnabledModule() as $module => $configs ) {
+			foreach ( Ibos::app()->getEnabledModule() as $module => $configs ) {
 				$config = CJSON::decode( $configs['config'], true );
 				if ( isset( $config['statistics'] ) ) {
 					$statModules[] = array( 'module' => $module, 'name' => $configs['name'] );
@@ -47,7 +47,7 @@ class StatCommon {
 	 * @return array
 	 */
 	public static function getWidget( $module ) {
-		$modules = IBOS::app()->getEnabledModule();
+		$modules = Ibos::app()->getEnabledModule();
 		$widgets = array();
 		if ( isset( $modules[$module] ) ) {
 			$configs = $modules[$module]['config'];

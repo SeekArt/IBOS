@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <link href="<?php echo $assetUrl; ?>/css/initialize_guide.css" rel="stylesheet" type="text/css">
 <link href="<?php echo $assetUrl; ?>/css/animate.css" rel="stylesheet" type="text/css">
@@ -115,7 +115,7 @@ use application\core\utils\IBOS;
 										<span id="upload_img" class="upload-img"></span>
 									</div>
 									<input type="hidden" id='img_src' name='src' />
-									<input type="hidden" id="uid" name="uid" value="<?php echo IBOS::app()->user->uid; ?>" />
+									<input type="hidden" id="uid" name="uid" value="<?php echo Ibos::app()->user->uid; ?>" />
 									<div class="img-upload-imgwrap" id="portrait_img_wrap">
 										<img class="portrait-img" id="portrait_img" src="<?php echo $assetUrl; ?>/image/bg.jpg">
 									</div>
@@ -191,15 +191,15 @@ use application\core\utils\IBOS;
 									<span class="sf-divider"></span>
 									<span class="step-tips"><?php echo $lang['Now you can']; ?></span>
 								</div>
-								<a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal' ); ?>" class="perfect-data fss">
+								<a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/personal' ); ?>" class="perfect-data fss">
 									<i class="o-data"></i>
 									<p><?php echo $lang['Continue to improve data']; ?></p>
 								</a>
-								<a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/home/index' ); ?>" class="greet-others fss" id="greet_others">
+								<a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/home/index' ); ?>" class="greet-others fss" id="greet_others">
                                     <i class="o-smile"></i>
                                     <p><?php echo $lang['And say hello']; ?></p>
                                 </a>
-								<a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/index' ); ?>" class="go-myhome fss" id="go_myhome">
+								<a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/index' ); ?>" class="go-myhome fss" id="go_myhome">
 									<i class="o-home"></i>
 									<p><?php echo $lang['Into my home page']; ?></p>
 								</a>
@@ -240,7 +240,7 @@ use application\core\utils\IBOS;
 <div id="ava_progress" class="hide"></div>
 <script>
 	Ibos.app.s({
-		avatarUploadUrl: "<?php echo IBOS::app()->urlManager->createUrl( 'user/info/uploadAvatar', array( 'uid' => $uid, 'hash' => $swfConfig['hash'] ) ); ?>",
+		avatarUploadUrl: "<?php echo Ibos::app()->urlManager->createUrl( 'user/info/uploadAvatar', array( 'uid' => $uid, 'hash' => $swfConfig['hash'] ) ); ?>",
 		passwordMinLength: '<?php echo $account['minlength']; ?>',
 		passwordMaxLength: 32,
 		passwordMixed: "<?php echo $account['mixed']; ?>",

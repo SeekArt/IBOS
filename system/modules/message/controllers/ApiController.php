@@ -5,7 +5,7 @@ namespace application\modules\message\controllers;
 use application\core\utils\Env;
 use application\core\utils\StringUtil;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\model\UserData;
 use application\modules\message\model\FeedDigg;
 use application\modules\weibo\model\Follow;
@@ -17,7 +17,7 @@ class ApiController extends BaseController {
      * @return void 
      */
     public function actionGetUnreadCount() {
-        $count = UserData::model()->getUnreadCount( IBOS::app()->user->uid );
+        $count = UserData::model()->getUnreadCount( Ibos::app()->user->uid );
         $data['status'] = 1;
         $data['data'] = $count;
         $this->ajaxReturn( $data );
@@ -28,7 +28,7 @@ class ApiController extends BaseController {
      * @return void 
      */
     public function actionSearchAt() {
-        $users = UserData::model()->fetchRecentAt( IBOS::app()->user->uid );
+        $users = UserData::model()->fetchRecentAt( Ibos::app()->user->uid );
         $this->ajaxReturn( !empty( $users ) ? $users : array()  );
     }
 
@@ -40,7 +40,7 @@ class ApiController extends BaseController {
         $offset = intval( Env::getRequest( 'offset' ) );
         $result = FeedDigg::model()->fetchUserList( $feedId, 5, $offset );
         $uids = Convert::getSubByKey( $result, 'uid' );
-        $followStates = Follow::model()->getFollowStateByFids( IBOS::app()->user->uid, $uids );
+        $followStates = Follow::model()->getFollowStateByFids( Ibos::app()->user->uid, $uids );
         $data['data'] = $this->renderPartial( 'application.modules.message.views.feed.digglistmore', array( 'list' => $result, 'followstates' => $followStates ), true );
         $data['isSuccess'] = true;
         $this->ajaxReturn( $data );
@@ -53,7 +53,7 @@ class ApiController extends BaseController {
         if ( Env::submitCheck( 'formhash' ) ) {
             // 安全过滤
             $fid = StringUtil::filterCleanHtml( $_POST['fid'] );
-            $res = Follow::model()->doFollow( IBOS::app()->user->uid, intval( $fid ) );
+            $res = Follow::model()->doFollow( Ibos::app()->user->uid, intval( $fid ) );
             // 是否互相关注
             $isFriend = $res['following'] && $res['follower'];
             $this->ajaxReturn( array( 'isSuccess' => !!$res, 'both' => $isFriend, 'msg' => Follow::model()->getError( 'doFollow' ) ) );
@@ -67,7 +67,7 @@ class ApiController extends BaseController {
         if ( Env::submitCheck( 'formhash' ) ) {
             // 安全过滤
             $fid = StringUtil::filterCleanHtml( $_POST['fid'] );
-            $res = Follow::model()->unFollow( IBOS::app()->user->uid, intval( $fid ) );
+            $res = Follow::model()->unFollow( Ibos::app()->user->uid, intval( $fid ) );
             $this->ajaxReturn( array( 'isSuccess' => !!$res, 'msg' => Follow::model()->getError( 'unFollow' ) ) );
         }
     }

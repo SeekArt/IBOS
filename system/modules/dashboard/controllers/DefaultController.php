@@ -19,7 +19,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\model\Log;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Menu;
 use application\modules\main\utils\Main as MainUtil;
@@ -37,7 +37,7 @@ class DefaultController extends BaseController {
 		$defaultUrl = 'default/index';
 		// 已登录即跳转
 		if ( $access > 0 ) {
-			$this->success( IBOS::lang( 'Login succeed' ), $this->createUrl( $defaultUrl ) );
+			$this->success( Ibos::lang( 'Login succeed' ), $this->createUrl( $defaultUrl ) );
 		}
 		// $referStr = Env::getRequest('refer');
 		// $referArray = array_filter(explode('&', $referStr));
@@ -53,7 +53,7 @@ class DefaultController extends BaseController {
 			$userName = Env::getRequest( 'username' );
 			$passWord = Env::getRequest( 'password' );
 			if ( !$passWord || $passWord != CHtml::encode( $passWord ) ) {
-				$this->error( IBOS::lang( 'Passwd illegal' ) );
+				$this->error( Ibos::lang( 'Passwd illegal' ) );
 			}
 			// 开始验证
 			// 登录类型
@@ -69,8 +69,8 @@ class DefaultController extends BaseController {
 			$identity = new UserIdentity( $userName, $passWord, $loginType );
 			$result = $identity->authenticate( true );
 			if ( $result > 0 ) {
-				IBOS::app()->user->login( $identity );
-				if ( IBOS::app()->user->uid != 1 ) {
+				Ibos::app()->user->login( $identity );
+				if ( Ibos::app()->user->uid != 1 ) {
 					MainUtil::checkLicenseLimit( true );
 				}
 				$refer = '';
@@ -86,9 +86,9 @@ class DefaultController extends BaseController {
 				if (empty($refer)) {
                 	$redirectUrl = $this->createUrl( $defaultUrl );
 				} else {
-					$redirectUrl = IBOS::app()->getBaseUrl() . $refer;
+					$redirectUrl = Ibos::app()->getBaseUrl() . $refer;
 				}
-                $this->success( IBOS::lang( 'Login succeed' )
+                $this->success( Ibos::lang( 'Login succeed' )
 						, $redirectUrl );
 			} else {
 				// 记录登录错误日志
@@ -98,18 +98,18 @@ class DefaultController extends BaseController {
 				$log = array(
 					'user' => $userName,
 					'password' => $passWord,
-					'ip' => IBOS::app()->setting->get( 'clientip' )
+					'ip' => Ibos::app()->setting->get( 'clientip' )
 				);
 				Log::write( $log, 'illegal', 'module.dashboard.login' );
 				switch ( $result ) {
 					case UserIdentity::USER_NO_ACCESS:
-						$msg = IBOS::lang( 'Login failed, not admin' );
+						$msg = Ibos::lang( 'Login failed, not admin' );
 						break;
 					case UserIdentity::USER_PASSWORD_INCORRECT:
-						$msg = IBOS::lang( 'Passwd illegal' );
+						$msg = Ibos::lang( 'Passwd illegal' );
 						break;
 					default:
-						$msg = IBOS::lang( 'Login failed' );
+						$msg = Ibos::lang( 'Login failed' );
 				}
 				$this->error( $msg );
 			}
@@ -154,7 +154,7 @@ class DefaultController extends BaseController {
 			$kws = array_map( 'trim', explode( ' ', $keywords ) );
 			$keywords = implode( ' ', $kws );
 			if ( $keywords ) {
-				$searchIndex = IBOS::getLangSource( 'dashboard.searchIndex' );
+				$searchIndex = Ibos::getLangSource( 'dashboard.searchIndex' );
 				$result = $html = array();
 				// 查找关键字所在的项目
 				foreach ( $searchIndex as $skey => $items ) {
@@ -172,7 +172,7 @@ class DefaultController extends BaseController {
 				} ), $kws );
 				if ( $result ) {
 					$totalCount = 0;
-					$item = IBOS::lang( 'Item' );
+					$item = Ibos::lang( 'Item' );
 					foreach ( $result as $skey => $tkeys ) {
 						// 具体项目的链接
 						$tmp = array();
@@ -201,13 +201,13 @@ EOT;
 						$data['total'] = $totalCount;
 						$data['html'] = $html;
 					} else {
-						$data['msg'] = IBOS::lang( 'Search result noexists' );
+						$data['msg'] = Ibos::lang( 'Search result noexists' );
 					}
 				} else {
-					$data['msg'] = IBOS::lang( 'Search result noexists' );
+					$data['msg'] = Ibos::lang( 'Search result noexists' );
 				}
 			} else {
-				$data['msg'] = IBOS::lang( 'Search keyword noexists' );
+				$data['msg'] = Ibos::lang( 'Search keyword noexists' );
 			}
 			$this->render( 'search', $data );
 		}
@@ -364,8 +364,8 @@ EOT;
 	 * @return void
 	 */
 	public function actionLogout() {
-		IBOS::app()->user->logout();
-		$this->showMessage( IBOS::lang( 'Logout succeed' ), IBOS::app()->urlManager->createUrl( $this->loginUrl ) );
+		Ibos::app()->user->logout();
+		$this->showMessage( Ibos::lang( 'Logout succeed' ), Ibos::app()->urlManager->createUrl( $this->loginUrl ) );
 	}
 
 	/**

@@ -17,7 +17,7 @@
 
  namespace application\modules\recruit\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\utils\StatCommon;
 
 class StatRecruitHeader extends StatRecruitBase {
@@ -43,7 +43,7 @@ class StatRecruitHeader extends StatRecruitBase {
 		$data = array(
 			'module' => $module,
 			'timeRoute' => $timeRoute,
-			'lang' => IBOS::getLangSources( array( 'recruit.default' ) ),
+			'lang' => Ibos::getLangSources( array( 'recruit.default' ) ),
 			'time' => StatCommon::getCommonTimeScope(),
 			'type' => $type,
 			'timestr' => $timestr

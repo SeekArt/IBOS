@@ -19,7 +19,7 @@ use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Cloud;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\file\model\File as FileModel;
@@ -76,10 +76,10 @@ class DashboardController extends BaseController {
                     }
                 }
             }
-            $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
         } else {
-            $setting['filedefsize'] = IBOS::app()->setting->get( 'setting/filedefsize' );
-            $setting['filecompmanager'] = IBOS::app()->setting->get( 'setting/filecompmanager' );
+            $setting['filedefsize'] = Ibos::app()->setting->get( 'setting/filedefsize' );
+            $setting['filecompmanager'] = Ibos::app()->setting->get( 'setting/filecompmanager' );
             if ( !empty( $setting['filecompmanager'] ) ) {
                 $manager = $setting['filecompmanager'];
                 $roleids = isset( $manager['roleid'] ) ? $manager['roleid'] : NULL; //为了兼容之前没有角色的代码
@@ -91,7 +91,7 @@ class DashboardController extends BaseController {
             }
             $setting['filecapasity'] = $capacity;
             $params = array(
-                'lang' => IBOS::getLangSource( 'file.default' ),
+                'lang' => Ibos::getLangSource( 'file.default' ),
                 'setting' => $setting
             );
             $this->render( 'setup', $params );
@@ -103,11 +103,11 @@ class DashboardController extends BaseController {
      */
     public function actionStore() {
         if ( Env::submitCheck( 'formhash' ) ) {
-            $isopen = IBOS::app()->setting->get( 'setting/filecloudopen' );
-            $cloudid = IBOS::app()->setting->get( 'setting/filecloudid' );
+            $isopen = Ibos::app()->setting->get( 'setting/filecloudopen' );
+            $cloudid = Ibos::app()->setting->get( 'setting/filecloudid' );
             if ( isset( $_POST['filecloudopen'] ) ) { // 开通
                 if ( !$this->checkIbosCloudOpen() ) {
-                    $this->error( IBOS::lang( 'Ibos cloud did not open' ) );
+                    $this->error( Ibos::lang( 'Ibos cloud did not open' ) );
                 }
                 $rs = Cloud::getInstance()->fetch( self::DISK_INFO_ROUTE );
                 if ( !is_array( $rs ) ) {
@@ -136,17 +136,17 @@ class DashboardController extends BaseController {
                         $this->error( $rs['msg'] );
                     }
                 } else {
-                    $this->error( IBOS::lang( 'Cloud comm error' ) );
+                    $this->error( Ibos::lang( 'Cloud comm error' ) );
                 }
             } else {
                 Setting::model()->updateSettingValueByKey( 'filecloudopen', 0 );
                 CacheUtil::update( 'setting' );
-                $this->success( IBOS::lang( 'Cloud close succeed' ) );
+                $this->success( Ibos::lang( 'Cloud close succeed' ) );
             }
         } else {
             $iboscloudopen = $this->checkIbosCloudOpen();
             $params = array(
-                'filecloudopen' => IBOS::app()->setting->get( 'setting/filecloudopen' ),
+                'filecloudopen' => Ibos::app()->setting->get( 'setting/filecloudopen' ),
                 'iboscloudopen' => $iboscloudopen,
             );
             $this->render( 'store', $params );
@@ -157,7 +157,7 @@ class DashboardController extends BaseController {
      * 检查是否开通云服务
      */
     private function checkIbosCloudOpen() {
-        $setting = IBOS::app()->setting->get( 'setting/iboscloud' );
+        $setting = Ibos::app()->setting->get( 'setting/iboscloud' );
         if ( $setting['isopen'] == 1 ) {
             return true;
         }
@@ -172,7 +172,7 @@ class DashboardController extends BaseController {
             $op = Env::getRequest( 'op' );
             if ( in_array( $op, array( 'restore', 'del', 'setEmpty' ) ) ) {
                 $res = $this->$op();
-                $this->ajaxReturn( array( 'isSuccess' => 'true', 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 'true', 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
             }
         } else {
             $search = false;
@@ -181,7 +181,7 @@ class DashboardController extends BaseController {
                 $search = true;
             }
             $this->_condition = FileData::joinCondition( $this->_condition, "f.isdel=1" );
-            $size = IBOS::app()->db->createCommand()
+            $size = Ibos::app()->db->createCommand()
                     ->select( "sum(f.size)" )
                     ->from( "{{file}} f" )
                     ->where( $this->_condition )
@@ -194,7 +194,7 @@ class DashboardController extends BaseController {
                 'search' => $search,
                 'datas' => $datas,
                 'pages' => $list['pages'],
-                'lang' => IBOS::getLangSource( 'file.default' )
+                'lang' => Ibos::getLangSource( 'file.default' )
             );
             $this->render( 'trash', $params );
         }
@@ -234,7 +234,7 @@ class DashboardController extends BaseController {
             if ( $list[$k]['type'] == 1 ) { // 文件夹的话计算出所有子文件大小
                 $list[$k]['size'] = FileModel::model()->countSizeByFid( $file['fid'] );
             }
-            $list[$k]['location'] = $file['belong'] == 0 ? IBOS::lang( 'Personal folder' ) : IBOS::lang( 'Company folder' );
+            $list[$k]['location'] = $file['belong'] == 0 ? Ibos::lang( 'Personal folder' ) : Ibos::lang( 'Company folder' );
             $parents = FileOffice::getParentsByIdPath( $file['idpath'] );
             foreach ( $parents as $p ) {
                 $list[$k]['location'] .= " \ " . $p['name'];

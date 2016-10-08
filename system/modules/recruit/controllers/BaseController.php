@@ -18,7 +18,7 @@ namespace application\modules\recruit\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\main\utils\Main;
 use application\modules\recruit\model\ResumeDetail;
@@ -40,7 +40,7 @@ class BaseController extends Controller {
     protected function getSidebar() {
         $sidebarAlias = 'application.modules.recruit.views.resume.sidebar';
         $params = array(
-            'statModule' => IBOS::app()->setting->get('setting/statmodules'),
+            'statModule' => Ibos::app()->setting->get('setting/statmodules'),
         );
         $sidebarView = $this->renderPartial($sidebarAlias, $params, true);
         return $sidebarView;
@@ -52,7 +52,7 @@ class BaseController extends Controller {
      */
     public function getDashboardConfig() {
         //取得所有配置
-        $config = IBOS::app()->setting->get('setting/recruitconfig');
+        $config = Ibos::app()->setting->get('setting/recruitconfig');
         $result = array();
         foreach ($config as $configName => $configValue) {
             list($visi, $fieldRule) = explode(',', $configValue);
@@ -76,7 +76,7 @@ class BaseController extends Controller {
      * @return void
      */
     public function actionGetRealname() {
-        if (IBOS::app()->request->isAjaxRequest) {
+        if (Ibos::app()->request->isAjaxRequest) {
             $keyword = Env::getRequest('keyword');
             $records = ResumeDetail::model()->fetchPKAndRealnameByKeyword($keyword);
             parent::ajaxReturn($records);

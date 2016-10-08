@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <div class="mc mcf clearfix">
     <?php echo $this->getHeader( $lang ); ?>
@@ -8,7 +8,7 @@ use application\core\utils\IBOS;
         <div>
             <ul class="nav nav-tabs nav-tabs-large nav-justified nav-special">
                 <li><a href="<?php echo $this->createUrl( 'home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
-                <?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
+                <?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
                 <?php if ( $this->getIsMe() ): ?>
                     <li><a href="<?php echo $this->createUrl( 'home/credit', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Credit']; ?></a></li>
                 <?php endif; ?>
@@ -72,15 +72,15 @@ use application\core\utils\IBOS;
                         <div class="tcrop">
                             <?php echo $lang['Avatar review']; ?></div>
                         <div class="crop crop180">
-                            <img id="crop-preview-180" src="<?php echo IBOS::app()->user->avatar_big ?>" />
+                            <img id="crop-preview-180" src="<?php echo Ibos::app()->user->avatar_big ?>" />
                         </div>
                         <p class="tcm fss size-tip">180*180<?php echo $lang['Pixel']; ?></p>
                         <div class="crop crop60">
-                            <img id="crop-preview-60" src="<?php echo IBOS::app()->user->avatar_middle ?>" />
+                            <img id="crop-preview-60" src="<?php echo Ibos::app()->user->avatar_middle ?>" />
                         </div>
                         <p class="tcm fss size-tip">60*60<?php echo $lang['Pixel']; ?></p>
                         <div class="crop crop30">
-                            <img id="crop-preview-30" src="<?php echo IBOS::app()->user->avatar_small ?>" />
+                            <img id="crop-preview-30" src="<?php echo Ibos::app()->user->avatar_small ?>" />
                         </div>
                         <p class="tcm fss size-tip">30*30<?php echo $lang['Pixel']; ?></p>
                     </div>

@@ -19,7 +19,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
@@ -45,7 +45,7 @@ class ReviewController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'show', 'showdiary', 'getsubordinates', 'getStampIcon' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
         }
         if ( $option == 'default' ) {
             $date = 'yesterday';
@@ -62,14 +62,14 @@ class ReviewController extends BaseController {
                 $time = strtotime( $date );
             }
 
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $getSubUids = Env::getRequest( 'uid' );  //是否是点击某个部门
             if ( !empty( $getSubUids ) ) {
                 $subUidArr = explode( ',', $getSubUids );
                 // 权限判断
                 foreach ( $subUidArr as $subUid ) {
                     if ( !UserUtil::checkIsSub( $uid, $subUid ) ) {
-                        $this->error( IBOS::lang( 'Have not permission' ), $this->createUrl( 'default/index' ) );
+                        $this->error( Ibos::lang( 'Have not permission' ), $this->createUrl( 'default/index' ) );
                     }
                 }
             } else {
@@ -122,11 +122,11 @@ class ReviewController extends BaseController {
                 'prevTime' => strtotime( $date ) - 24 * 60 * 60,
                 'nextTime' => strtotime( $date ) + 24 * 60 * 60
             );
-            $this->setPageTitle( IBOS::lang( 'Review subordinate diary' ) );
+            $this->setPageTitle( Ibos::lang( 'Review subordinate diary' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Subordinate diary' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Subordinate diary' ) )
             ) );
             $this->render( 'index', $params );
         } else {
@@ -139,11 +139,11 @@ class ReviewController extends BaseController {
      * @return void
      */
     public function actionPersonal() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $getUid = intval( Env::getRequest( 'uid' ) );
         // 权限判断
         if ( !UserUtil::checkIsSub( $uid, $getUid ) ) {
-            $this->error( IBOS::lang( 'Have not permission' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'Have not permission' ), $this->createUrl( 'review/index' ) );
         }
         //是否搜索
         if ( Env::getRequest( 'param' ) == 'search' ) {
@@ -164,11 +164,11 @@ class ReviewController extends BaseController {
             'dashboardConfig' => $this->getDiaryConfig(),
             'isattention' => empty( $attention ) ? 0 : 1
         );
-        $this->setPageTitle( IBOS::lang( 'Review subordinate diary' ) );
+        $this->setPageTitle( Ibos::lang( 'Review subordinate diary' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Subordinate personal diary' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Subordinate personal diary' ) )
         ) );
         $this->render( 'personal', $data );
     }
@@ -179,20 +179,20 @@ class ReviewController extends BaseController {
      */
     public function actionShow() {
         $diaryid = intval( Env::getRequest( 'diaryid' ) );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( empty( $diaryid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'review/index' ) );
         }
         $diary = Diary::model()->fetchByPk( $diaryid );
         if( $diary['uid'] == $uid ){
             $this->redirect( $this->createUrl( 'default/show', array( 'diaryid' => $diaryid ) ) );
         }
         if ( empty( $diary ) ) {
-            $this->error( IBOS::lang( 'No data found' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'No data found' ), $this->createUrl( 'review/index' ) );
         }
         // 权限判断
         if ( !ICDiary::checkReviewScope( $uid, $diary ) ) {
-            $this->error( IBOS::lang( 'You do not have permission to view the log' ), $this->createUrl( 'review/index' ) );
+            $this->error( Ibos::lang( 'You do not have permission to view the log' ), $this->createUrl( 'review/index' ) );
         }
         //增加阅读记录
         Diary::model()->addReaderuidByPK( $diary, $uid );
@@ -222,13 +222,13 @@ class ReviewController extends BaseController {
         if ( $this->issetStamp() && $this->issetAutoReview() ) {
             $this->changeIsreview( $diaryid );
         }
-        $this->setPageTitle( IBOS::lang( 'Show subordinate diary' ) );
+        $this->setPageTitle( Ibos::lang( 'Show subordinate diary' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Show subordinate diary' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Show subordinate diary' ) )
         ) );
-        NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+        NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
         $this->render( 'show', $params );
     }
 
@@ -241,7 +241,7 @@ class ReviewController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'remind', 'changeIsreview', 'editStamp' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
         }
         if ( $option == 'default' ) {
             
@@ -260,7 +260,7 @@ class ReviewController extends BaseController {
     private function changeIsreview( $diaryid ) {
         $diary = Diary::model()->fetchByPk( $diaryid );
         // 判断是否是直属上司，只给直属上司自动评阅
-        if ( !empty( $diary ) && UserUtil::checkIsUpUid( $diary['uid'], IBOS::app()->user->uid ) ) {
+        if ( !empty( $diary ) && UserUtil::checkIsUpUid( $diary['uid'], Ibos::app()->user->uid ) ) {
             if ( $diary['stamp'] == 0 ) {
                 $stamp = $this->getAutoReviewStamp();
                 Diary::model()->modify( $diaryid, array( 'isreview' => 1, 'stamp' => $stamp ) );
@@ -276,19 +276,19 @@ class ReviewController extends BaseController {
      * @void
      */
     private function remind() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $date = Env::getRequest( 'date' );
             $dateTime = strtotime( $date );
             $getUids = trim( Env::getRequest( 'uids' ), ',' );
             $uidArr = explode( ',', $getUids );
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             if ( empty( $uidArr ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No user to remind' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No user to remind' ) ) );
             }
             // 权限判断
             foreach ( $uidArr as $subUid ) {
                 if ( !UserUtil::checkIsSub( $uid, $subUid ) ) {
-                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'No permission to remind' ) ) );
+                    $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'No permission to remind' ) ) );
                 }
             }
             // 取得后台提醒配置及默认提醒内容
@@ -296,7 +296,7 @@ class ReviewController extends BaseController {
             // 发送系统提醒
             $config = array(
                 '{name}' => User::model()->fetchRealnameByUid( $uid ),
-                '{title}' => IBOS::lang( 'Remind title', '', array( 'y' => date( 'Y', $dateTime ), 'm' => date( 'm', $dateTime ), 'd' => date( 'd', $dateTime ) ) ),
+                '{title}' => Ibos::lang( 'Remind title', '', array( 'y' => date( 'Y', $dateTime ), 'm' => date( 'm', $dateTime ), 'd' => date( 'd', $dateTime ) ) ),
                 '{content}' => $dashboardConfig['remindcontent']
             );
             if ( count( $uidArr ) > 0 ) {
@@ -305,7 +305,7 @@ class ReviewController extends BaseController {
             // 写入cookie，这天已提醒过
             $todayTime = strtotime( date( 'Y-m-d' ) );
             MainUtil::setCookie( "reminded_" . $dateTime, md5( $dateTime ), $todayTime + 24 * 60 * 60 - TIMESTAMP );
-            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Remind succeed' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Remind succeed' ) ) );
         }
     }
 
@@ -314,7 +314,7 @@ class ReviewController extends BaseController {
      * @return void
      */
     private function getsubordinates() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $uid = $_GET['uid'];
             $getItem = Env::getRequest( 'item' );
             $item = empty( $getItem ) ? 5 : $getItem;
@@ -329,7 +329,7 @@ class ReviewController extends BaseController {
             foreach ( $users as $user ) {
                 if ( $num < $item ) {
                     $htmlStr.='<li class="mng-item">
-                                            <a href="' . IBOS::app()->urlManager->createUrl( $theUrl, array( 'uid' => $user['uid'] ) ) . '">
+                                            <a href="' . Ibos::app()->urlManager->createUrl( $theUrl, array( 'uid' => $user['uid'] ) ) . '">
                                                 <img src="' . $user['avatar_middle'] . '" alt="">
                                                 ' . $user['realname'] . '
                                             </a>';
@@ -347,7 +347,7 @@ class ReviewController extends BaseController {
                 $htmlStr.='<li class="mng-item view-all" data-uid="' . $uid . '">
                                                 <a href="javascript:;">
                                                     <i class="o-da-allsub"></i>
-                                                    ' . IBOS::lang( 'View all subordinate' ) . '
+                                                    ' . Ibos::lang( 'View all subordinate' ) . '
                                                 </a>
                                             </li>';
             }
@@ -360,7 +360,7 @@ class ReviewController extends BaseController {
      * 处理评阅图章
      */
     private function editStamp() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $diaryid = $_GET['diaryid'];
             $stamp = $_GET['stamp'];
             Diary::model()->modify( $diaryid, array( 'stamp' => $stamp ) );
@@ -371,7 +371,7 @@ class ReviewController extends BaseController {
      * 获取图章icon
      */
     private function getStampIcon() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $diaryid = $_GET['diaryid'];
             $diary = Diary::model()->fetchByPk( $diaryid );
             if ( $diary['stamp'] != 0 ) {

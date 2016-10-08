@@ -2,7 +2,7 @@
 
  namespace application\modules\recruit\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class StatRecruitSidebar extends StatRecruitBase {
 
@@ -14,7 +14,7 @@ class StatRecruitSidebar extends StatRecruitBase {
 	 */
 	public function run() {
 		$data = array(
-			'lang' => IBOS::getLangSource( 'recruit.default' )
+			'lang' => Ibos::getLangSource( 'recruit.default' )
 		);
 		$this->render( self::VIEW, $data );
 	}

@@ -4,7 +4,7 @@ namespace application\modules\email\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
@@ -19,7 +19,7 @@ class DashboardController extends BaseController {
 
 	public function actionIndex() {
 		$emailSetting = array( );
-		$setting = IBOS::app()->setting->get( 'setting' );
+		$setting = Ibos::app()->setting->get( 'setting' );
 		foreach ( $this->_fields as $field ) {
 			$emailSetting[$field] = $setting[$field];
 		}
@@ -54,7 +54,7 @@ class DashboardController extends BaseController {
 				Setting::model()->updateSettingValueByKey( $key, $value );
 			}
 			Cache::update( 'setting' );
-			$this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+			$this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
 		}
 	}
 

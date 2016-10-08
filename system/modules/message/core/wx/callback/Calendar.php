@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\callback;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Tasks;
 use application\modules\message\core\wx\Callback;
@@ -50,8 +50,8 @@ class Calendar extends Callback {
 	 * @return string
 	 */
 	protected function handleByText() {
-		$uid = IBOS::app()->user->uid;
-		$sort = IBOS::app()->db->createCommand()
+		$uid = Ibos::app()->user->uid;
+		$sort = Ibos::app()->db->createCommand()
 				->select( 'MAX(sort) as sortid' )
 				->from( '{{tasks}}' )
 				->where( 'uid=' . $uid )
@@ -74,7 +74,7 @@ class Calendar extends Callback {
 	 * @return string
 	 */
 	public function resRecentTasks() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$criteria = array(
 			'condition' => "`pid` = '' AND `uid` = {$uid} AND `complete` = 0",
 			'order' => '`sort` ASC,`addtime` DESC',

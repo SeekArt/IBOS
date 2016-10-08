@@ -8,7 +8,7 @@ namespace application\modules\article\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class CommentController extends Controller {
@@ -36,7 +36,7 @@ class CommentController extends Controller {
 					'url' => $url
 				)
 			);
-			$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment', $properties );
+			$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment', $properties );
 			$list = $widget->fetchCommentList();
 			$this->ajaxReturn( array( 'isSuccess' => true, 'data' => $list ) );
 		}
@@ -48,7 +48,7 @@ class CommentController extends Controller {
 	 */
 	public function actionAddComment() {
 		if ( Env::submitCheck( 'formhash' ) ) {
-			$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment' );
+			$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment' );
 			return $widget->addComment();
 		}
 	}
@@ -58,7 +58,7 @@ class CommentController extends Controller {
 	 * @return void
 	 */
 	public function actionDelComment() {
-		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment' );
+		$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\article\core\ArticleComment' );
 		return $widget->delComment();
 	}
 

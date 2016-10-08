@@ -18,7 +18,7 @@
 namespace application\modules\mobile\components;
 
 use application\core\components\Category;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\core\Article as ICArticle;
 use application\modules\article\model\Article as ArticleModel;
@@ -57,7 +57,7 @@ class Article {
 	
     public function getList($type = 1, $catid = 0, $search = "") {
 		//DEBUG 测试 只是显示新闻数据
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$childCatIds = '';
 		if (!empty($catid)) {
 			$this->catid = $catid;

@@ -18,7 +18,7 @@ namespace application\modules\position\components;
 
 use application\core\components\Category;
 use application\core\utils\Cache as CacheUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\modules\position\utils\Position as PositionUtil;
 
@@ -35,7 +35,7 @@ class PositionCategory extends Category {
             $row['pId'] = $row['pid'];
             $row['name'] = $row['name'];
             $row['target'] = '_self';
-            $row['url'] = IBOS::app()->urlManager->createUrl( "dashboard/position/index" ) . '&catid=' . $row['catid'];
+            $row['url'] = Ibos::app()->urlManager->createUrl( "dashboard/position/index" ) . '&catid=' . $row['catid'];
             $row['open'] = true;
         }
         return array_merge( (array) $data, array() );

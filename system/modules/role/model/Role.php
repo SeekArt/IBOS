@@ -11,7 +11,7 @@ namespace application\modules\role\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\modules\role\model\AuthItemChild;
 use application\modules\role\model\Node;
@@ -93,7 +93,7 @@ class Role extends Model {
      * @return type
      */
     public function getRoleNameByRoleid( $roleid ) {
-        $rolename = IBOS::app()->db->createCommand()
+        $rolename = Ibos::app()->db->createCommand()
                 ->select( 'rolename' )
                 ->from( $this->tableName() )
                 ->where( sprintf( " `roleid` = '%s' ", $roleid ) )
@@ -102,7 +102,7 @@ class Role extends Model {
     }
 
     public function getRoleNameIndexByRoleidX( $roleidX ) {
-        $roleArray = IBOS::app()->db->createCommand()
+        $roleArray = Ibos::app()->db->createCommand()
                 ->select()
                 ->from( $this->tableName() )
                 ->where( $this->roleid_find_in_set( $roleidX ) )
@@ -119,7 +119,7 @@ class Role extends Model {
      * @return array
      */
     public function fetchAllId() {
-        $roleIds = IBOS::app()->db->createCommand()
+        $roleIds = Ibos::app()->db->createCommand()
                 ->select('roleid')
                 ->from( $this->tableName() )
                 ->queryColumn();
@@ -139,7 +139,7 @@ class Role extends Model {
         // 更新关联节点数据
         NodeRelated::model()->deleteAllByRoleId( $roleId );
         // 创建认证对象
-        $auth = IBOS::app()->authManager;
+        $auth = Ibos::app()->authManager;
         $role = $auth->getAuthItem( $roleId );
         if ( $role === null ) {
             // 为该角色创建认证项目

@@ -274,7 +274,7 @@ class DateTime {
 		$hour = floor( ($secs % 86400) / 3600 );
 		$min = floor( ($secs % 3600) / 60 );
 		$sec = floor( $secs % 60 );
-		$lang = IBOS::getLangSource( 'date' );
+		$lang = Ibos::getLangSource( 'date' );
 		$timestr = "";
 		if ( $day > 0 && stristr( $format, 'd' ) ) {
 			$timestr .= $day . $lang['Day'];

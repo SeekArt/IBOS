@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\callback;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email as EM;
 use application\modules\email\model\EmailBody;
@@ -67,7 +67,7 @@ class Email extends Callback {
 			return $this->resText( '邮件正文不能为空' );
 		}
 
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$data = array(
 			'fromid' => $uid,
 			'toids' => StringUtil::wrapId( $toUser['uid'] ),

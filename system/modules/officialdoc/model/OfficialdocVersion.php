@@ -18,7 +18,7 @@ namespace application\modules\officialdoc\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\officialdoc\utils\Officialdoc as OfficialdocUtil;
 
 class OfficialdocVersion extends Model {

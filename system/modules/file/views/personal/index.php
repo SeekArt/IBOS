@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/file_cabinets.css?<?php echo VERHASH; ?>">
@@ -260,6 +260,6 @@ use application\core\utils\IBOS;
     Ibos.app.s({
         "pid": <?php echo $pid; ?>,
         "cabinetType": "personal",
-        "isAdministrator": <?php echo IBOS::app()->user->isadministrator; ?>
+        "isAdministrator": <?php echo Ibos::app()->user->isadministrator; ?>
     })
 </script>

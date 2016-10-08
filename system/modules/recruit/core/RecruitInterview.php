@@ -2,7 +2,7 @@
 
 namespace application\modules\recruit\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\recruit\model\ResumeDetail as RDModel;
 use application\modules\user\model\User;
@@ -43,7 +43,7 @@ class RecruitInterview {
             }
         }
         $interviewer = implode( ',', StringUtil::getId( $inverviewArr['interviewer'] ) );
-        $inverviewArr['interviewer'] = empty( $interviewer ) ? IBOS::app()->user->uid : $interviewer;
+        $inverviewArr['interviewer'] = empty( $interviewer ) ? Ibos::app()->user->uid : $interviewer;
         if ( $inverviewArr['interviewtime'] != 0 ) {
             $inverviewArr['interviewtime'] = strtotime( $inverviewArr['interviewtime'] );
         } else {

@@ -19,7 +19,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
@@ -40,7 +40,7 @@ class MailController extends BaseController {
 		$keyword = isset( $_GET["search"] ) ? $_GET["search"] : "";
 		$lastid = isset( $_GET["lastid"] ) ? intval( $_GET["lastid"] ) : 0;
 
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$list = $this->page( $type, $uid, $lastid, $keyword );
 		$this->ajaxReturn( array( 'data' => $list['list'], 'lastid' => $list['minid'] ), Mobile::dataType() );
 	}
@@ -53,7 +53,7 @@ class MailController extends BaseController {
 		}
 		$where = $lastid ? $condition . " and e.emailid < {$lastid}" : $condition;
 		$group = isset( $param['group'] ) ? $param['group'] : '';
-		$list = IBOS::app()->db->createCommand()
+		$list = Ibos::app()->db->createCommand()
 				->select( "*" )
 				->from( "{{email}} e" )
 				->leftJoin( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -72,7 +72,7 @@ class MailController extends BaseController {
 			}
 		}
 		$minid = !empty( $ids ) ? min( $ids ) : '';
-		$email = IBOS::app()->db->createCommand()
+		$email = Ibos::app()->db->createCommand()
 				->select( "*" )
 				->from( "{{email}} e" )
 				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -95,7 +95,7 @@ class MailController extends BaseController {
 //		}
 //
 //		$conditions = $lastid ? $where . " and e.emailid < {$lastid}" : $where;
-//		$list = IBOS::app()->db->createCommand()
+//		$list = Ibos::app()->db->createCommand()
 //				->select( "*" )
 //				->from( "{{email}} e" )
 //				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -113,7 +113,7 @@ class MailController extends BaseController {
 //			}
 //		}
 //		$minid = min( $ids );
-//		$email = IBOS::app()->db->createCommand()
+//		$email = Ibos::app()->db->createCommand()
 //				->select( "*" )
 //				->from( "{{email}} e" )
 //				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
@@ -129,15 +129,15 @@ class MailController extends BaseController {
 //	private function search( $kw ) {
 //		$search['keyword'] = $kw;
 //		$type = isset( $_GET["type"] ) ? $_GET["type"] : "";
-//		$uid = IBOS::app()->user->uid;
+//		$uid = Ibos::app()->user->uid;
 //		$lastid = isset( $_GET["lastid"] ) ? intval( $_GET["lastid"] ) : 0;
 //		$condition = array();
-//		$condition = EmailUtil::mergeSearchCondition( $search, IBOS::app()->user->uid );
+//		$condition = EmailUtil::mergeSearchCondition( $search, Ibos::app()->user->uid );
 //		$condition['condition'] .= "AND ( e.isweb = 0)";
 ////		$conditionStr = base64_encode( serialize( $condition ) );
 //
 //		if ( empty( $condition ) ) {
-//			$this->error( IBOS::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );
+//			$this->error( Ibos::lang( 'Request tainting', 'error' ), $this->createUrl( 'list/index' ) );
 //		}
 //		$datas = $this->searchPage( $type, $uid, $lastid, $condition );
 //		var_dump( $datas['list'] );
@@ -164,7 +164,7 @@ class MailController extends BaseController {
 //	}
 
 	public function actionCategory() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$myFolders = EmailFolder::model()->fetchAllUserFolderByUid( $uid );
 		// 获取未读邮件数目
 		$notReadCount = Email::model()->countUnreadByListParam( 'inbox', $uid );
@@ -187,7 +187,7 @@ class MailController extends BaseController {
 				$attachmentArr = explode( ",", $email['attachmentid'] );
 			}
 		}
-		Email::model()->setRead( $id, IBOS::app()->user->uid );
+		Email::model()->setRead( $id, Ibos::app()->user->uid );
 
 		$this->ajaxReturn( $email, Mobile::dataType() );
 	}
@@ -207,7 +207,7 @@ class MailController extends BaseController {
 		$bodyData["secrettoids"] = Env::getRequest( 'mcids' );
 		$bodyData["isneedreceipt"] = 0;
 		$bodyData['issend'] = 1;
-		$bodyData["fromid"] = IBOS::app()->user->uid;
+		$bodyData["fromid"] = Ibos::app()->user->uid;
 		$bodyData["sendtime"] = time();
 
 		$bodyId = EmailBody::model()->add( $bodyData, true );
@@ -221,10 +221,10 @@ class MailController extends BaseController {
 		$id = StringUtil::filterStr( $ids );
 		$status = false;
 		if ( !empty( $id ) ) {
-			$condition = 'toid = ' . intval( IBOS::app()->user->uid ) . ' AND FIND_IN_SET(emailid,"' . $id . '")';
+			$condition = 'toid = ' . intval( Ibos::app()->user->uid ) . ' AND FIND_IN_SET(emailid,"' . $id . '")';
 			$status = Email::model()->setField( 'isdel', 1, $condition );
 		}
-		$errorMsg = !$status ? IBOS::lang( 'Operation failure', 'message' ) : '';
+		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
 		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
 	}
 
@@ -237,7 +237,7 @@ class MailController extends BaseController {
 			$ismark = strcasecmp( $markFlag, 'true' ) == 0 ? 1 : 0;
 			$status = Email::model()->setField( 'ismark', $ismark, $condition );
 		}
-		$errorMsg = !$status ? IBOS::lang( 'Operation failure', 'message' ) : '';
+		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
 		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
 	}
 
@@ -247,7 +247,7 @@ class MailController extends BaseController {
 		$id = StringUtil::filterStr( $ids );
 		$status = false;
 		if ( !empty( $id ) ) {
-			$status = Email::model()->completelyDelete( explode( ',', $id ), IBOS::app()->user->uid );
+			$status = Email::model()->completelyDelete( explode( ',', $id ), Ibos::app()->user->uid );
 		}
 		$this->ajaxReturn( array( 'isSuccess' => !!$status ), Mobile::dataType() );
 	}
@@ -261,7 +261,7 @@ class MailController extends BaseController {
 			$condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
 			$status = Email::model()->setField( 'isdel', 0, $condition );
 		}
-		$errorMsg = !$status ? IBOS::lang( 'Operation failure', 'message' ) : '';
+		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
 		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
 	}
 

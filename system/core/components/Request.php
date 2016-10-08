@@ -10,7 +10,7 @@
 
 namespace application\core\components;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CHttpException;
 use CHttpRequest;
 

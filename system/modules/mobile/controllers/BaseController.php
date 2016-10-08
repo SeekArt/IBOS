@@ -18,7 +18,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Session;
 use application\modules\user\model\User;
 
@@ -116,8 +116,8 @@ class BaseController extends Controller {
      */
     public function init() {
         $this->_attributes = array_merge( $this->_attributes, $this->_extraAttributes );
-        if ( isset( IBOS::app()->user->uid ) ) {
-            $this->uid = intval( IBOS::app()->user->uid );
+        if ( isset( Ibos::app()->user->uid ) ) {
+            $this->uid = intval( Ibos::app()->user->uid );
         } else {
             $this->uid = 0;
         }
@@ -148,8 +148,8 @@ class BaseController extends Controller {
      * @return void
      */
     public final function userLogin() {
-        IBOS::app()->user->loginUrl = array( $this->_loginUrl );
-        IBOS::app()->user->loginRequired();
+        Ibos::app()->user->loginUrl = array( $this->_loginUrl );
+        Ibos::app()->user->loginRequired();
     }
 
     /**

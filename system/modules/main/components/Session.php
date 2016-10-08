@@ -149,9 +149,9 @@ class Session extends CHttpSession {
     public function updateSession() {
         static $updated = false;
         if ( !$updated ) {
-            $global = util\IBOS::app()->setting->toArray();
+            $global = util\Ibos::app()->setting->toArray();
             // 设置最后活动时间
-            if ( !util\IBOS::app()->user->isGuest ) {
+            if ( !util\Ibos::app()->user->isGuest ) {
                 if ( isset( $global['cookie']['ulastactivity'] ) ) {
                     $userLastActivity = util\StringUtil::authCode( $global['cookie']['ulastactivity'], 'DECODE' );
                 } else {
@@ -168,11 +168,11 @@ class Session extends CHttpSession {
             $onlineTimeOffset = $lastOnlineUpdate ? $lastOnlineUpdate : $userLastActivity;
             $allowUpdateOnlineTime = ( TIMESTAMP - $onlineTimeOffset > $onlineTimeSpan * 60 );
             // 更新在线时间
-            if ( !util\IBOS::app()->user->isGuest && $allowUpdateOnlineTime ) {
-                $updateStatus = UserModel\OnlineTime::model()->updateOnlineTime( util\IBOS::app()->user->uid, $onlineTimeSpan, $onlineTimeSpan, TIMESTAMP );
+            if ( !util\Ibos::app()->user->isGuest && $allowUpdateOnlineTime ) {
+                $updateStatus = UserModel\OnlineTime::model()->updateOnlineTime( util\Ibos::app()->user->uid, $onlineTimeSpan, $onlineTimeSpan, TIMESTAMP );
                 if ( $updateStatus === false ) {
                     $onlineTime = new UserModel\OnlineTime();
-                    $onlineTime->uid = util\IBOS::app()->user->uid;
+                    $onlineTime->uid = util\Ibos::app()->user->uid;
                     $onlineTime->thismonth = $onlineTimeSpan;
                     $onlineTime->total = $onlineTimeSpan;
                     $onlineTime->lastupdate = $global['timestamp'];
@@ -184,21 +184,21 @@ class Session extends CHttpSession {
             $this->var['invisible'] = UserUtil::getUserProfile( 'invisible' );
             // 赋值用户变量到var数组，然后更新
             foreach ( $this->var as $key => $value ) {
-                if ( util\IBOS::app()->user->hasState( $key ) && $key != 'lastactivity' ) {
-                    $this->setKey( $key, util\IBOS::app()->user->$key );
+                if ( util\Ibos::app()->user->hasState( $key ) && $key != 'lastactivity' ) {
+                    $this->setKey( $key, util\Ibos::app()->user->$key );
                 }
             }
 
-            util\IBOS::app()->session->update();
-            if ( !util\IBOS::app()->user->isGuest ) {
+            util\Ibos::app()->session->update();
+            if ( !util\Ibos::app()->user->isGuest ) {
                 $updateStatusField = array( 'lastip' => $global['clientip'], 'lastactivity' => TIMESTAMP, 'lastvisit' => TIMESTAMP, 'invisible' => 1 );
                 if ( TIMESTAMP - $userLastActivity > 21600 ) {
                     if ( $onlineTimeSpan && TIMESTAMP - $userLastActivity > 43200 ) {
-                        $onlineTime = UserModel\OnlineTime::model()->fetchByPk( util\IBOS::app()->user->uid );
-                        UserModel\UserCount::model()->updateByPk( util\IBOS::app()->user->uid, array( 'oltime' => round( intval( $onlineTime['total'] ) / 60 ) ) );
+                        $onlineTime = UserModel\OnlineTime::model()->fetchByPk( util\Ibos::app()->user->uid );
+                        UserModel\UserCount::model()->updateByPk( util\Ibos::app()->user->uid, array( 'oltime' => round( intval( $onlineTime['total'] ) / 60 ) ) );
                     }
                     MainUtil::setCookie( 'ulastactivity', util\StringUtil::authCode( TIMESTAMP, 'ENCODE' ), 31536000 );
-                    UserModel\UserStatus::model()->updateByPk( util\IBOS::app()->user->uid, $updateStatusField );
+                    UserModel\UserStatus::model()->updateByPk( util\Ibos::app()->user->uid, $updateStatusField );
                 }
             }
             // 切换session更新状态标识,以免重复更新
@@ -221,7 +221,7 @@ class Session extends CHttpSession {
                 }
                 MainModel\Session::model()->updateByPk( $this->var['sid'], $this->var );
             }
-            util\IBOS::app()->setting->set( 'session', $this->var );
+            util\Ibos::app()->setting->set( 'session', $this->var );
             MainUtil::setCookie( 'sid', $this->sid, 86400 );
         }
     }

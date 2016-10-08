@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 ?>
@@ -194,13 +194,13 @@ use application\core\utils\StringUtil;
                         <h4><?php echo $lang['Comment']; ?></h4>
                         <div id="report_comment" data-url="<?php echo Yii::app()->urlManager->createUrl( 'message/comment/getcomment' ); ?>">
                             <?php
-                            $sourceUrl = IBOS::app()->urlManager->createUrl( 'report/default/show', array( 'repid' => $report['repid'] ) );
+                            $sourceUrl = Ibos::app()->urlManager->createUrl( 'report/default/show', array( 'repid' => $report['repid'] ) );
                             $this->widget( 'application\modules\report\widgets\ReportComment', array(
                                 'module' => 'report',
                                 'table' => 'report',
                                 'attributes' => array(
                                     'rowid' => $report['repid'],
-                                    'moduleuid' => IBOS::app()->user->uid,
+                                    'moduleuid' => Ibos::app()->user->uid,
                                     'touid' => $report['uid'],
                                     'module_rowid' => $report['repid'],
                                     'module_table' => 'report',
@@ -208,7 +208,7 @@ use application\core\utils\StringUtil;
                                     'allowComment' => 1,
                                     'showStamp' => $this->issetStamp(),
                                     'url' => $sourceUrl,
-                                    'detail' => IBOS::lang( 'Comment my report', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $report['subject'], 50 ) ) )
+                                    'detail' => Ibos::lang( 'Comment my report', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $report['subject'], 50 ) ) )
                         ) ) );
                             ?>
                         </div>
@@ -225,7 +225,7 @@ use application\core\utils\StringUtil;
                                 </div>
                                 <div class="rp-reviews-avatar">
                                     <?php foreach ( $readers as $reader ): ?>
-                                        <a href="<?php echo IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
+                                        <a href="<?php echo Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $reader['uid'] ) ); ?>">
                                             <img src="<?php echo Org::getDataStatic( $reader['uid'], 'avatar', 'small' ) ?>" title="<?php echo $reader['realname']; ?>" class="img-rounded"/>
                                         </a>
                                     <?php endforeach; ?>

@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 use application\modules\officialdoc\model\RcType;
@@ -28,11 +28,11 @@ class DashboardController extends BaseController {
 
     public function getAssetUrl( $module = '' ) {
         $module = 'dashboard';
-        return IBOS::app()->assetManager->getAssetsUrl( $module );
+        return Ibos::app()->assetManager->getAssetsUrl( $module );
     }
 
     public function actionIndex() {
-        $docConfig = IBOS::app()->setting->get( 'setting/docconfig' );
+        $docConfig = Ibos::app()->setting->get( 'setting/docconfig' );
         //取出所有的套红数据
         $data = RcType::model()->fetchAll();
         $params = array(
@@ -88,7 +88,7 @@ class DashboardController extends BaseController {
             RcType::model()->deleteByPk( $delRcids );
         }
         Cache::update( 'setting' );
-        $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+        $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
     }
 
     /**
@@ -99,12 +99,12 @@ class DashboardController extends BaseController {
         $option = empty( $op ) ? 'default' : $op;
         $routes = array( 'default', 'update' );
         if ( !in_array( $option, $routes ) ) {
-            $this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
+            $this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'officialdoc/index' ) );
         }
         if ( $option == 'default' ) {
             $rcid = Env::getRequest( 'rcid' );
             if ( empty( $rcid ) ) {
-                $this->error( IBOS::lang( 'Request param', 'error' ) );
+                $this->error( Ibos::lang( 'Request param', 'error' ) );
             }
             $data = RcType::model()->fetchByPk( $rcid );
             $this->render( 'edit', array( 'data' => $data ) );
@@ -122,7 +122,7 @@ class DashboardController extends BaseController {
         $content = $_POST['content_text'];
         $escapeContent = $_POST['content'];
         RcType::model()->modify( $rcid, array( 'name' => $name, 'content' => $content, 'escape_content' => $escapeContent ) );
-        $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+        $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
     }
 
 }

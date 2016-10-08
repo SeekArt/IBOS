@@ -3,7 +3,7 @@
 namespace application\modules\email\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\model\EmailWeb;
 use application\modules\main\utils\Main as MainUtil;
@@ -63,11 +63,11 @@ class BaseController extends Controller {
 	 * @return void 
 	 */
 	public function init() {
-		$this->uid = $uid = intval( IBOS::app()->user->uid );
+		$this->uid = $uid = intval( Ibos::app()->user->uid );
 		// 个人文件夹
 		$this->folders = EmailFolder::model()->fetchAllUserFolderByUid( $uid );
 		// 是否允许外部邮箱
-		$this->allowWebMail = (bool) IBOS::app()->setting->get( 'setting/emailexternalmail' );
+		$this->allowWebMail = (bool) Ibos::app()->setting->get( 'setting/emailexternalmail' );
 		// 个人外部邮箱列表
 		$this->webMails = $this->allowWebMail ? EmailWeb::model()->fetchAllByUid( $uid ) : array( );
 		parent::init();
@@ -81,21 +81,21 @@ class BaseController extends Controller {
 	protected function getSidebar( $op = '' ) {
 		$archiveTable = array( );
 		// 获取存档表数据
-		$settings = IBOS::app()->setting->get( 'setting' );
+		$settings = Ibos::app()->setting->get( 'setting' );
 		// 存档表ID数组
 		$archiveTable['ids'] = $settings['emailtableids'] ? $settings['emailtableids'] : array( );
 		// 存档表信息数组
 		$archiveTable['info'] = $settings['emailtable_info'] ? $settings['emailtable_info'] : array( );
 		foreach ( $archiveTable['ids'] as $tableId ) {
 			if ( $tableId != 0 && empty( $archiveTable['info'][$tableId]['displayname'] ) ) {
-				$archiveTable['info'][$tableId]['displayname'] = IBOS::lang( 'Unnamed archive' ) . '(' . $tableId . ')';
+				$archiveTable['info'][$tableId]['displayname'] = Ibos::lang( 'Unnamed archive' ) . '(' . $tableId . ')';
 			}
 		}
 		// sidebar所用的渲染视图数据
 		$data = array(
 			'op' => $op,
 			'uid' => $this->uid,
-			'lang' => IBOS::getLangSources(),
+			'lang' => Ibos::getLangSources(),
 			'folders' => $this->folders,
 			'allowWebMail' => $this->allowWebMail,
 			'webEmails' => $this->webMails,

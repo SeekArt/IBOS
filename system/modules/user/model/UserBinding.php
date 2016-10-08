@@ -19,7 +19,7 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class UserBinding extends Model {
 
@@ -38,7 +38,7 @@ class UserBinding extends Model {
      * @return type
      */
     public function fetchValuesByUids( $uids, $app ) {
-        $rs = IBOS::app()->db->createCommand()
+        $rs = Ibos::app()->db->createCommand()
                 ->select( 'bindvalue' )
                 ->from( $this->tableName() )
                 ->where( sprintf( "FIND_IN_SET(uid,'%s') AND app = '%s'", implode( ',', $uids ), $app ) )
@@ -52,7 +52,7 @@ class UserBinding extends Model {
      * @return array
      */
     public function fetchAllByApp( $app ) {
-        $rs = IBOS::app()->db->createCommand()
+        $rs = Ibos::app()->db->createCommand()
                 ->select( '*' )
                 ->from( $this->tableName() )
                 ->where( sprintf( "app = '%s'", $app ) )
@@ -66,7 +66,7 @@ class UserBinding extends Model {
      * @return array
      */
     public function fetchUidByApp( $app ) {
-        $rs = IBOS::app()->db->createCommand()
+        $rs = Ibos::app()->db->createCommand()
                 ->select( 'uid' )
                 ->from( $this->tableName() )
                 ->where( sprintf( "app = '%s'", $app ) )
@@ -81,7 +81,7 @@ class UserBinding extends Model {
 	 * @return string
 	 */
 	public function fetchBindValue( $uid, $app ) {
-		$uid = IBOS::app()->db->createCommand()
+		$uid = Ibos::app()->db->createCommand()
 				->select( 'uid' )
 				->from( $this->tableName() )
 				->where( " `uid` = '{$uid}' AND `app` = '{$app}' " )

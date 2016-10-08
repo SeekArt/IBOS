@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 ?>
@@ -12,11 +12,11 @@ use application\core\utils\StringUtil;
         <strong><?php echo $user['group_title']; ?></strong>
     </div>
     <div class="uic-operate">
-        <?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
+        <?php if ( Ibos::app()->user->uid !== $user['uid'] ): ?>
             <a href="javascript:Ibos.showCallingDialog(<?php echo $user['uid']; ?>);void(0);" title="打电话" class="co-tcall"></a>
         <?php endif; ?>
-        <?php if ( Module::getIsEnabled( 'email' ) ): ?><a target="_blank" href="<?php echo IBOS::app()->createUrl( 'email/content/add', array( 'toid' => $user['uid'] ) ); ?>" title="<?php echo $lang['Send email']; ?>" class="co-temail"></a><?php endif; ?>
-        <?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
+        <?php if ( Module::getIsEnabled( 'email' ) ): ?><a target="_blank" href="<?php echo Ibos::app()->createUrl( 'email/content/add', array( 'toid' => $user['uid'] ) ); ?>" title="<?php echo $lang['Send email']; ?>" class="co-temail"></a><?php endif; ?>
+        <?php if ( Ibos::app()->user->uid !== $user['uid'] ): ?>
             <a title="<?php echo $lang['Send message']; ?>" href="javascript:Ibos.showPmDialog('<?php echo StringUtil::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="co-tpm">
                 <i class="<?php echo $status; ?>"></i>
             </a>
@@ -38,7 +38,7 @@ use application\core\utils\StringUtil;
         <a href="<?php echo $user['space_url']; ?>" class="avatar-circle">
             <img src="<?php echo $user['avatar_big']; ?>" alt="<?php echo $user['realname']; ?>">
         </a>
-        <?php if ( $weibo && IBOS::app()->user->uid !== $user['uid'] ): ?>
+        <?php if ( $weibo && Ibos::app()->user->uid !== $user['uid'] ): ?>
             <div class="uic-btn">
                 <?php if ( !$states['following'] ): ?>
                     <a href="javascript:;" class="btn btn-small btn-warning" data-action="follow" data-param='{"fid": <?php echo $user['uid']; ?>}' data-loading-text="关注中...">
@@ -64,17 +64,17 @@ use application\core\utils\StringUtil;
         <div class="uic-fans">
             <ul>
                 <li>
-                    <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/following', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Focus']; ?></a>
+                    <a target="_blank" href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/following', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Focus']; ?></a>
                     <span><?php echo isset( $userData['following_count'] ) ? $userData['following_count'] : 0; ?></span>
                 </li>
                 <li>|</li>
                 <li>
-                    <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/follower', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Fans']; ?></a>
+                    <a target="_blank" href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/follower', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Fans']; ?></a>
                     <span><?php echo isset( $userData['follower_count'] ) ? $userData['follower_count'] : 0; ?></span>
                 </li>
                 <li>|</li>
                 <li>
-                    <a target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Weibo']; ?></a>
+                    <a target="_blank" href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $user['uid'] ) ); ?>"><?php echo $lang['Weibo']; ?></a>
                     <span><?php echo isset( $userData['weibo_count'] ) ? $userData['weibo_count'] : 0; ?></span>
                 </li>
             </ul>

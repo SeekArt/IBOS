@@ -17,7 +17,7 @@
 namespace application\modules\mobile\utils;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\message\model\Notify;
 use application\modules\mobile\utils\Mobile;
@@ -97,7 +97,7 @@ class FreeNext extends Base {
         $key = $this->getKey();
         $flow = new ICFlowType( intval( $key['flowid'] ), true );
         $this->_var = array_merge( $key, array(
-            'lang' => IBOS::getLangSources(),
+            'lang' => Ibos::getLangSources(),
             'flow' => $flow,
             'key' => $this->makeKey( $key ),
             'flowName' => $flow->name,
@@ -222,12 +222,12 @@ class FreeNext extends Base {
 		$presetDesc = !is_null( $preset ) ? $var['lang']['Default step'] : '';
 		$userNameStr = User::model()->fetchRealnamesByUids( $prcsUserNext );
 		$content = $var['lang']['To the steps'] . $processIdNext . $presetDesc . ',' . $var['lang']['Transactor'] . ':' . $userNameStr;
-		Common::runlog( $var['runid'], $var['processid'], 0, IBOS::app()->user->uid, 1, $content );
+		Common::runlog( $var['runid'], $var['processid'], 0, Ibos::app()->user->uid, 1, $content );
 		//-------end------------
 		//-- 设置当前步骤所有人为已转交 --
 		FlowRunProcess::model()->updateAll( array( 'flag' => 3 ), sprintf( "runid = %d AND processid = %d", $var['runid'], $var['processid'] ) );
 		//-- 设置当前步骤自己的结束时间 --
-		FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], IBOS::app()->user->uid ) );
+		FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], Ibos::app()->user->uid ) );
 		//-- 短信提醒 --
 		$content = filter_input( INPUT_POST, 'message', FILTER_SANITIZE_STRING );
 		if ( !is_null( $content ) ) {
@@ -238,7 +238,7 @@ class FreeNext extends Base {
 				'flowprocess' => $var['flowprocess']
 			);
 			$ext = array(
-				'{url}' => IBOS::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
+				'{url}' => Ibos::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
 				'{message}' => $content
 			);
 			Notify::model()->sendNotify( $prcsUserNext, 'workflow_turn_notice', $ext );
@@ -265,7 +265,7 @@ class FreeNext extends Base {
 		);
 //		Main::setCookie( 'flow_turn_flag', 1, 30 );
 		$this->ajaxReturn( $datas, Mobile::dataType() );
-//        $url = IBOS::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+//        $url = Ibos::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 //        $this->getController()->redirect( $url );
 	}
 
@@ -349,12 +349,12 @@ class FreeNext extends Base {
 //        $presetDesc = !is_null( $preset ) ? $var['lang']['Default step'] : '';
 //        $userNameStr = User::model()->fetchRealnamesByUids( $prcsUserNext );
 //        $content = $var['lang']['To the steps'] . $processIdNext . $presetDesc . ',' . $var['lang']['Transactor'] . ':' . $userNameStr;
-//        Common::runlog( $var['runid'], $var['processid'], 0, IBOS::app()->user->uid, 1, $content );
+//        Common::runlog( $var['runid'], $var['processid'], 0, Ibos::app()->user->uid, 1, $content );
 //        //-------end------------
 //        //-- 设置当前步骤所有人为已转交 --
 //        FlowRunProcess::model()->updateAll( array( 'flag' => 3 ), sprintf( "runid = %d AND processid = %d", $var['runid'], $var['processid'] ) );
 //        //-- 设置当前步骤自己的结束时间 --
-//        FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], IBOS::app()->user->uid ) );
+//        FlowRunProcess::model()->updateAll( array( 'delivertime' => TIMESTAMP ), sprintf( "runid = %d AND processid = %d AND uid = %d", $var['runid'], $var['processid'], Ibos::app()->user->uid ) );
 //        //-- 短信提醒 --
 //        $content = filter_input( INPUT_POST, 'message', FILTER_SANITIZE_STRING );
 //        if ( !is_null( $content ) ) {
@@ -365,7 +365,7 @@ class FreeNext extends Base {
 //                'flowprocess' => $var['flowprocess']
 //            );
 //            $ext = array(
-//                '{url}' => IBOS::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
+//                '{url}' => Ibos::app()->createUrl( 'workflow/form/index', array( 'key' => Common::param( $key ) ) ),
 //                '{message}' => $content
 //            );
 //            Notify::model()->sendNotify( $prcsUserNext, 'workflow_turn_notice', $ext );
@@ -378,7 +378,7 @@ class FreeNext extends Base {
 //            FlowRunProcess::model()->updateAll( array( 'flag' => 4 ), sprintf( "runid = %d AND (processid = %d OR processid = %d)", $var['runid'], $prcsFirst, $prcsNext ) );
 //        }
 //        Main::setCookie( 'flow_turn_flag', 1, 30 );
-//        $url = IBOS::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
+//        $url = Ibos::app()->createUrl( 'workflow/list/index', array( 'op' => 'list', 'type' => 'trans', 'sort' => 'all' ) );
 //        $this->getController()->redirect( $url );
 //    }
 
@@ -421,7 +421,7 @@ class FreeNext extends Base {
     private function getProcessUser( &$var ) {
         $return = array();
         for ( $i = 1; $i <= $var['processid']; $i++ ) {
-            $querys = IBOS::app()->db->createCommand()
+            $querys = Ibos::app()->db->createCommand()
                     ->select( '*' )
                     ->from( '{{flow_run_process}}' )
                     ->where( sprintf( "runid = %d AND processid = %d", $var['runid'], $i ) )
@@ -448,7 +448,7 @@ class FreeNext extends Base {
                 $userName .= "[{$var['lang']['Host user']}]";
             }
             $isCurStep = $step == $var['processid'];
-            $isMe = $row['uid'] == IBOS::app()->user->uid;
+            $isMe = $row['uid'] == Ibos::app()->user->uid;
             // 处理步骤状态标记
             $userNamestr .= $this->handleFlag( intval( $row['flag'] ), $userName, $var['lang'] );
             if ( $isCurStep && $row['flag'] != 4 && !$isMe ) {
@@ -509,7 +509,7 @@ class FreeNext extends Base {
      */
     private function getPreset( $processId, $runId, $lang ) {
         $preset = '';
-        $querys = IBOS::app()->db->createCommand()
+        $querys = Ibos::app()->db->createCommand()
                 ->select( '*' )->from( '{{flow_run_process}}' )->where( "runid = {$runId} AND processid = {$processId} AND flag = 5" )
                 ->order( 'opflag DESC' )
                 ->queryAll();

@@ -6,7 +6,7 @@ use application\core\model\Log;
 use application\core\model\Model;
 use application\core\model\Source;
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
@@ -74,7 +74,7 @@ class Feed extends Model {
 	 * @return array 指定用户所关注人的所有微博，默认为当前登录用户
 	 */
 	public function getFollowingFeed( $where = '', $limit = 10, $offset = 0, $uid = '' ) {
-		$buid = intval( empty( $uid ) ? IBOS::app()->user->uid : $uid  );
+		$buid = intval( empty( $uid ) ? Ibos::app()->user->uid : $uid  );
 		// 加上自己的信息，若不需要屏蔽下语句
 		$_where = !empty( $where ) ? "(a.uid = '{$buid}' OR b.uid = '{$buid}') AND ($where)" : "(a.uid = '{$buid}' OR b.uid = '{$buid}')";
 		$feedlist = $this->getDbConnection()->createCommand()
@@ -97,7 +97,7 @@ class Feed extends Model {
 	 * @return integer
 	 */
 	public function countFollowingFeed( $where = '', $uid = '' ) {
-		$buid = intval( empty( $uid ) ? util\IBOS::app()->user->uid : $uid  );
+		$buid = intval( empty( $uid ) ? util\Ibos::app()->user->uid : $uid  );
 		// 加上自己的信息，若不需要屏蔽下语句
 		$_where = !empty( $where ) ? "(a.uid = '{$buid}' OR b.uid = '{$buid}') AND ($where)" : "(a.uid = '{$buid}' OR b.uid = '{$buid}')";
 		$count = $this->getDbConnection()->createCommand()
@@ -117,7 +117,7 @@ class Feed extends Model {
 	public function get( $feedId ) {
 		$feedList = $this->getFeeds( array( $feedId ) );
 		if ( !$feedList ) {
-			$this->addError( 'get', util\IBOS::lang( 'Get info fail', 'message.default' ) );
+			$this->addError( 'get', util\Ibos::lang( 'Get info fail', 'message.default' ) );
 			// 获取信息失败
 			return false;
 		} else {
@@ -171,7 +171,7 @@ class Feed extends Model {
 	public function put( $uid, $module = 'weibo', $type = '', $data = array(), $rowid = 0, $table = 'feed', $extUid = null, $lessUids = null, $isAtMe = true, $isRepost = 0 ) {
 		// 判断数据的正确性
 		if ( !$uid || $type == '' ) {
-			$this->addError( 'putFeed', util\IBOS::lang( 'Operation failure', 'message' ) );
+			$this->addError( 'putFeed', util\Ibos::lang( 'Operation failure', 'message' ) );
 			return false;
 		}
 		// 微博类型合法性验证 - 临时解决方案
@@ -241,8 +241,8 @@ class Feed extends Model {
 				Atme::model()->updateRecentAt( $content ); // 内容用户
 			}
 			// 发送@消息
-			$url = isset( $data['url'] ) ? $data['url'] : util\IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $feedId ) );
-            $detail = isset( $data['detail'] ) ? $data['detail'] : util\IBOS::lang( 'Published weibo', 'weibo.default', array( '{url}' => $url, '{title}' => util\StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", util\StringUtil::filterCleanHtml( $data['body'] ) ), 50 ) ) );
+			$url = isset( $data['url'] ) ? $data['url'] : util\Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $feedId ) );
+            $detail = isset( $data['detail'] ) ? $data['detail'] : util\Ibos::lang( 'Published weibo', 'weibo.default', array( '{url}' => $url, '{title}' => util\StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", util\StringUtil::filterCleanHtml( $data['body'] ) ), 50 ) ) );
 			Atme::model()->addAtme( 'weibo', 'feed', $content, $feedId, $extUid, $lessUids, $url, $detail );
 
 			$data['clientip'] = util\Env::getClientIp();
@@ -261,7 +261,7 @@ class Feed extends Model {
 			}
 			return $return;
 		} else {
-			$this->addError( 'putFeed', util\IBOS::lang( 'Operation failure', 'message' ) );
+			$this->addError( 'putFeed', util\Ibos::lang( 'Operation failure', 'message' ) );
 			return false;
 		}
 	}
@@ -274,7 +274,7 @@ class Feed extends Model {
 	 */
 	public function formatFeedContent( $content, $weiboNums = 0 ) {
 		// 拼装数据，如果是评论再转发、回复评论等情况，需要额外叠加对话数据
-        $content = str_replace( util\IBOS::app()->setting->get( 'siteurl' ), '[SITE_URL]', util\StringUtil::pregHtml( $content ) );
+        $content = str_replace( util\Ibos::app()->setting->get( 'siteurl' ), '[SITE_URL]', util\StringUtil::pregHtml( $content ) );
 		// 格式化微博信息 - URL
         $content = preg_replace_callback( '/((?:https?|mailto|ftp):\/\/([^\x{2e80}-\x{9fff}\s<\'\"“”‘’，。}]*)?)/u', 'application\core\utils\StringUtil::formatFeedContentUrlLength', $content );
 		if ( isset( $GLOBALS['replaceHash'] ) ) {
@@ -288,7 +288,7 @@ class Feed extends Model {
 		// 截取内容信息为微博内容字数 - 重点
 		$feedNums = 0;
 		if ( empty( $weiboNums ) ) {
-			$feedNums = intval( util\IBOS::app()->setting->get( 'setting/wbnums' ) );
+			$feedNums = intval( util\Ibos::app()->setting->get( 'setting/wbnums' ) );
 		} else {
 			$feedNums = $weiboNums;
 		}
@@ -331,7 +331,7 @@ class Feed extends Model {
 			if ( $type == 'deleteFeed' ) {
 				// 日志记录
 				$msg = array(
-					'user' => util\IBOS::app()->user->username,
+					'user' => util\Ibos::app()->user->username,
 					'ip' => util\Env::getClientIp(),
 					'id' => $feedid,
 					'value' => $this->get( $feedid )
@@ -410,7 +410,7 @@ class Feed extends Model {
 		if ( $data !== false && ($forApi === false ) ) {
 			return $data;
 		}
-		$data = util\IBOS::app()->db->createCommand()
+		$data = util\Ibos::app()->db->createCommand()
 				->from( '{{feed}} a' )
 				->leftJoin( '{{feed_data}} b', 'a.feedid = b.feedid' )
 				->where( 'a.feedid = ' . $id )
@@ -520,7 +520,7 @@ class Feed extends Model {
 	 * @return string
 	 */
 	private function mergeSearchFollowingCondition( $key, $loadId ) {
-		$me = intval( util\IBOS::app()->user->uid );
+		$me = intval( util\Ibos::app()->user->uid );
 		$where = !empty( $loadId ) ? " a.isdel = 0 AND a.feedid <'{$loadId}'" : "a.isdel = 0";
 		$where .= " AND (a.uid = '{$me}' OR b.uid = '{$me}' ) AND " . WbfeedUtil::getViewCondition( $me, 'a.' );
         $where .= " AND c.feedcontent LIKE '%" . util\StringUtil::filterCleanHtml( $key ) . "%'";
@@ -534,7 +534,7 @@ class Feed extends Model {
 	 * @return integer
 	 */
 	public function countSearchFollowing( $key, $loadId ) {
-		$me = intval( util\IBOS::app()->user->uid );
+		$me = intval( util\Ibos::app()->user->uid );
 		$where = $this->mergeSearchFollowingCondition( $key, $loadId );
 		$count = $this->getDbConnection()->createCommand()
 				->select( 'count(a.feedid)' )
@@ -555,7 +555,7 @@ class Feed extends Model {
 	 * @return string
 	 */
 	private function mergeSearchAllCondition( $key, $loadId, $feedtype = '', $uid = 0 ) {
-		$me = intval( util\IBOS::app()->user->uid );
+		$me = intval( util\Ibos::app()->user->uid );
 		$map = array( 'and' );
 		if ( !$uid ) {
 			$map[] = 'a.isdel = 0 AND ' . WbfeedUtil::getViewCondition( $me );
@@ -601,7 +601,7 @@ class Feed extends Model {
 	 * @return string
 	 */
 	private function mergeSearchMovementCondition( $key, $loadId, $feedtype = '', $uid = 0 ) {
-		$me = intval( util\IBOS::app()->user->uid );
+		$me = intval( util\Ibos::app()->user->uid );
 		$map = array( 'and' );
 		if ( !$uid ) {
 			$map[] = 'a.isdel = 0 AND ' . WbfeedUtil::getViewCondition( $me );
@@ -648,7 +648,7 @@ class Feed extends Model {
 	 * @return array 搜索后的微博数据
 	 */
 	public function searchFeed( $key, $type, $loadId, $limit, $offset, $feedtype = '', $uid = 0 ) {
-		$me = intval( util\IBOS::app()->user->uid );
+		$me = intval( util\Ibos::app()->user->uid );
 		switch ( $type ) {
 			case 'following':
 				$buid = $me;
@@ -753,7 +753,7 @@ class Feed extends Model {
 		if ( !empty( $feedId ) ) {
 			!is_array( $feedId ) && $feedId = explode( ',', $feedId );
 			$feedId = implode( ',', $feedId );
-			$list = util\IBOS::app()->db->createCommand()
+			$list = util\Ibos::app()->db->createCommand()
 					->select( "a.*,b.clientip,b.feeddata" )
 					->from( "{{feed}} a" )
 					->leftJoin( '{{feed_data}} b', 'a.feedid = b.feedid' )
@@ -858,11 +858,11 @@ class Feed extends Model {
 		}
 		// 解析Feed模版
 		$feedTemplateAlias = "application.modules.message.config.feed.{$_data['type']}Feed";
-		$file = util\IBOS::getPathOfAlias( $feedTemplateAlias );
+		$file = util\Ibos::getPathOfAlias( $feedTemplateAlias );
 		if ( !file_exists( $file . '.php' ) ) {
 			$feedTemplateAlias = "application.modules.message.config.feed.postFeed";
 		}
-        $file = util\IBOS::getPathOfAlias( $feedTemplateAlias ) . '.php';
+        $file = util\Ibos::getPathOfAlias( $feedTemplateAlias ) . '.php';
         extract( $var, EXTR_PREFIX_SAME, 'data' );
         ob_start();
         ob_implicit_flush( false );
@@ -887,7 +887,7 @@ class Feed extends Model {
 		$return['actions'] = $actions['@attributes'];
 		// 验证转发的原信息是否存在
 		if ( !$this->notDel( $_data['module'], $_data['type'], $_data['rowid'] ) ) {
-			$return['body'] = util\IBOS::lang( 'Info already delete', 'message.default' ); // 此信息已被删除
+			$return['body'] = util\Ibos::lang( 'Info already delete', 'message.default' ); // 此信息已被删除
 		}
 		return $return;
 	}
@@ -927,8 +927,8 @@ class Feed extends Model {
 			return $return;
 		}
 		// 内容数据
-		$d['content'] = isset( $data['content'] ) ? str_replace( util\IBOS::app()->setting->get( 'siteurl' ), '[SITE_URL]', $data['content'] ) : '';
-		$d['body'] = str_replace( util\IBOS::app()->setting->get( 'siteurl' ), '[SITE_URL]', $data['body'] );
+		$d['content'] = isset( $data['content'] ) ? str_replace( util\Ibos::app()->setting->get( 'siteurl' ), '[SITE_URL]', $data['content'] ) : '';
+		$d['body'] = str_replace( util\Ibos::app()->setting->get( 'siteurl' ), '[SITE_URL]', $data['body'] );
 
 		$feedType = 'repost';  // 默认为普通的转发格式
 		if ( !empty( $oldInfo['feedType'] ) && !in_array( $oldInfo['feedType'], array( 'post', 'postimage' ) ) ) {
@@ -949,7 +949,7 @@ class Feed extends Model {
 		}
 
 		$d['from'] = isset( $data['from'] ) ? intval( $data['from'] ) : 0;
-		$res = $this->put( util\IBOS::app()->user->uid, $module, $feedType, $d, $id, $table, null, $lessUids, $isOther, 1 );
+		$res = $this->put( util\Ibos::app()->user->uid, $module, $feedType, $d, $id, $table, null, $lessUids, $isOther, 1 );
 		if ( $res ) {
 			if ( isset( $data['comment'] ) ) {
 				// 发表评论

@@ -2,7 +2,7 @@
 
 namespace application\modules\assignment\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\message\utils\MessageApi;
@@ -42,18 +42,18 @@ class AssignmentApi extends MessageApi {
 	public function renderIndex() {
 		$return = array();
 		$viewAlias = 'application.modules.assignment.views.indexapi.assignment';
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$chargeData = Assignment::model()->fetchUnfinishedByChargeuid( $uid ); // 我负责的
 		$designeeData = Assignment::model()->fetchUnfinishedByDesigneeuid( $uid );  //我指派的
 		$data = array(
 			'chargeData' => AssignmentUtil::handleListData( $chargeData, $uid ),
 			'designeeData' => AssignmentUtil::handleListData( $designeeData, $uid ),
-			'lang' => IBOS::getLangSource( 'assignment.default' ),
-			'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'assignment' )
+			'lang' => Ibos::getLangSource( 'assignment.default' ),
+			'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'assignment' )
 		);
 		foreach ( $this->_indexTab as $tab ) {
 			$data['tab'] = $tab;
-			$data[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+			$data[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
 		}
 		return $data;
 	}
@@ -63,7 +63,7 @@ class AssignmentApi extends MessageApi {
 	 * @return integer
 	 */
 	public function loadNew() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		return Assignment::model()->getUnfinishCountByUid( $uid );
 	}
 

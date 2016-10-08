@@ -3,7 +3,7 @@
 namespace application\modules\main\components;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Setting as SettingModel;
 use CJSON;
 

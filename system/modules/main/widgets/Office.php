@@ -19,7 +19,7 @@ namespace application\modules\main\widgets;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\Xml;
 use CWidget;
@@ -96,7 +96,7 @@ class Office extends CWidget {
         $attach = $this->getAttach();
         $var = array(
             'assetUrl' => $this->getController()->getAssetUrl(),
-            'lang' => IBOS::getLangSources(),
+            'lang' => Ibos::getLangSources(),
             'attach' => $attach,
             'param' => $this->getParam(),
             'isNew' => empty( $attach )
@@ -118,7 +118,7 @@ class Office extends CWidget {
             $var['assetUrl'] = $this->getController()->getAssetUrl();
             $this->render( self::VIEW, $var );
         } else {
-            $this->getController()->error( IBOS::lang( 'Illegal office license', 'main.default' ), '', array( 'autoJump' => 0 ) );
+            $this->getController()->error( Ibos::lang( 'Illegal office license', 'main.default' ), '', array( 'autoJump' => 0 ) );
         }
     }
 

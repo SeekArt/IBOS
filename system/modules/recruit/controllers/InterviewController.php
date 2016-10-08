@@ -18,7 +18,7 @@ namespace application\modules\recruit\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\recruit\core\RecruitInterview as ICRecruitInterview;
 use application\modules\recruit\model\ResumeDetail;
@@ -41,11 +41,11 @@ class InterviewController extends BaseController {
             'exportData' => json_encode( $paginationData['data'] ),
             'resumes' => $resumes
         );
-        $this->setPageTitle( IBOS::lang( 'Interview management' ) );
+        $this->setPageTitle( Ibos::lang( 'Interview management' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Interview management' ), 'url' => $this->createUrl( 'interview/index' ) ),
-            array( 'name' => IBOS::lang( 'Interview list' ) )
+            array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Interview management' ), 'url' => $this->createUrl( 'interview/index' ) ),
+            array( 'name' => Ibos::lang( 'Interview list' ) )
         ) );
         $this->render( 'index', $params );
     }
@@ -54,12 +54,12 @@ class InterviewController extends BaseController {
      * 添加面试记录
      */
     public function actionAdd() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $detailid = Env::getRequest( 'detailid' );
             // 根据 detailid 获取简历 id
             $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'This name does not exist resume' ) ) );
             }
             $data = ICRecruitInterview::processAddOrEditData( $_POST );
             $data['resumeid'] = $resumeid;
@@ -73,7 +73,7 @@ class InterviewController extends BaseController {
                 $interview['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 $this->ajaxReturn( $interview );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Add fail' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Add fail' ) ) );
             }
         }
     }
@@ -85,7 +85,7 @@ class InterviewController extends BaseController {
         $op = Env::getRequest( 'op' );
         $interviewid = Env::getRequest( 'interviewid' );
         if ( !in_array( $op, array( 'update', 'getEditData' ) ) || empty( $interviewid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'interview/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'interview/index' ) );
         } else {
             $this->$op();
         }
@@ -95,7 +95,7 @@ class InterviewController extends BaseController {
      * 取得要编辑的记录
      */
     private function getEditData() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $interviewid = Env::getRequest( 'interviewid' );
             $interview = ResumeInterview::model()->fetchByPk( $interviewid );
             $interview['interviewtime'] = date( 'Y-m-d', $interview['interviewtime'] );
@@ -108,7 +108,7 @@ class InterviewController extends BaseController {
      * 修改面试记录
      */
     private function update() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $interviewid = Env::getRequest( 'interviewid' );
             $data = ICRecruitInterview::processAddOrEditData( $_POST );
             $modifySuccess = ResumeInterview::model()->modify( $interviewid, $data );
@@ -129,10 +129,10 @@ class InterviewController extends BaseController {
      * 删除面试信息
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $interviewids = Env::getRequest( 'interviewids' );
             if ( empty( $interviewids ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'interview/index' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'interview/index' ) );
             }
             $pk = '';
             if ( strpos( $interviewids, ',' ) ) {
@@ -142,9 +142,9 @@ class InterviewController extends BaseController {
             }
             $delSuccess = ResumeInterview::model()->deleteByPk( $pk );
             if ( $delSuccess ) {
-                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => IBOS::lang( 'Del failed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => Ibos::lang( 'Del failed', 'message' ) ) );
             }
         }
     }
@@ -156,11 +156,11 @@ class InterviewController extends BaseController {
         $interviews = Env::getRequest( 'interviews' );
         $interviewArr = ResumeInterview::model()->fetchAll( "FIND_IN_SET(interviewid, '{$interviews}')" );
         $fieldArr = array(
-            IBOS::lang( 'Name' ),
-            IBOS::lang( 'Interview time' ),
-            IBOS::lang( 'Interview people' ),
-            IBOS::lang( 'Interview types' ),
-            IBOS::lang( 'Interview process' )
+            Ibos::lang( 'Name' ),
+            Ibos::lang( 'Interview time' ),
+            Ibos::lang( 'Interview people' ),
+            Ibos::lang( 'Interview types' ),
+            Ibos::lang( 'Interview process' )
         );
         $str = implode( ',', $fieldArr ) . "\n";
         foreach ( $interviewArr as $interview ) {

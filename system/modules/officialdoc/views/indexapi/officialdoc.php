@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_officialdoc.css'; ?>">
@@ -18,7 +18,7 @@ use application\core\utils\IBOS;
 							<?php else: ?>
 								<span class="badge pull-right badge-danger"><?php echo $lang['No sign']; ?></span>
 							<?php endif; ?>
-							<a href="<?php echo IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $doc['docid'] ) ); ?>" class="title xcm"><?php echo $doc['subject']; ?></a>
+							<a href="<?php echo Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $doc['docid'] ) ); ?>" class="title xcm"><?php echo $doc['subject']; ?></a>
 						</div>
 						<div class="fss tcm">
 							<?php if ( $doc['isSign'] ): ?><span class="pull-right"><?php echo $lang['Sign in']; ?> <?php echo date( 'n' . $lang['Month'] . 'j' . $lang['Day'] . 'H:i', $doc['sign']['signtime'] ); ?></span><?php endif; ?>
@@ -31,7 +31,7 @@ use application\core\utils\IBOS;
 	</table>
 	<div class="mbox-base">
 		<div class="fill-hn xac">
-			<a href="<?php echo IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/index' ); ?>" class="link-more">
+			<a href="<?php echo Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/index' ); ?>" class="link-more">
 				<i class="cbtn o-more"></i>
 				<span class="ilsep"><?php echo $lang['See more docs']; ?></span>
 			</a>

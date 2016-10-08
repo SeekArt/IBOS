@@ -3,7 +3,7 @@
 namespace application\modules\user\utils;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\main\utils\ImportInterface;
@@ -134,15 +134,15 @@ class Import extends ImportParent implements ImportInterface {
 
 	protected function start() {
 		parent::start();
-		$deptArray = IBOS::app()->db->createCommand()
+		$deptArray = Ibos::app()->db->createCommand()
 				->select( 'deptid,deptname,pid' )
 				->from( '{{department}}' )
 				->queryAll();
-		$roleArray = IBOS::app()->db->createCommand()
+		$roleArray = Ibos::app()->db->createCommand()
 				->select( 'roleid,rolename' )
 				->from( '{{role}}' )
 				->queryAll();
-		$positionArray = IBOS::app()->db->createCommand()
+		$positionArray = Ibos::app()->db->createCommand()
 				->select( 'posname,positionid' )
 				->from( '{{position}}' )
 				->queryAll();
@@ -197,11 +197,11 @@ class Import extends ImportParent implements ImportInterface {
 			if ( !empty( $roleArray[$roleName] ) ) {
 				return $roleArray[$roleName];
 			} else {
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->insert( '{{role}}', array(
 							'rolename' => $roleName,
 						) );
-				$findRoleid = IBOS::app()->db->getLastInsertID();
+				$findRoleid = Ibos::app()->db->getLastInsertID();
 				$roleArray[$roleName] = $findRoleid;
 				$this->session->add( 'import_userTpl_roleArray', $roleArray );
 				return $findRoleid;
@@ -216,11 +216,11 @@ class Import extends ImportParent implements ImportInterface {
 			if ( !empty( $positionArray[$positionName] ) ) {
 				return $positionArray[$positionName];
 			} else {
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->insert( '{{position}}', array(
 							'posname' => $positionName,
 						) );
-				$findpositionid = IBOS::app()->db->getLastInsertID();
+				$findpositionid = Ibos::app()->db->getLastInsertID();
 				$positionArray[$positionName] = $findpositionid;
 				$this->session->add( 'import_userTpl_positionArray', $positionArray );
 				return $findpositionid;
@@ -243,12 +243,12 @@ class Import extends ImportParent implements ImportInterface {
 				}
 			}
 			if ( NULL === $findDeptid ) {
-				IBOS::app()->db->createCommand()
+				Ibos::app()->db->createCommand()
 						->insert( '{{department}}', array(
 							'pid' => $pid,
 							'deptname' => $deptname,
 						) );
-				$findDeptid = IBOS::app()->db->getLastInsertID();
+				$findDeptid = Ibos::app()->db->getLastInsertID();
 				$deptArray[$pid][] = array(
 					'pid' => $pid,
 					'deptname' => $deptname,
@@ -309,7 +309,7 @@ class Import extends ImportParent implements ImportInterface {
 
 	protected function afterHandleData( $connection ) {
 		$saveData = $this->import->saveData;
-		$ip = IBOS::app()->setting->get( 'clientip' );
+		$ip = Ibos::app()->setting->get( 'clientip' );
 		foreach ( $saveData as $i => $data ) {
 			$connection->schema->commandBuilder
 					->createInsertCommand( '{{user_count}}'

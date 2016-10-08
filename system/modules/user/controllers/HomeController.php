@@ -30,8 +30,8 @@ class HomeController extends HomeBaseController {
 		// 视图变量
 		$data = $this->getIndexData();
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => util\IBOS::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
-			array( 'name' => util\IBOS::lang( 'Home page' ) )
+			array( 'name' => util\Ibos::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
+			array( 'name' => util\Ibos::lang( 'Home page' ) )
 		) );
 		$this->render( 'index', $data );
 	}
@@ -49,7 +49,7 @@ class HomeController extends HomeBaseController {
 		if ( util\Env::submitCheck( 'userSubmit' ) ) {
 			// 如果不是本人操作，不能进行提交操作
 			if ( !$this->getIsMe() ) {
-				throw new CException( util\IBOS::lang( 'Parameters error', 'error' ) );
+				throw new CException( util\Ibos::lang( 'Parameters error', 'error' ) );
 			}
 			$data = $_POST;
 			// 个人资料提交
@@ -74,13 +74,13 @@ class HomeController extends HomeBaseController {
 				//手机就简单的看看是否是11位数字，可以做更严格的验证
 				if ( isset( $model['application\modules\user\model\User'] ) && isset( $model['application\modules\user\model\User']['mobile'] ) ) {
 					if ( !preg_match( "/^[0-9]{11}$/", $model['application\modules\user\model\User']['mobile'] ) ) {
-						$this->error( util\IBOS::lang( 'Phone number format error' ), $this->createUrl( 'home/personal' ) );
+						$this->error( util\Ibos::lang( 'Phone number format error' ), $this->createUrl( 'home/personal' ) );
 					}
 				}
 				//邮箱地址检查
 				if ( isset( $model['application\modules\user\model\User'] ) && isset( $model['application\modules\user\model\User']['email'] ) ) {
 					if ( !preg_match( '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', $model['application\modules\user\model\User']['email'] ) ) {
-						$this->error( util\IBOS::lang( 'Email address format error' ), $this->createUrl( 'home/personal' ) );
+						$this->error( util\Ibos::lang( 'Email address format error' ), $this->createUrl( 'home/personal' ) );
 					}
 				}
 				// 更新操作
@@ -93,13 +93,13 @@ class HomeController extends HomeBaseController {
 				$update = false;
 				if ( $data['originalpass'] == '' ) {
 					// 没有填写原来的密码
-					$this->error( util\IBOS::lang( 'Original password require' ) );
+					$this->error( util\Ibos::lang( 'Original password require' ) );
 				} else if ( strcasecmp( md5( md5( $data['originalpass'] ) . $user['salt'] ), $user['password'] ) !== 0 ) {
 					// 密码跟原来的对不上
-					$this->error( util\IBOS::lang( 'Password is not correct' ) );
+					$this->error( util\Ibos::lang( 'Password is not correct' ) );
 				} else if ( !empty( $data['newpass'] ) && strcasecmp( $data['newpass'], $data['newpass_confirm'] ) !== 0 ) {
 					// 两次密码不一致
-					$this->error( util\IBOS::lang( 'Confirm password is not correct' ) );
+					$this->error( util\Ibos::lang( 'Confirm password is not correct' ) );
 				} else {
 					$password = md5( md5( $data['newpass'] ) . $user['salt'] );
 					$update = UserModel\User::model()->updateByUid( $this->getUid(), array( 'password' => $password, 'lastchangepass' => TIMESTAMP ) );
@@ -124,11 +124,11 @@ class HomeController extends HomeBaseController {
 			}
 			// 更新缓存
 			UserUtil::cleanCache( $this->getUid() );
-			$this->success( util\IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'home/personal', array( 'op' => $op ) ) );
+			$this->success( util\Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'home/personal', array( 'op' => $op ) ) );
 		} else {
 			if ( in_array( $op, array( 'avatar', 'history', 'password', 'remind' ) ) ) {
 				if ( !$this->getIsMe() ) {
-					$this->error( util\IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'home/index' ) );
+					$this->error( util\Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'home/index' ) );
 				}
 			}
 			//查找酷办公是否有绑定
@@ -150,8 +150,8 @@ class HomeController extends HomeBaseController {
 					), $data, $dataCo );
 
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => util\IBOS::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
-				array( 'name' => util\IBOS::lang( 'Profile' ) )
+				array( 'name' => util\Ibos::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
+				array( 'name' => util\Ibos::lang( 'Profile' ) )
 			) );
 			$this->render( $op, $param );
 		}
@@ -163,7 +163,7 @@ class HomeController extends HomeBaseController {
 	 */
 	public function actionCredit() {
 		if ( !$this->getIsMe() ) {
-			$this->error( util\IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'home/index' ) );
+			$this->error( util\Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'home/index' ) );
 		}
 		$op = util\Env::getRequest( 'op' );
 		if ( !in_array( $op, array( 'log', 'level', 'rule' ) ) ) {
@@ -172,8 +172,8 @@ class HomeController extends HomeBaseController {
 		$dataProvider = 'getCredit' . ucfirst( $op );
 		$data = $this->$dataProvider();
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => util\IBOS::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
-			array( 'name' => util\IBOS::lang( 'Credit' ) )
+			array( 'name' => util\Ibos::lang( 'Home' ), 'url' => $this->createUrl( 'home/index' ) ),
+			array( 'name' => util\Ibos::lang( 'Credit' ) )
 		) );
 		$this->render( 'credit' . ucfirst( $op ), $data );
 	}
@@ -182,7 +182,7 @@ class HomeController extends HomeBaseController {
 	 * 检测安全得分
 	 */
 	public function actionCheckSecurityRating() {
-		if ( util\IBOS::app()->request->getIsAjaxRequest() ) {
+		if ( util\Ibos::app()->request->getIsAjaxRequest() ) {
 			$rating = $this->getSecurityRating();
 			$this->ajaxReturn( array( 'IsSuccess' => true, 'rating' => $rating ) );
 		}
@@ -193,7 +193,7 @@ class HomeController extends HomeBaseController {
 	 */
 	public function actionCheckRepeat() {
 		if ( !$this->getIsMe() ) {
-			exit( util\IBOS::lang( 'Parameters error', 'error' ) );
+			exit( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$op = util\Env::getRequest( 'op' );
 		if ( !in_array( $op, array( 'email', 'mobile' ) ) ) {
@@ -202,10 +202,10 @@ class HomeController extends HomeBaseController {
 		$data = urldecode( util\Env::getRequest( 'data' ) );
 		$record = UserModel\User::model()->countByAttributes( array( $op => $data ) );
 		if ( $record > 1 ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\IBOS::lang( 'Repeat ' . $op ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\Ibos::lang( 'Repeat ' . $op ) ) );
 		} else {
 			$res = $this->sendVerify( $op, $data );
-			$msg = $res ? util\IBOS::lang( 'Operation succeed', 'message' ) : util\IBOS::lang( 'Error ' . $op );
+			$msg = $res ? util\Ibos::lang( 'Operation succeed', 'message' ) : util\Ibos::lang( 'Error ' . $op );
 			$this->ajaxReturn( array( 'isSuccess' => $res, 'msg' => $msg ) );
 		}
 	}
@@ -223,7 +223,7 @@ class HomeController extends HomeBaseController {
 	public function actionBindco() {
 		//如果前端传过来的id不是本人的，就提示参数错误
 		if ( !$this->getIsMe() ) {
-			exit( util\IBOS::lang( 'Parameters error', 'error' ) );
+			exit( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$username = util\Env::getRequest( 'account' );
 		$password = util\Env::getRequest( 'password' );
@@ -273,14 +273,14 @@ class HomeController extends HomeBaseController {
 
 	public function actionUnbindco() {
 		if ( !$this->getIsMe() ) {
-			exit( util\IBOS::lang( 'Parameters error', 'error' ) );
+			exit( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$userBind = UserBinding::model()->fetch( 'uid = :uid AND  app = :app', array( ':uid' => $this->getUid(), ':app' => 'co' ) );
 		if ( !empty( $userBind ) ) {
 			UserBinding::model()->deleteByPk( $userBind['id'] );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Operation succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Operation succeed', 'message' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuceess' => false, 'msg' => util\IBOS::lang( 'Operation failure', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuceess' => false, 'msg' => util\Ibos::lang( 'Operation failure', 'message' ) ) );
 		}
 	}
 
@@ -294,14 +294,14 @@ class HomeController extends HomeBaseController {
 	 */
 	public function actionBind() {
 		if ( !$this->getIsMe() ) {
-			exit( util\IBOS::lang( 'Parameters error', 'error' ) );
+			exit( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$op = util\Env::getRequest( 'op' );
 		if ( !in_array( $op, array( 'mobile', 'email' ) ) ) {
 			$op = 'email';
 		}
 		$user = $this->getUser();
-		$this->renderPartial( 'bind' . ucfirst( $op ), array( 'user' => $user, 'lang' => util\IBOS::getLangSources() ) );
+		$this->renderPartial( 'bind' . ucfirst( $op ), array( 'user' => $user, 'lang' => util\Ibos::getLangSources() ) );
 	}
 
 	/**
@@ -310,7 +310,7 @@ class HomeController extends HomeBaseController {
 	 */
 	public function actionCheckVerify() {
 		if ( !$this->getIsMe() ) {
-			exit( util\IBOS::lang( 'Parameters error', 'error' ) );
+			exit( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$op = util\Env::getRequest( 'op' );
 		if ( !in_array( $op, array( 'email', 'mobile' ) ) ) {
@@ -362,14 +362,14 @@ class HomeController extends HomeBaseController {
 	 */
 	private function makeVerify( $op, $data, $val ) {
 		if ( $op == 'email' ) {
-			$message = util\IBOS::lang( 'Verify email content', '', array( '{code}' => $val, '{date}' => util\Convert::formatDate( TIMESTAMP, 'd' ) ) );
+			$message = util\Ibos::lang( 'Verify email content', '', array( '{code}' => $val, '{date}' => util\Convert::formatDate( TIMESTAMP, 'd' ) ) );
 			if ( util\Cloud::getInstance()->isOpen() ) {
-				$res = util\Mail::sendCloudMail( $data, util\IBOS::lang( 'Verify email title' ), $message );
+				$res = util\Mail::sendCloudMail( $data, util\Ibos::lang( 'Verify email title' ), $message );
 			} else {
-				$res = util\Mail::sendMail( $data, util\IBOS::lang( 'Verify email title' ), $message );
+				$res = util\Mail::sendMail( $data, util\Ibos::lang( 'Verify email title' ), $message );
 			}
 		} else if ( $op == 'mobile' ) {
-			$message = util\IBOS::lang( 'Verify mobile content', '', array( '{code}' => $val ) );
+			$message = util\Ibos::lang( 'Verify mobile content', '', array( '{code}' => $val ) );
 			$res = MessageUtil::sendSms( $data, $message, 'user', $this->getUid() );
 		}
 		return $res;
@@ -415,7 +415,7 @@ class HomeController extends HomeBaseController {
 			$isTop = false;
 		}
 		// 积分项目及用户统计
-		$extcredits = util\IBOS::app()->setting->get( 'setting/extcredits' );
+		$extcredits = util\Ibos::app()->setting->get( 'setting/extcredits' );
 		$userCount = UserModel\UserCount::model()->fetchByPk( $this->getUid() );
 		// 人脉
 		$user = $this->getUser();
@@ -495,7 +495,7 @@ class HomeController extends HomeBaseController {
 		util\Cache::load(  'creditrule' );
 		// 系统
 		$creditRule = CreditRule::model()->fetchAllSortByPk( 'rid' );
-		$credits = util\IBOS::app()->setting->get( 'setting/extcredits' );
+		$credits = util\Ibos::app()->setting->get( 'setting/extcredits' );
 		$relateRules = CreditRuleLog::model()->fetchAllByAttributes( array( 'uid' => $this->getUid() ) );
 		$criteria = array(
 			'condition' => "`uid` = :uid",
@@ -521,7 +521,7 @@ class HomeController extends HomeBaseController {
 	 * @return array
 	 */
 	protected function getCreditLevel() {
-		$usergroup = util\IBOS::app()->setting->get( 'cache/usergroup' );
+		$usergroup = util\Ibos::app()->setting->get( 'cache/usergroup' );
 		return array( 'level' => $usergroup, 'user' => $this->getUser() );
 	}
 
@@ -533,7 +533,7 @@ class HomeController extends HomeBaseController {
 		$count = CreditRule::model()->count();
 		$pages = util\Page::create( $count );
 		$creditRule = CreditRule::model()->fetchAllSortByPk( 'rid', array( 'offset' => $pages->getOffset(), 'limit' => $pages->getLimit() ) );
-		$credits = util\IBOS::app()->setting->get( 'setting/extcredits' );
+		$credits = util\Ibos::app()->setting->get( 'setting/extcredits' );
 		return array( 'credits' => $credits, 'creditRule' => $creditRule, 'pages' => $pages );
 	}
 

@@ -18,7 +18,7 @@ namespace application\modules\article\controllers;
 
 use application\core\model\Log;
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\core\Article as ICArticle;
 use application\modules\article\model as model;
@@ -47,15 +47,15 @@ class DefaultController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'search', 'getReader', 'getReaderByDeptId', 'getVoteCount', 'preview', 'clickVote' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( util\IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+			$this->error( util\Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
 		}
-		$uid = util\IBOS::app()->user->uid;
+		$uid = util\Ibos::app()->user->uid;
 		if ( $option == 'default' ) {
-			$this->setPageTitle( util\IBOS::lang( 'Article' ) );
+			$this->setPageTitle( util\Ibos::lang( 'Article' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => util\IBOS::lang( 'Information center' ) ),
-				array( 'name' => util\IBOS::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
-				array( 'name' => util\IBOS::lang( 'Article list' ) )
+				array( 'name' => util\Ibos::lang( 'Information center' ) ),
+				array( 'name' => util\Ibos::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
+				array( 'name' => util\Ibos::lang( 'Article list' ) )
 			) );
 			$catid = intval( util\Env::getRequest( 'catid' ) );
 			$childCatIds = '';
@@ -84,7 +84,7 @@ class DefaultController extends BaseController {
 	 * @return
 	 */
 	public function actionGetArticleList() {
-		$uid = util\IBOS::app()->user->uid;
+		$uid = util\Ibos::app()->user->uid;
 		$catid = intval( util\Env::getRequest( 'catid' ) );
 		$childCatIds = '';
         if ( isset($catid) ) {
@@ -95,7 +95,7 @@ class DefaultController extends BaseController {
 		// type信息类型{全部、未读、已读……}
 		$type = util\Env::getRequest( 'type' );
 		$condition = ArticleUtil::joinListCondition( $type, $uid, $childCatIds, $this->condition );
-		NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+		NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
 		$this->ajaxReturn( array(
 			'isSuccess' => true,
 			'msg' => '调用成功',
@@ -121,7 +121,7 @@ class DefaultController extends BaseController {
 			'limit' => $length,
 			'offset' => $start,
 				) );
-		$articleList = ICArticle::getListData( $articleList, util\IBOS::app()->user->uid );
+		$articleList = ICArticle::getListData( $articleList, util\Ibos::app()->user->uid );
 		if ( $type === 'notallow' ) {
 			$articleList = ICArticle::handleApproval( $articleList );
 		}
@@ -151,16 +151,16 @@ class DefaultController extends BaseController {
 	public function actionShow() {
 		$articleId = intval( $_GET['articleid'] );
 		if ( empty( $articleId ) ) {
-			$this->error( util\IBOS::lang( 'Parameters error', 'error' ) );
+			$this->error( util\Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$article = model\Article::model()->fetchByPk( $articleId );
 		if ( empty( $article ) ) {
-			$this->error( util\IBOS::lang( 'No permission or article not exists' ), $this->createUrl( 'default/index' ) );
+			$this->error( util\Ibos::lang( 'No permission or article not exists' ), $this->createUrl( 'default/index' ) );
 		}
 		//判断是否有阅读的权限
-		$uid = util\IBOS::app()->user->uid;
+		$uid = util\Ibos::app()->user->uid;
 		if ( !ArticleUtil::checkReadScope( $uid, $article ) ) {
-			$this->error( util\IBOS::lang( 'You do not have permission to read the article' ), $this->createUrl( 'default/index' ) );
+			$this->error( util\Ibos::lang( 'You do not have permission to read the article' ), $this->createUrl( 'default/index' ) );
 		}
 		$data = ICArticle::getShowData( $article );
 		model\ArticleReader::model()->addReader( $articleId, $uid );
@@ -172,7 +172,7 @@ class DefaultController extends BaseController {
 			$urlArr = parse_url( $data['url'] );
 			$url = isset( $urlArr['scheme'] ) ? $data['url'] : 'http://' . $data['url'];
 			header( 'Location: ' . $url );
-            NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+            NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
             exit;
 		}
 		$params = array(
@@ -193,13 +193,13 @@ class DefaultController extends BaseController {
 			$params['data'] = $temp[0];
 			$params['isApprovaler'] = $this->checkIsApprovaler( $article, $uid );
 		}
-		$this->setPageTitle( util\IBOS::lang( 'Show Article' ) );
+		$this->setPageTitle( util\Ibos::lang( 'Show Article' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => util\IBOS::lang( 'Information center' ) ),
-			array( 'name' => util\IBOS::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
-			array( 'name' => util\IBOS::lang( 'Show Article' ) )
+			array( 'name' => util\Ibos::lang( 'Information center' ) ),
+			array( 'name' => util\Ibos::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
+			array( 'name' => util\Ibos::lang( 'Show Article' ) )
 		) );
-		NotifyMessage::model()->setReadByUrl( $uid, IBOS::app()->getRequest()->getUrl() );
+		NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
 		$this->render( 'show', $params );
 	}
 
@@ -211,14 +211,14 @@ class DefaultController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'submit', 'default', 'checkIsAllowPublish' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( util\IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+			$this->error( util\Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
 		}
 		if ( $option == 'default' ) {
 			if ( !empty( $_GET['catid'] ) ) {
 				$this->catid = $_GET['catid'];
 			}
 			// 是否是免审人能直接发布
-			$allowPublish = model\ArticleCategory::model()->checkIsAllowPublish( $this->catid, util\IBOS::app()->user->uid );
+			$allowPublish = model\ArticleCategory::model()->checkIsAllowPublish( $this->catid, util\Ibos::app()->user->uid );
 			$aitVerify = model\ArticleCategory::model()->fetchIsProcessByCatid( $this->catid );
 			$params = array(
 				'categoryOption' => $this->getCategoryOption(),
@@ -227,18 +227,18 @@ class DefaultController extends BaseController {
 				'allowPublish' => $allowPublish,
 				'aitVerify' => $aitVerify
 			);
-			$this->setPageTitle( util\IBOS::lang( 'Add Article' ) );
+			$this->setPageTitle( util\Ibos::lang( 'Add Article' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => util\IBOS::lang( 'Information center' ) ),
-				array( 'name' => util\IBOS::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
-				array( 'name' => util\IBOS::lang( 'Add Article' ) )
+				array( 'name' => util\Ibos::lang( 'Information center' ) ),
+				array( 'name' => util\Ibos::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
+				array( 'name' => util\Ibos::lang( 'Add Article' ) )
 			) );
 			$this->render( 'add', $params );
 		} else if ( $option == 'submit' ) {
 			if ( ICArticle::formCheck( $_POST ) == false ) {
-				$this->error( util\IBOS::lang( 'Title do not empty' ), $this->createUrl( 'default/add' ) );
+				$this->error( util\Ibos::lang( 'Title do not empty' ), $this->createUrl( 'default/add' ) );
 			}
-			$uid = util\IBOS::app()->user->uid;
+			$uid = util\Ibos::app()->user->uid;
 			$this->beforeSaveData( $_POST );
 			$articleId = $this->addOrUpdateArticle( 'add', $_POST, $uid );
 			if ( $_POST['type'] == parent::ARTICLE_TYPE_PICTURE ) {
@@ -289,7 +289,7 @@ class DefaultController extends BaseController {
 						'author' => $user['realname'],
 							), true ),
 					'{orgContent}' => StringUtil::filterCleanHtml( $article['content'] ),
-					'{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $articleId ) ),
+					'{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $articleId ) ),
 					'id' => $articleId,
 				);
 				if ( count( $uidArr ) > 0 ) {
@@ -305,12 +305,12 @@ class DefaultController extends BaseController {
 						'roleid' => $article['roleid'],
 						'uid' => $article['uid'] );
 					$data = array(
-						'title' => util\IBOS::lang( 'Feed title', '', array(
+						'title' => util\Ibos::lang( 'Feed title', '', array(
 							'{subject}' => $article['subject'],
-							'{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $articleId ) )
+							'{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $articleId ) )
 						) ),
 						'body' => $article['subject'],
-						'actdesc' => util\IBOS::lang( 'Post news' ),
+						'actdesc' => util\Ibos::lang( 'Post news' ),
 						'userid' => $publishScope['uid'],
 						'deptid' => $publishScope['deptid'],
 						'positionid' => $publishScope['positionid'],
@@ -323,7 +323,7 @@ class DefaultController extends BaseController {
 					} else {
 						$type = 'post';
 					}
-					WbfeedUtil::pushFeed( util\IBOS::app()->user->uid, 'article', 'article', $articleId, $data, $type );
+					WbfeedUtil::pushFeed( util\Ibos::app()->user->uid, 'article', 'article', $articleId, $data, $type );
 				}
 				//更新积分
 				UserUtil::updateCreditByAction( 'addarticle', $uid );
@@ -332,12 +332,12 @@ class DefaultController extends BaseController {
 			}
 			//日志记录
 			$log = array(
-				'user' => IBOS::app()->user->username,
-				'ip' => IBOS::app()->setting->get( 'clientip' )
+				'user' => Ibos::app()->user->username,
+				'ip' => Ibos::app()->setting->get( 'clientip' )
 				, 'isSuccess' => 1
 			);
 			Log::write( $log, 'action', 'module.article.default.add' );
-			$this->success( util\IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
+			$this->success( util\Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'default/index' ) );
 		} else {
 			$this->$option();
 		}
@@ -388,7 +388,7 @@ class DefaultController extends BaseController {
 	 * @return boolean
 	 */
 	protected function checkIsAllowPublish() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$catid = intval( util\Env::getRequest( 'catid' ) );
 			$uid = intval( util\Env::getRequest( 'uid' ) );
 			$isAllow = model\ArticleCategory::model()->checkIsAllowPublish( $catid, $uid );
@@ -406,21 +406,21 @@ class DefaultController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'update', 'verify', 'move', 'top', 'highLight', 'back', 'clickVote' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( util\IBOS::lang( 'Can not find the path' ) );
+			$this->error( util\Ibos::lang( 'Can not find the path' ) );
 		}
 		if ( $option == 'default' ) {
 			$articleId = util\Env::getRequest( 'articleid' );
 			if ( empty( $articleId ) ) {
-				$this->error( util\IBOS::lang( 'Parameters error', 'error' ) );
+				$this->error( util\Ibos::lang( 'Parameters error', 'error' ) );
 			}
 			$data = model\Article::model()->fetchByPk( $articleId );
 			if ( empty( $data ) ) {
-				$this->error( util\IBOS::lang( 'No permission or article not exists' ) );
+				$this->error( util\Ibos::lang( 'No permission or article not exists' ) );
 			}
 			//选人框
 			$data['publishScope'] = StringUtil::joinSelectBoxValue( $data['deptid'], $data['positionid'], $data['uid'], $data['roleid'] );
 			// 是否是免审人能直接发布
-			$allowPublish = model\ArticleCategory::model()->checkIsAllowPublish( $data['catid'], util\IBOS::app()->user->uid );
+			$allowPublish = model\ArticleCategory::model()->checkIsAllowPublish( $data['catid'], util\Ibos::app()->user->uid );
 			$aitVerify = model\ArticleCategory::model()->fetchIsProcessByCatid( $data['catid'] );
 			$params = array(
 				'data' => $data,
@@ -443,11 +443,11 @@ class DefaultController extends BaseController {
 				}
 				$params['picids'] = substr( $params['picids'], 0, -1 );
 			}
-			$this->setPageTitle( util\IBOS::lang( 'Edit Article' ) );
+			$this->setPageTitle( util\Ibos::lang( 'Edit Article' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => util\IBOS::lang( 'Information center' ) ),
-				array( 'name' => util\IBOS::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
-				array( 'name' => util\IBOS::lang( 'Edit Article' ) )
+				array( 'name' => util\Ibos::lang( 'Information center' ) ),
+				array( 'name' => util\Ibos::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
+				array( 'name' => util\Ibos::lang( 'Edit Article' ) )
 			) );
 			$this->render( 'edit', $params );
 		} else {
@@ -459,7 +459,7 @@ class DefaultController extends BaseController {
 	 * 修改文章
 	 */
 	private function update() {
-		$uid = util\IBOS::app()->user->uid;
+		$uid = util\Ibos::app()->user->uid;
 		$articleId = $_POST['articleid'];
 		$this->beforeSaveData( $_POST );
 		$this->addOrUpdateArticle( 'update', $_POST, $uid );
@@ -509,7 +509,7 @@ class DefaultController extends BaseController {
 					'article' => $article,
 					'author' => $user['realname'],
 						), true ),
-				'{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $article['articleid'] ) ),
+				'{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $article['articleid'] ) ),
 				'id' => $article['articleid'],
 			);
 			if ( count( $uidArr ) > 0 ) {
@@ -520,7 +520,7 @@ class DefaultController extends BaseController {
 			$this->sendPending( $article, $uid );
 		}
 		model\ArticleBack::model()->deleteAll( "articleid = {$articleId}" );
-		$this->success( util\IBOS::lang( 'Update succeed' ), $this->createUrl( 'default/index' ) );
+		$this->success( util\Ibos::lang( 'Update succeed' ), $this->createUrl( 'default/index' ) );
 	}
 
 	/**
@@ -531,17 +531,17 @@ class DefaultController extends BaseController {
 		if ( isset( $postData['type'] ) ) {
 			if ( $postData['type'] == parent::ARTICLE_TYPE_PICTURE ) {
 				if ( empty( $postData['picids'] ) ) {
-					$this->error( util\IBOS::lang( 'Picture empty tip' ), $this->createUrl( 'default/add' ) );
+					$this->error( util\Ibos::lang( 'Picture empty tip' ), $this->createUrl( 'default/add' ) );
 				} else {
 					
 				}
 			} elseif ( $postData['type'] == parent::ARTICLE_TYPE_DEFAULT ) {
 				if ( empty( $postData['content'] ) ) {
-					$this->error( util\IBOS::lang( 'Content empty tip' ), $this->createUrl( 'default/add' ) );
+					$this->error( util\Ibos::lang( 'Content empty tip' ), $this->createUrl( 'default/add' ) );
 				}
 			} elseif ( $postData['type'] == parent::ARTICLE_TYPE_LINK ) {
 				if ( empty( $postData['url'] ) ) {
-					$this->error( util\IBOS::lang( 'Url empty tip' ), $this->createUrl( 'default/add' ) );
+					$this->error( util\Ibos::lang( 'Url empty tip' ), $this->createUrl( 'default/add' ) );
 				}
 			}
 		}
@@ -605,8 +605,8 @@ class DefaultController extends BaseController {
 				'size' => $value['filesize'],
 				'filepath' => $attachUrl . $value['attachment']
 			);
-			if ( IBOS::app()->setting->get( 'setting/articlethumbenable' ) ) {
-				list($thumbWidth, $thumbHeight) = explode( ',', IBOS::app()->setting->get( 'setting/articlethumbwh' ) );
+			if ( Ibos::app()->setting->get( 'setting/articlethumbenable' ) ) {
+				list($thumbWidth, $thumbHeight) = explode( ',', Ibos::app()->setting->get( 'setting/articlethumbwh' ) );
 				$imageInfo = util\Image::getImageInfo( util\File::imageName( $picture['filepath'] ) );
 				if ( $imageInfo['width'] < $thumbWidth && $imageInfo['height'] < $thumbHeight ) {
 					$picture['thumb'] = 0;
@@ -614,7 +614,7 @@ class DefaultController extends BaseController {
 					$sourceFileName = explode( '/', $picture['filepath'] );
 					$sourceFileName[count( $sourceFileName ) - 1] = 'thumb_' . $sourceFileName[count( $sourceFileName ) - 1];
 					$thumbName = implode( '/', $sourceFileName );
-					$thumbName = IBOS::engine()->io()->file()->thumbnail( $picture['filepath'], $thumbName, $thumbWidth, $thumbHeight );
+					$thumbName = Ibos::engine()->io()->file()->thumbnail( $picture['filepath'], $thumbName, $thumbWidth, $thumbHeight );
 					$picture['thumb'] = 1;
 				}
 			}
@@ -728,7 +728,7 @@ class DefaultController extends BaseController {
 	 * 删除文章，附带把评论，投票，附件等内容删除
 	 */
 	public function actionDel() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$articleids = trim( util\Env::getRequest( 'articleids' ), ',' );
 			// 删除附件
 			$attachmentids = '';
@@ -755,7 +755,7 @@ class DefaultController extends BaseController {
 			model\Article::model()->deleteAllByArticleIds( $articleids );
 			// 删除待审核记录
 			model\ArticleApproval::model()->deleteByArtIds( $articleids );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'count' => $count, 'msg' => util\IBOS::lang( 'Del succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'count' => $count, 'msg' => util\Ibos::lang( 'Del succeed', 'message' ) ) );
 		}
 	}
 
@@ -783,12 +783,12 @@ class DefaultController extends BaseController {
 	 * 审核
 	 */
 	private function verify() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
-			$uid = util\IBOS::app()->user->uid;
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
+			$uid = util\Ibos::app()->user->uid;
 			$artIds = trim( util\Env::getRequest( 'articleids' ), ',' );
 			$ids = explode( ',', $artIds );
 			if ( empty( $ids ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\IBOS::lang( 'Parameters error', 'error' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\Ibos::lang( 'Parameters error', 'error' ) ) );
 			}
 			$sender = User::model()->fetchRealnameByUid( $uid );
 			foreach ( $ids as $artId ) {
@@ -802,7 +802,7 @@ class DefaultController extends BaseController {
 					$curApproval = Approval::model()->fetchNextApprovalUids( $approval['id'], $artApproval['step'] ); // 当前审核到的步骤
 					$nextApproval = Approval::model()->fetchNextApprovalUids( $approval['id'], $artApproval['step'] + 1 ); // 下一步应该审核的步骤
 					if ( !in_array( $uid, $curApproval['uids'] ) ) {
-						$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\IBOS::lang( 'You do not have permission to verify the article' ) ) );
+						$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\Ibos::lang( 'You do not have permission to verify the article' ) ) );
 					}
 					if ( !empty( $nextApproval ) ) {
 						if ( $nextApproval['step'] == 'publish' ) { // 已完成标识
@@ -837,7 +837,7 @@ class DefaultController extends BaseController {
 					}
 				}
 			}
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Verify succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Verify succeed', 'message' ) ) );
 		}
 	}
 
@@ -856,12 +856,12 @@ class DefaultController extends BaseController {
 			if ( isset( $wbconf['wbmovement']['article'] ) && $wbconf['wbmovement']['article'] == 1 ) {
 				$publishScope = array( 'deptid' => $article['deptid'], 'positionid' => $article['positionid'], 'uid' => $article['uid'] );
 				$data = array(
-					'title' => util\IBOS::lang( 'Feed title', '', array(
+					'title' => util\Ibos::lang( 'Feed title', '', array(
 						'{subject}' => $article['subject'],
-						'{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $article['articleid'] ) )
+						'{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show', array( 'articleid' => $article['articleid'] ) )
 					) ),
 					'body' => $article['content'],
-					'actdesc' => util\IBOS::lang( 'Post news' ),
+					'actdesc' => util\Ibos::lang( 'Post news' ),
 					'userid' => $publishScope['uid'],
 					'deptid' => $publishScope['deptid'],
 					'positionid' => $publishScope['positionid'],
@@ -884,38 +884,38 @@ class DefaultController extends BaseController {
 	 * 退回
 	 */
 	private function back() {
-		$uid = util\IBOS::app()->user->uid;
+		$uid = util\Ibos::app()->user->uid;
 		$artIds = trim( util\Env::getRequest( 'articleids' ), ',' );
 		$reason = util\StringUtil::filterCleanHtml( util\Env::getRequest( 'reason' ) );
 		$ids = explode( ',', $artIds );
 		if ( empty( $ids ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\IBOS::lang( 'Parameters error', 'error' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\Ibos::lang( 'Parameters error', 'error' ) ) );
 		}
 		$sender = User::model()->fetchRealnameByUid( $uid );
 		foreach ( $ids as $artId ) {
 			$art = model\Article::model()->fetchByPk( $artId );
 			$categoryName = model\ArticleCategory::model()->fetchCateNameByCatid( $art['catid'] );
 			if ( !$this->checkIsApprovaler( $art, $uid ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\IBOS::lang( 'You do not have permission to verify the article' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => util\Ibos::lang( 'You do not have permission to verify the article' ) ) );
 			}
 			$config = array(
 				'{sender}' => $sender,
 				'{subject}' => $art['subject'],
 				'{category}' => $categoryName,
 				'{content}' => $reason,
-                '{url}' => util\IBOS::app()->urlManager->createUrl( 'article/default/show',array('articleid'=>$artId) )
+                '{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show',array('articleid'=>$artId) )
             );
 			Notify::model()->sendNotify( $art['author'], 'article_back_message', $config, $uid );
 			model\ArticleBack::model()->addBack( $artId, $uid, $reason, TIMESTAMP ); // 添加一条退回记录
 		}
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
 	 * 移动文章
 	 */
 	private function move() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$articleids = util\Env::getRequest( 'articleids' );
 			$catid = util\Env::getRequest( 'catid' );
 			if ( !empty( $articleids ) && !empty( $catid ) ) {
@@ -931,16 +931,16 @@ class DefaultController extends BaseController {
 	 * 置顶操作
 	 */
 	private function top() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$articleids = util\Env::getRequest( 'articleids' );
 			$topEndTime = util\Env::getRequest( 'topEndTime' );
 			if ( !empty( $topEndTime ) ) {
 				$topEndTime = strtotime( $topEndTime ) + 24 * 60 * 60 - 1;
 				model\Article::model()->updateTopStatus( $articleids, 1, TIMESTAMP, $topEndTime );
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Top succeed' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Top succeed' ) ) );
 			} else {
 				model\Article::model()->updateTopStatus( $articleids, 0, '', '' );
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Unstuck success' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Unstuck success' ) ) );
 			}
 		}
 	}
@@ -949,7 +949,7 @@ class DefaultController extends BaseController {
 	 * 高亮操作
 	 */
 	private function highLight() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$articleids = trim( util\Env::getRequest( 'articleids' ), ',' );
 			$highLight = array();
 			$highLight['endTime'] = util\Env::getRequest( 'highlightEndTime' );
@@ -960,10 +960,10 @@ class DefaultController extends BaseController {
 			$data = ArticleUtil::processHighLightRequestData( $highLight );
 			if ( empty( $data['highlightendtime'] ) ) {
 				model\Article::model()->updateHighlightStatus( $articleids, 0, '', '' );
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Unhighlighting success' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Unhighlighting success' ) ) );
 			} else {
 				model\Article::model()->updateHighlightStatus( $articleids, 1, $data['highlightstyle'], $data['highlightendtime'] );
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\IBOS::lang( 'Highlight succeed' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => util\Ibos::lang( 'Highlight succeed' ) ) );
 			}
 		}
 	}
@@ -1003,7 +1003,7 @@ class DefaultController extends BaseController {
 	 * @return void
 	 */
 	private function getReader() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$articleid = util\Env::getRequest( 'articleid' );
 			$readerData = model\ArticleReader::model()->fetchAll( 'articleid=:articleid', array( ':articleid' => $articleid ) );
 			$departments = DepartmentUtil::loadDepartment();
@@ -1033,7 +1033,7 @@ class DefaultController extends BaseController {
 	 * @return void
 	 */
 	private function getReaderByDeptId() {
-		if ( util\IBOS::app()->request->isAjaxRequest ) {
+		if ( util\Ibos::app()->request->isAjaxRequest ) {
 			$articleId = $_POST['articleid'];
 			$deptId = $_POST['deptid'];
 			$readerData = model\ArticleReader::model()->fetchArticleReaderByDeptid( $articleId, $deptId );
@@ -1046,11 +1046,11 @@ class DefaultController extends BaseController {
 	 * @return void
 	 */
 	private function preview() {
-		$this->setPageTitle( util\IBOS::lang( 'Preview Acticle' ) );
+		$this->setPageTitle( util\Ibos::lang( 'Preview Acticle' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => util\IBOS::lang( 'Information center' ) ),
-			array( 'name' => util\IBOS::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
-			array( 'name' => util\IBOS::lang( 'Preview Acticle' ) )
+			array( 'name' => util\Ibos::lang( 'Information center' ) ),
+			array( 'name' => util\Ibos::lang( 'Article' ), 'url' => $this->createUrl( 'default/index' ) ),
+			array( 'name' => util\Ibos::lang( 'Preview Acticle' ) )
 		) );
 		$type = $_POST['type'];
 		$subject = $_POST['subject'];

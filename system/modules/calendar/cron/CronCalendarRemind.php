@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\calendar\model\Calendars;
 use application\modules\main\model\Cron;
@@ -30,7 +30,7 @@ foreach ( $clist['events'] as $calendar ) {
             $subject = StringUtil::cutStr( $calendar['subject'], 20 );
             $config = array(
                 '{subject}' => $subject,
-                '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/schedule/index' )
+                '{url}' => Ibos::app()->urlManager->createUrl( 'calendar/schedule/index' )
             );
             Notify::model()->sendNotify( $calendar['uid'], 'calendar_message', $config );
         }
@@ -43,7 +43,7 @@ foreach ( $clist['events'] as $calendar ) {
             $subject = StringUtil::cutStr( $calendar['subject'], 20 );
             $config = array(
                 '{subject}' => $subject,
-                '{url}' => IBOS::app()->urlManager->createUrl( 'calendar/schedule/index' )
+                '{url}' => Ibos::app()->urlManager->createUrl( 'calendar/schedule/index' )
             );
             Notify::model()->sendNotify( $calendar['uid'], 'calendar_message', $config );
         }

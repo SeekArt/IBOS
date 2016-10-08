@@ -16,7 +16,7 @@
 
 namespace application\core\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\role\model\AuthItem;
@@ -68,7 +68,7 @@ class Controller extends CController {
     private $_assetUrl = '';
 
     public function __construct( $id, $module = null ) {
-        IBOS::app()->setting->set( 'module', $module->getId() );
+        Ibos::app()->setting->set( 'module', $module->getId() );
         parent::__construct( $id, $module );
     }
 
@@ -77,8 +77,8 @@ class Controller extends CController {
      */
     public function init() {
         parent::init();
-        if ( !IBOS::app()->user->isGuest && IBOS::app()->user->isNeedReset && !IBOS::app()->request->isAjaxRequest ) {
-            IBOS::app()->request->redirect( IBOS::app()->createUrl( 'user/default/reset' ) );
+        if ( !Ibos::app()->user->isGuest && Ibos::app()->user->isNeedReset && !Ibos::app()->request->isAjaxRequest ) {
+            Ibos::app()->request->redirect( Ibos::app()->createUrl( 'user/default/reset' ) );
         }
     }
 
@@ -87,9 +87,9 @@ class Controller extends CController {
      * @return void 
      */
     public function actionError() {
-        $error = IBOS::app()->errorHandler->error;
+        $error = Ibos::app()->errorHandler->error;
         if ( $error ) {
-            $isAjaxRequest = IBOS::app()->request->getIsAjaxRequest();
+            $isAjaxRequest = Ibos::app()->request->getIsAjaxRequest();
             $this->error( $error['message'], '', array(), $isAjaxRequest );
         }
     }
@@ -104,12 +104,12 @@ class Controller extends CController {
         if ( is_null( $data ) ) {
             $data = array();
         }
-        IBOS::app()->setting->set( 'pageTitle', $this->getPageTitle() );
-        IBOS::app()->setting->set( 'breadCrumbs', $this->getPageState( 'breadCrumbs', array() ) );
+        Ibos::app()->setting->set( 'pageTitle', $this->getPageTitle() );
+        Ibos::app()->setting->set( 'breadCrumbs', $this->getPageState( 'breadCrumbs', array() ) );
         $this->setPageState( 'breadCrumbs', null );
         !isset( $data['assetUrl'] ) && $data['assetUrl'] = $this->getAssetUrl();
-        $data['lang'] = IBOS::getLangSources( $langSources );
-        $data['language'] = IBOS::app()->getLanguage();
+        $data['lang'] = Ibos::getLangSources( $langSources );
+        $data['language'] = Ibos::app()->getLanguage();
         return parent::render( $view, $data, $return );
     }
 
@@ -230,7 +230,7 @@ class Controller extends CController {
     public function showMessage( $message, $jumpUrl = '', $params = array(), $status = 1, $ajax = false ) {
 
         // AJAX提交方式的处理
-        if ( $ajax === true || IBOS::app()->request->getIsAjaxRequest() ) {
+        if ( $ajax === true || Ibos::app()->request->getIsAjaxRequest() ) {
             $data = is_array( $ajax ) ? $ajax : array();
             $data['msg'] = $message;
             $data['isSuccess'] = $status;
@@ -264,8 +264,8 @@ class Controller extends CController {
             }
         }
         // 提示标题
-        $params['msgTitle'] = $status ? IBOS::lang( 'Operation successful', 'message' ) :
-                IBOS::lang( 'Operation failure', 'message' );
+        $params['msgTitle'] = $status ? Ibos::lang( 'Operation successful', 'message' ) :
+                Ibos::lang( 'Operation failure', 'message' );
         // 如果设置了关闭窗口，则提示完毕后自动关闭窗口
         if ( isset( $params['closeWin'] ) ) {
             $params['jumpUrl'] = 'javascript:window.close();';
@@ -287,7 +287,7 @@ class Controller extends CController {
                 $params['jumpUrl'] = '/';
             }
             // 渲染视图
-            $viewPath = $basePath = IBOS::app()->getViewPath();
+            $viewPath = $basePath = Ibos::app()->getViewPath();
             $viewFile = $this->resolveViewFile( 'showMessage', $viewPath, $basePath );
             $output = $this->renderFile( $viewFile, $params, true );
             echo $output;
@@ -303,9 +303,9 @@ class Controller extends CController {
     public function getAssetUrl( $module = '' ) {
         if ( empty( $this->_assetUrl ) ) {
             if ( empty( $module ) ) {
-                $module = IBOS::getCurrentModuleName();
+                $module = Ibos::getCurrentModuleName();
             }
-            $this->_assetUrl = IBOS::app()->assetManager->getAssetsUrl( $module );
+            $this->_assetUrl = Ibos::app()->assetManager->getAssetsUrl( $module );
         }
         return $this->_assetUrl;
     }
@@ -315,7 +315,7 @@ class Controller extends CController {
      * @param string $title
      */
     public function setTitle( $title ) {
-        IBOS::app()->setting->set( 'title', $title );
+        Ibos::app()->setting->set( 'title', $title );
     }
 
     /**
@@ -345,7 +345,7 @@ class Controller extends CController {
      */
     public function checkRouteAccess($routes) {
         // 创建对应的控制器
-        $ca = IBOS::app()->createController($routes);
+        $ca = Ibos::app()->createController($routes);
         list($controller, $actionId) = $ca;
 
         if (method_exists($controller, 'initBase')) {
@@ -369,7 +369,7 @@ class Controller extends CController {
                 }
                 if (true === $check) {
                     // step3
-                    if (!IBOS::app()->user->checkAccess($routes, Auth::getParams($routes))) {
+                    if (!Ibos::app()->user->checkAccess($routes, Auth::getParams($routes))) {
                         // 没有权限
                         return false;
                     }

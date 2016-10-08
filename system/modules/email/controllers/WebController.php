@@ -3,7 +3,7 @@
 namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\email\core\WebEmail;
@@ -31,7 +31,7 @@ class WebController extends BaseController {
         $i = isset($_GET['i']) ? intval($_GET['i']) - 9 : 0;
         if ($i <= 0)
             $this->error('抱歉，参数错误了', $this->createUrl('web/index'));
-        $query = IBOS::app()->db->createCommand()
+        $query = Ibos::app()->db->createCommand()
                 ->select('qeb.remoteattachment,qeb.sendtime,qew.*')
                 ->from('{{email_body}} qeb')
                 ->leftJoin('{{email}} qe', 'qe.bodyid = qeb.bodyid')
@@ -92,11 +92,11 @@ class WebController extends BaseController {
             'pages' => $pages,
             'list' => $list
         );
-        $this->setPageTitle(IBOS::lang('Web email'));
+        $this->setPageTitle(Ibos::lang('Web email'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-            array('name' => IBOS::lang('Web email'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+            array('name' => Ibos::lang('Web email'))
         ));
         $this->render('index', $data);
     }
@@ -112,13 +112,13 @@ class WebController extends BaseController {
         }
         if (Env::submitCheck('emailSubmit')) {
             $this->processAddWebMail(false);
-            $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('web/index'));
+            $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
-            $this->setPageTitle(IBOS::lang('Add web email'));
+            $this->setPageTitle(Ibos::lang('Add web email'));
             $this->setPageState('breadCrumbs', array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-                array('name' => IBOS::lang('Add web email'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                array('name' => Ibos::lang('Add web email'))
             ));
             $this->render('add', array('more' => false));
         }
@@ -147,21 +147,21 @@ class WebController extends BaseController {
             if (!empty($web['foldername'])) {
                 EmailFolder::model()->updateAll(array('name' => StringUtil::filterCleanHtml($web['foldername'])), 'webid = ' . $id . ' AND uid = ' . $this->uid);
             }
-            $this->success(IBOS::lang('Save succeed', 'message'), $this->createUrl('web/index'));
+            $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
             $web = EmailWeb::model()->fetch("webid = {$id} AND uid = " . $this->uid);
             if ($web) {
                 $web['foldername'] = EmailFolder::model()->fetchFolderNameByWebId($id);
-                $web['password'] = StringUtil::authCode($web['password'], 'DECODE', IBOS::app()->user->salt);
-                $this->setPageTitle(IBOS::lang('Edit web email'));
+                $web['password'] = StringUtil::authCode($web['password'], 'DECODE', Ibos::app()->user->salt);
+                $this->setPageTitle(Ibos::lang('Edit web email'));
                 $this->setPageState('breadCrumbs', array(
-                    array('name' => IBOS::lang(IBOS::lang('Personal Office'))),
-                    array('name' => IBOS::lang(IBOS::lang('Email center')), 'url' => $this->createUrl('list/index')),
-                    array('name' => IBOS::lang(IBOS::lang('Edit web email')))
+                    array('name' => Ibos::lang(Ibos::lang('Personal Office'))),
+                    array('name' => Ibos::lang(Ibos::lang('Email center')), 'url' => $this->createUrl('list/index')),
+                    array('name' => Ibos::lang(Ibos::lang('Edit web email')))
                 ));
                 $this->render('edit', array('web' => $web));
             } else {
-                $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('web/index'));
+                $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('web/index'));
             }
         }
     }
@@ -173,7 +173,7 @@ class WebController extends BaseController {
         $webId = intval(Env::getRequest('webid'));
         $webList = $this->webMails;
         if ( empty( $webList ) ) {
-            $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => IBOS::lang( 'Empty web mail box' ) ) );
+            $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => Ibos::lang( 'Empty web mail box' ) ) );
         }
         if ($webId === 0) {
             $web = $webList;
@@ -200,10 +200,10 @@ class WebController extends BaseController {
             $id = StringUtil::filterStr($id);
             $delStatus = EmailWeb::model()->delClear($id, $this->uid);
             if ($delStatus) {
-                if (IBOS::app()->request->getIsAjaxRequest()) {
+                if (Ibos::app()->request->getIsAjaxRequest()) {
                     $this->ajaxReturn(array('isSuccess' => true));
                 } else {
-                    $this->success(IBOS::lang('Del succeed', 'message'), $this->createUrl('web/index'));
+                    $this->success(Ibos::lang('Del succeed', 'message'), $this->createUrl('web/index'));
                 }
             }
         }
@@ -325,7 +325,7 @@ class WebController extends BaseController {
                 //check if text/html
                 if ($type == EmailMime::MIME_TEXT && strcasecmp($subtype, "html") == 0) {
                     $is_html = true;
-                    $img_url = IBOS::app()->urlManager->createUrl('email/web/show', array(
+                    $img_url = Ibos::app()->urlManager->createUrl('email/web/show', array(
                         'webid' => $webId,
                         'folder' => $folder,
                         'id' => $id,
@@ -399,11 +399,11 @@ class WebController extends BaseController {
         if (isset($_POST['moreinfo'])) {
             // 已经是自定义配置模式，再次检查账户
             if (empty($web['server'])) {
-                $this->error(IBOS::lang('Empty server address'), '', array(), $inAjax);
+                $this->error(Ibos::lang('Empty server address'), '', array(), $inAjax);
             }
             if ((!empty($web['ssl']) || !empty($web['smtpssl'])) && !extension_loaded('openssl')) {
                 $passCheck = false;
-                $errMsg = IBOS::lang('OpenSSL needed');
+                $errMsg = Ibos::lang('OpenSSL needed');
             } else {
                 // 但这一次，优先处理用户提交的服务器配置值 $web
                 $passCheck = WebMail::checkAccount($web['address'], $web['password'], $web);
@@ -411,7 +411,7 @@ class WebController extends BaseController {
                     // 如果检查通过，合并提交的值并返回该邮箱的配置值
                     $web = WebMail::mergePostConfig($web['address'], $web['password'], $web);
                 } else {
-                    $errMsg = IBOS::lang('Error server info');
+                    $errMsg = Ibos::lang('Error server info');
                 }
             }
         } else {
@@ -424,24 +424,24 @@ class WebController extends BaseController {
               $web = WebMail::getEmailConfig($web['address'], $web['password']);
               } else {
               // 没有的话，需要配置更详细的服务器信息，返回错误提示
-              $errMsg = IBOS::lang('More server info');
+              $errMsg = Ibos::lang('More server info');
               }
              */
-            $errMsg = IBOS::lang('More server info');
+            $errMsg = Ibos::lang('More server info');
             $passCheck = false;
         }
         if (!$passCheck) {
             if (!$inAjax) {
-                $this->setPageTitle(IBOS::lang('Add web email'));
+                $this->setPageTitle(Ibos::lang('Add web email'));
                 $this->setPageState('breadCrumbs', array(
-                    array('name' => IBOS::lang('Personal Office')),
-                    array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-                    array('name' => IBOS::lang('Add web email'))
+                    array('name' => Ibos::lang('Personal Office')),
+                    array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                    array('name' => Ibos::lang('Add web email'))
                 ));
                 $this->render('add', array('more' => true, 'errMsg' => $errMsg, 'web' => $web));
             } else {
                 $data = array(
-                    'lang' => IBOS::getLangSources(),
+                    'lang' => Ibos::getLangSources(),
                     'more' => true,
                     'errMsg' => $errMsg,
                     'web' => $web,
@@ -487,13 +487,13 @@ class WebController extends BaseController {
      * @return void
      */
     protected function ajaxAdd() {
-        // if (IBOS::app()->request->getIsPostRequest()) {
+        // if (Ibos::app()->request->getIsPostRequest()) {
         if ( Env::submitCheck( 'formhash' ) ) {
             $newId = $this->processAddWebMail(true);
-            $this->success(IBOS::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));
+            $this->success(Ibos::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));
         } else {
             $data = array(
-                'lang' => IBOS::getLangSources(),
+                'lang' => Ibos::getLangSources(),
                 'more' => false,
             );
             $this->renderPartial('ajaxAdd', $data);
@@ -508,10 +508,10 @@ class WebController extends BaseController {
     private function beforeSave($web) {
         $web['nickname'] = isset($_POST['web']['nickname']) ? trim(htmlspecialchars($_POST['web']['nickname'])) : ''; //发信昵称
         if (empty($web['nickname'])) {  //如果为空默认设置为真实姓名
-            $web['nickname'] = IBOS::app()->user->realname;
+            $web['nickname'] = Ibos::app()->user->realname;
         }
         $web['uid'] = $this->uid;
-        $web['password'] = StringUtil::authCode($web['password'], 'ENCODE', IBOS::app()->user->salt);
+        $web['password'] = StringUtil::authCode($web['password'], 'ENCODE', Ibos::app()->user->salt);
         return $web;
     }
 
@@ -522,10 +522,10 @@ class WebController extends BaseController {
      */
     private function submitCheck($data, $inAjax) {
         if (isset($data['address']) && empty($data['address'])) {
-            $this->error(IBOS::lang('Empty email address'), '', array(), $inAjax);
+            $this->error(Ibos::lang('Empty email address'), '', array(), $inAjax);
         }
         if (empty($data['password'])) {
-            $this->error(IBOS::lang('Empty email password'), '', array(), $inAjax);
+            $this->error(Ibos::lang('Empty email password'), '', array(), $inAjax);
         }
     }
 

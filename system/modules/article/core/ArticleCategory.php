@@ -19,7 +19,7 @@ namespace application\modules\article\core;
 
 use application\modules\article\model\Article as ArticleModel; 
 use application\core\components\Category;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\article\model\ArticleCategory as ArticleCategoryModel;
 
 class ArticleCategory extends Category {

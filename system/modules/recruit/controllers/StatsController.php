@@ -16,7 +16,7 @@
 namespace application\modules\recruit\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\statistics\utils\StatCommon;
 
@@ -27,7 +27,7 @@ class StatsController extends BaseController {
      */
     public function init() {
         if ( !Module::getIsEnabled( 'statistics' ) ) {
-            $this->error( IBOS::t( 'Module "{module}" is illegal.', 'error', array( '{module}' => IBOS::lang( 'Statistics' ) ) ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::t( 'Module "{module}" is illegal.', 'error', array( '{module}' => Ibos::lang( 'Statistics' ) ) ), $this->createUrl( 'default/index' ) );
         }
     }
 
@@ -38,8 +38,8 @@ class StatsController extends BaseController {
     public function getSidebar() {
         $sidebarAlias = 'application.modules.recruit.views.resume.sidebar';
         $params = array(
-            'lang' => IBOS::getLangSource( 'recruit.default' ),
-            'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
+            'lang' => Ibos::getLangSource( 'recruit.default' ),
+            'statModule' => Ibos::app()->setting->get( 'setting/statmodules' ),
         );
         $sidebarView = $this->renderPartial( $sidebarAlias, $params, false );
         return $sidebarView;
@@ -49,10 +49,10 @@ class StatsController extends BaseController {
      * 招聘统计
      */
     public function actionIndex() {
-        $this->setPageTitle( IBOS::lang( 'Recruit statistics' ) );
+        $this->setPageTitle( Ibos::lang( 'Recruit statistics' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Recruit statistics' ) )
+            array( 'name' => Ibos::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Recruit statistics' ) )
         ) );
         $this->render( 'stats', array_merge( array( 'type' => 'personal' ), $this->getData() ) );
     }
@@ -67,7 +67,7 @@ class StatsController extends BaseController {
         return array(
             'type' => $type,
             'timestr' => $timestr,
-            'statAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'statistics' ),
+            'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'statistics' ),
             'widgets' => StatCommon::getWidget( 'recruit' )
         );
     }

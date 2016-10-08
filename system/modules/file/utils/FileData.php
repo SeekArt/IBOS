@@ -17,7 +17,7 @@
 namespace application\modules\file\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\file\model\File;
@@ -102,7 +102,7 @@ class FileData extends System {
             return $roleSize;
         }
         // 默认容量
-        $defSize = IBOS::app()->setting->get( 'setting/filedefsize' );
+        $defSize = Ibos::app()->setting->get( 'setting/filedefsize' );
         return intval( $defSize );
     }
 

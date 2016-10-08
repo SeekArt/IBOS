@@ -18,7 +18,7 @@ namespace application\modules\recruit\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\recruit\core\ResumeContact as ICResumeContact;
 use application\modules\recruit\model\Resume;
@@ -43,11 +43,11 @@ class ContactController extends BaseController {
             'exportData' => json_encode( $paginationData['data'] ),
             'resumes' => $resumes
         );
-        $this->setPageTitle( IBOS::lang( 'Contact record' ) );
+        $this->setPageTitle( Ibos::lang( 'Contact record' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Contact record' ), 'url' => $this->createUrl( 'contact/index' ) ),
-            array( 'name' => IBOS::lang( 'Contact list' ) )
+            array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Contact record' ), 'url' => $this->createUrl( 'contact/index' ) ),
+            array( 'name' => Ibos::lang( 'Contact list' ) )
         ) );
         $this->render( 'index', $params );
     }
@@ -57,12 +57,12 @@ class ContactController extends BaseController {
      * @return void
      */
     public function actionAdd() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $detailid = Env::getRequest( 'detailid' );
             // 根据 detailid 获取简历 id
             $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'This name does not exist resume' ) ) );
             }
             $data = ICResumeContact::processAddOrEditData( $_POST );
             $data['resumeid'] = $resumeid;
@@ -80,7 +80,7 @@ class ContactController extends BaseController {
                 }
                 $this->ajaxReturn( $contact );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Add fail' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Add fail' ) ) );
             }
         }
     }
@@ -89,10 +89,10 @@ class ContactController extends BaseController {
      * 删除联系信息
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $contactids = Env::getRequest( 'contactids' );
             if ( empty( $contactids ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'contact/index' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'contact/index' ) );
             }
             if ( strpos( $contactids, ',' ) ) {
                 $pk = explode( ',', trim( $contactids, ',' ) );
@@ -101,9 +101,9 @@ class ContactController extends BaseController {
             }
             $delSuccess = ResumeContact::model()->deleteByPk( $pk );
             if ( $delSuccess ) {
-                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => IBOS::lang( 'Del failed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => Ibos::lang( 'Del failed', 'message' ) ) );
             }
         }
     }
@@ -115,7 +115,7 @@ class ContactController extends BaseController {
         $op = Env::getRequest( 'op' );
         $contactid = Env::getRequest( 'contactid' );
         if ( !in_array( $op, array( 'update', 'getEditData' ) ) || empty( $contactid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'contact/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'contact/index' ) );
         } else {
             $this->$op();
         }
@@ -125,7 +125,7 @@ class ContactController extends BaseController {
      * 修改联系记录
      */
     private function update() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $contactid = Env::getRequest( 'contactid' );
             $data = ICResumeContact::processAddOrEditData( $_POST );
             $modifySuccess = ResumeContact::model()->modify( $contactid, $data );
@@ -147,7 +147,7 @@ class ContactController extends BaseController {
      * 取得要编辑的数据,ajax返回
      */
     private function getEditData() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $contactid = Env::getRequest( 'contactid' );
             $contact = ResumeContact::model()->fetchByPk( $contactid );
             $contact['inputtime'] = date( 'Y-m-d', $contact['inputtime'] );
@@ -163,12 +163,12 @@ class ContactController extends BaseController {
         $contactids = Env::getRequest( 'contactids' );
         $contactArr = ResumeContact::model()->fetchAll( "FIND_IN_SET(contactid, '{$contactids}')" );
         $fieldArr = array(
-            IBOS::lang( 'Name' ),
-            IBOS::lang( 'Contact date' ),
-            IBOS::lang( 'Contact staff' ),
-            IBOS::lang( 'Contact method' ),
-            IBOS::lang( 'Contact purpose' ),
-            IBOS::lang( 'Content' )
+            Ibos::lang( 'Name' ),
+            Ibos::lang( 'Contact date' ),
+            Ibos::lang( 'Contact staff' ),
+            Ibos::lang( 'Contact method' ),
+            Ibos::lang( 'Contact purpose' ),
+            Ibos::lang( 'Content' )
         );
         $str = implode( ',', $fieldArr ) . "\n";
         foreach ( $contactArr as $contact ) {

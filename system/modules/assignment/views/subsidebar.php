@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 ?>
 <!-- 任务指派 -->
@@ -14,19 +14,19 @@ use application\core\utils\Org;
                         <span class="badge pull-right"><?php echo $unfinishCount; ?></span>
                     <?php endif; ?>
                     <i class="o-am-unfinished"></i>
-                    <?php echo IBOS::lang( 'Unfinished assignment' ) ?>
+                    <?php echo Ibos::lang( 'Unfinished assignment' ) ?>
                 </a>
             </li>
             <li <?php if ( $this->getId() == 'finished' ): ?>class="active"<?php endif; ?>>
                 <a href="<?php echo $this->createUrl( 'finished/index' ); ?>">
                     <i class="o-am-finished"></i>
-                    <?php echo IBOS::lang( 'Finished assignment' ) ?>
+                    <?php echo Ibos::lang( 'Finished assignment' ) ?>
                 </a>
             </li>
             <li <?php if ( $this->getId() == 'unfinished' && $this->getAction()->getId() == 'sublist' ): ?>class="active"<?php endif; ?>>
                 <a href="<?php echo $this->createUrl( 'unfinished/subList' ); ?>">
                     <i class="o-am-under"></i>
-                    <?php echo IBOS::lang( 'Under assignment' ) ?>
+                    <?php echo Ibos::lang( 'Under assignment' ) ?>
                 </a>
                 <div>
                     <ul class="mng-list" id="mng_list">

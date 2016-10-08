@@ -3,7 +3,7 @@
 namespace application\modules\officialdoc\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\utils\MessageApi;
 use application\modules\officialdoc\model\Officialdoc;
 use application\modules\officialdoc\model\OfficialdocReader;
@@ -18,11 +18,11 @@ class OfficialdocApi extends MessageApi {
     public function renderIndex() {
         $data = array(
             'docs' => $this->loadNewDoc(),
-            'lang' => IBOS::getLangSource( 'officialdoc.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'officialdoc' ),
+            'lang' => Ibos::getLangSource( 'officialdoc.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'officialdoc' ),
         );
         $viewAlias = 'application.modules.officialdoc.views.indexapi.officialdoc';
-        $return['officialdoc/officialdoc'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+        $return['officialdoc/officialdoc'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
         return $return;
     }
 
@@ -33,7 +33,7 @@ class OfficialdocApi extends MessageApi {
     public function loadSetting() {
         return array(
             'name' => 'officialdoc/officialdoc',
-            'title' => IBOS::lang( 'Officialdoc', 'officialdoc.default' ),
+            'title' => Ibos::lang( 'Officialdoc', 'officialdoc.default' ),
             'style' => 'in-officialdoc'
         );
     }
@@ -43,9 +43,9 @@ class OfficialdocApi extends MessageApi {
      * @return integer
      */
     public function loadNew() {
-        $uid = IBOS::app()->user->uid;
-        $allDeptId = IBOS::app()->user->alldeptid . '';
-        $allPosId = IBOS::app()->user->allposid . '';
+        $uid = Ibos::app()->user->uid;
+        $allDeptId = Ibos::app()->user->alldeptid . '';
+        $allPosId = Ibos::app()->user->allposid . '';
         $condition = " ( ((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) ) AND `status`='1'";
         $docs = Officialdoc::model()->fetchAll( $condition );
 		$docIds = Convert::getSubByKey( $docs, 'docid' );
@@ -61,9 +61,9 @@ class OfficialdocApi extends MessageApi {
      * @return array
      */
     private function loadNewDoc( $num = 3 ) {
-        $uid = IBOS::app()->user->uid;
-        $allDeptId = IBOS::app()->user->alldeptid . '';
-        $allPosId = IBOS::app()->user->allposid . '';
+        $uid = Ibos::app()->user->uid;
+        $allDeptId = Ibos::app()->user->alldeptid . '';
+        $allPosId = Ibos::app()->user->allposid . '';
         //$condition = " ( ((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) ) AND `status`='1'";
         $condition = "((deptid='alldept' OR FIND_IN_SET('{$allDeptId}',deptid) OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='')) AND `status`='1'";
         $criteria = array(

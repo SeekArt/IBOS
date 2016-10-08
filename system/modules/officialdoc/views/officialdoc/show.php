@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 ?>
@@ -215,18 +215,18 @@ use application\modules\user\model\User;
                                     <?php if ( $dashboardConfig['doccommentenable'] && $data['commentstatus'] ): ?>
                                         <div id="comment" class="comment fill-zn tab-pane active">
                                             <?php
-                                            $sourceUrl = IBOS::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $data['docid'] ) );
+                                            $sourceUrl = Ibos::app()->urlManager->createUrl( 'officialdoc/officialdoc/show', array( 'docid' => $data['docid'] ) );
                                             $this->widget( 'application\modules\officialdoc\core\OfficialdocComment', array(
                                                 'module' => 'officialdoc',
                                                 'table' => 'officialdoc',
                                                 'attributes' => array(
                                                     'rowid' => $data['docid'],
-                                                    'moduleuid' => IBOS::app()->user->uid,
+                                                    'moduleuid' => Ibos::app()->user->uid,
                                                     'touid' => $data['author'],
                                                     'module_rowid' => $data['docid'],
                                                     'module_table' => 'officialdoc',
                                                     'url' => $sourceUrl,
-                                                    'detail' => IBOS::lang( 'Comment my doc', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
+                                                    'detail' => Ibos::lang( 'Comment my doc', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $data['subject'], 50 ) ) )
                                         ) ) );
                                             ?>
                                         </div>

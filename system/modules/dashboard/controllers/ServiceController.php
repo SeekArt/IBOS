@@ -21,7 +21,7 @@ use application\core\utils\Api;
 use application\core\utils\Cache;
 use application\core\utils\Cloud;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\WebSite;
 use application\modules\main\model\Setting;
 use CJSON;
@@ -34,14 +34,14 @@ class ServiceController extends BaseController {
 	const LOGIN_ROUTE = 'Api/Service/Login';
 
 	public function actionIndex() {
-		$setting = IBOS::app()->setting->get( 'setting/iboscloud' );
+		$setting = Ibos::app()->setting->get( 'setting/iboscloud' );
 		$data = array(
 			'website' => self::WEBSITE
 		);
 		if ( empty( $setting['appid'] ) ) {
 			$data['isOpen'] = !preg_match( '/Pro/is', VERSION );
 			$data['loginInfo'] = $this->getLoginInfo();
-			$data['authkey'] = IBOS::app()->setting->get( 'config/security/authkey' );
+			$data['authkey'] = Ibos::app()->setting->get( 'config/security/authkey' );
 			$this->render( 'guide', $data );
 		} else {
 			$isOpen = Api::getInstance()->fetchResult( WebSite::SITE_URL . 'product/open', Cloud::getInstance()->getCloudAuthParam() );
@@ -64,7 +64,7 @@ class ServiceController extends BaseController {
 		$param = array(
 			'username' => Env::getRequest( 'username' ),
 			'password' => Env::getRequest( 'password' ),
-			'authkey' => IBOS::app()->setting->get( 'config/security/authkey' )
+			'authkey' => Ibos::app()->setting->get( 'config/security/authkey' )
 		);
 		$res = WebSite::getInstance()->fetch( self::LOGIN_ROUTE, $param );
 		if ( !is_array( $res ) ) {
@@ -79,12 +79,12 @@ class ServiceController extends BaseController {
 	 * 登陆并获得授权信息
 	 */
 	public function actionOpen() {
-		$authkey = IBOS::app()->setting->get( 'config/security/authkey' );
+		$authkey = Ibos::app()->setting->get( 'config/security/authkey' );
 		$res = WebSite::getInstance()->fetch( self::OPEN_ROUTE, array( 'authkey' => $authkey ), 'post' );
 		if ( !is_array( $res ) ) {
 			$result = CJSON::decode( $res, true );
 			if ( isset( $result['appid'] ) && isset( $result['secret'] ) ) {
-				$iboscloud = IBOS::app()->setting->get( 'setting/iboscloud' );
+				$iboscloud = Ibos::app()->setting->get( 'setting/iboscloud' );
 				$iboscloud['isopen'] = 1;
 				$iboscloud['appid'] = $result['appid'];
 				$iboscloud['secret'] = $result['secret'];
@@ -104,7 +104,7 @@ class ServiceController extends BaseController {
 	 * @return boolean
 	 */
 	public function getLoginInfo() {
-		$authkey = IBOS::app()->setting->get( 'config/security/authkey' );
+		$authkey = Ibos::app()->setting->get( 'config/security/authkey' );
 		$res = WebSite::getInstance()->fetch( self::CHECK_LOGIN_ROUTE, array( 'authkey' => $authkey ) );
 		if ( !is_array( $res ) ) {
 			return CJSON::decode( $res, true );

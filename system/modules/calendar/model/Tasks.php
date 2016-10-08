@@ -18,7 +18,7 @@ namespace application\modules\calendar\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CJSON;
 use CPagination;
@@ -76,7 +76,7 @@ class Tasks extends Model {
 	 */
 	public function fetchAllAndPage( $conditions = '', $pageSize = null ) {
 		$pages = new CPagination( $this->countByCondition( $conditions ) );
-		$pageSize = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$pageSize = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pages->setPageSize( intval( $pageSize ) );
 		$offset = $pages->getOffset();
 		$limit = $pages->getLimit();
@@ -204,7 +204,7 @@ class Tasks extends Model {
 		$task = $this->fetchByPk( $taskid );
 		$data = array(
 			'taskid' => $taskid,
-			'subject' => $task['text'] . IBOS::lang( 'From task' ),
+			'subject' => $task['text'] . Ibos::lang( 'From task' ),
 			'starttime' => strtotime( $task['date'] ),
 			'endtime' => strtotime( $task['date'] ),
 			'isalldayevent' => 1,
@@ -252,7 +252,7 @@ class Tasks extends Model {
 		$task = $this->fetchByPk( $taskid );
 		$data = array(
 			'taskid' => $taskid,
-			'subject' => $task['text'] . IBOS::lang( 'From task' ),
+			'subject' => $task['text'] . Ibos::lang( 'From task' ),
 			'starttime' => $st,
 			'endtime' => $et,
 			'isalldayevent' => 0,

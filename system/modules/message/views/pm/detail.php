@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/message.css?<?php echo VERHASH; ?>">
@@ -16,8 +16,8 @@ use application\core\utils\IBOS;
 				<div class="msg-pm-detail-header">
 					<div class="band band-primary">
 						<div class="avatar-box pull-right">
-							<a target='_blank' data-toggle='usercard' data-param='uid=<?php echo  IBOS::app()->user->uid; ?>' href="<?php echo IBOS::app()->user->space_url; ?>" class="avatar-circle">
-								<img class="mbm" src="<?php echo IBOS::app()->user->avatar_middle; ?>" >
+							<a target='_blank' data-toggle='usercard' data-param='uid=<?php echo  Ibos::app()->user->uid; ?>' href="<?php echo Ibos::app()->user->space_url; ?>" class="avatar-circle">
+								<img class="mbm" src="<?php echo Ibos::app()->user->avatar_middle; ?>" >
 							</a>
 						</div>
 						<div class="msg-pm-input msg-pm-input-fullmode" id="pm_input">

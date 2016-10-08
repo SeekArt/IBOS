@@ -6,7 +6,7 @@ use application\core\model\Module;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
@@ -33,7 +33,7 @@ class SmsController extends BaseController {
             Setting::model()->updateSettingValueByKey( 'smsinterface', (int) $interface );
             Setting::model()->updateSettingValueByKey( 'smssetup', $setup );
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array();
             $smsLeft = 0;
@@ -163,10 +163,10 @@ class SmsController extends BaseController {
             $enabledModule = !empty( $_POST['enabled'] ) ? explode( ',', $_POST['enabled'] ) : array();
             Setting::model()->updateSettingValueByKey( 'smsmodule', $enabledModule );
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $data = array(
-                'smsModule' => IBOS::app()->setting->get( 'setting/smsmodule' ),
+                'smsModule' => Ibos::app()->setting->get( 'setting/smsmodule' ),
                 'enableModule' => Module::model()->fetchAllNotCoreModule()
             );
             $this->render( 'access', $data );

@@ -1,20 +1,20 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <div class="ct">
 	<div class="clearfix">
-		<h1 class="mt"><?php echo IBOS::lang( 'Information center' ); ?></h1>
+		<h1 class="mt"><?php echo Ibos::lang( 'Information center' ); ?></h1>
 	</div>
 	<div>
 		<form action="<?php echo $this->createUrl( 'dashboard/edit', array( 'op' => 'update' ) ); ?>" class="form-horizontal" method="post">
 			<!-- 邮件发送设置 start -->
 			<div class="ctb">
-				<h2 class="st"><?php echo IBOS::lang( 'Officialdoc template edit' ); ?></h2>
+				<h2 class="st"><?php echo Ibos::lang( 'Officialdoc template edit' ); ?></h2>
 				<div class="span8">
 					<div class="control-group">
-						<label for="" class="control-label"><?php echo IBOS::lang( 'Template name' ); ?></label>
+						<label for="" class="control-label"><?php echo Ibos::lang( 'Template name' ); ?></label>
 						<div class="controls">
 							<input type="text" name="name" value="<?php echo $data['name']; ?>">
 						</div>
@@ -33,7 +33,7 @@ use application\core\utils\IBOS;
 					<div class="control-group">
 						<label for="" class="control-label"></label>
 						<div class="controls">
-							<button class="btn btn-primary btn-large btn-submit" type="button"><?php echo IBOS::lang( 'Submit' ); ?></button>
+							<button class="btn btn-primary btn-large btn-submit" type="button"><?php echo Ibos::lang( 'Submit' ); ?></button>
 						</div>
 					</div>
 					<input type="hidden" name="rcid" value="<?php echo $data['rcid']; ?>">

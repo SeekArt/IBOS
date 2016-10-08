@@ -2,7 +2,7 @@
 
 namespace application\modules\message\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Env;
 use application\core\utils\Page;
 use application\modules\message\model\Comment;
@@ -14,7 +14,7 @@ class CommentController extends BaseController {
      * 首页
      */
     public function actionIndex() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $type = Env::getRequest( 'type' );
         $map = array( 'and' );
         if ( !in_array( $type, array( 'receive', 'sent' ) ) ) {
@@ -36,10 +36,10 @@ class CommentController extends BaseController {
         );
         // 重置未读评论数
         UserData::model()->resetUserCount( $uid, 'unread_comment', 0 );
-        $this->setPageTitle( IBOS::lang( 'Comment' ) );
+        $this->setPageTitle( Ibos::lang( 'Comment' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
-            array( 'name' => IBOS::lang( 'Comment' ), 'url' => $this->createUrl( 'comment/index' ) )
+            array( 'name' => Ibos::lang( 'Message center' ), 'url' => $this->createUrl( 'mention/index' ) ),
+            array( 'name' => Ibos::lang( 'Comment' ), 'url' => $this->createUrl( 'comment/index' ) )
         ) );
         $this->render( 'index', $data );
     }
@@ -49,7 +49,7 @@ class CommentController extends BaseController {
      * @return type
      */
     public function actionDel() {
-        $widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\message\core\Comment' );
+        $widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\message\core\Comment' );
         return $widget->delComment();
     }
 

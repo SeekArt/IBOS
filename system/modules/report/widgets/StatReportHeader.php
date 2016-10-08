@@ -16,7 +16,7 @@
 
 namespace application\modules\report\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\utils\StatCommon;
 
 class StatReportHeader extends StatReportBase {
@@ -34,7 +34,7 @@ class StatReportHeader extends StatReportBase {
         $data = array(
             'module' => $module,
             'timeRoute' => $timeRoute,
-            'lang' => IBOS::getLangSources( array( 'report.default' ) ),
+            'lang' => Ibos::getLangSources( array( 'report.default' ) ),
             'time' => StatCommon::getCommonTimeScope()
         );
         $this->render( self::VIEW, $data );

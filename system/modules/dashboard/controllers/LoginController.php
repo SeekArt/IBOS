@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\dashboard\model\LoginTemplate;
 use application\modules\dashboard\utils\Dashboard;
@@ -41,7 +41,7 @@ class LoginController extends BaseController {
 				LoginTemplate::model()->deleteByIds( $removeIds, $bgPath );
 			}
 			clearstatcache();
-			$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 		} else {
 			if ( Env::getRequest( 'op' ) === 'upload' ) {
 				$fakeUrl = $this->imgUpload( 'bg' );

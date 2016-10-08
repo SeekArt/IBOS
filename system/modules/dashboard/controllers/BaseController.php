@@ -21,7 +21,7 @@ use application\core\controllers\Controller;
 use application\core\model\Log;
 use application\core\utils\Convert;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\components\CommonAttach;
 use application\modules\main\utils\Main as MainUtil;
@@ -108,15 +108,15 @@ class BaseController extends Controller {
 	 * @return void
 	 */
 	public function beforeAction( $action ) {
-		if ( !IBOS::app()->user->isGuest ) {
+		if ( !Ibos::app()->user->isGuest ) {
 			$param = Convert::implodeArray(
 							array( 'GET' => $_GET, 'POST' => $_POST ), array( 'username', 'password', 'formhash' )
 			);
 			$controller = $action->getController()->id;
 			$action = $action->getId();
 			$log = array(
-				'user' => IBOS::app()->user->username,
-				'ip' => IBOS::app()->setting->get( 'clientip' ),
+				'user' => Ibos::app()->user->username,
+				'ip' => Ibos::app()->setting->get( 'clientip' ),
 				'action' => $action,
 				'param' => $param
 			);
@@ -132,8 +132,8 @@ class BaseController extends Controller {
 	 * @return void
 	 */
 	protected function userLogin() {
-		IBOS::app()->user->loginUrl = array( $this->loginUrl );
-		IBOS::app()->user->loginRequired();
+		Ibos::app()->user->loginUrl = array( $this->loginUrl );
+		Ibos::app()->user->loginRequired();
 	}
 
 	/**
@@ -142,7 +142,7 @@ class BaseController extends Controller {
 	public function initBase() {
 		$this->useConfig = true;
 		$this->errorParam = array('autoJump' => false, 'jumpLinksOptions' => array('首页' => $this->createUrl('index/index'),));
-		$this->user = IBOS::app()->user->isGuest ? array() : User::model()->fetchByUid(IBOS::app()->user->uid, true);
+		$this->user = Ibos::app()->user->isGuest ? array() : User::model()->fetchByUid(Ibos::app()->user->uid, true);
 		$this->_adminType = $this->checkAdministrator($this->user);
 		$this->_sessionLimit = (int)(TIMESTAMP - $this->_sessionLife);
 		$this->_cookieLimit = (int)(TIMESTAMP - $this->_cookieLife);
@@ -196,7 +196,7 @@ class BaseController extends Controller {
 					return 1;
 				} else {
 					$allroleidS = $user['allroleid'];
-					$roleid = IBOS::app()->db->createCommand()
+					$roleid = Ibos::app()->db->createCommand()
 							->select( 'roleid' )
 							->from( Role::model()->tableName() )
 							->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )
@@ -236,11 +236,11 @@ class BaseController extends Controller {
 			}
 		}
 		if ( $this->_access == 1 ) {
-			IBOS::app()->session->update();
+			Ibos::app()->session->update();
 		} else {
 			// 获取当前url请求,判断是否在可访问url列表内
-			$requestUrl = IBOS::app()->getRequest()->getUrl();
-			$loginUrl = IBOS::app()->getUrlManager()->createUrl( $this->loginUrl );
+			$requestUrl = Ibos::app()->getRequest()->getUrl();
+			$loginUrl = Ibos::app()->getUrlManager()->createUrl( $this->loginUrl );
 			if ( strpos( $requestUrl, $loginUrl ) !== 0 ) {
 				return $this->userLogin();
 			}

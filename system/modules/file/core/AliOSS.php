@@ -1,11 +1,11 @@
 <?php
 
-IBOS::import( 'application.modules.file.extensions.alioss.aliyun', true );
+Ibos::import( 'application.modules.file.extensions.alioss.aliyun', true );
 
 namespace application\modules\file\core;
 
 use Aliyun\OSS\OSSClient;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CException;
 
 class AliOSS extends CloudOSS {
@@ -21,7 +21,7 @@ class AliOSS extends CloudOSS {
 	 */
 	public function __construct( $config ) {
 		if ( !isset( $config['bucket'] ) || !isset( $config['endpoint'] ) || !isset( $config['keyid'] ) || !isset( $config['keysecret'] ) ) {
-			throw new CException( IBOS::t( 'file.default', 'Cloud service not open success' ) );
+			throw new CException( Ibos::t( 'file.default', 'Cloud service not open success' ) );
 		}
 		$this->_bucket = $config['bucket'];
 		$this->_endPoint = $config['endpoint'];

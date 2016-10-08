@@ -1,13 +1,13 @@
 <?php
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <?php $viewDesc = array( 1 => '仅自己可见', 2 => '所在部门可见', 3 => '指定人可见' ); ?>
 <?php foreach ( $list as $fd ): ?>
     <div class="wb-ifview-box mpanel" data-node-type="feedBox" data-feed-id="<?php echo $fd['feedid'] ?>">
-        <?php if ( $fd['uid'] == IBOS::app()->user->uid || IBOS::app()->user->isadministrator ): ?>
+        <?php if ( $fd['uid'] == Ibos::app()->user->uid || Ibos::app()->user->isadministrator ): ?>
             <div class="wb-trash-wrap">
                 <a href="javascript:;" class="o-wbf-trash" data-param='{"feedid": <?php echo $fd['feedid']; ?>}' data-action="removeFeed"></a>
             </div>
@@ -65,7 +65,7 @@ use application\core\utils\StringUtil;
             <!--来源信息-->
             <div class="wb-info-ads clearfix">
                 <div class="wb-info-from pull-left">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $fd['uid'], 'feedid' => $fd['feedid'] ) ); ?>"><?php echo Convert::formatDate( $fd['ctime'], 'n月d日H:i' ); ?></a>
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'uid' => $fd['uid'], 'feedid' => $fd['feedid'] ) ); ?>"><?php echo Convert::formatDate( $fd['ctime'], 'n月d日H:i' ); ?></a>
                     <span>&nbsp;<?php echo $fd['from']; ?>&nbsp;</span>
                     <?php if ( !empty( $fd['view'] ) ): ?>
                         <a href="javascript:;" class="o-wbi-lock mls" data-action="openAllowedUserDialog" data-param='{"feedid": <?php echo $fd['feedid']; ?>}' data-toggle="tooltip" title="<?php echo $viewDesc[$fd['view']]; ?>"></a>	
@@ -99,7 +99,7 @@ use application\core\utils\StringUtil;
         </div>
         <?php if ( $fd['module'] == 'weibo' ): ?>
             <?php
-            $sourceUrl = IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $fd['feedid'] ) );
+            $sourceUrl = Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $fd['feedid'] ) );
             $this->widget( 'application\modules\weibo\core\WeiboComment', array(
                 'module' => $fd['module'],
                 'table' => 'feed',
@@ -111,7 +111,7 @@ use application\core\utils\StringUtil;
                     'tocid' => 0,
                     'touid' => $fd['uid'],
                     'url' => $sourceUrl,
-                    'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
+                    'detail' => Ibos::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
         ) ) );
             ?>
         <?php endif; ?>

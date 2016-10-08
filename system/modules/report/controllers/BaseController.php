@@ -6,7 +6,7 @@ use application\core\controllers\Controller;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Stamp;
@@ -62,7 +62,7 @@ class BaseController extends Controller {
         $fromController = Env::getRequest( 'fromController' );
         $report = Report::model()->fetchByPk( $repid );
         // 增加阅读记录
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         Report::model()->addReaderuid( $report, $uid );
         // 取得原计划和计划外内容,下一次计划内容
         $record = ReportRecord::model()->fetchAllRecordByRep( $report );
@@ -86,7 +86,7 @@ class BaseController extends Controller {
         // 日期个性化
         $report['addtime'] = Convert::formatDate( $report['addtime'], 'u' );
         $params = array(
-            'lang' => IBOS::getLangSource( 'report.default' ),
+            'lang' => Ibos::getLangSource( 'report.default' ),
             'repid' => $repid,
             'report' => $report,
             'uid' => $uid,
@@ -221,7 +221,7 @@ class BaseController extends Controller {
      * @param type $uid 上司UID
      */
     protected function getUnreviews() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         //获取所有直属下属id
         $subUidArr = User::model()->fetchSubUidByUid( $uid );
         $count = '';
@@ -239,7 +239,7 @@ class BaseController extends Controller {
      * 取得所有阅读和阅读人信息
      */
     protected function getReaderList() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $repid = Env::getRequest( 'repid' );
             $record = Report::model()->fetchByPk( $repid );
             $readerUids = $record['readeruid'];
@@ -249,12 +249,12 @@ class BaseController extends Controller {
                 $readerUidArr = explode( ',', trim( $readerUids, ',' ) );
                 $users = User::model()->fetchAllByUids( $readerUidArr );
                 foreach ( $users as $user ) {
-                    $htmlStr.='<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $user['uid'] ) ) . '">
+                    $htmlStr.='<a href="' . Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $user['uid'] ) ) . '">
 								<img class="img-rounded" src="' . $user['avatar_small'] . '" title="' . $user['realname'] . '" />
 							</a>';
                 }
             } else {
-                $htmlStr .= '<div><li align="middle">' . IBOS::lang( 'Has not reader' ) . '</li>';
+                $htmlStr .= '<div><li align="middle">' . Ibos::lang( 'Has not reader' ) . '</li>';
             }
             $htmlStr.='</div></table>';
             echo $htmlStr;
@@ -266,7 +266,7 @@ class BaseController extends Controller {
      * @return void
      */
     protected function getCommentList() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $repid = Env::getRequest( 'repid' );
             $records = Comment::model()->fetchAll(
                     array(
@@ -281,7 +281,7 @@ class BaseController extends Controller {
                     $record['realname'] = User::model()->fetchRealnameByUid( $record['uid'] );
                     $content = StringUtil::cutStr( $record['content'], 45 );
                     $htmlStr.= '<li class="media">
-									<a href="' . IBOS::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
+									<a href="' . Ibos::app()->createUrl( 'user/home/index', array( 'uid' => $record['uid'] ) ) . '" class="pop-comment-avatar pull-left">
 										<img src="' . Org::getDataStatic( $record['uid'], 'avatar', 'small' ) . '" title="' . $record['realname'] . '" class="img-rounded"/>
 									</a>
 									<div class="media-body">
@@ -290,7 +290,7 @@ class BaseController extends Controller {
 								</li>';
                 }
             } else {
-                $htmlStr .= '<li align="middle">' . IBOS::lang( 'Has not comment' ) . '</li>';
+                $htmlStr .= '<li align="middle">' . Ibos::lang( 'Has not comment' ) . '</li>';
             }
             $htmlStr .= '</ul></div>';
             echo $htmlStr;
@@ -302,7 +302,7 @@ class BaseController extends Controller {
      * @return boolean
      */
     protected function checkIsHasSub() {
-        $subUidArr = User::model()->fetchSubUidByUid( IBOS::app()->user->uid );
+        $subUidArr = User::model()->fetchSubUidByUid( Ibos::app()->user->uid );
         if ( !empty( $subUidArr ) ) {
             return true;
         } else {

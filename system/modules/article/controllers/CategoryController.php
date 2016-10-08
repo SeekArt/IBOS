@@ -17,7 +17,7 @@
 
 namespace application\modules\article\controllers;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Env;
 use application\modules\article\core\ArticleCategory;
 use application\modules\article\model\ArticleCategory as CateModel;
@@ -46,7 +46,7 @@ class CategoryController extends BaseController {
 	 * 默认动作
 	 */
 	public function actionIndex() {
-		if ( IBOS::app()->request->getIsAjaxRequest() ) {
+		if ( Ibos::app()->request->getIsAjaxRequest() ) {
 			$data = CateModel::model()->fetchAll( array( 'order' => 'sort ASC' ) );
 			$this->ajaxReturn( $this->_category->getAjaxCategory( $data ), 'json' );
 		}
@@ -91,7 +91,7 @@ class CategoryController extends BaseController {
 			$catid = intval( Env::getRequest( 'catid' ) );
 			$aid = intval( Env::getRequest( 'aid' ) );
 			if ( $pid == $catid ) {
-				$this->error( IBOS::lang( 'Parent and current can not be the same' ) );
+				$this->error( Ibos::lang( 'Parent and current can not be the same' ) );
 			}
 			$ret = CateModel::model()->modify( $catid, array( 'pid' => $pid, 'name' => $name, 'aid' => $aid ) );
 			$this->ajaxReturn( array( 'IsSuccess' => !!$ret, 'aid' => $aid ), 'json' );
@@ -104,17 +104,17 @@ class CategoryController extends BaseController {
 	 * 删除
 	 */
 	public function actionDel() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$catid = Env::getRequest( 'catid' );
 			// 判断顶级分类少于一个不给删除
 			$category = CateModel::model()->fetchByPk( $catid );
 			$supCategoryNum = CateModel::model()->countByAttributes( array( 'pid' => 0 ) );
 			if ( !empty( $category ) && $category['pid'] == 0 && $supCategoryNum == 1 ) {
-				$this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => IBOS::lang( 'Leave at least a Category' ) ), 'json' );
+				$this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => Ibos::lang( 'Leave at least a Category' ) ), 'json' );
 			}
 			$ret = $this->_category->delete( $catid );
 			if ( $ret == -1 ) {
-				$this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => IBOS::lang( 'Contents under this classification only be deleted when no content' ) ), 'json' );
+				$this->ajaxReturn( array( 'IsSuccess' => false, 'msg' => Ibos::lang( 'Contents under this classification only be deleted when no content' ) ), 'json' );
 			}
 			$this->ajaxReturn( array( 'IsSuccess' => !!$ret ), 'json' );
 		}
@@ -124,7 +124,7 @@ class CategoryController extends BaseController {
 	 * 移动
 	 */
 	protected function move() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$moveType = Env::getRequest( 'type' );
 			$pid = Env::getRequest( 'pid' );
 			$catid = Env::getRequest( 'catid' );

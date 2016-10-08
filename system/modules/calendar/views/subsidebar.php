@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 ?>
 <!-- Sidebar -->
@@ -11,13 +11,13 @@ use application\core\utils\Org;
             <li>
                 <a href="<?php echo $this->createUrl( 'schedule/index' ); ?>">
                     <i class="o-cal-personal"></i>
-                    <?php echo IBOS::lang( 'Personal' ); ?>
+                    <?php echo Ibos::lang( 'Personal' ); ?>
                 </a>
             </li>
             <li class="active">
                 <a href="<?php echo $this->createUrl( 'schedule/subschedule' ); ?>">
                     <i class="o-cal-underling"></i>
-                    <?php echo IBOS::lang( 'Subordinate' ); ?>
+                    <?php echo Ibos::lang( 'Subordinate' ); ?>
                 </a>
                 <div>
                     <ul class="mng-list" id="mng_list">
@@ -41,8 +41,8 @@ use application\core\utils\Org;
                                                         <?php echo $user['realname']; ?>
                                                     </a>
                                                     <div class="pull-right">
-                                                        <a href="<?php echo $this->createUrl( 'task/subtask', array( 'uid' => $user['uid'] ) ); ?>" class="o-cal-todo mlm" title="<?php echo IBOS::lang( 'Task' ); ?>"></a>
-                                                        <a href="<?php echo $this->createUrl( 'schedule/subschedule', array( 'uid' => $user['uid'] ) ); ?>" class="o-cal-calendar" title="<?php echo IBOS::lang( 'Schedule' ); ?>"></a>
+                                                        <a href="<?php echo $this->createUrl( 'task/subtask', array( 'uid' => $user['uid'] ) ); ?>" class="o-cal-todo mlm" title="<?php echo Ibos::lang( 'Task' ); ?>"></a>
+                                                        <a href="<?php echo $this->createUrl( 'schedule/subschedule', array( 'uid' => $user['uid'] ) ); ?>" class="o-cal-calendar" title="<?php echo Ibos::lang( 'Schedule' ); ?>"></a>
                                                     </div>
                                                 </div>
                                                 <!--下属资料,ajax调用生成-->
@@ -59,7 +59,7 @@ use application\core\utils\Org;
                 <li>
                     <a href="<?php echo $this->createUrl( 'schedule/shareschedule' ); ?>">
                         <i class="o-cal-shareme"></i>
-                        <?php echo IBOS::lang( 'Share' ); ?>
+                        <?php echo Ibos::lang( 'Share' ); ?>
                     </a>
                 </li>
             <?php endif; ?>

@@ -10,7 +10,7 @@
 namespace application\modules\main\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class Session extends Model {
@@ -34,7 +34,7 @@ class Session extends Model {
 		if ( empty( $sid ) ) {
 			return array();
 		}
-		$result = IBOS::app()->db->createCommand()
+		$result = Ibos::app()->db->createCommand()
 				->select()
 				->from( $this->tableName() )
 				->where( " `sid` = '{$sid}' " )

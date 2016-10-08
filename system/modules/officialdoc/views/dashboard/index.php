@@ -1,20 +1,20 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <div class="ct">
 	<div class="clearfix">
-		<h1 class="mt"><?php echo IBOS::lang( 'Information center' ); ?></h1>
+		<h1 class="mt"><?php echo Ibos::lang( 'Information center' ); ?></h1>
 	</div>
 	<div>
 		<form action="<?php echo $this->createUrl( 'dashboard/add' ); ?>" class="form-horizontal" method="post">
 			<!-- 邮件发送设置 start -->
 			<div class="ctb">
-				<h2 class="st"><?php echo IBOS::lang( 'Officialdoc setting' ); ?></h2>
+				<h2 class="st"><?php echo Ibos::lang( 'Officialdoc setting' ); ?></h2>
 				<div class="">
 					<div class="control-group">
-						<label for="" class="control-label"><?php echo IBOS::lang( 'Comment' ); ?></label>
+						<label for="" class="control-label"><?php echo Ibos::lang( 'Comment' ); ?></label>
 						<div class="controls">
 							<input type="checkbox" name="commentSwitch" value='1' id="" data-toggle="switch" class="visi-hidden" <?php if ( $commentSwitch ): ?>checked<?php endif; ?>>
 						</div>
@@ -23,9 +23,9 @@ use application\core\utils\IBOS;
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									<th width="120"><?php echo IBOS::lang( 'NO.' ); ?></th>
-									<th><?php echo IBOS::lang( 'Template name' ); ?></th>
-									<th width="120"><?php echo IBOS::lang( 'Operating' ); ?></th>
+									<th width="120"><?php echo Ibos::lang( 'NO.' ); ?></th>
+									<th><?php echo Ibos::lang( 'Template name' ); ?></th>
+									<th width="120"><?php echo Ibos::lang( 'Operating' ); ?></th>
 								</tr>
 							</thead>
 							<tbody id="mal_setup_tbody">
@@ -58,7 +58,7 @@ use application\core\utils\IBOS;
 					<div class="control-group">
 						<label for="" class="control-label"></label>
 						<div class="controls">
-							<button class="btn btn-primary btn-large btn-submit" type="submit"><?php echo IBOS::lang( 'Submit' ); ?></button>
+							<button class="btn btn-primary btn-large btn-submit" type="submit"><?php echo Ibos::lang( 'Submit' ); ?></button>
 						</div>
 					</div>
 				</div>

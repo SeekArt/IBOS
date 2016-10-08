@@ -58,7 +58,7 @@ class DepartmentRelated extends Model {
 		} else {
 			$condition = User::model()->uid_find_in_set( $uidX );
 		}
-		$related = IBOS::app()->db->createCommand()
+		$related = Ibos::app()->db->createCommand()
 				->select( 'uid,deptid' )
 				->from( $this->tableName() )
 				->where( $condition )

@@ -3,7 +3,7 @@
 namespace application\modules\email\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\email\model\Email;
@@ -26,29 +26,29 @@ class ListController extends BaseController {
         // 设置列表显示条数
         if ( isset( $_GET['pagesize'] ) ) {
             $this->setListPageSize( $_GET['pagesize'] );
-            $fid = IBOS::app()->session['fid'];
-            $op = IBOS::app()->session['op'];
+            $fid = Ibos::app()->session['fid'];
+            $op = Ibos::app()->session['op'];
             switch($op){
                 case 'folder':
-                    $this->success(IBOS::lang('My folders'), $this->createUrl('list/index',array('op'=>'folder','fid'=>$fid)));
+                    $this->success(Ibos::lang('My folders'), $this->createUrl('list/index',array('op'=>'folder','fid'=>$fid)));
                     break;
                 case 'inbox':
-                    $this->success(IBOS::lang('Inbox'),$this->createUrl('list/index',array('op'=>'inbox')));
+                    $this->success(Ibos::lang('Inbox'),$this->createUrl('list/index',array('op'=>'inbox')));
                     break;
                 case 'todo':
-                    $this->success(IBOS::lang('Todo email'), $this->createUrl('list/index',array('op'=>'todo')));
+                    $this->success(Ibos::lang('Todo email'), $this->createUrl('list/index',array('op'=>'todo')));
                     break;
                 case 'draft':
-                    $this->success(IBOS::lang('Drafts'), $this->createUrl('list/index',array('op'=>'draft')));
+                    $this->success(Ibos::lang('Drafts'), $this->createUrl('list/index',array('op'=>'draft')));
                     break;
                 case 'send':
-                    $this->success(IBOS::lang('Has been sent'), $this->createUrl('list/index',array('op'=>'send')));
+                    $this->success(Ibos::lang('Has been sent'), $this->createUrl('list/index',array('op'=>'send')));
                     break;
                 case 'archive':
-                    $this->success(IBOS::lang('Archived'), $this->createUrl('list/index',array('op'=>'archive')));
+                    $this->success(Ibos::lang('Archived'), $this->createUrl('list/index',array('op'=>'archive')));
                     break;
                 case 'del':
-                    $this->success(IBOS::lang('Deleted'), $this->createUrl('list/index',array('op'=>'del')));
+                    $this->success(Ibos::lang('Deleted'), $this->createUrl('list/index',array('op'=>'del')));
                     break;
                 default:
                     break;
@@ -75,10 +75,10 @@ class ListController extends BaseController {
         }
         $data = $this->getListData( $op );
         //文件夹名和邮件主题存在xss漏洞
-        $this->setPageTitle( IBOS::lang( 'Email center' ) );
+        $this->setPageTitle( Ibos::lang( 'Email center' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
         ) );
         $this->render( 'index', $data );
     }
@@ -88,7 +88,7 @@ class ListController extends BaseController {
      */
     public function actionSearch() {
         // 参数处理
-        $uid = (int)IBOS::app()->user->uid;
+        $uid = (int)Ibos::app()->user->uid;
         $op = Env::getRequest('op');
         $search = Env::getRequest('search');
         $type = Env::getRequest('type');
@@ -120,7 +120,7 @@ class ListController extends BaseController {
         } elseif ("advanced_search" === $type) {
             $command = Email::model()->advancedSearch($uid, $op, $search);
         } else {
-            return $this->error(IBOS::lang("Invalid params"), $this->createUrl('email/list'));
+            return $this->error(Ibos::lang("Invalid params"), $this->createUrl('email/list'));
         }
 
         $conditionStr = $command->getWhere();
@@ -142,11 +142,11 @@ class ListController extends BaseController {
             'condition' => $conditionStr,
             'folders' => $this->folders
         );
-        $this->setPageTitle( IBOS::lang( 'Search result' ) );
+        $this->setPageTitle( Ibos::lang( 'Search result' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
-            array( 'name' => IBOS::lang( 'Search result' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Email center' ), 'url' => $this->createUrl( 'list/index' ) ),
+            array( 'name' => Ibos::lang( 'Search result' ) )
         ) );
         $this->render( 'search', $data );
     }
@@ -161,7 +161,7 @@ class ListController extends BaseController {
         $data['webId'] = $this->webId;
         $data['folders'] = $this->folders;
         $data['archiveId'] = $this->archiveId;
-        $data['allowRecall'] = IBOS::app()->setting->get( 'setting/emailrecall' );
+        $data['allowRecall'] = Ibos::app()->setting->get( 'setting/emailrecall' );
         $uid = $this->uid;
         // 归档列表要确认子动作
         if ( $operation == 'archive' ) {

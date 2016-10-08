@@ -21,7 +21,7 @@ use application\core\utils\Cache;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\core\utils\Upgrade;
@@ -92,16 +92,16 @@ class InitMainModule extends CBehavior {
 	 * @param mixed $event
 	 */
 	public function handleLoadSysCache( $event ) {
-		$caches = IBOS::app()->db->createCommand()
+		$caches = Ibos::app()->db->createCommand()
 				->select()
 				->from( Syscache::model()->tableName() )
 				->queryAll();
 		foreach ( $caches as $cache ) {
 			$value = $cache['type'] == '1' ? StringUtil::utf8Unserialize( $cache['value'] ) : $cache['value'];
 			if ( $cache['name'] == 'setting' ) {
-				IBOS::app()->setting->set( 'setting', $value );
+				Ibos::app()->setting->set( 'setting', $value );
 			} else {
-				IBOS::app()->setting->set( 'cache/' . $cache['name'], $value );
+				Ibos::app()->setting->set( 'cache/' . $cache['name'], $value );
 			}
 		}
 	}
@@ -116,12 +116,12 @@ class InitMainModule extends CBehavior {
 		// ---- 性能检测 ,部署模式时可移除以减少组件加载 ----
 		//既然调试模式不显示，那么也不计算
 		if ( YII_DEBUG ) {
-			IBOS::app()->performance->startClock();
-			IBOS::app()->performance->startMemoryUsageMarker();
+			Ibos::app()->performance->startClock();
+			Ibos::app()->performance->startMemoryUsageMarker();
 		}
 		// -------------------------------------------
 		// 可访问的静态资源文件夹
-		defined( 'STATICURL' ) || define( 'STATICURL', IBOS::app()->assetManager->getBaseUrl() );
+		defined( 'STATICURL' ) || define( 'STATICURL', Ibos::app()->assetManager->getBaseUrl() );
 		// 是否用手机访问
 		defined( 'IN_MOBILE' ) || define( 'IN_MOBILE', Env::checkInMobile() );
 		defined( 'IN_DASHBOARD' ) || define( 'IN_DASHBOARD', Env::checkInDashboard() );
@@ -135,7 +135,7 @@ class InitMainModule extends CBehavior {
 			}
 		}
 		// setting 组件里要用到的全局变量，这里先赋予给一个数组,里面的全为初始值
-		$global = IBOS::app()->setting->toArray() + array(
+		$global = Ibos::app()->setting->toArray() + array(
 			'timestamp' => TIMESTAMP,
 			'version' => VERSION,
 			'clientip' => Env::getClientIp(),
@@ -156,9 +156,9 @@ class InitMainModule extends CBehavior {
 		$global['siteroot'] = isset( $url['path'] ) ? $url['path'] : '';
 		$global['siteport'] = empty( $_SERVER['SERVER_PORT'] ) || $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ':' . $_SERVER['SERVER_PORT'];
 		// 加载系统生成配置文件
-		$config = IBOS::engine()->getMainConfig();
+		$config = Ibos::engine()->getMainConfig();
 		if ( empty( $config ) ) {
-			throw new CException( IBOS::Lang( 'Config not found', 'error' ) );
+			throw new CException( Ibos::Lang( 'Config not found', 'error' ) );
 		} else {
 			$global['config'] = $config;
 		}
@@ -166,7 +166,7 @@ class InitMainModule extends CBehavior {
 		$timeOffset = $global['setting']['timeoffset'];
 		$this->setTimezone( $timeOffset );
 		// 注册给setting 组件,实现全局调用
-		IBOS::app()->setting->copyFrom( $global );
+		Ibos::app()->setting->copyFrom( $global );
 	}
 
 	/**
@@ -174,11 +174,11 @@ class InitMainModule extends CBehavior {
 	 * @param mixed $event
 	 */
 	public function handleSystemConfigure( $event ) {
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 
 		// todo::检查系统设置里ip过滤是否启用，若启用，检查当前ip是否合法 @banyan
 		// 处理身份标识
-		if ( !IBOS::app()->user->isGuest ) {
+		if ( !Ibos::app()->user->isGuest ) {
 			defined( 'FORMHASH' ) || define( 'FORMHASH', Env::formHash() );
 		} else {
 			defined( 'FORMHASH' ) || define( 'FORMHASH', '' );
@@ -187,14 +187,14 @@ class InitMainModule extends CBehavior {
 		// 程序关闭处理
 		if ( $global['setting']['appclosed'] ) {
 			if ( defined( 'MODULE_NAME' ) && in_array( MODULE_NAME, array( 'dashboard', 'user' ) ) ||
-					!IBOS::app()->user->isGuest && IBOS::app()->user->isadministrator ||
+					!Ibos::app()->user->isGuest && Ibos::app()->user->isadministrator ||
 					defined( 'IN_SWFHASH' ) && IN_SWFHASH ) {
 				//如果是这些模块，忽略
 				//如果是超级管理员，忽略
 				//如果是swf上传，忽略
 			} else {
-				$msg = IBOS::lang( 'System closed', 'message' );
-				if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+				$msg = Ibos::lang( 'System closed', 'message' );
+				if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
 					Env::iExit( CJSON::encode( array( 'isSuccess' => false, 'msg' => $msg ) ) );
 				} else {
 					Env::iExit( $msg );
@@ -212,9 +212,9 @@ class InitMainModule extends CBehavior {
 		// 过滤全局数组
 		if ( isset( $_GET['GLOBALS'] ) || isset( $_POST['GLOBALS'] ) ||
 				isset( $_COOKIE['GLOBALS'] ) || isset( $_FILES['GLOBALS'] ) ) {
-			throw new CException( IBOS::lang( 'Parameters error', 'error' ) );
+			throw new CException( Ibos::lang( 'Parameters error', 'error' ) );
 		}
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 		$config = $global['config'];
 		// 如果是ibos生成的cookie,把它重新赋值到全局设置里
 		$preLength = strlen( $global['config']['cookie']['cookiepre'] );
@@ -233,7 +233,7 @@ class InitMainModule extends CBehavior {
 		}
 		// 生成身份验证码
 		$global['authkey'] = md5( $global['config']['security']['authkey'] . $global['cookie']['saltkey'] );
-		IBOS::app()->setting->copyFrom( $global );
+		Ibos::app()->setting->copyFrom( $global );
 	}
 
 	/**
@@ -245,10 +245,10 @@ class InitMainModule extends CBehavior {
 		// 这些url也要考虑到程序在升级的过程中可用的情况
 		$allowedGuestUserUrls = array();
 		foreach ( $this->allowedGuestUserRoutes as $allowedGuestUserRoute ) {
-			$allowedGuestUserUrls[] = IBOS::app()->createUrl( $allowedGuestUserRoute );
+			$allowedGuestUserUrls[] = Ibos::app()->createUrl( $allowedGuestUserRoute );
 		}
 		// 获取当前url请求,判断是否在可访问url列表内
-		$requestedUrl = IBOS::app()->getRequest()->getUrl();
+		$requestedUrl = Ibos::app()->getRequest()->getUrl();
 		$isUrlAllowedToGuests = false;
 		//不能用in_array代替了下面的判断是因为还有URL后参数是可变的
 		foreach ( $allowedGuestUserUrls as $url ) {
@@ -293,18 +293,18 @@ class InitMainModule extends CBehavior {
 			// 未登录即跳转
 			if ( !$isUrlAllowedToGuests ) {
 				// 如果是 Ajax 请求
-				if (IBOS::app()->request->getIsAjaxRequest()) {
+				if (Ibos::app()->request->getIsAjaxRequest()) {
 					$retData = array(
 						'isSuccess' => false,
-						'msg' => IBOS::lang('Login timeout'),
+						'msg' => Ibos::lang('Login timeout'),
 					);
 					header('Content-Type:application/json; charset=' . CHARSET);
 					exit(CJSON::encode($retData));
 				}
 				if ( IN_DASHBOARD ) {
-					return IBOS::app()->request->redirect( Ibos::app()->createUrl( 'dashboard/default/login', array( 'refer' => $requestedUrl ) ) );
+					return Ibos::app()->request->redirect( Ibos::app()->createUrl( 'dashboard/default/login', array( 'refer' => $requestedUrl ) ) );
 				} else {
-					return IBOS::app()->user->loginRequired();
+					return Ibos::app()->user->loginRequired();
 				}
 			}
 		}
@@ -315,23 +315,23 @@ class InitMainModule extends CBehavior {
 	 * @param mixed $event
 	 */
 	public function handleInitSession( $event ) {
-		$global = IBOS::app()->setting->toArray();
-		IBOS::app()->session->load( $global['cookie']['sid'], $global['clientip'], IBOS::app()->user->isGuest ? 0 : IBOS::app()->user->uid  );
-		$global['sid'] = IBOS::app()->session->sid;
-		$global['session'] = IBOS::app()->session->var;
+		$global = Ibos::app()->setting->toArray();
+		Ibos::app()->session->load( $global['cookie']['sid'], $global['clientip'], Ibos::app()->user->isGuest ? 0 : Ibos::app()->user->uid  );
+		$global['sid'] = Ibos::app()->session->sid;
+		$global['session'] = Ibos::app()->session->var;
 
 		if ( !empty( $global['sid'] ) && $global['sid'] != $global['cookie']['sid'] ) {
 			MainUtil::setCookie( 'sid', $global['sid'], 86400 );
 		}
-		IBOS::app()->setting->copyFrom( $global );
-		$isNewSession = IBOS::app()->session->isNew;
+		Ibos::app()->setting->copyFrom( $global );
+		$isNewSession = Ibos::app()->session->isNew;
 		// 如果是未登录的用户，检查是否被ban IP
 		if ( $isNewSession ) {
 			if ( Env::ipBanned( $global['clientip'] ) ) {
 				//当访问的客户在禁止ip列表时，程序运行到这里会出错
 				//error方法没有定义
 				//解决是要调用正确的处理函数或是新定义一个error函数
-				//IBOS::error(IBOS::lang('User banned', 'message'));
+				//Ibos::error(Ibos::lang('User banned', 'message'));
 				//直接返回403，禁止访问
 				//TODO 显示更加友好的提示信息
 				header( "HTTP/1.1 403 Forbidden" );
@@ -340,10 +340,10 @@ class InitMainModule extends CBehavior {
 			}
 		}
 		// 如果已登录用户，检查是否需要更新最后活动时间
-		if ( !IBOS::app()->user->isGuest && ( $isNewSession || ( IBOS::app()->session->getKey( 'lastactivity' ) + 600) < TIMESTAMP) ) {
-			IBOS::app()->session->setKey( 'lastactivity', TIMESTAMP );
+		if ( !Ibos::app()->user->isGuest && ( $isNewSession || ( Ibos::app()->session->getKey( 'lastactivity' ) + 600) < TIMESTAMP) ) {
+			Ibos::app()->session->setKey( 'lastactivity', TIMESTAMP );
 			if ( $isNewSession ) {
-				UserStatus::model()->updateByPk( IBOS::app()->user->uid, array( 'lastip' => $global['clientip'], 'lastvisit' => TIMESTAMP ) );
+				UserStatus::model()->updateByPk( Ibos::app()->user->uid, array( 'lastip' => $global['clientip'], 'lastvisit' => TIMESTAMP ) );
 			}
 		}
 	}
@@ -353,10 +353,10 @@ class InitMainModule extends CBehavior {
 	 * @param mixed $event
 	 */
 	public function handleInitCron( $event ) {
-		$cronNextRunTime = IBOS::app()->setting->get( 'cache/cronnextrun' );
+		$cronNextRunTime = Ibos::app()->setting->get( 'cache/cronnextrun' );
 		$enableCronRun = $cronNextRunTime && $cronNextRunTime <= TIMESTAMP;
 		if ( $enableCronRun ) {
-			IBOS::app()->cron->run();
+			Ibos::app()->cron->run();
 		}
 	}
 
@@ -388,16 +388,16 @@ class InitMainModule extends CBehavior {
 	 */
 	public function handleCheckUpgrade( $event ) {
 		// 只有超级管理员才有权限看到
-		if ( !IBOS::app()->user->isGuest && IBOS::app()->user->isadministrator ) {
-			$upgrade = IBOS::app()->setting->get( 'setting/upgrade' );
+		if ( !Ibos::app()->user->isGuest && Ibos::app()->user->isadministrator ) {
+			$upgrade = Ibos::app()->setting->get( 'setting/upgrade' );
 			if ( !empty( $upgrade ) ) {
-				IBOS::app()->setting->set( 'newversion', 1 );
+				Ibos::app()->setting->set( 'newversion', 1 );
 			}
-			$cookie = IBOS::app()->setting->get( 'cookie' );
+			$cookie = Ibos::app()->setting->get( 'cookie' );
 			$needUpgrade = isset( $cookie['checkupgrade'] );
 			if ( $needUpgrade ) {
 				$checkReturn = Upgrade::checkUpgrade();
-				IBOS::app()->setting->set( 'newversion', $checkReturn ? 1 : 0  );
+				Ibos::app()->setting->set( 'newversion', $checkReturn ? 1 : 0  );
 				MainUtil::setCookie( 'checkupgrade', 1, 7200 );
 			}
 		}
@@ -434,7 +434,7 @@ class InitMainModule extends CBehavior {
 			$phpSelf = str_replace( '\\', '/', str_replace( $_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME'] ) );
 			$phpSelf[0] != '/' && $phpSelf = '/' . $phpSelf;
 		} else {
-			throw new CException( IBOS::lang( 'Request tainting', 'error' ) );
+			throw new CException( Ibos::lang( 'Request tainting', 'error' ) );
 		}
 		return $phpSelf;
 	}

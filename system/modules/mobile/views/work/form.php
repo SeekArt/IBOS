@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\DateTime;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
 ?>
@@ -11,12 +11,12 @@ use application\modules\user\model\User;
 			<div><?php echo $run['name']; ?></div>
 			<div class="content">
 				<p class="fss">[<?php echo $run['runid'] ?>] <?php echo $flow['name']; ?></p>
-				<p class="fss"><?php echo  IBOS::lang("Begin user"); ?><?php echo User::model()->fetchRealnameByUid($run['beginuser']); ?></p>
-				<p class="fss"><?php echo IBOS::lang("Begin time"); ?><?php echo DateTime::getlunarCalendar($run['begintime']); ?></p>
+				<p class="fss"><?php echo  Ibos::lang("Begin user"); ?><?php echo User::model()->fetchRealnameByUid($run['beginuser']); ?></p>
+				<p class="fss"><?php echo Ibos::lang("Begin time"); ?><?php echo DateTime::getlunarCalendar($run['begintime']); ?></p>
 			</div>
 			<button class="button small wf-vsf-btn" -data-evt="viewSourceForm" data-param='{"runId": 1}'>
 				<a href="javascript:void(0);" onclick="window.open('<?php echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?r=workflow/preview/print&key='.$_REQUEST['key'];?>', '_blank', 'location=yes')"><i class="moicon mo-search-gray"></i>
-				<?php echo IBOS::lang("Viewform"); ?></a>
+				<?php echo Ibos::lang("Viewform"); ?></a>
 			</button>
 		</li>
 	<?php if(is_array($valueArr)){

@@ -70,7 +70,7 @@ class Module {
 	public static function getIsEnabled( $moduleName ) {
 		static $modules = array();
 		if ( empty( $modules ) ) {
-			$modules = IBOS::app()->getEnabledModule();
+			$modules = Ibos::app()->getEnabledModule();
 		}
 		return isset( $modules[$moduleName] );
 	}
@@ -232,7 +232,7 @@ class Module {
 	public static function getModulePath() {
 		static $path = null;
 		if ( !$path ) {
-			$path = IBOS::getPathOfAlias( 'application' ) . self::DS . self::MODULE_ALIAS . self::DS;
+			$path = Ibos::getPathOfAlias( 'application' ) . self::DS . self::MODULE_ALIAS . self::DS;
 		}
 		return $path;
 	}
@@ -395,18 +395,18 @@ class Module {
 		// 检查是否已安装
 		$record = ModuleModel::model()->findByPk( $moduleName );
 		if ( !empty( $record ) ) {
-			$error = IBOS::lang( 'This module has been installed', 'error' );
+			$error = Ibos::lang( 'This module has been installed', 'error' );
 			return $error;
 		}
 		// 检查模块安装目录
 		$installPath = self::getInstallPath( $moduleName );
 		if ( !is_dir( $installPath ) ) {
-			$error = IBOS::lang( 'Install dir does not exists', 'error' );
+			$error = Ibos::lang( 'Install dir does not exists', 'error' );
 			return $error;
 		}
 		// 模块配置文件
 		if ( !file_exists( $installPath . 'config.php' ) ) {
-			$error = IBOS::lang( 'Module config missing', 'error' );
+			$error = Ibos::lang( 'Module config missing', 'error' );
 			return $error;
 		}
 		// 配置文件格式，目前只是粗略匹配
@@ -414,7 +414,7 @@ class Module {
 		$config = (array) include_once $configFile;
 		$configFormatCorrect = isset( $config['param'] ) && isset( $config['config'] );
 		if ( !$configFormatCorrect ) {
-			$error = IBOS::lang( 'Module config format error', 'error' );
+			$error = Ibos::lang( 'Module config format error', 'error' );
 			return $error;
 		}
 		return $error;
@@ -426,7 +426,7 @@ class Module {
 	 */
 	public static function executeSql( $sql ) {
 		$sqls = StringUtil::splitSql( $sql );
-		$command = IBOS::app()->db->createCommand();
+		$command = Ibos::app()->db->createCommand();
 		if ( is_array( $sqls ) ) {
 			foreach ( $sqls as $sql ) {
 				if ( trim( $sql ) != '' ) {
@@ -455,7 +455,7 @@ class Module {
 	 * @return boolean
 	 */
 	public static function getIsInstall( $module ) {
-		$rs = IBOS::app()->db->createCommand()
+		$rs = Ibos::app()->db->createCommand()
 				->select( 'module' )
 				->from( '{{module}}' )
 				->where( "`module` = '{$module}'" )

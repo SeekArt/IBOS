@@ -7,7 +7,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\StringUtil;
 use application\modules\article\model\Article;
@@ -77,7 +77,7 @@ class ContentController extends BaseController {
                 $bodyData['toids'] = $data['fromid'];
                 $bodyData['sendtime'] = TIMESTAMP;
                 $bodyData['content'] = $content;
-                $bodyData['subject'] = IBOS::lang('Reply subject', '', array('{subject}' => $data['subject']));
+                $bodyData['subject'] = Ibos::lang('Reply subject', '', array('{subject}' => $data['subject']));
             } else {
                 // 表单提交
                 $bodyData = $this->beforeSaveBody();
@@ -88,8 +88,8 @@ class ContentController extends BaseController {
              * 日志记录
              */
             $log = array(
-                'user' => IBOS::app()->user->username,
-                'ip' => IBOS::app()->setting->get('clientip'),
+                'user' => Ibos::app()->user->username,
+                'ip' => Ibos::app()->setting->get('clientip'),
                 'isSuccess' => 1
             );
             Log::write($log, 'action', 'module.email.content.add');
@@ -149,7 +149,7 @@ class ContentController extends BaseController {
                                         $toidAll = array_filter($toidAll); // 去除空值
                                         $toidAll = array_unique($toidAll); // 去除重复
 
-                                        $uid = IBOS::app()->user->uid;
+                                        $uid = Ibos::app()->user->uid;
                                         if ($uid != $bodyData['fromid']) {
                                             $in[] = StringUtil::wrapId($bodyData['fromid']);
                                         }
@@ -164,10 +164,10 @@ class ContentController extends BaseController {
                                         }
                                     }
                                 }
-                                $subject = IBOS::lang('Reply subject', '', array('{subject}' => $bodyData['subject']));
+                                $subject = Ibos::lang('Reply subject', '', array('{subject}' => $bodyData['subject']));
                                 break;
                             case 'fw':
-                                $subject = IBOS::lang('Fw subject', '', array('{subject}' => $bodyData['subject']));
+                                $subject = Ibos::lang('Fw subject', '', array('{subject}' => $bodyData['subject']));
                                 if (!empty($bodyData['attachmentid'])) {
                                     $attach = Attach::getAttach($bodyData['attachmentid']);
                                 }
@@ -188,7 +188,7 @@ class ContentController extends BaseController {
                 'content' => $content,
                 'allowWebMail' => $this->allowWebMail,
                 'webMails' => $this->webMails,
-                'systemRemind' => IBOS::app()->setting->get('setting/emailsystemremind'),
+                'systemRemind' => Ibos::app()->setting->get('setting/emailsystemremind'),
                 'uploadConfig' => Attach::getUploadConfig(),
                 'isInstallThread' => Module::getIsEnabled('thread')
             );
@@ -196,13 +196,13 @@ class ContentController extends BaseController {
                 $data['attach'] = $attach;
             }
             if ($data['isInstallThread']) {
-                $data['threadList'] = Thread::model()->getThreadList(IBOS::app()->user->uid);
+                $data['threadList'] = Thread::model()->getThreadList(Ibos::app()->user->uid);
             }
-            $this->setPageTitle(IBOS::lang('Fill in email'));
+            $this->setPageTitle(Ibos::lang('Fill in email'));
             $this->setPageState('breadCrumbs', array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-                array('name' => IBOS::lang('Fill in email'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                array('name' => Ibos::lang('Fill in email'))
             ));
             $data['backurl'] = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
             $this->render('add', $data);
@@ -216,15 +216,15 @@ class ContentController extends BaseController {
     public function actionEdit() {
         $id = intval(Env::getRequest('id'));
         if (empty($id)) {
-            $this->error(IBOS::lang('Parameters error', 'error'), $this->createUrl('list/index'));
+            $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('list/index'));
         }
         $emailBody = EmailBody::model()->fetchByPk($id);
         if (empty($emailBody)) {
-            $this->error(IBOS::lang('Email not exists'), $this->createUrl('list/index'));
+            $this->error(Ibos::lang('Email not exists'), $this->createUrl('list/index'));
         }
         // 权限判定
         if (intval($emailBody['fromid']) !== $this->uid) {
-            $this->error(IBOS::lang('Request tainting', 'error'), $this->createUrl('list/index'));
+            $this->error(Ibos::lang('Request tainting', 'error'), $this->createUrl('list/index'));
         }
         if (Env::submitCheck('formhash')) {
             $bodyData = $this->beforeSaveBody();
@@ -243,14 +243,14 @@ class ContentController extends BaseController {
                 'email' => $emailBody,
                 'allowWebMail' => $this->allowWebMail,
                 'webMails' => $this->webMails,
-                'systemRemind' => IBOS::app()->setting->get('setting/emailsystemremind'),
+                'systemRemind' => Ibos::app()->setting->get('setting/emailsystemremind'),
                 'uploadConfig' => Attach::getUploadConfig()
             );
-            $this->setPageTitle(IBOS::lang('Edit email'));
+            $this->setPageTitle(Ibos::lang('Edit email'));
             $this->setPageState('breadCrumbs', array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-                array('name' => IBOS::lang('Edit email'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                array('name' => Ibos::lang('Edit email'))
             ));
             $this->render('edit', $data);
         }
@@ -274,7 +274,7 @@ class ContentController extends BaseController {
                 $data['isSend'] = FALSE;
             }
             if (!$email) {
-                $this->error(IBOS::lang('Email not exists'), $this->createUrl('list/index'));
+                $this->error(Ibos::lang('Email not exists'), $this->createUrl('list/index'));
             }
             // 阅读权限判定
             $isReceiver = $email['toid'] == $this->uid ||
@@ -282,7 +282,7 @@ class ContentController extends BaseController {
                 StringUtil::findIn($email['copytoids'], $this->uid) ||
                 StringUtil::findIn($email['toids'], $this->uid);
             if (!$isReceiver) {
-                $this->error(IBOS::lang('View access invalid'), $this->createUrl('list/index'));
+                $this->error(Ibos::lang('View access invalid'), $this->createUrl('list/index'));
             }
             // 显示外部邮件框架内容
             if (Env::getRequest('op') == 'showframe') {
@@ -361,16 +361,16 @@ class ContentController extends BaseController {
             $data['prev'] = Email::model()->fetchPrev($id, $this->uid, $email['fid'], $this->archiveId);
             $data['email'] = $email;
             $data['weekDay'] = DateTime::getWeekDay($email['sendtime']);
-            $this->setPageTitle(IBOS::lang('Show email'));
+            $this->setPageTitle(Ibos::lang('Show email'));
             $this->setPageState('breadCrumbs', array(
-                array('name' => IBOS::lang('Personal Office')),
-                array('name' => IBOS::lang('Email center'), 'url' => $this->createUrl('list/index')),
-                array('name' => IBOS::lang('Show email'))
+                array('name' => Ibos::lang('Personal Office')),
+                array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+                array('name' => Ibos::lang('Show email'))
             ));
-            NotifyMessage::model()->setReadByUrl($this->uid, IBOS::app()->getRequest()->getUrl());
+            NotifyMessage::model()->setReadByUrl($this->uid, Ibos::app()->getRequest()->getUrl());
             $this->render('show', $data);
         } else {
-            $this->error(IBOS::lang('Parameters error'), $this->createUrl('list/index'));
+            $this->error(Ibos::lang('Parameters error'), $this->createUrl('list/index'));
         }
     }
 
@@ -395,7 +395,7 @@ class ContentController extends BaseController {
         $usedSize = EmailFolder::model()->getUsedSize($this->uid);
         //如果要比较数字大小，只要其中一个是数字即可
         if ((float)$usedSize > implode('', StringUtil::ConvertBytes($userSize . 'm'))) {
-            $this->error(IBOS::lang('Capacity overflow', '', array('{size}' => $usedSize)), $this->createUrl('email/list'));
+            $this->error(Ibos::lang('Capacity overflow', '', array('{size}' => $usedSize)), $this->createUrl('email/list'));
         }
     }
 
@@ -407,7 +407,7 @@ class ContentController extends BaseController {
         $data = $_POST['emailbody'];
         // 内部收件人与外部收件人不能同时为空
         if (empty($data['towebmail']) && empty($data['toids'])) {
-            $this->error(IBOS::lang('Empty receiver'));
+            $this->error(Ibos::lang('Empty receiver'));
         }
         $data['fromid'] = $this->uid;
         $bodyData = EmailBody::model()->handleEmailBody($data);
@@ -444,12 +444,12 @@ class ContentController extends BaseController {
             }
             // 更新积分
             UserUtil::updateCreditByAction('postmail', $this->uid);
-            $message = IBOS::lang('Send succeed');
+            $message = Ibos::lang('Send succeed');
         } else {
-            $message = IBOS::lang('Save succeed', 'message');
+            $message = Ibos::lang('Save succeed', 'message');
         }
         // 两种请求的不同返回
-        if (IBOS::app()->request->getIsAjaxRequest()) {
+        if (Ibos::app()->request->getIsAjaxRequest()) {
             $this->ajaxReturn(array('isSuccess' => true, 'messsage' => $message));
         } else {
             $backurl = Env::getRequest('backurl');
@@ -468,7 +468,7 @@ class ContentController extends BaseController {
      * @return string
      */
     private function handleEmailContentData($bodyData) {
-        $lang = IBOS::getLangSources();
+        $lang = Ibos::getLangSources();
         $contentData = array(
             'lang' => $lang,
             'body' => $bodyData
@@ -505,7 +505,7 @@ class ContentController extends BaseController {
         $artId = intval(Env::getRequest('relatedid'));
         $article = Article::model()->fetchByPk($artId);
         if (empty($article)) {
-            $this->error(IBOS::lang('转发的新闻不存在或者已删掉'), IBOS::app()->urlManager->createUrl('article/default/index'));
+            $this->error(Ibos::lang('转发的新闻不存在或者已删掉'), Ibos::app()->urlManager->createUrl('article/default/index'));
         }
         return $article;
     }
@@ -518,7 +518,7 @@ class ContentController extends BaseController {
         $docId = intval(Env::getRequest('relatedid'));
         $doc = Officialdoc::model()->fetchByPk($docId);
         if (empty($doc)) {
-            $this->error(IBOS::lang('转发的公文不存在或者已删掉'), IBOS::app()->urlManager->createUrl('officialdoc/officialdoc/index'));
+            $this->error(Ibos::lang('转发的公文不存在或者已删掉'), Ibos::app()->urlManager->createUrl('officialdoc/officialdoc/index'));
         }
         return $doc;
     }

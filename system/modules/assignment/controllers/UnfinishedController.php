@@ -18,7 +18,7 @@ namespace application\modules\assignment\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\assignment\core\AssignmentOpApi;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\model\AssignmentApply;
@@ -34,13 +34,13 @@ class UnfinishedController extends BaseController {
 	 * 未完成的任务列表页
 	 */
 	public function actionIndex() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$params = $this->getUnfinishedDataByUid( $uid );
 		$params['uploadConfig'] = Attach::getUploadConfig();
-		$this->setPageTitle( IBOS::lang( 'Assignment' ) );
+		$this->setPageTitle( Ibos::lang( 'Assignment' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Assignment' ), 'url' => $this->createUrl( 'unfinished/index' ) ),
-			array( 'name' => IBOS::lang( 'Unfinished list' ) )
+			array( 'name' => Ibos::lang( 'Assignment' ), 'url' => $this->createUrl( 'unfinished/index' ) ),
+			array( 'name' => Ibos::lang( 'Unfinished list' ) )
 		) );
 		$this->render( 'list', $params );
 	}
@@ -55,26 +55,26 @@ class UnfinishedController extends BaseController {
 		}
 		$getUid = intval( Env::getRequest( 'uid' ) );
 		if ( !$getUid ) {
-			$deptArr = UserUtil::getManagerDeptSubUserByUid( IBOS::app()->user->uid ); //取得管理的部门和下属
+			$deptArr = UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ); //取得管理的部门和下属
 			if ( !empty( $deptArr ) ) {  // 取得管理的第一个部门的第一个下属
 				$firstDept = reset( $deptArr );
 				$uid = $firstDept['user'][0]['uid'];
 			} else {
-				$this->error( IBOS::lang( 'You do not subordinate' ), $this->createUrl( 'schedule/index' ) );
+				$this->error( Ibos::lang( 'You do not subordinate' ), $this->createUrl( 'schedule/index' ) );
 			}
 		} else {
 			$uid = $getUid;
 		}
 		// 权限判断
-		if ( !UserUtil::checkIsSub( IBOS::app()->user->uid, $uid ) ) {
-			$this->error( IBOS::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
+		if ( !UserUtil::checkIsSub( Ibos::app()->user->uid, $uid ) ) {
+			$this->error( Ibos::lang( 'No permission to view schedule' ), $this->createUrl( 'schedule/index' ) );
 		}
 		$params = $this->getUnfinishedDataByUid( $uid );
 		$params['uid'] = $uid;
-		$this->setPageTitle( IBOS::lang( 'Assignment' ) );
+		$this->setPageTitle( Ibos::lang( 'Assignment' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Assignment' ), 'url' => $this->createUrl( 'unfinished/index' ) ),
-			array( 'name' => IBOS::lang( 'Unfinished list' ) )
+			array( 'name' => Ibos::lang( 'Assignment' ), 'url' => $this->createUrl( 'unfinished/index' ) ),
+			array( 'name' => Ibos::lang( 'Unfinished list' ) )
 		) );
 		$this->render( 'sublist', $params );
 	}
@@ -83,7 +83,7 @@ class UnfinishedController extends BaseController {
 	 * 得到某个用户的下属，取5条
 	 */
 	protected function getsubordinates() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$uid = intval( Env::getRequest( 'uid' ) );
 			$getItem = Env::getRequest( 'item' );
 			$item = empty( $getItem ) ? 5 : $getItem;
@@ -98,12 +98,12 @@ class UnfinishedController extends BaseController {
 	 * 异步统一入口
 	 */
 	public function actionAjaxEntrance() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$op = Env::getRequest( 'op' );
 			// 推办，完成，评价，重启，申请延期，延期，同意/拒绝延期申请，申请取消，取消，同意/拒绝取消申请，提醒
 			$allowOptions = array( 'push', 'toFinished', 'stamp', 'restart', 'applyDelay', 'delay', 'runApplyDelayResult', 'applyCancel', 'cancel', 'runApplyCancelResult', 'remind' );
 			if ( !in_array( $op, $allowOptions ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Parameters error', 'error' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Parameters error', 'error' ) ) );
 			} else {
 				$assignmentId = Env::getRequest( 'id' );
 				$paramCheck = $this->checkAvailableById( $assignmentId );
@@ -122,18 +122,18 @@ class UnfinishedController extends BaseController {
 	protected function push( $assignmentId ) {
 		// 判断是否是该任务的指派人
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( !$this->checkIsDesigneeuid( $assignment['designeeuid'] ) ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Only the sponsors have permission to remind' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Only the sponsors have permission to remind' ) ) );
 		}
 		$opApi = AssignmentOpApi::getInstance();
 		// 给负责人消息提醒
 		$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['chargeuid'], 'assignment_push_message' );
 		// 发送一条推办评论
-		$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Push the assignment' ) );
+		$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Push the assignment' ) );
 		// 记录日志
-		AssignmentLog::model()->addLog( $uid, $assignmentId, 'push', IBOS::lang( 'Push the assignment' ) );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		AssignmentLog::model()->addLog( $uid, $assignmentId, 'push', Ibos::lang( 'Push the assignment' ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -145,24 +145,24 @@ class UnfinishedController extends BaseController {
 		$isDesigneeuid = $this->checkIsDesigneeuid( $assignment['designeeuid'] );
 		$isChargeuid = $this->checkIsChargeuid( $assignment['chargeuid'] );
 		if ( !$isDesigneeuid && !$isChargeuid ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Only the sponsors or head have permission to complete' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Only the sponsors or head have permission to complete' ) ) );
 		}
 		// 更改任务为完成状态
 		$updateSuccess = Assignment::model()->modify( $assignmentId, array( 'status' => 2, 'finishtime' => TIMESTAMP ) );
 		if ( $updateSuccess ) {
 			$opApi = AssignmentOpApi::getInstance();
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			// 给发起人消息提醒
 			$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['designeeuid'], 'assignment_finish_message' );
 			// 增加积分
 			UserUtil::updateCreditByAction( 'finishassignment', $uid );
 			// 发送一条完成评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Finish the assignment', 'assignment.default' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Finish the assignment', 'assignment.default' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'finish', IBOS::lang( 'Finish the assignment', 'assignment.default' ) );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'finish', Ibos::lang( 'Finish the assignment', 'assignment.default' ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The assignment has been completed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The assignment has been completed' ) ) );
 		}
 	}
 
@@ -179,16 +179,16 @@ class UnfinishedController extends BaseController {
 			$participantuid = explode( ',', $assignment['participantuid'] );
 			$uidArr = array_merge( $participantuid, $chargeuid );
 			$opApi = AssignmentOpApi::getInstance();
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $uidArr, 'assignment_appraisal_message' );
 			// 发送一条评价评论
 			$stampInfo = Stamp::model()->fetchByPk( $stamp );
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Stamp the assignment', 'assignment.default' ) . '-' . $stampInfo['code'] );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Stamp the assignment', 'assignment.default' ) . '-' . $stampInfo['code'] );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'stamp', IBOS::lang( 'Stamp the assignment' ) . '-' . $stampInfo['code'] );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'stamp', Ibos::lang( 'Stamp the assignment' ) . '-' . $stampInfo['code'] );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Assignment has not been finished' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Assignment has not been finished' ) ) );
 		}
 	}
 
@@ -201,19 +201,19 @@ class UnfinishedController extends BaseController {
 		$isDesigneeuid = $this->checkIsDesigneeuid( $assignment['designeeuid'] );
 		$isChargeuid = $this->checkIsChargeuid( $assignment['chargeuid'] );
 		if ( !$isDesigneeuid && !$isChargeuid ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Only the sponsors or head have permission to restart' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Only the sponsors or head have permission to restart' ) ) );
 		}
 		// 更改完成状态
 		$updateSuccess = Assignment::model()->modify( $assignmentId, array( 'status' => 1, 'finishtime' => 0, 'stamp' => 0 ) );
 		if ( $updateSuccess ) {
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			// 发送一条重启评论
-			AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, IBOS::lang( 'Restart the assignment', 'assignment.default' ) );
+			AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, Ibos::lang( 'Restart the assignment', 'assignment.default' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'restart', IBOS::lang( 'Restart the assignment', 'assignment.default' ) );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'restart', Ibos::lang( 'Restart the assignment', 'assignment.default' ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		} else {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Task is the initial state' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Task is the initial state' ) ) );
 		}
 	}
 
@@ -226,11 +226,11 @@ class UnfinishedController extends BaseController {
 			$postStattime = Env::getRequest( 'starttime' );
 			$postEndtime = Env::getRequest( 'endtime' );
 			if ( empty( $postEndtime ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The end time cannot be empty' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The end time cannot be empty' ) ) );
 			}
 			$delayReason = Env::getRequest( 'delayReason' ); // 延期理由
 			// 记录延期申请
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$starttime = empty( $postStattime ) ? TIMESTAMP : strtotime( $postStattime );
 			$endtime = strtotime( $postEndtime );
 			AssignmentApply::model()->addDelay( $uid, $assignmentId, $delayReason, $starttime, $endtime );
@@ -238,10 +238,10 @@ class UnfinishedController extends BaseController {
 			$opApi = AssignmentOpApi::getInstance();
 			$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['designeeuid'], 'assignment_applydelay_message' );
 			// 发送一条申请延期评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Apply delay the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Apply delay the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'applydelay', IBOS::lang( 'Apply delay the assignment' ) );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'applydelay', Ibos::lang( 'Apply delay the assignment' ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		}
 	}
 
@@ -250,15 +250,15 @@ class UnfinishedController extends BaseController {
 	 */
 	protected function delay( $assignmentId ) {
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( $this->checkIsDesigneeuid( $assignment['designeeuid'] ) ) { // 指派人判断
 			$delayStattime = strtotime( Env::getRequest( 'starttime' ) );
 			$delayEndtime = strtotime( Env::getRequest( 'endtime' ) );
 			if ( empty( $delayEndtime ) ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The end time cannot be empty' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The end time cannot be empty' ) ) );
 			}
 			$this->handleDelay( $assignmentId, $delayStattime, $delayEndtime, $uid );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		}
 	}
 
@@ -268,29 +268,29 @@ class UnfinishedController extends BaseController {
 	protected function runApplyDelayResult( $assignmentId ) {
 		$agree = intval( Env::getRequest( 'agree' ) );
 		$opApi = AssignmentOpApi::getInstance();
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( $agree ) { // 同意
 			$apply = AssignmentApply::model()->fetchByAttributes( array( 'assignmentid' => $assignmentId ) );
 			if ( !empty( $apply ) ) {
 				$this->handleDelay( $assignmentId, $apply['delaystarttime'], $apply['delayendtime'], $uid );
 			}
 			// 发送一条同意延期评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Agree delay the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Agree delay the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'agreedelay', IBOS::lang( 'Agree delay the assignment' ) );
-			$result = IBOS::lang( 'Agree' );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'agreedelay', Ibos::lang( 'Agree delay the assignment' ) );
+			$result = Ibos::lang( 'Agree' );
 		} else { // 拒绝
 			AssignmentApply::model()->deleteAll( "assignmentid = {$assignmentId}" );
 			// 发送一条拒绝延期评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Refuse delay the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Refuse delay the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'refusedelay', IBOS::lang( 'Refuse delay the assignment' ) );
-			$result = IBOS::lang( 'Refuse' );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'refusedelay', Ibos::lang( 'Refuse delay the assignment' ) );
+			$result = Ibos::lang( 'Refuse' );
 		}
 		// 给申请人消息提醒
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
 		$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['chargeuid'], 'assignment_applydelayresult_message', $result );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -300,9 +300,9 @@ class UnfinishedController extends BaseController {
 		Assignment::model()->modify( $assignmentId, array( 'starttime' => $delayStarttime, 'endtime' => $delayEndtime ) );
 		AssignmentApply::model()->deleteAll( "assignmentid = {$assignmentId}" );
 		// 发送一条延期评论
-		AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, IBOS::lang( 'Delay the assignment' ) );
+		AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, Ibos::lang( 'Delay the assignment' ) );
 		// 记录日志
-		AssignmentLog::model()->addLog( $uid, $assignmentId, 'delay', IBOS::lang( 'Delay the assignment' ) );
+		AssignmentLog::model()->addLog( $uid, $assignmentId, 'delay', Ibos::lang( 'Delay the assignment' ) );
 		return true;
 	}
 
@@ -311,9 +311,9 @@ class UnfinishedController extends BaseController {
 	 */
 	protected function applyCancel( $assignmentId ) {
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( $assignment['status'] == 2 ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The completed assignment cannot be cancelled, can restart' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The completed assignment cannot be cancelled, can restart' ) ) );
 		}
 		if ( $this->checkIsChargeuid( $assignment['chargeuid'] ) ) { // 负责人判断
 			$cancelReason = Env::getRequest( 'cancelReason' ); // 延期理由
@@ -323,10 +323,10 @@ class UnfinishedController extends BaseController {
 			$opApi = AssignmentOpApi::getInstance();
 			$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['designeeuid'], 'assignment_applycancel_message' );
 			// 发送一条申请取消评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Apply cancel the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Apply cancel the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'applycancel', IBOS::lang( 'Apply cancel the assignment' ) );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'applycancel', Ibos::lang( 'Apply cancel the assignment' ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		}
 	}
 
@@ -335,13 +335,13 @@ class UnfinishedController extends BaseController {
 	 */
 	protected function cancel( $assignmentId ) {
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( $assignment['status'] == 2 ) {
-			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'The completed assignment cannot be cancelled, can restart' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'The completed assignment cannot be cancelled, can restart' ) ) );
 		}
 		if ( $this->checkIsDesigneeuid( $assignment['designeeuid'] ) ) { // 指派人判断
 			$this->handleCancel( $assignmentId, $uid );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 		}
 	}
 
@@ -351,25 +351,25 @@ class UnfinishedController extends BaseController {
 	protected function runApplyCancelResult( $assignmentId ) {
 		$opApi = AssignmentOpApi::getInstance();
 		$agree = intval( Env::getRequest( 'agree' ) );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( $agree ) { // 同意
 			// 发送一条同意取消评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Agree cancel the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Agree cancel the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'agreecancel', IBOS::lang( 'Agree cancel the assignment' ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'agreecancel', Ibos::lang( 'Agree cancel the assignment' ) );
 			$this->handleCancel( $assignmentId, $uid );
-			$result = IBOS::lang( 'Agree' );
+			$result = Ibos::lang( 'Agree' );
 		} else { // 拒绝
-			$result = IBOS::lang( 'Refuse' );
+			$result = Ibos::lang( 'Refuse' );
 			AssignmentApply::model()->deleteAll( "assignmentid = {$assignmentId}" );
 			// 发送一条拒绝取消评论
-			$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Refuse cancel the assignment' ) );
+			$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Refuse cancel the assignment' ) );
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'refusecancel', IBOS::lang( 'Refuse cancel the assignment' ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'refusecancel', Ibos::lang( 'Refuse cancel the assignment' ) );
 		}
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
 		$opApi->sendNotify( $uid, $assignmentId, $assignment['subject'], $assignment['chargeuid'], 'assignment_applycancelresult_message', $result );
-		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+		$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 	}
 
 	/**
@@ -379,9 +379,9 @@ class UnfinishedController extends BaseController {
 		Assignment::model()->modify( $assignmentId, array( 'status' => 4 ) );
 		AssignmentApply::model()->deleteAll( "assignmentid = {$assignmentId}" );
 		// 发送一条取消评论
-		AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, IBOS::lang( 'Cancel the assignment' ) );
+		AssignmentOpApi::getInstance()->addStepComment( $uid, $assignmentId, Ibos::lang( 'Cancel the assignment' ) );
 		// 记录日志
-		AssignmentLog::model()->addLog( $uid, $assignmentId, 'cancel', IBOS::lang( 'Cancel the assignment' ) );
+		AssignmentLog::model()->addLog( $uid, $assignmentId, 'cancel', Ibos::lang( 'Cancel the assignment' ) );
 		return true;
 	}
 
@@ -391,7 +391,7 @@ class UnfinishedController extends BaseController {
 	protected function remind( $assignmentId ) {
 		if ( Env::submitCheck( 'remindsubmit' ) ) {
 			if ( $this->getIsInstallCalendar() ) {
-				$uid = IBOS::app()->user->uid;
+				$uid = Ibos::app()->user->uid;
 				$remindTime = Env::getRequest( 'remindTime' );
 				// 删除旧日程
 				$oldCalendarids = AssignmentRemind::model()->fetchCalendarids( $assignmentId, $uid );
@@ -415,18 +415,18 @@ class UnfinishedController extends BaseController {
 					// 关联表，删除旧数据，添加新数据
 					AssignmentRemind::model()->add( array( 'assignmentid' => $assignmentId, 'calendarid' => $cid, 'remindtime' => $remindTime, 'uid' => $uid, 'content' => $remindContent ) );
 				}
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
 			} else {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Not installed calendar to support remind' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Not installed calendar to support remind' ) ) );
 			}
 		} else {
-			$remind = AssignmentRemind::model()->fetch( sprintf( "uid = %d AND assignmentid = %d", IBOS::app()->user->uid, $assignmentId ) );
+			$remind = AssignmentRemind::model()->fetch( sprintf( "uid = %d AND assignmentid = %d", Ibos::app()->user->uid, $assignmentId ) );
 			$remindtime = empty( $remind ) ? TIMESTAMP : $remind['remindtime'];
 			$params = array(
 				'reminddate' => date( 'Y-m-d', $remindtime ),
 				'remindtime' => date( 'H:i', $remindtime ),
 				'content' => empty( $remind ) ? '' : $remind['content'],
-				'lang' => IBOS::getLangSource( 'assignment.default' )
+				'lang' => Ibos::getLangSource( 'assignment.default' )
 			);
 			$remindAlias = 'application.modules.assignment.views.default.remind';
 			$editView = $this->renderPartial( $remindAlias, $params, true );

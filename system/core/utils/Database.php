@@ -54,7 +54,7 @@ class Database {
      * @return string
      */
     public static function getdbPrefix() {
-        return IBOS::app()->setting->get( 'config/db/tableprefix' );
+        return Ibos::app()->setting->get( 'config/db/tableprefix' );
     }
 
     /**
@@ -96,7 +96,7 @@ class Database {
         $prefix = str_replace( '_', '\_', $tablePrefix );
         $sqlAdd = $dbName ? " FROM {$dbName} LIKE '$arr[1]%'" : "LIKE '{$prefix}%'";
         $tables = $table = array();
-        $command = IBOS::app()->db->createCommand( "SHOW TABLE STATUS {$sqlAdd}" );
+        $command = Ibos::app()->db->createCommand( "SHOW TABLE STATUS {$sqlAdd}" );
         $command->execute();
         $query = $command->query();
         foreach ( $query as $table ) {
@@ -113,7 +113,7 @@ class Database {
      * @return array
      */
     public static function getTableStatus( $tableName, $formatSize = true ) {
-        $status = IBOS::app()->db->createCommand()
+        $status = Ibos::app()->db->createCommand()
                 ->setText( "SHOW TABLE STATUS LIKE '{{" . str_replace( '_', '\_', $tableName ) . "}}'" )
                 ->queryRow();
 
@@ -134,12 +134,12 @@ class Database {
     public static function dropTable( $tableName, $force = false ) {
         $quoteTableName = "{{{$tableName}}}";
         if ( $force ) {
-            IBOS::app()->db->createCommand()->dropTable( $quoteTableName );
+            Ibos::app()->db->createCommand()->dropTable( $quoteTableName );
             return 1;
         } else {
             $tableInfo = self::getTableStatus( $tableName );
             if ( $tableInfo['Rows'] == 0 ) {
-                IBOS::app()->db->createCommand()->dropTable( $quoteTableName );
+                Ibos::app()->db->createCommand()->dropTable( $quoteTableName );
                 return 1;
             } else {
                 return -1;
@@ -154,8 +154,8 @@ class Database {
      * @return boolean
      */
     public static function cloneTable( $prototype, $target ) {
-        $db = IBOS::app()->db->createCommand();
-        $prefix = IBOS::app()->db->tablePrefix;
+        $db = Ibos::app()->db->createCommand();
+        $prefix = Ibos::app()->db->tablePrefix;
         $prototype = $prefix . $prototype;
         $target = $prefix . $target;
         $db->setText( 'SET SQL_QUOTE_SHOW_CREATE = 0' )->execute();
@@ -174,7 +174,7 @@ class Database {
      * @return string 数据库表结构字符串
      */
     public static function getSqlDumpTableStruct( $table, $compat, $dumpCharset, $charset = '' ) {
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         $rows = $command->setText( "SHOW CREATE TABLE {$table}" )->queryRow();
         if ( $rows ) {
             $tableDump = "DROP TABLE IF EXISTS {$table};\n";
@@ -186,7 +186,7 @@ class Database {
             $rows['Create Table'] = str_replace( "CREATE TABLE {$tableName}", 'CREATE TABLE ' . $table, $rows['Create Table'] );
         }
         $tableDump .= $rows['Create Table'];
-        $dbVersion = IBOS::app()->db->getServerVersion();
+        $dbVersion = Ibos::app()->db->getServerVersion();
         if ( $compat == 'MYSQL41' && $dbVersion < '4.1' ) {
             $tableDump = preg_replace( '/TYPE\=(.+)/', 'ENGINE=\\1 DEFAULT CHARSET=' . $dumpCharset, $tableDump );
         }
@@ -214,9 +214,9 @@ class Database {
      * @return array 返回一个带有消息状态及消息内容的数组
      */
     public static function databaseBackup() {
-        $config = IBOS::app()->setting->toArray();
+        $config = Ibos::app()->setting->toArray();
         // 设置备份时关键字不转义
-        $command = IBOS::app()->db->createCommand( 'SET SQL_QUOTE_SHOW_CREATE=0' );
+        $command = Ibos::app()->db->createCommand( 'SET SQL_QUOTE_SHOW_CREATE=0' );
         $command->execute();
         // 检查导出名字
         $fileName = Env::getRequest( 'filename' );
@@ -224,7 +224,7 @@ class Database {
         if ( !$fileName || (boolean) $hasDangerFileName ) {
             return array(
                 'type' => 'error',
-                'msg' => IBOS::lang( 'Database export filename invalid', 'dashboard.default' )
+                'msg' => Ibos::lang( 'Database export filename invalid', 'dashboard.default' )
             );
         }
 
@@ -253,7 +253,7 @@ class Database {
             if ( !is_array( $tables ) || empty( $tables ) ) {
                 return array(
                     'type' => 'error',
-                    'msg' => IBOS::lang( 'Database export custom invalid', 'dashboard.default' )
+                    'msg' => Ibos::lang( 'Database export custom invalid', 'dashboard.default' )
                 );
             }
         }
@@ -267,7 +267,7 @@ class Database {
         // 导出编码
         $sqlCharset = Env::getRequest( 'sqlcharset' );
         $sqlCompat = Env::getRequest( 'sqlcompat' );
-        $dbVersion = IBOS::app()->db->getServerVersion();
+        $dbVersion = Ibos::app()->db->getServerVersion();
         $useZip = Env::getRequest( 'usezip' );
         $useHex = Env::getRequest( 'usehex' );
         $extendIns = Env::getRequest( 'extendins' );
@@ -333,7 +333,7 @@ class Database {
                     @fclose( $fp );
                     return array(
                         'type' => 'error',
-                        'msg' => IBOS::lang( 'Database export file invalid', 'dashboard.default' ),
+                        'msg' => Ibos::lang( 'Database export file invalid', 'dashboard.default' ),
                         'url' => ''
                     );
                 } else {
@@ -366,10 +366,10 @@ class Database {
                         'usehex' => $useHex,
                         'usezip' => $useZip
                     );
-                    $url = IBOS::app()->urlManager->createUrl( 'dashboard/database/backup', $param );
+                    $url = Ibos::app()->urlManager->createUrl( 'dashboard/database/backup', $param );
                     return array(
                         'type' => 'success',
-                        'msg' => IBOS::lang( 'Database export multivol redirect', 'dashboard.default', array( 'volume' => $volume ) ),
+                        'msg' => Ibos::lang( 'Database export multivol redirect', 'dashboard.default', array( 'volume' => $volume ) ),
                         'url' => $url
                     );
                 }
@@ -395,8 +395,8 @@ class Database {
                     } else {
                         return array(
                             'type' => 'success',
-                            'msg' => IBOS::lang( 'Database export multivol succeed', 'dashboard.default', array( 'volume' => $volume ) ),
-                            'url' => IBOS::app()->urlManager->createUrl( 'dashboard/database/restore' )
+                            'msg' => Ibos::lang( 'Database export multivol succeed', 'dashboard.default', array( 'volume' => $volume ) ),
+                            'url' => Ibos::app()->urlManager->createUrl( 'dashboard/database/restore' )
                         );
                     }
                     unset( $sqlDump, $zip, $content );
@@ -404,14 +404,14 @@ class Database {
                     $filename = $zipFileName;
                     return array(
                         'type' => 'success',
-                        'msg' => IBOS::lang( 'Database export zip succeed', 'dashboard.default' ),
+                        'msg' => Ibos::lang( 'Database export zip succeed', 'dashboard.default' ),
                         'param' => array( 'autoJump' => false )
                     );
                 } else {
                     return array(
                         'type' => 'success',
-                        'msg' => IBOS::lang( 'Database export multivol succeed', 'dashboard.default', array( 'volume' => $volume ) ),
-                        'url' => IBOS::app()->urlManager->createUrl( 'dashboard/database/restore' )
+                        'msg' => Ibos::lang( 'Database export multivol succeed', 'dashboard.default', array( 'volume' => $volume ) ),
+                        'url' => Ibos::app()->urlManager->createUrl( 'dashboard/database/restore' )
                     );
                 }
             }
@@ -446,8 +446,8 @@ class Database {
                     unset( $sqlDump, $zip, $content );
                     return array(
                         'type' => 'success',
-                        'msg' => IBOS::lang( 'Database export zip succeed', 'dashboard.default' ),
-                        'url' => IBOS::app()->urlManager->createUrl( 'dashboard/database/restore' )
+                        'msg' => Ibos::lang( 'Database export zip succeed', 'dashboard.default' ),
+                        'url' => Ibos::app()->urlManager->createUrl( 'dashboard/database/restore' )
                     );
                 } else {
                     if ( @is_writeable( $dumpFile ) ) {
@@ -458,14 +458,14 @@ class Database {
                     $filename = $backupFileName . '.sql';
                     return array(
                         'type' => 'success',
-                        'msg' => IBOS::lang( 'Database export succeed', 'dashboard.default' ),
-                        'param' => IBOS::app()->urlManager->createUrl( 'dashboard/database/restore' )
+                        'msg' => Ibos::lang( 'Database export succeed', 'dashboard.default' ),
+                        'param' => Ibos::app()->urlManager->createUrl( 'dashboard/database/restore' )
                     );
                 }
             } else {
                 return array(
                     'type' => 'error',
-                    'msg' => IBOS::lang( 'Database shell fail', 'dashboard.default' )
+                    'msg' => Ibos::lang( 'Database shell fail', 'dashboard.default' )
                 );
             }
         }// end else
@@ -484,7 +484,7 @@ class Database {
     public static function sqlDumpTable( $table, $extendIns, $sizeLimit, $useHex = true, $startFrom = 0, $currentSize = 0 ) {
         $offset = self::OFFSET;
         $tableDump = '';
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         $tableFields = $command->setText( "SHOW FULL COLUMNS FROM `{$table}`" )->queryAll();
         if ( !$tableFields ) {
             $useHex = false;
@@ -621,7 +621,7 @@ class Database {
      * @return array
      */
     public static function getOptimizeTable() {
-        $tableType = IBOS::app()->db->getServerVersion() > '4.1' ? 'Engine' : 'Type';
+        $tableType = Ibos::app()->db->getServerVersion() > '4.1' ? 'Engine' : 'Type';
         $lists = self::getTablelist( self::getdbPrefix() );
         $tables = array();
         foreach ( $lists as $list ) {
@@ -640,7 +640,7 @@ class Database {
      * @return boolean
      */
     public static function optimize( $tables ) {
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         foreach ( $tables as $table ) {
             $command->setText( "OPTIMIZE TABLE {$table}" )->execute();
         }

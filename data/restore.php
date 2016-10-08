@@ -2,7 +2,7 @@
 
 use application\core\utils\Database;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\extensions\SimpleUnzip;
 
@@ -152,18 +152,18 @@ function restore( $id ) {
 		fclose( $fp );
 	} else {
 		if ( Env::getRequest( 'autorestore', 'G' ) ) {
-			return array( 'success' => 1, 'msg' => IBOS::lang( 'Database import multivol succeed', 'dashboard.default' ) );
+			return array( 'success' => 1, 'msg' => Ibos::lang( 'Database import multivol succeed', 'dashboard.default' ) );
 		} else {
-			return array( 'success' => 0, 'msg' => IBOS::lang( 'Database import file illegal', 'dashboard.default' ) );
+			return array( 'success' => 0, 'msg' => Ibos::lang( 'Database import file illegal', 'dashboard.default' ) );
 		}
 	}
-	$command = IBOS::app()->db->createCommand();
+	$command = Ibos::app()->db->createCommand();
 	// 分卷导入
 	if ( $dumpInfo['method'] == 'multivol' ) {
 		$sqlQuery = StringUtil::splitSql( $sqlDump );
 		unset( $sqlDump );
-		$dbCharset = IBOS::app()->db->charset;
-		$dbVersion = IBOS::app()->db->getServerVersion();
+		$dbCharset = Ibos::app()->db->charset;
+		$dbVersion = Ibos::app()->db->getServerVersion();
 		foreach ( $sqlQuery as $sql ) {
 			$sql = Database::syncTableStruct( trim( $sql ), $dbVersion > '4.1', $dbCharset );
 			if ( $sql != '' ) {
@@ -186,20 +186,20 @@ function restore( $id ) {
 		if ( $delunzip ) {
 			$param['delunzip'] = 'yes';
 		}
-		$msg = IBOS::lang( 'Database import multivol redirect', 'dashboard.default', array( 'volume' => $dumpInfo['volume'] ) );
+		$msg = Ibos::lang( 'Database import multivol redirect', 'dashboard.default', array( 'volume' => $dumpInfo['volume'] ) );
 		$url = 'restore.php?' . http_build_query( $param );
 		if ( $dumpInfo['volume'] == 1 ) {
 			return array( 'type' => 'redirect', 'msg' => $msg, 'url' => $url );
 		} elseif ( Env::getRequest( 'autorestore', 'G' ) ) {
 			return array( 'type' => 'redirect', 'msg' => $msg, 'url' => $url );
 		} else {
-			return array( 'success' => 1, 'msg' => IBOS::lang( 'Database import succeed', 'dashboard.default' ) );
+			return array( 'success' => 1, 'msg' => Ibos::lang( 'Database import succeed', 'dashboard.default' ) );
 		}
 	} else if ( $dumpInfo['method'] == 'shell' ) {
 		// 加载系统生成配置文件
 		$config = @include PATH_ROOT . './system/config/config.php';
 		if ( empty( $config ) ) {
-			throw new Exception( IBOS::Lang( 'Config not found', 'error' ) );
+			throw new Exception( Ibos::Lang( 'Config not found', 'error' ) );
 		} else {
 			$db = $config['db'];
 		}
@@ -208,9 +208,9 @@ function restore( $id ) {
 		$mysqlBin = $mysqlBase == '/' ? '' : addslashes( $mysqlBase ) . 'bin/';
 		shell_exec( $mysqlBin . 'mysql -h"' . $db['host'] . ($db['port'] ? (is_numeric( $db['port'] ) ? ' -P' . $db['port'] : ' -S"' . $db['port'] . '"') : '') .
 				'" -u"' . $db['username'] . '" -p"' . $db['password'] . '" "' . $db['dbname'] . '" < ' . $file );
-		return array( 'success' => 1, 'msg' => IBOS::lang( 'Database import succeed', 'dashboard.default' ) );
+		return array( 'success' => 1, 'msg' => Ibos::lang( 'Database import succeed', 'dashboard.default' ) );
 	} else {
-		return array( 'success' => 0, 'msg' => IBOS::lang( 'Database import file illegal', 'dashboard.default' ) );
+		return array( 'success' => 0, 'msg' => Ibos::lang( 'Database import file illegal', 'dashboard.default' ) );
 	}
 }
 
@@ -220,16 +220,16 @@ function restoreZip( $id ) {
 		$id = trim( str_replace( 'data', '', $id ), '/' );
 	}
 	if ( !file_exists( $id ) ) {
-		return array( 'success' => 0, 'msg' => IBOS::lang( 'Database import file illegal', 'dashboard.default' ) );
+		return array( 'success' => 0, 'msg' => Ibos::lang( 'Database import file illegal', 'dashboard.default' ) );
 	}
 	$dataFileVol1 = trim( Env::getRequest( 'datafilevol1', 'G' ) );
 	$multiVol = intval( Env::getRequest( 'multivol', 'G' ) );
-	IBOS::import( 'ext.Zip', true );
+	Ibos::import( 'ext.Zip', true );
 	$unzip = new SimpleUnzip();
 	$unzip->ReadFile( $id );
 
 	if ( $unzip->Count() == 0 || $unzip->GetError( 0 ) != 0 || !preg_match( "/\.sql$/i", $importFile = $unzip->GetName( 0 ) ) ) {
-		return array( 'success' => 0, 'msg' => IBOS::lang( 'Database import file illegal', 'dashboard.default' ) );
+		return array( 'success' => 0, 'msg' => Ibos::lang( 'Database import file illegal', 'dashboard.default' ) );
 	}
 	$identify = explode( ',', base64_decode( preg_replace( "/^# Identify:\s*(\w+).*/s", "\\1", substr( $unzip->GetData( 0 ), 0, 256 ) ) ) );
 	$confirm = Env::getRequest( 'confirm', 'G' );
@@ -237,7 +237,7 @@ function restoreZip( $id ) {
 	if ( !$confirm && $identify[1] != VERSION ) {
 		return array(
 			'type' => 'confirm',
-			'msg' => IBOS::lang( 'Database import confirm', 'dashboard.default' ),
+			'msg' => Ibos::lang( 'Database import confirm', 'dashboard.default' ),
 			'url' => 'restore.php?' . http_build_query( array( 'op' => 'restorezip', 'confirm' => 'yes', 'id' => $id ) )
 		);
 	}
@@ -253,7 +253,7 @@ function restoreZip( $id ) {
 	}
 
 	if ( !$sqlFileCount ) {
-		return array( 'success' => 0, 'msg' => IBOS::lang( 'Database import file illegal', 'dashboard.default' ) );
+		return array( 'success' => 0, 'msg' => Ibos::lang( 'Database import file illegal', 'dashboard.default' ) );
 	}
 	if ( $multiVol ) {
 		$multiVol++;
@@ -268,7 +268,7 @@ function restoreZip( $id ) {
 			);
 			return array(
 				'type' => 'confirm',
-				'msg' => IBOS::lang( 'Database import multivol unzip redirect', 'dashboard.default', array( 'multivol' => $multiVol ) ),
+				'msg' => Ibos::lang( 'Database import multivol unzip redirect', 'dashboard.default', array( 'multivol' => $multiVol ) ),
 				'url' => 'restore.php?' . http_build_query( $param )
 			);
 		} else {
@@ -280,16 +280,16 @@ function restoreZip( $id ) {
 			);
 			return array(
 				'type' => 'confirm',
-				'msg' => IBOS::lang( 'Database import multivol confirm', 'dashboard.default' ),
+				'msg' => Ibos::lang( 'Database import multivol confirm', 'dashboard.default' ),
 				'url' => 'restore.php?' . http_build_query( $param )
 			);
 		}
 	}
 	$info = '<b>' . basename( $id ) . '</b><br />' .
-			IBOS::lang( 'Version' ) .
-			': ' . $identify[1] . '<br />' . IBOS::lang( 'Type' ) .
-			': ' . $identify[2] . '<br />' . IBOS::lang( 'Backup method' ) .
-			': ' . ($identify[3] == 'multivol' ? IBOS::lang( 'DBMultivol' ) : IBOS::lang( 'DBShell' )) . '<br />';
+			Ibos::lang( 'Version' ) .
+			': ' . $identify[1] . '<br />' . Ibos::lang( 'Type' ) .
+			': ' . $identify[2] . '<br />' . Ibos::lang( 'Backup method' ) .
+			': ' . ($identify[3] == 'multivol' ? Ibos::lang( 'DBMultivol' ) : Ibos::lang( 'DBShell' )) . '<br />';
 
 	if ( $identify[3] == 'multivol' && $identify[4] == 1 && preg_match( "/-1(\..+)$/", $id ) ) {
 		$dataFileVol1 = $id;
@@ -304,7 +304,7 @@ function restoreZip( $id ) {
 			);
 			return array(
 				'type' => 'redirect',
-				'msg' => IBOS::lang( 'Database import multivol unzip redirect', 'dashboard.default', array( 'multivol' => 1 ) ),
+				'msg' => Ibos::lang( 'Database import multivol unzip redirect', 'dashboard.default', array( 'multivol' => 1 ) ),
 				'url' => 'restore.php?' . http_build_query( $param )
 			);
 		}
@@ -318,7 +318,7 @@ function restoreZip( $id ) {
 	);
 	return array(
 		'type' => 'confirm',
-		'msg' => IBOS::lang( 'Database import unzip', 'dashboard.default', array( 'info' => $info ) ),
+		'msg' => Ibos::lang( 'Database import unzip', 'dashboard.default', array( 'info' => $info ) ),
 		'url' => 'restore.php?' . http_build_query( $param ),
 	);
 }

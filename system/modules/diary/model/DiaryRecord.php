@@ -17,7 +17,7 @@
 namespace application\modules\diary\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\calendar\model\Calendars;
 
@@ -36,7 +36,7 @@ class DiaryRecord extends Model {
 	 * @param integer $plantime
 	 */
 	public function fetchAllByPlantime( $plantime, $uid = 0 ) {
-		$uid = empty( $uid ) ? IBOS::app()->user->uid : $uid;
+		$uid = empty( $uid ) ? Ibos::app()->user->uid : $uid;
 		$records = DiaryRecord::model()->fetchAll( array(
 			'condition' => 'plantime=:plantime AND uid=:uid',
 			'order' => 'recordid ASC',

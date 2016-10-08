@@ -20,7 +20,7 @@ namespace application\modules\file\core;
 
 use application\core\utils\Attach;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\file\model\FileCloudSet;
 use CException;
 
@@ -32,7 +32,7 @@ class FileCloud extends FileCore {
 	public function __construct( $cloudid ) {
 		$cloudSet = FileCloudSet::model()->fetchByAttributes( array( 'id' => $cloudid ) );
 		if ( empty( $cloudSet ) ) {
-			throw new CException( IBOS::t( 'file.default', 'Ibos cloud did not open succeed' ) );
+			throw new CException( Ibos::t( 'file.default', 'Ibos cloud did not open succeed' ) );
 		}
 		if ( !empty( $cloudSet['server'] ) ) {
 			$this->_server = $cloudSet['server'];
@@ -48,7 +48,7 @@ class FileCloud extends FileCore {
 	 */
 	public function getOfficeReadUrl( $idString ) {
 		// return "http://o.ibos.cn/op/view.aspx?src=" . urlencode( $this->getRealUrl( $attachUrl ) );
-        $urlManager = IBOS::app()->urlManager;
+        $urlManager = Ibos::app()->urlManager;
         return $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op'=>'read' ) );
 	}
 

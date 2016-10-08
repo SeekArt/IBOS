@@ -18,7 +18,7 @@
 namespace application\core\components;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 
 class PerformanceMeasurement extends CApplicationComponent {
@@ -100,7 +100,7 @@ class PerformanceMeasurement extends CApplicationComponent {
 	}
 
 	public function getDbStats() {
-        $stats = IBOS::app()->db->getStats();
+        $stats = Ibos::app()->db->getStats();
 		return $stats[0];
 	}
 

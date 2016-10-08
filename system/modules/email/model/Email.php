@@ -21,7 +21,7 @@ use application\core\model\Model;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Database;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\controllers\BaseController;
 use application\modules\main\model\Attachment;
@@ -77,7 +77,7 @@ class Email extends Model {
     public function fetchById($id, $archiveId = 0) {
         $mainTable = $this->getTableName($archiveId);
         $bodyTable = EmailBody::model()->getTableName($archiveId);
-        $email = IBOS::app()->db->createCommand()
+        $email = Ibos::app()->db->createCommand()
             ->select('*')
             ->from('{{' . $mainTable . '}} e')
             ->leftJoin('{{' . $bodyTable . '}} eb', 'e.bodyid = eb.bodyid')
@@ -89,7 +89,7 @@ class Email extends Model {
     public function fetchAllBodyIdByKeywordFromAttach($keyword, $whereAdd = '1', $queryArchiveId = 0) {
         $kwBodyIds = array();
         //查询附件名，返回相关附件信息
-        $queryParam = "uid = " . IBOS::app()->user->uid;
+        $queryParam = "uid = " . Ibos::app()->user->uid;
         $kwAttachments = Attachment::model()->fetchAllByKeywordFileName($keyword, $queryParam);
         if (!empty($kwAttachments)) {
             // 思路：把这些含关键字的附件ID求出与邮件中的附件ID交集，把交集中的邮件ID添加到sql条件中
@@ -156,16 +156,16 @@ class Email extends Model {
             $newId = $this->add($email, true);
             // 发送提醒处理
             // DEBUG:: 效率问题。可能会发生在推送QQ提醒时 by banyan
-            $file = IBOS::getPathOfAlias('application.modules.email.views.remindcontent') . '.php';
+            $file = Ibos::getPathOfAlias('application.modules.email.views.remindcontent') . '.php';
             extract(array('body' => $bodyData), EXTR_PREFIX_SAME, 'data');
             ob_start();
             ob_implicit_flush(false);
             require($file);
             $content = ob_get_clean();
             $config = array(
-                '{sender}' => IBOS::app()->user->realname,
+                '{sender}' => Ibos::app()->user->realname,
                 '{subject}' => $bodyData['subject'],
-                '{url}' => IBOS::app()->urlManager->createUrl('email/content/show', array('id' => $newId)),
+                '{url}' => Ibos::app()->urlManager->createUrl('email/content/show', array('id' => $newId)),
                 '{content}' => $content,
                 '{orgContent}' => StringUtil::filterCleanHtml($bodyData['content']),
                 'id' => $newId,
@@ -173,10 +173,10 @@ class Email extends Model {
             Notify::model()->sendNotify($uid, 'email_message', $config);
             // 是否关联主线
             if ($threadId) {
-                $fromUid = IBOS::app()->user->uid;
-                $dynamic = IBOS::lang('Relative thread', '', array(
+                $fromUid = Ibos::app()->user->uid;
+                $dynamic = Ibos::lang('Relative thread', '', array(
                     '{realname}' => User::model()->fetchRealnameByUid($uid),
-                    '{url}' => IBOS::app()->urlManager->createUrl('email/content/show', array('id' => $newId)),
+                    '{url}' => Ibos::app()->urlManager->createUrl('email/content/show', array('id' => $newId)),
                     '{subject}' => $bodyData['subject']
                 ));
                 ThreadUtil::getInstance()->relative($fromUid, $threadId, 'email', $newId, $dynamic);
@@ -209,7 +209,7 @@ class Email extends Model {
         $mainTable = sprintf('{{%s}}', $this->getTableName($archiveId));
         $bodyTable = sprintf('{{%s}}', EmailBody::model()->getTableName($archiveId));
         $this->setDeleteBodyId($mainTable, $emailIds);
-        $bodyIds = IBOS::app()->db->createCommand()
+        $bodyIds = Ibos::app()->db->createCommand()
             ->select('bodyid')
             ->from($mainTable)
             ->where("FIND_IN_SET(emailid,'" . implode(',', $emailIds) . "')")
@@ -218,16 +218,16 @@ class Email extends Model {
             $bodyIds = Convert::getSubByKey($bodyIds, 'bodyid');
         }
         foreach ($bodyIds as $i => $bodyId) {
-            $body = IBOS::app()->db->createCommand()->select('fromid,attachmentid')
+            $body = Ibos::app()->db->createCommand()->select('fromid,attachmentid')
                 ->from($bodyTable)
                 ->where("bodyid = {$bodyId} AND fromid = {$uid}")
                 ->queryRow();
             if ($body || !isset($emailIds[$i])) {
                 // 将邮件移到草稿箱
-                IBOS::app()->db->createCommand()->update($bodyTable, array("issend" => 0), "bodyid = :bodyid", array(":bodyid" => $bodyId));
+                Ibos::app()->db->createCommand()->update($bodyTable, array("issend" => 0), "bodyid = :bodyid", array(":bodyid" => $bodyId));
 
                 if (isset($emailIds[$i])) {
-                    $readerRows = IBOS::app()->db->createCommand()->select('bodyid')
+                    $readerRows = Ibos::app()->db->createCommand()->select('bodyid')
                         ->from($mainTable)
                         ->where("emailid = $emailIds[$i] AND isread != 0 AND toid != {$uid}")
                         ->queryRow();
@@ -235,14 +235,14 @@ class Email extends Model {
                     $readerRows = false;
                 }
                 if ($readerRows) {
-                    if (IBOS::app()->db->createCommand()->update($bodyTable, array('issenderdel' => 1), 'bodyid = ' . $bodyId)) {
+                    if (Ibos::app()->db->createCommand()->update($bodyTable, array('issenderdel' => 1), 'bodyid = ' . $bodyId)) {
                         $isSuccess = 1;
                     }
                 } else {
                     if (isset($emailIds[$i])) {
-                        $nextStep = IBOS::app()->db->createCommand()->delete($mainTable, 'emailid = ' . $emailIds[$i]);
+                        $nextStep = Ibos::app()->db->createCommand()->delete($mainTable, 'emailid = ' . $emailIds[$i]);
                     } else {
-                        IBOS::app()->db->createCommand()->delete($bodyTable, 'bodyid = ' . $bodyId);
+                        Ibos::app()->db->createCommand()->delete($bodyTable, 'bodyid = ' . $bodyId);
                         $nextStep = true;
                     }
                     if ($nextStep) {
@@ -253,13 +253,13 @@ class Email extends Model {
                     }
                 }
             } else {
-                $lastRows = IBOS::app()->db->createCommand()->select('toid')
+                $lastRows = Ibos::app()->db->createCommand()->select('toid')
                     ->from($mainTable)
                     ->where("bodyid = {$bodyId} AND toid != {$uid}")
                     ->queryRow();
                 if (!$lastRows) { //如果是最后一个收件人,删除
-                    IBOS::app()->db->createCommand()->delete($mainTable, 'emailid = ' . $emailIds[$i]);
-                    $attachmentId = IBOS::app()->db->createCommand()
+                    Ibos::app()->db->createCommand()->delete($mainTable, 'emailid = ' . $emailIds[$i]);
+                    $attachmentId = Ibos::app()->db->createCommand()
                         ->select('attachmentid')
                         ->from($bodyTable)
                         ->where('bodyid = ' . $bodyId)
@@ -269,7 +269,7 @@ class Email extends Model {
                     }
                     $isSuccess++;
                 } else { //否则只删除emailid
-                    IBOS::app()->db->createCommand()->delete($mainTable, "emailid = {$emailIds[$i]} AND toid = {$uid}");
+                    Ibos::app()->db->createCommand()->delete($mainTable, "emailid = {$emailIds[$i]} AND toid = {$uid}");
                     $isSuccess++;
                 }
             }
@@ -304,7 +304,7 @@ class Email extends Model {
             $toids = !empty($bodyRow->toids) ? $bodyRow->toids : '';
             $toids .= !empty($bodyRow->copytoids) ? ',' . $bodyRow->copytoids : '';
             $toids .= !empty($bodyRow->secrettoids) ? ',' . $bodyRow->secrettoids : '';
-            $row = IBOS::app()->db->createCommand()
+            $row = Ibos::app()->db->createCommand()
                 ->select('emailid')
                 ->from($mainTable)
                 ->where(array(
@@ -314,7 +314,7 @@ class Email extends Model {
                 ))
                 ->queryRow();
             if (empty($row)) {
-                IBOS::app()->db->createCommand()->delete($bodyTable, sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId));
+                Ibos::app()->db->createCommand()->delete($bodyTable, sprintf("FIND_IN_SET(`bodyid`, '%s')", $bodyId));
             }
         }
     }
@@ -348,7 +348,7 @@ class Email extends Model {
             if (in_array($emailTableName, $queryTable)) {
                 continue;
             }
-            $list = IBOS::app()->db->createCommand()
+            $list = Ibos::app()->db->createCommand()
                 ->select($field)
                 ->from(sprintf("{{%s}} %s", $emailTableName, $tableAlias[0]))
                 ->leftJoin(sprintf("{{%s}} %s", $emailbodyTableName, $tableAlias[1]), "{$tableAlias[0]}.bodyid = {$tableAlias[1]}.bodyid")
@@ -400,7 +400,7 @@ class Email extends Model {
             $sql .= ' GROUP BY ' . $param['group'];
         }
         $sql .= " ORDER BY {$param['order']} LIMIT {$offset},{$limit}";
-        $db = IBOS::app()->db->createCommand();
+        $db = Ibos::app()->db->createCommand();
         $list = $db->setText(sprintf($sql, $param['field'], $param['table'], $param['condition']))->queryAll();
         foreach ($list as &$value) {
             if (!empty($value['fromid'])) {
@@ -468,7 +468,7 @@ class Email extends Model {
         if (!empty($param['group'])) {
             $sql .= ' GROUP BY ' . $param['group'];
         }
-        $result = IBOS::app()->db->createCommand()
+        $result = Ibos::app()->db->createCommand()
             ->setText(sprintf($sql, $param['field'], $param['table'], $param['condition']))
             ->queryAll();
         //含有gourp by的分组统计返回一个多维数组，每个数组含有每个分组的条数（邮件的主体对应多少封邮件）
@@ -488,7 +488,7 @@ class Email extends Model {
      */
     public function getListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $getUnread = false, $subOp = '') {
         if (!$uid) {
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
         }
         $mainTable = $this->getTableName($archiveId);
         $bodyTable = EmailBody::model()->getTableName($archiveId);
@@ -558,7 +558,7 @@ class Email extends Model {
         $source = intval($source);
         $target = intval($target);
         if ($source != $target) {
-            $db = IBOS::app()->db->createCommand();
+            $db = Ibos::app()->db->createCommand();
             $text = sprintf("REPLACE INTO {{%s}} SELECT * FROM {{%s}} WHERE bodyid IN ('%s')", $this->getTableName($target), $this->getTableName($source), implode(',', $emailids));
             $db->setText($text)->execute();
             return $db->delete($this->getTableName($source), "FIND_IN_SET(bodyid,'" . implode(',', $emailids) . ")");
@@ -574,7 +574,7 @@ class Email extends Model {
     public function fetchTableIds() {
         $tableIds = array('0' => 0);
         $name = $this->getTableSchema()->name;
-        $tables = IBOS::app()->db->createCommand()
+        $tables = Ibos::app()->db->createCommand()
             ->setText("SHOW TABLES LIKE '" . str_replace('_', '\_', $this->tableName() . '_%') . "'")
             ->queryAll(false);
         foreach ($tables as $table) {
@@ -620,7 +620,7 @@ class Email extends Model {
      */
     public function countBySplitCondition($tableId, $conditions = '') {
         $condition = $this->mergeSplitCondition($conditions);
-        $db = IBOS::app()->db->createCommand();
+        $db = Ibos::app()->db->createCommand();
         $count = $db->select('COUNT(*)')
             ->from('{{' . $this->getTableName($tableId) . '}} e')
             ->rightJoin('{{' . EmailBody::model()->getTableName($tableId) . '}} b', 'e.`bodyid` = b.`bodyid`')
@@ -639,7 +639,7 @@ class Email extends Model {
      */
     public function fetchAllBySplitCondition($tableId, $conditions = '', $offset = null, $limit = null) {
         $condition = $this->mergeSplitCondition($conditions);
-        $db = IBOS::app()->db->createCommand();
+        $db = Ibos::app()->db->createCommand();
         $list = $db->select('e.emailid,b.fromid,b.subject,b.sendtime,b.bodyid')
             ->from('{{' . $this->getTableName($tableId) . '}} e')
             ->rightJoin('{{' . EmailBody::model()->getTableName($tableId) . '}} b', 'e.`bodyid` = b.`bodyid`')
@@ -726,7 +726,7 @@ class Email extends Model {
      * @return array
      */
     private function getSiblingsByCondition($condition, $order, $archiveId = 0) {
-        $siblings = IBOS::app()->db->createCommand()
+        $siblings = Ibos::app()->db->createCommand()
             ->select('e.emailid,eb.subject')
             ->from(sprintf('{{%s}} e', $this->getTableName($archiveId)))
             ->leftJoin(sprintf('{{%s}} eb', EmailBody::model()->getTableName($archiveId)), 'e.bodyid = eb.bodyid')
@@ -749,7 +749,7 @@ class Email extends Model {
      * @param array $emailIds
      */
     private function setDeleteBodyId($mainTable, $emailIds) {
-        $this->bodyIds = IBOS::app()->db->createCommand()
+        $this->bodyIds = Ibos::app()->db->createCommand()
             ->select('bodyid')
             ->from($mainTable)
             ->where('isweb=1 AND isdel=3')
@@ -765,7 +765,7 @@ class Email extends Model {
      */
     private function deleteWebEmail($bodyTable) {
         if (!empty($this->bodyIds)) {
-            IBOS::app()->db->createCommand()
+            Ibos::app()->db->createCommand()
                 ->delete($bodyTable, array('in', 'bodyid', $this->bodyIds));
         }
     }
@@ -807,7 +807,7 @@ class Email extends Model {
         $emailbodyTable = EmailBody::model()->getTableName($aid);
         $emailbodyAlias = "eb";
 
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         $condition = "";
 
         $command = $command->select("*")
@@ -862,7 +862,7 @@ class Email extends Model {
             $queryArchiveId = 0;
             $folder = 0;
         } elseif ($folder == 'all') {//全部邮件（包含归档）
-            $ids = IBOS::app()->setting->get('setting/emailtableids');
+            $ids = Ibos::app()->setting->get('setting/emailtableids');
             $queryArchiveId = $ids;
             $folder = 0;
         } elseif (strpos($folder, 'archive_') !== false) { //某一个归档

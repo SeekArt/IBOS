@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!-- load css -->
@@ -17,7 +17,7 @@ use application\core\utils\IBOS;
                     <li class="active">
                         <a href="<?php echo $this->createUrl( 'officialdoc/index'); ?>">
                             <i class="o-art-doc"></i>
-                            <?php echo IBOS::lang( 'Officialdoc' ); ?>
+                            <?php echo Ibos::lang( 'Officialdoc' ); ?>
                         </a>
                         <ul id="tree" class="ztree">
                         </ul>

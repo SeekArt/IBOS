@@ -22,7 +22,7 @@ class Model {
      * @return boolean
      */
     public static function tableExists( $tableName ) {
-        $isExist = IBOS::app()->db
+        $isExist = Ibos::app()->db
                 ->createCommand()
                 ->setText( sprintf( "SHOW TABLES LIKE '%s'", $tableName ) )
                 ->execute();
@@ -37,7 +37,7 @@ class Model {
     public static function dropTable( $tableName ) {
         $res = false;
         if ( self::tableExists( $tableName ) ) {
-            $res = IBOS::app()->db
+            $res = Ibos::app()->db
                             ->createCommand()->dropTable( $tableName );
         }
         return (bool) $res;
@@ -52,7 +52,7 @@ class Model {
     public static function createTable( $tableName, $sql ) {
         $res = false;
         if ( !self::tableExists( $tableName ) ) {
-            IBOS::app()->db
+            Ibos::app()->db
                     ->createCommand()->setText( $sql )->execute();
         }
         return (bool) $res;
@@ -64,7 +64,7 @@ class Model {
      */
     public static function getCurrentDbName() {
         $sql = "select database();";
-        return IBOS::app()->db
+        return Ibos::app()->db
                         ->createCommand()->setText( $sql )->queryScalar();
     }
 
@@ -81,7 +81,7 @@ class Model {
         $sql = "SELECT `COLUMN_NAME` FROM information_schema.`COLUMNS`"
                 . " WHERE `TABLE_SCHEMA` = '{$currentDbName}'"
                 . " AND `TABLE_NAME` = '{$tableName}' AND ( {$conditionString} )";
-        $existColumnArray = IBOS::app()->db
+        $existColumnArray = Ibos::app()->db
                         ->createCommand()->setText( $sql )->queryColumn();
         $notExistArray = array_diff( $columnArray, $existColumnArray );
         return $notExistArray;
@@ -89,7 +89,7 @@ class Model {
 
     public static function executeSqls( $sqlString ) {
         $sqlArray = StringUtil::splitSql( $sqlString );
-        $command = IBOS::app()->db->createCommand();
+        $command = Ibos::app()->db->createCommand();
         if ( is_array( $sqlArray ) ) {
             foreach ( $sqlArray as $sql ) {
                 if ( trim( $sql ) != '' ) {

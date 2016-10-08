@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Mail;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
@@ -51,7 +51,7 @@ class EmailController extends BaseController {
             );
             Setting::model()->updateSettingValueByKey( 'mail', $data );
             Cache::update( array( 'setting' ) );
-            $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ) );
         } else {
             $this->render( 'setup', array( 'mail' => $mail ) );
         }
@@ -63,15 +63,15 @@ class EmailController extends BaseController {
             $testFrom = $_POST['testfrom'];
             $testTo = $_POST['testto'];
             if ( empty( $testFrom ) || empty( $testTo ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ) );
             }
             $toEmails = explode( ',', $testTo );
-            $subject = IBOS::lang( 'IBOS test email subject' );
-            $message = IBOS::lang( 'IBOS test email content' );
+            $subject = Ibos::lang( 'IBOS test email subject' );
+            $message = Ibos::lang( 'IBOS test email content' );
             foreach ( $toEmails as $to ) {
                 Mail::sendMail( $to, $subject, $message, $testFrom );
             }
-            $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
         } else {
             $this->render( 'check' );
         }

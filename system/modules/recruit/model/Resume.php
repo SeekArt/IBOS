@@ -18,7 +18,7 @@ namespace application\modules\recruit\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
@@ -42,7 +42,7 @@ class Resume extends Model {
     public function fetchAllByPage( $conditions = '', $pageSize = null ) {
 
         $pages = new CPagination( $this->countByCondition( $conditions ) );
-        $pageSize = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+        $pageSize = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
         $pages->setPageSize( intval( $pageSize ) );
         $criteria = new CDbCriteria( array( 'limit' => $pages->getLimit(), 'offset' => $pages->getOffset() ) );
         $pages->applyLimit( $criteria );

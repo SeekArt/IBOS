@@ -17,7 +17,7 @@
 
 namespace application\modules\user\components;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\role\model\Role;
 use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User as UserModel;
@@ -107,7 +107,7 @@ class UserIdentity extends CUserIdentity {
 			$relatedRoleId = RoleRelated::model()->fetchAllRoleIdByUid( $uid );
 			$roleIds = array_merge( array( $roleid ), (array) $relatedRoleId );
 			$allroleidS = implode( ',', array_unique( $roleIds ) );
-			$roleTypeValue = IBOS::app()->db->createCommand()
+			$roleTypeValue = Ibos::app()->db->createCommand()
 					->select( 'roletype' )
 					->from( Role::model()->tableName() )
 					->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )

@@ -13,7 +13,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Api;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\department\model\Department as DepartmentModel;
@@ -151,7 +151,7 @@ class CosyncController extends CoController {
                     'deptlevel' => 0,
                     'deptcount' => $deptCount,
                 );
-                IBOS::app()->user->setState( 'codept', $codept );
+                Ibos::app()->user->setState( 'codept', $codept );
                 $this->ajaxReturn(array(
                     'status' => 1,
                     'message' => '酷办公部门已同步过来，接着同步Ibos部门..',
@@ -160,7 +160,7 @@ class CosyncController extends CoController {
                 ));
                 break;
             case 'dept':  // 参考企业号部门同步 WxsyncController
-                $codept = IBOS::app()->user->codept;
+                $codept = Ibos::app()->user->codept;
                 $level = $codept['deptlevel'];
                 $i = 10;
                 $type = 'co';
@@ -175,7 +175,7 @@ class CosyncController extends CoController {
                         $level ++;
                     }
                 }    
-                IBOS::app()->user->setState( 'codept', $codept );
+                Ibos::app()->user->setState( 'codept', $codept );
                 if ( empty( $deptPer ) ) {
                     return $this->ajaxReturn(array(
                             'status' => 1,
@@ -767,7 +767,7 @@ class CosyncController extends CoController {
         } 
         // 调用接口成功，根据返回数据添加相应的绑定记录,将部门插入ibos
         if ($res['errorcode'] == CodeApi::SUCCESS) {
-            $connection = IBOS::app()->db; 
+            $connection = Ibos::app()->db; 
             $transaction = $connection->beginTransaction();
             try {
                 foreach ( $res['data'] as $relation ) {
@@ -887,7 +887,7 @@ class CosyncController extends CoController {
      */
     protected function userBind( $msgPlatform, $array ) {
         foreach ( $array as $uid => $bindvalue ) {
-            IBOS::app()->db->createCommand()
+            Ibos::app()->db->createCommand()
                     ->insert( '{{user_binding}}', array(
                         'uid' => $uid,
                         'bindvalue' => $bindvalue,
@@ -901,12 +901,12 @@ class CosyncController extends CoController {
      */
     protected function userDelete( $msgPlatform, $array ) {
         foreach ( $array as $uid => $bindvalue ) {
-            IBOS::app()->db->createCommand()
+            Ibos::app()->db->createCommand()
                     ->delete( 'user_binding'
                             , " `uid` = '{$uid}' AND"
                             . " `bindvalue` = '{$bindvalue}' AND"
                             . " `app` = '{$msgPlatform}' " );
-            IBOS::app()->db->createCommand()
+            Ibos::app()->db->createCommand()
                     ->update( '{{user}}'
                             , array( 'status' => 2 )
                             , " `uid` = '{$uid}' " );
@@ -934,7 +934,7 @@ class CosyncController extends CoController {
      */
     protected function deptBind( $msgPlatform, $array ) {
         foreach ( $array as $deptid => $bindvalue ) {
-            IBOS::app()->db->createCommand()
+            Ibos::app()->db->createCommand()
                     ->insert( '{{department_binding}}', array(
                         'deptid' => $deptid,
                         'bindvalue' => $bindvalue,

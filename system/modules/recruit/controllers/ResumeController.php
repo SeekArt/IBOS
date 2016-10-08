@@ -21,7 +21,7 @@ use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\recruit\core\RecruitBgchecks as ICRecruitBgchecks;
 use application\modules\recruit\core\RecruitInterview as ICRecruitInterview;
 use application\modules\recruit\core\ResumeContact as ICResumeContact;
@@ -68,11 +68,11 @@ class ResumeController extends BaseController {
 			'countAudition' => Resume::model()->countAudition(),
 			'countFlag' => Resume::model()->countFlag(),
         );
-        $this->setPageTitle( IBOS::lang( 'Talent management' ) );
+        $this->setPageTitle( Ibos::lang( 'Talent management' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Talent management' ) ),
-            array( 'name' => IBOS::lang( 'Resume list' ) )
+            array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Talent management' ) ),
+            array( 'name' => Ibos::lang( 'Resume list' ) )
         ) );
         $this->render( 'index', $params );
     }
@@ -94,11 +94,11 @@ class ResumeController extends BaseController {
             $params['dashboardConfigToJson'] = CJSON::encode( $params['dashboardConfig'] );
             $regulars = Regular::model()->fetchAll();
             $params['regulars'] = CJSON::encode( $regulars );
-            $this->setPageTitle( IBOS::lang( 'Add resume' ) );
+            $this->setPageTitle( Ibos::lang( 'Add resume' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-                array( 'name' => IBOS::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-                array( 'name' => IBOS::lang( 'Add resume' ) )
+                array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+                array( 'name' => Ibos::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+                array( 'name' => Ibos::lang( 'Add resume' ) )
             ) );
             $this->render( 'add', $params );
         } else {
@@ -112,7 +112,7 @@ class ResumeController extends BaseController {
     private function save() {
         $data = ICResumeDetail::processAddRequestData();
         $resume = array(
-            'input' => IBOS::app()->user->uid,
+            'input' => Ibos::app()->user->uid,
             'positionid' => $data['positionid'],
             'entrytime' => TIMESTAMP,
             'uptime' => TIMESTAMP,
@@ -131,12 +131,12 @@ class ResumeController extends BaseController {
                 Attach::updateAttach( $data['attachmentid'] );
             }
             //更新积分
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             UserUtil::updateCreditByAction( 'addresume', $uid );
             ResumeStats::model()->updateState( 'new' );
             ResumeStats::model()->updateState( $this->stateList[$data['status']] );
 
-            $this->success( IBOS::lang( 'Save succeed', 'message' ), $this->createUrl( 'resume/index' ) );
+            $this->success( Ibos::lang( 'Save succeed', 'message' ), $this->createUrl( 'resume/index' ) );
         }
     }
 
@@ -146,7 +146,7 @@ class ResumeController extends BaseController {
     public function actionShow() {
         $resumeid = Env::getRequest( 'resumeid' );
         if ( empty( $resumeid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ) );
         }
         $resumeDetail = ResumeDetail::model()->fetch( 'resumeid=' . $resumeid );
         //取得上一个和下一个Id
@@ -178,11 +178,11 @@ class ResumeController extends BaseController {
             'bgcheckList' => ICRecruitBgchecks::processListData( $bgcheckList ),
             'resumeid' => $resumeid
         );
-        $this->setPageTitle( IBOS::lang( 'Show resume' ) );
+        $this->setPageTitle( Ibos::lang( 'Show resume' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Show resume' ) )
+            array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Show resume' ) )
         ) );
         $this->render( 'show', $data );
     }
@@ -197,7 +197,7 @@ class ResumeController extends BaseController {
             $op = 'default';
         }
         if ( !in_array( $op, array( 'default', 'update', 'mark', 'status' ) ) || empty( $resumeid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'resume/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'resume/index' ) );
         }
         if ( $op == 'default' ) {
             $detail = ResumeDetail::model()->fetch( 'resumeid=:resumeid', array( ':resumeid' => $resumeid ) );
@@ -224,11 +224,11 @@ class ResumeController extends BaseController {
             $data['dashboardConfigToJson'] = CJSON::encode( $data['dashboardConfig'] );
             $regulars = Regular::model()->fetchAll();
             $data['regulars'] = CJSON::encode( $regulars );
-            $this->setPageTitle( IBOS::lang( 'Edit resume' ) );
+            $this->setPageTitle( Ibos::lang( 'Edit resume' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-                array( 'name' => IBOS::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-                array( 'name' => IBOS::lang( 'Edit resume' ) )
+                array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+                array( 'name' => Ibos::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+                array( 'name' => Ibos::lang( 'Edit resume' ) )
             ) );
             $this->render( 'edit', $data );
         } else {
@@ -247,7 +247,7 @@ class ResumeController extends BaseController {
         // 如果有改变状态，把改变状态的时期改为当前日期时间戳，否则不改动
         $statustime = $resume['status'] == $resumeDetail['status'] ? $resume['statustime'] : strtotime( date( 'Y-m-d' ) );
         $data = array(
-            'input' => IBOS::app()->user->uid,
+            'input' => Ibos::app()->user->uid,
             'positionid' => $resumeDetail['positionid'],
             'uptime' => TIMESTAMP,
             'status' => $resumeDetail['status'],
@@ -271,9 +271,9 @@ class ResumeController extends BaseController {
                 Attach::updateAttach( $resumeDetail['attachmentid'] );
             }
             ResumeDetail::model()->modify( $detailid, $resumeDetail );
-            $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'resume/show', array( 'resumeid' => $resumeid ) ) );
+            $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'resume/show', array( 'resumeid' => $resumeid ) ) );
         } else {
-            $this->error( IBOS::lang( 'Update failed', 'message' ), $this->createUrl( 'resume/show', array( 'resumeid' => $resumeid ) ) );
+            $this->error( Ibos::lang( 'Update failed', 'message' ), $this->createUrl( 'resume/show', array( 'resumeid' => $resumeid ) ) );
         }
     }
 
@@ -281,10 +281,10 @@ class ResumeController extends BaseController {
      * 删除简历信息
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $resumeids = Env::getRequest( 'resumeids' );
             if ( empty( $resumeids ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'resume/index' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'resume/index' ) );
             }
             $pk = '';
             if ( strpos( $resumeids, ',' ) ) {
@@ -313,9 +313,9 @@ class ResumeController extends BaseController {
                     }
                 }
                 ResumeDetail::model()->deleteAll( "FIND_IN_SET(resumeid,'{$resumeids}') " );
-                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => IBOS::lang( 'Del failed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => Ibos::lang( 'Del failed', 'message' ) ) );
             }
         }
     }
@@ -324,14 +324,14 @@ class ResumeController extends BaseController {
      * 标记简历
      */
     private function mark() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $resumeid = intval( Env::getRequest( 'resumeid' ) );
             $flag = intval( Env::getRequest( 'flag' ) );
             $modifySuccess = Resume::model()->modify( $resumeid, array( 'flag' => $flag ) );
             if ( $modifySuccess ) {
-                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => IBOS::lang( 'Operation failure', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => Ibos::lang( 'Operation failure', 'message' ) ) );
             }
         }
     }
@@ -340,7 +340,7 @@ class ResumeController extends BaseController {
      * 更改简历状态
      */
     private function status() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $resumeid = Env::getRequest( 'resumeid' );
             $status = Env::getRequest( 'status' );
             $resume = Resume::model()->findByPk( $resumeid );
@@ -349,7 +349,7 @@ class ResumeController extends BaseController {
             ResumeStats::model()->updateState( $this->stateList[$status], $oldStatus );
             Resume::model()->updateAll( array( 'status' => $status, 'uptime' => TIMESTAMP, 'statustime' => strtotime( date( 'Y-m-d' ) ) ), "FIND_IN_SET(resumeid,'{$resumeid}')" );
             $showStatus = ICResumeDetail::handleResumeStatus( $status );
-            $this->ajaxReturn( array( 'showStatus' => $showStatus, 'isSuccess' => 1, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+            $this->ajaxReturn( array( 'showStatus' => $showStatus, 'isSuccess' => 1, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
         }
     }
 
@@ -410,11 +410,11 @@ class ResumeController extends BaseController {
             'regulars' => CJSON::encode( $regulars )
         );
         $params['dashboardConfigToJson'] = CJSON::encode( $params['dashboardConfig'] );
-        $this->setPageTitle( IBOS::lang( 'Add resume' ) );
+        $this->setPageTitle( Ibos::lang( 'Add resume' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-            array( 'name' => IBOS::lang( 'Add resume' ) )
+            array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Talent management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+            array( 'name' => Ibos::lang( 'Add resume' ) )
         ) );
         $this->render( 'add', $params );
     }
@@ -426,11 +426,11 @@ class ResumeController extends BaseController {
         $resumeids = Env::getRequest( 'resumeids' );
         $resumeidsStr = trim( $resumeids, ',' );
         if ( empty( $resumeidsStr ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ) );
         }
         $details = ResumeDetail::model()->fetchAll( array( 'select' => 'email', 'condition' => "resumeid IN ($resumeidsStr)" ) );
         $emails = Convert::getSubByKey( $details, 'email' );
-        $this->redirect( IBOS::app()->urlManager->createUrl( 'email/content/add', array( 'webid' => $emails ) ) );
+        $this->redirect( Ibos::app()->urlManager->createUrl( 'email/content/add', array( 'webid' => $emails ) ) );
     }
 
 }

@@ -16,7 +16,7 @@
 
 namespace application\modules\report\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class ReportType {
@@ -30,7 +30,7 @@ class ReportType {
         $type = array(
             'sort' => intval( $data['sort'] ),
             'typename' => StringUtil::filterCleanHtml( $data['typename'] ),
-            'uid' => IBOS::app()->user->uid,
+            'uid' => Ibos::app()->user->uid,
             'intervaltype' => intval( $data['intervaltype'] ),
             'intervals' => intval( $data['intervals'] ),
             'issystype' => 0

@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!-- Sidebar -->
 <div class="aside" id="aside">
@@ -12,17 +12,17 @@ use application\core\utils\IBOS;
 				</a>
 				<div class="sbb sbbf">
 					<ul class="aside-list">
-						<li <?php if ( IBOS::app()->getController()->getId() == 'schedule' ): ?>class="active"<?php endif; ?>>
+						<li <?php if ( Ibos::app()->getController()->getId() == 'schedule' ): ?>class="active"<?php endif; ?>>
 							<a href="<?php echo $this->createUrl( 'schedule/index' ); ?>"><i class="o-cal-calendar"></i>
 								<?php echo $lang['Schedule']; ?>
 							</a>
 						</li>
-						<li <?php if ( IBOS::app()->getController()->getId() == 'task' ): ?>class="active"<?php endif; ?>>
+						<li <?php if ( Ibos::app()->getController()->getId() == 'task' ): ?>class="active"<?php endif; ?>>
 							<a href="<?php echo $this->createUrl( 'task/index' ); ?>"><i class="o-cal-todo"></i>
 								<?php echo $lang['Task']; ?>
 							</a>
 						</li>
-						<li <?php if ( IBOS::app()->getController()->getId() == 'loop' ): ?>class="active"<?php endif; ?>>
+						<li <?php if ( Ibos::app()->getController()->getId() == 'loop' ): ?>class="active"<?php endif; ?>>
 							<a href="<?php echo $this->createUrl( 'loop/index' ); ?>"><i class="o-cal-affairs"></i>
 								<?php echo $lang['Periodic affairs']; ?>
 							</a>

@@ -4,7 +4,7 @@ namespace application\modules\email\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class EmailWeb extends Model {
 
@@ -55,7 +55,7 @@ class EmailWeb extends Model {
      * @return type
      */
     public function delClear( $id, $uid ) {
-        $fidArr = IBOS::app()->db->createCommand()
+        $fidArr = Ibos::app()->db->createCommand()
                 ->select( 'fid' )
                 ->from( $this->tableName() )
                 ->where( "FIND_IN_SET(webid,'{$id}') AND uid = {$uid}" )
@@ -63,8 +63,8 @@ class EmailWeb extends Model {
         $fids = Convert::getSubByKey( $fidArr, 'fid' );
         if ( !empty( $fids ) ) {
             $fid = implode( ',', $fids );
-            IBOS::app()->db->createCommand()->delete( '{{email_folder}}', "FIND_IN_SET(fid,'{$fid}') AND uid = {$uid}" );
-            IBOS::app()->db->createCommand()->update( '{{email}}', array( 'fid' => 1 ), "FIND_IN_SET(fid,'{$fid}') AND toid = {$uid}" );
+            Ibos::app()->db->createCommand()->delete( '{{email_folder}}', "FIND_IN_SET(fid,'{$fid}') AND uid = {$uid}" );
+            Ibos::app()->db->createCommand()->update( '{{email}}', array( 'fid' => 1 ), "FIND_IN_SET(fid,'{$fid}') AND toid = {$uid}" );
             return $this->deleteAll( "FIND_IN_SET(webid,'{$id}')" );
         } else {
             return 0;

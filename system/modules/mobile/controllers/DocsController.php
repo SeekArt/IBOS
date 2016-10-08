@@ -19,7 +19,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Approval;
 use application\modules\mobile\utils\Mobile;
@@ -60,7 +60,7 @@ class DocsController extends BaseController {
             $this->search();
         }
 
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $this->_condition = OfficialdocUtil::joinListCondition( $type, $uid, $childCatIds, $this->_condition );
         $datas = Officialdoc::model()->fetchAllAndPage( $this->_condition );
         if ( isset( $datas["datas"] ) ) {
@@ -102,7 +102,7 @@ class DocsController extends BaseController {
     }
 
     public function actionShow() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $docid = Env::getRequest( 'id' );
         $version = Env::getRequest( 'version' );
         if ( empty( $docid ) ) {
@@ -117,7 +117,7 @@ class DocsController extends BaseController {
         if ( !empty( $officialDoc ) ) {
             //如果这篇文章状态是待审核时：如果当前读者是作者本人，可以查看，否者，提示该文章未通过审核
             if ( !OfficialdocUtil::checkReadScope( $uid, $officialDoc ) ) {
-                $this->error( IBOS::lang( 'You do not have permission to read the officialdoc' ), $this->createUrl( 'default/index' ) );
+                $this->error( Ibos::lang( 'You do not have permission to read the officialdoc' ), $this->createUrl( 'default/index' ) );
             }
             $data = ICOfficialdoc::getShowData( $officialDoc );
             $row = OfficialdocReader::model()->find( sprintf( "`docid` = %d AND `uid` = %d", $docid, $uid ) );
@@ -140,7 +140,7 @@ class DocsController extends BaseController {
             $params = array(
                 'data' => $data,
                 'pages' => $pages,
-                'dashboardConfig' => IBOS::app()->setting->get( 'setting/docconfig' ),
+                'dashboardConfig' => Ibos::app()->setting->get( 'setting/docconfig' ),
             );
             if ( $data['rcid'] ) {
                 $params['rcType'] = RcType::model()->fetchByPk( $data['rcid'] );
@@ -186,7 +186,7 @@ class DocsController extends BaseController {
             $isSuccess = false;
             $msg = '参数错误';
         } else {
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $counter = OfficialdocReader::model()->updateSignByDocid( $docid, $uid, true );
             if ( !empty( $counter ) ) {
                 $isSuccess = true;
@@ -208,7 +208,7 @@ class DocsController extends BaseController {
             $isSuccess = false;
             $msg = '参数错误';
         } else {
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             OfficialdocReader::model()->addReader( $docid, $uid );
             $isSuccess = true;
             $msg = '成功';

@@ -19,7 +19,7 @@
 
 namespace application\modules\statistics\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 use CMap;
@@ -58,7 +58,7 @@ class ChartFactory extends CApplicationComponent {
 	 */
 	private function chkInstance( $chart ) {
 		if ( !$chart instanceof Chart ) {
-			throw new CException( IBOS::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $chart ) ) ) );
+			throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $chart ) ) ) );
 		}
 	}
 

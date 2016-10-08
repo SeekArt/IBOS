@@ -191,7 +191,7 @@ class Credit extends System {
 
     public function updateCreditByRule($rule, $uids = 0, $coef = 1) {
         $this->_coef = intval($coef);
-        $uids = $uids ? $uids : intval(IBOS::app()->user->uid);
+        $uids = $uids ? $uids : intval(Ibos::app()->user->uid);
         $rule = is_array($rule) ? $rule : $this->getRule($rule);
         $creditArr = array();
         $updateCredit = false;
@@ -215,12 +215,12 @@ class Credit extends System {
      * @param type $ruletxt
      */
     public function updateUserCount($creditArr, $uids = 0, $checkGroup = true, $ruletxt = '') {
-        if (IBOS::app()->user->isGuest) {
+        if (Ibos::app()->user->isGuest) {
             return;
         }
-        $setting = IBOS::app()->setting->toArray();
+        $setting = Ibos::app()->setting->toArray();
         if (!$uids) {
-            $uids = intval(IBOS::app()->user->uid);
+            $uids = intval(Ibos::app()->user->uid);
         }
         $uids = is_array($uids) ? $uids : array($uids);
         if ($uids && ($creditArr || $this->_extraSql)) {
@@ -232,7 +232,7 @@ class Credit extends System {
                 'extcredits1', 'extcredits2', 'extcredits3', 'extcredits4', 'extcredits5',
                 'oltime', 'attachsize'
             );
-            $creditRemind = $setting['setting']['creditremind'] && IBOS::app()->user->uid && $uids == array(IBOS::app()->user->uid);
+            $creditRemind = $setting['setting']['creditremind'] && Ibos::app()->user->uid && $uids == array(Ibos::app()->user->uid);
             if ($creditRemind) {
                 if (!isset($setting['cookiecredits'])) {
                     $setting['cookiecredits'] = !empty($_COOKIE['creditnotice']) ? explode('D', $_COOKIE['creditremind']) : array_fill(0, 6, 0);
@@ -254,13 +254,13 @@ class Credit extends System {
                 }
             }
             if ($creditRemind) {
-                MainUtil::setCookie('creditremind', implode('D', $setting['cookiecredits']) . 'D' . IBOS::app()->user->uid);
+                MainUtil::setCookie('creditremind', implode('D', $setting['cookiecredits']) . 'D' . Ibos::app()->user->uid);
                 MainUtil::setCookie('creditbase', '0D' . implode('D', $setting['cookiecreditsbase']));
                 if (!empty($setting['cookiecreditsrule'])) {
                     MainUtil::setCookie('creditrule', strip_tags(implode("\t", $setting['cookiecreditsrule'])));
                 }
             }
-            IBOS::app()->setting->copyFrom($setting);
+            Ibos::app()->setting->copyFrom($setting);
             if ($sql) {
                 UserCount::model()->increase($uids, $sql);
             }
@@ -279,14 +279,14 @@ class Credit extends System {
      */
     public function countCredit($uid, $update = true) {
         $credits = 0;
-        $creditsformula = IBOS::app()->setting->get('setting/creditsformula');
+        $creditsformula = Ibos::app()->setting->get('setting/creditsformula');
         if ($uid && !empty($creditsformula)) {
             $user = UserCount::model()->fetchByPk($uid); // for eval
             eval("\$credits = round(" . $creditsformula . ");");
             if ($uid == $uid) {
                 if ($update && $user['credits'] != $credits) {
                     User::model()->updateCredits($uid, $credits);
-                    IBOS::app()->user->setState('credits', $credits);
+                    Ibos::app()->user->setState('credits', $credits);
                 }
             } elseif ($update) {
                 User::model()->updateCredits($uid, $credits);
@@ -338,7 +338,7 @@ class Credit extends System {
         if ($sendNotify) {
             Notify::model()->sendNotify($uid, 'user_group_upgrade', array(
                 '{groupname}' => $newGroup['title'],
-                '{url}' => IBOS::app()->urlManager->createUrl('user/home/credit', array('op' => 'level', 'uid' => $uid))
+                '{url}' => Ibos::app()->urlManager->createUrl('user/home/credit', array('op' => 'level', 'uid' => $uid))
                     )
             );
         }
@@ -412,7 +412,7 @@ class Credit extends System {
             return false;
         }
         Cache::load('creditrule');
-        $caches = IBOS::app()->setting->get('cache/creditrule');
+        $caches = Ibos::app()->setting->get('cache/creditrule');
         $extcredits = $this->getExtCredits();
         $rule = false;
         if (is_array($caches[$action])) {
@@ -436,7 +436,7 @@ class Credit extends System {
      */
     public function getRuleLog($rid, $uid = 0) {
         $log = array();
-        $uid = $uid ? $uid : IBOS::app()->user->uid;
+        $uid = $uid ? $uid : Ibos::app()->user->uid;
         if ($rid && $uid) {
             $log = CreditRuleLog::model()->fetchRuleLog($rid, $uid);
         }
@@ -450,7 +450,7 @@ class Credit extends System {
      * @return array
      */
     public function getCheckLogByClId($clid, $uid = 0) {
-        $uid = $uid ? $uid : IBOS::app()->user->uid;
+        $uid = $uid ? $uid : Ibos::app()->user->uid;
         return CreditRuleLogField::model()->fetchByAttributes(array('uid' => $uid, 'clid' => $clid));
     }
 
@@ -459,7 +459,7 @@ class Credit extends System {
      * @return array
      */
     public function getExtCredits() {
-        return IBOS::app()->setting->get('setting/extcredits');
+        return Ibos::app()->setting->get('setting/extcredits');
     }
 
     /**

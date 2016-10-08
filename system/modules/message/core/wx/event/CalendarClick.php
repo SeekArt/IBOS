@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\event;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\model\Calendars;
 use application\modules\message\core\wx\Code;
 use application\modules\message\core\wx\Factory;
@@ -49,7 +49,7 @@ class CalendarClick extends ClickEvent {
         $day = date( 'Y-m-d', TIMESTAMP );
         $st = strtotime( $day . ' 00:00:00' );
         $et = strtotime( $day . ' 23:59:59' );
-        $lists = Calendars::model()->listCalendarByRange( $st, $et, IBOS::app()->user->uid, 9 );
+        $lists = Calendars::model()->listCalendarByRange( $st, $et, Ibos::app()->user->uid, 9 );
         $items[0] = array(
             'title' => "今天的日程",
             'description' => '',

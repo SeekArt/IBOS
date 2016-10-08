@@ -4,7 +4,7 @@ namespace application\modules\mobile\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\department\utils\Department as DepartmentUtil;
@@ -140,7 +140,7 @@ class WorkController extends BaseController {
         if ($key) {
             $condition[] = array('or', "fr.runid LIKE '%{$key}%'", "fr.name LIKE '%{$key}%'",);
         }
-        $runProcess = IBOS::app()->db->createCommand()
+        $runProcess = Ibos::app()->db->createCommand()
             ->select($fields)
             ->from('{{flow_run_process}} frp')
             ->leftJoin('{{flow_run}} fr', 'frp.runid = fr.runid')
@@ -222,11 +222,11 @@ class WorkController extends BaseController {
                 if (isset($allProcess[$run['flowid']][$run['flowprocess']]['name'])) {
                     $run['stepname'] = $allProcess[$run['flowid']][$run['flowprocess']]['name'];
                 } else {
-                    $run['stepname'] = IBOS::lang('Process steps already deleted');
+                    $run['stepname'] = Ibos::lang('Process steps already deleted');
                 }
             } else {
                 //如果是自由流程则显示当前是第几步骤
-                $run['stepname'] = IBOS::lang('Stepth', '', array('{step}' => $run['processid']));
+                $run['stepname'] = Ibos::lang('Stepth', '', array('{step}' => $run['processid']));
             }
             if ($this->type !== 'done') {
                 $run['focus'] = StringUtil::findIn($this->uid, $run['focususer']);
@@ -337,7 +337,7 @@ class WorkController extends BaseController {
      */
     public function getDelOpt(&$run) {
         // 必须在流程第一步 及 未转交之前 或 拥有管理员权限的人才可删除
-        if (($run['processid'] == '1' && $run['flag'] < FlowConst::PRCS_TRANS) || IBOS::app()->user->isadministrator) {
+        if (($run['processid'] == '1' && $run['flag'] < FlowConst::PRCS_TRANS) || Ibos::app()->user->isadministrator) {
             $run['del'] = true;
             return true;
         } else {

@@ -19,7 +19,7 @@ namespace application\modules\message\core;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
 use CJSON;
@@ -105,7 +105,7 @@ EOT;
 				'uid' => implode( ',', $uids ),
 				'flag' => $flag
 			);
-			IBOS::app()->getController()->renderPartial( 'application.modules.dashboard.views.user.qqsync', $properties );
+			Ibos::app()->getController()->renderPartial( 'application.modules.dashboard.views.user.qqsync', $properties );
 		} else if ( $op == 'sync' ) {
 			$count = count( $syncUsers );
 			if ( $flag == 1 ) {
@@ -212,11 +212,11 @@ EOT;
 		$openIds = UserBinding::model()->fetchValuesByUids( $this->getUid(), 'bqq' );
 		if ( !empty( $openIds ) ) {
 			try {
-				$unit = IBOS::app()->setting->get( 'setting/unit/shortname' );
+				$unit = Ibos::app()->setting->get( 'setting/unit/shortname' );
 				$content = strip_tags( $this->getMessage(), '<a>' );
 				$data = array(
-					'window_title' => IBOS::lang( 'From unit', 'default', array( '{unit}' => $unit ) ),
-					'tips_title' => IBOS::lang( 'System notify', 'default' ),
+					'window_title' => Ibos::lang( 'From unit', 'default', array( '{unit}' => $unit ) ),
+					'tips_title' => Ibos::lang( 'System notify', 'default' ),
 					'tips_content' => $content,
 					'receivers' => implode( ',', $openIds ),
 					'to_all' => 0,
@@ -247,7 +247,7 @@ EOT;
 				'company_id' => $config['id'],
 				'company_token' => $config['token'],
 				'app_id' => $config['appid'],
-				'client_ip' => IBOS::app()->setting->get( 'clientip' )
+				'client_ip' => Ibos::app()->setting->get( 'clientip' )
 			);
 			$api = new BQQApi( $properties );
 		}

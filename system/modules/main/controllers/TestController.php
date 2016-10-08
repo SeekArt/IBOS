@@ -4,7 +4,7 @@ namespace application\modules\main\controllers;
 
 use application\core\controllers\Controller;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
 /**
@@ -31,7 +31,7 @@ class TestController extends Controller {
 		echo '耗时' . number_format( $end - $start, 6 );
 		echo '<br/>';
 		echo '当前用户的格式：<pre>';
-		print_r( $users[IBOS::app()->user->uid] );
+		print_r( $users[Ibos::app()->user->uid] );
 	}
 
 	public function actionTestfile() {

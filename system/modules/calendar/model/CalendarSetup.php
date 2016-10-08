@@ -17,7 +17,7 @@
 namespace application\modules\calendar\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class CalendarSetup extends Model {
@@ -50,7 +50,7 @@ class CalendarSetup extends Model {
      */
     public function getWorkTimeByUid( $uid ) {
         $setupData = $this->fetchSetupByUid( $uid );
-        $workTime = explode( ',', IBOS::app()->setting->get( "setting/calendarworkingtime" ) );
+        $workTime = explode( ',', Ibos::app()->setting->get( "setting/calendarworkingtime" ) );
         if ( empty( $setupData ) ) { // 没有设置的用户读取后台的设置
             $data['startTime'] = isset( $workTime[0] ) ? $workTime[0] : '8';
             $data['endTime'] = isset( $workTime[1] ) ? $workTime[1] : '18';

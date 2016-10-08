@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\model\User;
 use application\modules\department\utils\Department as DepartmentUtil;
 ?>
@@ -46,7 +46,7 @@ use application\modules\department\utils\Department as DepartmentUtil;
 							<img src="<?php echo $user['avatar_big']?>" />
 							<div class="admin-item-body">
 								<span class="fsl"><?php echo $user['username']?></span>
-								<?php if ( $user['uid'] !== IBOS::app()->user->uid ): ?>
+								<?php if ( $user['uid'] !== Ibos::app()->user->uid ): ?>
 									<div class="admin-edit-btn">
 										<button class="btn ptm pbm" data-action="superDel" data-id="u_<?php echo $user['uid']?>">删除</button>
 									</div>
@@ -81,7 +81,7 @@ use application\modules\department\utils\Department as DepartmentUtil;
 <script>
 	Ibos.app.s({
 		"members": "<?php echo $uidStr;?>".split(","),
-		"user": "u_<?php echo IBOS::app()->user->uid;?>"
+		"user": "u_<?php echo Ibos::app()->user->uid;?>"
 	});
 </script>
 <script src='<?php echo $assetUrl; ?>/js/role_super.js?<?php echo VERHASH; ?>'></script>

@@ -37,16 +37,16 @@ class HomeBaseController extends Controller {
     public function init() {
         $uid = intval( util\Env::getRequest( 'uid' ) );
         if ( !$uid ) {
-            $uid = util\IBOS::app()->user->uid;
+            $uid = util\Ibos::app()->user->uid;
         }
         $this->_uid = $uid;
         $user = User::model()->fetchByUid( $uid );
         if ( !$user ) {
-            $this->error( util\IBOS::lang( 'Cannot find the user' ), $this->createUrl( 'home/index' ) );
+            $this->error( util\Ibos::lang( 'Cannot find the user' ), $this->createUrl( 'home/index' ) );
         } else {
             $this->_user = $user;
         }
-        $this->_isMe = $uid == util\IBOS::app()->user->uid;
+        $this->_isMe = $uid == util\Ibos::app()->user->uid;
         parent::init();
     }
 
@@ -89,8 +89,8 @@ class HomeBaseController extends Controller {
      */
     public function getCreditSidebar( $lang = array() ) {
         $data['lang'] = $lang;
-        $data['creditFormulaExp'] = strip_tags( util\IBOS::app()->setting->get( 'setting/creditsformulaexp' ) );
-        $extcredits = util\IBOS::app()->setting->get( 'setting/extcredits' );
+        $data['creditFormulaExp'] = strip_tags( util\Ibos::app()->setting->get( 'setting/creditsformulaexp' ) );
+        $extcredits = util\Ibos::app()->setting->get( 'setting/extcredits' );
         if ( !empty( $extcredits ) ) {
             $user = UserCount::model()->fetchByPk( $this->getUid() );
             foreach ( $extcredits as $index => &$ext ) {
@@ -127,7 +127,7 @@ class HomeBaseController extends Controller {
         );
         if ( $this->getIsWeiboEnabled() ) {
             $data['userData'] = UserData::model()->getUserData( $this->getUid() );
-            !$this->getIsMe() && $data['states'] = Follow::model()->getFollowState( util\IBOS::app()->user->uid, $this->getUid() );
+            !$this->getIsMe() && $data['states'] = Follow::model()->getFollowState( util\Ibos::app()->user->uid, $this->getUid() );
         }
         return $this->renderPartial( 'application.modules.user.views.header', $data, true );
     }

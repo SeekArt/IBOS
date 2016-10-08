@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 
@@ -117,7 +117,7 @@ use application\core\utils\IBOS;
 								<i class="o-type-phone mls"></i>
 							</div>
 							<div class="number-input-block mb">
-								<input type="hidden" id="my_phone_select" value="<?php echo 'u_' . IBOS::app()->user->uid; ?>" />
+								<input type="hidden" id="my_phone_select" value="<?php echo 'u_' . Ibos::app()->user->uid; ?>" />
 							</div>
 							<div class="number-input-block mb">
 								<div class="clearfix mbm">

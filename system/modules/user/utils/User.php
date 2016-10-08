@@ -13,7 +13,7 @@ namespace application\modules\user\utils;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Credit;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\PHPExcel;
@@ -41,8 +41,8 @@ class User {
 	 * @return string|null
 	 */
 	public static function getUserProfile( $field ) {
-		if ( IBOS::app()->user->hasState( $field ) ) {
-			return IBOS::app()->user->$field;
+		if ( Ibos::app()->user->hasState( $field ) ) {
+			return Ibos::app()->user->$field;
 		}
 		static $modelFields = array(
 			'count' => array(
@@ -62,14 +62,14 @@ class User {
 		}
 		if ( $profileModel ) {
 			$model = 'application\modules\user\model\User' . ucfirst( $profileModel );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			$mergeArray = $model::model()->fetchByPk( $uid );
 			if ( $mergeArray ) {
 				foreach ( $mergeArray as $key => $val ) {
-					IBOS::app()->user->setState( $key, $val );
+					Ibos::app()->user->setState( $key, $val );
 				}
 			}
-			return IBOS::app()->user->$field;
+			return Ibos::app()->user->$field;
 		}
 		return null;
 	}
@@ -142,7 +142,7 @@ class User {
 	 * @return type
 	 */
 //    public static function loadUser( $uidX = '', $fieldCon = array() ) {
-//        $userA = IBOS::app()->setting->get( 'cache/users' );
+//        $userA = Ibos::app()->setting->get( 'cache/users' );
 //        $return = array();
 //        if ( !empty( $uidX ) ) {
 //            $uidA = is_array( $uidX ) ? $uidX : explode( ',', $uidX );
@@ -318,7 +318,7 @@ class User {
 		if ( false === $force ) {
 			//找缓存
 			$notInCache = " `uid` NOT IN ( SELECT uid FROM {{cache_user_detail}} ) ";
-			$uidArray = IBOS::app()->db->createCommand()
+			$uidArray = Ibos::app()->db->createCommand()
 					->select( 'uid' )
 					->from( '{{user}}' )
 					->where( $notInCache )
@@ -330,7 +330,7 @@ class User {
 			}
 		} else {
 			//先删除所有需要更新的uid的cache
-			IBOS::app()->db->createCommand()
+			Ibos::app()->db->createCommand()
 					->delete( '{{cache_user_detail}}', $condition );
 			self::CacheUser( $uidX, $returnDisabled );
 		}
@@ -342,7 +342,7 @@ class User {
 				$condition,
 					) : $condition;
 			//从cache表里取数据
-			$cache = IBOS::app()->db->createCommand()
+			$cache = Ibos::app()->db->createCommand()
 					->select( 'uid,detail' )
 					->from( '{{cache_user_detail}}' )
 					->where( $where )
@@ -364,7 +364,7 @@ class User {
 	 * @return boolean 缓存结束
 	 */
 	public static function CacheUser( $uidX = NULL, $returnDisabled = false, $cacheConfig = NULL ) {
-		$userGroupArray = IBOS::app()->setting->get( 'cache/usergroup' );
+		$userGroupArray = Ibos::app()->setting->get( 'cache/usergroup' );
 		$department = DepartmentUtil::loadDepartment();
 		$position = PositionUtil::loadPosition();
 		$role = RoleUtil::loadRole();
@@ -386,7 +386,7 @@ class User {
 			} else {
 				$offset += $limit;
 			}
-			$connection = IBOS::app()->db;
+			$connection = Ibos::app()->db;
 			$transaction = $connection->beginTransaction();
 
 			try {
@@ -478,12 +478,12 @@ class User {
 	 * @return type
 	 */
 	public static function getOrgJsData() {
-		$userArray = IBOS::app()->db->createCommand()
+		$userArray = Ibos::app()->db->createCommand()
 				->select( 'uid,realname,mobile,deptid,roleid,positionid' )
 				->from( UserModel\User::model()->tableName() )
 				->where( " status != 2 " )
 				->queryAll();
-		$deptRelated = IBOS::app()->db->createCommand()
+		$deptRelated = Ibos::app()->db->createCommand()
 				->select( 'uid,deptid' )
 				->from( DepartmentModel\DepartmentRelated::model()->tableName() )
 				->queryAll();
@@ -491,7 +491,7 @@ class User {
 		foreach ( $deptRelated as $dept ) {
 			$deptRes[$dept['uid']][] = $dept['deptid'];
 		}
-		$positionRelated = IBOS::app()->db->createCommand()
+		$positionRelated = Ibos::app()->db->createCommand()
 				->select( 'uid,positionid' )
 				->from( PositionModel\PositionRelated::model()->tableName() )
 				->queryAll();
@@ -499,7 +499,7 @@ class User {
 		foreach ( $positionRelated as $position ) {
 			$positionRes[$position['uid']][] = $position['positionid'];
 		}
-		$roleRelated = IBOS::app()->db->createCommand()
+		$roleRelated = Ibos::app()->db->createCommand()
 				->select( 'uid,roleid' )
 				->from( RoleModel\RoleRelated::model()->tableName() )
 				->queryAll();
@@ -537,7 +537,7 @@ class User {
 		static $cache = NULL;
 		if ( empty( $cache ) ) {
 			Cache::load( 'UserGroup' );
-			$cache = IBOS::app()->setting->get( 'cache/usergroup' );
+			$cache = Ibos::app()->setting->get( 'cache/usergroup' );
 		}
 		$level = !empty( $cache[$groupid] ) ? $cache[$groupid]['grade'] : 1;
 		return $level;
@@ -692,7 +692,7 @@ class User {
 		$uidArr = Convert::getSubByKey( $subUserArr, 'uid' );
 		$allDeptidArr = Convert::getSubByKey( $subUserArr, 'deptid' );
 		$deptidArr = array_unique( $allDeptidArr );
-		$unit = IBOS::app()->setting->get( 'setting/unit' );
+		$unit = Ibos::app()->setting->get( 'setting/unit' );
 		$undefindDeptName = isset( $unit ) ? $unit['fullname'] : '未定义部门';
 		// 将直属下属uid数组转换成字符串，用于IN搜索
 		$uidStr = implode( ',', $uidArr );
@@ -921,8 +921,8 @@ class User {
 	 * @param type $nav
 	 */
 	public static function checkNavPurv( $nav ) {
-		if ( $nav['system'] == '1' && !empty( $nav['module'] ) && !IBOS::app()->user->isadministrator ) {
-			$access = self::getUserPurv( IBOS::app()->user->uid );
+		if ( $nav['system'] == '1' && !empty( $nav['module'] ) && !Ibos::app()->user->isadministrator ) {
+			$access = self::getUserPurv( Ibos::app()->user->uid );
 			return isset( $access[$nav['url']] );
 		}
 		return true;

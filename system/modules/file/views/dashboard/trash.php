@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\utils\Main as MainUtil;
 ?>
 <div class="ct">
@@ -23,7 +23,7 @@ use application\modules\main\utils\Main as MainUtil;
         <!-- 管理评论 -->
         <div class="ctb">
             <h2 class="st"><?php echo $lang['Trash mamage']; ?></h2>
-            <div><?php echo IBOS::lang( 'Total of size to deal with', '', array( '{size}' => $size ) ); ?></div>
+            <div><?php echo Ibos::lang( 'Total of size to deal with', '', array( '{size}' => $size ) ); ?></div>
             <div class="page-list">
                 <div class="page-list-header">
                     <div class="row">

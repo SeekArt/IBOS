@@ -19,7 +19,7 @@ namespace application\modules\position\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\position\utils\Position as PositionUtil;
 
@@ -116,7 +116,7 @@ class Position extends Model {
 
     public function findPositionNameIndexByPositionid( $positionidX ) {
         $positionString = is_array( $positionidX ) ? implode( ',', $positionidX ) : $positionidX;
-        $positionArray = IBOS::app()->db->createCommand()
+        $positionArray = Ibos::app()->db->createCommand()
                 ->select( 'positionid,posname' )
                 ->from( $this->tableName() )
                 ->where( " FIND_IN_SET( `positionid`, '{$positionString}')" )

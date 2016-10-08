@@ -22,7 +22,7 @@ use application\core\utils\Attach;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Image;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -199,7 +199,7 @@ class LocalFile implements FileOperationInterface {
 	public function download( $attach, $downloadInfo = array() ) {
 		$file = PATH_ROOT . '/' . $attach['attachment'];
 		if ( file_exists( $file ) ) {
-			if ( IBOS::app()->browser->name == 'msie' || IBOS::app()->browser->getVersion() == '10.0' || IBOS::app()->browser->getVersion() == '11.0' ) {
+			if ( Ibos::app()->browser->name == 'msie' || Ibos::app()->browser->getVersion() == '10.0' || Ibos::app()->browser->getVersion() == '11.0' ) {
 				$usingIe = true;
 			} else {
 				$usingIe = false;
@@ -274,7 +274,7 @@ class LocalFile implements FileOperationInterface {
 		$this->createFile( $avatarPath . $avatarMiddle, '' );
 		$this->createFile( $avatarPath . $avatarSmall, '' );
 		// 加载类库
-		IBOS::import( 'ext.ThinkImage.ThinkImage', true );
+		Ibos::import( 'ext.ThinkImage.ThinkImage', true );
 		$imgObj = new ThinkImage( THINKIMAGE_GD );
 		//裁剪原图
 		$imgObj->open( $srcPath )->crop( $params['w'], $params['h'], $params['x'], $params['y'] )->save( $srcPath );

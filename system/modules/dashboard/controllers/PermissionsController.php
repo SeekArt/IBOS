@@ -20,7 +20,7 @@ class PermissionsController extends BaseController {
         if ( empty( $module ) ) {
             $module = 'app';
         }
-        $modules = util\IBOS::app()->db->createCommand()
+        $modules = util\Ibos::app()->db->createCommand()
                 ->select( "*" )
                 ->from( "{{node}} as n" )
                 ->leftJoin( "{{module}} as m", "n.module = m.module" )
@@ -43,8 +43,8 @@ class PermissionsController extends BaseController {
         } else {
             $alias = "application.modules.dashboard.views.permissions.limitAdd";
             $params = array(
-                'lang' => util\IBOS::getLangSource( "dashboard.default" ),
-                'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( "dashboard" ),
+                'lang' => util\Ibos::getLangSource( "dashboard.default" ),
+                'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( "dashboard" ),
                 'moduleList' => $this->getModuleNode( $module ),
                 'module' => $module,
                 'roles' => $this->getRoles()
@@ -72,8 +72,8 @@ class PermissionsController extends BaseController {
             $nodeRCombine = RoleUtil::combineRelated( $nodeRelated );
             $alias = "application.modules.dashboard.views.permissions.limitEdit";
             $params = array(
-                'lang' => util\IBOS::getLangSource( "dashboard.default" ),
-                'assetUrl' => util\IBOS::app()->assetManager->getAssetsUrl( "dashboard" ),
+                'lang' => util\Ibos::getLangSource( "dashboard.default" ),
+                'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( "dashboard" ),
                 'roleid' => $roleid,
                 'module' => $module,
                 'moduleList' => $this->getModuleNode( $module ),
@@ -133,7 +133,7 @@ class PermissionsController extends BaseController {
      * @return array
      */
     public function indexInfo( $module ) {
-        $content = util\IBOS::app()->db->createCommand()
+        $content = util\Ibos::app()->db->createCommand()
                 ->select( "*,GROUP_CONCAT(`name`) as names" )
                 ->from( "{{role}} r" )
                 ->leftJoin( "{{node_related}} nr", "r.roleid = nr.roleid" )
@@ -153,7 +153,7 @@ class PermissionsController extends BaseController {
         if ( !empty( $nodes ) ) {
             foreach ( $roleids as $roleid ) {
                 $nodeList = Node::model()->fetchAllSortByPk( 'id' );
-                $auth = util\IBOS::app()->authManager;
+                $auth = util\Ibos::app()->authManager;
                 $role = $auth->getAuthItem( $roleid );
                 foreach ( $nodes as $key => $nodeId ) {
                     $nodeL = Node::model()->fetch( "id = '{$key}'" );

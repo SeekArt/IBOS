@@ -18,7 +18,7 @@ namespace application\modules\message\utils;
 
 use application\core\utils\Cloud;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 use application\modules\message\core as MessageCore;
@@ -78,7 +78,7 @@ class Message {
             return true;
         } else {
             // 客户自定义接口，待项目版定制
-            /* $setting = IBOS::app()->setting->get( 'setting' );
+            /* $setting = Ibos::app()->setting->get( 'setting' );
               if ( $setting['smsenabled'] && in_array( $module, $setting['smsmodule'] ) ) {
 
               } */
@@ -94,18 +94,18 @@ class Message {
     public static function exportSms( $id ) {
         $ids = is_array( $id ) ? $id : explode( ',', $id );
         header( "Content-Type:application/vnd.ms-excel" );
-        $fileName = Convert::iIconv( IBOS::lang( 'SMS export name', 'dashboard.default', array( '{date}' => date( 'Ymd' ) ) ), CHARSET, 'gbk' );
+        $fileName = Convert::iIconv( Ibos::lang( 'SMS export name', 'dashboard.default', array( '{date}' => date( 'Ymd' ) ) ), CHARSET, 'gbk' );
         header( "Content-Disposition: attachment;filename={$fileName}.csv" );
         header( 'Cache-Control: max-age = 0' );
         $head = array(
             'ID',
-            IBOS::lang( 'Sender', 'dashboard.default' ),
-            IBOS::lang( 'Recipient', 'dashboard.default' ),
-            IBOS::lang( 'Membership module', 'dashboard.default' ),
-            IBOS::lang( 'Recipient phone number', 'dashboard.default' ),
-            IBOS::lang( 'Content', 'dashboard.default' ),
-            IBOS::lang( 'Result', 'dashboard.default' ),
-            IBOS::lang( 'Send time', 'dashboard.default' )
+            Ibos::lang( 'Sender', 'dashboard.default' ),
+            Ibos::lang( 'Recipient', 'dashboard.default' ),
+            Ibos::lang( 'Membership module', 'dashboard.default' ),
+            Ibos::lang( 'Recipient phone number', 'dashboard.default' ),
+            Ibos::lang( 'Content', 'dashboard.default' ),
+            Ibos::lang( 'Result', 'dashboard.default' ),
+            Ibos::lang( 'Send time', 'dashboard.default' )
         );
         foreach ( $head as &$header ) {
             // CSV的Excel支持GBK编码，一定要转换，否则乱码
@@ -119,7 +119,7 @@ class Message {
         $cnt = 0;
         // 每隔$limit行，刷新一下输出buffer，不要太大，也不要太小
         $limit = 100;
-        $system = IBOS::lang( 'System', 'dashboard.default' );
+        $system = Ibos::lang( 'System', 'dashboard.default' );
         foreach ( NotifySms::model()->fetchAll( sprintf( "FIND_IN_SET(id,'%s')", implode( ',', $ids ) ) ) as $row ) {
             //刷新一下输出buffer，防止由于数据过多造成问题
             if ( $limit == $cnt ) {
@@ -183,7 +183,7 @@ class Message {
     public static function push( $type, $toUid, $push ) {
         !is_array( $toUid ) && $toUid = explode( ',', $toUid );
         $imCfg = array();
-        foreach ( IBOS::app()->setting->get( 'setting/im' ) as $imType => $config ) {
+        foreach ( Ibos::app()->setting->get( 'setting/im' ) as $imType => $config ) {
             if ( $config['open'] == '1' ) {
                 $className = 'application\modules\message\core\IM' . ucfirst( $imType );
                 $imCfg = $config;

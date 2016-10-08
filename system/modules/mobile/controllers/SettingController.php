@@ -18,7 +18,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
 use application\modules\main\components\CommonAttach;
@@ -49,7 +49,7 @@ class SettingController extends BaseController {
 			//$tempSize = File::imageSize( $fileUrl );
 			//裁剪并存为3个头像
 			//图片裁剪数据
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			//临时头像地址
 			$tempAvatar = $file;
 			// 存放路径
@@ -95,8 +95,8 @@ class SettingController extends BaseController {
 
 	public function actionUpdate() {
 		// 如果不是本人操作，不能进行提交操作
-//		if ( $uid !== IBOS::app()->user->uid ) {
-//			throw new EnvException( IBOS::lang( 'Parameters error', 'error' ) );
+//		if ( $uid !== Ibos::app()->user->uid ) {
+//			throw new EnvException( Ibos::lang( 'Parameters error', 'error' ) );
 //		}
 		// 个人资料提交
 		$profileField = array( 'birthday', 'bio', 'telephone', 'address', 'qq' );
@@ -116,19 +116,19 @@ class SettingController extends BaseController {
 		}
 		// 更新操作
 		foreach ( $model as $modelObject => $value ) {
-			$modelObject::model()->modify( IBOS::app()->user->uid, $value );
+			$modelObject::model()->modify( Ibos::app()->user->uid, $value );
 		}
 		// 更新缓存
-		UserUtil::cleanCache( IBOS::app()->user->uid );
-//			$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+		UserUtil::cleanCache( Ibos::app()->user->uid );
+//			$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 //		echo "<script>parent.settingCallback('图片大小不能超过2M',false)</script>";
 		exit();
 	}
 
 	public function actionChangePass() {
 		//$user = User::model()->fetchByUid( $uid );
-		$user['salt'] = IBOS::app()->user->salt;
-		$user['password'] = IBOS::app()->user->password;
+		$user['salt'] = Ibos::app()->user->salt;
+		$user['password'] = Ibos::app()->user->password;
 
 		$oldpass = $_REQUEST["oldpass"];
 		$newpass = $_REQUEST["newpass"];
@@ -137,20 +137,20 @@ class SettingController extends BaseController {
 		$update = false;
 		if ( $oldpass == '' ) {
 			// 没有填写原来的密码
-			$errorMsg = IBOS::lang( 'Original password require' );
+			$errorMsg = Ibos::lang( 'Original password require' );
 			$this->ajaxReturn( array( 'isSuccess' => 'false', 'msg' => $errorMsg ), Mobile::dataType() );
 		} else if ( strcasecmp( md5( md5( $oldpass ) . $user['salt'] ), $user['password'] ) !== 0 ) {
 			// 密码跟原来的对不上
-			$errorMsg = IBOS::lang( 'Original password error' );
+			$errorMsg = Ibos::lang( 'Original password error' );
 			$this->ajaxReturn( array( 'isSuccess' => 'false', 'msg' => $errorMsg ), Mobile::dataType() );
 		} else if ( !empty( $newpass ) && strcasecmp( $newpass, $repass ) !== 0 ) {
 			// 两次密码不一致
-			$errorMsg = IBOS::lang( 'Confirm password is not correct' );
+			$errorMsg = Ibos::lang( 'Confirm password is not correct' );
 			$this->ajaxReturn( array( 'isSuccess' => 'false', 'msg' => $errorMsg ), Mobile::dataType() );
 		} else {
 			$password = md5( md5( $newpass ) . $user['salt'] );
-			$update = User::model()->updateByUid( IBOS::app()->user->uid, array( 'password' => $password ) );
-			$msg = IBOS::lang( 'Change password succeed' );
+			$update = User::model()->updateByUid( Ibos::app()->user->uid, array( 'password' => $password ) );
+			$msg = Ibos::lang( 'Change password succeed' );
 			$this->ajaxReturn( array( 'isSuccess' => 'true', 'msg' => $msg, 'login' => "false" ), Mobile::dataType() );
 		}
 		exit();

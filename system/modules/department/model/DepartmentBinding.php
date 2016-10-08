@@ -3,7 +3,7 @@
 namespace application\modules\department\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 /**
  * department_binding模型类
@@ -33,7 +33,7 @@ class DepartmentBinding extends Model {
     * @return array
     */
     public function fetchAllBindvalue( $type ) {
-        $return = IBOS::app()->db->createCommand()
+        $return = Ibos::app()->db->createCommand()
             ->select('deptid,bindvalue')
             ->from($this->tableName())
             ->where("app = '{$type}'")

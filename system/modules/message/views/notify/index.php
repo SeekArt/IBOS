@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/message.css?<?php echo VERHASH; ?>">
@@ -16,7 +16,7 @@ use application\core\utils\IBOS;
 					<label class="checkbox btn"><input type="checkbox" data-name="remind"></label>
 					<button type="button" class="btn" data-action="removeNotices"><?php echo $lang['Delete']; ?></button>
 					<?php if ( $unreadCount > 0 ): ?><button type="button" class="btn" data-action="markNoticeRead"><?php echo $lang['Set read']; ?></button><?php endif; ?>
-					<button type="button" onclick="location.href = '<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal', array( 'op' => 'remind' , 'uid' => IBOS::app()->user->uid) ); ?>'" class="btn"><?php echo $lang['Remind set']; ?></button>
+					<button type="button" onclick="location.href = '<?php echo Ibos::app()->urlManager->createUrl( 'user/home/personal', array( 'op' => 'remind' , 'uid' => Ibos::app()->user->uid) ); ?>'" class="btn"><?php echo $lang['Remind set']; ?></button>
 				</div>
 				<!-- 	<div class="pull-right" style="margin-top: 10px;" title="启用桌面通知功能，目前只支持chrome和safari浏览器">
 					<label class="checkbox">
@@ -38,7 +38,7 @@ use application\core\utils\IBOS;
 							<?php $isNew = array_key_exists( 'newlist', $data );?>
 							<li class="main-list-item" id="remind_<?php echo $module; ?>">
 								<div class="avatar-box pull-left posr" >
-									<img class="mbm" width="64" src="<?php echo IBOS::app()->assetManager->getAssetsUrl($module).'/image/icon.png';?>" alt="">
+									<img class="mbm" width="64" src="<?php echo Ibos::app()->assetManager->getAssetsUrl($module).'/image/icon.png';?>" alt="">
 									<?php if ( $isNew ): ?><span class="bubble"><?php echo count( $data['newlist'] ); ?></span><?php endif; ?>
 								</div>
 								<div class="main-list-item-body">

@@ -19,7 +19,7 @@ namespace application\modules\officialdoc\model;
 use application\core\model\Model;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Approval;
 use application\modules\dashboard\model\Syscache;
 
@@ -158,7 +158,7 @@ class OfficialdocCategory extends Model {
     }
 
     public function afterDelete() {
-        $category = IBOS::app()->setting->get( 'officialdoccategory' );
+        $category = Ibos::app()->setting->get( 'officialdoccategory' );
         $pk = $this->getPrimaryKey();
         unset( $category[$pk] );
         Syscache::model()->modifyCache( 'officialdoccategory', $category );
@@ -169,7 +169,7 @@ class OfficialdocCategory extends Model {
     public function afterSave() {
         $pk = $this->getPrimaryKey();
         if ( $pk ) {
-            $category = IBOS::app()->setting->get( 'officialdoccategory' );
+            $category = Ibos::app()->setting->get( 'officialdoccategory' );
             $attr = $this->getAttributes();
             $category[$pk] = $attr;
             Syscache::model()->modifyCache( 'officialdoccategory', $category );

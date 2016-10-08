@@ -12,20 +12,20 @@ use application\modules\assignment\model\AssignmentRemind;
 use application\modules\assignment\model\Assignment;
 use application\modules\user\model\User;
 use application\modules\message\model\NotifyMessage;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
-if ( !isset( IBOS::app()->user->uid ) ) {
+if ( !isset( Ibos::app()->user->uid ) ) {
     return;
 }
 
-$uid = IBOS::app()->user->uid;
+$uid = Ibos::app()->user->uid;
 $remindList = AssignmentRemind::model()->fetchNeedRemindReminder( $uid );
 if ( !empty( $remindList ) ) {
     foreach ( $remindList as $remind ) {
         $assignment = Assignment::model()->findByPk( $remind['assignmentid'] );
         $senderName = User::model()->fetchRealnameByUid( $remind['uid'] );
-        $title = IBOS::lang( 'assignment/default/Timing assign title', '', array( '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
-        $body = IBOS::lang( 'assignment/default/Timing assign content', '', array( '{url}' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ), '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
+        $title = Ibos::lang( 'assignment/default/Timing assign title', '', array( '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
+        $body = Ibos::lang( 'assignment/default/Timing assign content', '', array( '{url}' => Ibos::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ), '{subject}' => $assignment['subject'], '{content}' => $remind['content'] ) );
         $assignData = array(
             'uid' => $uid,
             'node' => 'assignment_push_message',
@@ -33,7 +33,7 @@ if ( !empty( $remindList ) ) {
             'title' => $title,
             'body' => $body,
             'ctime' => time(),
-            'url' => IBOS::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ),
+            'url' => Ibos::app()->createUrl( 'assignment/default/show', array( 'assignmentId' => $remind['assignmentid'] ) ),
         );
         $addRes = NotifyMessage::model()->add( $assignData );
         if ( $addRes ) {

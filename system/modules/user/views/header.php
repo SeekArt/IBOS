@@ -1,20 +1,20 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\BgTemplate;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/user.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/avatar.css?<?php echo VERHASH; ?>">
 <div class="pc-banner">
-    <img src="<?php echo IBOS::app()->user->bg_big ?>" />
+    <img src="<?php echo Ibos::app()->user->bg_big ?>" />
     <?php if ( $this->getIsMe() ): ?><a href="javascript:;" id="skin_choose" title="<?php echo $lang['Custom banner']; ?>"></a><?php endif; ?>
 </div>
 <div class="pc-usi">
     <div class="pc-usi-bg"></div>
     <?php if ( $this->getIsMe() ): ?>
-        <a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'avatar', 'uid' => $user['uid'] ) ); ?>" class="pc-usi-avatar posr">
-            <img src="<?php echo IBOS::app()->user->avatar_big ?>" alt="<?php echo $user['realname']; ?>" width="180" height="180" />
+        <a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'avatar', 'uid' => $user['uid'] ) ); ?>" class="pc-usi-avatar posr">
+            <img src="<?php echo Ibos::app()->user->avatar_big ?>" alt="<?php echo $user['realname']; ?>" width="180" height="180" />
             <div class="pc-img-shade">
                 <div class="pc-bg"></div>
                 <div class="pc-upload-tip"><?php echo $lang['Edit avatar']; ?></div>
@@ -25,7 +25,7 @@ use application\modules\user\model\BgTemplate;
             <img src="<?php echo $user['avatar_big']; ?>" alt="<?php echo $user['realname']; ?>" width="180" height="180" />
         </span>
     <?php endif; ?>
-    <?php if ( IBOS::app()->user->uid !== $user['uid'] ): ?>
+    <?php if ( Ibos::app()->user->uid !== $user['uid'] ): ?>
         <a href="javascript:Ibos.showPmDialog('<?php echo StringUtil::wrapId( $user['uid'], 'u' ); ?>');void(0);" class="private-letter" title="<?php echo $lang['Send message']; ?>">
             <i class="o-private-letter <?php echo $onlineIcon; ?>"></i>
         </a>
@@ -43,7 +43,7 @@ use application\modules\user\model\BgTemplate;
     <div class="pc-usi-sign clearfix">
         <div class="pull-left">
             <?php if ( $this->getIsMe() ): ?>
-                <a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'uid' => $user['uid'] ) ); ?>" class="btn btn-small"><?php echo $lang['Edit profile']; ?></a>
+                <a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'uid' => $user['uid'] ) ); ?>" class="btn btn-small"><?php echo $lang['Edit profile']; ?></a>
             <?php else: ?>
                 <!-- 关注的几种状态 -->
                 <?php if ( !$states['following'] ): ?>
@@ -69,19 +69,19 @@ use application\modules\user\model\BgTemplate;
         <div class="pull-right">
             <ul class="list-inline pc-info-list">
                 <li class="ml">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/following', array( 'uid' => $user['uid'] ) ); ?>">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/following', array( 'uid' => $user['uid'] ) ); ?>">
                         <strong class="xcbu fsl"><?php echo isset( $userData['following_count'] ) ? $userData['following_count'] : 0; ?></strong>
                         <p><?php echo $lang['Focus']; ?></p>
                     </a>
                 </li>
                 <li class="ml">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/follower', array( 'uid' => $user['uid'] ) ); ?>">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/follower', array( 'uid' => $user['uid'] ) ); ?>">
                         <strong class="xcbu fsl"><?php echo isset( $userData['follower_count'] ) ? $userData['follower_count'] : 0; ?></strong>
                         <p><?php echo $lang['Fans']; ?></p>
                     </a>
                 </li>
                 <li class="ml">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $user['uid'] ) ); ?>">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $user['uid'] ) ); ?>">
                         <strong class="xcbu fsl"><?php echo isset( $userData['weibo_count'] ) ? $userData['weibo_count'] : 0; ?></strong>
                         <p><?php echo $lang['Weibo']; ?></p>
                     </a>
@@ -118,7 +118,7 @@ use application\modules\user\model\BgTemplate;
             <div class="sk-divider mbs"></div>
 
             <div class="clearfix">
-                <?php if ( IBOS::app()->user->uid == 1 ): ?>
+                <?php if ( Ibos::app()->user->uid == 1 ): ?>
                     <div class="pull-left delete-module">
                         <a href="javascript:;" class="sk-delete-btn" id="sk_delete_btn">
                             <i class="o-trash"></i>
@@ -134,7 +134,7 @@ use application\modules\user\model\BgTemplate;
         </div>
         <div id="skin_custom" class="bg-choose mark tab-pane model-skin">
             <div class="user-defined-bg mark">
-                <form action="<?php echo IBOS::app()->urlManager->createUrl( 'user/skin/cropBg' ); ?>" method="post" id="skin" class="update-pic cf">
+                <form action="<?php echo Ibos::app()->urlManager->createUrl( 'user/skin/cropBg' ); ?>" method="post" id="skin" class="update-pic cf">
                     <div class="skin-choose-area mb active" id="skin_choose_area">
                         <input type="file" id="skin_bg_choose">
                         <input type="hidden" id="sk_x" name="x" />
@@ -143,7 +143,7 @@ use application\modules\user\model\BgTemplate;
                         <input type="hidden" id="sk_h" name="h" />
                         <input type="hidden" id='sk_img_src' name='src' />
                         <input type="hidden" name="formhash" value='<?php echo FORMHASH; ?>' />
-                        <input type="hidden" name="uid" value="<?php echo IBOS::app()->user->uid; ?>" />
+                        <input type="hidden" name="uid" value="<?php echo Ibos::app()->user->uid; ?>" />
                         <input type="hidden" name="bgSubmit" value="1" />
                         <div class="file-tips">
                             <div class="mb xac">
@@ -166,7 +166,7 @@ use application\modules\user\model\BgTemplate;
                             </a>
                         </div>
                         <div class="pull-right">
-                            <?php if ( IBOS::app()->user->isadministrator == 1 ): ?>
+                            <?php if ( Ibos::app()->user->isadministrator == 1 ): ?>
                                 <label class="checkbox dib sk-setting-model">
                                     <input type="checkbox" name="commonSet" value="同时设为公用模板" id="sk_setting_model" />同时设为公用模板
                                 </label>

@@ -10,7 +10,7 @@
 namespace application\modules\role\utils;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
 use application\modules\role\model\NodeRelated;
@@ -24,7 +24,7 @@ use Guzzle\Common\Exception\InvalidArgumentException;
 class Role {
 
 	public static function loadRole() {
-		return IBOS::app()->setting->get( 'cache/role' );
+		return Ibos::app()->setting->get( 'cache/role' );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Role {
 	public static function getPurv( $roleId ) {
 		//$access = Cache::get( 'purv_' . $roleId );
 		//if ( !$access ) {
-		$access = IBOS::app()->getAuthManager()->getItemChildren( $roleId );
+		$access = Ibos::app()->getAuthManager()->getItemChildren( $roleId );
 		Cache::set( 'purv_' . $roleId, array_flip( array_map( 'strtolower', array_keys( $access ) ) ) );
 		//}
 		return $access;
@@ -145,7 +145,7 @@ class Role {
 	 */
 	public static function checkRouteAccess($routes) {
 		// 创建对应的控制器
-		$ca = IBOS::app()->createController($routes);
+		$ca = Ibos::app()->createController($routes);
 
 		// 找不到对应的控制器。有可能是路由有误
 		if (empty($ca) || count($ca) != 2) {

@@ -48,7 +48,7 @@ class Convert {
 	 * @return string 
 	 */
 	public static function formatDate( $timestamp, $format = 'dt', $timeOffset = '9999', $uformat = '' ) {
-		$setting = IBOS::app()->setting->get( 'setting' );
+		$setting = Ibos::app()->setting->get( 'setting' );
 		$dateConvert = $setting['dateconvert'];
 		if ( $format == 'u' && !$dateConvert ) {
 			$format = 'dt';
@@ -75,17 +75,17 @@ class Convert {
 				$replace = array( '{outputStr}' => $outputStr );
 				if ( $time > 3600 ) {
 					$replace['{outputTime}'] = intval( $time / 3600 );
-					$returnTimeStr = IBOS::lang( 'Time greaterthan 3600', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Time greaterthan 3600', 'date', $replace );
 				} elseif ( $time > 1800 ) {
-					$returnTimeStr = IBOS::lang( 'Time greaterthan 1800', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Time greaterthan 1800', 'date', $replace );
 				} elseif ( $time > 60 ) {
 					$replace['{outputTime}'] = intval( $time / 60 );
-					$returnTimeStr = IBOS::lang( 'Time greaterthan 60', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Time greaterthan 60', 'date', $replace );
 				} elseif ( $time > 0 ) {
 					$replace['{outputTime}'] = $time;
-					$returnTimeStr = IBOS::lang( 'Time greaterthan 0', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Time greaterthan 0', 'date', $replace );
 				} elseif ( $time == 0 ) {
-					$returnTimeStr = IBOS::lang( 'Time equal 0', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Time equal 0', 'date', $replace );
 				} else {
 					return $outputStr;
 				}
@@ -96,12 +96,12 @@ class Convert {
 					'{outputDay}' => gmdate( $timeFormat, $timestamp )
 				);
 				if ( $days == 0 ) {
-					$returnTimeStr = IBOS::lang( 'Day equal 0', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Day equal 0', 'date', $replace );
 				} elseif ( $days == 1 ) {
-					$returnTimeStr = IBOS::lang( 'Day equal 1', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Day equal 1', 'date', $replace );
 				} else {
 					$replace['{outputDay}'] = $days + 1;
-					$returnTimeStr = IBOS::lang( 'Day equal else', 'date', $replace );
+					$returnTimeStr = Ibos::lang( 'Day equal else', 'date', $replace );
 				}
 				return $returnTimeStr;
 			} else {

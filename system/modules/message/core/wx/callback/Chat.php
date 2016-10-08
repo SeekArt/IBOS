@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\callback;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\core\wx\Callback;
 use application\modules\message\core\wx\Factory;
 use application\modules\message\core\wx\Push;
@@ -70,12 +70,12 @@ class Chat extends Callback {
 		if ( !empty( $atUids ) ) { // at人，单独发送
 			$userIds = UserBinding::model()->fetchValuesByUids( $atUids, 'wxqy' );
 			if ( !empty( $userIds ) ) {
-				return $handle->sendText( $userIds, IBOS::app()->user->realname . ':' . $this->getMessage(), $this->getAppId() );
+				return $handle->sendText( $userIds, Ibos::app()->user->realname . ':' . $this->getMessage(), $this->getAppId() );
 			} else {
 				return '';
 			}
 		} else {
-			$res = $handle->sendText( 'all', IBOS::app()->user->realname . ':' . $this->getMessage(), $this->getAppId() );
+			$res = $handle->sendText( 'all', Ibos::app()->user->realname . ':' . $this->getMessage(), $this->getAppId() );
 			return $res;
 		}
 	}

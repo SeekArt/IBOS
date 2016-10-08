@@ -3,7 +3,7 @@
 namespace application\modules\mobile\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\mobile\utils\Mobile;
 use application\modules\workflow\utils\Common;
 use application\modules\thread\controllers\DetailController;
@@ -34,7 +34,7 @@ class ThreadDetailController extends DetailController {
 		$tab = Env::getRequest( 'tab' );
 		$tabs = array( 'assignment', 'feed', 'email', 'flow', 'file', 'team' );
 		if ( !in_array( $tab, $tabs ) ) {
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			ThreadReader::model()->record( $threadId, $uid );
 			$params = array(
 				'thread' => ThreadUtil::getInstance()->getDetail( $threadId, $uid ),
@@ -74,16 +74,16 @@ class ThreadDetailController extends DetailController {
 			'table' => 'thread',
 			'attributes' => array(
 				'rowid' => $thread['threadid'],
-				'moduleuid' => IBOS::app()->user->uid,
+				'moduleuid' => Ibos::app()->user->uid,
 				'touid' => $thread['designeeuid'],
 				'module_rowid' => $thread['threadid'],
 				'module_table' => 'thread',
 				// 'url' => $sourceUrl,
-				// 'detail' => IBOS::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $thread['subject'], 50 ) ) )
+				// 'detail' => Ibos::lang( 'Comment my thread', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $thread['subject'], 50 ) ) )
 			)
 		);
 
-		$widget = IBOS::app()->getWidgetFactory()->createWidget( $this, 'application\modules\thread\widgets\ThreadComment', $properties );
+		$widget = Ibos::app()->getWidgetFactory()->createWidget( $this, 'application\modules\thread\widgets\ThreadComment', $properties );
 		$list = $widget->getCommentList();
 
 		$this->ajaxReturn( array( 'datas' => $list ), Mobile::dataType() );
@@ -94,7 +94,7 @@ class ThreadDetailController extends DetailController {
 	 */
 	protected function email() {
 		$threadId = $_GET['id'];
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$emails = $this->getThreadObj( $threadId )->getEmailWithPage( $uid );
 		$this->ajaxReturn( array( 'datas' => $emails ), Mobile::dataType() );
 	}
@@ -104,7 +104,7 @@ class ThreadDetailController extends DetailController {
 	 */
 	protected function flow() {
 		$threadId = $_GET['id'];
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$flows = $this->getThreadObj( $threadId )->getFlowWithPage( $uid );
 		$flowsWithKey = $this->mergeFlowKey($flows);
 		$this->ajaxReturn( array( 'datas' => $flowsWithKey ), Mobile::dataType() );
@@ -149,8 +149,8 @@ class ThreadDetailController extends DetailController {
 		$assignments = $this->getThreadObj( $threadId )->getAssignment();
 		$settingObj = new ThreadSetting();
 		$params = array(
-			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, IBOS::app()->user->uid ),
-			// 'editAble' => $settingObj->chkEditAble( $threadId, IBOS::app()->user->uid ),
+			// 'addMembersAble' => $settingObj->chkAddAttentionsAble( $threadId, Ibos::app()->user->uid ),
+			// 'editAble' => $settingObj->chkEditAble( $threadId, Ibos::app()->user->uid ),
 			'members' => ThreadUtil::getInstance()->handleMembers( $threadId, $members ),
 			'attentions' => ThreadUtil::getInstance()->handleMembers( $threadId, $attentions ),
 			// 'counters' => $this->getCounters(),
@@ -167,7 +167,7 @@ class ThreadDetailController extends DetailController {
 	private function getRelationModule() {
 		$modules = array();
 		$m = ThreadSetting::RELATIVE_MODULE;
-		$setting = IBOS::app()->setting->get( "setting/threadconfig" );
+		$setting = Ibos::app()->setting->get( "setting/threadconfig" );
 		if ( isset( $setting[$m] ) && is_array( $setting[$m] ) ) {
 			$modules = array_keys( $setting[$m] );
 		}

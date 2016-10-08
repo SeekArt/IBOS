@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\vote\components\Vote;
 ?>
 <!-- load css -->
@@ -20,13 +20,13 @@ use application\modules\vote\components\Vote;
                     <div class="row">
                         <div class="span8">
                             <div class="control-group">
-                                <label for=""><?php echo IBOS::lang( 'News title'); ?></label>
+                                <label for=""><?php echo Ibos::lang( 'News title'); ?></label>
                                 <input type="text" id="subject" name="subject" value="<?php echo $data['subject']; ?>">
                             </div>
                         </div>
                         <div class="span4">
                             <div class="control-group">
-                                <label for=""><?php echo IBOS::lang( 'Appertaining category'); ?></label>
+                                <label for=""><?php echo Ibos::lang( 'Appertaining category'); ?></label>
                                 <select name="catid"  id="edit_articleCategory">
                                     <?php echo $this->getCategoryOption(); ?>
                                 </select>
@@ -69,19 +69,19 @@ use application\modules\vote\components\Vote;
                                 <li>
                                     <a href="#type_article" data-toggle="tab" data-value="0">
                                         <i class="o-art-text"></i>
-                                        <?php echo IBOS::lang( 'Article content'); ?>
+                                        <?php echo Ibos::lang( 'Article content'); ?>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#type_pic" data-toggle="tab" data-value="1">
                                         <i class="o-art-picm"></i>
-                                        <?php echo IBOS::lang( 'Picture content'); ?>
+                                        <?php echo Ibos::lang( 'Picture content'); ?>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#type_url" data-toggle="tab" data-value="2">
                                         <i class="o-art-link"></i>
-                                        <?php echo IBOS::lang( 'Hyperlink address'); ?>
+                                        <?php echo Ibos::lang( 'Hyperlink address'); ?>
                                     </a>
                                 </li>
                             </ul>
@@ -174,20 +174,20 @@ use application\modules\vote\components\Vote;
                     <div class="row">
                         <div class="span4">
                             <div class="control-group">
-                                <label for="status"><?php echo IBOS::lang( 'Information Status'); ?></label>
+                                <label for="status"><?php echo Ibos::lang( 'Information Status'); ?></label>
                                 <div>
                                     <div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
                                         <label class="btn <?php if( $aitVerify == 0 && $data['status'] != 3): ?>active<?php endif; ?>" <?php if($aitVerify != 0): ?>style="display:none"<?php endif;?>>
                                             <input type="radio" name="status" value="2" <?php if( $aitVerify == 0 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Wait verify'); ?>
+                                            <?php echo Ibos::lang( 'Wait verify'); ?>
                                         </label>
 										<label class="btn <?php if( $aitVerify == 1 && $data['status'] != 3): ?>active<?php endif; ?>" <?php if($aitVerify != 1): ?>style="display:none"<?php endif;?>>
                                             <input type="radio" name="status" value="1" <?php if( $aitVerify == 1 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Publish'); ?>
+                                            <?php echo Ibos::lang( 'Publish'); ?>
                                         </label>
                                         <label class="btn <?php if( $data['status'] == 3 ): ?>active<?php endif; ?>">
                                             <input type="radio" name="status" value="3" <?php if( $data['status'] == 3 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Draft'); ?>
+                                            <?php echo Ibos::lang( 'Draft'); ?>
                                         </label>
                                     </div>
                                 </div>
@@ -200,7 +200,7 @@ use application\modules\vote\components\Vote;
                                     <div class="pull-right">
                                         <input type="checkbox" value="1" id="commentStatus"
                                         <?php if ( !$dashboardConfig['articlecommentenable'] ): ?>
-                                        disabled title="<?php echo IBOS::lang( 'Comments module is not installed or enabled'); ?>"
+                                        disabled title="<?php echo Ibos::lang( 'Comments module is not installed or enabled'); ?>"
                                         <?php elseif( $data['commentstatus'] ): ?>
                                             checked
                                         <?php else: ?>
@@ -209,7 +209,7 @@ use application\modules\vote\components\Vote;
                                         name="commentstatus" data-toggle="switch" class="visi-hidden">
                                     </div>
                                     <i class="o-comment"></i>
-                                    <?php echo IBOS::lang( 'Comment'); ?>
+                                    <?php echo Ibos::lang( 'Comment'); ?>
                                 </div>
                             </div>
 
@@ -220,7 +220,7 @@ use application\modules\vote\components\Vote;
                                     <div class="pull-right">
                                         <input type="checkbox" id="voteStatus" value="<?php echo $data['votestatus']; ?>"
                                         <?php if ( !$this->getVoteInstalled() || !$dashboardConfig['articlevoteenable'] ): ?>
-                                        disabled title="<?php echo IBOS::lang( 'Votes module is not installed or enabled'); ?>"
+                                        disabled title="<?php echo Ibos::lang( 'Votes module is not installed or enabled'); ?>"
                                         <?php elseif( !$data['votestatus'] ): ?>
 
                                         <?php else: ?>
@@ -229,7 +229,7 @@ use application\modules\vote\components\Vote;
                                         name="votestatus" data-toggle="switch" class="visi-hidden">
                                     </div>
                                     <i class="o-vote"></i>
-                                    <?php echo IBOS::lang( 'Vote'); ?>
+                                    <?php echo Ibos::lang( 'Vote'); ?>
                                 </div>
                             </div>
                         </div>
@@ -240,10 +240,10 @@ use application\modules\vote\components\Vote;
                     <?php endif; ?>
                     <!-- Row 6 Button -->
                     <div id="submit_bar" class="clearfix">
-                        <button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back(-1);"><?php echo IBOS::lang( 'Return'); ?></button>
+                        <button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back(-1);"><?php echo Ibos::lang( 'Return'); ?></button>
                         <div class="pull-right">
-                            <button type="button" id="prewiew_submit" class="btn btn-large btn-submit"><?php echo IBOS::lang( 'Preview'); ?></button>
-                            <button type="submit" class="btn btn-large btn-submit btn-primary"><?php echo IBOS::lang( 'Submit'); ?></button>
+                            <button type="button" id="prewiew_submit" class="btn btn-large btn-submit"><?php echo Ibos::lang( 'Preview'); ?></button>
+                            <button type="submit" class="btn btn-large btn-submit btn-primary"><?php echo Ibos::lang( 'Submit'); ?></button>
                         </div>
                     </div>
                 </div>

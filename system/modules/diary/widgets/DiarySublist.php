@@ -16,7 +16,7 @@
 
 namespace application\modules\diary\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\user\utils\User as UserUtil;
 use CWidget;
@@ -44,7 +44,7 @@ class DiarySublist extends CWidget {
      */
     public function run() {
         $data = array(
-            'deptArr' => UserUtil::getManagerDeptSubUserByUid( IBOS::app()->user->uid ),
+            'deptArr' => UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
             'dashboardConfig' => DiaryUtil::getSetting(),
             'deptRoute' => $this->inStats() ? 'stats/review' : 'review/index',
             'userRoute' => $this->inStats() ? 'stats/review' : 'review/personal',

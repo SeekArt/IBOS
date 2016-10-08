@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\utils\Main;
 use application\modules\main\utils\Update;
 
@@ -12,7 +12,7 @@ class UpdateController extends BaseController {
 
 	public function actionIndex() {
 
-		if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+		if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
 			if ( LOCAL ) {
 				@set_time_limit( 0 );
 			}
@@ -25,9 +25,9 @@ class UpdateController extends BaseController {
 						) );
 			}
 			$offset = Env::getRequest( 'offset' );
-			$update = Main::getCookie( IBOS::app()->user->uid . '_update_lock' );
+			$update = Main::getCookie( Ibos::app()->user->uid . '_update_lock' );
 			if ( $offset == '0' && empty( $update ) ) {
-				Main::setCookie( IBOS::app()->user->uid . '_update_lock', 1 );
+				Main::setCookie( Ibos::app()->user->uid . '_update_lock', 1 );
 				Cache::update();
 			}
 			$method = $op . 's';

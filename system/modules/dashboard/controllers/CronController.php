@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Cron;
 
@@ -38,11 +38,11 @@ class CronController extends BaseController {
                 }
                 $cronfile = $this->getRealCronFile( $_POST['type'], $_POST['filenamenew'], $_POST['module'] );
                 if ( preg_match( "/[\\\\\/\:\*\?\"\<\>\|]+/", $_POST['filenamenew'] ) ) {
-                    $this->error( IBOS::lang( 'Crons filename illegal' ) );
+                    $this->error( Ibos::lang( 'Crons filename illegal' ) );
                 } elseif ( !is_readable( $cronfile ) ) {
-                    $this->error( IBOS::lang( 'Crons filename invalid', '', array( '{cronfile}' => $cronfile ) ) );
+                    $this->error( Ibos::lang( 'Crons filename invalid', '', array( '{cronfile}' => $cronfile ) ) );
                 } elseif ( $_POST['weekdaynew'] == -1 && $dayNew == -1 && $_POST['hournew'] == -1 && $minuteNew === '' ) {
-                    $this->error( IBOS::lang( 'Crons time invalid' ) );
+                    $this->error( Ibos::lang( 'Crons time invalid' ) );
                 }
                 $data = array(
                     'weekday' => $_POST['weekdaynew'],
@@ -52,7 +52,7 @@ class CronController extends BaseController {
                     'filename' => trim( $_POST['filenamenew'] )
                 );
                 $id && Cron::model()->modify( $id, $data );
-                IBOS::app()->cron->run( $id );
+                Ibos::app()->cron->run( $id );
             } else {
                 if ( $op == 'delete' ) {
                     if ( !empty( $_POST['delete'] ) ) {
@@ -96,7 +96,7 @@ class CronController extends BaseController {
                     Cache::update( 'setting' );
                 }
             }
-            $this->success( IBOS::lang( 'Crons succeed' ), $this->createUrl( 'cron/index' ) );
+            $this->success( Ibos::lang( 'Crons succeed' ), $this->createUrl( 'cron/index' ) );
         } else {
             if ( $op && in_array( $op, array( 'edit', 'run' ) ) ) {
                 $cron = Cron::model()->fetchByPk( $id );
@@ -109,10 +109,10 @@ class CronController extends BaseController {
                 } else if ( $op == 'run' ) {
                     $file = $this->getRealCronFile( $cron['type'], $cron['filename'], $cron['module'] );
                     if ( !file_exists( $file ) ) {
-                        $this->error( IBOS::lang( 'Crons run invalid', '', array( '{cronfile}' => $file ) ) );
+                        $this->error( Ibos::lang( 'Crons run invalid', '', array( '{cronfile}' => $file ) ) );
                     } else {
-                        IBOS::app()->cron->run( $cron['cronid'] );
-                        $this->success( IBOS::lang( 'Crons run succeed' ), $this->createUrl( 'cron/index' ) );
+                        Ibos::app()->cron->run( $cron['cronid'] );
+                        $this->success( Ibos::lang( 'Crons run succeed' ), $this->createUrl( 'cron/index' ) );
                     }
                 }
             } else {
@@ -140,31 +140,31 @@ class CronController extends BaseController {
         foreach ( $list as &$cron ) {
             $cron['disabled'] = $cron['weekday'] == -1 && $cron['day'] == -1 && $cron['hour'] == -1 && $cron['minute'] == '' ? true : false;
             if ( $cron['day'] > 0 && $cron['day'] < 32 ) {
-                $cron['time'] = IBOS::lang( 'Per mensem' ) . $cron['day'] . IBOS::lang( 'Cron day' );
+                $cron['time'] = Ibos::lang( 'Per mensem' ) . $cron['day'] . Ibos::lang( 'Cron day' );
             } elseif ( $cron['weekday'] >= 0 && $cron['weekday'] < 7 ) {
-                $cron['time'] = IBOS::lang( 'Weekly' ) . IBOS::lang( 'Cron week day ' . $cron['weekday'] );
+                $cron['time'] = Ibos::lang( 'Weekly' ) . Ibos::lang( 'Cron week day ' . $cron['weekday'] );
             } elseif ( $cron['hour'] >= 0 && $cron['hour'] < 24 ) {
-                $cron['time'] = IBOS::lang( 'Cron perday' );
+                $cron['time'] = Ibos::lang( 'Cron perday' );
             } else {
-                $cron['time'] = IBOS::lang( 'Per hour' );
+                $cron['time'] = Ibos::lang( 'Per hour' );
             }
             
-            $cron['time'] .= $cron['hour'] >= 0 && $cron['hour'] < 24 ? sprintf( '%02d', $cron['hour'] ) . IBOS::lang( 'Cron hour' ) : '';
+            $cron['time'] .= $cron['hour'] >= 0 && $cron['hour'] < 24 ? sprintf( '%02d', $cron['hour'] ) . Ibos::lang( 'Cron hour' ) : '';
             if ( strpos( $cron['minute'], '*/' ) !== FALSE ) {
-                $cron['time'] = IBOS::lang( 'Every few minutes', '', array( '{minutes}' => str_replace( '*/', '', $cron['minute'] ) ) );
+                $cron['time'] = Ibos::lang( 'Every few minutes', '', array( '{minutes}' => str_replace( '*/', '', $cron['minute'] ) ) );
             } elseif ( !in_array( $cron['minute'], array( -1, '' ) ) ) {
                 foreach ( $cron['minute'] = explode( "\t", $cron['minute'] ) as $k => $v ) {
                     $cron['minute'][$k] = sprintf( '%02d', $v );
                 }
                 $cron['minute'] = implode( ',', $cron['minute'] );
-                $cron['time'] .= $cron['minute'] . IBOS::lang( 'Cron minute' );
+                $cron['time'] .= $cron['minute'] . Ibos::lang( 'Cron minute' );
             } else {
-                $cron['time'] .= '00' . IBOS::lang( 'Cron minute' );
+                $cron['time'] .= '00' . Ibos::lang( 'Cron minute' );
             }
 
-            $cron['lastrun'] = $cron['lastrun'] ? Convert::formatDate( $cron['lastrun'], IBOS::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . IBOS::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';
+            $cron['lastrun'] = $cron['lastrun'] ? Convert::formatDate( $cron['lastrun'], Ibos::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . Ibos::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';
 //			$cron['nextcolor'] = $cron['nextrun'] && $cron['nextrun'] + $_G['setting']['timeoffset'] * 3600 < TIMESTAMP ? 'style="color: #ff0000"' : '';
-            $cron['nextrun'] = $cron['nextrun'] ? Convert::formatDate( $cron['nextrun'], IBOS::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . IBOS::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';
+            $cron['nextrun'] = $cron['nextrun'] ? Convert::formatDate( $cron['nextrun'], Ibos::app()->setting->get( 'setting/dateformat' ) . "<\b\\r />" . Ibos::app()->setting->get( 'setting/timeformat' ) ) : '<b>N/A</b>';
         }
     }
 

@@ -19,7 +19,7 @@ namespace application\core\engines;
 
 use application\core\components\Engine;
 use application\core\engines\sae\SaeIo;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CMap;
 
 class Sae extends Engine {
@@ -83,13 +83,13 @@ class Sae extends Engine {
 	 * @return void
 	 */
 	protected function init() {
-		IBOS::setPathOfAlias( 'engineDriver', IBOS::getPathOfAlias( 'application.core.engines.sae' ) );
-		$alias = IBOS::getPathOfAlias( 'engineDriver' );
+		Ibos::setPathOfAlias( 'engineDriver', Ibos::getPathOfAlias( 'application.core.engines.sae' ) );
+		$alias = Ibos::getPathOfAlias( 'engineDriver' );
 		$classes = array(
 			'CDbCommand' => $alias . '/db/CDbCommand.php',
 			'CDbConnection' => $alias . '/db/CDbConnection.php',
 		);
-		IBOS::$classMap = CMap::mergeArray( IBOS::$classMap, $classes );
+		Ibos::$classMap = CMap::mergeArray( Ibos::$classMap, $classes );
 	}
 
 	protected function preinit() {

@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\vote\components\Vote;
 ?>
 <!-- load css -->
@@ -107,7 +107,7 @@ use application\modules\vote\components\Vote;
 								<input type="hidden" name="picids" id="picids"/>
 							</div>
 
-							<!-- <?php echo IBOS::lang( 'Hyperlink address' ); ?> -->
+							<!-- <?php echo Ibos::lang( 'Hyperlink address' ); ?> -->
 							<div id="type_url" class="tab-pane fill-nn">
 								<input type="text" id="article_link_url" name="url" value="" placeholder="输入链接地址">
 							</div>
@@ -123,15 +123,15 @@ use application\modules\vote\components\Vote;
 								<div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
 									<label class="btn active" <?php if($aitVerify != 0): ?>style="display:none"<?php endif; ?>>
 										<input type="radio" name="status" value="2" <?php if($aitVerify == 0): ?>checked<?php endif;?>>
-										<?php echo IBOS::lang( 'Wait verify' ); ?>
+										<?php echo Ibos::lang( 'Wait verify' ); ?>
 									</label>
 									<label class="btn active" <?php if($aitVerify != 1): ?>style="display:none;"<?php endif; ?>>
 										<input type="radio" name="status" value="1" <?php if($aitVerify == 1): ?>checked<?php endif;?>>
-										<?php echo IBOS::lang( 'Publish' ); ?>
+										<?php echo Ibos::lang( 'Publish' ); ?>
 									</label>
 									<label class="btn">
 										<input type="radio" name="status" value="3">
-										<?php echo IBOS::lang( 'Draft' ); ?>
+										<?php echo Ibos::lang( 'Draft' ); ?>
 									</label>
 								</div>
 							</div>
@@ -144,7 +144,7 @@ use application\modules\vote\components\Vote;
 								<div class="pull-right">
 									<input type="checkbox" value="1" id="commentStatus" 
 									<?php if ( !$dashboardConfig['articlecommentenable'] ): ?>
-											   disabled title="<?php echo IBOS::lang( 'Comments module is not installed or enabled' ); ?>"
+											   disabled title="<?php echo Ibos::lang( 'Comments module is not installed or enabled' ); ?>"
 										   <?php else: ?>
 											   checked
 										   <?php endif; ?>
@@ -166,7 +166,7 @@ use application\modules\vote\components\Vote;
 										   name="votestatus" data-toggle="switch">
 								</div>
 								<i class="o-vote"></i>
-								<?php echo IBOS::lang( 'Vote' ); ?>
+								<?php echo Ibos::lang( 'Vote' ); ?>
 							</div>
 						</div>
 					</div>
@@ -177,10 +177,10 @@ use application\modules\vote\components\Vote;
 				<?php endif; ?>
 				<!-- Row 6 Button -->	
 				<div id="submit_bar" class="clearfix">
-					<button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back();"><?php echo IBOS::lang( 'Return' ); ?></button>
+					<button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back();"><?php echo Ibos::lang( 'Return' ); ?></button>
 					<div class="pull-right">
-						<button type="button" id="prewiew_submit" class="btn btn-large btn-submit btn-preview"><?php echo IBOS::lang( 'Preview' ); ?></button>
-						<button type="submit" class="btn btn-large btn-submit btn-primary"><?php echo IBOS::lang( 'Submit' ); ?></button>
+						<button type="button" id="prewiew_submit" class="btn btn-large btn-submit btn-preview"><?php echo Ibos::lang( 'Preview' ); ?></button>
+						<button type="submit" class="btn btn-large btn-submit btn-primary"><?php echo Ibos::lang( 'Submit' ); ?></button>
 					</div>
 				</div>
 			</div>

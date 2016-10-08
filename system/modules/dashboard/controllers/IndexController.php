@@ -8,7 +8,7 @@ use application\core\utils\Convert;
 use application\core\utils\Database;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Attachment;
 use application\modules\main\model\Setting;
@@ -47,17 +47,17 @@ class IndexController extends BaseController {
         // 系统关闭
         $appClosed = Setting::model()->fetchSettingValueByKey( 'appclosed' );
         // 新版本提示升级
-        $newVersion = IBOS::app()->setting->get( 'newversion' );
+        $newVersion = Ibos::app()->setting->get( 'newversion' );
         // 安全信息获取URL
-        $getSecurityUrl = IBOS::app()->urlManager->createUrl( 'dashboard/index/getsecurity' );
+        $getSecurityUrl = Ibos::app()->urlManager->createUrl( 'dashboard/index/getsecurity' );
         // 安装日期
         $mainModule = Module::model()->fetchByPk( 'main' );
         // 授权信息
-        $authkey = IBOS::app()->setting->get( 'config/security/authkey' );
+        $authkey = Ibos::app()->setting->get( 'config/security/authkey' );
         $unit = Setting::model()->fetchSettingValueByKey( 'unit' );
         if ( isset( $_GET['attachsize'] ) ) {
             $attachSize = Attachment::model()->getTotalFilesize();
-            $attachSize = is_numeric( $attachSize ) ? Convert::sizeCount( $attachSize ) : IBOS::lang( 'Unknow' );
+            $attachSize = is_numeric( $attachSize ) ? Convert::sizeCount( $attachSize ) : Ibos::lang( 'Unknow' );
         } else {
             $attachSize = '';
         }
@@ -81,7 +81,7 @@ class IndexController extends BaseController {
      * @return void
      */
     public function actionSwitchstatus() {
-        if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
             $val = Env::getRequest( 'val' );
             $result = Setting::model()->updateSettingValueByKey( 'appclosed', (int) $val );
             Cache::update( array( 'setting' ) );
@@ -94,7 +94,7 @@ class IndexController extends BaseController {
      * @return void
      */
     public function actionGetSecurity() {
-        if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
             $return = File::fileSockOpen( self::SECURITY_URL, 0, 'charset=' . CHARSET );
             $this->ajaxReturn( $return, 'EVAL' );
         }

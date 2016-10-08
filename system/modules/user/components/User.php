@@ -18,7 +18,7 @@
 namespace application\modules\user\components;
 
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model as MainModel;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\role\model\Role;
@@ -46,7 +46,7 @@ class User extends CWebUser {
 	 * @return void
 	 */
 	public function init() {
-		$account = util\IBOS::app()->setting->get( 'setting/account' );
+		$account = util\Ibos::app()->setting->get( 'setting/account' );
 		$this->account = $account;
 		$isAutologin = MainUtil::getCookie( 'autologin' );
 		if ( !$isAutologin ) {
@@ -96,8 +96,8 @@ class User extends CWebUser {
 			'invisible' => 1 )
 		);
 		if ( !$fromCookie ) {
-			util\IBOS::app()->session->isNew = true;
-			util\IBOS::app()->session->updateSession();
+			util\Ibos::app()->session->isNew = true;
+			util\Ibos::app()->session->updateSession();
 		}
 	}
 
@@ -148,7 +148,7 @@ class User extends CWebUser {
 	 * 重写更新在线状态判定。先检查当前连接是否ajax操作，是则跳过
 	 */
 	protected function updateAuthStatus() {
-		if ( !util\IBOS::app()->request->getIsAjaxRequest() ) {
+		if ( !util\Ibos::app()->request->getIsAjaxRequest() ) {
 			// 多人同时登录同一账号的机制实现
 			if ( $this->account['allowshare'] != 1 && !$this->getIsGuest() ) {
 				// 查找session表是否有相同用户数据
@@ -157,9 +157,9 @@ class User extends CWebUser {
 				);
 				$session = MainModel\Session::model()->fetch( $criteria );
 				// 如果有但不等于当前的sid,表明已经被重复登录，退出当前用户
-				if ( $session && $session['sid'] != util\IBOS::app()->setting->get( 'sid' ) ) {
-					util\IBOS::app()->getRequest()->getCookies()->remove( $this->getStateKeyPrefix() );
-					util\IBOS::app()->getSession()->destroy();
+				if ( $session && $session['sid'] != util\Ibos::app()->setting->get( 'sid' ) ) {
+					util\Ibos::app()->getRequest()->getCookies()->remove( $this->getStateKeyPrefix() );
+					util\Ibos::app()->getSession()->destroy();
 				}
 			}
 			parent::updateAuthStatus();
@@ -173,10 +173,10 @@ class User extends CWebUser {
 	protected function getIsNeedReset() {
 		$neededReset = false;
 		if ( $this->account['expiration'] != 0 ) {
-			if ( util\IBOS::app()->user->lastchangepass == 0 ) {
+			if ( util\Ibos::app()->user->lastchangepass == 0 ) {
 				$neededReset = true;
 			} else {
-				$time = TIMESTAMP - util\IBOS::app()->user->lastchangepass;
+				$time = TIMESTAMP - util\Ibos::app()->user->lastchangepass;
 				switch ( $this->account['expiration'] ) {
 					case '1': // month
 						if ( $time / 86400 > 30 ) {
@@ -202,10 +202,10 @@ class User extends CWebUser {
 	}
 
 	public function getRoleType() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$roleIds = UserModel\User::model()->findAllRoleidByUid( $uid );
 		$allroleidS = implode( ',', array_unique( $roleIds ) );
-		$roleType = IBOS::app()->db->createCommand()
+		$roleType = Ibos::app()->db->createCommand()
 				->select( 'roletype' )
 				->from( Role::model()->tableName() )
 				->where( sprintf( " FIND_IN_SET( `roleid`, '%s' ) AND `roletype` = '%s' ", $allroleidS, Role::ADMIN_TYPE ) )

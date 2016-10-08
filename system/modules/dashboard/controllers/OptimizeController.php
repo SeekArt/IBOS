@@ -4,7 +4,7 @@ namespace application\modules\dashboard\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
@@ -23,10 +23,10 @@ class OptimizeController extends BaseController {
             $operation = Env::getRequest( 'op' );
             if ( $operation == 'clear' ) {
                 Cache::clear();
-                $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+                $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
             }
-            $options = IBOS::app()->cache->options;
-            $cacheExtension = IBOS::app()->cache->getExtension();
+            $options = Ibos::app()->cache->options;
+            $cacheExtension = Ibos::app()->cache->getExtension();
             $cacheType = $options['type'];
             $caches = array();
             foreach ( $cacheExtension as $cacheName => $enable ) {
@@ -37,7 +37,7 @@ class OptimizeController extends BaseController {
             $data = array( 'list' => $caches );
             $this->render( 'cache', $data );
         } else {
-            echo IBOS::lang( 'Not compatible service', 'message' );
+            echo Ibos::lang( 'Not compatible service', 'message' );
         }
     }
 
@@ -70,7 +70,7 @@ class OptimizeController extends BaseController {
                     Setting::model()->updateSettingValueByKey( $sKey, $value );
                 }
                 Cache::update( array( 'setting' ) );
-                $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+                $this->success( Ibos::lang( 'Save succeed', 'message' ) );
             } else {
                 $operation = Env::getRequest( 'op' );
                 $moduleList = explode( ',', self::DEFAULT_SEARCH_MODULE );
@@ -85,7 +85,7 @@ class OptimizeController extends BaseController {
                 $this->render( 'search', $data );
             }
         } else {
-            echo IBOS::lang( 'Not compatible service', 'message' );
+            echo Ibos::lang( 'Not compatible service', 'message' );
         }
     }
 
@@ -102,7 +102,7 @@ class OptimizeController extends BaseController {
                 Setting::model()->updateSettingValueByKey( 'sphinxhost', $sphinxHost );
                 Setting::model()->updateSettingValueByKey( 'sphinxport', $sphinxPort );
                 Cache::update( array( 'setting' ) );
-                $this->success( IBOS::lang( 'Save succeed', 'message' ) );
+                $this->success( Ibos::lang( 'Save succeed', 'message' ) );
             } else {
                 $record = Setting::model()->fetchSettingValueByKeys( 'sphinxhost,sphinxport' );
                 $sphinxPort = Setting::model()->fetchSettingValueByKey( 'sphinxport' );
@@ -110,7 +110,7 @@ class OptimizeController extends BaseController {
                 $this->render( 'sphinx', $data );
             }
         } else {
-            echo IBOS::lang( 'Not compatible service', 'message' );
+            echo Ibos::lang( 'Not compatible service', 'message' );
         }
     }
 

@@ -17,7 +17,7 @@
 
  namespace application\modules\recruit\widgets;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\statistics\core\ChartFactory;
 use application\modules\statistics\utils\StatCommon;
 
@@ -38,7 +38,7 @@ class StatRecruitCount extends StatRecruitBase {
 		$degreeCounter = $this->createComponent( 'application\modules\recruit\components\DegreeCounter', $properties ); // 学历分布统计器
 		$workYearsCounter = $this->createComponent( 'application\modules\recruit\components\WorkYearsCounter', $properties ); // 工作年限统计器
 		$data = array(
-			'statAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'statistics' ),
+			'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'statistics' ),
 			'talentFlow' => $factory->createChart( $flowCounter, 'application\modules\recruit\components\RecruitLineChart' ),
 			'sexRatio' => $factory->createChart( $sexRatioCounter, 'application\modules\recruit\components\RecruitPieChart' ),
 			'age' => $factory->createChart( $ageCounter, 'application\modules\recruit\components\RecruitPieChart' ),

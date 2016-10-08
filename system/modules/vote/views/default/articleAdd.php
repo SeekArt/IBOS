@@ -1,21 +1,21 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
-<link rel="stylesheet" href="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/css/vote.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'vote' ); ?>/css/vote.css?<?php echo VERHASH; ?>">
 
 <div id="vote" class="vote mb" style="display: none;">
     <ul class="nav nav-tabs nav-tabs-large nav-justified" id="vote_tab">
         <li class="active">
             <a href="javascript:;" data-target="#vote_text" data-value="1">
                 <i class="o-art-text"></i>
-                <?php echo IBOS::lang( 'Initiated text vote', 'vote.default' ); ?>
+                <?php echo Ibos::lang( 'Initiated text vote', 'vote.default' ); ?>
             </a>
         </li>
         <li>
             <a href="javascript:;" data-target="#vote_pic" data-value="2">
                 <i class="o-art-picm"></i>
-                <?php echo IBOS::lang( 'Initiated image vote', 'vote.default' ); ?>
+                <?php echo Ibos::lang( 'Initiated image vote', 'vote.default' ); ?>
             </a>
         </li>
     </ul>
@@ -23,13 +23,13 @@ use application\core\utils\IBOS;
         <!-- 文字投票 -->
         <div class="ct ctform form-compact" id="vote_text">
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Create title', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Create title', 'vote.default' ); ?></label>
                 <div class="controls">
                     <input id="vote_subject" name="vote[subject]" type="text" maxlength="20">
                 </div>
             </div>
             <div class="control-group">
-                <div class="controls"><?php echo IBOS::lang( 'Vote option description', 'vote.default' ); ?></div>
+                <div class="controls"><?php echo Ibos::lang( 'Vote option description', 'vote.default' ); ?></div>
             </div>
             <div>
                 <!-- 投票列表: 内容由JS动态生成 -->
@@ -38,14 +38,14 @@ use application\core\utils\IBOS;
                     <div class="controls">
                         <a href="javascript:;" class="add-one" id="vote_text_add">
                             <i class="cbtn o-plus"></i>
-                            <?php echo IBOS::lang( 'Add option', 'vote.default' ); ?>
+                            <?php echo Ibos::lang( 'Add option', 'vote.default' ); ?>
                         </a>
                     </div>
                 </div>
             </div>
             <!-- 最大可选项 -->
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Single or multi select', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Single or multi select', 'vote.default' ); ?></label>
                 <div class="controls">
                     <div class="row">
                         <div class="span3">
@@ -61,16 +61,16 @@ use application\core\utils\IBOS;
             </div>
             <!-- 截止时间 -->
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Deadline', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Deadline', 'vote.default' ); ?></label>
                 <div class="controls">
                     <div class="row">
                         <div class="span3">
                             <select name="vote[deadlineType]" id="vote_txt_deadline">
-                                <option value="0"><?php echo IBOS::lang( 'Custom', 'vote.default' ); ?></option>
-                                <option value="1"><?php echo IBOS::lang( 'One week', 'date' ) ?></option>
-                                <option value="2"><?php echo IBOS::lang( 'One month', 'date' ) ?></option>
-                                <option value="3"><?php echo IBOS::lang( 'Half of a year', 'date' ) ?></option>
-                                <option value="4"><?php echo IBOS::lang( 'One year', 'date' ) ?></option>
+                                <option value="0"><?php echo Ibos::lang( 'Custom', 'vote.default' ); ?></option>
+                                <option value="1"><?php echo Ibos::lang( 'One week', 'date' ) ?></option>
+                                <option value="2"><?php echo Ibos::lang( 'One month', 'date' ) ?></option>
+                                <option value="3"><?php echo Ibos::lang( 'Half of a year', 'date' ) ?></option>
+                                <option value="4"><?php echo Ibos::lang( 'One year', 'date' ) ?></option>
                             </select>
                         </div>
                         <div class="span6">
@@ -84,15 +84,15 @@ use application\core\utils\IBOS;
             </div>
             <!-- 投票结果 -->
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Vote result', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Vote result', 'vote.default' ); ?></label>
                 <div class="controls">
                     <label class="radio radio-inline">
                         <input type="radio" name="vote[isvisible]" value="1" checked>
-                        <?php echo IBOS::lang( 'After the vote visible', 'vote.default' ); ?>
+                        <?php echo Ibos::lang( 'After the vote visible', 'vote.default' ); ?>
                     </label>
                     <label class="radio radio-inline">
                         <input type="radio" name="vote[isvisible]" value="0">
-                        <?php echo IBOS::lang( 'Any visible', 'vote.default' ); ?>
+                        <?php echo Ibos::lang( 'Any visible', 'vote.default' ); ?>
                     </label>
                 </div>
             </div>
@@ -100,13 +100,13 @@ use application\core\utils\IBOS;
         <!-- 图片投票 -->
         <div id="vote_pic" class="ct ctform form-compact" style="display:none;">
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Create title', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Create title', 'vote.default' ); ?></label>
                 <div class="controls">
                     <input name="imageVote[subject]" id="imageVote_subject" type="text" maxlength="20">
                 </div>
             </div>
             <div class="control-group">
-                <div class="controls"><?php echo IBOS::lang( 'Vote option description', 'vote.default' ); ?></div>
+                <div class="controls"><?php echo Ibos::lang( 'Vote option description', 'vote.default' ); ?></div>
             </div>
             <div>
                 <!-- 投票列表内容由JS动态生成 -->
@@ -116,13 +116,13 @@ use application\core\utils\IBOS;
                     <div class="controls">
                         <a href="javascript:;" class="add-one" id="vote_pic_add">
                             <i class="cbtn o-plus o-plus"></i>
-                            <?php echo IBOS::lang( 'Add option', 'vote.default' ); ?>
+                            <?php echo Ibos::lang( 'Add option', 'vote.default' ); ?>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Single or multi select', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Single or multi select', 'vote.default' ); ?></label>
                 <div class="controls">
                     <div class="row">
                         <div class="span3">
@@ -137,16 +137,16 @@ use application\core\utils\IBOS;
                 <input type="hidden" id="picvote_ismulti" name="imageVote[ismulti]" value="0" />
             </div>
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Deadline', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Deadline', 'vote.default' ); ?></label>
                 <div class="controls">
                     <div class="row">
                         <div class="span3">
                             <select name="imageVote[deadlineType]" id="vote_pic_deadline">
-                                <option value="0"><?php echo IBOS::lang( 'Custom', 'vote.default' ); ?></option>
-                                <option value="1"><?php echo IBOS::lang( 'One week', 'date' ) ?></option>
-                                <option value="2"><?php echo IBOS::lang( 'One month', 'date' ) ?></option>
-                                <option value="3"><?php echo IBOS::lang( 'Half of a year', 'date' ) ?></option>
-                                <option value="4"><?php echo IBOS::lang( 'One year', 'date' ) ?></option>
+                                <option value="0"><?php echo Ibos::lang( 'Custom', 'vote.default' ); ?></option>
+                                <option value="1"><?php echo Ibos::lang( 'One week', 'date' ) ?></option>
+                                <option value="2"><?php echo Ibos::lang( 'One month', 'date' ) ?></option>
+                                <option value="3"><?php echo Ibos::lang( 'Half of a year', 'date' ) ?></option>
+                                <option value="4"><?php echo Ibos::lang( 'One year', 'date' ) ?></option>
                             </select>
                         </div>
                         <div class="span6">
@@ -159,15 +159,15 @@ use application\core\utils\IBOS;
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label"><?php echo IBOS::lang( 'Vote result', 'vote.default' ); ?></label>
+                <label class="control-label"><?php echo Ibos::lang( 'Vote result', 'vote.default' ); ?></label>
                 <div class="controls">
                     <label class="radio radio-inline">
                         <input type="radio" name="imageVote[isvisible]" value="1" checked>
-                        <?php echo IBOS::lang( 'After the vote visible', 'vote.default' ); ?>
+                        <?php echo Ibos::lang( 'After the vote visible', 'vote.default' ); ?>
                     </label>
                     <label class="radio radio-inline">
                         <input type="radio" name="imageVote[isvisible]" value="0">
-                        <?php echo IBOS::lang( 'Any visible', 'vote.default' ); ?>
+                        <?php echo Ibos::lang( 'Any visible', 'vote.default' ); ?>
                     </label>
                 </div>
             </div>
@@ -185,7 +185,7 @@ use application\core\utils\IBOS;
     </label>
     <div class="controls">
     <input type="text" name="vote[voteItem][]" class="input-small" maxlength="20">
-    <a href="javascript:;" title="<?php echo IBOS::lang( 'Delete', 'vote.default' ); ?>" class="o-ra" data-item-remove="<%=id%>"></a>
+    <a href="javascript:;" title="<?php echo Ibos::lang( 'Delete', 'vote.default' ); ?>" class="o-ra" data-item-remove="<%=id%>"></a>
     </div>
     </li>
 </script>
@@ -224,20 +224,20 @@ use application\core\utils\IBOS;
     <input type="text" name="imageVote[voteItem][<%=id%>]" class="input-small" maxlength="20">
     </div>
     </div>
-    <a href="javascript:;" title="<?php echo IBOS::lang( 'Delete', 'vote.default' ); ?>" class="o-ra" data-item-remove="<%=id%>"></a>
+    <a href="javascript:;" title="<?php echo Ibos::lang( 'Delete', 'vote.default' ); ?>" class="o-ra" data-item-remove="<%=id%>"></a>
     </div>
     </li>
 </script>
 <script>
     Ibos.app.setPageParam({
         voteUploadSettings: {
-            upload_url: "<?php echo IBOS::app()->urlManager->createUrl( 'main/attach/upload', array( 'uid' => IBOS::app()->user->uid, 'hash' => $uploadConfig['hash'], 'type' => 'vote' ) ); ?>",
+            upload_url: "<?php echo Ibos::app()->urlManager->createUrl( 'main/attach/upload', array( 'uid' => Ibos::app()->user->uid, 'hash' => $uploadConfig['hash'], 'type' => 'vote' ) ); ?>",
             file_size_limit: "<?php echo $uploadConfig['max']; ?>",
             file_types: "<?php echo $uploadConfig['attachexts']['ext']; ?>",
             file_types_description: "<?php echo $uploadConfig['attachexts']['depict']; ?>"
         }
     })
 </script>
-<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote.js?<?php echo VERHASH; ?>"></script>
-<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote_default_articleadd.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'vote' ); ?>/js/vote_default_articleadd.js?<?php echo VERHASH; ?>"></script>
 

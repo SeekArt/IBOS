@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
 
@@ -20,7 +20,7 @@ function getScriptUrl() {
         $phpSelf = str_replace( '\\', '/', str_replace( $_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME'] ) );
         $phpSelf[0] != '/' && $phpSelf = '/' . $phpSelf;
     } else {
-        throw new Exception( IBOS::lang( 'Request tainting', 'error' ) );
+        throw new Exception( Ibos::lang( 'Request tainting', 'error' ) );
     }
     return $phpSelf;
 }

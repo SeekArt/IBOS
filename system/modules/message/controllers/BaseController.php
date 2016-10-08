@@ -10,7 +10,7 @@
 namespace application\modules\message\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\model\UserData;
 
 class BaseController extends Controller {
@@ -32,7 +32,7 @@ class BaseController extends Controller {
      * @return array
      */
     private function getUnreadCount() {
-        $unreadCount = UserData::model()->getUnreadCount( IBOS::app()->user->uid );
+        $unreadCount = UserData::model()->getUnreadCount( Ibos::app()->user->uid );
         $sidebarUnreadMap['mention'] = $unreadCount['unread_atme'];
         $sidebarUnreadMap['comment'] = $unreadCount['unread_comment'];
         $sidebarUnreadMap['notify'] = $unreadCount['unread_notify'];

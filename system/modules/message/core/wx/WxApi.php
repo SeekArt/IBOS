@@ -21,7 +21,7 @@ use application\core\model\Log;
 use application\core\utils\Api;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\WebSite;
 use application\modules\dashboard\utils\Wx;
 use application\modules\department\model\DepartmentBinding;
@@ -320,7 +320,7 @@ EOT;
 		static $hostInfo = false;
 		if ( !$hostInfo ) {
 			if ( defined( 'CALLBACK' ) ) {
-				$hostInfo = rtrim( IBOS::app()->request->getHostInfo(), '/' );
+				$hostInfo = rtrim( Ibos::app()->request->getHostInfo(), '/' );
 			} else {
 				$hostInfo = rtrim( Env::getSiteUrl( Env::isHttps() ), '/' );
 			}

@@ -16,7 +16,7 @@
 
 namespace application\modules\file\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\file\model\File;
@@ -119,7 +119,7 @@ class FileCheck extends System {
                         }
                     }
                 }
-                $record = IBOS::app()->db->createCommand()
+                $record = Ibos::app()->db->createCommand()
                         ->select( "*,f.fid AS fid" )
                         ->from( "{{file_share}} as fs" )
                         ->leftJoin( "{{file}} f", "f.`fid` = fs.`fid`" )
@@ -177,10 +177,10 @@ class FileCheck extends System {
      * @return boolean
      */
     public function isManager( $uid ) {
-        if ( IBOS::app()->user->isadministrator ) {
+        if ( Ibos::app()->user->isadministrator ) {
             return true;
         }
-        $manager = IBOS::app()->setting->get( 'setting/filecompmanager' );
+        $manager = Ibos::app()->setting->get( 'setting/filecompmanager' );
         if ( empty( $manager ) ) {
             return false;
         }

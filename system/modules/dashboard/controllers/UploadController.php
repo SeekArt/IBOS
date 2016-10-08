@@ -6,7 +6,7 @@ use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Image;
 use application\core\utils\StringUtil;
 use application\extensions\ThinkImage\ThinkImage;
@@ -125,14 +125,14 @@ class UploadController extends BaseController {
 			Setting::model()->updateAll( array( 'svalue' => $waterConfigArray['watermodule'] ), "skey = 'watermodule' " );
 			Setting::model()->updateAll( array( 'svalue' => $waterConfigArray['watermarkstatus'] ), "skey = 'watermarkstatus' " );
 			Cache::update( array( 'setting' ) );
-			$this->success( IBOS::lang( 'Save succeed', 'message' ) );
+			$this->success( Ibos::lang( 'Save succeed', 'message' ) );
 		} else {
 			$upload = Setting::model()->fetchSettingValueByKeys( 'attachdir,attachurl,thumbquality,attachsize,filetype' );
 			$waterStatus = Setting::model()->fetchSettingValueByKey( 'watermarkstatus' );
 			$waterConfig = Setting::model()->fetchSettingValueByKey( 'waterconfig' );
 			$waterModule = Setting::model()->fetchSettingValueByKey( 'watermodule' );
 			$fontPath = Dashboard::getFontPathlist( self::TTF_FONT_PATH );
-			$modules = IBOS::app()->getEnabledModule();
+			$modules = Ibos::app()->getEnabledModule();
 			$moduleArray = array_merge( $modules, array( 'baidu' => array( 'name' => '百度编辑器', 'module' => 'baidu' ) ) );
 			$data = array(
 				'size' => $size,

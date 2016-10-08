@@ -4,7 +4,7 @@ namespace application\modules\message\model;
 
 use application\core\model\Model;
 use application\core\model\Source;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Convert;
 use application\modules\user\model\User;
 
@@ -61,11 +61,11 @@ class Atme extends Model {
 	 */
 	public function addAtme( $module, $table, $content, $rowId, $extraUids = null, $lessUids = null, $url = '', $detail = '' ) {
 		// 去除重复，空值与自己
-		$extraUids = array_diff( (array) $extraUids, array( IBOS::app()->user->uid ) );
+		$extraUids = array_diff( (array) $extraUids, array( Ibos::app()->user->uid ) );
 		$extraUids = array_unique( $extraUids );
 		$extraUids = array_filter( $extraUids );
 
-		$lessUids[] = (int) IBOS::app()->user->uid;
+		$lessUids[] = (int) Ibos::app()->user->uid;
 		$lessUids = array_unique( $lessUids );
 		$lessUids = array_filter( $lessUids );
 		// 获取@用户的UID数组
@@ -84,7 +84,7 @@ class Atme extends Model {
 		preg_match_all( $this->_atRegex, $content, $matches );
 		$unames = $matches[1];
 		if ( isset( $unames[0] ) ) {
-			$curUid = IBOS::app()->user->uid;
+			$curUid = Ibos::app()->user->uid;
 			$map = array( 'select' => 'uid', 'condition' => "realname in ('" . implode( "','", $unames ) . "') AND uid!=" . $curUid );
 			$userIds = User::model()->fetchAllSortByPk( 'uid', $map );
 			$matchUids = Convert::getSubByKey( $userIds, 'uid' );
@@ -171,7 +171,7 @@ class Atme extends Model {
 	 * @return integer 添加成功后的@ID
 	 */
 	private function saveAtme( $module, $table, $uids, $rowId, $url = '', $detail = '' ) {
-		$self = IBOS::app()->user->uid;
+		$self = Ibos::app()->user->uid;
 		foreach ( $uids as $uid ) {
 			// 去除自己@自己的数据
 			if ( $uid == $self ) {

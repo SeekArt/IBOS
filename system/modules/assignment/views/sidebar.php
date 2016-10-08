@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!-- 任务指派 -->
 <div class="aside" id="aside">
@@ -11,20 +11,20 @@ use application\core\utils\IBOS;
                     <span class="badge pull-right"><?php echo $unfinishCount; ?></span>
                     <?php endif; ?>
                     <i class="o-am-unfinished"></i>
-                    <?php echo IBOS::lang('Unfinished assignment') ?>
+                    <?php echo Ibos::lang('Unfinished assignment') ?>
                 </a>
             </li>
             <li <?php if($this->getId() == 'finished'): ?>class="active"<?php endif; ?>>
                 <a href="<?php echo $this->createUrl( 'finished/index' ); ?>">
                     <i class="o-am-finished"></i>
-                    <?php echo IBOS::lang('Finished assignment') ?>
+                    <?php echo Ibos::lang('Finished assignment') ?>
                 </a>
             </li>
             <?php if($hasSubUid): ?>
             <li>
                 <a href="<?php echo $this->createUrl( 'unfinished/subList' ); ?>">
                     <i class="o-am-under"></i>
-                    <?php echo IBOS::lang('Under assignment') ?>
+                    <?php echo Ibos::lang('Under assignment') ?>
                 </a>
             </li>
             <?php endif; ?>

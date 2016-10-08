@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 ?>
 <!-- private css -->
@@ -14,20 +14,20 @@ use application\core\utils\Module;
     <div class="mtw-portal-nav-wrap">
         <ul class="portal-nav clearfix">
             <li>
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'main/default/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'main/default/index' ); ?>">
                     <i class="o-portal-office"></i>
                     办公门户
                 </a>
             </li>
             <li class="active">
-                <a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/home/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/home/index' ); ?>">
                     <i class="o-portal-personal"></i>
                     个人门户
                 </a>
             </li>
             <?php if ( Module::getIsEnabled( 'app' ) ): ?>
                 <li >
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl( 'app/default/index' ); ?>">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'app/default/index' ); ?>">
                         <i class="o-portal-app"></i>
                         常用工具
                     </a>
@@ -35,7 +35,7 @@ use application\core\utils\Module;
             <?php endif; ?>
         </ul>
     </div>
-    <span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
+    <span class="pull-right"><?php echo Ibos::app()->setting->get( 'lunar' ); ?></span>
 </div>
 
 <div class="wrap">
@@ -183,18 +183,18 @@ use application\core\utils\Module;
                 <div class="mpanel">
                     <div class="wb-tpc-user bdbs">
                         <div class="wb-tpcu-banner rdt">
-                            <img src="<?php echo IBOS::app()->user->bg_small; ?>" alt="<?php echo IBOS::app()->user->realname; ?>" />
+                            <img src="<?php echo Ibos::app()->user->bg_small; ?>" alt="<?php echo Ibos::app()->user->realname; ?>" />
                         </div>
                         <div class="wb-tpcu-usi">
                             <div class="wb-tpcu-pic">
-                                <a href="<?php echo IBOS::app()->user->space_url; ?>" class="avatar-circle">
-                                    <img src="<?php echo IBOS::app()->user->avatar_big; ?>" alt="<?php echo IBOS::app()->user->realname; ?>" />
+                                <a href="<?php echo Ibos::app()->user->space_url; ?>" class="avatar-circle">
+                                    <img src="<?php echo Ibos::app()->user->avatar_big; ?>" alt="<?php echo Ibos::app()->user->realname; ?>" />
                                 </a>
                             </div>
-                            <div class="wb-tpcu-name"> <strong><?php echo IBOS::app()->user->realname; ?></strong>
+                            <div class="wb-tpcu-name"> <strong><?php echo Ibos::app()->user->realname; ?></strong>
                                 &nbsp; <strong>·</strong>
                                 &nbsp;
-                                <small><?php echo IBOS::app()->user->posname; ?></small>
+                                <small><?php echo Ibos::app()->user->posname; ?></small>
                             </div>
                             <div class="wb-tpcu-num ">
                                 <ul>
@@ -223,16 +223,16 @@ use application\core\utils\Module;
                         <!-- Status 1 start-->
                         <div class="mbs">
                             <span> 
-                                <i class="wb-lv lv<?php echo IBOS::app()->user->level; ?>"></i>
+                                <i class="wb-lv lv<?php echo Ibos::app()->user->level; ?>"></i>
                                 &nbsp;
-                                <strong><?php echo IBOS::app()->user->group_title; ?></strong>
+                                <strong><?php echo Ibos::app()->user->group_title; ?></strong>
                             </span>
-                            <span class="exp-val"> <em><?php echo IBOS::app()->user->credits; ?></em>
-                                /<?php echo IBOS::app()->user->next_group_credit; ?>
+                            <span class="exp-val"> <em><?php echo Ibos::app()->user->credits; ?></em>
+                                /<?php echo Ibos::app()->user->next_group_credit; ?>
                             </span>
                         </div>
                         <div class="progress mbs" id="exp_info">
-                            <div class="progress-bar " style="width: <?php echo IBOS::app()->user->upgrade_percent; ?>%;"></div>
+                            <div class="progress-bar " style="width: <?php echo Ibos::app()->user->upgrade_percent; ?>%;"></div>
                         </div>
                     </div>
                 </div>
@@ -471,7 +471,7 @@ use application\core\utils\Module;
 </script>
 <script>
     var params = {
-        wbnums: '<?php echo IBOS::app()->setting->get( 'setting/wbnums' ); ?>',
+        wbnums: '<?php echo Ibos::app()->setting->get( 'setting/wbnums' ); ?>',
         firstId: '<?php echo $firstId; ?>',
         loadId: '<?php echo $lastId; ?>',
         maxId: '<?php echo $firstId; ?>',
@@ -481,7 +481,7 @@ use application\core\utils\Module;
         feedtype: '<?php echo $feedtype; ?>',
         feedkey: '<?php echo $feedkey; ?>',
         inHome: 1,
-        submitInterval: <?php echo intval( IBOS::app()->setting->get( 'setting/wbpostfrequency' ) ) * 1000; ?>
+        submitInterval: <?php echo intval( Ibos::app()->setting->get( 'setting/wbpostfrequency' ) ) * 1000; ?>
     };
     Ibos.app.setPageParam(params);
 </script>

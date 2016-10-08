@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!-- load css -->
@@ -35,7 +35,7 @@ use application\core\utils\IBOS;
 					</div>
 					<div class="span4">
 						<div class="control-group">
-							<label for=""><?php echo IBOS::lang( 'Appertaining category' ); ?></label>
+							<label for=""><?php echo Ibos::lang( 'Appertaining category' ); ?></label>
 							<select name="catid"  id="articleCategory">
 								<?php echo $categoryOption; ?>
 							</select>
@@ -54,7 +54,7 @@ use application\core\utils\IBOS;
 					</div>
 					<div class="span4">
 						<div class="control-group">
-							<label><?php echo IBOS::lang( 'Cc' ); ?></label>
+							<label><?php echo Ibos::lang( 'Cc' ); ?></label>
 							<input type="text" name="ccScope" value="" id="ccScope">
 						</div>
 					</div>
@@ -67,15 +67,15 @@ use application\core\utils\IBOS;
 								<div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
 									<label class="btn active" <?php if ( $aitVerify != 0 ): ?>style="display:none"<?php endif; ?>>
 										<input type="radio" name="status" value="2" <?php if($aitVerify == 0): ?>checked<?php endif;?>>
-										<?php echo IBOS::lang( 'Wait verify' ); ?>
+										<?php echo Ibos::lang( 'Wait verify' ); ?>
 									</label>
 									<label class="btn active" <?php if ( $aitVerify != 1 ): ?>style="display:none"<?php endif; ?>>
 										<input type="radio" name="status" value="1" <?php if($aitVerify == 1): ?>checked<?php endif;?>>
-										<?php echo IBOS::lang( 'Publish' ); ?>
+										<?php echo Ibos::lang( 'Publish' ); ?>
 									</label>
 									<label class="btn">
 										<input type="radio" name="status" value="3">
-										<?php echo IBOS::lang( 'Draft' ); ?>
+										<?php echo Ibos::lang( 'Draft' ); ?>
 									</label>
 								</div>
 							</div>
@@ -87,13 +87,13 @@ use application\core\utils\IBOS;
 								<div class="pull-right">
 									<input type="checkbox" value="1" id="commentStatus" 
 									<?php if ( !$dashboardConfig['doccommentenable'] ): ?>
-											   disabled title="<?php echo IBOS::lang( 'Comments module is not installed or enabled' ); ?>"
+											   disabled title="<?php echo Ibos::lang( 'Comments module is not installed or enabled' ); ?>"
 										   <?php else: ?>
 											   checked
 										   <?php endif; ?>
 										   name="commentstatus" data-toggle="switch" class="visi-hidden">
 								</div>
-								<?php echo IBOS::lang( 'Comment' ); ?>
+								<?php echo Ibos::lang( 'Comment' ); ?>
 							</div>
 						</div>
 					</div>
@@ -136,10 +136,10 @@ use application\core\utils\IBOS;
 				</div>
 				<!-- Row 6 Button -->	
 				<div id="submit_bar" class="clearfix">
-					<button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back();"><?php echo IBOS::lang( 'Return' ); ?></button>
+					<button type="button" class="btn btn-large btn-submit pull-left" onclick="history.back();"><?php echo Ibos::lang( 'Return' ); ?></button>
 					<div class="pull-right">
-						<button type="button" data-action="preview" class="btn btn-large btn-submit"><?php echo IBOS::lang( 'Preview' ); ?></button>
-						<button type="submit" id="article_submit" class="btn btn-large btn-submit btn-primary"><?php echo IBOS::lang( 'Submit' ); ?></button>
+						<button type="button" data-action="preview" class="btn btn-large btn-submit"><?php echo Ibos::lang( 'Preview' ); ?></button>
+						<button type="submit" id="article_submit" class="btn btn-large btn-submit btn-primary"><?php echo Ibos::lang( 'Submit' ); ?></button>
 					</div>
 				</div>
 			</div>

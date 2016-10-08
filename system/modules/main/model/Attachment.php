@@ -3,7 +3,7 @@
 namespace application\modules\main\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Attachment extends Model {
 
@@ -25,7 +25,7 @@ class Attachment extends Model {
         $attachSize = 0;
         foreach ( $this->_tableIds as $id ) {
             $table = 'attachment_' . $id;
-            $attachSize += IBOS::app()->db->createCommand()
+            $attachSize += Ibos::app()->db->createCommand()
                     ->select( 'SUM(filesize)' )
                     ->from( sprintf( '{{%s}}', $table ) )
                     ->queryScalar();
@@ -40,7 +40,7 @@ class Attachment extends Model {
             $conditions .= ' AND `filename` LIKE \'%' . $keyword . '%\'';
             $sortRefer = array();
             foreach ( $this->_tableIds as $tableId ) {
-                $subData = IBOS::app()->db->createCommand()->select( '*' )
+                $subData = Ibos::app()->db->createCommand()->select( '*' )
                         ->from( "{{attachment_{$tableId}}}" )
                         ->where( $conditions )
                         ->queryAll();

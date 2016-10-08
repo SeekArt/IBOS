@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Setting;
 
 // 程序根目录路径
@@ -17,8 +17,8 @@ Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' )
 Yii::createApplication( 'application\core\components\Application', $mainConfig );
 // 接收信息处理
 $result = trim( file_get_contents( "php://input" ), " \t\n\r" );
-$signature = IBOS::app()->getRequest()->getQuery( 'signature' );
-$timestamp = IBOS::app()->getRequest()->getQuery( 'timestamp' );
+$signature = Ibos::app()->getRequest()->getQuery( 'signature' );
+$timestamp = Ibos::app()->getRequest()->getQuery( 'timestamp' );
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 if ( strcmp( $signature, md5( $aeskey . $timestamp ) ) != 0 ) {
 	Env::iExit( "签名错误" );

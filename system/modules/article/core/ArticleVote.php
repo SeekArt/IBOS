@@ -17,7 +17,7 @@
 
 namespace application\modules\article\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\vote\components\Vote;
 use application\modules\vote\model\Vote as VoteModel;
 use application\modules\vote\model\VoteItem;
@@ -38,7 +38,7 @@ class ArticleVote extends Vote {
 			}
 		}
 		$vote->save();
-		$voteid = IBOS::app()->db->getLastInsertID();
+		$voteid = Ibos::app()->db->getLastInsertID();
 		for ( $i = 0; $i < count( $voteItemList ); $i++ ) {
 			$voteItem = new VoteItem();
 			$voteItem->voteid = $voteid;

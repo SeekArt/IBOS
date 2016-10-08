@@ -80,13 +80,13 @@ class Attach {
 		$config = array();
 		$imageexts = self::getCommonImgExt();
 		$config['limit'] = 0;
-		$uid = !empty( $uid ) ? intval( $uid ) : IBOS::app()->user->uid;
-		$authKey = IBOS::app()->setting->get( 'config/security/authkey' );
+		$uid = !empty( $uid ) ? intval( $uid ) : Ibos::app()->user->uid;
+		$authKey = Ibos::app()->setting->get( 'config/security/authkey' );
 		// 身份验证
 		$config['hash'] = md5( substr( md5( $authKey ), 8 ) . $uid );
 		// 上传限制
 		$config['max'] = 0;
-		$max = IBOS::app()->setting->get( 'setting/attachsize' );
+		$max = Ibos::app()->setting->get( 'setting/attachsize' );
 		if ( $max ) {
 			$max = $max * 1024 * 1024;
 		}
@@ -95,7 +95,7 @@ class Attach {
 		$config['imageexts']['ext'] = !empty( $imageexts ) ? '*.' . implode( ';*.', $imageexts ) : '';
 		// 文件格式
 		$config['attachexts'] = array( 'ext' => '*.*', 'depict' => 'All Support Formats' );
-		$extensions = IBOS::app()->setting->get( 'setting/filetype' );
+		$extensions = Ibos::app()->setting->get( 'setting/filetype' );
 		if ( !empty( $extensions ) ) {
 			$extension = str_replace( ' ', '', $extensions );
 			$exts = explode( ',', $extension );
@@ -130,7 +130,7 @@ class Attach {
 	public static function updateAttach( $aid, $relateId = 0 ) {
 		$aid = is_array( $aid ) ? $aid : explode( ',', $aid );
 		$relateId = $relateId > 0 ? $relateId : mt_rand( 0, 9 );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$records = Attachment::model()->findAllByPk( $aid );
 		$count = 0;
 		$tableArray = array();
@@ -193,7 +193,7 @@ class Attach {
 	 */
 	public static function getAttachStr( $aid, $tableId = '', $param = array() ) {
 		if ( !is_numeric( $tableId ) ) {
-			$tableId = IBOS::app()->db->createCommand()->select( 'tableid' )->from( '{{attachment}}' )->where( "aid = {$aid}" )->queryScalar();
+			$tableId = Ibos::app()->db->createCommand()->select( 'tableid' )->from( '{{attachment}}' )->where( "aid = {$aid}" )->queryScalar();
 		}
 		//下载字符串分割样式： 附件id|所属表id|当前时间戳|$param,采用加密方式：authcode
 		//密钥为当前用户的salt + base64_encode + url硬转码，这样加密后就只能保证只有当前的用户能下载
@@ -201,7 +201,7 @@ class Attach {
 		if ( !empty( $param ) ) {
 			$str .= '|' . serialize( $param );
 		}
-		$encode = rawurlencode( base64_encode( StringUtil::authCode( $str, 'ENCODE', IBOS::app()->user->salt ) ) );
+		$encode = rawurlencode( base64_encode( StringUtil::authCode( $str, 'ENCODE', Ibos::app()->user->salt ) ) );
 		return $encode;
 	}
 
@@ -241,7 +241,7 @@ class Attach {
 		if ( !empty( $aid ) ) {
 			$data = self::getAttachData( $aid );
 		}
-		$urlManager = IBOS::app()->urlManager;
+		$urlManager = Ibos::app()->urlManager;
 		foreach ( $data as $id => &$val ) {
 			$val['date'] = Convert::formatDate( $val['dateline'], 'u' );
 			$val['filetype'] = StringUtil::getFileExt( $val['filename'] );
@@ -273,7 +273,7 @@ class Attach {
 			$readOfficeRange = in_array( self::attachType( $val['filetype'], 'id' ), range( 3, 5 ) );
 			if ( $readOfficeRange && $val['down_office'] ) {
 				// $val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => self::getAttachStr( $aid, $val['tableid'], array( 'filetype' => $val['filetype'], 'op' => 'read' ) ) ) );
-				// $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( IBOS::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
+				// $val['officereadurl'] = "http://o.ibos.cn/op/view.aspx?src=" . urlencode( Ibos::app()->setting->get( 'siteurl' ) . File::getAttachUrl() . '/' . $val['attachment'] );
 				$val['officereadurl'] = $urlManager->createUrl( 'main/attach/office', array( 'id' => $idString, 'op' => 'read' ) );
 			}
 

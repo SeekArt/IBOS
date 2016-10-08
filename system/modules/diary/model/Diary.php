@@ -17,7 +17,7 @@
 namespace application\modules\diary\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
@@ -55,7 +55,7 @@ class Diary extends Model {
 		}
 		$count = $this->count( $criteria );
 		$pagination = new CPagination( $count );
-		$everyPage = empty( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$everyPage = empty( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pagination->setPageSize( intval( $everyPage ) );
 		$pagination->applyLimit( $criteria );
 		$diaryList = $this->fetchAll( $criteria );
@@ -76,7 +76,7 @@ class Diary extends Model {
 		}
 		$count = $this->count( $criteria );
 		$pagination = new CPagination( $count );
-		$everyPage = empty( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+		$everyPage = empty( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
 		$pagination->setPageSize( intval( $everyPage ) );
 		$pagination->applyLimit( $criteria );
 		$diaryList = $this->fetchAll( $criteria );

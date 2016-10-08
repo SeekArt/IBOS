@@ -1,6 +1,6 @@
 <?php 
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\statistics\core\StatConst;
 use application\modules\statistics\utils\StatCommon;
@@ -12,25 +12,25 @@ use application\modules\statistics\utils\StatCommon;
             <li class="active">
                 <a href="<?php echo $this->createUrl( 'default/index' ); ?>">
                     <i class="o-da-personal"></i>
-					<?php echo IBOS::lang( 'Personal' ); ?>
+					<?php echo Ibos::lang( 'Personal' ); ?>
                 </a>
                 <div class="da-calendar">
                     <div class="da-calendar-month clearfix">
                         <a href="javascript:;" class="da-calendar-prev" data-action="toPrevMonth"></a>
-                        <a href="javascript:;" id="ym"><?php echo $currentDateInfo['year']; ?> / <?php echo $currentDateInfo['monthStr']; ?><?php echo IBOS::lang( 'Month' ); ?></a>
+                        <a href="javascript:;" id="ym"><?php echo $currentDateInfo['year']; ?> / <?php echo $currentDateInfo['monthStr']; ?><?php echo Ibos::lang( 'Month' ); ?></a>
                         <a href="javascript:;" class="da-calendar-next" data-action="toNextMonth"></a>
                     </div>
                     <div class="da-calendar-week">
                         <table class="da-calendar-table">
                             <tbody>
                                 <tr>
-                                    <th><?php echo IBOS::lang( 'Day' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'One' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'Two' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'Three' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'Four' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'Five' ); ?></th>
-                                    <th><?php echo IBOS::lang( 'Six' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Day' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'One' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Two' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Three' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Four' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Five' ); ?></th>
+                                    <th><?php echo Ibos::lang( 'Six' ); ?></th>
                                 </tr>
                             </tbody>
                         </table>
@@ -55,15 +55,15 @@ use application\modules\statistics\utils\StatCommon;
                     <div class="da-calendar-footer">
                         <span>
                             <i class="da-square-log"></i>
-							<?php echo IBOS::lang( 'Have a diary' ); ?>
+							<?php echo Ibos::lang( 'Have a diary' ); ?>
                         </span>
                         <span>
                             <i class="da-square-comment"></i>
-							<?php echo IBOS::lang( 'Have comments' ); ?>
+							<?php echo Ibos::lang( 'Have comments' ); ?>
                         </span>
                         <span>
                             <i class="da-square-current"></i>
-							<?php echo IBOS::lang( 'Has been selected' ); ?>
+							<?php echo Ibos::lang( 'Has been selected' ); ?>
                         </span>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ use application\modules\statistics\utils\StatCommon;
 						<span class="badge pull-right"><?php echo $this->getUnreviews(); ?></span>
 						<?php endif ?>
 						<i class="o-da-appraise"></i>
-						<?php echo IBOS::lang( 'Review it' ); ?>
+						<?php echo Ibos::lang( 'Review it' ); ?>
 					</a>
 				</li>
 			
@@ -83,7 +83,7 @@ use application\modules\statistics\utils\StatCommon;
 				<li>
 					<a href="<?php echo $this->createUrl( 'share/index' ); ?>">
 						<i class="o-da-concerned"></i>
-						<?php echo IBOS::lang( 'Share diary' ); ?>
+						<?php echo Ibos::lang( 'Share diary' ); ?>
 					</a>
 				</li>
 			<?php endif; ?>
@@ -91,7 +91,7 @@ use application\modules\statistics\utils\StatCommon;
 				<li>
 					<a href="<?php echo $this->createUrl( 'attention/index' ); ?>">
 						<i class="o-da-shared"></i>
-						<?php echo IBOS::lang( 'Attention diary' ); ?>
+						<?php echo Ibos::lang( 'Attention diary' ); ?>
 					</a>
 				</li>
 			<?php endif; ?>

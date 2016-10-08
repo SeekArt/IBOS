@@ -17,7 +17,7 @@
 namespace application\modules\vote\controllers;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
@@ -25,7 +25,7 @@ class DashboardController extends BaseController {
 
     public function getAssetUrl( $module = '' ) {
         $module = 'dashboard';
-        return IBOS::app()->assetManager->getAssetsUrl( $module );
+        return Ibos::app()->assetManager->getAssetsUrl( $module );
     }
 
     /**
@@ -33,10 +33,10 @@ class DashboardController extends BaseController {
      * @return void
      */
     public function actionIndex() {
-        $votethumbwh = IBOS::app()->setting->get( 'setting/votethumbwh' );
+        $votethumbwh = Ibos::app()->setting->get( 'setting/votethumbwh' );
         list($width, $height) = explode( ',', $votethumbwh );
         $config = array(
-            'votethumbenable' => IBOS::app()->setting->get( 'setting/votethumbenable' ),
+            'votethumbenable' => Ibos::app()->setting->get( 'setting/votethumbenable' ),
             'votethumbwidth' => $width,
             'votethumbheight' => $height
         );
@@ -58,7 +58,7 @@ class DashboardController extends BaseController {
         Setting::model()->modify( 'votethumbenable', array( 'svalue' => $votethumbenable ) );
         Setting::model()->modify( 'votethumbwh', array( 'svalue' => $votethumbewh ) );
         Cache::update( 'setting' );
-        $this->success( IBOS::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
+        $this->success( Ibos::lang( 'Update succeed', 'message' ), $this->createUrl( 'dashboard/index' ) );
     }
 
 }

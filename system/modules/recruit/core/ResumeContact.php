@@ -16,7 +16,7 @@
 
 namespace application\modules\recruit\core;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\recruit\model\ResumeDetail as RDModel;
 use application\modules\user\model\User;
@@ -61,7 +61,7 @@ class ResumeContact {
             }
         }
         $input = implode( ',', StringUtil::getId( $contactArr['upuid'] ) );
-        $contactArr['input'] = empty( $input ) ? IBOS::app()->user->uid : $input;
+        $contactArr['input'] = empty( $input ) ? Ibos::app()->user->uid : $input;
         if ( $contactArr['inputtime'] != 0 ) {
             $contactArr['inputtime'] = strtotime( $contactArr['inputtime'] );
         } else {

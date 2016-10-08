@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\statistics\core\StatConst;
 use application\modules\statistics\utils\StatCommon;
@@ -13,7 +13,7 @@ use application\modules\statistics\utils\StatCommon;
             <li>
                 <a href="<?php echo $this->createUrl('default/index') ?>">
                     <i class="o-da-personal"></i>
-                    <?php echo IBOS::lang( 'Personal'); ?>
+                    <?php echo Ibos::lang( 'Personal'); ?>
                 </a>
             </li>
 			<?php if($this->checkIsHasSub()): ?>
@@ -23,14 +23,14 @@ use application\modules\statistics\utils\StatCommon;
                     <span class="badge pull-right"><?php echo $this->getUnreviews(); ?></span>
                     <?php endif; ?>
                     <i class="o-da-appraise"></i>
-                    <?php echo IBOS::lang( 'Review it'); ?>
+                    <?php echo Ibos::lang( 'Review it'); ?>
                 </a>
             </li>
 			<?php endif; ?>
             <li class="active">
                 <a href="<?php echo $this->createUrl('share/index') ?>">
                     <i class="o-da-concerned"></i>
-                    <?php echo IBOS::lang( 'Share diary'); ?>
+                    <?php echo Ibos::lang( 'Share diary'); ?>
                 </a>
                 <div class="aside-sub">
                     <ul class="da-share-user-list">
@@ -48,7 +48,7 @@ use application\modules\statistics\utils\StatCommon;
             <li>
                 <a href="<?php echo $this->createUrl('attention/index') ?>">
                     <i class="o-da-shared"></i>
-                    <?php echo IBOS::lang( 'Attention diary'); ?>
+                    <?php echo Ibos::lang( 'Attention diary'); ?>
                 </a>
             </li>
 			<?php endif; ?>

@@ -3,7 +3,7 @@
 namespace application\modules\message\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class NotifyMessage extends Model {
@@ -187,7 +187,7 @@ class NotifyMessage extends Model {
      * @return mixed 删除失败返回false，删除成功返回删除的条数
      */
     public function deleteNotify( $id, $type = 'id' ) {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( $type == 'id' ) {
             return $this->deleteAll( 'uid = :uid AND FIND_IN_SET(id,:id)', array( ':uid' => $uid, ':id' => $id ) );
         } else if ( $type == 'module' ) {

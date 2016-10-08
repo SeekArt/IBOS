@@ -126,20 +126,20 @@ use application\core\utils\StringUtil;
 				<div class="t">任务详情</div>
 				<div>
 					<?php
-					$sourceUrl = IBOS::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $assignment['assignmentid'] ) );
+					$sourceUrl = Ibos::app()->urlManager->createUrl( 'assignment/default/show', array( 'assignmentId' => $assignment['assignmentid'] ) );
 					$this->widget( 'application\modules\assignment\widgets\AssignmentComment', array(
 						'module' => 'assignment',
 						'table' => 'assignment',
 						'attributes' => array(
 							'rowid' => $assignment['assignmentid'],
-							'moduleuid' => IBOS::app()->user->uid,
+							'moduleuid' => Ibos::app()->user->uid,
 							'touid' => $assignment['designeeuid'],
 							'module_rowid' => $assignment['assignmentid'],
 							'module_table' => 'assignment',
 							'allowComment' => 1,
 							'showStamp' => 1,
 							'url' => $sourceUrl,
-							'detail' => IBOS::lang( 'Comment my assignment', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $assignment['subject'], 50 ) ) )
+							'detail' => Ibos::lang( 'Comment my assignment', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( $assignment['subject'], 50 ) ) )
 				) ) );
 					?>
 				</div>

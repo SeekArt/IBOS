@@ -8,7 +8,7 @@
 
 namespace application\modules\dashboard\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\model\UserBinding;
@@ -42,7 +42,7 @@ class CoSync {
                 $newId = User::model()->add( $data, true );
                 if ( $newId ) {
                     UserCount::model()->add( array( 'uid' => $newId ) );
-                    $ip = IBOS::app()->setting->get( 'clientip' );
+                    $ip = Ibos::app()->setting->get( 'clientip' );
                     UserStatus::model()->add( array( 'uid' => $newId, 'regip' => $ip, 'lastip' => $ip ) );
                     UserProfile::model()->add( array( 'uid' => $newId ) ); //用户user_profile一定要有相关的用户数据，即使为空，要不然会出错
                     //创建用户绑定

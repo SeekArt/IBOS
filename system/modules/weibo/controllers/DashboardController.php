@@ -17,7 +17,7 @@ namespace application\modules\weibo\controllers;
 
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\controllers\BaseController;
@@ -69,7 +69,7 @@ class DashboardController extends BaseController {
                 Setting::model()->updateSettingValueByKey( $key, $value );
             }
             Cache::update( 'setting' );
-            $this->success( IBOS::lang( 'Operation succeed', 'message' ) );
+            $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
         } else {
             $data = array(
                 'config' => WbCommonUtil::getSetting(),
@@ -121,7 +121,7 @@ class DashboardController extends BaseController {
                 'op' => $op,
                 'list' => $list,
                 'pages' => $pages,
-                'moduleAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+                'moduleAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
             );
             $this->render( 'manage', $data );
         }
@@ -162,7 +162,7 @@ class DashboardController extends BaseController {
                 'op' => $op,
                 'list' => $list,
                 'pages' => $pages,
-                'moduleAssetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'weibo' ),
+                'moduleAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
             );
             $this->render( 'comment', $data );
         }

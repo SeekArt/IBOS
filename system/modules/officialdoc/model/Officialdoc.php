@@ -18,7 +18,7 @@ namespace application\modules\officialdoc\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\department\model\Department;
 use application\modules\officialdoc\utils\Officialdoc as OfficialdocUtil;
@@ -54,7 +54,7 @@ class Officialdoc extends Model {
         }
         $count = $this->count( $criteria );
         $pages = new CPagination( $count );
-        $everyPage = is_null( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+        $everyPage = is_null( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
         $pages->setPageSize( intval( $everyPage ) );
         $pages->applyLimit( $criteria );
         $datas = $this->fetchAll( $criteria );

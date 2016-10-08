@@ -18,7 +18,7 @@
 namespace application\modules\user\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class OnlineTime extends Model {
 
@@ -44,7 +44,7 @@ class OnlineTime extends Model {
         if ( NULL === $record ) {
             return false;
         }
-        $result = IBOS::app()->db->createCommand()
+        $result = Ibos::app()->db->createCommand()
                 ->update( $this->tableName(), array(
             'total' => $record->total + $total,
             'thismonth' => $record->thismonth + $thisMonth,

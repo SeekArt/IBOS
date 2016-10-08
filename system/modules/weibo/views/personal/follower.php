@@ -1,9 +1,9 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <!-- private css -->
-<link rel="stylesheet" href="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'user' ); ?>/css/user.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'user' ); ?>/css/user.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo $moduleAssetUrl; ?>/css/wbpublic.css?<?php echo VERHASH; ?>" />
 <link rel="stylesheet" href="<?php echo $moduleAssetUrl; ?>/css/wbstyle.css?<?php echo VERHASH; ?>" />
 <div class="wrap">
@@ -15,14 +15,14 @@ use application\core\utils\StringUtil;
 		<!--导航 S-->
 		<div>
 			<ul class="nav nav-tabs nav-tabs-large nav-justified">
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
 				<li class="active">
-					<a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
+					<a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
 				</li>
 				<?php if ( $this->getIsMe() ): ?>
-					<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
+					<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
 				<?php endif; ?>
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
 			</ul>
 		</div>
 		<!--导航 E-->

@@ -11,17 +11,17 @@ namespace application\core\utils;
 
 use Yii;
 
-class IBOS extends Yii {
+class Ibos extends Yii {
 
     /**
      * 当前平台引擎
-     * @var mixed 
+     * @var mixed
      */
     private static $_engine;
 
     /**
      * 默认加载的全局语言包
-     * @var array 
+     * @var array
      */
     private static $globalLangSource = array( 'default', 'message', 'error' );
 

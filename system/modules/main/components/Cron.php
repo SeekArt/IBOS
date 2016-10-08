@@ -10,7 +10,7 @@
 
 namespace application\modules\main\components;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Syscache;
 use application\modules\main\model\Cron as CronModel;
 use CApplicationComponent;
@@ -33,10 +33,10 @@ class Cron extends CApplicationComponent {
         $processName = 'MAIN_CRON_' . (empty( $cron ) ? 'CHECKER' : $cron['cronid']);
         // 如果指定了进程id,先却解锁系统进程
         if ( $cronId && !empty( $cron ) ) {
-            IBOS::app()->process->unLock( $processName );
+            Ibos::app()->process->unLock( $processName );
         }
         // 检查当前进程是否存在,存在即退出处理
-        if ( IBOS::app()->process->isLocked( $processName, 600 ) ) {
+        if ( Ibos::app()->process->isLocked( $processName, 600 ) ) {
             return false;
         }
         // 处理当前任务
@@ -54,7 +54,7 @@ class Cron extends CApplicationComponent {
         // 插入下一次任务记录
         $this->nextCron();
         // 解锁当前进程
-        IBOS::app()->process->unLock( $processName );
+        Ibos::app()->process->unLock( $processName );
         return true;
     }
 
@@ -82,7 +82,7 @@ class Cron extends CApplicationComponent {
         if ( empty( $cron ) ) {
             return false;
         }
-        $timeoffSet = IBOS::app()->setting->get( 'setting/timeoffset' );
+        $timeoffSet = Ibos::app()->setting->get( 'setting/timeoffset' );
         list($yearNow, $monthNow, $dayNow, $weekdayNow, $hourNow, $minuteNow) = explode( '-', gmdate( 'Y-m-d-w-H-i', TIMESTAMP + $timeoffSet * 3600 ) );
 
         if ( $cron['weekday'] == -1 ) {
@@ -138,7 +138,7 @@ class Cron extends CApplicationComponent {
      * @return type
      */
     private function todayNextRun( $cron, $hour = -2, $minute = -2 ) {
-        $timeoffSet = IBOS::app()->setting->get( 'setting/timeoffset' );
+        $timeoffSet = Ibos::app()->setting->get( 'setting/timeoffset' );
         $hour = $hour == -2 ? gmdate( 'H', TIMESTAMP + $timeoffSet * 3600 ) : $hour;
         $minute = $minute == -2 ? gmdate( 'i', TIMESTAMP + $timeoffSet * 3600 ) : $minute;
         

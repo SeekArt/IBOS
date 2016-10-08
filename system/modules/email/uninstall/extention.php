@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Menu;
 use application\modules\dashboard\model\Nav;
 use application\modules\main\model\MenuCommon;
@@ -32,7 +32,7 @@ NodeRelated::model()->deleteAllByAttributes( array( 'module' => 'email' ) );
 AuthItem::model()->deleteAll( "name LIKE 'email%'" );
 AuthItemChild::model()->deleteAll( "child LIKE 'email%'" );
 // step4:删除所有相关表
-$db = IBOS::app()->db->createCommand();
+$db = Ibos::app()->db->createCommand();
 $prefix = $db->getConnection()->tablePrefix;
 $tables = $db->setText( "SHOW TABLES LIKE '" . str_replace( '_', '\_', $prefix . 'email_%' ) . "'" )
 		->queryAll( false );

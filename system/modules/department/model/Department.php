@@ -20,7 +20,7 @@ namespace application\modules\department\model;
 
 use application\core\model\Model;
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\user\model\User as UserModel;
 
@@ -226,12 +226,12 @@ class Department extends Model {
 	}
 
 	public function findAllDeptidByUidX( $uidX ) {
-		$deptidArray = IBOS::app()->db->createCommand()
+		$deptidArray = Ibos::app()->db->createCommand()
 				->select( 'deptid' )
 				->from( UserModel::model()->tableName() )
 				->where( UserModel::model()->uid_find_in_set( $uidX ) )
 				->queryColumn();
-		$deptidRelatedArray = IBOS::app()->db->createCommand()
+		$deptidRelatedArray = Ibos::app()->db->createCommand()
 				->select( 'deptid' )
 				->from( DepartmentRelated::model()->tableName() )
 				->where( UserModel::model()->uid_find_in_set( $uidX ) )
@@ -248,7 +248,7 @@ class Department extends Model {
 			$deptString = is_array( $deptMixed ) ? implode( ',', $deptMixed ) : $deptMixed;
 			$condition = " FIND_IN_SET( `deptid`, '{$deptString}' )";
 		}
-		$query = IBOS::app()->db->createCommand()
+		$query = Ibos::app()->db->createCommand()
 				->select()
 				->from( $this->tableName() )
 				->where( $condition );
@@ -275,7 +275,7 @@ class Department extends Model {
 			$deptString = is_array( $deptMixed ) ? implode( ',', $deptMixed ) : $deptMixed;
 			$condition = " FIND_IN_SET( `deptid`, '{$deptString}' )";
 		}
-		$deptArray = IBOS::app()->db->createCommand()
+		$deptArray = Ibos::app()->db->createCommand()
 				->select()
 				->from( $this->tableName() )
 				->where( $condition )
@@ -294,7 +294,7 @@ class Department extends Model {
 	* @return array  用户uid数组
 	*/
 	public function CountUnbind( $type ) {
-		$list = IBOS::app()->db->createCommand()
+		$list = Ibos::app()->db->createCommand()
 				->select( 'count(deptid)' )
 				->from( $this->tableName() )
 				->where( $this->deptid_not_in_binding( $type ) )
@@ -307,7 +307,7 @@ class Department extends Model {
  	* @param type $level
  	*/
 	private function createConditionByDeptLevel( $level = 0 ) {
-		$sqlString = IBOS::app()->db->createCommand()
+		$sqlString = Ibos::app()->db->createCommand()
 				->select( 'deptid' )
 				->from( $this->tableName() )
 				->where( " `pid` IN ( <string> )" )
@@ -327,7 +327,7 @@ class Department extends Model {
 	public function getPerDept( $level,$type ) {
 		if ( '0' == $level) { // pid为0
 			$deptidCondition = $this->createConditionByDeptLevel( $level );
-			$return = IBOS::app()->db->createCommand()
+			$return = Ibos::app()->db->createCommand()
 				->select( 'deptname,deptid,pid,sort' )
 				->from( $this->tableName() )
 				->where( " `deptid` IN( {$deptidCondition} )" )
@@ -337,7 +337,7 @@ class Department extends Model {
 				->queryAll();
 		} else {
 			$deptidCondition = $this->createConditionByDeptLevel( $level );
-			$deptids = IBOS::app()->db->createCommand()
+			$deptids = Ibos::app()->db->createCommand()
 		        ->select( 'deptid' )
 		        ->from( '{{department}}' )
 		        ->where( " `deptid` IN( {$deptidCondition} )" )
@@ -346,7 +346,7 @@ class Department extends Model {
 		        ->limit( self::DEPT_NUM_PER )
 		        ->queryColumn();
 		    $deptids = implode(',', $deptids);
-			$return = IBOS::app()->db->createCommand()
+			$return = Ibos::app()->db->createCommand()
 				->select( 'd.deptname,d.deptid,b.bindvalue as pid,d.sort' )
 				->from( '{{department}} d' )
 				->leftjoin('{{department_binding}} b', 'd.pid = b.deptid')
@@ -365,14 +365,14 @@ class Department extends Model {
  	*/
 	public function getDeptBydDepatid ( $deptid, $flag = TRUE ) {
 		if( $flag ) {
-			$deptArray = IBOS::app()->db->createCommand()
+			$deptArray = Ibos::app()->db->createCommand()
 				->select('deptname, deptid, pid, sort')
 				->from( $this->tableName() )
 				->where( "`deptid` = '{$deptid}'" )
 				->queryAll();
 			return $deptArray;
 		} else {
-			$deptArray = IBOS::app()->db->createCommand()
+			$deptArray = Ibos::app()->db->createCommand()
 				->select( 'd.deptname, d.deptid, b.bindvalue as pid, d.sort' )
 				->from( '{{department}} d' )
 				->leftjoin('{{department_binding}} b', 'd.pid = b.deptid')

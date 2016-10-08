@@ -3,7 +3,7 @@
 namespace application\modules\weibo\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class BaseController extends Controller {
 
@@ -60,7 +60,7 @@ class BaseController extends Controller {
      */
     public function init() {
         $this->_attributes = array_merge( $this->_attributes, $this->_extraAttributes );
-        $this->uid = intval( IBOS::app()->user->uid );
+        $this->uid = intval( Ibos::app()->user->uid );
         parent::init();
     }
 

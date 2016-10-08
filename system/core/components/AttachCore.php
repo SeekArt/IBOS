@@ -17,7 +17,7 @@
 namespace application\core\components;
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CException;
 
 abstract class AttachCore {
@@ -36,7 +36,7 @@ abstract class AttachCore {
 	public function __construct( $fileArea = 'Filedata', $module = 'temp' ) {
 		$file = $_FILES[$fileArea];
 		if ( $file['error'] ) {
-			throw new CException( IBOS::lang( 'File is too big', 'error' ) );
+			throw new CException( Ibos::lang( 'File is too big', 'error' ) );
 		} else {
 			$upload = File::getUpload( $file, $module );
 			$this->upload = $upload;

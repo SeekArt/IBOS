@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <?php foreach ( $list as $reply ): ?>
     <li class="cmt-item">
@@ -28,7 +28,7 @@ use application\core\utils\IBOS;
     <?php if ( $count > $limit ): ?>
     <div>
         <?php if ( !isset( $showlist ) ): ?>
-            <a target="_blank" href='<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $rowid, 'uid' => $moduleuid ) ) ?>' class='fss anchor'><?php echo $lang['See more']; ?> >></a>
+            <a target="_blank" href='<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array( 'feedid' => $rowid, 'uid' => $moduleuid ) ) ?>' class='fss anchor'><?php echo $lang['See more']; ?> >></a>
         <?php else: ?>
             <?php echo $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages ), true ); ?>
     <?php endif; ?>

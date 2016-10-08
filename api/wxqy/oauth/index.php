@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model\Setting;
 use application\modules\user\model\UserBinding;
 
@@ -18,9 +18,9 @@ require_once '../../login.php';
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 Yii::createApplication( 'application\core\components\Application', $mainConfig );
 
-$signature = IBOS::app()->getRequest()->getQuery( 'signature' );
+$signature = Ibos::app()->getRequest()->getQuery( 'signature' );
 $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
-$userId = IBOS::app()->getRequest()->getQuery( 'userid' );
+$userId = Ibos::app()->getRequest()->getQuery( 'userid' );
 $text = '详见 <a href = "http://doc.ibos.com.cn/article/detail/id/329" target="_blank" >传送门</a>';
 if ( strcmp( $signature, md5( $aeskey . $userId ) ) != 0 ) {
     Env::iExit( "签名错误:" . $text );
@@ -29,7 +29,7 @@ if ( !empty( $userId ) ) {
     $uid = UserBinding::model()->fetchUidByValue( $userId, 'wxqy' );
     if ( $uid ) {
         $resArr = dologin( $uid );
-        if ( !IBOS::app()->user->isGuest && $resArr['code'] > '0' ) {
+        if ( !Ibos::app()->user->isGuest && $resArr['code'] > '0' ) {
             $redirect = Env::getRequest( 'redirect' );
             $url = base64_decode( $redirect );
             $parse = parse_url( $url );

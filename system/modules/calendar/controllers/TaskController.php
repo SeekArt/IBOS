@@ -17,7 +17,7 @@
 namespace application\modules\calendar\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\model\Calendars;
 use application\modules\calendar\model\Tasks;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
@@ -43,23 +43,23 @@ Class TaskController extends BaseController {
     public function actionIndex() {
         // 权限判断
         if (!$this->checkIsMe()) {
-            $this->error(IBOS::lang('No permission to view task'), $this->createUrl('task/index'));
+            $this->error(Ibos::lang('No permission to view task'), $this->createUrl('task/index'));
         }
         $postComp = Env::getRequest('complete');
         $this->complete = empty($postComp) ? 0 : $postComp;
         //是否搜索，并且是post类型请求
-        if (Env::getRequest('param') == 'search' && IBOS::app()->request->isPostRequest) {
+        if (Env::getRequest('param') == 'search' && Ibos::app()->request->isPostRequest) {
             $this->search();
         }
         $this->_condition = CalendarUtil::joinCondition($this->_condition, "uid = " . $this->uid);
         $data = Tasks::model()->fetchTaskByComplete($this->_condition, $this->complete);
         $data['complete'] = $this->complete;
         $data['user'] = User::model()->fetchByUid($this->uid);
-        $this->setPageTitle(IBOS::lang('Personal task'));
+        $this->setPageTitle(Ibos::lang('Personal task'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
-            array('name' => IBOS::lang('Personal task'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+            array('name' => Ibos::lang('Personal task'))
         ));
         $this->render('index', $data);
     }
@@ -69,8 +69,8 @@ Class TaskController extends BaseController {
      */
     public function actionSubTask() {
         // 权限判断
-        if (!UserUtil::checkIsSub(IBOS::app()->user->uid, $this->uid)) {
-            $this->error(IBOS::lang('No permission to view task'), $this->createUrl('task/index'));
+        if (!UserUtil::checkIsSub(Ibos::app()->user->uid, $this->uid)) {
+            $this->error(Ibos::lang('No permission to view task'), $this->createUrl('task/index'));
         }
         $postComp = Env::getRequest('complete');
         $this->complete = empty($postComp) ? 0 : $postComp;
@@ -84,11 +84,11 @@ Class TaskController extends BaseController {
         $data['user'] = User::model()->fetchByUid($this->uid);
         $data['supUid'] = UserUtil::getSupUid($this->uid); //获取上司uid
         $data['allowEditTask'] = CalendarUtil::getIsAllowEidtTask();
-        $this->setPageTitle(IBOS::lang('Subordinate task'));
+        $this->setPageTitle(Ibos::lang('Subordinate task'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Personal Office')),
-            array('name' => IBOS::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
-            array('name' => IBOS::lang('Subordinate task'))
+            array('name' => Ibos::lang('Personal Office')),
+            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+            array('name' => Ibos::lang('Subordinate task'))
         ));
         $this->render('subtask', $data);
     }
@@ -100,11 +100,11 @@ Class TaskController extends BaseController {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
-                $this->error(IBOS::lang('No permission to add task'), $this->createUrl('task/index'));
+                $this->error(Ibos::lang('No permission to add task'), $this->createUrl('task/index'));
             }
             $postData = $_POST;
             if (!$this->checkTaskPermission()) {
-                $this->error(IBOS::lang('No permission to add task'), $this->createUrl('task/index'));
+                $this->error(Ibos::lang('No permission to add task'), $this->createUrl('task/index'));
             }
             $postData['text'] = isset($postData['text']) ? CHtml::encode($postData['text']) : '';
             $postData['upuid'] = $this->upuid;
@@ -121,7 +121,7 @@ Class TaskController extends BaseController {
                 $config = array(
                     '{sender}' => User::model()->fetchRealnameByUid($this->upuid),
                     '{subject}' => htmlspecialchars($_POST['text']),
-                    '{url}' => IBOS::app()->urlManager->createUrl('calendar/task/index')
+                    '{url}' => Ibos::app()->urlManager->createUrl('calendar/task/index')
                 );
                 Notify::model()->sendNotify($this->uid, 'task_message', $config, $this->upuid);
             }
@@ -136,7 +136,7 @@ Class TaskController extends BaseController {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
-                $this->error(IBOS::lang('No permission to edit task'), $this->createUrl('task/index'));
+                $this->error(Ibos::lang('No permission to edit task'), $this->createUrl('task/index'));
             }
             $op = Env::getRequest('op');
             $id = Env::getRequest('id');
@@ -195,7 +195,7 @@ Class TaskController extends BaseController {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
-                $this->error(IBOS::lang('No permission to del task'), $this->createUrl('task/index'));
+                $this->error(Ibos::lang('No permission to del task'), $this->createUrl('task/index'));
             }
             $id = Chtml::encode($_POST['id']);
             Tasks::model()->removeTasksById($id);

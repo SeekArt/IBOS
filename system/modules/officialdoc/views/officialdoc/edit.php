@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
 <!-- load css -->
@@ -21,7 +21,7 @@ use application\core\utils\IBOS;
 				<div class="row">
 					<div class="span12">
 						<div class="control-group">
-							<label for=""><?php echo IBOS::lang( 'News title' ); ?></label>
+							<label for=""><?php echo Ibos::lang( 'News title' ); ?></label>
 							<input type="text" name="subject" id="subject" value="<?php echo $data['subject']; ?>">
 						</div>
 					</div>
@@ -36,7 +36,7 @@ use application\core\utils\IBOS;
 					</div>
 					<div class="span4">
 						<div class="control-group">
-							<label for=""><?php echo IBOS::lang( 'Appertaining category' ); ?></label>
+							<label for=""><?php echo Ibos::lang( 'Appertaining category' ); ?></label>
 							<select name="catid"  id="articleCategory">
 								<?php echo $categoryOption; ?>
 							</select>
@@ -48,14 +48,14 @@ use application\core\utils\IBOS;
 				<div class="row">
 					<div class="span8">
 						<div class="control-group">
-							<label for=""><?php echo IBOS::lang( 'Publishing permissions' ); ?></label>
+							<label for=""><?php echo Ibos::lang( 'Publishing permissions' ); ?></label>
 							<input type="text" name="publishScope" value="<?php echo $data['publishScope']; ?>" id="publishScope">
 							<div id="publishScope_box"></div>
 						</div>
 					</div>
 					<div class="span4">
 						<div class="control-group">
-							<label><?php echo IBOS::lang( 'Cc' ); ?></label>
+							<label><?php echo Ibos::lang( 'Cc' ); ?></label>
 							<input type="text" name="ccScope" value="<?php echo $data['ccScope']; ?>" id="ccScope">
 							<div id="ccScope_box"></div>
 						</div>
@@ -69,15 +69,15 @@ use application\core\utils\IBOS;
 								<div class="btn-group btn-group-justified" data-toggle="buttons-radio" id="article_status">
 										<label class="btn <?php if( $aitVerify == 0 && $data['status'] != 3): ?>active<?php endif; ?>" <?php if($aitVerify != 0): ?>style="display:none"<?php endif;?>>
                                             <input type="radio" name="status" value="2" <?php if( $aitVerify == 0 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Wait verify'); ?>
+                                            <?php echo Ibos::lang( 'Wait verify'); ?>
                                         </label>
 										<label class="btn <?php if( $aitVerify == 1 && $data['status'] != 3): ?>active<?php endif; ?>" <?php if($aitVerify != 1): ?>style="display:none"<?php endif;?>>
                                             <input type="radio" name="status" value="1" <?php if( $aitVerify == 1 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Publish'); ?>
+                                            <?php echo Ibos::lang( 'Publish'); ?>
                                         </label>
                                         <label class="btn <?php if( $data['status'] == 3 ): ?>active<?php endif; ?>">
                                             <input type="radio" name="status" value="3" <?php if( $data['status'] == 3 ): ?>checked<?php endif; ?>>
-                                            <?php echo IBOS::lang( 'Draft'); ?>
+                                            <?php echo Ibos::lang( 'Draft'); ?>
                                         </label>
 								</div>
 							</div>
@@ -89,13 +89,13 @@ use application\core\utils\IBOS;
 								<div class="pull-right">
 									<input type="checkbox" value="1" id="commentStatus"
 									<?php if ( !$dashboard['doccommentenable'] ): ?>
-											   disabled title="<?php echo IBOS::lang( 'Comments module is not installed or enabled' ); ?>"
+											   disabled title="<?php echo Ibos::lang( 'Comments module is not installed or enabled' ); ?>"
 										   <?php elseif ( $data['commentstatus'] ): ?>
 											   checked
 										   <?php endif; ?>
 										   name="commentstatus" data-toggle="switch" class="visi-hidden">
 								</div>
-								<?php echo IBOS::lang( 'Comment' ); ?>
+								<?php echo Ibos::lang( 'Comment' ); ?>
 							</div>
 						</div>
 					</div>
@@ -167,10 +167,10 @@ use application\core\utils\IBOS;
 				</div>
 				<!-- Row 5 Button -->
 				<div id="submit_bar" class="clearfix">
-					<button type="button" onclick="history.go(-1);" class="btn btn-large btn-submit pull-left"><?php echo IBOS::lang( 'Return' ); ?></button>
+					<button type="button" onclick="history.go(-1);" class="btn btn-large btn-submit pull-left"><?php echo Ibos::lang( 'Return' ); ?></button>
 					<div class="pull-right">
-						<button type="button" id="prewiew_submit" data-action="preview" class="btn btn-large btn-submit"><?php echo IBOS::lang( 'Preview' ); ?></button>
-						<button type="submit" class="btn btn-large btn-submit btn-primary" id="edit_submit"><?php echo IBOS::lang( 'Submit' ); ?></button>
+						<button type="button" id="prewiew_submit" data-action="preview" class="btn btn-large btn-submit"><?php echo Ibos::lang( 'Preview' ); ?></button>
+						<button type="submit" class="btn btn-large btn-submit btn-primary" id="edit_submit"><?php echo Ibos::lang( 'Submit' ); ?></button>
 					</div>
 				</div>
 			</div>

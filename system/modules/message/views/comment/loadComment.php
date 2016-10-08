@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <?php if (!$loadmore): ?>
@@ -51,8 +51,8 @@ use application\core\utils\StringUtil;
         <!-- 新增评论 -->
         <div class="cmt-item" id="newCommentBox" data-node-type="commentBox">
             <div class="avatar-box">
-                <a href="<?php echo IBOS::app()->user->space_url; ?>" class="avatar-circle">
-                    <img src="<?php echo IBOS::app()->user->avatar_middle; ?>" width="60" height="60" >
+                <a href="<?php echo Ibos::app()->user->space_url; ?>" class="avatar-circle">
+                    <img src="<?php echo Ibos::app()->user->avatar_middle; ?>" width="60" height="60" >
                 </a>
             </div>
             <div class="cmt-body">

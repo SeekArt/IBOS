@@ -3,7 +3,7 @@
 namespace application\modules\email\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class EmailFolder extends Model {
 
@@ -40,7 +40,7 @@ class EmailFolder extends Model {
      * @return string
      */
     public function fetchFolderNameByWebId( $id ) {
-        $rs = IBOS::app()->db->createCommand()
+        $rs = Ibos::app()->db->createCommand()
                 ->select( 'name' )
                 ->from( '{{email_folder}}' )
                 ->where( 'webid = ' . intval( $id ) )
@@ -55,7 +55,7 @@ class EmailFolder extends Model {
      */
     public function getUsedSize( $uid ) {
         $where = array( 'and', "toid={$uid}", 'isdel=0', 'issend=1' );
-        $count = IBOS::app()->db->createCommand()
+        $count = Ibos::app()->db->createCommand()
                 ->select( 'SUM(eb.size) AS sum' )
                 ->from( '{{email}} e' )
                 ->leftJoin( '{{email_body}} eb', 'e.bodyid = eb.bodyid' )
@@ -72,7 +72,7 @@ class EmailFolder extends Model {
      */
     public function getFolderSize( $uid, $fid ) {
         $where = array( 'and', "toid={$uid}", "fid={$fid}", 'isdel=0', 'issend=1' );
-        $count = IBOS::app()->db->createCommand()
+        $count = Ibos::app()->db->createCommand()
                 ->select( 'SUM(eb.size) AS sum' )
                 ->from( '{{email}} e' )
                 ->leftJoin( '{{email_body}} eb', 'e.bodyid = eb.bodyid' )
@@ -89,7 +89,7 @@ class EmailFolder extends Model {
      */
     public function getSysFolderSize( $uid, $alias ) {
         $param = Email::model()->getListParam( $alias, $uid );
-        $count = IBOS::app()->db->createCommand()
+        $count = Ibos::app()->db->createCommand()
                 ->select( 'SUM(eb.size) AS sum' )
                 ->from( '{{email}} e' )
                 ->leftJoin( '{{email_body}} eb', 'e.bodyid = eb.bodyid' )

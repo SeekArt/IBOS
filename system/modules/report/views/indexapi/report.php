@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_report.css'; ?>">
@@ -17,7 +17,7 @@ use application\core\utils\StringUtil;
 						<td width="80">
 							<div>
 								<a title="<?php echo $report['subject']; ?>" 
-								   href="<?php echo IBOS::app()->urlManager->createUrl( 'report/default/show', array('repid' => $report['repid']) ); ?>" 
+								   href="<?php echo Ibos::app()->urlManager->createUrl( 'report/default/show', array('repid' => $report['repid']) ); ?>" 
 									><?php echo StringUtil::cutStr( $report['subject'], 40 ); ?></a>
 							</div>
 						</td>
@@ -30,7 +30,7 @@ use application\core\utils\StringUtil;
 		</table>
 		<div class="mbox-base">
 			<div class="fill-hn xac">
-				<a href="<?php echo IBOS::app()->urlManager->createUrl( 'report/default/index' ); ?>" class="link-more">
+				<a href="<?php echo Ibos::app()->urlManager->createUrl( 'report/default/index' ); ?>" class="link-more">
 					<i class="cbtn o-more"></i>
 					<span class="ilsep"><?php echo $lang['Show more report']; ?></span>
 				</a>
@@ -38,7 +38,7 @@ use application\core\utils\StringUtil;
 		</div>
 	<?php else: ?>
 		<div class="in-rp-personal-empty">
-			<a href="<?php echo IBOS::app()->createUrl('report/default/add') ?>" class="in-rp-add" target="_blank"></a>
+			<a href="<?php echo Ibos::app()->createUrl('report/default/add') ?>" class="in-rp-add" target="_blank"></a>
 		</div>
 	<?php endif; ?>
 <!--评阅-->
@@ -51,7 +51,7 @@ use application\core\utils\StringUtil;
 						<td width="40">
 							<div class="avatar-box" data-toggle="usercard" data-param="uid=<?php echo $subReport['uid']; ?>">
                                 <span class="avatar-circle avatar-circle-small">
-									<a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/index', array( 'uid'=>$subReport['uid'] ) ); ?>">
+									<a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/index', array( 'uid'=>$subReport['uid'] ) ); ?>">
 										<img src="<?php echo $subReport['userInfo']['avatar_middle']; ?>">
 									</a>
                                 </span>
@@ -60,7 +60,7 @@ use application\core\utils\StringUtil;
 						<td align="left">
 							<div>
 								<a title="<?php echo $subReport['subject']; ?>" 
-								   href="<?php echo IBOS::app()->urlManager->createUrl( 'report/review/show', array('repid' => $subReport['repid']) ); ?>" 
+								   href="<?php echo Ibos::app()->urlManager->createUrl( 'report/review/show', array('repid' => $subReport['repid']) ); ?>" 
 									><?php echo $subReport['userInfo']['realname'].' &nbsp; ' . StringUtil::cutStr( $subReport['subject'], 40 ); ?></a>
 							</div>
 						</td>
@@ -73,7 +73,7 @@ use application\core\utils\StringUtil;
 		</table>
 		<div class="mbox-base">
 			<div class="fill-hn xac">
-				<a href="<?php echo IBOS::app()->urlManager->createUrl( 'report/default/index' ); ?>" class="link-more">
+				<a href="<?php echo Ibos::app()->urlManager->createUrl( 'report/default/index' ); ?>" class="link-more">
 					<i class="cbtn o-more"></i>
 					<span class="ilsep"><?php echo $lang['Show more report']; ?></span>
 				</a>

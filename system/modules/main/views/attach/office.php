@@ -1,5 +1,5 @@
 <?php
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <!doctype html>
 <html lang="en">
@@ -13,7 +13,7 @@ use application\core\utils\IBOS;
 </head>
 <body onload="loaddoc();">
 	<div id="office_viewer">
-		<form action="<?php echo IBOS::app()->createUrl( 'main/attach/office' ); ?>" id="office_form" enctype="multipart/form-data" method="post">
+		<form action="<?php echo Ibos::app()->createUrl( 'main/attach/office' ); ?>" id="office_form" enctype="multipart/form-data" method="post">
 			<table width="100%" height="100%" cellspacing="1" cellpadding="3">
 				<tbody>
 					<tr width="100%">
@@ -147,7 +147,7 @@ function loaddoc(){
 		pathUrl: '<?php echo $officePath; ?>',
 		attachName: '<?php echo $fileName; ?>',
 		fileName: '<?php echo $fileName; ?>',
-		user: '<?php echo IBOS::app()->user->realname; ?>',
+		user: '<?php echo Ibos::app()->user->realname; ?>',
 		staticurl: '<?php echo STATICURL; ?>/office/'
 	};
 

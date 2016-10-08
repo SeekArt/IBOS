@@ -20,7 +20,7 @@ namespace application\modules\diary\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
@@ -36,7 +36,7 @@ class AttentionController extends BaseController {
 	 */
 	public function init() {
 		if ( !$this->issetAttention() ) {
-			$this->error( IBOS::lang( 'Attention not open' ), $this->createUrl( 'default/index' ) );
+			$this->error( Ibos::lang( 'Attention not open' ), $this->createUrl( 'default/index' ) );
 		}
 		parent::init();
 	}
@@ -47,14 +47,14 @@ class AttentionController extends BaseController {
 	 */
 	protected function getSidebar() {
 		$sidebarAlias = 'application.modules.diary.views.attention.sidebar';
-		$aUids = DiaryAttention::model()->fetchAuidByUid( IBOS::app()->user->uid );
+		$aUids = DiaryAttention::model()->fetchAuidByUid( Ibos::app()->user->uid );
 		$aUsers = array();
 		if ( !empty( $aUids ) ) {
 			$aUsers = User::model()->fetchAllByUids( $aUids );
 		}
 		$params = array(
 			'aUsers' => $aUsers,
-			'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ),
+			'statModule' => Ibos::app()->setting->get( 'setting/statmodules' ),
 		);
 		$sidebarView = $this->renderPartial( $sidebarAlias, $params, true );
 		return $sidebarView;
@@ -86,7 +86,7 @@ class AttentionController extends BaseController {
 				$date = date( 'Y-m-d', $time );
 			}
 
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			//关注了哪些人
 			$attentions = DiaryAttention::model()->fetchAllByAttributes( array( 'uid' => $uid ) );
 			$auidArr = Convert::getSubByKey( $attentions, 'auid' );
@@ -110,11 +110,11 @@ class AttentionController extends BaseController {
 				'prevTime' => strtotime( $date ) - 24 * 60 * 60,
 				'nextTime' => strtotime( $date ) + 24 * 60 * 60,
 			);
-			$this->setPageTitle( IBOS::lang( 'Attention diary' ) );
+			$this->setPageTitle( Ibos::lang( 'Attention diary' ) );
 			$this->setPageState( 'breadCrumbs', array(
-				array( 'name' => IBOS::lang( 'Personal Office' ) ),
-				array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-				array( 'name' => IBOS::lang( 'Attention diary' ) )
+				array( 'name' => Ibos::lang( 'Personal Office' ) ),
+				array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+				array( 'name' => Ibos::lang( 'Attention diary' ) )
 			) );
 			$this->render( 'index', $params );
 		} else {
@@ -149,7 +149,7 @@ class AttentionController extends BaseController {
 	 * @return void
 	 */
 	private function personal() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$getUid = intval( Env::getRequest( 'uid' ) );
 		$condition = "uid = '{$getUid}'";
 		if( !UserUtil::checkIsSub( $uid, $getUid ) ){
@@ -167,13 +167,13 @@ class AttentionController extends BaseController {
 			'diaryCount' => Diary::model()->count( $this->_condition ),
 			'commentCount' => Diary::model()->countCommentByReview( $getUid ),
 			'user' => User::model()->fetchByUid( $getUid ),
-			'dashboardConfig' => IBOS::app()->setting->get( 'setting/diaryconfig' )
+			'dashboardConfig' => Ibos::app()->setting->get( 'setting/diaryconfig' )
 		);
-		$this->setPageTitle( IBOS::lang( 'Attention diary' ) );
+		$this->setPageTitle( Ibos::lang( 'Attention diary' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Personal Office' ) ),
-			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-			array( 'name' => IBOS::lang( 'Attention diary' ) )
+			array( 'name' => Ibos::lang( 'Personal Office' ) ),
+			array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+			array( 'name' => Ibos::lang( 'Attention diary' ) )
 		) );
 		$this->render( 'personal', $data );
 	}
@@ -187,7 +187,7 @@ class AttentionController extends BaseController {
 		$option = empty( $op ) ? 'default' : $op;
 		$routes = array( 'default', 'attention', 'unattention' );
 		if ( !in_array( $option, $routes ) ) {
-			$this->error( IBOS::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
+			$this->error( Ibos::lang( 'Can not find the path' ), $this->createUrl( 'default/index' ) );
 		}
 		if ( $option == 'default' ) {
 			
@@ -201,11 +201,11 @@ class AttentionController extends BaseController {
 	 * @return void
 	 */
 	private function attention() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$auid = Env::getRequest( 'auid' );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			DiaryAttention::model()->addAttention( $uid, $auid );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'info' => IBOS::lang( 'Attention succeed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'info' => Ibos::lang( 'Attention succeed' ) ) );
 		}
 	}
 
@@ -214,11 +214,11 @@ class AttentionController extends BaseController {
 	 * @return void
 	 */
 	private function unattention() {
-		if ( IBOS::app()->request->isAjaxRequest ) {
+		if ( Ibos::app()->request->isAjaxRequest ) {
 			$auid = Env::getRequest( 'auid' );
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			DiaryAttention::model()->removeAttention( $uid, $auid );
-			$this->ajaxReturn( array( 'isSuccess' => true, 'info' => IBOS::lang( 'Unattention succeed' ) ) );
+			$this->ajaxReturn( array( 'isSuccess' => true, 'info' => Ibos::lang( 'Unattention succeed' ) ) );
 		}
 	}
 
@@ -227,16 +227,16 @@ class AttentionController extends BaseController {
 	 */
 	public function actionShow() {
 		$diaryid = intval( Env::getRequest( 'diaryid' ) );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( empty( $diaryid ) ) {
-			$this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'attention/index' ) );
+			$this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'attention/index' ) );
 		}
 		$diary = Diary::model()->fetchByPk( $diaryid );
 		if ( empty( $diary ) ) {
-			$this->error( IBOS::lang( 'No data found' ), $this->createUrl( 'attention/index' ) );
+			$this->error( Ibos::lang( 'No data found' ), $this->createUrl( 'attention/index' ) );
 		}
 		if ( !ICDiary::checkScope( $uid, $diary ) ) {
-			$this->error( IBOS::lang( 'You do not have permission to view the log' ), $this->createUrl( 'attention/index' ) );
+			$this->error( Ibos::lang( 'You do not have permission to view the log' ), $this->createUrl( 'attention/index' ) );
 		}
 		//增加阅读记录
 		Diary::model()->addReaderuidByPK( $diary, $uid );
@@ -263,11 +263,11 @@ class AttentionController extends BaseController {
 		if ( !empty( $diary['stamp'] ) ) {
 			$params['stampUrl'] = Stamp::model()->fetchStampById( $diary['stamp'] );
 		}
-		$this->setPageTitle( IBOS::lang( 'Show Attention diary' ) );
+		$this->setPageTitle( Ibos::lang( 'Show Attention diary' ) );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Personal Office' ) ),
-			array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-			array( 'name' => IBOS::lang( 'Show Attention diary' ) )
+			array( 'name' => Ibos::lang( 'Personal Office' ) ),
+			array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+			array( 'name' => Ibos::lang( 'Show Attention diary' ) )
 		) );
 		$this->render( 'show', $params );
 	}

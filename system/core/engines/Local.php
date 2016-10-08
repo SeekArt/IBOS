@@ -19,7 +19,7 @@ namespace application\core\engines;
 
 use application\core\components\Engine;
 use application\core\engines\local\LocalIo;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CMap;
 
 class Local extends Engine {
@@ -78,9 +78,9 @@ class Local extends Engine {
 	 */
 	protected function init() {
 		// 设置data别名
-		IBOS::setPathOfAlias( 'data', PATH_ROOT . DIRECTORY_SEPARATOR . 'data' );
+		Ibos::setPathOfAlias( 'data', PATH_ROOT . DIRECTORY_SEPARATOR . 'data' );
 		// 设置引擎驱动别名
-		IBOS::setPathOfAlias( 'engineDriver', IBOS::getPathOfAlias( 'application.core.engines.local' ) );
+		Ibos::setPathOfAlias( 'engineDriver', Ibos::getPathOfAlias( 'application.core.engines.local' ) );
 	}
 
 	protected function preinit() {

@@ -18,7 +18,7 @@ namespace application\modules\assignment\controllers;
 
 use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\main\utils\Main as MainUtil;
@@ -30,9 +30,9 @@ class FinishedController extends BaseController {
     protected $_condition;
 
     public function actionIndex() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         //是否搜索，并且必须是post类型请求
-        if (Env::getRequest('param') == 'search' && IBOS::app()->request->isPostRequest) {
+        if (Env::getRequest('param') == 'search' && Ibos::app()->request->isPostRequest) {
             $this->search();
         }
         // 完成任务查看条件，指派人或负责人或参与人
@@ -41,10 +41,10 @@ class FinishedController extends BaseController {
         $data['datas'] = AssignmentUtil::handleListData($data['datas'], $uid);
 
         $data['datas'] = $this->groupByFinishtime($data['datas']);
-        $this->setPageTitle(IBOS::lang('Assignment'));
+        $this->setPageTitle(Ibos::lang('Assignment'));
         $this->setPageState('breadCrumbs', array(
-            array('name' => IBOS::lang('Assignment'), 'url' => $this->createUrl('unfinished/index')),
-            array('name' => IBOS::lang('Finished list'))
+            array('name' => Ibos::lang('Assignment'), 'url' => $this->createUrl('unfinished/index')),
+            array('name' => Ibos::lang('Finished list'))
         ));
         $this->render('list', $data);
     }

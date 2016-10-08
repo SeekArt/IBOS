@@ -2,7 +2,7 @@
 
 use application\core\utils\Attach;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\user\utils\User;
 ?>
 <!-- load css -->
@@ -25,16 +25,16 @@ use application\modules\user\utils\User;
 <?php $gAccount = User::getAccountSetting(); ?>
     var G = {
         VERHASH: '<?php echo VERHASH; ?>',
-        SITE_URL: '<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>',
+        SITE_URL: '<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>',
         STATIC_URL: '<?php echo STATICURL; ?>',
-        uid: '<?php echo IBOS::app()->user->uid; ?>',
-        cookiePre: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
-        cookiePath: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
-        cookieDomain: '<?php echo IBOS::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
-        creditRemind: '<?php echo IBOS::app()->setting->get( 'setting/creditnames' ); ?>',
+        uid: '<?php echo Ibos::app()->user->uid; ?>',
+        cookiePre: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiepre' ); ?>',
+        cookiePath: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiepath' ); ?>',
+        cookieDomain: '<?php echo Ibos::app()->setting->get( 'config/cookie/cookiedomain' ); ?>',
+        creditRemind: '<?php echo Ibos::app()->setting->get( 'setting/creditnames' ); ?>',
         formHash: '<?php echo FORMHASH ?>',
         settings: {notifyInterval: 320},
-        contact: '<?php echo User::getJsConstantUids( IBOS::app()->user->uid ); ?>',
+        contact: '<?php echo User::getJsConstantUids( Ibos::app()->user->uid ); ?>',
         loginTimeout: '<?php echo $gAccount['timeout'] ?>',
         upload: {
             attachexts: {

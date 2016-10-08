@@ -18,7 +18,7 @@
 namespace application\modules\assignment\controllers;
 
 use application\core\controllers\Controller;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\modules\assignment\model\Assignment;
 use application\modules\assignment\utils\Assignment as AssignmentUtil;
@@ -33,7 +33,7 @@ class BaseController extends Controller {
 	 */
 	public function getSidebar() {
 		$sidebarAlias = 'application.modules.assignment.views.sidebar';
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$params = array(
 			'hasSubUid' => UserUtil::hasSubUid( $uid ),
 			'unfinishCount' => Assignment::model()->getUnfinishCountByUid( $uid )
@@ -46,7 +46,7 @@ class BaseController extends Controller {
 	 * @return type
 	 */
 	protected function getSubSidebar() {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$deptArr = UserUtil::getManagerDeptSubUserByUid( $uid );
 		$params = array(
 			'deptArr' => $deptArr,
@@ -63,7 +63,7 @@ class BaseController extends Controller {
 	 * @return boolean
 	 */
 	protected function checkIsDesigneeuid( $designeeuid ) {
-		if ( $designeeuid == IBOS::app()->user->uid ) {
+		if ( $designeeuid == Ibos::app()->user->uid ) {
 			return true;
 		} else {
 			return false;
@@ -76,7 +76,7 @@ class BaseController extends Controller {
 	 * @return boolean
 	 */
 	protected function checkIsChargeuid( $chargeuid ) {
-		if ( $chargeuid == IBOS::app()->user->uid ) {
+		if ( $chargeuid == Ibos::app()->user->uid ) {
 			return true;
 		} else {
 			return false;
@@ -90,7 +90,7 @@ class BaseController extends Controller {
 	 */
 	protected function checkIsParticipantuid( $participantuid ) {
 		$uids = is_array( $participantuid ) ? $participantuid : explode( ',', $participantuid );
-		if ( in_array( IBOS::app()->user->uid, $uids ) ) {
+		if ( in_array( Ibos::app()->user->uid, $uids ) ) {
 			return true;
 		} else {
 			return false;
@@ -103,7 +103,7 @@ class BaseController extends Controller {
 	 * @return boolean
 	 */
 	protected function checkShowPermissions( $assignment ) {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$participantuid = explode( ',', $assignment['participantuid'] );
 		if ( $uid != $assignment['designeeuid'] && $uid != $assignment['chargeuid'] && !in_array( $uid, $participantuid ) ) {
 			return false;
@@ -117,7 +117,7 @@ class BaseController extends Controller {
 	 * @return boolean
 	 */
 	protected function checkIsSup( $assignment ) {
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		$participantuid = explode( ',', $assignment['participantuid'] );
 		if ( UserUtil::checkIsSub( $uid, $assignment['designeeuid'] ) ) {
 			return true;
@@ -139,13 +139,13 @@ class BaseController extends Controller {
 	 * @return array
 	 */
 	protected function checkAvailableById( $assignmentId ) {
-		$ret = array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Check pass' ) );
+		$ret = array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Check pass' ) );
 		if ( empty( $assignmentId ) ) {
-			$ret = array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Parameters error', 'error' ) );
+			$ret = array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Parameters error', 'error' ) );
 		}
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
 		if ( empty( $assignment ) ) {
-			$ret = array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Assignment has been delete' ) );
+			$ret = array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Assignment has been delete' ) );
 		}
 		return $ret;
 	}
@@ -157,7 +157,7 @@ class BaseController extends Controller {
 	 */
 	protected function getUnfinishedDataByUid( $uid ) {
 		$datas = Assignment::model()->getUnfinishedByUid( $uid );
-		$curUid = IBOS::app()->user->uid;
+		$curUid = Ibos::app()->user->uid;
 		$designeeData = AssignmentUtil::handleListData( $datas['designeeData'], $curUid );
 		$params = array(
 			'user' => User::model()->fetchByUid( $uid ),

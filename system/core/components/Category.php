@@ -9,7 +9,7 @@
 
 namespace application\core\components;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CException;
 use CMap;
 
@@ -69,7 +69,7 @@ class Category {
 		if ( isset( $this->_setting[strtolower( $name )] ) ) {
 			return $this->_setting[$name];
 		}
-		throw new CException( IBOS::t( 'yii', 'Property "{class}.{property}" is not defined.', array( '{class}' => get_class( $this ), '{property}' => $name ) ) );
+		throw new CException( Ibos::t( 'yii', 'Property "{class}.{property}" is not defined.', array( '{class}' => get_class( $this ), '{property}' => $name ) ) );
 	}
 
 	public function __isset( $name ) {
@@ -91,7 +91,7 @@ class Category {
 		} else if ( class_exists( $category ) ) {
 			$this->_category = new $category();
 		} else {
-			throw new CException( IBOS::lang( 'Cannot find class', 'error', array( '{class}' => $category ) ) );
+			throw new CException( Ibos::lang( 'Cannot find class', 'error', array( '{class}' => $category ) ) );
 		}
 	}
 

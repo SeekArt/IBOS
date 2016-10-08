@@ -3,7 +3,7 @@
 namespace application\modules\diary\utils;
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\model\Diary;
 use application\modules\diary\utils\Diary as DiaryUtil;
@@ -20,7 +20,7 @@ class DiaryApi extends MessageApi {
      * @return array
      */
     public function loadSetting() {
-        $subUidArr = UserUtil::getAllSubs( IBOS::app()->user->uid, '', true );
+        $subUidArr = UserUtil::getAllSubs( Ibos::app()->user->uid, '', true );
         if ( count( $subUidArr ) > 0 ) {
             return array(
                 'name' => 'diary/diary',
@@ -63,13 +63,13 @@ class DiaryApi extends MessageApi {
         $return = array();
         $viewAlias = 'application.modules.diary.views.indexapi.diary';
         $today = date( 'Y-m-d' );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         $data = array(
             'diary' => Diary::model()->fetch( 'diarytime = :diarytime AND uid = :uid', array( ':diarytime' => strtotime( $today ), ':uid' => $uid ) ),
             'calendar' => $this->loadCalendar(),
             'dateWeekDay' => DiaryUtil::getDateAndWeekDay( $today ),
-            'lang' => IBOS::getLangSource( 'diary.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'diary' )
+            'lang' => Ibos::getLangSource( 'diary.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'diary' )
         );
         // 判断是否已被评阅，拿取图章
         if ( !empty( $data['diary'] ) && $data['diary']['stamp'] != 0 ) {
@@ -140,9 +140,9 @@ class DiaryApi extends MessageApi {
         foreach ( $this->_indexTab as $tab ) {
             $data['tab'] = $tab;
             if ( $tab == 'diaryPersonal' ) {
-                $return[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+                $return[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
             } else if ( $tab == 'diaryAppraise' && count( $subUidArr ) > 0 ) {
-                $return[$tab] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+                $return[$tab] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
             }
         }
         return $return;
@@ -153,7 +153,7 @@ class DiaryApi extends MessageApi {
      * @return integer
      */
     public function loadNew() {
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         //获取所有直属下属id
         $uidArr = User::model()->fetchSubUidByUid( $uid );
         if ( !empty( $uidArr ) ) {
@@ -169,7 +169,7 @@ class DiaryApi extends MessageApi {
     private function loadCalendar() {
         //取出某个月的所有日志记录，得到每篇日志的有日志，已点评状态
         list($year, $month, $day) = explode( '-', date( 'Y-m-d' ) );
-        $diaryList = Diary::model()->fetchAllByUidAndDiarytime( $year . $month, IBOS::app()->user->uid );
+        $diaryList = Diary::model()->fetchAllByUidAndDiarytime( $year . $month, Ibos::app()->user->uid );
         return DiaryUtil::getCalendar( $year . $month, $diaryList, $day );
     }
 

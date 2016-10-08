@@ -65,7 +65,7 @@ class Mail {
      * @return boolean 发送成功与否
      */
     public static function sendMail( $to, $subject, $message, $from = 'IBOS2.0 MAIL CONTROL' ) {
-        $setting = IBOS::app()->setting->toArray();
+        $setting = Ibos::app()->setting->toArray();
         $mail = $setting['setting']['mail'];
         if ( !is_array( $mail ) ) {
             $mail = StringUtil::utf8Unserialize( $mail );

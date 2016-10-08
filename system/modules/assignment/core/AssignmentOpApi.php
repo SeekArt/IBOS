@@ -17,7 +17,7 @@
 namespace application\modules\assignment\core;
 
 use application\core\utils\Attach;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\System;
 use application\modules\assignment\model\Assignment;
@@ -58,12 +58,12 @@ Class AssignmentOpApi extends System {
         $wbconf = WbCommonUtil::getSetting(true);
         if (isset($wbconf['wbmovement']['assignment']) && $wbconf['wbmovement']['assignment'] == 1) {
             $data = array(
-                'title' => IBOS::lang('Feed title', '', array(
+                'title' => Ibos::lang('Feed title', '', array(
                     '{subject}' => $assignment['subject'],
-                    '{url}' => IBOS::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId))
+                    '{url}' => Ibos::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId))
                 )),
                 'body' => $assignment['subject'],
-                'actdesc' => IBOS::lang('Post assignment', 'assignment.default'),
+                'actdesc' => Ibos::lang('Post assignment', 'assignment.default'),
                 'userid' => implode(',', $uidArr),
                 'deptid' => '',
                 'positionid' => '',
@@ -71,9 +71,9 @@ Class AssignmentOpApi extends System {
             WbfeedUtil::pushFeed($uid, 'assignment', 'assignment', $assignmentId, $data, 'post');
         }
         // 发表一条添加评论
-        $this->addStepComment($uid, $assignmentId, IBOS::lang('Add the assignment', 'assignment.default'));
+        $this->addStepComment($uid, $assignmentId, Ibos::lang('Add the assignment', 'assignment.default'));
         // 记录日志
-        AssignmentLog::model()->addLog($uid, $assignmentId, 'add', IBOS::lang('Add the assignment', 'assignment.default'));
+        AssignmentLog::model()->addLog($uid, $assignmentId, 'add', Ibos::lang('Add the assignment', 'assignment.default'));
         return $assignmentId;
     }
 
@@ -111,7 +111,7 @@ Class AssignmentOpApi extends System {
         $config = array(
             '{sender}' => User::model()->fetchRealnameByUid($uid),
             '{subject}' => $subject,
-            '{url}' => IBOS::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId)),
+            '{url}' => Ibos::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId)),
             'id' => $assignmentId,
         );
         if (isset($result)) {

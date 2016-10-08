@@ -18,7 +18,7 @@ namespace application\modules\recruit\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\recruit\core\RecruitBgchecks as ICRecruitBgchecks;
 use application\modules\recruit\model\ResumeBgchecks;
 use application\modules\recruit\model\ResumeDetail;
@@ -39,11 +39,11 @@ class BgchecksController extends BaseController {
             'exportData' => json_encode( $paginationData['data'] ),
             'resumes' => $resumes
         );
-		$this->setPageTitle( IBOS::lang('Background investigation') );
+		$this->setPageTitle( Ibos::lang('Background investigation') );
 		$this->setPageState( 'breadCrumbs', array(
-			array( 'name' => IBOS::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
-			array( 'name' => IBOS::lang( 'Background investigation' ), 'url' => $this->createUrl( 'bgchecks/index' ) ),
-			array( 'name' => IBOS::lang( 'Bgchecks list' ) )
+			array( 'name' => Ibos::lang( 'Recruitment management' ), 'url' => $this->createUrl( 'resume/index' ) ),
+			array( 'name' => Ibos::lang( 'Background investigation' ), 'url' => $this->createUrl( 'bgchecks/index' ) ),
+			array( 'name' => Ibos::lang( 'Bgchecks list' ) )
 		) );
         $this->render( 'index', $params );
     }
@@ -52,12 +52,12 @@ class BgchecksController extends BaseController {
      * 添加背景记录
      */
     public function actionAdd() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $detailid = Env::getRequest( 'detailid' );
             // 根据 detailid 获取简历 id
             $resumeid = ResumeDetail::model()->fetchResumeidByDetailid( $detailid );
             if ( empty( $resumeid ) ) {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'This name does not exist resume' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'This name does not exist resume' ) ) );
             }
             $data = ICRecruitBgchecks::processAddOrEditData( $_POST );
             $data['resumeid'] = $resumeid;
@@ -70,7 +70,7 @@ class BgchecksController extends BaseController {
                 $bgcheck['fullname'] = ResumeDetail::model()->fetchRealnameByDetailid( $detailid );
                 $this->ajaxReturn( $bgcheck );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Add fail' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Add fail' ) ) );
             }
         }
     }
@@ -82,7 +82,7 @@ class BgchecksController extends BaseController {
         $op = Env::getRequest( 'op' );
         $checkid = Env::getRequest( 'checkid' );
         if ( !in_array( $op, array( 'update', 'getEditData' ) ) || empty( $checkid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'bgchecks/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'bgchecks/index' ) );
         } else {
             $this->$op();
         }
@@ -92,7 +92,7 @@ class BgchecksController extends BaseController {
      * 取得要编辑的记录
      */
     private function getEditData() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $checkid = Env::getRequest( 'checkid' );
             $bgcheck = ResumeBgchecks::model()->fetchByPk( $checkid );
             $bgcheck['entrytime'] = $bgcheck['entrytime'] == 0 ? '' : date( 'Y-d-d', $bgcheck['entrytime'] );
@@ -106,7 +106,7 @@ class BgchecksController extends BaseController {
      * 修改面试记录
      */
     private function update() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $checkid = Env::getRequest( 'checkid' );
             $data = ICRecruitBgchecks::processAddOrEditData( $_POST );
             $modifySuccess = ResumeBgchecks::model()->modify( $checkid, $data );
@@ -127,10 +127,10 @@ class BgchecksController extends BaseController {
      * 删除面试信息
      */
     public function actionDel() {
-        if ( IBOS::app()->request->isAjaxRequest ) {
+        if ( Ibos::app()->request->isAjaxRequest ) {
             $checkids = Env::getRequest( 'checkids' );
             if ( empty( $checkids ) ) {
-                $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'bgchecks/index' ) );
+                $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'bgchecks/index' ) );
             }
             $pk = '';
             if ( strpos( $checkids, ',' ) ) {
@@ -140,9 +140,9 @@ class BgchecksController extends BaseController {
             }
             $delSuccess = ResumeBgchecks::model()->deleteByPk( $pk );
             if ( $delSuccess ) {
-                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => IBOS::lang( 'Del succeed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 1, 'msg' => Ibos::lang( 'Del succeed', 'message' ) ) );
             } else {
-                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => IBOS::lang( 'Del failed', 'message' ) ) );
+                $this->ajaxReturn( array( 'isSuccess' => 0, 'msg' => Ibos::lang( 'Del failed', 'message' ) ) );
             }
         }
     }
@@ -154,12 +154,12 @@ class BgchecksController extends BaseController {
         $checkids = Env::getRequest( 'checkids' );
         $bgcheckArr = ResumeBgchecks::model()->fetchAll( "FIND_IN_SET(checkid, '{$checkids}')" );
         $fieldArr = array(
-            IBOS::lang( 'Name' ),
-            IBOS::lang( 'Company name' ),
-            IBOS::lang( 'Position' ),
-            IBOS::lang( 'Entry time' ),
-            IBOS::lang( 'Departure time' ),
-            IBOS::lang( 'Details' )
+            Ibos::lang( 'Name' ),
+            Ibos::lang( 'Company name' ),
+            Ibos::lang( 'Position' ),
+            Ibos::lang( 'Entry time' ),
+            Ibos::lang( 'Departure time' ),
+            Ibos::lang( 'Details' )
         );
         $str = implode( ',', $fieldArr ) . "\n";
         foreach ( $bgcheckArr as $bgcheck ) {

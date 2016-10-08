@@ -17,7 +17,7 @@
 namespace application\modules\report\widgets;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\report\utils\Report;
 use application\modules\user\utils\User;
 use CWidget;
@@ -37,8 +37,8 @@ class ReportSublist extends CWidget {
     public function run() {
         $data = array(
             'typeid' => Env::getRequest( 'typeid' ),
-            'lang' => IBOS::getLangSource( 'report.default' ),
-            'deptArr' => User::getManagerDeptSubUserByUid( IBOS::app()->user->uid ),
+            'lang' => Ibos::getLangSource( 'report.default' ),
+            'deptArr' => User::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
             'dashboardConfig' => Report::getSetting(),
             'deptRoute' => $this->inStats() ? 'stats/review' : 'review/index',
             'userRoute' => $this->inStats() ? 'stats/review' : 'review/personal'

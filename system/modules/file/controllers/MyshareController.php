@@ -17,7 +17,7 @@
 namespace application\modules\file\controllers;
 
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\file\model\File;
 use application\modules\file\model\FileDynamic;
@@ -41,7 +41,7 @@ class MyShareController extends BaseController {
             'pid' => 0,
             'idpath' => File::TOP_IDPATH
         );
-        $this->setPageTitle( IBOS::lang( 'My share folder' ) );
+        $this->setPageTitle( Ibos::lang( 'My share folder' ) );
         $this->render( 'index', $params );
     }
 
@@ -105,17 +105,17 @@ class MyShareController extends BaseController {
                 } else {
                     FileShare::model()->add( $data );
                 }
-                $content = IBOS::lang( 'Feed content', '', array(
+                $content = Ibos::lang( 'Feed content', '', array(
                             '{filename}' => $file['name'],
                             '{shortname}' => StringUtil::cutStr( $file['name'], 20 ),
-                            '{placeUrl}' => IBOS::app()->urlManager->createUrl( 'file/fromshare/index#from/' . $this->uid ),
-                            '{downloadUrl}' => IBOS::app()->urlManager->createUrl( 'file/personal/ajaxEnt', array( 'op' => 'download', 'fids' => $fid ) ),
+                            '{placeUrl}' => Ibos::app()->urlManager->createUrl( 'file/fromshare/index#from/' . $this->uid ),
+                            '{downloadUrl}' => Ibos::app()->urlManager->createUrl( 'file/personal/ajaxEnt', array( 'op' => 'download', 'fids' => $fid ) ),
                         ) );
                 FileDynamic::model()->record( $fid, $this->uid, $content, $shares['uid'], $shares['deptid'], $shares['positionid'] );
             }
         }
 
-        $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Operation succeed', 'message' ) ) );
+        $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
     }
 
     /**
@@ -148,7 +148,7 @@ class MyShareController extends BaseController {
         }
         $delFids = implode( ',', $deletes );
         $res = FileShare::model()->deleteAll( "FIND_IN_SET(`fid`, '{$delFids}')" );
-        $msg = $res ? IBOS::lang( 'Operation succeed', 'message' ) : IBOS::lang( 'Operation failure', 'message' );
+        $msg = $res ? Ibos::lang( 'Operation succeed', 'message' ) : Ibos::lang( 'Operation failure', 'message' );
         $this->ajaxReturn( array( 'isSuccess' => !!$res, 'msg' => $msg ) );
     }
 

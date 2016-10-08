@@ -11,7 +11,7 @@ namespace application\modules\main\components;
 
 use application\core\components\AttachCore;
 use application\core\utils as util;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\model as MainModel;
 use CJSON;
 
@@ -19,7 +19,7 @@ class CommonAttach extends AttachCore {
 
 	public function upload() {
 		$uidTemp = intval( util\Env::getRequest( 'uid' ) );
-		$uid = empty( $uidTemp ) ? IBOS::app()->user->uid : $uidTemp;
+		$uid = empty( $uidTemp ) ? Ibos::app()->user->uid : $uidTemp;
 		$this->upload->save();
 		$attach = $this->upload->getAttach();
 		$attachment = $attach['type'] . '/' . $attach['attachment'];

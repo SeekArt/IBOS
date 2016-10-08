@@ -5,7 +5,7 @@ namespace application\modules\mobile\controllers;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\assignment\core\AssignmentOpApi;
 use application\modules\assignment\model\Assignment;
@@ -36,7 +36,7 @@ class AssignmentController extends DefaultController {
 	 */
 	public function actionAdd() {
 		$this->beforeSave( $_POST ); // 空值判断
-		$_POST['uid'] = IBOS::app()->user->uid;
+		$_POST['uid'] = Ibos::app()->user->uid;
 		$assignmentId = AssignmentOpApi::getInstance()->addAssignment( $_POST );
 		$assignment = Assignment::model()->fetchByPk( $assignmentId );
 		$returnData = array(
@@ -52,8 +52,8 @@ class AssignmentController extends DefaultController {
 	 * 编辑任务
 	 */
 	public function actionEdit() {
-		$uid = IBOS::app()->user->uid;
-		if ( IBOS::app()->request->getIsPostRequest() ) {
+		$uid = Ibos::app()->user->uid;
+		if ( Ibos::app()->request->getIsPostRequest() ) {
 			$assignmentId = intval( Env::getRequest( 'id' ) );
 			$assignment = Assignment::model()->fetchByPk( $assignmentId );
 			$this->beforeSave( $_POST ); // 空值判断
@@ -72,12 +72,12 @@ class AssignmentController extends DefaultController {
 					$opApi->sendNotify( $uid, $assignmentId, $data['subject'], $uidArr, 'assignment_new_message' );
 				}
 				// 发表一条编辑评论
-				$opApi->addStepComment( $uid, $assignmentId, IBOS::lang( 'Eidt the assignment', 'assignment.default' ) );
+				$opApi->addStepComment( $uid, $assignmentId, Ibos::lang( 'Eidt the assignment', 'assignment.default' ) );
 				// 记录日志
-				AssignmentLog::model()->addLog( $uid, $assignmentId, 'edit', IBOS::lang( 'Eidt the assignment', 'assignment.default' ) );
-				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => IBOS::lang( 'Update succeed', 'message' ) ) );
+				AssignmentLog::model()->addLog( $uid, $assignmentId, 'edit', Ibos::lang( 'Eidt the assignment', 'assignment.default' ) );
+				$this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Update succeed', 'message' ) ) );
 			} else {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'Update failed', 'message' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'Update failed', 'message' ) ) );
 			}
 		} else {
 			$assignmentId = intval( Env::getRequest( 'id' ) );
@@ -88,7 +88,7 @@ class AssignmentController extends DefaultController {
 			$assignment = Assignment::model()->fetchByPk( $assignmentId );
 			// 只有发起人有权编辑任务
 			if ( $uid != $assignment['designeeuid'] ) {
-				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => IBOS::lang( 'You donot have permission to edit' ) ) );
+				$this->ajaxReturn( array( 'isSuccess' => false, 'msg' => Ibos::lang( 'You donot have permission to edit' ) ) );
 			}
 			// 附件
 			if ( !empty( $assignment['attachmentid'] ) ) {
@@ -98,8 +98,8 @@ class AssignmentController extends DefaultController {
 			$assignment['endtime'] = empty( $assignment['endtime'] ) ? '' : date( 'Y-m-d H:i', $assignment['endtime'] );
 			$assignment['chargeuid'] = StringUtil::wrapId( $assignment['chargeuid'] );
 			$assignment['participantuid'] = StringUtil::wrapId( $assignment['participantuid'] );
-			$assignment['lang'] = IBOS::getLangSource( 'assignment.default' );
-			$assignment['assetUrl'] = IBOS::app()->assetManager->getAssetsUrl( 'assignment' );
+			$assignment['lang'] = Ibos::getLangSource( 'assignment.default' );
+			$assignment['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl( 'assignment' );
 			// $editAlias = 'application.modules.assignment.views.default.edit';
 			// $editView = $this->renderPartial( $editAlias, $assignment, true );
 			// echo $editView;
@@ -112,7 +112,7 @@ class AssignmentController extends DefaultController {
 	 */
 	public function actionShow() {
 		$op = Env::getRequest( 'op' );
-		$uid = IBOS::app()->user->uid;
+		$uid = Ibos::app()->user->uid;
 		if ( empty( $op ) ) {
 			$assignmentId = intval( Env::getRequest( 'assignmentId' ) );
 			// 参数检查
@@ -123,7 +123,7 @@ class AssignmentController extends DefaultController {
 			$assignment = Assignment::model()->fetchByPk( $assignmentId );
 			// 权限检查
 			if ( !$this->checkShowPermissions( $assignment ) && !$this->checkIsSup( $assignment ) ) {
-				$this->error( IBOS::lang( 'You donot have permission to view' ), $this->createUrl( 'unfinished/index' ) );
+				$this->error( Ibos::lang( 'You donot have permission to view' ), $this->createUrl( 'unfinished/index' ) );
 			}
 			// 取出附件
 			if ( !empty( $assignment['attachmentid'] ) ) {
@@ -146,7 +146,7 @@ class AssignmentController extends DefaultController {
 				$assignment['status'] = 1;
 			}
 			// 记录日志
-			AssignmentLog::model()->addLog( $uid, $assignmentId, 'view', IBOS::lang( 'View the assignment' ) );
+			AssignmentLog::model()->addLog( $uid, $assignmentId, 'view', Ibos::lang( 'View the assignment' ) );
 			// 参与人
 			$participantuidArr = explode( ',', $assignment['participantuid'] );
 			$participantuid = array_filter( $participantuidArr, create_function( '$v', 'return !empty($v);' ) );

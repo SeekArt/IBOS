@@ -86,14 +86,14 @@ class Env {
 	 */
 	public static function ipBanned( $onlineip ) {
 		Cache::load( 'ipbanned' );
-		$ipBanned = IBOS::app()->setting->get( 'cache/ipbanned' );
+		$ipBanned = Ibos::app()->setting->get( 'cache/ipbanned' );
 		if ( empty( $ipBanned ) ) {
 			return false;
 		} else {
 			if ( $ipBanned['expiration'] < TIMESTAMP ) {
 				Cache::update( 'ipbanned' );
 				Cache::load( 'ipbanned', true );
-				$ipBanned = IBOS::app()->setting->get( 'cache/ipbanned' );
+				$ipBanned = Ibos::app()->setting->get( 'cache/ipbanned' );
 			}
 			return preg_match( "/^(" . $ipBanned['regexp'] . ")$/", $onlineip );
 		}
@@ -113,7 +113,7 @@ class Env {
 		}
 		$value = StringUtil::istrpos( $userAgent, self::$mobileBrowserList, true );
 		if ( $value ) {
-			IBOS::app()->setting->set( 'mobile', $value );
+			Ibos::app()->setting->set( 'mobile', $value );
 			return true;
 		}
 		return false;
@@ -142,12 +142,12 @@ class Env {
 	 * @return 处理后的重定向
 	 */
 	public static function referer( $default = '' ) {
-		$referer = IBOS::app()->setting->get( 'referer' );
-		$default = empty( $default ) ? IBOS::app()->urlManager->createUrl( 'main/default/index' ) : $default;
+		$referer = Ibos::app()->setting->get( 'referer' );
+		$default = empty( $default ) ? Ibos::app()->urlManager->createUrl( 'main/default/index' ) : $default;
 		//前一页地址，如果存在$_GET参数，否则使用$_SERVER
 		$referer = !empty( $_GET['referer'] ) ? $_GET['referer'] : (isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : $default);
 		//请求的页面是登陆页,返回主页
-		$loginPage = IBOS::app()->urlManager->createUrl( 'user/default/login' );
+		$loginPage = Ibos::app()->urlManager->createUrl( 'user/default/login' );
 		if ( strpos( $referer, $loginPage ) ) {
 			$referer = $default;
 		}
@@ -155,7 +155,7 @@ class Env {
 		$referer = StringUtil::ihtmlSpecialChars( $referer, ENT_QUOTES );
 		$referer = strip_tags( str_replace( '&amp;', '&', $referer ) );
 		// 写入全局组件
-		IBOS::app()->setting->set( 'referer', $referer );
+		Ibos::app()->setting->set( 'referer', $referer );
 		return $referer;
 	}
 
@@ -167,7 +167,7 @@ class Env {
 	 */
 	public static function getRequest( $key, $type = 'GP', $defaultValue = null ) {
 		$type = strtoupper( $type );
-		$request = IBOS::app()->request;
+		$request = Ibos::app()->request;
 		switch ( $type ) {
 			case 'G':
 				$var = $request->getQuery( $key, $defaultValue );
@@ -191,9 +191,9 @@ class Env {
 	 * @return string
 	 */
 	public static function formHash() {
-		$global = IBOS::app()->setting->toArray();
+		$global = Ibos::app()->setting->toArray();
 		$hashAdd = defined( 'IN_DASHBOARD' ) ? 'Only For IBOS Admin DASHBOARD' : '';
-		return substr( md5( substr( $global['timestamp'], 0, -7 ) . IBOS::app()->user->uid . $global['authkey'] . $hashAdd ), 8, 8 );
+		return substr( md5( substr( $global['timestamp'], 0, -7 ) . Ibos::app()->user->uid . $global['authkey'] . $hashAdd ), 8, 8 );
 	}
 
 	/**
@@ -208,12 +208,12 @@ class Env {
 			return false;
 		} else {
 			// ---- 表单提交变量检查 ----
-			// IBOS::app()->request->isPostRequest是否是post请求类型
+			// Ibos::app()->request->isPostRequest是否是post请求类型
 			// 直接访问属性应该比调用方法快
-			$isPostRequest = IBOS::app()->request->getIsPostRequest();
+			$isPostRequest = Ibos::app()->request->getIsPostRequest();
 			$emptyFlashProtected = empty( $_SERVER['HTTP_X_FLASH_VERSION'] );
 			$emptyReferer = isset( $_SERVER['HTTP_REFERER'] ) ? empty( $_SERVER['HTTP_REFERER'] ) : true;
-			$formHash = IBOS::app()->request->getParam( 'formhash' );
+			$formHash = Ibos::app()->request->getParam( 'formhash' );
 			$formHashCorrect = !empty( $formHash ) && $formHash == self::formHash();
 			// -------------------------
 			//$_SERVER['HTTP_REFERER']直接访问页面时没有
@@ -227,7 +227,7 @@ class Env {
 			if ( $allowGet or ( $formPostCorrect or $refererEqualsHost ) ) {
 				return true;
 			} else {
-				throw new CException( IBOS::lang( 'Data type invalid', 'error' ) );
+				throw new CException( Ibos::lang( 'Data type invalid', 'error' ) );
 			}
 		}
 	}
@@ -309,7 +309,7 @@ class Env {
 	//获取一条微博的来源信息
 	public static function getFromClient( $type = 0, $module = 'weibo' ) {
 		if ( $module != 'weibo' ) {
-			$modules = IBOS::app()->getEnabledModule();
+			$modules = Ibos::app()->getEnabledModule();
 			if ( isset( $modules[$module] ) ) {
 				return '来自' . $modules[$module]['name'];
 			} else {
@@ -386,7 +386,7 @@ class Env {
 			$phpSelf = str_replace( '\\', '/', str_replace( $_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME'] ) );
 			$phpSelf[0] != '/' && $phpSelf = '/' . $phpSelf;
 		} else {
-			throw new CException( IBOS::lang( 'Request tainting', 'error' ) );
+			throw new CException( Ibos::lang( 'Request tainting', 'error' ) );
 		}
 		return $phpSelf;
 	}

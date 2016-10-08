@@ -4,7 +4,7 @@ namespace application\modules\message\model;
 
 use application\core\model\Model;
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\message\model\MessageContent;
 use application\modules\message\model\NotifyMessage;
@@ -99,7 +99,7 @@ class UserData extends Model {
     public function updateKey( $key, $nums, $add = true, $uid = '' ) {
         // 不需要修改
         if ( $nums == 0 ) {
-            $this->addError( 'updateKey', IBOS::lang( 'Dont need to modify', 'message.default' ) );
+            $this->addError( 'updateKey', Ibos::lang( 'Dont need to modify', 'message.default' ) );
             return false;
         }
         // 若更新数目小于0，则默认为减少数目
@@ -116,7 +116,7 @@ class UserData extends Model {
 
         $data[$key] < 0 && $data[$key] = 0;
 
-        $map['uid'] = empty( $uid ) ? IBOS::app()->user->uid : $uid;
+        $map['uid'] = empty( $uid ) ? Ibos::app()->user->uid : $uid;
         $map['key'] = $key;
         $this->deleteAll( '`key` = :key AND uid = :uid', array( ':key' => $key, ':uid' => $map['uid'] ) );
         $map['value'] = $data[$key];
@@ -134,7 +134,7 @@ class UserData extends Model {
     public function getUserData( $uid = '' ) {
         // 默认为设置的用户
         if ( empty( $uid ) ) {
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
         }
         if ( ($data = Cache::get( 'userData_' . $uid )) === false || count( $data ) == 1 ) {
             $data = array();

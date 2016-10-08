@@ -1,6 +1,6 @@
 <?php 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <!-- private css -->
@@ -19,14 +19,14 @@ use application\core\utils\StringUtil;
 		<!--导航 S-->
 		<div>
 			<ul class="nav nav-tabs nav-tabs-large nav-justified">
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
 				<li class="active">
-					<a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
+					<a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a>
 				</li>
 				<?php if ( $this->getIsMe() ): ?>
-					<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
+					<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
 				<?php endif; ?>
-				<li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
+				<li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
 			</ul>
 		</div>
 		<!--导航 E-->
@@ -50,7 +50,7 @@ use application\core\utils\StringUtil;
 				<!--顶部tab E-->
 				<div id="wb_main" data-node-type="feedList">
 					<div class="wb-ifview-box mpanel" data-node-type="feedBox" data-feed-id="<?php echo $fd['uid']; ?>">
-						<?php if ( $fd['uid'] == IBOS::app()->user->uid || IBOS::app()->user->isadministrator ): ?>
+						<?php if ( $fd['uid'] == Ibos::app()->user->uid || Ibos::app()->user->isadministrator ): ?>
 							<div class="wb-trash-wrap">
 								<a href="javascript:;" class="o-wbf-trash" data-param='{"redirectToUid":<?php echo $fd['uid']; ?>,"feedid": <?php echo $fd['feedid']; ?>}' data-action="removeFeed"></a>
 							</div>
@@ -101,7 +101,7 @@ use application\core\utils\StringUtil;
 						</div>
 						<?php if ( $fd['module'] == 'weibo' ): ?>
 							<?php
-							$sourceUrl = IBOS::app()->urlManager->createUrl( 'weibo/personal/feed', array('feedid' => $fd['feedid']) );
+							$sourceUrl = Ibos::app()->urlManager->createUrl( 'weibo/personal/feed', array('feedid' => $fd['feedid']) );
 							$this->widget( 'application\modules\weibo\core\WeiboComment', array(
 								'module' => $fd['module'],
 								'table' => 'feed',
@@ -114,7 +114,7 @@ use application\core\utils\StringUtil;
 									'touid' => $fd['uid'],
 									'showlist' => 1,
 									'url' => $sourceUrl,
-									'detail' => IBOS::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
+									'detail' => Ibos::lang( 'Comment my weibo', '', array( '{url}' => $sourceUrl, '{title}' => StringUtil::cutStr( preg_replace( "/[\s]{2,}/", "", StringUtil::filterCleanHtml( $fd['body'] ) ), 50 ) ) )
 						) ) );
 							?>
 						<?php endif; ?>

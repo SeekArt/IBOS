@@ -10,7 +10,7 @@
 namespace application\modules\role\utils;
 
 use application\core\utils\Cache;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\role\model\Node;
 use application\modules\role\model\NodeRelated;
 use application\modules\user\model\User;
@@ -23,7 +23,7 @@ class Auth {
 	 * @return array
 	 */
 	public static function loadAuthItem() {
-		return IBOS::app()->setting->get( 'cache/authitem' );
+		return Ibos::app()->setting->get( 'cache/authitem' );
 	}
 
 	/**
@@ -32,7 +32,7 @@ class Auth {
 	 * @return array 参数数组
 	 */
 	public static function getParams( $route ) {
-		$roleidA = explode( ',', IBOS::app()->user->allroleid );
+		$roleidA = explode( ',', Ibos::app()->user->allroleid );
 		if ( !empty( $roleidA ) ) {
 			$dataItems = Node::model()->fetchAllDataNode();
 			$param = array();
@@ -127,7 +127,7 @@ class Auth {
 	public static function updateAuthItem( $routes, $isData = false ) {
 		if ( !empty( $routes ) ) {
 			// 创建认证对象
-			$auth = IBOS::app()->authManager;
+			$auth = Ibos::app()->authManager;
 			foreach ( $routes as $route ) {
 				$bizRule = $isData ? 'return UserUtil::checkDataPurv($purvId);' : '';
 				$auth->removeAuthItem( $route );

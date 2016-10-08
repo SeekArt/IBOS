@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_article.css' ?>">
 <!-- IE 8 Hack 加入空script标签延迟html加载，为了让空值图片能正常显示 -->
@@ -16,9 +16,9 @@ use application\core\utils\IBOS;
                     <td>
                         <div>
                             <span class="tcm pull-right"><?php echo date('n月j日', $article['addtime']); ?></span>
-                            <a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/show', array( 'articleid' => $article['articleid'])); ?>" class="title xcm"><?php echo $article['subject']; ?></a>
+                            <a href="<?php echo Ibos::app()->urlManager->createUrl('article/default/show', array( 'articleid' => $article['articleid'])); ?>" class="title xcm"><?php echo $article['subject']; ?></a>
                             <?php if ($index == 0): ?>
-                                <div class="content mbs"><a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/show', array('articleid' => $article['articleid'])); ?>"><?php echo $article['content']; ?></a></div>
+                                <div class="content mbs"><a href="<?php echo Ibos::app()->urlManager->createUrl('article/default/show', array('articleid' => $article['articleid'])); ?>"><?php echo $article['content']; ?></a></div>
                             <?php endif; ?>
                         </div>
                     </td>
@@ -28,7 +28,7 @@ use application\core\utils\IBOS;
     </table>
     <div class="mbox-base">
         <div class="fill-hn xac">
-            <a href="<?php echo IBOS::app()->urlManager->createUrl('article/default/index'); ?>" class="link-more">
+            <a href="<?php echo Ibos::app()->urlManager->createUrl('article/default/index'); ?>" class="link-more">
                 <i class="cbtn o-more"></i>
                 <span class="ilsep"><?php echo $lang['See more news']; ?></span>
             </a>

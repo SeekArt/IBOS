@@ -1,11 +1,11 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 ?>
-<li <?php if ( IBOS::app()->controller->id == 'stats' ): ?> class="active" <?php endif; ?>>
-	<a href="<?php echo IBOS::app()->createUrl( 'recruit/stats/index' ); ?>">
+<li <?php if ( Ibos::app()->controller->id == 'stats' ): ?> class="active" <?php endif; ?>>
+	<a href="<?php echo Ibos::app()->createUrl( 'recruit/stats/index' ); ?>">
 		<i class="os-statistics"></i>
-		<?php echo IBOS::lang( 'Recruit statistics' ); ?>
+		<?php echo Ibos::lang( 'Recruit statistics' ); ?>
 	</a>
 </li>

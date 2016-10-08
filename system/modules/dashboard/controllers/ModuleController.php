@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\model\Module;
 use application\core\utils\Cache;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module as ModuleUtil;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Menu;
@@ -52,7 +52,7 @@ class ModuleController extends BaseController {
 				if ( !empty( $menu ) ) {
 					$route = $menu['m'] . '/' . $menu['c'] . '/' . $menu['a'];
 					$param = StringUtil::splitParam( $menu['param'] );
-					$module['managerUrl'] = IBOS::app()->urlManager->createUrl( $route, $param );
+					$module['managerUrl'] = Ibos::app()->urlManager->createUrl( $route, $param );
 				} else {
 					$module['managerUrl'] = '';
 				}
@@ -77,9 +77,9 @@ class ModuleController extends BaseController {
 			Cache::update();
 			// 清除缓存文件
 			Cache::clear();
-			$this->success( IBOS::lang( 'Install module success' ), $jumpUrl );
+			$this->success( Ibos::lang( 'Install module success' ), $jumpUrl );
 		} else {
-			$this->error( IBOS::lang( 'Install module failed' ) );
+			$this->error( Ibos::lang( 'Install module failed' ) );
 		}
 	}
 
@@ -89,7 +89,7 @@ class ModuleController extends BaseController {
 	 */
 	public function actionUninstall() {
 		$moduleName = Env::getRequest( 'module' );
-		if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+		if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
 			$status = ModuleUtil::uninstall( $moduleName );
 			Cache::update();
 			// 清除缓存文件
@@ -105,7 +105,7 @@ class ModuleController extends BaseController {
 	public function actionStatus() {
 		$moduleStatus = Env::getRequest( 'type' );
 		$module = Env::getRequest( 'module' );
-		if ( IBOS::app()->getRequest()->getIsAjaxRequest() ) {
+		if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
 			$status = 0;
 			if ( $moduleStatus == 'disabled' ) {
 				$status = 1;

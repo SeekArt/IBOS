@@ -4,7 +4,7 @@ namespace application\modules\weibo\core;
 
 use application\core\model\Source;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Page;
 use application\core\utils\StringUtil;
 use application\modules\message\core\Comment as IWComment;
@@ -45,7 +45,7 @@ class WeiboComment extends IWComment {
         is_array( $attr ) && $var = array_merge( $var, $attr );
         $var['moduleuid'] = intval( $var['moduleuid'] );
         $var['rowid'] = intval( $var['rowid'] );
-        if ( $var['table'] == 'feed' && IBOS::app()->user->uid != $var['moduleuid'] ) {
+        if ( $var['table'] == 'feed' && Ibos::app()->user->uid != $var['moduleuid'] ) {
             // 获取资源类型
             $sourceInfo = Feed::model()->get( $var['rowid'] );
             $var['feedtype'] = $sourceInfo['type'];
@@ -90,7 +90,7 @@ class WeiboComment extends IWComment {
         $this->setAttributes( array( 'offset' => $pages->getOffset(), 'limit' => $pages->getLimit() ) );
         $var = array(
             'list' => $this->getCommentList(),
-            'lang' => IBOS::getLangSources( array( 'message.default' ) ),
+            'lang' => Ibos::getLangSources( array( 'message.default' ) ),
             'count' => $count,
             'limit' => $limit,
             'rowid' => $this->getAttributes( 'rowid' ),
@@ -163,10 +163,10 @@ class WeiboComment extends IWComment {
 
         // 如果为原创微博，不给原创用户发送@信息
         if ( $sourceInfo['type'] == 'post' && empty( $data['touid'] ) ) {
-            $lessUids[] = IBOS::app()->user->uid;
+            $lessUids[] = Ibos::app()->user->uid;
         }
         Feed::model()->shareFeed( $s, 'comment', $lessUids );
-        UserUtil::updateCreditByAction( 'forwardedweibo', IBOS::app()->user->uid );
+        UserUtil::updateCreditByAction( 'forwardedweibo', Ibos::app()->user->uid );
     }
 
     /**

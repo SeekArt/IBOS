@@ -2,7 +2,7 @@
 
 namespace application\modules\file\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class FileApi{
 	
@@ -12,11 +12,11 @@ class FileApi{
      */
     public function renderIndex() {
         $data = array(
-            'lant' => IBOS::getLangSource( 'file.default' ),
-            'assetUrl' => IBOS::app()->assetManager->getAssetsUrl( 'file' )
+            'lant' => Ibos::getLangSource( 'file.default' ),
+            'assetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'file' )
         );
         $viewAlias = 'application.modules.file.views.indexapi.file';
-        $return['file/file'] = IBOS::app()->getController()->renderPartial( $viewAlias, $data, true );
+        $return['file/file'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
         return $return;
     }
 	
@@ -27,7 +27,7 @@ class FileApi{
     public function loadSetting() {
         return array(
             'name' => 'file/file',
-            'title' => IBOS::lang( 'Folder', 'file.default' ),
+            'title' => Ibos::lang( 'Folder', 'file.default' ),
             'style' => 'in-file'
         );
     }

@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx\event;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\message\core\wx\Event;
 
 class LocationEvent extends Event {
@@ -97,10 +97,10 @@ class LocationEvent extends Event {
             'longitude' => $this->getLongitude(),
             'precision' => $this->getPrecision(),
             'appid' => $this->getAppId(),
-            'uid' => IBOS::app()->user->uid,
+            'uid' => Ibos::app()->user->uid,
             'time' => TIMESTAMP,
         );
-        IBOS::app()->db->createCommand()->insert( '{{user_location}}', $var );
+        Ibos::app()->db->createCommand()->insert( '{{user_location}}', $var );
         $this->resText();
     }
 

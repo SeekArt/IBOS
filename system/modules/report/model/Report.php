@@ -18,7 +18,7 @@ namespace application\modules\report\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
@@ -46,7 +46,7 @@ class Report extends Model {
         }
         $count = $this->count( $criteria );
         $pagination = new CPagination( $count );
-        $everyPage = empty( $pageSize ) ? IBOS::app()->params['basePerPage'] : $pageSize;
+        $everyPage = empty( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
         $pagination->setPageSize( intval( $everyPage ) );
         $pagination->applyLimit( $criteria );
         $reportList = $this->fetchAll( $criteria );

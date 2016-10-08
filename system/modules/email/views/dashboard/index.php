@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <div class="ct">
@@ -102,4 +102,4 @@ use application\core\utils\StringUtil;
     <span class="input-group-addon">MB</span>										
     </div>
 </script>
-<script src="<?php echo IBOS::app()->assetManager->getAssetsUrl( 'email' ); ?>/js/email_dashboard_index.js?<?php echo VERHASH; ?>"></script>
+<script src="<?php echo Ibos::app()->assetManager->getAssetsUrl( 'email' ); ?>/js/email_dashboard_index.js?<?php echo VERHASH; ?>"></script>

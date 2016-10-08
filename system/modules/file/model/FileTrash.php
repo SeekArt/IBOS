@@ -19,7 +19,7 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\file\utils\FileOffice;
 use CDbCriteria;
 use CPagination;
@@ -39,7 +39,7 @@ class FileTrash extends Model {
 	 * @return array
 	 */
 	public function fetchList( $condition ) {
-		$count = IBOS::app()->db->createCommand()
+		$count = Ibos::app()->db->createCommand()
 				->select("count(ft.fid)")
 				->from("{{file_trash}} ft")
 				->leftJoin( "{{file}} f", "f.`fid` = ft.`fid`" )
@@ -50,9 +50,9 @@ class FileTrash extends Model {
 		$criteria = new CDbCriteria();
 		$criteria->order = $order;
 		$pages->applyLimit( $criteria );
-		$limit = IBOS::app()->params['basePerPage'];
+		$limit = Ibos::app()->params['basePerPage'];
 		$pages->setPageSize( intval( $limit ) );
-		$datas = IBOS::app()->db->createCommand()
+		$datas = Ibos::app()->db->createCommand()
 				->select( "*,f.fid AS fid" )
 				->from( "{{file_trash}} ft" )
 				->leftJoin( "{{file}} f", "f.`fid` = ft.`fid`" )

@@ -4,7 +4,7 @@ namespace application\modules\message\core;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\message\model\Comment as CommentModel;
 use application\modules\user\model\User;
@@ -68,7 +68,7 @@ class Comment extends CWidget {
         if ($this->_module !== null) {
             return $this->_module;
         } else {
-            return IBOS::getCurrentModuleName();
+            return Ibos::getCurrentModuleName();
         }
     }
 
@@ -181,10 +181,10 @@ class Comment extends CWidget {
      */
     public function addComment() {
         // 返回结果集默认值
-        $return = array('isSuccess' => false, 'data' => IBOS::lang('Post comment fail', 'message'));
+        $return = array('isSuccess' => false, 'data' => Ibos::lang('Post comment fail', 'message'));
         // 获取接收数据
         $data = $_POST;
-        $data['uid'] = IBOS::app()->user->uid;
+        $data['uid'] = Ibos::app()->user->uid;
         // 评论所属与评论内容
         $data['content'] = StringUtil::parseHtml( \CHtml::encode( \CHtml::encode( $data['content'] ) ) );
         $data['detail'] = isset($data['detail']) ? $data['detail'] : '';
@@ -198,7 +198,7 @@ class Comment extends CWidget {
         $sourceInfo = $table::model()->fetch(array('condition' => "`{$pk}` = {$data['rowid']}"));
         if (!$sourceInfo) {
             $return['isSuccess'] = false;
-            $return['data'] = IBOS::lang('Comment has been delete', 'message.default');
+            $return['data'] = Ibos::lang('Comment has been delete', 'message.default');
             $this->getOwner()->ajaxReturn($return);
         }
         $data['cid'] = CommentModel::model()->addComment($data);
@@ -226,15 +226,15 @@ class Comment extends CWidget {
             return false;
         }
         // 非作者时
-        if ($comment ['uid'] != IBOS::app()->user->uid) {
+        if ($comment ['uid'] != Ibos::app()->user->uid) {
             // 没有管理权限不可以删除
-            if (!IBOS::app()->user->isadministrator) {
+            if (!Ibos::app()->user->isadministrator) {
                 $this->getOwner()->ajaxReturn(array('isSuccess' => false));
             }
         }
         if (!empty($cid)) {
             $this->beforeDelComment($comment, $cid);
-            $res = CommentModel::model()->deleteComment($cid, IBOS::app()->user->uid);
+            $res = CommentModel::model()->deleteComment($cid, Ibos::app()->user->uid);
             if ($res) {
                 $this->getOwner()->ajaxReturn(array('isSuccess' => true));
             } else {
@@ -265,10 +265,10 @@ class Comment extends CWidget {
      * @return string
      */
     protected function parseComment($data) {
-        $uid = IBOS::app()->user->uid;
-        $isAdministrator = IBOS::app()->user->isadministrator;
+        $uid = Ibos::app()->user->uid;
+        $isAdministrator = Ibos::app()->user->isadministrator;
         $data ['userInfo'] = User::model()->fetchByUid($uid);
-        $data['lang'] = IBOS::getLangSources(array('message.default'));
+        $data['lang'] = Ibos::getLangSources(array('message.default'));
         $data['isCommentDel'] = $isAdministrator || $uid === $data['uid'];
         if (!empty($data['attachmentid'])) {
             $data['attach'] = Attach::getAttach($data['attachmentid']);

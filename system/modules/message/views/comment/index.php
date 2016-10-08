@@ -1,6 +1,6 @@
 <?php 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 ?>
 <!-- private css -->
@@ -28,7 +28,7 @@ use application\core\utils\StringUtil;
 		</div>
 		<div class="page-list" id="msg_comment_list">
 			<div class="page-list-header">
-				<?php if ( IBOS::app()->user->isadministrator ): ?>
+				<?php if ( Ibos::app()->user->isadministrator ): ?>
 				<div class="pull-left msg-toolbar">
 					<button type="button" class="btn" id="start_multiple_btn"><?php echo $lang['Batch delete']; ?></button>
 				</div>

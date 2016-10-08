@@ -1,5 +1,5 @@
 <?php 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 <div class="dib right-sidebar">
 	<div class="sidebar-header">
@@ -22,7 +22,7 @@ use application\core\utils\IBOS;
 				<?php if ( $tip == 'mobile' ): ?>
 					<span class="dib"> <i class="o-tip-phone"></i></span>
 					<div class="tip-content">
-						<a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'remind' ) ); ?>" class="dib xcn xwb">绑定手机</a>
+						<a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'remind' ) ); ?>" class="dib xcn xwb">绑定手机</a>
 						<div class="tcm fss tip-progress">
 							<span class="tcm">绑定手机进度</span>
 							<span class="xco">+20%</span>
@@ -31,7 +31,7 @@ use application\core\utils\IBOS;
 				<?php elseif ( $tip == 'email' ): ?>
 					<span class="dib"> <i class="o-tip-email"></i></span>
 					<div class="tip-content">
-						<a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'remind' ) ); ?>" class="dib xcn xwb">绑定邮箱</a>
+						<a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'remind' ) ); ?>" class="dib xcn xwb">绑定邮箱</a>
 						<div class="tcm fss tip-progress">
 							<span class="tcm">绑定邮箱进度</span>
 							<span class="xco">+10%</span>
@@ -40,7 +40,7 @@ use application\core\utils\IBOS;
 				<?php elseif ( $tip == 'others' ): ?>
 					<span class="dib"> <i class="o-tip-pc-info"></i></span>
 					<div class="tip-content">
-						<a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'profile' ) ); ?>" class="dib xcn xwb">填写个人信息</a>
+						<a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'profile' ) ); ?>" class="dib xcn xwb">填写个人信息</a>
 						<div class="tcm fss tip-progress">
 							<span class="tcm">填写个人信息进度</span>
 							<span class="xco">+10%</span>
@@ -49,7 +49,7 @@ use application\core\utils\IBOS;
 				<?php elseif ( $tip == 'birthday' ): ?>
 					<a class="dib"> <i class="o-tip-birthday"></i></a>
 					<div class="tip-content">
-						<a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'profile' ) ); ?>" class="dib xcn xwb">填写生日</a>
+						<a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'profile' ) ); ?>" class="dib xcn xwb">填写生日</a>
 						<div class="tcm fss tip-progress">
 							<span class="tcm">填写生日进度</span>
 							<span class="xco">+10%</span>
@@ -58,7 +58,7 @@ use application\core\utils\IBOS;
 				<?php elseif ( $tip == 'avatar' ): ?>
 					<span class="dib"> <i class="o-tip-avatar"></i></span>
 					<div class="tip-content">
-						<a href="<?php echo IBOS::app()->createUrl( 'user/home/personal', array( 'op' => 'avatar' ) ); ?>" class="dib xcn xwb">上传头像</a>
+						<a href="<?php echo Ibos::app()->createUrl( 'user/home/personal', array( 'op' => 'avatar' ) ); ?>" class="dib xcn xwb">上传头像</a>
 						<div class="tcm fss tip-progress">
 							<span class="tcm">上传真实头像进度</span>
 							<span class="xco">+30%</span>

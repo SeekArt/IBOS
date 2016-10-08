@@ -17,7 +17,7 @@ namespace application\modules\weibo\utils;
 
 use application\core\utils\Attach;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Image;
 use application\core\utils\StringUtil;
 use application\modules\main\model\Setting;
@@ -84,7 +84,7 @@ class Common {
 		$file = sprintf( '%s/%s', $attachUrl, $attach['attachment'] );
 		$fileext = StringUtil::getFileExt( $file );
 		$thumbName = self::getThumbName( $attach, $width, $height );
-		$thumbName = IBOS::engine()->io()->file()->thumbnail( $file, $thumbName, $width, $height );
+		$thumbName = Ibos::engine()->io()->file()->thumbnail( $file, $thumbName, $width, $height );
 		return $thumbName;
 	}
 
@@ -114,7 +114,7 @@ class Common {
 		$serializeKeys = array( 'wbmovement', 'wbposttype' );
 		if ( $loadcache ) {
 			$allkeys = array_merge( $keys, $serializeKeys );
-			$setting = IBOS::app()->setting->toArray();
+			$setting = Ibos::app()->setting->toArray();
 			$values = array();
 			foreach ( $allkeys as $key ) {
 				$values[$key] = $setting['setting'][$key];
@@ -130,7 +130,7 @@ class Common {
 	 * @return array 模块数组
 	 */
 	public static function getMovementModules() {
-		$modules = IBOS::app()->getEnabledModule();
+		$modules = Ibos::app()->getEnabledModule();
 		$movementModules = array();
 		foreach ( $modules as $module => $configs ) {
 			$config = CJSON::decode( $configs['config'], true );

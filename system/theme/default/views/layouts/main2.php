@@ -1,7 +1,7 @@
 <?php
 
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\Url;
 use application\modules\user\utils\User;
@@ -17,7 +17,7 @@ use application\modules\user\utils\User;
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <meta name="renderer" content="webkit"/>
         <meta charset=<?php echo CHARSET; ?> />
-        <title><?php echo IBOS::app()->setting->get( 'title' ); ?></title>
+        <title><?php echo Ibos::app()->setting->get( 'title' ); ?></title>
 		<link rel="shortcut icon" href="<?php echo STATICURL; ?>/image/favicon.ico?<?php echo VERHASH; ?>">
 		<link rel="apple-touch-icon-precomposed" href="<?php echo STATICURL; ?>/image/common/ios_icon.png">
         <meta name="generator" content="IBOS <?php echo VERSION; ?>" />
@@ -26,13 +26,13 @@ use application\modules\user\utils\User;
 		<!-- IE 8 以下跳转至浏览器升级页 -->
 		<!--[if lt IE 8]>
 			<script>
-				window.location.href = "<?php echo IBOS::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
+				window.location.href = "<?php echo Ibos::app()->urlManager->createUrl( "main/default/unsupportedBrowser" ); ?>"
 			</script>
 		<![endif]-->
 		<!-- load css -->
         <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/base.css?<?php echo VERHASH; ?>" />
 		<link rel="stylesheet" href="<?php echo STATICURL; ?>/css/common.css?<?php echo VERHASH; ?>" />
-		<?php $skin = IBOS::app()->setting->get( 'setting/skin' ); ?>
+		<?php $skin = Ibos::app()->setting->get( 'setting/skin' ); ?>
 		<?php if ( !empty( $skin ) ): ?><link rel="stylesheet" href="<?php echo STATICURL; ?>/css/skin/<?php echo $skin; ?>.css?<?php echo VERHASH; ?>" /><?php endif; ?>
 		<link rel="stylesheet" href="<?php echo STATICURL; ?>/css/call.css?<?php echo VERHASH; ?>" />
 		<!-- IE8 fixed -->
@@ -59,14 +59,14 @@ use application\modules\user\utils\User;
 			<div class="header" id="header">
 				<div class="wrap">		
 					<div class="logo">
-						<?php $unit = IBOS::app()->setting->get( 'setting/unit' ); ?>
-						<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>"><img src="<?php
+						<?php $unit = Ibos::app()->setting->get( 'setting/unit' ); ?>
+						<a href="<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>"><img src="<?php
 							if ( !empty( $unit['logourl'] ) ): echo File::imageName( $unit['logourl'] );
 							else:
 								?><?php echo STATICURL; ?>/image/logo.png<?php endif; ?>?<?php echo VERHASH; ?>" alt="IBOS" height="40"></a>
 					</div>
 					<!-- Nav -->
-					<?php $navs = IBOS::app()->setting->get( 'cache/nav' ); ?>
+					<?php $navs = Ibos::app()->setting->get( 'cache/nav' ); ?>
 					<?php if ( $navs ): ?>
 						<div class="nvw" id="nvw">
 							<ul class="nv nl" id="nv">
@@ -118,30 +118,30 @@ use application\modules\user\utils\User;
 					<div class="usi">
 						<div class="btn-group">
 							<a href="javascript:;" data-toggle="dropdown" id="user_login_ctrl">
-								<?php echo StringUtil::cutStr( IBOS::app()->user->realname, 6 ); ?>
+								<?php echo StringUtil::cutStr( Ibos::app()->user->realname, 6 ); ?>
 								<i class="caret caret-small"></i>
 							</a>
 						</div>
-						<a href="<?php echo IBOS::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message" id="user_fun_ctrl">
-							<?php echo IBOS::lang( 'Message', 'default' ); ?>
+						<a href="<?php echo Ibos::app()->createUrl( 'message/mention/index' ); ?>" class="cbtn o-message" id="user_fun_ctrl">
+							<?php echo Ibos::lang( 'Message', 'default' ); ?>
 						</a>
 					</div>
 					<div class="posr">
 						<div id="message_container" class="reminder" style="display: none;">
 							<a href="javascript:void(0)" onclick="Ibosapp.dropnotify.hide()" class="o-close-small"></a>
 							<ul class="reminder-list" >
-								<li rel="new_folower_count" ><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/follower' ); ?>" class="anchor">查看粉丝</a></li>
-								<li rel="unread_comment" ><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/comment/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="unread_message"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/pm/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="unread_atme"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/mention/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="user"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
-								<li rel="diary"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="report"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="calendar"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="workflow"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="article"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="officialdoc"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
-								<li rel="email"><span></span>，<a href="<?php echo IBOS::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="new_folower_count" ><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/follower' ); ?>" class="anchor">查看粉丝</a></li>
+								<li rel="unread_comment" ><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/comment/index' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="unread_message"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/pm/index' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="unread_atme"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/mention/index' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="user"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看消息</a></li>
+								<li rel="diary"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="report"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="calendar"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="workflow"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="article"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="officialdoc"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
+								<li rel="email"><span></span>，<a href="<?php echo Ibos::app()->urlManager->createUrl( 'message/notify/index' ); ?>" class="anchor">查看详情</a></li>
 								<li rel="unread_group_atme"><span></span>，<a href="" class="anchor">查看消息</a></li>
 								<li rel="unread_group_comment"><span></span>，<a href="" class="anchor">查看消息</a></li> 
 								<li rel="car"><span></span>，<a href="" class="anchor">查看消息</a></li>
@@ -154,28 +154,28 @@ use application\modules\user\utils\User;
 				<div class="uil-card" id="user_login_card" style="display:none;">
 					<div class="uil-card-header">
 						<div class="media">
-							<a href="<?php echo IBOS::app()->user->space_url; ?>" class="pull-left avatar-circle">
-								<img src="<?php echo IBOS::app()->user->avatar_middle; ?>">
+							<a href="<?php echo Ibos::app()->user->space_url; ?>" class="pull-left avatar-circle">
+								<img src="<?php echo Ibos::app()->user->avatar_middle; ?>">
 							</a>
 							<div class="media-body">
-								<h5 class="media-heading"><strong><?php echo IBOS::app()->user->realname; ?></strong></h5>
-								<p class="fss"><?php echo trim( IBOS::app()->user->deptname . ':' . IBOS::app()->user->posname, ':' ); ?></p>
+								<h5 class="media-heading"><strong><?php echo Ibos::app()->user->realname; ?></strong></h5>
+								<p class="fss"><?php echo trim( Ibos::app()->user->deptname . ':' . Ibos::app()->user->posname, ':' ); ?></p>
 							</div>
 						</div>
 					</div>
 					<div class="uil-card-body">
 						<div class="mbm">
-							<span class="exp-val"><em><?php echo IBOS::app()->user->credits; ?></em>/<?php echo IBOS::app()->user->next_group_credit; ?></span>
-							<span><i class="lv lv<?php echo IBOS::app()->user->level; ?>"></i> <?php echo IBOS::app()->user->group_title; ?></span>
+							<span class="exp-val"><em><?php echo Ibos::app()->user->credits; ?></em>/<?php echo Ibos::app()->user->next_group_credit; ?></span>
+							<span><i class="lv lv<?php echo Ibos::app()->user->level; ?>"></i> <?php echo Ibos::app()->user->group_title; ?></span>
 						</div>
 						<div class="progress" title="Progress-bar">
-							<div class="progress-bar <?php if ( IBOS::app()->user->upgrade_percent > 90 ): ?>progress-bar-danger<?php else: ?>progress-bar-success<?php endif; ?>" style="width: <?php echo IBOS::app()->user->upgrade_percent; ?>%;"></div>
+							<div class="progress-bar <?php if ( Ibos::app()->user->upgrade_percent > 90 ): ?>progress-bar-danger<?php else: ?>progress-bar-success<?php endif; ?>" style="width: <?php echo Ibos::app()->user->upgrade_percent; ?>%;"></div>
 						</div>
 						<div class="btn-group btn-group-justified">
-							<a href="<?php echo IBOS::app()->user->space_url; ?>" class="btn"><i class="om-user"></i>个人中心</a>
-							<?php if ( IBOS::app()->user->isadministrator ): ?><a class="btn" target="_blank" href="<?php echo IBOS::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><i class="om-key"></i><?php echo IBOS::lang( 'Control', 'default' ); ?></a><?php endif; ?>
-							<a href="<?php echo IBOS::app()->urlManager->createUrl( 'user/default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="btn">
-								<i class="om-shutdown"></i><?php echo IBOS::lang( 'Quit', 'default' ); ?>
+							<a href="<?php echo Ibos::app()->user->space_url; ?>" class="btn"><i class="om-user"></i>个人中心</a>
+							<?php if ( Ibos::app()->user->isadministrator ): ?><a class="btn" target="_blank" href="<?php echo Ibos::app()->urlManager->createUrl( 'dashboard/' ); ?>" ><i class="om-key"></i><?php echo Ibos::lang( 'Control', 'default' ); ?></a><?php endif; ?>
+							<a href="<?php echo Ibos::app()->urlManager->createUrl( 'user/default/logout', array( 'formhash' => FORMHASH ) ); ?>" class="btn">
+								<i class="om-shutdown"></i><?php echo Ibos::lang( 'Quit', 'default' ); ?>
 							</a>
 						</div>
 					</div>
@@ -190,7 +190,7 @@ use application\modules\user\utils\User;
 								</a>
 							</li>
 							<li>
-								<a class="fun-opt-box" href="<?php echo IBOS::app()->urlManager->createUrl( 'email/content/add' ); ?>">
+								<a class="fun-opt-box" href="<?php echo Ibos::app()->urlManager->createUrl( 'email/content/add' ); ?>">
 									<i class="on-fun-email"></i>
 									<span class="fss db fun-opt-title">发邮件</span>
 								</a>
@@ -208,10 +208,10 @@ use application\modules\user\utils\User;
 			<!-- Header end -->
 			<!-- load script end -->
 			<div class="wrap" id="mainer">
-				<?php if ( !in_array( IBOS::app()->setting->get( 'module' ), array( 'user', 'weibo', 'app', 'main' ) ) ): ?>
+				<?php if ( !in_array( Ibos::app()->setting->get( 'module' ), array( 'user', 'weibo', 'app', 'main' ) ) ): ?>
 					<div class="mtw">
-						<h2 class="mt pull-left"><?php echo IBOS::app()->setting->get( 'pageTitle' ); ?></h2>
-						<span class="pull-right"><?php echo IBOS::app()->setting->get( 'lunar' ); ?></span>
+						<h2 class="mt pull-left"><?php echo Ibos::app()->setting->get( 'pageTitle' ); ?></h2>
+						<span class="pull-right"><?php echo Ibos::app()->setting->get( 'lunar' ); ?></span>
 					</div>
 				<?php endif; ?>
 				<!-- Mainer -->
@@ -222,10 +222,10 @@ use application\modules\user\utils\User;
 			<div class="footer wrap" id="footer">
 				<!-- Breadcrumb -->
 				<div class="brc clearfix">
-					<a href="<?php echo IBOS::app()->setting->get( 'siteurl' ); ?>" title="">
+					<a href="<?php echo Ibos::app()->setting->get( 'siteurl' ); ?>" title="">
 						<i class="o-logo"></i>
 					</a>
-					<?php $breadCrumbs = IBOS::app()->setting->get( 'breadCrumbs' ); ?>
+					<?php $breadCrumbs = Ibos::app()->setting->get( 'breadCrumbs' ); ?>
 					<?php foreach ( $breadCrumbs as $key => $value ): ?>
 						<a href="<?php echo isset( $value['url'] ) ? $value['url'] : 'javascript:;' ?>"><?php echo $value['name']; ?></a>
 					<?php endforeach; ?>
@@ -233,17 +233,17 @@ use application\modules\user\utils\User;
 				<!-- Quick link -->
 				<div class="copyright">
 					<div class="quick-link">
-						<a target="_blank" href="http://doc.ibos.com.cn/"><?php echo IBOS::lang( 'Ibos help', 'default' ); ?></a>
+						<a target="_blank" href="http://doc.ibos.com.cn/"><?php echo Ibos::lang( 'Ibos help', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a target="_blank" href="http://kf.ibos.com.cn"><?php echo IBOS::lang( 'Ibos feedback', 'default' ); ?></a>
+						<a target="_blank" href="http://kf.ibos.com.cn"><?php echo Ibos::lang( 'Ibos feedback', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a href="javascript:;" data-action="showCert"><?php echo IBOS::lang( 'Certificate of authorization', 'default' ); ?></a>
+						<a href="javascript:;" data-action="showCert"><?php echo Ibos::lang( 'Certificate of authorization', 'default' ); ?></a>
 						<span class="ilsep">|</span>
-						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo IBOS::lang( 'Chrome frame', 'default' ); ?></a>
+						<a target="_blank" href="http://doc.ibos.com.cn/article/detail/id/256"><?php echo Ibos::lang( 'Chrome frame', 'default' ); ?></a>
 						<span class="ilsep">|</span>
 						<a href="javascript:;" data-action="appDownload">客户端下载</a>
 						<?php
-						$qr = IBOS::app()->setting->get( 'setting/qrcode' );
+						$qr = Ibos::app()->setting->get( 'setting/qrcode' );
 						$qrcode = isset( $qr ) ? $qr : '';
 						if ( !empty( $qrcode ) ) :
 							?>
@@ -255,8 +255,8 @@ use application\modules\user\utils\User;
 					</div>
 					Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
 					<?php if ( YII_DEBUG ): ?>
-						Processed in <code><?php echo IBOS::app()->performance->endClockAndGet(); ?></code> second(s).
-						<code><?php echo IBOS::app()->performance->getDbstats(); ?></code> queries. 
+						Processed in <code><?php echo Ibos::app()->performance->endClockAndGet(); ?></code> second(s).
+						<code><?php echo Ibos::app()->performance->getDbstats(); ?></code> queries. 
 					<?php endif; ?>
 				</div>
 			</div>

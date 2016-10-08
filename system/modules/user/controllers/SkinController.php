@@ -10,7 +10,7 @@ namespace application\modules\user\controllers;
 
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\main\components\CommonAttach;
 use application\modules\user\model\BgTemplate;
 use application\modules\user\model\UserProfile;
@@ -36,14 +36,14 @@ class SkinController extends HomeBaseController {
 					'bg_small' => $base . 'bg_small.jpg',
 				);
 			} else {
-				$bgArray = IBOS::engine()->io()->file()->createBg( $params['src'], $params );
+				$bgArray = Ibos::engine()->io()->file()->createBg( $params['src'], $params );
 			}
-			$uid = IBOS::app()->user->uid;
+			$uid = Ibos::app()->user->uid;
 			UserProfile::model()->updateAll( $bgArray, "uid = {$uid}" );
 			User::wrapUserInfo( $uid, true, true, true );
-			IBOS::app()->user->setState( 'bg_big', $bgArray['bg_big'] );
-			//IBOS::app()->user->setState( 'bg_middle', $avatarArray['bg_middle']  );
-			IBOS::app()->user->setState( 'bg_small', $bgArray['bg_small'] );
+			Ibos::app()->user->setState( 'bg_big', $bgArray['bg_big'] );
+			//Ibos::app()->user->setState( 'bg_middle', $avatarArray['bg_middle']  );
+			Ibos::app()->user->setState( 'bg_small', $bgArray['bg_small'] );
 
 			return $this->ajaxReturn( array( 'isSuccess' => true ) );
 		}
@@ -57,7 +57,7 @@ class SkinController extends HomeBaseController {
 		$upload = new CommonAttach( 'Filedata' );
 		$upload->upload();
 		if ( !$upload->getIsUpoad()) {
-			$this->ajaxReturn( array( 'msg' => IBOS::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
+			$this->ajaxReturn( array( 'msg' => Ibos::lang( 'Save failed', 'message' ), 'isSuccess' => false ) );
 		} else {
 			$info = $upload->getUpload()->getAttach();
 			$file = File::getAttachUrl() . '/' . $info['type'] . '/' . $info['attachment'];
@@ -65,7 +65,7 @@ class SkinController extends HomeBaseController {
 			$tempSize = File::imageSize( $fileUrl );
 			//判断宽和高是否符合头像要求
 			if ( $tempSize[0] < 1000 || $tempSize[1] < 300 ) {
-				$this->ajaxReturn( array( 'msg' => IBOS::lang( 'Bg size error' ), 'isSuccess' => false ), 'json' );
+				$this->ajaxReturn( array( 'msg' => Ibos::lang( 'Bg size error' ), 'isSuccess' => false ), 'json' );
 			}
 			$this->ajaxReturn( array( 'data' => $file, 'file' => $fileUrl, 'isSuccess' => true ) );
 		}

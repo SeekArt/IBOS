@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 ?>
 
 <link rel="stylesheet" href="<?php echo $assetUrl . '/css/index_calendar.css'; ?>">
@@ -42,6 +42,6 @@ use application\core\utils\IBOS;
 	</table>
 <?php else: ?>
 	<div class="in-cal-empty">
-		<a href="<?php echo IBOS::app()->createUrl('calendar/schedule/index') ?>" class="in-cal-add" target="_blank"></a>
+		<a href="<?php echo Ibos::app()->createUrl('calendar/schedule/index') ?>" class="in-cal-add" target="_blank"></a>
 	</div>
 <?php endif; ?>

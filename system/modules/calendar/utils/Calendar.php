@@ -16,7 +16,7 @@
 
 namespace application\modules\calendar\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\calendar\model\Calendars as CalendarModel;
 use application\modules\calendar\model\CalendarSetup;
 
@@ -49,19 +49,19 @@ Class Calendar {
     public static function getDateAndWeekDay( $dateStr ) {
         list($year, $month, $day) = explode( '-', $dateStr );
         $weekArray = array(
-            IBOS::lang( 'Day', 'date' ),
-            IBOS::lang( 'One', 'date' ),
-            IBOS::lang( 'Two', 'date' ),
-            IBOS::lang( 'Three', 'date' ),
-            IBOS::lang( 'Four', 'date' ),
-            IBOS::lang( 'Five', 'date' ),
-            IBOS::lang( 'Six', 'date' )
+            Ibos::lang( 'Day', 'date' ),
+            Ibos::lang( 'One', 'date' ),
+            Ibos::lang( 'Two', 'date' ),
+            Ibos::lang( 'Three', 'date' ),
+            Ibos::lang( 'Four', 'date' ),
+            Ibos::lang( 'Five', 'date' ),
+            Ibos::lang( 'Six', 'date' )
         );
         $weekday = $weekArray[date( "w", strtotime( $dateStr ) )];
         return array( 'year' => $year,
             'month' => $month,
             'day' => $day,
-            'weekday' => IBOS::lang( 'Weekday', 'date' ) . $weekday
+            'weekday' => Ibos::lang( 'Weekday', 'date' ) . $weekday
         );
     }
 
@@ -73,13 +73,13 @@ Class Calendar {
     public static function digitalToDay( $digitalStr ) {
         $digitalArr = explode( ',', $digitalStr );
         $dayArr = array(
-            1 => IBOS::lang( 'One', 'date' ),
-            2 => IBOS::lang( 'Two', 'date' ),
-            3 => IBOS::lang( 'Three', 'date' ),
-            4 => IBOS::lang( 'Four', 'date' ),
-            5 => IBOS::lang( 'Five', 'date' ),
-            6 => IBOS::lang( 'Six', 'date' ),
-            7 => IBOS::lang( 'day' )
+            1 => Ibos::lang( 'One', 'date' ),
+            2 => Ibos::lang( 'Two', 'date' ),
+            3 => Ibos::lang( 'Three', 'date' ),
+            4 => Ibos::lang( 'Four', 'date' ),
+            5 => Ibos::lang( 'Five', 'date' ),
+            6 => Ibos::lang( 'Six', 'date' ),
+            7 => Ibos::lang( 'day' )
         );
         $recurringtime = '';
         foreach ( $digitalArr as $digital ) {
@@ -107,7 +107,7 @@ Class Calendar {
      * @return boolean
      */
     public static function getIsAllowAdd() {
-        return IBOS::app()->setting->get( 'setting/calendaraddschedule' );
+        return Ibos::app()->setting->get( 'setting/calendaraddschedule' );
     }
 
     /**
@@ -115,7 +115,7 @@ Class Calendar {
      * @return boolean
      */
     public static function getIsAllowEdit() {
-        return IBOS::app()->setting->get( 'setting/calendareditschedule' );
+        return Ibos::app()->setting->get( 'setting/calendareditschedule' );
     }
 
     /**
@@ -123,7 +123,7 @@ Class Calendar {
      * @return boolean
      */
     public static function getIsAllowEidtTask() {
-        return IBOS::app()->setting->get( 'setting/calendaredittask' );
+        return Ibos::app()->setting->get( 'setting/calendaredittask' );
     }
 
     /**

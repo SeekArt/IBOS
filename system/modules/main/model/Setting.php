@@ -17,7 +17,7 @@
 namespace application\modules\main\model;
 
 use application\core\model\Model;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 class Setting extends Model {
@@ -37,7 +37,7 @@ class Setting extends Model {
      * @author Ring
      */
     public function fetchSettingValueByKey( $sKey ) {
-        $value = IBOS::app()->db->createCommand()
+        $value = Ibos::app()->db->createCommand()
                 ->select( 'svalue' )
                 ->from( $this->tableName() )
                 ->where( " `skey` = '{$sKey}' " )
@@ -92,7 +92,7 @@ class Setting extends Model {
      */
     public function fetchAllSetting() {
         $setting = array();
-        $records = IBOS::app()->db->createCommand()
+        $records = Ibos::app()->db->createCommand()
                 ->select( '*' )
                 ->from( $this->tableName() )
                 ->queryAll();
@@ -128,7 +128,7 @@ class Setting extends Model {
      */
     public function checkSettingExist( $settingX ) {
         $settingString = is_array( $settingX ) ? implode( ',', $settingX ) : $settingX;
-        $value = IBOS::app()->db->createCommand()
+        $value = Ibos::app()->db->createCommand()
                 ->select( 'skey' )
                 ->from( $this->tableName() )
                 ->where( " FIND_IN_SET( `skey`, '{$settingString}' )" )

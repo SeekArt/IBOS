@@ -1,7 +1,7 @@
 <?php 
 
 use application\core\utils\Convert;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
 ?>
@@ -12,7 +12,7 @@ use application\core\utils\StringUtil;
 		<div>
 			<ul class="nav nav-tabs nav-tabs-large nav-justified nav-special">
 				<li class="active"><a href="<?php echo $this->createUrl( 'home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
-				<?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
+				<?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
 				<?php if ( $this->getIsMe() ): ?>
 					<li><a href="<?php echo $this->createUrl( 'home/credit' ); ?>"><?php echo $lang['Credit']; ?></a></li>
 				<?php endif; ?>

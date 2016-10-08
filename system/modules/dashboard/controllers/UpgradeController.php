@@ -5,7 +5,7 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Env;
 use application\core\utils\File;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\Module;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -22,7 +22,7 @@ class UpgradeController extends BaseController {
     public function init() {
         parent::init();
         if ( !LOCAL ) {
-            die( IBOS::lang( 'Not compatible service', 'message' ) );
+            die( Ibos::lang( 'Not compatible service', 'message' ) );
         }
     }
 
@@ -96,7 +96,7 @@ class UpgradeController extends BaseController {
                     // 初始化更新所需信息
                     $upgradeRun = Cache::model()->fetchByPk( 'upgrade_run' );
                     if ( !$upgradeRun ) {
-                        $upgrade = IBOS::app()->setting->get( 'setting/upgrade' );
+                        $upgrade = Ibos::app()->setting->get( 'setting/upgrade' );
                         $data = array(
                             'cachekey' => 'upgrade_run',
                             'cachevalue' => serialize( $upgrade ),
@@ -122,7 +122,7 @@ class UpgradeController extends BaseController {
                         if ( empty( $upgradeInfo ) ) {
                             Cache::model()->deleteByPk( 'upgrade_step' );
                             Cache::model()->deleteByPk( 'upgrade_run' );
-                            $msg = IBOS::lang( 'upgrade_unknow_error', '', array(
+                            $msg = Ibos::lang( 'upgrade_unknow_error', '', array(
                                         '{url}' => $this->createUrl( 'upgrade/index', array( 'op' => 'checking', 'rechecking' => 1 ) ) )
                             );
                             $this->render( 'upgradeError', array( 'msg' => $msg ) );
@@ -197,11 +197,11 @@ class UpgradeController extends BaseController {
     private function preProcessingStep( $upgradeInfo, $actionUrl, $fileListExists ) {
         // 没有文件更新
         if ( !$upgradeInfo ) {
-            return array( 'status' => -1, 'msg' => IBOS::lang( 'Upgrade none' ) );
+            return array( 'status' => -1, 'msg' => Ibos::lang( 'Upgrade none' ) );
         }
         // 无法找到更新列表
         if ( !$fileListExists ) {
-            return array( 'status' => -2, 'msg' => IBOS::lang( 'Upgrade download upgradelist error' ), 'actionUrl' => $actionUrl );
+            return array( 'status' => -2, 'msg' => Ibos::lang( 'Upgrade download upgradelist error' ), 'actionUrl' => $actionUrl );
         }
         return array( 'status' => 1 );
     }
@@ -211,9 +211,9 @@ class UpgradeController extends BaseController {
      * @return array 结果数组 e.g : array('isHaveUpgrade' => true, list => array(...));
      */
     private function processingUpgradeList() {
-        $upgrades = IBOS::app()->setting->get( 'setting/upgrade' );
+        $upgrades = Ibos::app()->setting->get( 'setting/upgrade' );
         if ( !$upgrades ) {
-            return array( 'isHaveUpgrade' => false, 'msg' => IBOS::lang( 'Upgrade latest version' ) );
+            return array( 'isHaveUpgrade' => false, 'msg' => Ibos::lang( 'Upgrade latest version' ) );
         } else {
             // 有更新，即存入缓存表备用
             $upgradeStep = array(
@@ -228,7 +228,7 @@ class UpgradeController extends BaseController {
             // -----------------------
             $upgradeRow = array();
             $charset = str_replace( '-', '', strtoupper( CHARSET ) );
-            $dbVersion = IBOS::app()->db->getServerVersion();
+            $dbVersion = Ibos::app()->db->getServerVersion();
             // 确定更新地区目录
             $locale = '';
             if ( $charset == 'BIG5' ) {
@@ -236,7 +236,7 @@ class UpgradeController extends BaseController {
             } elseif ( $charset == 'GBK' ) {
                 $locale = 'SC';
             } elseif ( $charset == 'UTF8' ) {
-                $language = IBOS::app()->getLanguage();
+                $language = Ibos::app()->getLanguage();
                 if ( $language == 'zh_cn' ) {
                     $locale = 'SC';
                 } elseif ( $language == 'zh_tw' ) {
@@ -254,7 +254,7 @@ class UpgradeController extends BaseController {
                         ' [' . $upgrade['latestrelease'] . ']';
                 // 未达到版本要求的提示
                 if ( $unUpgrade ) {
-                    $this->render( 'upgradeError', array( 'msg' => IBOS::lang( 'Upgrade require config', '', array( 'phpVersion' => PHP_VERSION, 'dbVersion' => $dbVersion ) ) ) );
+                    $this->render( 'upgradeError', array( 'msg' => Ibos::lang( 'Upgrade require config', '', array( 'phpVersion' => PHP_VERSION, 'dbVersion' => $dbVersion ) ) ) );
                     exit;
                 } else {
                     $params = array(
@@ -323,7 +323,7 @@ class UpgradeController extends BaseController {
                 }
                 $data['data'] = array(
                     'IsSuccess' => true,
-                    'msg' => IBOS::lang( 'Upgrade download complete to compare' ),
+                    'msg' => Ibos::lang( 'Upgrade download complete to compare' ),
                     'url' => $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 3 ), $urlParam ) )
                 );
                 $data['step'] = 3;
@@ -341,20 +341,20 @@ class UpgradeController extends BaseController {
                 if ( $downloadStatus == 1 ) { // 断点下载，继续进行下载
                     $data['data'] = array(
                         'IsSuccess' => true,
-                        'msg' => IBOS::lang( 'Upgrade downloading file', '', array( '{file}' => $curFile, '{percent}' => $percent, '{percent2}' => $percent2 ) ),
+                        'msg' => Ibos::lang( 'Upgrade downloading file', '', array( '{file}' => $curFile, '{percent}' => $percent, '{percent2}' => $percent2 ) ),
                         'url' => $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 2, 'fileseq' => $fileSeq, 'position' => ($position + $offset) ), $urlParam ) )
                     );
                 } elseif ( $downloadStatus == 2 ) { // 下载完成,继续下一个
                     $data['data'] = array(
                         'IsSuccess' => true,
-                        'msg' => IBOS::lang( 'Upgrade downloading file', '', array( '{file}' => $curFile, '{percent}' => $percent, '{percent2}' => $percent2 ) ),
+                        'msg' => Ibos::lang( 'Upgrade downloading file', '', array( '{file}' => $curFile, '{percent}' => $percent, '{percent2}' => $percent2 ) ),
                         'url' => $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 2, 'fileseq' => ($fileSeq + 1) ), $urlParam ) )
                     );
                 } else {
                     // 尝试重新下载
                     $data['data'] = array(
                         'IsSuccess' => false,
-                        'msg' => IBOS::lang( 'Upgrade redownload', '', array( '{file}' => $curFile ) ),
+                        'msg' => Ibos::lang( 'Upgrade redownload', '', array( '{file}' => $curFile ) ),
                         'url' => $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 2, 'fileseq' => $fileSeq ), $urlParam ) )
                     );
                 }
@@ -380,7 +380,7 @@ class UpgradeController extends BaseController {
         list($modifyList, $showList) = Upgrade::compareBasefile( $updateFileList );
         $data['step'] = 3;
 //		if ( empty( $modifyList ) && empty( $showList ) ) {
-//			$msg = IBOS::lang( 'Filecheck nofound md5file' );
+//			$msg = Ibos::lang( 'Filecheck nofound md5file' );
 //			$this->render( 'upgradeError', array( 'msg' => $msg ) );
 //			exit();
 //		} else {
@@ -402,7 +402,7 @@ class UpgradeController extends BaseController {
         $data['data']['list'] = $list;
         $data['data']['url'] = $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 4 ), $urlParam ) );
         $data['data']['forceUpgrade'] = !empty( $modifyList );
-        $data['data']['msg'] = IBOS::lang( 'Upgrade comepare', '', array(
+        $data['data']['msg'] = Ibos::lang( 'Upgrade comepare', '', array(
                     '{savePath}' => $savePath,
                     '{backPath}' => $backPath )
         );
@@ -449,7 +449,7 @@ class UpgradeController extends BaseController {
                 } else {
                     // 没有权限，要设置ftp或重试。
                     $data['data']['status'] = 'no_access';
-                    $data['data']['msg'] = IBOS::lang( 'Upgrade cannot access file' );
+                    $data['data']['msg'] = Ibos::lang( 'Upgrade cannot access file' );
                     $data['data']['retryUrl'] = $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 4 ), $urlParam ) );
                     $data['data']['ftpUrl'] = $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 4, 'ftpsetting' => 1 ), $urlParam ) );
                     $this->ajaxReturn( $data, 'json' );
@@ -472,7 +472,7 @@ class UpgradeController extends BaseController {
                         'confirm' => $confirm
                     );
                     $data['data']['status'] = 'upgrade_backuping';
-                    $data['data']['msg'] = IBOS::lang( 'Upgrade backuping' );
+                    $data['data']['msg'] = Ibos::lang( 'Upgrade backuping' );
                     $data['data']['url'] = $this->createUrl( 'upgrade/index', array_merge( $ftpParam, $param, $urlParam ) );
                     $this->ajaxReturn( $data, 'json' );
                 }
@@ -482,13 +482,13 @@ class UpgradeController extends BaseController {
                     if ( is_file( $destFile ) ) {
                         if ( !Upgrade::copyFile( $destFile, $backFile, 'file' ) ) {
                             $data['data']['status'] = 'upgrade_backup_error';
-                            $data['data']['msg'] = IBOS::lang( 'Upgrade backup error' );
+                            $data['data']['msg'] = Ibos::lang( 'Upgrade backup error' );
                             $this->ajaxReturn( $data, 'json' );
                         }
                     }
                 }
                 $data['data']['status'] = 'upgrade_backup_complete';
-                $data['data']['msg'] = IBOS::lang( 'Upgrade backup complete' );
+                $data['data']['msg'] = Ibos::lang( 'Upgrade backup complete' );
                 $data['data']['url'] = $this->createUrl( 'upgrade/index', array_merge( array( 'step' => 4, 'startupgrade' => 1, 'confirm' => $confirm ), $ftpParam, $urlParam ) );
                 $this->ajaxReturn( $data, 'json' );
             }
@@ -512,10 +512,10 @@ class UpgradeController extends BaseController {
                     $data['data']['retryUrl'] = $url;
                     if ( $confirm == 'ftp' ) {
                         $data['data']['status'] = 'upgrade_ftp_upload_error';
-                        $data['data']['msg'] = IBOS::lang( 'Upgrade ftp upload error', '', array( '{file}' => $updateFile ) );
+                        $data['data']['msg'] = Ibos::lang( 'Upgrade ftp upload error', '', array( '{file}' => $updateFile ) );
                     } else {
                         $data['data']['status'] = 'upgrade_copy_error';
-                        $data['data']['msg'] = IBOS::lang( 'Upgrade copy error', '', array( '{file}' => $updateFile ) );
+                        $data['data']['msg'] = Ibos::lang( 'Upgrade copy error', '', array( '{file}' => $updateFile ) );
                     }
                     $this->ajaxReturn( $data, 'json' );
                 }
@@ -538,10 +538,10 @@ class UpgradeController extends BaseController {
                         $data['data']['retryUrl'] = $url;
                         if ( $confirm == 'ftp' ) {
                             $data['data']['status'] = 'upgrade_ftp_upload_error';
-                            $data['data']['msg'] = IBOS::lang( 'Upgrade ftp upload error', '', array( '{file}' => $dbUpdateFile ) );
+                            $data['data']['msg'] = Ibos::lang( 'Upgrade ftp upload error', '', array( '{file}' => $dbUpdateFile ) );
                         } else {
                             $data['data']['status'] = 'upgrade_copy_error';
-                            $data['data']['msg'] = IBOS::lang( 'Upgrade copy error', '', array( '{file}' => $dbUpdateFile ) );
+                            $data['data']['msg'] = Ibos::lang( 'Upgrade copy error', '', array( '{file}' => $dbUpdateFile ) );
                         }
                         $this->ajaxReturn( $data, 'json' );
                     }
@@ -557,11 +557,11 @@ class UpgradeController extends BaseController {
                 $param = array(
                     'step' => 'prepare',
                     'from' => rawurlencode( $dbReturnUrl ),
-                    'frommd5' => md5( rawurlencode( $dbReturnUrl ) . IBOS::app()->setting->get( 'config/security/authkey' ) )
+                    'frommd5' => md5( rawurlencode( $dbReturnUrl ) . Ibos::app()->setting->get( 'config/security/authkey' ) )
                 );
                 $data['data']['status'] = 'upgrade_database';
                 $data['data']['url'] = 'data/update.php?' . http_build_query( $param );
-                $data['data']['msg'] = IBOS::lang( 'Upgrade file successful' );
+                $data['data']['msg'] = Ibos::lang( 'Upgrade file successful' );
                 $this->ajaxReturn( $data, 'json' );
             }
             $data['data']['status'] = 'upgrade_file_successful';
@@ -587,7 +587,7 @@ class UpgradeController extends BaseController {
      */
     private function processingTempFile( $urlParam ) {
         $file = PATH_ROOT . '/data/update/IBOS ' . $urlParam['version'] . ' Release[' . $urlParam['release'] . ']/updatelist.tmp';
-        $authKey = IBOS::app()->setting->get( 'config/security/authkey' );
+        $authKey = Ibos::app()->setting->get( 'config/security/authkey' );
         @unlink( $file );
         @unlink( PATH_ROOT . '/data/update.php' );
         Cache::model()->deleteByPk( 'upgrade_step' );
@@ -604,7 +604,7 @@ class UpgradeController extends BaseController {
         File::clearDirs( PATH_ROOT . $oldBackDir );
         $data['step'] = 5;
         $data['data']['url'] = $this->createUrl( 'upgrade/updateCache', array_merge( array( 'op' => "cache" ) ) );
-        $data['data']['msg'] = IBOS::lang( 'Upgrade successful', '', array(
+        $data['data']['msg'] = Ibos::lang( 'Upgrade successful', '', array(
                     '{version}' => 'IBOS' . VERSION . ' ' . VERSION_DATE,
                     '{saveUpdateDir}' => $newUpdateDir,
                     '{saveBackDir}' => $newBackDir )

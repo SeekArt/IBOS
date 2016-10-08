@@ -19,7 +19,7 @@ namespace application\modules\diary\controllers;
 
 use application\core\utils\Attach;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\diary\components\Diary as ICDiary;
 use application\modules\diary\model\Diary;
@@ -36,7 +36,7 @@ class ShareController extends BaseController {
      */
     public function init() {
         if ( !$this->issetShare() ) {
-            $this->error( IBOS::lang( 'Share not open' ), $this->createUrl( 'default/index' ) );
+            $this->error( Ibos::lang( 'Share not open' ), $this->createUrl( 'default/index' ) );
         }
         parent::init();
     }
@@ -49,14 +49,14 @@ class ShareController extends BaseController {
         $sidebarAlias = 'application.modules.diary.views.share.sidebar';
 
         //取得最近的五篇分享日志
-        $records = Diary::model()->fetchAllByShareCondition( IBOS::app()->user->uid, 5 );
+        $records = Diary::model()->fetchAllByShareCondition( Ibos::app()->user->uid, 5 );
         $result = array();
         foreach ( $records as $record ) {
             $record['diarytime'] = date( 'm-d', $record['diarytime'] );
             $record['user'] = User::model()->fetchByUid( $record['uid'] );
             $result[] = $record;
         }
-        $sidebarView = $this->renderPartial( $sidebarAlias, array( 'data' => $result, 'statModule' => IBOS::app()->setting->get( 'setting/statmodules' ) ), true );
+        $sidebarView = $this->renderPartial( $sidebarAlias, array( 'data' => $result, 'statModule' => Ibos::app()->setting->get( 'setting/statmodules' ) ), true );
         return $sidebarView;
     }
 
@@ -83,7 +83,7 @@ class ShareController extends BaseController {
                 $date = date( 'Y-m-d', $time );
             }
             // 取得shareuid字段中包含作者的数据
-            $uid = IBOS::app()->user->uid;
+            $uid = Ibos::app()->user->uid;
             $condition = "FIND_IN_SET('$uid',shareuid) AND uid NOT IN($uid) AND diarytime=$time";
             $paginationData = Diary::model()->fetchAllByPage( $condition );
             $params = array(
@@ -100,11 +100,11 @@ class ShareController extends BaseController {
                 'prevTime' => strtotime( $date ) - 24 * 60 * 60,
                 'nextTime' => strtotime( $date ) + 24 * 60 * 60
             );
-            $this->setPageTitle( IBOS::lang( 'Share diary' ) );
+            $this->setPageTitle( Ibos::lang( 'Share diary' ) );
             $this->setPageState( 'breadCrumbs', array(
-                array( 'name' => IBOS::lang( 'Personal Office' ) ),
-                array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-                array( 'name' => IBOS::lang( 'Share diary' ) )
+                array( 'name' => Ibos::lang( 'Personal Office' ) ),
+                array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+                array( 'name' => Ibos::lang( 'Share diary' ) )
             ) );
             $this->render( 'index', $params );
         } else {
@@ -117,17 +117,17 @@ class ShareController extends BaseController {
      */
     public function actionShow() {
         $diaryid = intval( Env::getRequest( 'diaryid' ) );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         if ( empty( $diaryid ) ) {
-            $this->error( IBOS::lang( 'Parameters error', 'error' ), $this->createUrl( 'share/index' ) );
+            $this->error( Ibos::lang( 'Parameters error', 'error' ), $this->createUrl( 'share/index' ) );
         }
         $diary = Diary::model()->fetchByPk( $diaryid );
         if ( empty( $diary ) ) {
-            $this->error( IBOS::lang( 'No data found' ), $this->createUrl( 'share/index' ) );
+            $this->error( Ibos::lang( 'No data found' ), $this->createUrl( 'share/index' ) );
         }
         // 权限判断
         if ( !ICDiary::checkScope( $uid, $diary ) ) {
-            $this->error( IBOS::lang( 'You do not have permission to view the log' ), $this->createUrl( 'share/index' ) );
+            $this->error( Ibos::lang( 'You do not have permission to view the log' ), $this->createUrl( 'share/index' ) );
         }
         //增加阅读记录
         Diary::model()->addReaderuidByPK( $diary, $uid );
@@ -155,11 +155,11 @@ class ShareController extends BaseController {
             $params['stampUrl'] = Stamp::model()->fetchStampById( $diary['stamp'] );
         }
         $params['sharecomment'] = $this->issetSharecomment();
-        $this->setPageTitle( IBOS::lang( 'Show share diary' ) );
+        $this->setPageTitle( Ibos::lang( 'Show share diary' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Show share diary' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Show share diary' ) )
         ) );
         $this->render( 'show', $params );
     }
@@ -170,7 +170,7 @@ class ShareController extends BaseController {
      */
     private function personal() {
         $getUid = intval( Env::getRequest( 'uid' ) );
-        $uid = IBOS::app()->user->uid;
+        $uid = Ibos::app()->user->uid;
         //是否搜索
         if ( Env::getRequest( 'param' ) == 'search' ) {
             $this->search();
@@ -189,11 +189,11 @@ class ShareController extends BaseController {
             'dashboardConfig' => $this->getDiaryConfig(),
             'isattention' => empty( $attention ) ? 0 : 1
         );
-        $this->setPageTitle( IBOS::lang( 'Share diary' ) );
+        $this->setPageTitle( Ibos::lang( 'Share diary' ) );
         $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => IBOS::lang( 'Personal Office' ) ),
-            array( 'name' => IBOS::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
-            array( 'name' => IBOS::lang( 'Share diary' ) )
+            array( 'name' => Ibos::lang( 'Personal Office' ) ),
+            array( 'name' => Ibos::lang( 'Work diary' ), 'url' => $this->createUrl( 'default/index' ) ),
+            array( 'name' => Ibos::lang( 'Share diary' ) )
         ) );
         $this->render( 'personal', $data );
     }

@@ -16,7 +16,7 @@
 
 namespace application\modules\report\utils;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 
 class Report {
 
@@ -206,7 +206,7 @@ class Report {
      * @return type
      */
     public static function getSetting() {
-        return IBOS::app()->setting->get('setting/reportconfig');
+        return Ibos::app()->setting->get('setting/reportconfig');
     }
 
     /**

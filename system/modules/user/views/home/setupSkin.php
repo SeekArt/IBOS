@@ -6,7 +6,7 @@
 			<ul class="nav nav-tabs nav-tabs-large nav-justified nav-special">
 				<li><a href="<?php echo $this->createUrl( 'home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
 				<li><a href="<?php echo $this->createUrl( 'home/personal', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Profile']; ?></a></li>
-				<?php if($this->getIsWeiboEnabled()): ?><li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
+				<?php if($this->getIsWeiboEnabled()): ?><li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
 				<?php if ( $this->getIsMe() ): ?>
 					<li><a href="<?php echo $this->createUrl( 'home/credit', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Credit']; ?></a></li>
 					<li class="active"><a href="<?php echo $this->createUrl( 'home/setup', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Setup']; ?></a></li>

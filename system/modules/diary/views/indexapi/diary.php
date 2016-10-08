@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\modules\dashboard\model\Stamp;
 use application\modules\main\utils\Main;
 ?>
@@ -67,7 +67,7 @@ use application\modules\main\utils\Main;
                 <?php endif; ?>
             <?php else: ?>
                 <div class="xac">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl('diary/default/add'); ?>" class="btn btn-warning">
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl('diary/default/add'); ?>" class="btn btn-warning">
                         <i class="o-new"></i>
                         <?php echo $lang['Write log']; ?>
                     </a>
@@ -105,7 +105,7 @@ use application\modules\main\utils\Main;
                             </div>
                         </td>
                         <td>
-                            <a href="<?php echo IBOS::app()->urlManager->createUrl('diary/review/show',array('diaryid'=>$review['diaryid'])); ?>"><?php echo $review['user']['realname'].' &nbsp; '.$review['diarytime']; ?></a>
+                            <a href="<?php echo Ibos::app()->urlManager->createUrl('diary/review/show',array('diaryid'=>$review['diaryid'])); ?>"><?php echo $review['user']['realname'].' &nbsp; '.$review['diarytime']; ?></a>
                         </td>
                         <td width="60">
                            
@@ -122,7 +122,7 @@ use application\modules\main\utils\Main;
                             </div>
                         </td>
                         <td>
-                            <a href="<?php echo IBOS::app()->urlManager->createUrl('diary/review/show',array('diaryid'=>$review['diaryid'])); ?>"><?php echo $review['user']['realname'].' &nbsp; '.$review['diarytime']; ?></a>
+                            <a href="<?php echo Ibos::app()->urlManager->createUrl('diary/review/show',array('diaryid'=>$review['diaryid'])); ?>"><?php echo $review['user']['realname'].' &nbsp; '.$review['diarytime']; ?></a>
                         </td>
                         <td width="60">
 							<?php if($review['stamp']!=0): ?>
@@ -137,7 +137,7 @@ use application\modules\main\utils\Main;
             <?php if(  count( $reviewRecordList) + count( $noReviewRecordList) >4  ): ?>
             <div class="mbox-base">
                 <div class="fill-hn xac">
-                    <a href="<?php echo IBOS::app()->urlManager->createUrl('diary/review/index'); ?>" class="link-more"> <i class="cbtn o-more"></i>
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl('diary/review/index'); ?>" class="link-more"> <i class="cbtn o-more"></i>
                         <span class="ilsep"><?php echo $lang['See more logs']; ?></span>
                     </a>
                 </div>
@@ -187,7 +187,7 @@ use application\modules\main\utils\Main;
                 <ul class="list-inline">
                     <?php foreach ($noRecordUserList as $user): ?>
     				<li>
-                        <a href="<?php echo IBOS::app()->urlManager->createUrl('diary/review/index'); ?>">
+                        <a href="<?php echo Ibos::app()->urlManager->createUrl('diary/review/index'); ?>">
                             <img src="<?php echo $user['avatar_middle']; ?>" title="<?php echo $user['realname'] ?>" alt="" class="avatar-small">
                         </a>
     				</li>

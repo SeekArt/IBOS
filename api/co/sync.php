@@ -2,7 +2,7 @@
 
 use application\core\utils\Api;
 use application\core\utils\Env;
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache as CacheModel;
 use application\modules\dashboard\model\Syscache;
@@ -236,7 +236,7 @@ function verifyWebSite() {
 function syncDept( $msgData, $msgPlatform ) {
 	$bindArray = array(); //Cache::get( 'sync_department_binding' );
 	if ( empty( $bindArray ) ) {
-		$list = IBOS::app()->db->createCommand()
+		$list = Ibos::app()->db->createCommand()
 				->select( 'deptid,bindvalue' )
 				->from( '{{department_binding}}' )
 				->where( " `app` = '{$msgPlatform}' " )
@@ -247,7 +247,7 @@ function syncDept( $msgData, $msgPlatform ) {
 		}
 	}
 	$return = array( 'bind' => array(), );
-	$connection = IBOS::app()->db;
+	$connection = Ibos::app()->db;
 	$transaction = $connection->beginTransaction();
 	foreach ( $msgData as $row ) {
 		if ( !isset( $bindArray[$row['deptid']] ) ) {
@@ -305,7 +305,7 @@ function syncDept( $msgData, $msgPlatform ) {
 function syncUser( $msgData, $msgPlatform ) {
 	$bindArray = array(); //Cache::get( 'sync_user_binding' );
 	if ( empty( $bindArray ) ) {
-		$list = IBOS::app()->db->createCommand()
+		$list = Ibos::app()->db->createCommand()
 				->select( 'uid,bindvalue' )
 				->from( '{{user_binding}}' )
 				->where( " `app` = '{$msgPlatform}' " )
@@ -316,8 +316,8 @@ function syncUser( $msgData, $msgPlatform ) {
 		}
 	}
 	$return = array( 'bind' => array(), 'delete' => array() );
-	$ip = IBOS::app()->setting->get( 'clientip' );
-	$connection = IBOS::app()->db;
+	$ip = Ibos::app()->setting->get( 'clientip' );
+	$connection = Ibos::app()->db;
 	$transaction = $connection->beginTransaction();
 	foreach ( $msgData as $row ) {
 		if ( !isset( $bindArray[$row['guid']] ) ) {
@@ -496,7 +496,7 @@ function ibosSync( $msgPlatform ) {
 }
 
 function findDeptByPid( $msgPlatform, $pid, $per ) {
-	$list = IBOS::app()->db->createCommand()
+	$list = Ibos::app()->db->createCommand()
 			->select( 'deptname,deptid,pid' )
 			->from( '{{department}}' )
 			->where( " `pid` IN ({$pid})" )
@@ -535,7 +535,7 @@ function sendSyncDept( $msgPlatform, $deptArray ) {
 
 function deptBind( $msgPlatform, $array ) {
 	foreach ( $array as $deptid => $bindvalue ) {
-		IBOS::app()->db->createCommand()
+		Ibos::app()->db->createCommand()
 				->insert( '{{department_binding}}', array(
 					'deptid' => $deptid,
 					'bindvalue' => $bindvalue,
@@ -556,7 +556,7 @@ function getUrl( $type ) {
 }
 
 function sendSyncUser( $msgPlatform, $limit, $offset ) {
-	$userArray = IBOS::app()->db->createCommand()
+	$userArray = Ibos::app()->db->createCommand()
 			->select( implode( ',', getSelectUser() ) )
 			->from( '{{user}} u' )
 			->leftJoin( '{{user_profile}} up', ' `u`.`uid` = `up`.`uid` ' )
@@ -582,7 +582,7 @@ function sendSyncUser( $msgPlatform, $limit, $offset ) {
 
 function userBind( $msgPlatform, $array ) {
 	foreach ( $array as $uid => $bindvalue ) {
-		IBOS::app()->db->createCommand()
+		Ibos::app()->db->createCommand()
 				->insert( '{{user_binding}}', array(
 					'uid' => $uid,
 					'bindvalue' => $bindvalue,
@@ -593,12 +593,12 @@ function userBind( $msgPlatform, $array ) {
 
 function userDelete( $msgPlatform, $array ) {
 	foreach ( $array as $uid => $bindvalue ) {
-		IBOS::app()->db->createCommand()
+		Ibos::app()->db->createCommand()
 				->delete( 'user_binding'
 						, " `uid` = '{$uid}' AND"
 						. " `bindvalue` = '{$bindvalue}' AND"
 						. " `app` = '{$msgPlatform}' " );
-		IBOS::app()->db->createCommand()
+		Ibos::app()->db->createCommand()
 				->update( '{{user}}'
 						, array( 'status' => 2 )
 						, " `uid` = '{$uid}' " );

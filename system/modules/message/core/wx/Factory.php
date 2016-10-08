@@ -17,7 +17,7 @@
 
 namespace application\modules\message\core\wx;
 
-use application\core\utils\IBOS;
+use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 
@@ -47,7 +47,7 @@ class Factory extends CApplicationComponent {
      */
     private function chkInstance( $handle ) {
         if ( !$handle instanceof CApplicationComponent ) {
-            throw new CException( IBOS::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $handle ) ) ) );
+            throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $handle ) ) ) );
         }
     }
 
