@@ -147,33 +147,13 @@ var userCenter = {
 			return $.post(url, param, $.noop, "json");
 		},
 		/**
-		 * 绑定微信企业号
-		 * @method bindIbosco
-		 * @param  {Object} param 传入JSON格式数据
-		 * @return {Object}       传出deffered对象
-		 */
-		"bindIboswxqy": function(param){
-			var url = Ibos.app.url("user/home/bindwxqy");
-			return $.post(url, param, $.noop, "json");
-		},
-		/**
 		 * 解绑酷办公
-		 * @method relieveIbosco
+		 * @method bindIbosco
 		 * @param  {Object} param 传入JSON格式数据
 		 * @return {Object}       传出deffered对象
 		 */ 
 		relieveIbosco: function(param){
 			var url = Ibos.app.url("user/home/unbindco");
-			return $.post(url, param, $.noop, "json");
-		},
-		/**
-		 * 解绑微信企业
-		 * @method relieveIboswxqy
-		 * @param  {Object} param 传入JSON格式数据
-		 * @return {Object}       传出deffered对象
-		 */ 
-		relieveIboswxqy: function(param){
-			var url = Ibos.app.url("user/home/unbindwxqy");
 			return $.post(url, param, $.noop, "json");
 		},
 		/**
@@ -200,24 +180,17 @@ $(function() {
 				cancel: true,
 				ok: function() {
 					var $verify = $('#inputVerify'),
-						verify = $verify.val(),
-						checkData;
+						verify = $verify.val();
 					if ($.trim(verify) === '') {
 						$verify.blink().focus();
 						return false;
 					}
-					if( param.type == "wxqy" ){
-						checkData = {
-							userid: verify
-						};
-					}else{
-						checkData = {
-							uid: Ibos.app.g("currentUid"),
-							data: encodeURI(verify),
-							op: param.type
-						};
-					}
-					userCenter.op[param.type === 'wxqy' ? "bindIboswxqy": "checkVerify"](checkData).done(function(res) {
+					var checkData = {
+						uid: Ibos.app.g("currentUid"),
+						data: encodeURI(verify),
+						op: param.type
+					};
+					userCenter.op.checkVerify(checkData).done(function(res) {
 						if (res.isSuccess) {
 							Ui.tip('@OPERATION_SUCCESS');
 							dialog.close();
@@ -296,21 +269,6 @@ $(function() {
 					}
 				});
 			});
-		},
-		// 解绑微信企业账号
-		relieveIboswxqy: function(){
-			 Ui.confirm(Ibos.l("USER.SUER_UNBIND_WXYQ"), function() {
-				userCenter.op.relieveIboswxqy().done(function(res){
-					if (res.isSuccess) {
-						Ui.tip(res.msg);
-						window.location.reload();
-					} else {
-						Ui.tip(res.msg, "danger");
-						return false;
-					}
-				});
-			});
-
 		}
 	});
 });

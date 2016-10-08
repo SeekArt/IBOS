@@ -9,10 +9,7 @@ $(function(){
 		fun: function(txt, elem){
 			// 内部收件人及外部收件人只要有一者即可允许发送
 			var toWebEmail = document.getElementById("to_web_email");
-			if($.trim(elem.value) === "") {
-				if (toWebEmail && $.trim(toWebEmail.value) !== "") {
-					return true;
-				}
+			if($.trim(elem.value) === "" && toWebEmail && $.trim(toWebEmail.value) === "") {
 				return false;
 			}
 			return true;
@@ -94,13 +91,7 @@ $(function(){
 			return false;
 		}
 
-
 		if($.formValidator.pageIsValid()) {
-			if( $.trim(ue.getContent()) == "" ){
-				Ui.tip("请填写邮件内容", "danger");
-				return false;
-			}
-			
 			$.data(this, "submiting", true);	
 		}
 	});

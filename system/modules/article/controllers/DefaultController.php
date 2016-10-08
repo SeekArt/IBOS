@@ -10,7 +10,7 @@
 /**
  * 信息中心模块------文章默认控制器，继承BaseController
  * @package application.modules.article.components
- * @version $Id: DefaultController.php 8567 2016-09-29 09:24:51Z tanghang $
+ * @version $Id: DefaultController.php 7563 2016-07-16 03:29:19Z tanghang $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -63,7 +63,6 @@ class DefaultController extends BaseController {
 				$this->catid = $catid;
 				$childCatIds = model\ArticleCategory::model()->fetchCatidByPid( $this->catid, true );
 			}
-            //$childCatIds = model\ArticleCategory::model()->fetchCatidByPid( 0, true );
 			// 取消已过期的置顶样式标记
 			model\Article::model()->cancelTop();
 			// 取消已过期的高亮文章的样式标记
@@ -86,12 +85,12 @@ class DefaultController extends BaseController {
 	 */
 	public function actionGetArticleList() {
 		$uid = util\Ibos::app()->user->uid;
-        $catid = intval( util\Env::getRequest( 'catid' ) );
-        $childCatIds = '';
+		$catid = intval( util\Env::getRequest( 'catid' ) );
+		$childCatIds = '';
         if ( isset($catid) ) {
-            $this->catid = $catid;
-            $childCatIds = model\ArticleCategory::model()->fetchCatidByPid( $this->catid, true );
-        }
+			$this->catid = $catid;
+			$childCatIds = model\ArticleCategory::model()->fetchCatidByPid( $this->catid, true );
+		}
 		$this->search();
 		// type信息类型{全部、未读、已读……}
 		$type = util\Env::getRequest( 'type' );
@@ -833,7 +832,7 @@ class DefaultController extends BaseController {
 							} else {
 								$approval = $uid;
 							}
-							model\Article::model()->updateAllStatusAndApproverByPks( $artId, $approver , 2 );
+							model\Article::model()->updateAllStatusAndApproverByPks( $artId, $approver, 2 );
 						}
 					}
 				}
@@ -855,7 +854,7 @@ class DefaultController extends BaseController {
 		if ( !empty( $article ) ) {
 			$wbconf = WbCommonUtil::getSetting( true );
 			if ( isset( $wbconf['wbmovement']['article'] ) && $wbconf['wbmovement']['article'] == 1 ) {
-				$publishScope = array( 'deptid' => $article['deptid'], 'positionid' => $article['positionid'], 'uid' => $article['uid'],'roleid' => $article['roleid'] );
+				$publishScope = array( 'deptid' => $article['deptid'], 'positionid' => $article['positionid'], 'uid' => $article['uid'] );
 				$data = array(
 					'title' => util\Ibos::lang( 'Feed title', '', array(
 						'{subject}' => $article['subject'],
@@ -876,27 +875,6 @@ class DefaultController extends BaseController {
 				}
 				WbfeedUtil::pushFeed( $article['author'], 'article', 'article', $article['articleid'], $data, $type );
 			}
-            $category = model\ArticleCategory::model()->fetchByPk( $article['catid'] );
-            $author = User::model()->fetchByPk($article['author']);
-            $config = array(
-                '{sender}' => $author['realname'],
-                '{subject}' => $article['subject'],
-                '{content}' => $this->renderPartial('remindcontent',array(
-                    'article' => $article,
-                    'author' => $author['realname'],
-                ),true),
-                '{orgContent}' => StringUtil::filterCleanHtml($article['content']),
-                '{category}' => $category['name'],
-                '{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show',array('articleid'=>$article['articleid'])),
-                'id' => $artId,
-            );
-            $publishScope = array(
-                'deptid' => $article['deptid'],
-                'positionid' => $article['positionid'],
-                'roleid' => $article['roleid'],
-                'uid' => $article['uid'] );
-            $uidArr = ArticleUtil::getScopeUidArr( $publishScope );
-            Notify::model()->sendNotify( $uidArr, 'article_message', $config );
 			//更新积分
 			UserUtil::updateCreditByAction( 'addarticle', $article['author'] );
 		}
@@ -925,7 +903,6 @@ class DefaultController extends BaseController {
 				'{subject}' => $art['subject'],
 				'{category}' => $categoryName,
 				'{content}' => $reason,
-				//'{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/index', array( 'type' => 'notallow', 'catid' => 0 ) )
                 '{url}' => util\Ibos::app()->urlManager->createUrl( 'article/default/show',array('articleid'=>$artId) )
             );
 			Notify::model()->sendNotify( $art['author'], 'article_back_message', $config, $uid );

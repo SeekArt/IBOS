@@ -1,6 +1,6 @@
 <?php
 
-use application\core\utils\Ibos;
+use application\core\utils\IBOS;
 ?>
 <div class="mc mcf clearfix">
 	<?php echo $this->getHeader( $lang ); ?>
@@ -8,7 +8,7 @@ use application\core\utils\Ibos;
 		<div>
 			<ul class="nav nav-tabs nav-tabs-large nav-justified nav-special">
 				<li><a href="<?php echo $this->createUrl( 'home/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Home page']; ?></a></li>
-				<?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
+				<?php if ( $this->getIsWeiboEnabled() ): ?><li><a href="<?php echo IBOS::app()->urlManager->createUrl( 'weibo/personal/index', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Weibo']; ?></a></li><?php endif; ?>
 				<?php if ( $this->getIsMe() ): ?>
 					<li><a href="<?php echo $this->createUrl( 'home/credit', array( 'uid' => $this->getUid() ) ); ?>"><?php echo $lang['Credit']; ?></a></li>
 				<?php endif; ?>
@@ -48,10 +48,10 @@ use application\core\utils\Ibos;
 				<?php $host = $_SERVER['HTTP_HOST']; ?>
 				<?php if ( $host == 'demo.ibos.com.cn' && in_array( $this->getUid(), array( 2, 3, 4 ) ) ) : ?>
 					<div class="control-group">	
-						ã€<?php echo Ibos::app()->user->realname ?>ã€‘ä¸ºæµ‹è¯•çš„æ¼”ç¤ºè´¦å·ï¼Œä¸å…è®¸ä¿®æ”¹å¯†ç 
+						¡¾<?php echo IBOS::app()->user->realname ?>¡¿Îª²âÊÔµÄÑİÊ¾ÕËºÅ£¬²»ÔÊĞíĞŞ¸ÄÃÜÂë
 					</div>
 					<div class="control-group">
-						å¦‚éœ€ä½¿ç”¨æœ¬åŠŸèƒ½ï¼Œè¯·è”ç³»IBOSå®˜ç½‘å®¢æœè·å–æ­£å¼çš„æµ‹è¯•è´¦å·
+						ÈçĞèÊ¹ÓÃ±¾¹¦ÄÜ£¬ÇëÁªÏµIBOS¹ÙÍø¿Í·ş»ñÈ¡ÕıÊ½µÄ²âÊÔÕËºÅ
 					</div>
 				<?php else : ?>
 					<div class="control-group">
@@ -88,7 +88,7 @@ use application\core\utils\Ibos;
 			</form>
 		</div>
 	</div>
-	<?php $this->widget( 'application\modules\user\components\UserProfileTracker', array( 'user' => $user ) ) ?>
+    <?php $this->widget( 'application\modules\user\components\UserProfileTracker', array( 'user' => $user ) ) ?>
 </div>
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/user.js?<?php echo VERHASH; ?>'></script>

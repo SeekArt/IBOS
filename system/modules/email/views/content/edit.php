@@ -1,8 +1,3 @@
-<?php
-
-use application\core\utils\Convert;
-use application\core\utils\Env;
-?>
 <!-- load css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/email.css?<?php echo VERHASH; ?>">
 <!-- Mainer -->
@@ -162,17 +157,6 @@ use application\core\utils\Env;
 							</div>
 						</div>
 					</div>
-                    <?php if ($isInstallThread): ?>
-                        <div class="span4">
-                            <select name="threadid"  >
-                                <?php $threadId = intval(Env::getRequest('threadid')); ?>
-                                <option value="0"><?php echo $lang['Not associated']; ?></option>
-                                <?php foreach ($threadList as $thread): ?>
-                                    <option value="<?php echo $thread['threadid'] ?>" <?php if ($thread['threadid'] == $threadId): ?>selected<?php endif; ?>><?php echo $thread['subject']; ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    <?php endif; ?>
 				</div>
 				<!-- Row 10 Button -->
 				<div id="submit_bar" class="clearfix">

@@ -45,7 +45,7 @@ use application\modules\department\utils\Department as DepartmentUtil;
 						<li id="super_u_<?php echo $user['uid']?>" class="super-list">
 							<img src="<?php echo $user['avatar_big']?>" />
 							<div class="admin-item-body">
-								<span class="fsl"><?php echo $user['realname']?></span>
+								<span class="fsl"><?php echo $user['username']?></span>
 								<?php if ( $user['uid'] !== Ibos::app()->user->uid ): ?>
 									<div class="admin-edit-btn">
 										<button class="btn ptm pbm" data-action="superDel" data-id="u_<?php echo $user['uid']?>">删除</button>

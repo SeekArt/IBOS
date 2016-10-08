@@ -21,13 +21,14 @@ var ArticleShow = {
 		if(Ibos.app.g("articleType") === 1) {
 			var STATIC_URL = Ibos.app.getStaticUrl();
 
-			U.loadCss(STATIC_URL + "/js/lib/gallery/jquery.gallery.css?" + Ibos.app.g("VERHASH"), function(){
-				$.getScript(STATIC_URL + "/js/lib/gallery/jquery.gallery.js", function(){
-					$('#gallery').adGallery({
-						loader_image: STATIC_URL + "/image/loading_mini.gif"
-					});
+			U.loadCss(STATIC_URL + "/js/lib/gallery/jquery.gallery.css?" + Ibos.app.g("VERHASH"));
+
+			$.getScript(STATIC_URL + "/js/lib/gallery/jquery.gallery.js", function(){
+				$('#gallery').adGallery({
+					loader_image: STATIC_URL + "/image/loading_mini.gif"
 				});
 			});
+
 		}
 
 		$("#isread").delegate("#load_more_reader" ,"click", function(){

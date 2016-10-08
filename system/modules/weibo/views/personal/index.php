@@ -145,7 +145,9 @@ use application\core\utils\Ibos;
 	};
 	Ibos.app.setPageParam(params);
 	$("#mn_search").search(function(val) {
-		window.location.href = Ibos.app.url('weibo/personal/index', {feedkey: val, uid: Ibos.app.g('uid'), type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
+		if ($.trim(val) !== '') {
+			window.location.href = Ibos.app.url('weibo/personal/index', {feedkey: val, uid: Ibos.app.g('uid'), type: Ibos.app.g("type"), feedtype: Ibos.app.g("feedtype")});
+		}
 	});
 </script>
 <script src="<?php echo STATICURL; ?>/js/src/emotion.js?<?php echo VERHASH; ?>"></script>

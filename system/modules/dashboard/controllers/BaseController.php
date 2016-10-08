@@ -12,7 +12,7 @@
  *
  * @package application.modules.dashboard.componets
  * @author banyan <banyan@ibos.com.cn>
- * @version $Id: BaseController.php 8245 2016-09-05 03:06:57Z tanghang $
+ * @version $Id: BaseController.php 7563 2016-07-16 03:29:19Z tanghang $
  */
 
 namespace application\modules\dashboard\controllers;
@@ -141,11 +141,11 @@ class BaseController extends Controller {
 	 */
 	public function initBase() {
 		$this->useConfig = true;
-		$this->errorParam = array( 'autoJump' => false, 'jumpLinksOptions' => array( '首页' => $this->createUrl( 'index/index' ), ) );
-		$this->user = Ibos::app()->user->isGuest ? array() : User::model()->fetchByUid( Ibos::app()->user->uid );
-		$this->_adminType = $this->checkAdministrator( $this->user );
-		$this->_sessionLimit = (int) (TIMESTAMP - $this->_sessionLife);
-		$this->_cookieLimit = (int) (TIMESTAMP - $this->_cookieLife);
+		$this->errorParam = array('autoJump' => false, 'jumpLinksOptions' => array('首页' => $this->createUrl('index/index'),));
+		$this->user = Ibos::app()->user->isGuest ? array() : User::model()->fetchByUid(Ibos::app()->user->uid, true);
+		$this->_adminType = $this->checkAdministrator($this->user);
+		$this->_sessionLimit = (int)(TIMESTAMP - $this->_sessionLife);
+		$this->_cookieLimit = (int)(TIMESTAMP - $this->_cookieLife);
 	}
 
 	/**

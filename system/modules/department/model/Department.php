@@ -11,7 +11,7 @@
  * 部门表department对应数据层操作
  *
  * @package application.modules.department.model
- * @version $Id: Department.php 8536 2016-09-28 01:30:57Z tanghang $
+ * @version $Id: Department.php 7629 2016-07-21 10:14:41Z php_lxy $
  * @author Ring <Ring@ibos.com.cn>
  *
  */
@@ -41,14 +41,13 @@ class Department extends Model {
 	}
 
 	const DEPT_NUM_PER = 100; //每次从数据库里取的部门数目，默认100
-
+	
 	/**
 	 * 根据单个或多个部门ID（用英文,号隔开）得到其所有父部门id，包括父部门的父部门
 	 * @param string $deptid 部门Id
 	 * @param boolean $connect 是否链接$deptid返回
 	 * @return string
 	 */
-
 	public function queryDept( $deptid, $connect = false ) {
 		$deptid = util\StringUtil::filterStr( $deptid );
 		$splitArray = explode( ',', $deptid );
@@ -111,7 +110,7 @@ class Department extends Model {
 	 * @return array $result 子部门数组
 	 * @author gzwwb
 	 */
-	public function fetchChildDeptByDeptid( $deptid, $departArr, $flag = true ) {
+	public function fetchChildDeptByDeptid( $deptid, $departArr , $flag = true) {
 		static $result = array();
 		if ( !is_array( $departArr ) ) {//写入缓存的时候如果序列化的字符串出错了，会导致拿不到数组，这里做判断，如果出错，返回空，这么做是否合适有待考究，这里只是不让它报错
 			return array();
@@ -122,12 +121,13 @@ class Department extends Model {
 					$result[] = $department['deptid'];
 					array_merge( $result, $this->fetchChildDeptByDeptid( $department['deptid'], $departArr, FALSE ) );
 				}
-			} else {
+			}else {
 				if ( $department['pid'] == $deptid ) {
 					$result[] = $department;
 					array_merge( $result, $this->fetchChildDeptByDeptid( $department['deptid'], $departArr ) );
 				}
 			}
+
 		}
 		return $result;
 	}
@@ -289,10 +289,10 @@ class Department extends Model {
 	}
 
 	/**
-	 * 查询未跟指定第三方关联的部门总数
-	 * @param  string $type
-	 * @return array  用户uid数组
-	 */
+	*查询未跟指定第三方关联的部门总数
+	* @param  string $type
+	* @return array  用户uid数组
+	*/
 	public function CountUnbind( $type ) {
 		$list = Ibos::app()->db->createCommand()
 				->select( 'count(deptid)' )
@@ -303,10 +303,9 @@ class Department extends Model {
 	}
 
 	/**
-	 * 根据部门的层级创建查询的条件
-	 * @param type|int $level
-	 * @return
-	 */
+ 	* 根据部门的层级创建查询的条件
+ 	* @param type $level
+ 	*/
 	private function createConditionByDeptLevel( $level = 0 ) {
 		$sqlString = Ibos::app()->db->createCommand()
 				->select( 'deptid' )
@@ -322,96 +321,66 @@ class Department extends Model {
 	}
 
 	/**
-	 * 得到部门树
-	 * @param type $level
-	 * @param $type
-	 * @return
-	 */
-	public function getPerDept( $level, $type ) {
-		if ( '0' == $level ) { // pid为0
+ 	* 得到部门树
+ 	* @param type $level
+ 	*/
+	public function getPerDept( $level,$type ) {
+		if ( '0' == $level) { // pid为0
 			$deptidCondition = $this->createConditionByDeptLevel( $level );
 			$return = Ibos::app()->db->createCommand()
-					->select( 'deptname,deptid,pid,sort' )
-					->from( $this->tableName() )
-					->where( " `deptid` IN( {$deptidCondition} )" )
-					->andWhere( $this->deptid_not_in_binding( $type ) )
-					->order( 'deptid ASC' )
-					->limit( self::DEPT_NUM_PER )
-					->queryAll();
+				->select( 'deptname,deptid,pid,sort' )
+				->from( $this->tableName() )
+				->where( " `deptid` IN( {$deptidCondition} )" )
+				->andWhere( $this->deptid_not_in_binding( $type ) )
+				->order( 'deptid ASC' )
+				->limit( self::DEPT_NUM_PER )
+				->queryAll();
 		} else {
 			$deptidCondition = $this->createConditionByDeptLevel( $level );
 			$deptids = Ibos::app()->db->createCommand()
-					->select( 'deptid' )
-					->from( '{{department}}' )
-					->where( " `deptid` IN( {$deptidCondition} )" )
-					->andWhere( $this->deptid_not_in_binding( $type ) )
-					->order( 'deptid ASC' )
-					->limit( self::DEPT_NUM_PER )
-					->queryColumn();
-			$deptids = implode( ',', $deptids );
+		        ->select( 'deptid' )
+		        ->from( '{{department}}' )
+		        ->where( " `deptid` IN( {$deptidCondition} )" )
+		        ->andWhere( $this->deptid_not_in_binding( $type ) )
+		        ->order( 'deptid ASC' )
+		        ->limit( self::DEPT_NUM_PER )
+		        ->queryColumn();
+		    $deptids = implode(',', $deptids);
 			$return = Ibos::app()->db->createCommand()
-					->select( 'd.deptname,d.deptid,b.bindvalue as pid,d.sort' )
-					->from( '{{department}} d' )
-					->leftjoin( '{{department_binding}} b', 'd.pid = b.deptid' )
-					->where( "FIND_IN_SET(`d`.`deptid`, '{$deptids}')" )
-					->andWhere( "b.app = '{$type}'" )
-					->limit( self::DEPT_NUM_PER )
-					->queryAll();
+				->select( 'd.deptname,d.deptid,b.bindvalue as pid,d.sort' )
+				->from( '{{department}} d' )
+				->leftjoin('{{department_binding}} b', 'd.pid = b.deptid')
+				->where( "FIND_IN_SET(`d`.`deptid`, '{$deptids}')" )
+				->limit( self::DEPT_NUM_PER )
+				->queryAll();
 		}
-
+		
 		return $return;
 	}
 
 	/**
-	 * 得到部门
-	 * @param string $deptid 部门id
-	 * @param boolean $flag 部门pid不为0,就要从绑定表里拿pid
-	 */
-	public function getDeptBydDepatid( $deptid, $flag = TRUE ) {
-		if ( $flag ) {
+ 	* 得到部门
+ 	* @param string $deptid 部门id
+ 	* @param boolean $flag 部门pid不为0,就要从绑定表里拿pid
+ 	*/
+	public function getDeptBydDepatid ( $deptid, $flag = TRUE ) {
+		if( $flag ) {
 			$deptArray = Ibos::app()->db->createCommand()
-					->select( 'deptname, deptid, pid, sort' )
-					->from( $this->tableName() )
-					->where( "`deptid` = '{$deptid}'" )
-					->queryAll();
+				->select('deptname, deptid, pid, sort')
+				->from( $this->tableName() )
+				->where( "`deptid` = '{$deptid}'" )
+				->queryAll();
 			return $deptArray;
 		} else {
 			$deptArray = Ibos::app()->db->createCommand()
-					->select( 'd.deptname, d.deptid, b.bindvalue as pid, d.sort' )
-					->from( '{{department}} d' )
-					->leftjoin( '{{department_binding}} b', 'd.pid = b.deptid' )
-					->where( "`d`.`deptid` = '{$deptid}'" )
-					->queryAll();
+				->select( 'd.deptname, d.deptid, b.bindvalue as pid, d.sort' )
+				->from( '{{department}} d' )
+				->leftjoin('{{department_binding}} b', 'd.pid = b.deptid')
+				->where( "`d`.`deptid` = '{$deptid}'" )
+				->queryAll();
 			return $deptArray;
 		}
+		
 	}
 
-	/**
-	 * 通过pid拿到部门名字
-	 * @param $pid
-	 * @return mixed
-	 */
-	public function getDeptNamesByPid($pid) {
-		$names = Ibos::app()->db->createCommand()
-			->select('deptname')
-			->from( $this->tableName() )
-			->where( 'pid = :pid', array('pid' => $pid) )
-			->queryColumn();
-		return $names;
-	}
-
-	/**
-	 * 通过pid和部门名字拿到deptid
-	 * @param $pid
-	 * @param $name
-	 * @return mixed
-	 */
-	public function getDeptIdByPidAndName($pid, $name){
-		$deptId = Ibos::app()->db->createCommand()
-			->select('deptid')
-			->from( $this->tableName() )
-			->where( 'pid = :pid AND deptname = :name', array('pid' => $pid, 'name' => $name) )
-			->queryScalar();
-		return $deptId;
-	}
 }

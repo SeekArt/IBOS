@@ -263,7 +263,6 @@ $(function() {
                     tip = $('.admincp-tip'),
                     search = $('#admincp_search');
 
-                $(this).addClass("active").siblings().removeClass("active");
                 if (type === 'admincp') {
                     tip.slideDown('fast');
                     search.is(':hidden') && search.show();

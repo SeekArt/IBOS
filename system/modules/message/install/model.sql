@@ -161,7 +161,6 @@ CREATE TABLE `{{feed}}` (
   `userid` text NOT NULL COMMENT '可见用户ID',
   `deptid` text NOT NULL COMMENT '可见部门ID',
   `positionid` text NOT NULL COMMENT '可见岗位ID',
-  `roleid` text NOT NULL COMMENT '可见角色ID',
   PRIMARY KEY (`feedid`),
   KEY `isdel` (`isdel`,`ctime`),
   KEY `uid` (`uid`,`isdel`,`ctime`)

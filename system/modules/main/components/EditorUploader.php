@@ -234,7 +234,7 @@ class EditorUploader {
 			$pathStr .= "/";
 		}
 		$pathStr .= date( "Ymd" );
-		if ( LOCAL && !defined( 'SAE_TMP_PATH' ) ) {
+		if ( !defined( 'SAE_TMP_PATH' ) ) {
 			if ( !file_exists( $pathStr ) ) {
 				if ( !mkdir( $pathStr, 0777, true ) ) {
 					return false;

@@ -18,9 +18,11 @@ class SysstampController extends BaseController {
 				// 更新图章
 				foreach ( $_POST['stamps'] as $id => $stamp ) {
 					if ( File::fileExists( $stamp['stamp'] ) ) {
+						Stamp::model()->delImg( $id, 'stamp' );
 						$stamp['stamp'] = Dashboard::moveTempFile( $stamp['stamp'], $stampPath );
 					}
 					if ( File::fileExists( $stamp['icon'] ) ) {
+						Stamp::model()->delImg( $id, 'icon' );
 						$stamp['icon'] = Dashboard::moveTempFile( $stamp['icon'], $stampPath );
 					}
 					$stamp['code'] = \CHtml::encode( $stamp['code'] );

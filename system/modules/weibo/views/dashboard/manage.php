@@ -89,8 +89,10 @@
 <script>
 	// 复选框联动
 	$("#mn_search").search(
-		function(val) {{
-			window.location.href = Ibos.app.url('weibo/dashboard/manage', {search: val, op: '<?php echo $op; ?>'});
-		}
+			function(val) {
+				if ($.trim(val) !== '') {
+					window.location.href = Ibos.app.url('weibo/dashboard/manage', {search: val, op: '<?php echo $op; ?>'});
+				}
+			}
 	);
 </script>

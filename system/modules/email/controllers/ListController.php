@@ -30,25 +30,25 @@ class ListController extends BaseController {
             $op = Ibos::app()->session['op'];
             switch($op){
                 case 'folder':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'folder','fid'=>$fid)));
+                    $this->success(Ibos::lang('My folders'), $this->createUrl('list/index',array('op'=>'folder','fid'=>$fid)));
                     break;
                 case 'inbox':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'inbox')));
+                    $this->success(Ibos::lang('Inbox'),$this->createUrl('list/index',array('op'=>'inbox')));
                     break;
                 case 'todo':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'todo')));
+                    $this->success(Ibos::lang('Todo email'), $this->createUrl('list/index',array('op'=>'todo')));
                     break;
                 case 'draft':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'draft')));
+                    $this->success(Ibos::lang('Drafts'), $this->createUrl('list/index',array('op'=>'draft')));
                     break;
                 case 'send':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'send')));
+                    $this->success(Ibos::lang('Has been sent'), $this->createUrl('list/index',array('op'=>'send')));
                     break;
                 case 'archive':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'archive')));
+                    $this->success(Ibos::lang('Archived'), $this->createUrl('list/index',array('op'=>'archive')));
                     break;
                 case 'del':
-                    $this->redirect($this->createUrl('list/index',array('op'=>'del')));
+                    $this->success(Ibos::lang('Deleted'), $this->createUrl('list/index',array('op'=>'del')));
                     break;
                 default:
                     break;
@@ -62,7 +62,6 @@ class ListController extends BaseController {
      */
     public function actionIndex() {
         $op = Env::getRequest( 'op' );
-        Ibos::app()->session['op'] = $op;
         $opList = array(
             'inbox', 'todo', 'draft',
             'send', 'folder', 'archive',
@@ -70,9 +69,6 @@ class ListController extends BaseController {
         );
         if ( $this->allowWebMail ) {
             $opList[] = 'web';
-        }
-		 if($op == 'folder'){
-            Ibos::app()->session['fid'] = Env::getRequest('fid');
         }
         if ( !in_array( $op, $opList ) ) {
             $op = 'inbox';
@@ -94,18 +90,15 @@ class ListController extends BaseController {
         // 参数处理
         $uid = (int)Ibos::app()->user->uid;
         $op = Env::getRequest('op');
-        Ibos::app()->session['op'] = $op;
         $search = Env::getRequest('search');
         $type = Env::getRequest('type');
-        // 参数判断，需要考虑外部邮件的时候
+
         $opArr = array(
             "draft",
             "send",
             "inbox",
             "todo",
             "del",
-            "folder",
-            "web"
         );
         if (!in_array($op, $opArr)) {
             $op = "inbox";
@@ -129,6 +122,7 @@ class ListController extends BaseController {
         } else {
             return $this->error(Ibos::lang("Invalid params"), $this->createUrl('email/list'));
         }
+
         $conditionStr = $command->getWhere();
         $emailData = $command->queryAll();
         $emailData = Email::model()->handleSearchData($emailData);
@@ -140,12 +134,6 @@ class ListController extends BaseController {
         $list = array_slice( $emailData, $pages->getOffset(), $pages->getLimit(), false );
         foreach ( $list as $index => &$mail ) {
             $mail['fromuser'] = $mail['fromid'] ? User::model()->fetchRealnameByUid( $mail['fromid'] ) : "";
-        }
-        //修改了一下如果的外部邮件的需要修改的发件人。
-        for($i=0;$i<count($list);$i++){
-            if(empty($list[$i]['fromuser'])){
-                $list[$i]['fromuser'] = $list[$i]['fromwebmail'];
-            }
         }
         $data = array(
             'op' => Env::getRequest( 'op' ),
@@ -170,7 +158,6 @@ class ListController extends BaseController {
     private function getListData( $operation ) {
         $data['op'] = $operation;
         $data['fid'] = $this->fid;
-        Ibos::app()->session['fid'] = $this->fid;
         $data['webId'] = $this->webId;
         $data['folders'] = $this->folders;
         $data['archiveId'] = $this->archiveId;

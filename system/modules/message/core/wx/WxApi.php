@@ -175,16 +175,20 @@ EOT;
 			} else {
 				switch ( $res['errcode'] ) {
 					case '60104'://手机号存在
-						$msg = $this->setBind( $user['uid'], $res['errmsg'], '手机号' );
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
 						break;
 					case '60106'://邮箱已存在
-						$msg = $this->setBind( $user['uid'], $res['errmsg'], '邮箱' );
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
 						break;
 					case '60108'://微信已存在
-						$msg = $this->setBind( $user['uid'], $res['errmsg'], '微信' );
+						$msg = '';
+						$this->setBind( $user['uid'], $res['errmsg'] );
 						break;
 					case '60102'://userid存在
-						$msg = $this->setBind( $user['uid'], 'exist:' . $user['userid'], '账号' );
+						$msg = '';
+						$this->setBind( $user['uid'], 'exist:' . $user['userid'] );
 						break;
 					default :
 						$msg = Code::getErrmsg( $res['errcode'] );
@@ -203,20 +207,10 @@ EOT;
 	 * @param type $uid
 	 * @param type $errmsg
 	 */
-	private function setBind( $uid, $errmsg, $type ) {
-		list($msg, $useridString) = explode( ':', $errmsg );
-		$userid = trim( $useridString );
-		$findUid = Ibos::app()->db->createCommand()
-				->select( 'uid' )
-				->from( '{{user}}' )
-				->where( " `mobile` = '{$userid}'" )
-				->queryScalar();
-		if ( !empty( $findUid ) && $findUid != $uid ) {
-			return "该用户的{$type}和企业号账号{$userid}的用户冲突";
-		}
+	private function setBind( $uid, $errmsg ) {
+		list($msg, $userid) = explode( ':', $errmsg );
 		UserBinding::model()->deleteAll( sprintf( "`uid` = '%s' AND `app` = 'wxqy' ", $uid ) );
-		UserBinding::model()->add( array( 'uid' => $uid, 'bindvalue' => $userid, 'app' => 'wxqy' ) );
-		return '';
+		UserBinding::model()->add( array( 'uid' => $uid, 'bindvalue' => trim( $userid ), 'app' => 'wxqy' ) );
 	}
 
 	/**

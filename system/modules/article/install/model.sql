@@ -108,6 +108,3 @@ INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `content
 INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('article_back_message','信息中心审核退回提醒','article','article/default/New back title','article/default/New back content','1','1','1','2');
 REPLACE INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表信息公告', 'addarticle', '3', '2', '0', '2','1');
 INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('article','信息中心','article/default/index','提供企业新闻信息发布','5','1');
-INSERT INTO `{{auth_item}}` (`name`, `type`, `description`, `bizrule`, `data`) VALUES ('article/default/move', '0', '', 'return UserUtil::checkDataPurv($purvId);', 's:0:\"\";');
-INSERT INTO `{{auth_item_child}}` (`parent`, `child`) VALUES ('1', 'article/default/move');
-UPDATE `{{node}}` SET  `routes`='article/default/edit,article/default/move' WHERE (`node`='edit' AND `module`='article');

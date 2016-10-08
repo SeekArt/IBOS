@@ -32,18 +32,18 @@ class WebController extends BaseController {
         if ($i <= 0)
             $this->error('抱歉，参数错误了', $this->createUrl('web/index'));
         $query = Ibos::app()->db->createCommand()
-            ->select('qeb.remoteattachment,qeb.sendtime,qew.*')
-            ->from('{{email_body}} qeb')
-            ->leftJoin('{{email}} qe', 'qe.bodyid = qeb.bodyid')
-            ->leftJoin('{{email_folder}} qef', 'qef.fid = qe.fid')
-            ->leftJoin('{{email_web}} qew', 'qew.webid = qef.webid')
-            ->where('qeb.bodyid = ' . $id)
-            ->queryRow();
+                ->select('qeb.remoteattachment,qeb.sendtime,qew.*')
+                ->from('{{email_body}} qeb')
+                ->leftJoin('{{email}} qe', 'qe.bodyid = qeb.bodyid')
+                ->leftJoin('{{email_folder}} qef', 'qef.fid = qe.fid')
+                ->leftJoin('{{email_web}} qew', 'qew.webid = qef.webid')
+                ->where('qeb.bodyid = ' . $id)
+                ->queryRow();
         if ($query && !empty($query)) {
             //根据邮箱获取邮件
             $user = User::model()->fetchByUid($query['uid']);
             $pwd = StringUtil::authCode($query['password'], 'DECODE', $user['salt']);
-            list($prefix, ,) = explode('.', $query['server']);
+            list($prefix,, ) = explode('.', $query['server']);
             $host = $query['server'];
             $port = $query['port'];
             $user = $query['address'];
@@ -106,13 +106,13 @@ class WebController extends BaseController {
      * @return void
      */
     public function actionAdd() {
-        $inAjax = (bool)Env::getRequest('inajax');
+        $inAjax = intval(Env::getRequest('inajax'));
         if ($inAjax) {
             return $this->ajaxAdd();
         }
         if (Env::submitCheck('emailSubmit')) {
             $this->processAddWebMail(false);
-            return $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('web/index'));
+            $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('web/index'));
         } else {
             $this->setPageTitle(Ibos::lang('Add web email'));
             $this->setPageState('breadCrumbs', array(
@@ -172,8 +172,8 @@ class WebController extends BaseController {
     public function actionReceive() {
         $webId = intval(Env::getRequest('webid'));
         $webList = $this->webMails;
-        if (empty($webList)) {
-            $this->ajaxReturn(array('isSuccess' => FALSE, 'msg' => Ibos::lang('Empty web mail box')));
+        if ( empty( $webList ) ) {
+            $this->ajaxReturn( array( 'isSuccess' => FALSE, 'msg' => Ibos::lang( 'Empty web mail box' ) ) );
         }
         if ($webId === 0) {
             $web = $webList;
@@ -183,6 +183,7 @@ class WebController extends BaseController {
         if (empty($web)) {
             exit();
         }
+        $msg = array();
         foreach ($web as $webMail) {
             WebMail::receiveMail($webMail);
         }
@@ -221,7 +222,7 @@ class WebController extends BaseController {
         if (intval($web['uid']) !== $this->uid) {
             exit();
         }
-        list($prefix, ,) = explode('.', $web['server']);
+        list($prefix,, ) = explode('.', $web['server']);
         $user = User::model()->fetchByUid($web['uid']);
         $pwd = StringUtil::authCode($web['password'], 'DECODE', $user['salt']); //解密
         //按类型加载所用的函数库
@@ -306,10 +307,10 @@ class WebController extends BaseController {
                     $name = str_replace("/", ".", EmailMime::getPartName($structure, $part));
                     $header = "Content-type: $typestr";
                     if (!empty($charset)) {
-                        $header .= "; charset=\"" . $charset . "\"";
+                        $header.="; charset=\"" . $charset . "\"";
                     }
                     if (!empty($name)) {
-                        $header .= "; name=\"" . $name . "\"";
+                        $header.="; name=\"" . $name . "\"";
                     }
                     header($header);
                     if ($type != EmailMime::MIME_TEXT && $type != EmailMime::MIME_IMAGE) {
@@ -325,10 +326,10 @@ class WebController extends BaseController {
                 if ($type == EmailMime::MIME_TEXT && strcasecmp($subtype, "html") == 0) {
                     $is_html = true;
                     $img_url = Ibos::app()->urlManager->createUrl('email/web/show', array(
-                            'webid' => $webId,
-                            'folder' => $folder,
-                            'id' => $id,
-                            'cid' => '')
+                        'webid' => $webId,
+                        'folder' => $folder,
+                        'id' => $id,
+                        'cid' => '')
                     );
                 } else {
                     $is_html = false;
@@ -392,8 +393,8 @@ class WebController extends BaseController {
      * @return type
      */
     protected function processAddWebMail($inAjax = false) {
-        $web = Env::getRequest('web', 'P');
-        $errMsg = array();
+        $web = $_POST['web'];
+        $errMsg = '';
         $this->submitCheck($web, $inAjax);
         if (isset($_POST['moreinfo'])) {
             // 已经是自定义配置模式，再次检查账户
@@ -402,7 +403,7 @@ class WebController extends BaseController {
             }
             if ((!empty($web['ssl']) || !empty($web['smtpssl'])) && !extension_loaded('openssl')) {
                 $passCheck = false;
-                $errMsg[] = Ibos::lang('OpenSSL needed');
+                $errMsg = Ibos::lang('OpenSSL needed');
             } else {
                 // 但这一次，优先处理用户提交的服务器配置值 $web
                 $passCheck = WebMail::checkAccount($web['address'], $web['password'], $web);
@@ -410,22 +411,25 @@ class WebController extends BaseController {
                     // 如果检查通过，合并提交的值并返回该邮箱的配置值
                     $web = WebMail::mergePostConfig($web['address'], $web['password'], $web);
                 } else {
-                    $errMsg[] = Ibos::lang('Error server info');
+                    $errMsg = Ibos::lang('Error server info');
                 }
             }
         } else {
-            // 第一次提交，查看默认配置里有没有适合的服务器配置
-            $passCheck = WebMail::checkAccount($web['address'], $web['password']);
-            if ($passCheck) {
-                // 如果检查通过，返回该邮件的配置值
-                $web = WebMail::getEmailConfig($web['address'], $web['password']);
-            } else {
-                // 没有的话，需要配置更详细的服务器信息，返回错误提示
-                $errMsg[] = Ibos::lang('More server info');
-            }
+            /**
+             * 测试时直接跳过这一步
+              // 第一次提交，查看默认配置里有没有适合的服务器配置
+              $passCheck = WebMail::checkAccount($web['address'], $web['password']);
+              if ( $passCheck ) {
+              // 如果检查通过，返回该邮件的配置值
+              $web = WebMail::getEmailConfig($web['address'], $web['password']);
+              } else {
+              // 没有的话，需要配置更详细的服务器信息，返回错误提示
+              $errMsg = Ibos::lang('More server info');
+              }
+             */
+            $errMsg = Ibos::lang('More server info');
             $passCheck = false;
         }
-
         if (!$passCheck) {
             if (!$inAjax) {
                 $this->setPageTitle(Ibos::lang('Add web email'));
@@ -484,7 +488,7 @@ class WebController extends BaseController {
      */
     protected function ajaxAdd() {
         // if (Ibos::app()->request->getIsPostRequest()) {
-        if (Env::submitCheck('formhash')) {
+        if ( Env::submitCheck( 'formhash' ) ) {
             $newId = $this->processAddWebMail(true);
             $this->success(Ibos::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));
         } else {

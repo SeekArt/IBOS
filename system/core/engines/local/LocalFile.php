@@ -9,7 +9,7 @@
  */
 /**
  * 本地文件处理类，基本上就是php文件函数的封装,实现IO接口
- *
+ * 
  * @package ext.enginedriver.local
  * @author banyanCheung <banyan@ibos.com.cn>
  * @version $Id: file.php 3934 2014-08-11 09:32:26Z gzhzh $
@@ -34,14 +34,14 @@ use application\modules\user\utils\User as UserUtil;
 class LocalFile implements FileOperationInterface {
 
 	public function __construct( $config = array() ) {
-
+		
 	}
 
 	private static $_instance;
 
 	/**
 	 * 扫描文件夹时忽略的文件夹
-	 * @var array
+	 * @var array 
 	 */
 	public $excludeFiles = array( '.svn', '.gitignore', '.', '..' );
 
@@ -112,15 +112,14 @@ class LocalFile implements FileOperationInterface {
 	}
 
 	public function copyFile( $source, $savepath, $deleteSrc = false ) {
-        $dir = substr( $savepath, 0, strripos( $savepath, '/' ) );
+		$dir = substr( $savepath, 0, strripos( $savepath, '/' ) );
 		if ( !file_exists( $dir ) ) {
-           File::makeDirs( $dir, 0777, true );
+			mkdir( $dir, 0777, true );
 		}
-		$isCopy = copy( $source, $savepath );
 		if ( true === $deleteSrc ) {
 			$this->deleteFile( $source );
 		}
-		return $isCopy;
+		return copy( $source, $savepath );
 	}
 
 	/**
@@ -254,20 +253,12 @@ class LocalFile implements FileOperationInterface {
 	}
 
 	public function uploadFile( $destFileName, $srcFileName ) {
-		$isUpload = move_uploaded_file( $srcFileName, $destFileName );
+		$isUpload = move_uploaded_file( $destFileName, $srcFileName );
 		if ( $isUpload ) {
 			return $destFileName;
+		} else {
+			return false;
 		}
-
-		if (rename($srcFileName, $destFileName)) {
-			return $destFileName;
-		}
-
-		if (copy($srcFileName, $destFileName)) {
-			return $destFileName;
-		}
-
-		return false;
 	}
 
 	public function createAvatar( $srcPath, $params ) {

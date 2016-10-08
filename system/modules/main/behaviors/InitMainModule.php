@@ -11,7 +11,7 @@
  * 主模块初始化,执行主要操作如初始化环境变量，初始化链接，升级，license,session,缓存及
  * 系统配置等重要操作
  * @package application.module.main.components
- * @version $Id: InitMainModule.php 8549 2016-09-28 10:07:50Z tanghang $
+ * @version $Id: InitMainModule.php 8197 2016-09-01 10:22:14Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -338,15 +338,7 @@ class InitMainModule extends CBehavior {
 				header( "status: 403 Forbidden" );
 				exit( '<h1>Forbidden<h1>' );
 			}
-		}else{
-            //加这段代码的原因是如果用户已经处于登录好的状态，这个时候才禁止他的ip地址，也可以立即生效。
-            $bannedIp =  Env::getClientIp();
-            if(Env::ipBanned($bannedIp)){
-                header("HTTP/1.1 403 Forbidden");
-                header("status: 403 Forbidden");
-                exit('<h1>Forbidden</h1>');
-            }
-        }
+		}
 		// 如果已登录用户，检查是否需要更新最后活动时间
 		if ( !Ibos::app()->user->isGuest && ( $isNewSession || ( Ibos::app()->session->getKey( 'lastactivity' ) + 600) < TIMESTAMP) ) {
 			Ibos::app()->session->setKey( 'lastactivity', TIMESTAMP );

@@ -7,12 +7,20 @@ use application\modules\dashboard\utils\Wx;
 <div>
 	<div class="ct">
 		<div class="clearfix">
-			<h1 class="mt"><?php echo $lang['Binding wechat and enjoy it']; ?></h1>
+			<h1 class="mt"><?php echo $lang['Wechat corp']; ?></h1>
+	        <ul class="mn">
+	            <li>
+	                <span><?php echo $lang['Wechat binding'] ?></span>
+	            </li>
+	            <li>
+	                <a href="<?php echo $this->createUrl( 'wxsync/index' ) ?>"><?php echo $lang['Department and user sync'] ?></a>
+	            </li>
+	        </ul>
 		</div>
 		<div>
 			<!-- 企业信息 start -->
 			<div class="ctb">
-				<h2 class="st"><?php echo $lang['Wechat binding'] ?></h2>
+				<h2 class="st"><?php echo $lang['Binding wechat'] ?></h2>
 				<div class="co-banding-wrap">
 					<div class="box-shadow ibosoa-info clearfix">
 						<div class="company-logo mbs pull-left">
@@ -28,39 +36,43 @@ use application\modules\dashboard\utils\Wx;
 						</div>
 					</div>
 					<div class="wx-binding-check">
-						<div class="wx-check-result">
-							<i class="mbs <?php echo $access ? 'o-result-tip' : 'o-failure-tip'; ?>"></i>
-							<?php if ($access) : ?>
-								<p class="xcgn mbm">系统URL验证成功！</p>
-								<p>接下来你可以使用该域名授权并安装套件应用</p>
-							<?php else : ?>
-								<p class="xcr mbm">系统URL验证失败！</p>
-								<p>请检查系统URL是否可被微信服务器访问，请填写正确URL验证并授权</p>
-							<?php endif; ?>
+						<p class="fsb">系统URL连接验证</p>
+						<div>
+							<input type="text" class="span12" name="sysurl" value="<?php echo $domain; ?>" readonly disabled/>
 						</div>
-						<?php if ($access) : ?>
-							<div>
-								<input type="hidden" class="dib span5" name="sysurl" value="<?php echo $domain; ?>"/>
-							</div>
-						<?php else : ?>
-							<div>
-								<input type="text" class="dib span5" name="sysurl" value="<?php echo $domain; ?>"/>
-								<button class="btn btn-primary mlm" data-action="bindWXCheck">验证</button>
-							</div>
-						<?php endif; ?>
+						<div class="wx-check-result <?php echo $access ? 'xcgn' : 'xcr'; ?>">
+							<i class="<?php echo $access ? 'o-tip-success' : 'o-tip-failure'; ?>"></i>
+							<span><?php echo $access ? '验证成功！' : '验证失败！请检查系统URL是否可被微信服务器访问。'; ?></span>
+						</div>
 					</div>
 					<div class="wx-btn-group">
 						<a class="wx-back-btn" href="<?php echo $this->createUrl('wxbinding/logout'); ?>">
 							<i class="o-back-arrow mrm"></i>
 							<span>退出当前帐号</span>
 						</a>
-						<button class="btn fsm wx-suite-install <?php echo $access ? 'btn-primary' : 'disabled'; ?>" data-action="installApply" <?php echo $access ? '' : 'disabled'; ?>>安装套件应用</button>
+						<button class="btn wx-suite-install <?php echo $access ? 'btn-primary' : 'disabled'; ?>" data-action="installApply" data-param='{ "url": "<?php echo $url; ?>"}' <?php echo $access ? '' : 'disabled'; ?>>安装套件应用</button>
 					</div>
 				</div>
 			</div>
+			<?php if ( $isBinding ) : ?>
+				<div class="wx-auth-menu-wrap">
+					<p class="wx-auth-menu-has">已授权<span class="wx-auth-menu-has-num"><?php echo count( $app ); ?></span>个应用</p>
+					<ul class="wx-auth-menu-list clearfix">
+						<?php foreach ($app as $row) : ?>
+							<li class="wx-auth-menu-unit">
+								<div class="wx-unit-box">
+									<img class="wx-unit-icon" src="http://www.ibos.com.cn/Wxapi/image/<?php echo $row['appid']; ?>"/>
+									<span class="wx-unit-name"><?php echo $row['name']; ?></span>
+								</div>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 </div>
+
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
 <script type="text/javascript" src="<?php echo $this->getAssetUrl(); ?>/js/iboscologin.js"></script>
 <script src="<?php echo $assetUrl; ?>/js/syncdata.js"></script>

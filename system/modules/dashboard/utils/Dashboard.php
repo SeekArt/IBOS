@@ -10,7 +10,7 @@
 /**
  * 后台模块函数库类，提供全局静态方法调用
  * @package application.modules.dashboard.utils
- * @version $Id: Dashboard.php 8536 2016-09-28 01:30:57Z tanghang $
+ * @version $Id: Dashboard.php 7528 2016-07-13 08:40:53Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -46,9 +46,8 @@ class Dashboard {
 	 * @throws CException 系统环境异常：无法移动文件
 	 */
 	public static function moveTempFile( $file, $path, $isImage = false ) {
-		$toFile = rtrim( $path, '/' ) . '/' . basename( $file );
-		$delete = $toFile != $file ? true : false;
-		File::copyFile( $file, $toFile, $delete );
+		$toFile = $path . '/' . basename( $file );
+		File::copyFile( $file, $toFile );
 		if ( true === $isImage ) {
 			return File::imageName( $toFile );
 		} else {

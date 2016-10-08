@@ -140,8 +140,7 @@
 						<div class="controls">
 							<div class="clearfix">
 								<div class="pull-left info-list-wrap">
-									<input type="text" name="roleid" placeholder="选择一个主要角色" id="role_select">
-									<!-- <input type="hidden" id="role_select" name="roleid" value="1" placeholder="请选择角色"/> -->
+									<input type="hidden" id="role_select" name="roleid" value="1" placeholder="请选择角色"/>
 								</div>
 								<div class="pull-left mls">
 									<a href="javascript:;" class="btn toggle-btn" data-target="#auxiliary_role_wrap">辅助角色</a>
@@ -152,8 +151,7 @@
 					<div class="control-group" style="display:none;" id="auxiliary_role_wrap">
 						<label for="" class="control-label">辅助角色</label>
 						<div class="controls">
-							<input type="text" name="auxiliaryrole" placeholder="可以选择多个辅助角色" id="auxiliary_role_select">
-							<!-- <input type="hidden" id="auxiliary_role_select" name="auxiliaryrole" value="" placeholder="可以选择多个辅助角色"/> -->
+							<input type="hidden" id="auxiliary_role_select" name="auxiliaryrole" value="" placeholder="可以选择多个辅助角色"/>
 						</div>
 					</div>
 					<div class="control-group">
@@ -184,6 +182,31 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+(function(){
+	var data = [<?php foreach($roles as $role):?>{text:"<?php echo $role['rolename']; ?>", id: <?php echo $role['roleid']; ?>},<?php endforeach;?>];
+	$.each(data, function(index, item){
+		if( item == null ){
+			data.splice(index, 1);
+		}
+	});
+	// 角色初选择框始化
+	$("#role_select").ibosSelect({
+		data: data,
+		width: '100%',
+		multiple: false,
+		placeholder: "请选择角色"
+	});
+
+	// 辅助角色初始化
+	$("#auxiliary_role_select").ibosSelect({
+		data: data,
+		width: '100%',
+		multiple: true,
+		placeholder: "可以选择多个辅助角色"
+	});
+})();
+</script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/organization.js?<?php echo VERHASH; ?>'></script>

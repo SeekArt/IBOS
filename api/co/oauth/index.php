@@ -108,7 +108,7 @@ function checkBind( $userId, $redirect ) {
 				exit();
 			}
 		} else {
-			$msg = "你的企业账号可能还没有与酷办公绑定，请输入你的企业账号用户名密码来绑定你的账户<br />";
+			$msg = "你的IBOS帐号可能还没有与酷办公绑定，请输入你的IBOS用户名密码来绑定你的帐户<br />";
 			showBind( $msg );
 			exit();
 		}
@@ -138,12 +138,12 @@ function showBind( $msg, $url = "" ) {
 	$str .= '	button{ box-sizing: border-box; width: 100%; margin-left: 0; padding-top: 15px; padding-bottom: 15px; }   }';
 	$str .= '	</style>';
 	if ( $url ) {
-		$str .= '	<script>  if(confirm("用户已被绑定其它酷办公账号，确定重新绑定新账号吗？")){location.href="' . $url . '";}';
+		$str .= '	<script>  if(confirm("用户已被绑定其它酷办公帐号，确定重新绑定新帐号吗？")){location.href="' . $url . '";}';
 		$str .= '	</script>';
 	}
-	$str .= '<div id="stylized" class="myform"><form name="form" method="post" ><h1>绑定企业账号</h1><p>' . $msg . '</p>';
-	$str .= '<label>用户名<span class="small">填写你的企业账号用户名</span></label><input type="text" name="username" />';
-	$str .= '<label>密码<span class="small">输入你的登录密码</span></label><input type="password" name="password" />';
+	$str .= '<div id="stylized" class="myform"><form name="form" method="post" ><h1>绑定酷办公</h1><p>' . $msg . '</p>';
+	$str .= '<label>用户名<span class="small">填写你的IBOS用户名</span></label><input type="text" name="username" />';
+	$str .= '<label>密码<span class="small">输入你登录IBOS的密码</span></label><input type="password" name="password" />';
 	$str .= '<div class="spacer"></div><input type="hidden" name="op" value="bind" /><button type="submit">验证并绑定</button></form></div>';
 	$str .='</body></html>';
 	echo $str;

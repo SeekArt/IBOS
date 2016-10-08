@@ -244,7 +244,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
 										<td width="22"></td>
 										<td width="36">
 											<span class="avatar-circle avatar-circle-small">
-												<img src="<?php echo!empty( $participant['charge']['avatar_small'] ) ? $participant['charge']['avatar_small'] : 'data/avatar/noavatar_small.jpg'; ?>">
+												<img src="<?php echo $participant['charge']['avatar_small']; ?>">
 											</span>
 										</td>
 										<td>
@@ -252,7 +252,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
 												<?php echo $participant['subject']; ?>
 											</a>
 											<div class="fss">
-												<?php echo $lang['The head']; ?> <?php echo!empty( $participant['charge']['realname'] ) ? $participant['charge']['realname'] : ''; ?> 
+												<?php echo $lang['The head']; ?> <?php echo $participant['charge']['realname']; ?> 
 												<?php echo $participant['st'] ?> —— <?php echo $participant['et'] ?>
 												<?php if ( TIMESTAMP > $participant['endtime'] ): ?>
 													<i class="om-am-warning mls" title="<?php echo $lang['Expired']; ?>"></i>

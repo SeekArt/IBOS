@@ -157,7 +157,7 @@ define(['module'], function (module) {
 
             var parsed = text.parseName(name),
                 nonStripName = parsed.moduleName + '.' + parsed.ext,
-                url = (G.PLATFORM == "saas" || !(/static\/[a-z0-9]{8}/.test(Ibos.app.assetUrl))) ? nonStripName : req.toUrl(nonStripName),
+                url = req.toUrl(nonStripName),
                 useXhr = (masterConfig.useXhr) ||
                          text.useXhr;
 

@@ -96,8 +96,4 @@ $(function(){
 		var target = $(this).data("target");
 		$(target).toggle();
 	});
-
-	$('#user_form').submit(function() {
-		window.sessionStorage.clear();
-	});
 });

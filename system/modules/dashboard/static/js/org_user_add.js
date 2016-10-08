@@ -37,19 +37,6 @@ $(function(){
 		type: "user"
 	});
 
-	// 角色初选择框始化
-	$("#role_select").userSelect({
-		data: Ibos.data.get("role"),
-		type: "role",
-		maximumSelectionSize: "1"
-	});
-
-	// 辅助角色初始化
-	$("#auxiliary_role_select").userSelect({
-		data: Ibos.data.get("role"),
-		type: "role"
-	});
-
 	// 通用AJAX验证配置
 	var ajaxValidateSettings = {
 		type : 'GET',
@@ -140,9 +127,5 @@ $(function(){
 	$(".toggle-btn").on("click", function(){
 		var target = $(this).data("target");
 		$(target).toggle();
-	});
-
-	$('#user_form').submit(function() {
-		window.sessionStorage.clear();
 	});
 });

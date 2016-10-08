@@ -47,8 +47,8 @@ class Feed {
         $user = User::model()->fetchByUid( $uid );
         $alldowndeptid = Department::model()->fetchChildIdByDeptids( $user['alldeptid'] );
         $deptids = StringUtil::filterStr( $user['alldeptid'] . ',' . $alldowndeptid );
-        $custom = sprintf( "(FIND_IN_SET('%d',{$tableprefix}userid) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR FIND_IN_SET('%s',{$tableprefix}positionid) OR FIND_IN_SET('%s',{$tableprefix}roleid)) ", $uid, $user['allposid'],$user['allroleid']);
-       $condition = "({$tableprefix}view = 0 OR ({$tableprefix}view = 1 AND {$tableprefix}uid = {$uid}) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR {$tableprefix}deptid = {$user['deptid']} OR {$tableprefix}deptid = 'alldept' OR {$tableprefix}roleid = {$user['roleid']} OR {$custom})";
+        $custom = sprintf( "(FIND_IN_SET('%d',{$tableprefix}userid) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR FIND_IN_SET('%s',{$tableprefix}positionid))", $uid, $user['allposid'] );
+        $condition = "({$tableprefix}view = 0 OR ({$tableprefix}view = 1 AND {$tableprefix}uid = {$uid}) OR FIND_IN_SET('{$deptids}',{$tableprefix}deptid) OR {$tableprefix}deptid = {$user['deptid']} OR {$tableprefix}deptid = 'alldept' OR {$custom})";
         return $condition;
     }
 

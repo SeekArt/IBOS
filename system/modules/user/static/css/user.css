@@ -346,8 +346,6 @@
 .o-mail-unbind,
 .o-phone-bind,
 .o-phone-unbind,
-.o-iboswxqy-bind,
-.o-iboswxqy-unbind,
 .o-ibosco-bind,
 .o-ibosco-unbind,
 .o-bind-info,
@@ -406,14 +404,6 @@
 	height: 42px;
 	vertical-align: middle;
 }
-.o-iboswxqy-bind,
-.o-iboswxqy-unbind{
-	display: inline-block;
-	width: 40px;
-	height: 40px;
-	vertical-align: middle;
-}
-
 .o-mail-bind,
 .o-mail-unbind{
 	display: inline-block;
@@ -471,8 +461,6 @@
 .o-mail-bind{ background-position: -164px 0; }
 .o-phone-unbind{ background-position: -120px -45px; }
 .o-phone-bind{ background-position: -120px 0; }
-.o-iboswxqy-bind{ background-position: -119px -203px; }
-.o-iboswxqy-unbind{ background-position: -161px -203px; }
 .private-letter{
 	position: absolute;
 	top: 58px;
