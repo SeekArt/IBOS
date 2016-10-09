@@ -63,12 +63,12 @@ use application\core\utils\Ibos;
 									<td><?php echo $node['nodeinfo']; ?></td>
 									<td>
 										<label class="checkbox" <?php if ( $node['maildisabled'] ): ?>title='<?php echo $lang['Bind email first']; ?>'<?php endif; ?>>
-											<input type="checkbox" name="email[<?php echo $id; ?>]" value='1' <?php if ( $node['emailcheck'] and !$node['maildisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['maildisabled'] ): ?>disabled<?php endif; ?> />
+											<input type="checkbox" name="email[<?php echo $id; ?>]" value='1' <?php if ( $node['emailcheck'] and ! $node['maildisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['maildisabled'] ): ?>disabled<?php endif; ?> />
 										</label>
 									</td>
 									<td>
 										<label class="checkbox" <?php if ( $node['smsdisabled'] ): ?>title='<?php echo $lang['Bind mobile first']; ?>'<?php endif; ?>>
-											<input type="checkbox" name="sms[<?php echo $id; ?>]" value='1' <?php if ( $node['smscheck'] and !$node['smsdisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['smsdisabled'] ): ?>disabled<?php endif; ?> />
+											<input type="checkbox" name="sms[<?php echo $id; ?>]" value='1' <?php if ( $node['smscheck'] and ! $node['smsdisabled'] ): ?>checked<?php endif; ?> <?php if ( $node['smsdisabled'] ): ?>disabled<?php endif; ?> />
 										</label>
 									</td>
 								</tr>
@@ -129,16 +129,35 @@ use application\core\utils\Ibos;
 			<div class="bind-item clearfix">
 				<?php if ( $co ): ?>
 					<i class="o-ibosco-bind"></i>
-				<?php else: ?>
-					<i class="o-ibosco-unbind"></i>
-				<?php endif; ?>
-				<?php if ( !$co ): ?>
-					<!-- 绑定酷办公账号 -->
-					<a href="javascript:;" data-action="bindIbosco" class="pull-right btn">绑定</a>
-				<?php else: ?>
 					<!-- 解绑酷办公账号 -->
 					<a href="javascript:;" data-action="relieveIbosco" class="pull-right btn">解绑</a>
+				<?php else: ?>
+					<i class="o-ibosco-unbind"></i>
+					<!-- 绑定酷办公账号 -->
+					<a href="javascript:;" data-action="bindIbosco" class="pull-right btn">绑定</a>
 				<?php endif; ?>
+			</div>
+		<?php endif; ?>
+		<?php if ( !empty( $wxqybinding ) ): ?>
+			<div class="bind-item clearfix">
+				<?php if ( $wxqy ): ?>
+					<i class="o-iboswxqy-bind"></i>
+				<?php else: ?>
+					<i class="o-iboswxqy-unbind"></i>
+				<?php endif; ?>
+				<div class="dib vam mls">
+	                <div>企业号账号</div>
+	                <div><?php echo $value; ?></div>
+	            </div>
+            	<div class="dib pull-right">
+				<?php if ( $wxqy ): ?>
+					<!-- 解绑企业号账号 -->
+					<a href="javascript:;" data-action="relieveIboswxqy" class="pull-right btn">解绑</a>
+				<?php else: ?>
+					<!-- 绑定企业号账号 -->
+					<a href="javascript:;" data-action="bind" data-param='{"type": "wxqy"}' class="pull-right btn">绑定</a>
+				<?php endif; ?>
+				</div>
 			</div>
 		<?php endif; ?>
     </div>

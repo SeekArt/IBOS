@@ -971,27 +971,29 @@
                     // 提供拼音搜索功能
                     query.matcher = function(data) {
                         // 岗位分类应排除在数据集中
-                        if (data.id.charAt(0) === 'f') {
+                        if (data.id && data.id.charAt(0) === 'f') {
                             return false;
                         }
-                        var text = data.text,
-                            textArr = pinyinEngine.toPinyin(text, false),
-                            termArr = term.split("");
-                        for (var i = 0; i < termArr.length; i++) {
-                            var inside = false;
-                            //假设使用首字母拼音搜索
-                            for (var j = 0; j < textArr.length; j++) {
-                                if (textArr[j][i] && textArr[j][i].charAt(0) == termArr[i]) {
-                                    inside = true;
-                                }
-                            }
-                            //假设全拼或完全匹配
-                            if (!inside) {
-                                text += "," + pinyinEngine.toPinyin(text, false, ",");
-                                return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
-                            }
+                        if( data.text && data.id ){
+                           var text = data.text,
+                               textArr = pinyinEngine.toPinyin(text, false),
+                               termArr = term.split("");
+                           for (var i = 0; i < termArr.length; i++) {
+                               var inside = false;
+                               //假设使用首字母拼音搜索
+                               for (var j = 0; j < textArr.length; j++) {
+                                   if (textArr[j][i] && textArr[j][i].charAt(0) == termArr[i]) {
+                                       inside = true;
+                                   }
+                               }
+                               //假设全拼或完全匹配
+                               if (!inside) {
+                                   text += "," + pinyinEngine.toPinyin(text, false, ",");
+                                   return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
+                               }
+                           }
+                           return true; 
                         }
-                        return true;
                     };
 
                     data.results = Ibos.data.converToArray(Ibos.data.filter(that.data, query.matcher));

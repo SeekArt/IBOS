@@ -1,14 +1,14 @@
 <?php
 
 /**
- * IBOS 应用程序组件
+ * Ibos 应用程序组件
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2012-2014 IBOS Inc
  */
 /**
- * 初始化IBOS Application,模块及分发控制器
+ * 初始化Ibos Application,模块及分发控制器
  * @package application.core.components
  * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>

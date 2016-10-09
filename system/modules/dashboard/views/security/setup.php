@@ -62,7 +62,7 @@
 					<label class="control-label"><?php echo $lang['Auto login time']; ?></label>
 					<div class="controls">
 						<select name='autologin' class='span2'>
-							<option value='0' <?php if ( $account['autologin'] == '-1' ): ?>selected<?php endif; ?>><?php echo $lang['Autologin never']; ?></option>
+							<option value='-1' <?php if ( $account['autologin'] == '-1' ): ?>selected<?php endif; ?>><?php echo $lang['Autologin never']; ?></option>
 							<option value='0' <?php if ( $account['autologin'] == '0' ): ?>selected<?php endif; ?>><?php echo $lang['Autologin one day']; ?></option>
 							<option value='1' <?php if ( $account['autologin'] == '1' ): ?>selected<?php endif; ?>><?php echo $lang['Autologin one week']; ?></option>
 							<option value='2' <?php if ( $account['autologin'] == '2' ): ?>selected<?php endif; ?>><?php echo $lang['Autologin one month']; ?></option>

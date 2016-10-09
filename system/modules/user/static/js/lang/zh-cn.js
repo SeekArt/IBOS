@@ -25,6 +25,7 @@ L.USER = {
 
     // 个人资料 提醒设置
     SUER_UNBIND_IBOSCO :"确定解绑酷办公账号？",
+    SUER_UNBIND_WXYQ : "确定解绑微信企业账号？",
 
     // 登录界面， 扫描二维码登录
     SCAN_QR_CODE_SUCCESSED: "扫描成功,请在企业号中点击确认链接。",

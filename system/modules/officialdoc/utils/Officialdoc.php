@@ -23,6 +23,7 @@ use application\modules\department\model\DepartmentRelated;
 use application\modules\officialdoc\model\Officialdoc as OffModel;
 use application\modules\officialdoc\model\OfficialdocReader;
 use application\modules\position\model\PositionRelated;
+use application\modules\role\model\RoleRelated;
 use application\modules\user\model\User;
 use CHtml;
 
@@ -82,49 +83,63 @@ class Officialdoc {
 //        return $condition;
 //    }
 	public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
-		$user = User::model()->fetchByUid( $uid );
-		$upDeptid = Department::model()->queryDept( $user['deptid'] );
-		$typeWhere = self::joinTypeCondition( $type, $uid, $catid );
-		if ( !empty( $condition ) ) {
-			$condition .=" AND " . $typeWhere;
-		} else {
-			$condition = $typeWhere;
-		}
-		//加上阅读权限判断
-		$allDeptId = array_filter( array_unique( explode( ',', $upDeptid . $user['alldeptid'] ) ) );
-		$deptCondition = '';
-		if ( count( $allDeptId ) > 0 ) {
-			foreach ( $allDeptId as $deptId ) {
-				$deptCondition .= "FIND_IN_SET('$deptId',deptid) OR ";
-			}
-			$deptCondition = substr( $deptCondition, 0, -4 );
-		} else {
-			$deptCondition = "FIND_IN_SET('',deptid)";
-		}
-		// $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
-		$scopeCondition = " ( ((deptid='alldept' OR "
-				. "{$deptCondition} OR "
-				. "FIND_IN_SET('{$user['allposid']}',positionid) OR "
-				. "FIND_IN_SET('{$uid}',uid) OR "
-				. "FIND_IN_SET('{$user['allroleid']}',roleid)) OR "
-				. "(author='{$uid}') OR (approver='{$uid}')) ";
+        $user = User::model()->fetchByUid( $uid );;
+        $upDeptid = Department::model()->queryDept( $user['deptid'] );
+        $typeWhere = self::joinTypeCondition( $type, $uid, $catid );
+        if ( !empty( $condition ) ) {
+            $condition .=" AND " . $typeWhere;
+        } else {
+            $condition = $typeWhere;
+        }
+        //加上阅读权限判断
+        $allDeptId = array_filter( array_unique( explode( ',', $upDeptid . "," . $user['alldeptid'] ) ) );
+        $deptConditionArray = array();
+        if ( count( $allDeptId ) > 0 ) {
+            foreach ( $allDeptId as $deptId ) {
+                $deptConditionArray[] = "FIND_IN_SET( '$deptId',deptid)";
+            }
+            $deptCondition = implode( ' OR ', $deptConditionArray );
+        } else {
+            $deptCondition = "FIND_IN_SET( '',deptid)";
+        }
+        //主要是考虑到如果有辅助部门和辅助岗位和辅助角色的时候需要有列表显示
+        $posCon = '';
+        $pos = explode(',',$user['allposid']);
+        for($i=0;$i<count($pos);$i++){
+            $posCon .= "FIND_IN_SET('{$pos[$i]}',positionid) OR ";
+        }
+        $roleCon = '';
+        $role = explode(',',$user['allroleid']);
+        for($i=0;$i<count($role);$i++){
+            $roleCon .= "FIND_IN_SET('{$role[$i]}',roleid) OR ";
+        }
+        //这里要考虑很多条件，首先是发布角色，岗位，部门和个人的情况，接下来还要考虑是否还有抄送，如果有抄送还要考虑抄送的角色，岗位，部门和个人的情况，
+        //最后还要考虑用户是否具有辅助角色，辅助岗位和辅助部门，如果有也要考虑进去。
+        $scopeCondition = " ( ((deptid='alldept' OR "
+            . "{$deptCondition} OR FIND_IN_SET('{$user['deptid']}',deptid) OR "
+            . "FIND_IN_SET('{$user['positionid']}',positionid) OR "
+            . $posCon
+            . $roleCon
+            . "FIND_IN_SET('{$user['roleid']}',ccroleid) OR FIND_IN_SET('{$user['deptid']}',ccdeptid) OR FIND_IN_SET('{$user['positionid']}',ccpositionid) OR "
+            . "FIND_IN_SET('{$uid}',uid) OR FIND_IN_SET('{$uid}',ccuid) OR "
+            . "FIND_IN_SET('{$user['roleid']}',roleid)) OR "
+            . "(author='{$uid}') OR (approver='{$uid}')) ";
+        // 如果公文当前状态为：未审核
+        // 审核人可以看到所有属于他的所有未审核新闻
+        if (self::TYPE_NOTALLOW === $type) {
+            $scopeCondition .= " OR {$typeWhere} ";
+        }
+        $scopeCondition .= " ) ";
+        $condition.=" AND " . $scopeCondition;
+        if ( !empty( $catid ) ) {
+            $condition.=" AND catid IN ($catid)";
+        }
 
-		// 如果公文当前状态为：未审核
-		// 审核人可以看到所有属于他的所有未审核公文
-		if ( self::TYPE_NOTALLOW === $type ) {
-			$scopeCondition .= " OR {$typeWhere} ";
-		}
-		$scopeCondition .= " ) ";
-		$condition.=" AND " . $scopeCondition;
-		if ( !empty( $catid ) ) {
-			$condition.=" AND catid IN ($catid)";
-		}
-
-		// 只有对应步骤的审核人才能看到未审核公文
-		if ( self::TYPE_NOTALLOW === $type ) {
-			$condition .= " AND (approver IN (0, {$uid})) ";
-		}
-		return $condition;
+        // 只有对应步骤的审核人才能看到未审核公文
+        if (self::TYPE_NOTALLOW === $type) {
+            $condition .= " AND (approver IN (0, {$uid})) ";
+        }
+        return $condition;
 	}
 
 	/**
@@ -255,37 +270,37 @@ class Officialdoc {
 	 * @param array $data
 	 * @return array
 	 */
-	public static function getScopeUidArr( $data ) {
-		$string = '';
-		$all = false;
-		if ( !empty( $data['deptid'] ) ) {
-			foreach ( explode( ',', $data['deptid'] ) as $deptid ) {
-				if ( $deptid == 'alldept' ) {
-					$all = true;
-					$string = 'c_0';
+    public static function getScopeUidArr( $data ) {
+        $string = '';
+        $all = false;
+        if ( !empty( $data['deptid'] ) ) {
+            foreach ( explode( ',', $data['deptid'] ) as $deptid ) {
+                if ( $deptid == 'alldept' ) {
+                    $all = true;
+                    $string = 'c_0';
                 } else {
                     $string .=',d_' . $deptid;
-				}
-			}
-		}
-		if ( false === $all && !empty( $data['positionid'] ) ) {
-			foreach ( explode( ',', $data['positionid'] ) as $positionid ) {
-				$string .= 'p_' . $positionid;
-			}
-		}
-		if ( false === $all && !empty( $data['uid'] ) ) {
+                }
+            }
+        }
+        if ( false === $all && !empty( $data['positionid'] ) ) {
+            foreach ( explode( ',', $data['positionid'] ) as $positionid ) {
+                $string .= ',p_' . $positionid;
+            }
+        }
+        if ( false === $all && !empty( $data['uid'] ) ) {
             foreach ( explode( ',', $data['uid'] ) as $uid ) {
                 $string .= ',u_' . $uid;
-			}
-		}
-		if ( false === $all && !empty( $data['roleid'] ) ) {
-			foreach ( explode( ',', $data['roleid'] ) as $roleid ) {
-				$string.= 'r_' . $roleid;
-			}
-		}
-		$uidArray = StringUtil::getUidAByUDPX( $string, true, false, true );
-		return $uidArray;
-	}
+            }
+        }
+        if ( false === $all && !empty( $data['roleid'] ) ) {
+            foreach ( explode( ',', $data['roleid'] ) as $roleid ) {
+                $string .= ',r_' . $roleid;
+            }
+        }
+        $uidArray = StringUtil::getUidAByUDPX( trim( $string, ',' ), true, false, true );
+        return $uidArray;
+    }
 
 	/**
 	 * 取出源数据中$field的值，用$join分割合并成字符串
@@ -534,6 +549,7 @@ class Officialdoc {
 		$deptidList = explode( ',', Department::model()->queryDept( $userInfo['deptid'], true ) );
 		$deptidList = array_merge( $deptidList, DepartmentRelated::model()->fetchAllDeptIdByUid( $uid ) );
 		$positionidList = array_merge( array( $userInfo['positionid'] ), PositionRelated::model()->fetchAllPositionIdByUid( $uid ) );
+        $roleidList = array_merge(array($userInfo['roleid']),RoleRelated::model()->fetchAllRoleIdByUid($uid));
 		// 发布范围中有我的 WHERE 条件
 		if ( !empty( $condition ) ) {
 			$condition .= ' AND ';
@@ -541,13 +557,20 @@ class Officialdoc {
 		$condition .= sprintf( '`deptid` = \'alldept\' OR FIND_IN_SET( \'%s\', `uid` )', $uid );
 		foreach ( $deptidList as $deptid ) {
 			if ( !empty( $deptid ) )
-				$condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `deptid` )', $deptid );
+                $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `deptid` )', $deptid );
 		}
 		foreach ( $positionidList as $positionid ) {
 			if ( !empty( $positionid ) )
 				$condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `positionid` )', $positionid );
 		}
-		$condition = '(' . $condition . ' OR FIND_IN_SET( ' . $userInfo['roleid'] . ', `roleid` ) ) AND `status` = 1';
+        foreach ($roleidList as $roleid){
+            if(!empty($roleid)){
+                $condition .= sprintf( ' OR FIND_IN_SET( \'%s\', `roleid` )', $roleid );
+            }
+        }
+		//需要考虑抄送的时候
+//		$condition = '(' . $condition . ' OR FIND_IN_SET( ' . $userInfo['roleid'] . ', `roleid` ) OR FIND_IN_SET('.$userInfo['roleid'].',`ccroleid`) OR FIND_IN_SET('.$userInfo['positionid'].',`ccpositionid`) OR FIND_IN_SET('.$uid.',`ccuid`) OR FIND_IN_SET('.$userInfo['deptid'].',`ccdeptid`)) AND `status` = 1';
+        $condition = '(' . $condition . ' OR FIND_IN_SET( ' . $userInfo['roleid'] . ', `roleid` )) AND `status` = 1';
 		// 组合上去掉已签收公文的 WHERE 条件
 		$hasSignDocList = OfficialdocReader::model()->findAll( sprintf( '`uid` = %d AND `issign` = 1', $uid ) );
 		$hasSignDocIdList = array();

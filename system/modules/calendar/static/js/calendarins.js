@@ -537,20 +537,23 @@ var calendar = {
      * @param  {String} start 开始时间
      * @param  {String} end   结束时间
      * @param  {String} type  类型
+     * @param  {boolean} iskeep 是否保持当前日期
      * @return {String}       模板
      */
-    getNewTmpl: function($elem, start, end, type) {
-        if (type == "add") {
-            var startDay = moment(start).add(1, "month").format("YYYY-MM-DD"),
-                endDay = moment(end).add(1, "month").format("YYYY-MM-DD");
-        } else if (type == "subtract") {
-            var startDay = moment(start).subtract(1, "month").format("YYYY-MM-DD"),
-                endDay = moment(end).subtract(1, "month").format("YYYY-MM-DD");
+    getNewTmpl: function($elem, start, end, type, iskeep) {
+        if(!iskeep) {
+            if (type == "add") {
+                var startDay = moment(start).add(1, "month").format("YYYY-MM-DD"),
+                    endDay = moment(end).add(1, "month").format("YYYY-MM-DD");
+            } else if (type == "subtract") {
+                var startDay = moment(start).subtract(1, "month").format("YYYY-MM-DD"),
+                    endDay = moment(end).subtract(1, "month").format("YYYY-MM-DD");
+            }
         }
 
         var param = {
-                start: startDay,
-                end: endDay,
+                start: startDay || start,
+                end: endDay || end,
                 type: "month"
             },
             calendarData;
@@ -770,9 +773,12 @@ $(function() {
             var $elem = $(elem),
                 $range = $("#time_range"),
                 start = $range.attr("data-start"),
-                end = $range.attr("data-end"),
-                type = $elem.attr("data-type");
-            var param = calendar.getNewTmpl($elem, start, end, type);
+                type = $elem.attr("data-type"),
+                toStart = moment(start).add(1, "month").format('YYYY-MM-DD'),
+                toEnd = moment(toStart).add(1, "month").subtract(1, 'day').format('YYYY-MM-DD');
+
+            var param = calendar.getNewTmpl($elem, toStart, toEnd, type, true);
+
             $range.attr({
                 "data-start": param.start,
                 "data-end": param.end

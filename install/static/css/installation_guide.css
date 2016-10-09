@@ -540,6 +540,7 @@ body{
 }
 .binding-mc{
 	width: 100%;
-	height: 660px;
+	height: 635px;
+	min-height: 635px;
 	overflow: hidden;
 }

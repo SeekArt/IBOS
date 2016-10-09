@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 8018 2016-08-25 06:43:45Z tanghang $
+ *	@version $Id: common.css 8391 2016-09-13 09:14:12Z tanghang $
  *	@modified 2013-03-22  
  */
 
@@ -1713,7 +1713,8 @@ a.progressCancel:hover {
 .o-sync-success,
 .o-wx-unbinding,
 .o-tip-success,
-.o-tip-failure{
+.o-tip-failure,
+.o-wxapp-center{
 	display: block;
 	background-image: url(../image/binding_guide.png);
 }
@@ -1776,7 +1777,7 @@ a.progressCancel:hover {
 	height: 20px;
 	float: left;
 	background-position: -484px -220px;
-	margin: 10px 10px 10px 25px;
+	margin: 10px 10px 10px 18px;
 }
 .o-unbinding-success{
 	width: 17px;
@@ -1824,11 +1825,16 @@ a.progressCancel:hover {
 .o-tip-failure {
 	background-position: -544px -244px;
 }
+.o-wxapp-center {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background-position: -481px -449px;
+    vertical-align: middle;
+    transform: translateY(-2px);
+}
 .ml12{
 	margin-left: 12px;
-}
-.new-binding-wrap .co-banding-wrap{
-	width: 798px;
 }
 .binding-install-wrap .ct{
 	padding: 0;
@@ -1836,6 +1842,7 @@ a.progressCancel:hover {
 .binding-install-wrap .co-banding-wrap{
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
+	width: 798px;
 	min-height: 350px;
 }
 .binding-title{
@@ -1853,8 +1860,11 @@ a.progressCancel:hover {
 .co-list-wrap li{
 	list-style: none;
 	float: left;
-	margin-left: 40px;
+	margin-left: 30px;
 	margin-bottom: 10px;
+}
+.binding-install-wrap .co-list-wrap li{
+	margin-left: 48px;
 }
 .co-list-wrap li:nth-child(5n+1){
 	margin-left: 0;
@@ -1955,13 +1965,13 @@ a.progressCancel:hover {
 }
 .co-binding-content{
 	position: relative;
-	margin: 30px 40px 0;
+	margin: 30px 30px 0;
 }
 .input-group-addon:hover{
 	cursor: pointer;
 }
 .co-info-box{
-	width: 336px;
+	width: 320px;
 	height: 120px;
 	padding: 30px 0;
 	border-radius: 4px;
@@ -2049,7 +2059,7 @@ a.progressCancel:hover {
 	width: 100%;
 }
 .co-sync-box{
-	width: 318px;
+	width: 275px;
 	padding: 0 40px;
 	margin-top: 30px;
 }

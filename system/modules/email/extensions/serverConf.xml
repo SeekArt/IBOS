@@ -14,6 +14,20 @@
 		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
 		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
 	</item>
+	<item id="ibos.com.cn">
+		<item id="POP3NAME"><![CDATA[pop.exmail.qq.com]]></item>
+		<item id="POP3EntireAddress"><![CDATA[1]]></item>
+		<item id="SMTPNAME"><![CDATA[smtp.exmail.qq.com]]></item>
+		<item id="IMAPNAME"><![CDATA[imap.exmail.qq.com]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[993]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[1]]></item>
+		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+	</item>
 	<item id="foxmail.com">
 		<item id="POP3NAME"><![CDATA[pop.qq.com]]></item>
 		<item id="POP3EntireAddress"><![CDATA[1]]></item>
@@ -46,11 +60,17 @@
 		<item id="POP3NAME"><![CDATA[pop.163.com]]></item>
 		<item id="POP3EntireAddress"><![CDATA[1]]></item>
 		<item id="SMTPNAME"><![CDATA[smtp.163.com]]></item>
+		<item id="POP3NAME"><![CDATA[pop.163.com]]></item>
 		<item id="IMAPNAME"><![CDATA[imap.163.com]]></item>
 		<item id="IMAPPORT"><![CDATA[143]]></item>
-		<item id="IMAPSSL"><![CDATA[0]]></item>
+		<item id="POP3SSL"><![CDATA[1]]></item>
+		<item id="SMTPSSL"><![CDATA[1]]></item>
+		<item id="IMAPSSL"><![CDATA[1]]></item>
 		<item id="IMAPEntireAddress"><![CDATA[1]]></item>
-		<item id="DefaultUseIMAP"><![CDATA[1]]></item>
+		<item id="DefaultUseIMAP"><![CDATA[0]]></item>
+		<item id="POP3PORT"><![CDATA[995]]></item>
+		<item id="SMTPPORT"><![CDATA[465]]></item>
+		<item id="IMAPPORT"><![CDATA[143]]></item>
 	</item>
 	<item id="126.com">
 		<item id="POP3NAME"><![CDATA[pop3.126.com]]></item>

@@ -314,7 +314,7 @@ $(function() {
                 mobile: elem.inputMobile.val()
             }).done(function(res) {
                 if (res.isSuccess) {
-                    if (res.data && res.data.hasMobile) {
+                    if (res.data.hasMobile) {
                         Ui.tip('此手机已注册过账号，请登录！', 'warning');
                         return false;
                     } else {

@@ -9,7 +9,7 @@
  */
 /**
  * 微信企业号应用中心控制器
- * 
+ *
  * @package application.modules.dashboard.controllers
  * @author gzhzh <gzhzh@ibos.com.cn>
  * @version $Id: WxCenterController.php 2052 2014-09-22 10:05:11Z gzhzh $
@@ -17,6 +17,7 @@
 
 namespace application\modules\dashboard\controllers;
 
+use application\core\utils\Ibos;
 use application\core\utils\WebSite;
 use application\modules\main\model\Setting;
 use application\modules\message\core\wx\WxApi;
@@ -45,6 +46,7 @@ class WxController extends BaseController {
 		$aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
 		$url = 'Api/WxCorp/isBinding';
 		$res = WebSite::getInstance()->fetch( $url, array( 'aeskey' => $aeskey ) );
+		$isLogin = false;
 		if ( !is_array( $res ) ) {
 			$result = CJSON::decode( $res, true );
 			switch ( $result['type'] ) {
@@ -59,6 +61,14 @@ class WxController extends BaseController {
 					$this->wxqyInfo['mobile'] = $result['mobile'];
 					$this->wxqyInfo['app'] = $result['app'];
 					$this->wxqyInfo['uid'] = $result['uid'];
+					$isLogin = Ibos::app()->user->mobile == $this->wxqyInfo['mobile'];
+					//绑定的时候，如果绑定手机号和当前手机号一致，直接判定为登录
+					if ( false === $isLogin ) {
+						$param = Ibos::app()->user->param;
+						if ( isset( $param['wxqyInfo'] ) && !empty( $param['wxqyInfo']['mobile'] ) ) {
+							$isLogin = Ibos::app()->user->mobile == $param['wxqyInfo']['mobile'];
+						}
+					}
 					break;
 				case 2 :
 					$this->isBinding = false;
@@ -69,6 +79,17 @@ class WxController extends BaseController {
 					$this->isBinding = false;
 					$this->msg = $result['msg'];
 					break;
+			}
+			if ( false === $isLogin ) {
+				$param = Ibos::app()->user->param;
+				if ( isset( $param['wxqyInfo'] ) && !empty( $param['wxqyInfo']['mobile'] ) ) {
+					$isLogin = true;
+				}
+			}
+			$this->wxqyInfo['isLogin'] = $isLogin;
+			//如果退出，则设置param为空
+			if ( false === $isLogin ) {
+				Ibos::app()->user->setState( 'param', array() );
 			}
 		}
 	}

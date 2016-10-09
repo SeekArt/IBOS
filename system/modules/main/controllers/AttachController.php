@@ -3,7 +3,7 @@
 /**
  * main模块的附件控制器
  *
- * @version $Id: AttachController.php 7549 2016-07-14 10:08:35Z tanghang $
+ * @version $Id: AttachController.php 8567 2016-09-29 09:24:51Z tanghang $
  * @package application.modules.main.controllers
  */
 
@@ -13,6 +13,7 @@ use application\core\controllers\Controller;
 use application\core\utils as util;
 use application\core\utils\File;
 use application\modules\main\model\AttachmentN;
+use application\modules\main\model\AttachmentUnused;
 
 class AttachController extends Controller {
 

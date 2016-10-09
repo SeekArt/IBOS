@@ -57,51 +57,51 @@ use application\modules\main\utils\Main;
 				<?php if ( count( $reportList ) > 0 ): ?>
 					<div class="page-list-mainer">
 						<ul class="rp-list" id="rp_list">
-							<?php foreach($reportList as $k => $report): ?>
-							<li class="rp-list-item">
-								<div class="rp-summary">
-									<a href="<?php echo $this->createUrl( 'review/show', array( 'repid' => $report['repid'] ) ); ?>" class="rp-weekly">
-										<span class="rp-weekly-start">
-											<em><?php echo date( 'd', $report['enddate'] ); ?></em>
-											<?php echo date( 'm', $report['enddate'] ); ?><?php echo $lang['Month'] ?>
-										</span>
-										<span class="rp-weekly-end">
-											<em><?php echo date( 'd', $report['begindate'] ); ?></em>
-											<?php echo date( 'm', $report['begindate'] ); ?><?php echo $lang['Month'] ?>
-										</span>
-									</a>
-									<div class="rps-content">
-										<h4><a href="javascript:;" data-action="showReportDetail" data-param='{"id": "<?php echo $report['repid']; ?>", "fromController": "<?php echo $this->id; ?>"}' title="<?php echo $report['subject']; ?>"><?php echo $report['cutSubject']; ?></a></h4>
-										<p class="xcm mb">
-											<?php echo $report['content']; ?>
-										</p>
-										<div class="rp-list-item-desc">
-											<div class="pull-right">
-												<a href="<?php echo $this->createUrl( 'review/show', array( 'repid' => $report['repid'] ) ) ?>" target="_blank" class="o-more cbtn" title="<?php echo $lang['More']; ?>"></a>
+							<?php foreach ( $reportList as $k => $report ): ?>
+								<li class="rp-list-item">
+									<div class="rp-summary">
+										<a href="<?php echo $this->createUrl( 'review/show', array( 'repid' => $report['repid'] ) ); ?>" class="rp-weekly">
+											<span class="rp-weekly-start">
+												<em><?php echo date( 'd', $report['enddate'] ); ?></em>
+												<?php echo date( 'm', $report['enddate'] ); ?><?php echo $lang['Month'] ?>
+											</span>
+											<span class="rp-weekly-end">
+												<em><?php echo date( 'd', $report['begindate'] ); ?></em>
+												<?php echo date( 'm', $report['begindate'] ); ?><?php echo $lang['Month'] ?>
+											</span>
+										</a>
+										<div class="rps-content">
+											<h4><a href="javascript:;" data-action="showReportDetail" data-param='{"id": "<?php echo $report['repid']; ?>", "fromController": "<?php echo $this->id; ?>"}' title="<?php echo $report['subject']; ?>"><?php echo $report['cutSubject']; ?></a></h4>
+											<p class="xcm mb">
+												<?php echo $report['content']; ?>
+											</p>
+											<div class="rp-list-item-desc">
+												<div class="pull-right">
+													<a href="<?php echo $this->createUrl( 'review/show', array( 'repid' => $report['repid'] ) ) ?>" target="_blank" class="o-more cbtn" title="<?php echo $lang['More']; ?>"></a>
+												</div>
+												<span class="fss"><?php echo $report['addtime']; ?></span>
+												<span class="fss ilsep">|</span>
+												<a href="javascript:;" class="j-comment fss" data-node-type="loadCommentUser" data-id="<?php echo $report['repid']; ?>">点评 <em><?php echo $report['commentcount']; ?></em></a>
+												<span class="fss ilsep">|</span>
+												<a href="javascript:;" class="j-reader fss" data-node-type="loadReader" data-id="<?php echo $report['repid']; ?>">阅读  <em><?php echo $report['readercount']; ?></em></a>
+												<?php if ( $report['stamp'] > 0 ): ?>
+													&nbsp;&nbsp;<img width="60" height="24" id="report_stamp_<?php echo $report['repid']; ?>" src="<?php echo $report['stampPath']; ?>" />
+												<?php endif; ?>
 											</div>
-											<span class="fss"><?php echo $report['addtime']; ?></span>
-											<span class="fss ilsep">|</span>
-											<a href="javascript:;" class="j-comment fss" data-node-type="loadCommentUser" data-id="<?php echo $report['repid']; ?>">点评 <em><?php echo $report['commentcount']; ?></em></a>
-											<span class="fss ilsep">|</span>
-											<a href="javascript:;" class="j-reader fss" data-node-type="loadReader" data-id="<?php echo $report['repid']; ?>">阅读  <em><?php echo $report['readercount']; ?></em></a>
-											<?php if ( $report['stamp'] > 0 ): ?>
-												&nbsp;&nbsp;<img width="60" height="24" src="<?php echo $report['stampPath']; ?>" />
-											<?php endif; ?>
 										</div>
 									</div>
-								</div>
-								<!-- 此处展开详细页 -->
-								<div class="rp-detail" style="display:none;"></div>
-								<div class="rp-mark-down-wrap">
-									<a href="javascript:;" class="rp-mark-down" data-action="showReportDetail" data-param='{"id": "<?php echo $report['repid']; ?>", "fromController": "<?php echo $this->id; ?>"}'></a>
-								</div>
-							</li>
+									<!-- 此处展开详细页 -->
+									<div class="rp-detail" style="display:none;"></div>
+									<div class="rp-mark-down-wrap">
+										<a href="javascript:;" class="rp-mark-down" data-action="showReportDetail" data-param='{"id": "<?php echo $report['repid']; ?>", "fromController": "<?php echo $this->id; ?>"}'></a>
+									</div>
+								</li>
 							<?php endforeach; ?>
 						<?php else: ?>
 							<div class="no-data-tip"></div>
 						<?php endif; ?>
-						</ul>
-					</div>
+					</ul>
+				</div>
 				<div class="page-list-footer">
 					<?php $this->widget( 'application\core\widgets\Page', array( 'pages' => $pagination ) ); ?> 
 				</div>
@@ -160,21 +160,21 @@ use application\modules\main\utils\Main;
 <script src='<?php echo $assetUrl; ?>/js/report_review.js?<?php echo VERHASH; ?>'></script>
 
 <script>
-	$(document).ready(function() {
+	$(document).ready(function () {
 		//高级搜索
-	    $("#mn_search").search(null, function(){
-	    	Ibos.openAdvancedSearchDialog({
-	    		content: document.getElementById("mn_search_advance"),
-	            init: function(){
-	                // 初始化日期选择
-	                $("#date_start").datepicker({ target: $("#date_end") });
-	            },
-	            ok: function(){
-	                this.DOM.content.find("form").submit();
-	            }
-	    	});
-	    });
-	
+		$("#mn_search").search(null, function () {
+			Ibos.openAdvancedSearchDialog({
+				content: document.getElementById("mn_search_advance"),
+				init: function () {
+					// 初始化日期选择
+					$("#date_start").datepicker({target: $("#date_end")});
+				},
+				ok: function () {
+					this.DOM.content.find("form").submit();
+				}
+			});
+		});
+
 		// 若浏览的是下属的下属，需要展开
 		var supUid = Ibos.app.g('supUid');
 		if (supUid !== 0) {

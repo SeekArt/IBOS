@@ -251,10 +251,44 @@ use application\core\utils\Ibos;
 		</div>
 	<?php endif ?>
 </div>
+<script src='<?php echo STATICURL; ?>/js/lib/formValidator/formValidator.packaged.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/user.js?<?php echo VERHASH; ?>'></script>
 <script>
+	Ibos.app.s('mobile', '<?php echo $user["mobile"]; ?>');
+
 	$(function() {
 		//日期选择器
 		$("#birthday").datepicker();
+
+		// 通用AJAX验证配置
+		var ajaxValidateSettings = {
+			type : 'GET',
+			dataType : "json",
+			async : true,
+			url : Ibos.app.url("dashboard/user/isRegistered"),
+			success : function(res){
+				//数据是否可用？可用则返回true，否则返回false
+				//数据是否发生变化
+				if (Ibos.app.g('mobile') == $('#mobile').val()) {
+					return true;
+				}
+				
+				return !!res.isSuccess;
+			},
+			buttons: $(".btn btn-large btn-submit btn-primary"),
+		};
+
+		$.formValidator.initConfig({ formID:"profile_form", errorFocus:true });
+
+		$("#mobile").formValidator()
+		.regexValidator({ 
+			regExp:"mobile",
+			dataType:"enum",
+			onError: U.lang("RULE.MOBILE_INVALID_FORMAT")
+		})
+		//验证手机是否已被注册
+		.ajaxValidator($.extend(ajaxValidateSettings, {	
+			onError : U.lang("V.MOBILE_EXISTED"),
+		}));
 	});
 </script>

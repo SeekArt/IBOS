@@ -32,7 +32,7 @@ if ( get( 'p' ) == 'phpinfo' ) {
 
 $option = get( 'op', '' );
 if ( !in_array( $option, array( 'envCheck', 'configCheck', 'dbCheck', 'moduleCheck',
-			'handleInstall', 'handleInstallAll', 'handleAfterInstallAll',
+			'handleInstall', 'handleInstallAll', 'handleAfterInstallAll', 'handleUpdateCoinfo',
 			'handleCheckSaas', 'handleUpdateData' ) ) ) {
 	$option = '';
 }
@@ -110,6 +110,10 @@ switch ( 1 ) {
 	case $option == 'handleAfterInstallAll':
 		//只有saas版才会进这里
 		handleAfterInstallAllOp();
+		break;
+	case $option == 'handleUpdateCoinfo':
+		//只有saas版才会进这里
+		handleUpdateCoinfoOp();
 		break;
 	case $option == 'handleCheckSaas':
 		//只有saas版才会进这里
@@ -264,8 +268,8 @@ function dbCheckOp() {
 	file_put_contents( PATH_ROOT . '/data/aes.key', base64_encode( json_encode( $aeskeyArray ) ) );
 
 	$postHost = explode( ':', $dbHost );
-	list($host, $portTemp) = $postHost;
-	$port = $portTemp ? $portTemp : 3306;
+	$host = isset( $postHost[0] ) ? $postHost[0] : '127.0.0.1';
+	$port = isset( $postHost[1] ) ? $postHost[1] : '3306';
 	// 检查表单各项
 	if ( empty( $dbAccount ) ) { // 数据库用户名
 		$msg = lang( 'Dbaccount not empty' );
@@ -292,15 +296,29 @@ function dbCheckOp() {
 		return ajaxReturn( array( 'isSuccess' => false, 'msg' => $msg, 'data' => array( 'type' => 'qycode' ) ) );
 	}
 	try {
-		$conn = new PDO( "mysql:host={$dbHost};port={$port}", $dbAccount, $dbPassword );
+		$conn = new PDO( "mysql:host={$host};port={$port}", $dbAccount, $dbPassword );
 		$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		$sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
 		$conn->exec( $sql );
 	} catch (PDOException $e) {
+		$msg = $e->getMessage();
+		$type = 'dbName';
+		if ( $e->getCode() == '2002' ) {
+			$msg = '端口错误';
+			$type = 'dbHost';
+		}
+		if ( $e->getCode() == '1045' ) {
+			$msg = '数据库账号或密码错误';
+			$type = 'dbAccount';
+		}
+		if ( $e->getCode() == '1130' ) {
+			$msg = '数据库服务器错误';
+			$type = 'dbHost';
+		}
 		return ajaxReturn( array(
 			'isSuccess' => false,
-			'msg' => '数据库创建失败:' . $e->getMessage(),
-			'data' => array( 'type' => 'dbName' ),
+			'msg' => '数据库创建失败：' . $msg,
+			'data' => array( 'type' => $type ),
 				) );
 	}
 	$pdo = pdo( $dbHost, $port, $dbName, $dbAccount, $dbPassword );
@@ -461,12 +479,21 @@ function handleInstallOp() {
  */
 function handleInstallAllOp() {
 	global $sysModules, $saasConfig;
+
+	$corpCode = strtolower( post( 'qycode' ) );
+
+	$k = 0;
+	if ( strpos( $corpCode, 'test' ) === 0 ) {
+		$k = 1;
+	}
+	$saasdb = $saasConfig['saasdb'][$k];
+
 	//不带端口的域名
-	$dbHost = post( 'dbHost', $saasConfig['dbHost'] );
-	$dbPort = post( 'dbPort', $saasConfig['dbPort'] );
-	$dbAccount = post( 'dbAccount', $saasConfig['dbAccount'] );
-	$dbPassword = post( 'dbPassword', $saasConfig['dbPassword'] );
-	$dbName = post( 'dbName', $saasConfig['dbName'] );
+	$dbHost = post( 'dbHost', $saasdb['dbHost'] );
+	$dbPort = post( 'dbPort', $saasdb['dbPort'] );
+	$dbAccount = post( 'dbAccount', $saasdb['dbAccount'] );
+	$dbPassword = post( 'dbPassword', $saasdb['dbPassword'] );
+	$dbName = post( 'dbName', $saasdb['dbName'] );
 
 	$adminName = post( 'adminName' );
 	$realNameTemp = post( 'realName' );
@@ -480,7 +507,6 @@ function handleInstallAllOp() {
 
 	$corpFullname = post( 'fullname' );
 	$corpShortname = post( 'shortname' );
-	$corpCode = strtolower( post( 'qycode' ) );
 	$platformTemp = post( 'platform' );
 	$platform = !empty( $platformTemp ) ? $platformTemp : 'saas';
 	//企业代码为表前缀
@@ -613,22 +639,19 @@ function handleCheckSaasOp() {
 		return ajaxReturn( array(
 			'isSuccess' => false,
 			'msg' => '不允许使用保留企业代码',
+			'data' => array(
+				'type' => 'keepcode',
+			),
 				) );
 	}
 	if ( !preg_match( '/^[a-zA-Z\d]{4,20}$/', $corpCode ) ) {
 		return ajaxReturn( array(
 			'isSuccess' => false,
-			'msg' => '企业代码只能是英文和数字的4~20位的组合'
+			'msg' => '企业代码只能是英文和数字的4~20位的组合',
+			'data' => array(
+				'type' => 'format',
+			),
 				) );
-	}
-	$res = CoApi::getInstance()->searchCorp( strtolower( $corpCode ), true );
-	if ( isset( $res['code'] ) && $res['code'] == '0' ) {
-		if ( !empty( $res['data'] ) ) {
-			return ajaxReturn( array(
-				'isSuccess' => false,
-				'msg' => '企业代码已被注册'
-					) );
-		}
 	}
 	$pdo = null;
 	$corpRow = getCorpByCode( $corpCode, $pdo );
@@ -640,6 +663,7 @@ function handleCheckSaasOp() {
 				'isSuccess' => false,
 				'msg' => '安装了SAAS',
 				'data' => array(
+					'type' => 'saasExist',
 					'hasSaas' => true,
 					'aeskey' => $admin['aeskey'],
 					'fullname' => $admin['fullname'],
@@ -655,6 +679,19 @@ function handleCheckSaasOp() {
 			}
 		}
 	}
+	$res = CoApi::getInstance()->searchCorp( strtolower( $corpCode ), true );
+	if ( isset( $res['code'] ) && $res['code'] == '0' ) {
+		if ( !empty( $res['data'] ) ) {
+			return ajaxReturn( array(
+				'isSuccess' => false,
+				'msg' => '企业代码已被注册',
+				'data' => array(
+					'type' => 'coExist',
+				),
+					) );
+		}
+	}
+
 	return ajaxReturn( array(
 		'isSuccess' => true,
 		'msg' => '没有安装SAAS，可以开始新的安装',
@@ -667,7 +704,7 @@ function handleCheckSaasOp() {
 function handleAfterInstallAllOp() {
 	global $saasConfig;
 	$corpCode = strtolower( post( 'qycode' ) );
-	$coGuid = post( 'guid' );
+	$smsContent = post( 'sms' );
 	$pdo = null;
 	$corpRow = getCorpByCode( $corpCode, $pdo );
 	// 检查数据库连接正确性
@@ -708,10 +745,6 @@ function handleAfterInstallAllOp() {
 					->insert( '{{user_status}}', array( 'uid' => $uid, 'regip' => $ip, 'lastip' => $ip ) );
 			Yii::app()->db->createCommand()
 					->insert( '{{user_profile}}', array( 'uid' => $uid, 'remindsetting' => '', 'bio' => '' ) );
-			if ( !empty( $coGuid ) ) {
-				Yii::app()->db->createCommand()
-						->insert( '{{user_binding}}', array( 'uid' => $uid, 'bindvalue' => $coGuid, 'app' => 'co' ) );
-			}
 		}
 
 		//aeskey存入表里
@@ -805,12 +838,13 @@ function handleAfterInstallAllOp() {
 		//发送短信
 		// TODO 更换短信内容
 		$sms = '尊敬的' . $admin['realname'] . '，您已成功开通了IBOS协同云，您的网址为：http://' . $corpCode . '.saas.ibos.cn， 管理员账号密码与酷办公账号密码一致。【酷办公】';
+		$message = !empty( $smsContent ) ? $smsContent : $sms;
 		$url = $saasConfig['url'];
 		$get = array(
 			'account' => $saasConfig['account'],
 			'pswd' => $saasConfig['pswd'],
 			'mobile' => $corpRow['mobile'],
-			'msg' => $sms
+			'msg' => $message
 		);
 
 		$res = Api::getInstance()->fetchResult( $url, $get );
@@ -823,6 +857,59 @@ function handleAfterInstallAllOp() {
 		$pdo = null;
 		return ajaxReturn( array( 'isSuccess' => false, 'msg' => '请确认执行了handleInstallAll请求' ) );
 	}
+}
+
+function handleUpdateCoinfoOp() {
+	$corpCode = strtolower( post( 'qycode' ) );
+	$pdo = null;
+	$corpRow = getCorpByCode( $corpCode, $pdo );
+	// 检查数据库连接正确性
+	if ( !empty( $corpRow ) ) {
+		$ibosApplication = PATH_ROOT . '/system/core/components/Application.php';
+		require_once ( $ibosApplication );
+		$commonConfig = require CONFIG_PATH . 'common.php';
+		Yii::createApplication( 'application\core\components\Application', $commonConfig );
+		//防止接口重复被调用导致n多个管理员的问题，嗯……这个情况吓我一跳
+		$user1 = Yii::app()->db->createCommand()
+				->select()
+				->from( '{{user}}' )
+				->where( " `uid` = 1 " )
+				->queryRow();
+		if ( !empty( $user1 ) ) {
+			$coGuid = post( 'guid' );
+			$corpid = post( 'cocorpid' );
+			$shortname = post( 'shortname' );
+			$fullname = post( 'fullname' );
+			$mobile = post( 'mobile' );
+			$string = serialize( array(
+				'guid' => $coGuid,
+				'mobile' => $mobile,
+				'corpid' => $corpid,
+				'corpshortname' => $shortname,
+				'corpname' => $fullname,
+				'corplogo' => ''
+					) );
+			$uid = $user1['uid'];
+			Yii::app()->db->createCommand()
+					->insert( '{{user_binding}}', array( 'uid' => $uid, 'bindvalue' => $coGuid, 'app' => 'co' ) );
+			Yii::app()->db->createCommand()
+					->update( '{{setting}}', array(
+						'svalue' => $string,
+							), " `skey` = 'coinfo' " );
+			Yii::app()->db->createCommand()
+					->update( '{{setting}}', array(
+						'svalue' => 1,
+							), " `skey` = 'cobinding' " );
+		}
+		Cache::update();
+		return ajaxReturn( array(
+			'isSuccess' => true,
+			'msg' => '更新酷办公信息成功', ) );
+	}
+	return ajaxReturn( array(
+		'isSuccess' => false,
+		'msg' => '更新酷办公信息失败',
+			) );
 }
 
 /**

@@ -1,8 +1,7 @@
-<?php 
+<?php
 
 use application\core\utils\Env;
 use application\modules\main\utils\Main;
-
 ?>
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/diary.css?<?php echo VERHASH; ?>">
@@ -34,10 +33,10 @@ use application\modules\main\utils\Main;
 							<i href="javascript:;" data-action="toggleAsterisk" <?php if ( $isattention ): ?>class="o-da-asterisk"<?php else: ?>class="o-da-unasterisk"<?php endif; ?> data-id="<?php echo $user['uid']; ?>" data-param='{"id": "<?php echo $user['uid']; ?>"}'></i>
 						<?php endif; ?>
 					</div>
-					
+
 					<span class="usi-terse-user"><?php echo $user['realname']; ?></span>
 					<span class="usi-terse-group"><?php echo $user['deptname']; ?></span>
-					
+
 				</div>
 			</div>
 		</div>
@@ -47,7 +46,7 @@ use application\modules\main\utils\Main;
                     <div class="search search-config pull-right span3">
                         <input type="text" name="keyword" placeholder="Search" id="mn_search" nofocus value="<?php
 						if ( Env::getRequest( 'param' ) == 'search' ) {
-						echo Main::getCookie( 'keyword' );
+							echo Main::getCookie( 'keyword' );
 						};
 						?>">
                         <a href="javascript:;">search</a>
@@ -82,7 +81,7 @@ use application\modules\main\utils\Main;
 											<span class="fss ilsep">|</span>
 											<a href="javascript:;" data-node-type="loadReader" class="fss" data-id="<?php echo $diary['diaryid']; ?>"><?php echo $lang['Read']; ?>  <em><?php echo $diary['readercount']; ?></em></a>
 											<?php if ( $diary['stamp'] > 0 ): ?>
-												&nbsp;&nbsp;<img width="60" height="24" src="<?php echo $diary['stampPath']; ?>"/>
+												&nbsp;&nbsp;<img width="60" height="24" id="diary_stamp_<?php echo $diary['diaryid']; ?>" src="<?php echo $diary['stampPath']; ?>"/>
 											<?php endif; ?>
 										</div>
 									</div>
@@ -120,19 +119,19 @@ use application\modules\main\utils\Main;
         <div class="control-group">
             <label for="" class="control-label"><?php echo $lang['Startime']; ?></label>
             <div class="controls">
-            	<div class="datepicker" id="date_start">
-            		<a href="javascript:;" class="datepicker-btn"></a>
-            		<input type="text" class="datepicker-input" name="search[starttime]">
-            	</div>
+				<div class="datepicker" id="date_start">
+					<a href="javascript:;" class="datepicker-btn"></a>
+					<input type="text" class="datepicker-input" name="search[starttime]">
+				</div>
             </div>
         </div>
         <div class="control-group">
             <label for="" class="control-label"><?php echo $lang['Endtime']; ?></label>
             <div class="controls">
-            	<div class="datepicker" id="date_end">
-            		<a href="javascript:;" class="datepicker-btn"></a>
-            		<input type="text" class="datepicker-input" name="search[endtime]">
-            	</div>
+				<div class="datepicker" id="date_end">
+					<a href="javascript:;" class="datepicker-btn"></a>
+					<input type="text" class="datepicker-input" name="search[endtime]">
+				</div>
             </div>
         </div>
         <input type="hidden" name="type" value="advanced_search"> 
@@ -154,33 +153,33 @@ use application\modules\main\utils\Main;
 <script src='<?php echo $assetUrl; ?>/js/diary.js?<?php echo VERHASH; ?>'></script>
 <script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script>
-	$(document).ready(function() {
+	$(document).ready(function () {
 		//高级搜索
-	    $("#mn_search").search(null, function(){
-	        Ui.dialog({
-	            id: "d_advance_search",
-	            title: U.lang("ADVANCED_SETTING"),
-	            content: document.getElementById("mn_search_advance"),
-	            cancel: true,
-	            init: function(){
-	                var form = this.DOM.content.find("form")[0];
-	                form && form.reset();
-	                // 初始化日期选择
-	                $("#date_start").datepicker({ target: $("#date_end") });
-	            },
-	            ok: function(){
-	                this.DOM.content.find("form").submit();
-	            },
-	        })
-	    })
-		
+		$("#mn_search").search(null, function () {
+			Ui.dialog({
+				id: "d_advance_search",
+				title: U.lang("ADVANCED_SETTING"),
+				content: document.getElementById("mn_search_advance"),
+				cancel: true,
+				init: function () {
+					var form = this.DOM.content.find("form")[0];
+					form && form.reset();
+					// 初始化日期选择
+					$("#date_start").datepicker({target: $("#date_end")});
+				},
+				ok: function () {
+					this.DOM.content.find("form").submit();
+				},
+			})
+		})
+
 		$("[data-toggle='tooltip']").tooltip();
 
 		var supUid = Ibos.app.g("supUid");
 		if (supUid) {
 			var $sub = $('.g-sub[data-uid=' + supUid + ']');
 			$sub.click()
-			.parent().addClass('active');
+					.parent().addClass('active');
 		}
 	});
 </script>

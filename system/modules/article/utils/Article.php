@@ -10,12 +10,13 @@
 /**
  * 信息中心模块------  文章工具类
  * @package application.modules.article.model
- * @version $Id: Article.php 7605 2016-07-20 02:16:23Z gzhyj $
+ * @version $Id: Article.php 8563 2016-09-29 07:56:31Z tanghang $
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
 namespace application\modules\article\utils;
 
+use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\article\model\Article as ArticleModel;
 use application\modules\article\model\ArticleReader;
@@ -35,59 +36,69 @@ class Article {
     //草稿
     const TYPE_DRAFT = 'draft';
 
-	/**
-	 * 列表查询条件组合
-	 * @param string $type 全部、未读、已读、未审核、草稿 这几种类型
-	 * @param string $catid 分类id 包括当前分类及它的子类以','号分割的字符串
-	 * @param string $condition 其他的查询条件
-	 * @return array $condition 组合好的查询条件
-	 */
-	public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
-		$user = User::model()->fetchByUid( $uid );
-		$upDeptid = Department::model()->queryDept( $user['deptid'] );
-		$typeWhere = self::joinTypeCondition( $type, $uid, $catid );
-		if ( !empty( $condition ) ) {
-			$condition .=" AND " . $typeWhere;
-		} else {
-			$condition = $typeWhere;
-		}
-		//加上阅读权限判断
-		$allDeptId = array_filter( array_unique( explode( ',', $upDeptid . "," . $user['alldeptid'] ) ) );
-		$deptCondition = '';
+    /**
+     * 列表查询条件组合
+     * @param string $type 全部、未读、已读、未审核、草稿 这几种类型
+     * @param string $catid 分类id 包括当前分类及它的子类以','号分割的字符串
+     * @param string $condition 其他的查询条件
+     * @return array $condition 组合好的查询条件
+     */
+    public static function joinListCondition( $type, $uid, $catid = 0, $condition = '' ) {
+        $user = User::model()->fetchByUid( $uid );
+        $upDeptid = Department::model()->queryDept( $user['deptid'] );
+        $typeWhere = self::joinTypeCondition( $type, $uid, $catid );
+        if ( !empty( $condition ) ) {
+            $condition .=" AND " . $typeWhere;
+        } else {
+            $condition = $typeWhere;
+        }
+        //加上阅读权限判断
+        $allDeptId = array_filter( array_unique( explode( ',', $upDeptid . "," . $user['alldeptid'] ) ) );
 		$deptConditionArray = array();
 		if ( count( $allDeptId ) > 0 ) {
 			foreach ( $allDeptId as $deptId ) {
-				$deptConditionArray[] = "FIND_IN_SET('$deptId',deptid)";
+				$deptConditionArray[] = "FIND_IN_SET( '$deptId',deptid)";
 			}
 			$deptCondition = implode( ' OR ', $deptConditionArray );
-		} else {
-			$deptCondition = "FIND_IN_SET('',deptid)";
-		}
-		// $scopeCondition = " ( ((deptid='alldept' OR $deptCondition OR FIND_IN_SET('{$allPosId}',positionid) OR FIND_IN_SET('{$uid}',uid)) OR (deptid='' AND positionid='' AND uid='') OR (author='{$uid}') OR (approver='{$uid}')) )";
-		$scopeCondition = " ( ((deptid='alldept' OR "
-				. "{$deptCondition} OR "
-				. "FIND_IN_SET('{$user['allposid']}',positionid) OR "
-				. "FIND_IN_SET('{$uid}',uid) OR "
-				. "FIND_IN_SET('{$user['allroleid']}',roleid)) OR "
-				. "(author='{$uid}') OR (approver='{$uid}')) ";
+        } else {
+            $deptCondition = "FIND_IN_SET( '',deptid)";
+        }
+        //主要是考虑到如果有辅助部门和辅助岗位和辅助角色的时候需要有列表显示
+        $posCon = '';
+        $pos = explode(',',$user['allposid']);
+        for($i=0;$i<count($pos);$i++){
+            $posCon .= "FIND_IN_SET('{$pos[$i]}',positionid) OR ";
+        }
+        $roleCon = '';
+        $role = explode(',',$user['allroleid']);
+        for($i=0;$i<count($role);$i++){
+            $roleCon .= "FIND_IN_SET('{$role[$i]}',roleid) OR ";
+        }
+        $scopeCondition = " ( ((deptid='alldept' OR "
+                . "{$deptCondition} OR FIND_IN_SET('{$user['deptid']}',deptid) OR "
+                . "FIND_IN_SET('{$user['positionid']}',positionid) OR "
+                . $posCon
+                . $roleCon
+                . "FIND_IN_SET('{$uid}',uid) OR "
+                . "FIND_IN_SET('{$user['roleid']}',roleid)) OR "
+                . "(author='{$uid}') OR (approver='{$uid}')) ";
+        // 如果新闻当前状态为：未审核
+        // 审核人可以看到所有属于他的所有未审核新闻
+        if (self::TYPE_NOTALLOW === $type) {
+            $scopeCondition .= " OR {$typeWhere} ";
+        }
+        $scopeCondition .= " ) ";
+        $condition.=" AND " . $scopeCondition;
+        if ( !empty( $catid ) ) {
+            $condition.=" AND catid IN ($catid)";
+        }
 
-		// 如果新闻当前状态为：未审核
-		// 审核人可以看到所有属于他的所有未审核新闻
-		if ( self::TYPE_NOTALLOW === $type ) {
-			$scopeCondition .= " OR {$typeWhere} ";
-		}
-		$scopeCondition .= " ) ";
-		$condition.=" AND " . $scopeCondition;
-		if ( !empty( $catid ) ) {
-			$condition.=" AND catid IN ($catid)";
-		}
-
-		// 只有对应步骤的审核人才能看到未审核新闻
-		if ( self::TYPE_NOTALLOW === $type ) {
-			$condition .= " AND (approver IN (0, {$uid})) ";
-		}
-		return $condition;
-	}
+        // 只有对应步骤的审核人才能看到未审核新闻
+        if (self::TYPE_NOTALLOW === $type) {
+            $condition .= " AND (approver IN (0, {$uid})) ";
+        }
+        return $condition;
+    }
 
     /**
      * 获取类型条件
@@ -147,26 +158,26 @@ class Article {
         return $condition . $newCondition;
     }
 
-	/**
-	 * 判断信息中心的阅读权限
-	 * @param integer $uid 用户访问uid
-	 * @param array $data 文章数据
-	 * @return boolean
-	 */
-	public static function checkReadScope( $uid, $data ) {
-		if ( $data['deptid'] == 'alldept' ) {
-			return true;
-		}
-		if ( $uid == $data['author'] ) {
-			return true;
-		}
-		//如果都为空，返回true
-		if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
-			return true;
-		}
-		if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) ) {
-			return true;
-		}
+    /**
+     * 判断信息中心的阅读权限
+     * @param integer $uid 用户访问uid
+     * @param array $data 文章数据
+     * @return boolean
+     */
+    public static function checkReadScope( $uid, $data ) {
+        if ( $data['deptid'] == 'alldept' ) {
+            return true;
+        }
+        if ( $uid == $data['author'] ) {
+            return true;
+        }
+        //如果都为空，返回true
+        if ( empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['uid'] ) ) {
+            return true;
+        }
+        if(empty( $data['deptid'] ) && empty( $data['positionid'] ) && empty( $data['roleid'] )){
+            return true;
+        }
         //得到用户的部门id,如果该id存在于文章部门范围之内,返回true
         $user = User::model()->fetch( array( 'select' => array( 'deptid', 'positionid' ), 'condition' => 'uid=:uid', 'params' => array( ':uid' => $uid ) ) );
         $departRelated = DepartmentRelated::model()->fetchAllDeptIdByUid( $uid );
@@ -175,17 +186,75 @@ class Article {
         if ( StringUtil::findIn( $user['deptid'] . ',' . implode( ',', $departRelated ), $childDeptid . ',' . $data['deptid'] ) ) {
             return true;
         }
-		//取得文章岗位范围Id与用户岗位相比较,话说写这个有什么用呢？因为无论审核人在不在这个文章发布的岗位发布范围内，他作为审核人肯定可以查看审核啦！因此这段代码可以说写了也没有什么用。
+        //考虑辅助部门的时候
+        if(static::isDepterment($data['deptid'],$user['deptid'])){
+            return true;
+        }
+        //取得文章岗位范围Id与用户岗位相比较
         if ( StringUtil::findIn( $data['positionid'], $user['positionid'] ) ) {
             return true;
-		}else{
-		    return true;
+        }
+        //考虑辅助岗位的时候
+        if(static::isPosition($data['positionid'],$uid)){
+            return true;
         }
         if ( StringUtil::findIn( $data['uid'], $uid ) ) {
             return true;
         }
         if ( StringUtil::findIn( $data['roleid'], $user['roleid'] ) ) {
             return true;
+        }
+        //辅助辅助角色的时候
+        if(static::isRole($data['roleid'], $user['roleid'])){
+            return true;
+        }
+        return false;
+    }
+
+    /*
+     * 判断文章的发布岗位是否在用户的辅助岗位上
+     */
+    public static function isPosition($pid = 0,$uid){
+        $positionId = Ibos::app()->db->createCommand()
+            ->select('positionid')
+            ->from('{{position_related}}')
+            ->where('uid = :uid', array(':uid' => $uid))->queryAll();
+        for($i=0;$i<count($positionId);$i++){
+            if($positionId[$i]['positionid'] == $pid){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 判断文章的发布角色是否在用户的辅助角色上
+     */
+    public static function isRole($rid,$uid){
+        $ruleId = Ibos::app()->db->createCommand()
+            ->select('roleid')
+            ->from('{{role_related}}')
+            ->where('uid = :uid', array(':uid' => $uid))->queryAll();
+        for($i=0;$i<count($ruleId);$i++){
+            if($ruleId[$i]['roleid'] == $rid){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*
+     * 判断文章的发布部门是否在用户的辅助部门上
+     */
+    public static function isDepterment($did,$uid){
+        $deptermentId = Ibos::app()->db->createCommand()
+            ->select('deptid')
+            ->from('{{department_related}}')
+            ->where('uid = :uid', array(':uid' => $uid))->queryAll();
+        for($i=0;$i<count($deptermentId);$i++){
+            if($deptermentId[$i]['deptid'] == $did){
+                return true;
+            }
         }
         return false;
     }

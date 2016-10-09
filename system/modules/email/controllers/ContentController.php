@@ -71,7 +71,12 @@ class ContentController extends BaseController {
             if ($op == 'quickReply') {
                 $data = EmailBody::model()->fetchByPk($id);
                 $content = CHtml::encode(Env::getRequest('content'));
+                //根据当前的用户和外部邮箱来得到当前用户外部邮箱的id
+                $row = EmailWeb::model()->find('uid = :uid AND address = :address',array(':uid' => $this->uid,':address' => $data['towebmail']));
                 $bodyData = EmailBody::model()->getAttributes();
+                $bodyData['fromwebmail'] = $data['towebmail'];
+                $bodyData['towebmail'] = $data['fromwebmail'];
+                $bodyData['fromwebid'] = $row->webid;
                 $bodyData['issend'] = 1;
                 $bodyData['fromid'] = $this->uid;
                 $bodyData['toids'] = $data['fromid'];
@@ -131,7 +136,9 @@ class ContentController extends BaseController {
                                     }
                                 } else {
                                     if (empty($bodyData['fromid'])) {
-                                        $allIds = StringUtil::filterStr($bodyData['toids'] . ',' . $bodyData['copytoids']);
+                                        //觉得这里有问题，感觉怪怪的
+//                                        $allIds = StringUtil::filterStr($bodyData['toids'] . ',' . $bodyData['copytoids']);
+                                        $allIds = StringUtil::filterStr( $bodyData['fromwebmail']. ',' . $bodyData['copytoids']);
                                         foreach (explode(',', $allIds) as $key => $uid) {
                                             if (!empty($uid)) {
                                                 $tempUid = strpos($uid, '@');
@@ -244,8 +251,13 @@ class ContentController extends BaseController {
                 'allowWebMail' => $this->allowWebMail,
                 'webMails' => $this->webMails,
                 'systemRemind' => Ibos::app()->setting->get('setting/emailsystemremind'),
-                'uploadConfig' => Attach::getUploadConfig()
+                'uploadConfig' => Attach::getUploadConfig(),
+                'isInstallThread' => Module::getIsEnabled('thread')
             );
+            
+            if ($data['isInstallThread']) {
+                $data['threadList'] = Thread::model()->getThreadList(Ibos::app()->user->uid);
+            }
             $this->setPageTitle(Ibos::lang('Edit email'));
             $this->setPageState('breadCrumbs', array(
                 array('name' => Ibos::lang('Personal Office')),
@@ -284,6 +296,8 @@ class ContentController extends BaseController {
             if (!$isReceiver) {
                 $this->error(Ibos::lang('View access invalid'), $this->createUrl('list/index'));
             }
+
+            $email['content'] = nl2br($email['content']);
             // 显示外部邮件框架内容
             if (Env::getRequest('op') == 'showframe') {
                 echo $email['content'];
@@ -356,9 +370,23 @@ class ContentController extends BaseController {
                 $data['webid'] = $email['bodyid'];
             }
             !empty($email['attachmentid']) && $data['attach'] = Attach::getAttach($email['attachmentid']);
-            // 获取上/下一封邮件
-            $data['next'] = Email::model()->fetchNext($id, $this->uid, $email['fid'], $this->archiveId);
-            $data['prev'] = Email::model()->fetchPrev($id, $this->uid, $email['fid'], $this->archiveId);
+            // 获取上/下一封邮件,需要考虑已发送和已删除的两种情况
+            if($email['isdel'] == 3){
+                $data['next'] = Email::model()->fetchNextDel($id, $this->uid,$this->archiveId,3,1);
+                $data['prev'] = Email::model()->fetchPrevDel($id, $this->uid,$this->archiveId,3,1);
+            }
+            elseif((isset($_GET['op']) && $_GET['op'] === 'send')){
+                    $sendEmail = EmailBody::model()->fetchById($id, $this->archiveId);
+                    $data['next'] = Email::model()->fetchNextSend($sendEmail['emailid'], $this->uid,$this->archiveId,0,1);
+                    $data['prev'] = Email::model()->fetchPrevSend($sendEmail['emailid'], $this->uid,$this->archiveId,0,1);
+            }elseif (($email['fromid'] == $this->uid && $email['isdel'] == 0)){
+                $data['next'] = Email::model()->fetchNextSend($id,$this->uid,$this->archiveId,0,1);
+                $data['prev'] = Email::model()->fetchPrevSend($id, $this->uid,$this->archiveId,0,1);
+            }
+            else{
+                $data['next'] = Email::model()->fetchNext($id, $this->uid, $email['fid'], $this->archiveId);
+                $data['prev'] = Email::model()->fetchPrev($id, $this->uid, $email['fid'], $this->archiveId);
+            }
             $data['email'] = $email;
             $data['weekDay'] = DateTime::getWeekDay($email['sendtime']);
             $this->setPageTitle(Ibos::lang('Show email'));

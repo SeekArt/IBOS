@@ -4,7 +4,7 @@
  * 用户模块函数库
  *
  * @package application.app.user.utils
- * @version $Id: User.php 8197 2016-09-01 10:22:14Z tanghang $
+ * @version $Id: User.php 8536 2016-09-28 01:30:57Z tanghang $
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -313,7 +313,7 @@ class User {
 			$condition = 1;
 		} else {
 			$uidString = is_array( $uidX ) ? implode( ',', $uidX ) : $uidX;
-			$condition = !empty( $uidString ) ? " `uid` IN ( '{$uidString}' ) " : 0;
+			$condition = !empty( $uidString ) ? " FIND_IN_SET( `uid`, '{$uidString}' ) " : 0;
 		}
 		if ( false === $force ) {
 			//找缓存
@@ -405,7 +405,7 @@ class User {
 						$user['level'] = $userGroup['grade'];
 					}
 
-					if ( $user['deptid'] > 0 ) {
+					if ( $user['deptid'] >= 0 ) {
 						$related = !empty( $deptidRelated[$user['uid']] ) ? $deptidRelated[$user['uid']] : array();
 						$deptIds = $related;
 						$deptIds[] = $user['deptid'];
@@ -457,7 +457,7 @@ class User {
 				$transaction->commit();
 			} catch (Exception $e) {
 				//如果已经有数据，要回滚就回滚好了~~，所以之前就会处理有没有数据
-				//$transaction->rollBack();
+				$transaction->rollBack();
 			}
 			if ( $loop == '0' ) {
 				return false;
@@ -530,8 +530,9 @@ class User {
 
 	/**
 	 * 获取用户等级
-	 * @param array $user 用户数组
-	 * @return integer
+	 * @param $groupid
+	 * @return int
+	 * @internal param array $user 用户数组
 	 */
 	public static function getUserLevel( $groupid ) {
 		static $cache = NULL;
@@ -959,7 +960,7 @@ class User {
 		$list = UserModel\User::model()->fetchAllByUids( $uids, $returnDisabled );
 		// $list 的值可能为 false， 需判断 $list 是否可迭代数据。
 		// 否则，在使用 foreach 的时候，会导致错误。即 Invalid argument supplied for foreach()
-		if (!is_array( $list ) && !($list instanceof \Traversable)) {
+		if ( !is_array( $list ) && !($list instanceof \Traversable) ) {
 			$list = array();
 		}
 		foreach ( $list as $k => $v ) {

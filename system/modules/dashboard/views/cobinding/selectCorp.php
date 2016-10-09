@@ -1,5 +1,5 @@
 <link href="<?php echo $this->getAssetUrl(); ?>/css/ibosco.css" type="text/css" rel="stylesheet">
-<div class="new-binding-wrap <?php if( $isInstall ) : ?>binding-install-wrap<?php endif; ?>">
+<div class="<?php if( $isInstall ) : ?>binding-install-wrap<?php endif; ?>">
 	<div class="ct">
 		<?php if( !$isInstall ) : ?>
 			<div class="clearfix">

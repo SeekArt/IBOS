@@ -37,9 +37,8 @@ class WxbindingController extends WxController {
 			'aeskey' => $aeskey,
 			'isBinding' => $this->isBinding,
 		);
-		$currentUid = Ibos::app()->user->uid;
-		$loginWebUid = Ibos::app()->cache->get( $currentUid . 'loginWeb' );
-		if ( !$loginWebUid ) {
+		$isLogin = $this->wxqyInfo['isLogin'];
+		if ( false === $isLogin ) {
 			$view = 'login';
 		} else {
 			$view = 'index';
@@ -57,24 +56,28 @@ class WxbindingController extends WxController {
 			}
 			$params['access'] = $isSuccess;
 			$params['msg'] = $msg;
-			$params['url'] = $isSuccess ? WebSite::getInstance()->build( 'Wxapi/Api/toWx', array(
-						'state' => base64_encode( json_encode( array(
-							'domain' => $params['domain'],
-							'uid' => $loginWebUid,
-							'aeskey' => $params['aeskey'],
-							'version' => strtolower( implode( ',', array( ENGINE, VERSION, VERSION_DATE ) ) )
-						) ) )
-					) ) : '';
-			$params['url'] .= '&' . rand( 0, 999 );
 		}
+
 		if ( true === $this->isBinding ) {
 			$params['wxlogo'] = $this->wxqyInfo['logo'];
 			$params['wxcorpid'] = $this->wxqyInfo['corpid'];
 			$params['wxname'] = $this->wxqyInfo['name'];
 			$params['mobile'] = $this->wxqyInfo['mobile'];
 			$params['app'] = $this->wxqyInfo['app'];
+			return $this->redirect( $this->createUrl( 'wxsync/index' ) );
 		}
 		return $this->render( $view, $params );
+	}
+
+	public function actionCheckAccess() {
+		$domain = Ibos::app()->getRequest()->getPost( 'domain' );
+		$aeskey = Ibos::app()->setting->get( 'setting/aeskey' );
+		$res = WebSite::getInstance()->fetch( 'Api/Api/checkAccess', array(
+			'domain' => $domain,
+			'aeskey' => $aeskey,
+				), 'post' );
+		$ajaxReturn = $this->ajaxReturnArray( $res );
+		return $this->ajaxReturn( $ajaxReturn );
 	}
 
 	public function actionLogin() {
@@ -87,17 +90,17 @@ class WxbindingController extends WxController {
 				), 'post' );
 		$ajaxReturn = $this->ajaxReturnArray( $res );
 		if ( true === $ajaxReturn['isSuccess'] ) {
-			$uid = $ajaxReturn['data']['uid'];
-			$currentUid = Ibos::app()->user->uid;
-			Ibos::app()->cache->set( $currentUid . 'loginWeb', $uid );
+			Ibos::app()->user->setState( 'param', array(
+				'uid' => $ajaxReturn['data']['uid'],
+				'wxqyInfo' => array( 'mobile' => $mobile )
+			) );
 		}
 		return $this->ajaxReturn( $ajaxReturn );
 	}
 
 	public function actionLogout() {
-		$currentUid = Ibos::app()->user->uid;
-		Ibos::app()->cache->set( $currentUid . 'loginWeb', null );
-		return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
+		Ibos::app()->user->setState( 'param', array() );
+		return $this->redirect( $this->createUrl('wxbinding/index' ));
 	}
 
 	public function actionRegister() {
@@ -112,9 +115,10 @@ class WxbindingController extends WxController {
 				), 'post' );
 		$ajaxReturn = $this->ajaxReturnArray( $res );
 		if ( true === $ajaxReturn['isSuccess'] ) {
-			$uid = $ajaxReturn['data']['uid'];
-			$currentUid = Ibos::app()->user->uid;
-			Ibos::app()->cache->set( $currentUid . 'loginWeb', $uid );
+			Ibos::app()->user->setState( 'param', array(
+				'uid' => $ajaxReturn['data']['uid'],
+				'wxqyInfo' => array( 'mobile' => $mobile )
+			) );
 		}
 		return $this->ajaxReturn( $ajaxReturn );
 	}
@@ -165,6 +169,35 @@ class WxbindingController extends WxController {
 				'data' => isset( $result['data'] ) ? $result['data'] : array(),
 			);
 		}
+	}
+
+	public function actionLocationWx() {
+		$request = Ibos::app()->request;
+		$domain = $request->getPost( 'domain' );
+		$aeskey = Ibos::app()->setting->get( 'setting/aeskey' );
+		if ( isset( Ibos::app()->user->param['uid'] ) ) {
+			//如果没有登录酷办公，就强制跳转到首页登录
+			$uid = Ibos::app()->user->param['uid'];
+		} else {
+			Ibos::app()->user->setState( 'param', array() );
+			return $this->redirect( $this->createUrl('wxbinding/index' ));
+		}
+		$url = WebSite::getInstance()->build( 'Wxapi/Api/toWx', array(
+			'state' => base64_encode( json_encode( array(
+				'domain' => $domain,
+				'uid' => $uid,
+				'aeskey' => $aeskey,
+				'version' => strtolower( implode( ',', array( ENGINE, VERSION, VERSION_DATE ) ) )
+			) ) )
+				) );
+		$url .= '&' . rand( 0, 999 );
+		return $this->ajaxReturn( array(
+					'isSuccess' => true,
+					'msg' => '',
+					'data' => array(
+						'url' => $url,
+					),
+				) );
 	}
 
 }
