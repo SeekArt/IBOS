@@ -4,7 +4,7 @@
  * 邮件中心默认语言包 zh_cn
  *
  * @package application.modules.email.language.zh_cn
- * @version $Id: default.php 8549 2016-09-28 10:07:50Z tanghang $
+ * @version $Id: default.php 8575 2016-10-08 08:32:06Z gzhyj $
  * @author Ring <Ring@ibos.com.cn>
  */
 return array(
@@ -183,7 +183,7 @@ return array(
     'Empty email address' => '请填写正确的邮箱地址。',
     'Empty email password' => '请填写邮箱密码。',
     'Error server info' => '您所填写的服务器地址验证不通过，无法建立外部邮箱。',
-    'More server info' => '请填写正确的服务器地址信息以便进行验证。',
+    'More server info' => '个人邮箱请填写正确的服务器地址信息以便进行验证。',
     'OpenSSL needed' => '缺少PHP扩展openssl，无法使用SSL链接。',
     'Empty server address' => '请填写服务器地址',
     'Edit web mail' => '修改外部邮箱',

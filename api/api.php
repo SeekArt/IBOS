@@ -5,11 +5,10 @@ use application\core\utils\Ibos;
 use application\modules\main\model\Setting;
 
 // 程序根目录路径
-define( 'PATH_ROOT', dirname( __FILE__ ) . '/../' );
+defined( 'PATH_ROOT' ) || define( 'PATH_ROOT', dirname( __FILE__ ) . '/../' );
 $defines = PATH_ROOT . '/system/defines.php';
 require_once ( $defines );
-define( 'TIMESTAMP', time() );
-define( 'YII_DEBUG', true );
+defined( 'TIMESTAMP' ) || define( 'TIMESTAMP', time() );
 $yii = PATH_ROOT . '/library/yii.php';
 require_once ( $yii );
 $mainConfig = require_once PATH_ROOT . '/system/config/common.php';

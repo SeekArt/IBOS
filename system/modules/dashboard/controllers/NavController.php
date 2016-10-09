@@ -46,6 +46,9 @@ class NavController extends BaseController {
         if ( !isset( $nav['disabled'] ) ) {
             $nav['disabled'] = 1;
         }
+        if(!isset($nav['system'])){
+            $nav['system'] = 0;
+        }
         if ( !isset( $nav['targetnew'] ) ) {
             $nav['targetnew'] = 0;
         }

@@ -87,8 +87,8 @@ use application\core\utils\Ibos;
 											<input type="checkbox" name="navs[<?php echo $key; ?>][targetnew]" value="1" <?php if ( $nav['targetnew'] == '1' ): ?>checked<?php endif; ?> />
 										</label>
 									</div>
-									<input type="hidden" data-type="module" name="navs[<?php echo $key; ?>][module]" value="<?php echo $nav['module']; ?>"
-									<input type="hidden" data-type="isSystem" name="navs[<?php echo $key; ?>][isSystem]" value="<?php if ( $nav['system'] == '1' ): ?>1<?php else: ?>0<?php endif; ?>">
+									<input type="hidden" data-type="module" name="navs[<?php echo $key; ?>][module]" value="<?php echo $nav['module']; ?>"/>
+									<input type="hidden" data-type="isSystem" name="navs[<?php echo $key; ?>][isSystem]" value="<?php echo $nav['system']; ?>">
 								</div>
 								<div class="add-nav-item">
 									<ul class="nav-child-list" data-id='<?php echo $key; ?>' id="sys_child_<?php echo $key; ?>_body">
@@ -147,8 +147,8 @@ use application\core\utils\Ibos;
 														<input type="checkbox" name="navs[<?php echo $subVal['id']; ?>][targetnew]" value="1" <?php if ( $subVal['targetnew'] == '1' ): ?>checked<?php endif; ?> />
 													</label>
 												</div>
-												<input type="hidden" data-type="module" name="navs[<?php echo $subVal['id']; ?>][module]" value="<?php echo $subVal['module']; ?>"
-												<input type="hidden" data-type="isSystem" name="navs[<?php echo $subVal['id']; ?>][isSystem]" value="<?php if ( $subVal['system'] == '1' ): ?>1<?php else: ?>0<?php endif; ?>">
+												<input type="hidden" data-type="module" name="navs[<?php echo $subVal['id']; ?>][module]" value="<?php echo $subVal['module']; ?>"/>
+												<input type="hidden" data-type="isSystem" name="navs[<?php echo $subVal['id']; ?>][isSystem]" value="<?php echo $nav['system']; ?>">
 											</div>
 										</li>
 										<?php endforeach; ?>

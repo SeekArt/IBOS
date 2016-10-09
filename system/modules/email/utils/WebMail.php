@@ -620,6 +620,8 @@ EOT;
                 return self::receivePopMail($web, $pwd);
             } elseif ($prefix == 'imap') {
                 return self::receiveImapMail($web, $pwd);
+            } else {
+                return self::receiveOtherMail($web, $pwd);
             }
         } catch (\Exception $e) {
             if (Ibos::app()->request->getIsAjaxRequest()) {
@@ -817,6 +819,22 @@ EOT;
         }
 
         return true;
+    }
+
+    /**
+     * 接收未知类型的邮箱邮件
+     * 先尝试使用 pop 协议连接；如果连接失败，则再尝试使用 imap 协议连接。
+     *
+     * @param $web
+     * @param $pwd
+     * @return mixed
+     */
+    protected static function receiveOtherMail($web, $pwd) {
+        try {
+            return self::receivePopMail($web, $pwd);
+        } catch (\Exception $e) {
+            return self::receiveImapMail($web, $pwd);
+        }
     }
 
 
