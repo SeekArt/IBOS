@@ -57,15 +57,17 @@ class WxbindingController extends WxController {
 			$params['access'] = $isSuccess;
 			$params['msg'] = $msg;
 		}
-
 		if ( true === $this->isBinding ) {
 			$params['wxlogo'] = $this->wxqyInfo['logo'];
 			$params['wxcorpid'] = $this->wxqyInfo['corpid'];
 			$params['wxname'] = $this->wxqyInfo['name'];
 			$params['mobile'] = $this->wxqyInfo['mobile'];
 			$params['app'] = $this->wxqyInfo['app'];
-			return $this->redirect( $this->createUrl( 'wxsync/index' ) );
+			if ( true === $isLogin ) {
+				return $this->redirect( $this->createUrl( 'wxsync/index' ) );
+			}
 		}
+
 		return $this->render( $view, $params );
 	}
 
@@ -100,7 +102,7 @@ class WxbindingController extends WxController {
 
 	public function actionLogout() {
 		Ibos::app()->user->setState( 'param', array() );
-		return $this->redirect( $this->createUrl('wxbinding/index' ));
+		return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
 	}
 
 	public function actionRegister() {
@@ -180,7 +182,7 @@ class WxbindingController extends WxController {
 			$uid = Ibos::app()->user->param['uid'];
 		} else {
 			Ibos::app()->user->setState( 'param', array() );
-			return $this->redirect( $this->createUrl('wxbinding/index' ));
+			return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
 		}
 		$url = WebSite::getInstance()->build( 'Wxapi/Api/toWx', array(
 			'state' => base64_encode( json_encode( array(
