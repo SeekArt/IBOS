@@ -6,25 +6,29 @@ use application\core\model\Model;
 use application\core\utils as util;
 use application\modules\user\model\User;
 
-class NotifyEmail extends Model {
+class NotifyEmail extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{notify_email}}';
-	}
+    public function tableName()
+    {
+        return '{{notify_email}}';
+    }
 
-	public function formatEmailNotify( $data ) {
-		$baseUrl = util\Ibos::app()->setting->get( 'siteurl' );
-		$fullName = util\Ibos::app()->setting->get( 'setting/unit/fullname' );
-		$user = User::model()->fetchByUid( $data['uid'] );
-		$named = $user['realname'] . ($user['gender'] == 1 ? ' 先生' : ' 女士');
-		$body = $data['body'];
-		$time = date('Y',time());
-		if ( $data['hasContent'] ) {
-			$bodyStr = <<<str
+    public function formatEmailNotify($data)
+    {
+        $baseUrl = util\Ibos::app()->setting->get('siteurl');
+        $fullName = util\Ibos::app()->setting->get('setting/unit/fullname');
+        $user = User::model()->fetchByUid($data['uid']);
+        $named = $user['realname'] . ($user['gender'] == 1 ? ' 先生' : ' 女士');
+        $body = $data['body'];
+        $time = date('Y', time());
+        if ($data['hasContent']) {
+            $bodyStr = <<<str
         <tr>
 			<td colspan="2">
 				<div style="width:493px; padding:25px; margin:0 auto; background:#FFF; border:1px solid #ededed">
@@ -33,8 +37,8 @@ class NotifyEmail extends Model {
 			</td>
 		</tr>   
 str;
-		} else {
-			$bodyStr = <<<EOT
+        } else {
+            $bodyStr = <<<EOT
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
@@ -111,9 +115,9 @@ str;
 </body>
 </html>
 EOT;
-		}
+        }
 
-		return $bodyStr;
-	}
+        return $bodyStr;
+    }
 
 }

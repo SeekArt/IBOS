@@ -16,7 +16,8 @@ use application\modules\email\utils\RyosImap;
 use application\modules\email\utils\WebMail;
 use application\modules\user\model\User;
 
-class WebController extends BaseController {
+class WebController extends BaseController
+{
 
     /**
      * 外部邮件附件下载
@@ -24,7 +25,8 @@ class WebController extends BaseController {
      * id = id -5;
      * i = i - 9;
      */
-    public function actionDownload() {
+    public function actionDownload()
+    {
         $id = isset($_GET['id']) ? intval($_GET['id']) - 5 : 0;
         if ($id <= 0)
             $this->error('抱歉，参数错误', $this->createUrl('web/index'));
@@ -84,7 +86,8 @@ class WebController extends BaseController {
     /**
      * 外部邮箱索引页
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $count = EmailWeb::model()->countByAttributes(array('uid' => $this->uid));
         $pages = Page::create($count, $this->getListPageSize());
         $list = EmailWeb::model()->fetchByList($this->uid, $pages->getOffset(), $pages->getLimit());
@@ -105,7 +108,8 @@ class WebController extends BaseController {
      * 新增操作
      * @return void
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $inAjax = (bool)Env::getRequest('inajax');
         if ($inAjax) {
             return $this->ajaxAdd();
@@ -128,7 +132,8 @@ class WebController extends BaseController {
      * 编辑操作
      * @return void
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         // 设置默认邮箱
         if (Env::getRequest('op') == 'setDefault') {
             $webId = Env::getRequest('webid');
@@ -169,11 +174,12 @@ class WebController extends BaseController {
     /**
      *  收取邮件
      */
-    public function actionReceive() {
+    public function actionReceive()
+    {
         $webId = intval(Env::getRequest('webid'));
         $webList = $this->webMails;
         if (empty($webList)) {
-            $this->ajaxReturn(array('isSuccess' => FALSE, 'msg' => Ibos::lang('Empty web mail box')));
+            $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('Empty web mail box')));
         }
         if ($webId === 0) {
             $web = $webList;
@@ -193,7 +199,8 @@ class WebController extends BaseController {
      * 删除操作
      * @return void
      */
-    public function actionDel() {
+    public function actionDel()
+    {
         $id = Env::getRequest('webids');
         if ($id) {
             $id = StringUtil::filterStr($id);
@@ -211,7 +218,8 @@ class WebController extends BaseController {
     /**
      * 显示外部邮件的部分内容（如附件，图片等）
      */
-    public function actionShow() {
+    public function actionShow()
+    {
         $webId = intval(Env::getRequest('webid'));
         $id = intval(Env::getRequest('id'));
         $folder = Env::getRequest('folder');
@@ -391,7 +399,8 @@ class WebController extends BaseController {
      * @param boolean $inAjax
      * @return type
      */
-    protected function processAddWebMail($inAjax = false) {
+    protected function processAddWebMail($inAjax = false)
+    {
         $web = Env::getRequest('web', 'P');
         $errMsg = array();
         $this->submitCheck($web, $inAjax);
@@ -467,7 +476,8 @@ class WebController extends BaseController {
      * @param integer $webId 外部邮箱ID
      * @return void
      */
-    protected function setDefault($webId) {
+    protected function setDefault($webId)
+    {
         if ($webId) {
             EmailWeb::model()->updateAll(array('isdefault' => 0), 'uid = ' . $this->uid);
             EmailWeb::model()->modify($webId, array('uid' => $this->uid, 'isdefault' => 1));
@@ -482,9 +492,12 @@ class WebController extends BaseController {
      * 快捷添加操作
      * @return void
      */
-    protected function ajaxAdd() {
+    protected function ajaxAdd()
+    {
         // if (Ibos::app()->request->getIsPostRequest()) {
-        if (Env::submitCheck('formhash')) {
+        //通过判断提交的数据是否有web这个数据，有的话说明是要开始提交邮箱和密码，否则的话就只想得到渲染的页面
+        $web = Env::getRequest('web');
+        if (isset($web)) {
             $newId = $this->processAddWebMail(true);
             $this->success(Ibos::lang('Save succeed', 'message'), '', array(), array('webId' => $newId));
         } else {
@@ -501,7 +514,8 @@ class WebController extends BaseController {
      * @param array $web
      * @return array 返回部分处理后的数据
      */
-    private function beforeSave($web) {
+    private function beforeSave($web)
+    {
         $web['nickname'] = isset($_POST['web']['nickname']) ? trim(htmlspecialchars($_POST['web']['nickname'])) : ''; //发信昵称
         if (empty($web['nickname'])) {  //如果为空默认设置为真实姓名
             $web['nickname'] = Ibos::app()->user->realname;
@@ -516,7 +530,8 @@ class WebController extends BaseController {
      * @param array $data
      * @param boolean $inajax
      */
-    private function submitCheck($data, $inAjax) {
+    private function submitCheck($data, $inAjax)
+    {
         if (isset($data['address']) && empty($data['address'])) {
             $this->error(Ibos::lang('Empty email address'), '', array(), $inAjax);
         }

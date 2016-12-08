@@ -27,5 +27,6 @@ L.WB = {
 	DIGG:                            '赞',
 	DIGGED:                          '已赞',
 	VIEWDIGGLIST:                    '查看赞我的人员',
-	VIEWALLOWEDLIST:                 '允许查看的人员'
+	VIEWALLOWEDLIST:                 '允许查看的人员',
+	PUBLISH_TIME_LIMIT:              '发布频率间隔不应低于<%= time %>秒，请稍后重试'
 }

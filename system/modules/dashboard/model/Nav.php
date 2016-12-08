@@ -11,7 +11,7 @@
  *  nav表的数据层操作
  *
  * @package application.modules.dashboard.model
- * @version $Id: Nav.php 6450 2016-02-25 09:15:51Z tanghang $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -21,22 +21,27 @@ use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 use application\core\utils\Ibos;
 
-class Nav extends Model {
+class Nav extends Model
+{
 
-    public function init() {
+    public function init()
+    {
         $this->cacheLife = 0;
         parent::init();
     }
 
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{nav}}';
     }
 
-    public function afterSave() {
+    public function afterSave()
+    {
         CacheUtil::update('Nav');
         CacheUtil::load('Nav');
         parent::afterSave();
@@ -46,13 +51,14 @@ class Nav extends Model {
      * 查找所有的导航设置并以父子形式返回数组
      * @return array
      */
-    public function fetchAllByAllPid() {
+    public function fetchAllByAllPid()
+    {
 
         $all = Ibos::app()->db->createCommand()
-                ->select('*')
-                ->from($this->tableName())
-                ->order(" pid ASC,sort ASC ")
-                ->queryAll();
+            ->select('*')
+            ->from($this->tableName())
+            ->order(" pid ASC,sort ASC ")
+            ->queryAll();
         $result = array();
         foreach ($all as $v) {
             $result[$v['id']] = $v;
@@ -76,7 +82,8 @@ class Nav extends Model {
      * @param string $ids
      * @return integer 删除的条数
      */
-    public function deleteById($ids) {
+    public function deleteById($ids)
+    {
         $id = explode(',', trim($ids, ','));
         $affecteds = $this->deleteByPk($id, "`system` = '0'");
         $affecteds += $this->deleteAll("FIND_IN_SET(pid,'" . implode(',', $id) . "')");

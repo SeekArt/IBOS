@@ -6,7 +6,7 @@
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author gzwwb <gzwwb@ibos.com.cn>
- */ 
+ */
 /**
  * 核心组件------插件管理器组件类，必须继承CApplicationComponent
  * @package application.core.components
@@ -20,11 +20,12 @@ namespace application\core\components;
 use application\core\utils\Ibos;
 use CApplicationComponent;
 
-abstract class PlugManager extends CApplicationComponent {
+abstract class PlugManager extends CApplicationComponent
+{
 
     /**
      * 是否已安装
-     * @var boolean 
+     * @var boolean
      * @access private
      */
     private $_init = false;
@@ -33,10 +34,11 @@ abstract class PlugManager extends CApplicationComponent {
      * 初始化各自的插件
      * @param string $moduleName 模块名
      */
-    public function setInit( $moduleName ) {
+    public function setInit($moduleName)
+    {
         $installedModule = Ibos::app()->getEnabledModule();
-        if ( isset( $installedModule[$moduleName] ) ) {
-            Ibos::app()->getModule( $moduleName );
+        if (isset($installedModule[$moduleName])) {
+            Ibos::app()->getModule($moduleName);
             $this->_init = true;
         }
     }
@@ -45,7 +47,8 @@ abstract class PlugManager extends CApplicationComponent {
      * 返回是否已安装标示符
      * @return boolean
      */
-    public function getInit() {
+    public function getInit()
+    {
         return $this->_init;
     }
 

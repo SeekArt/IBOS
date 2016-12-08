@@ -87,7 +87,7 @@ class QueryString extends Collection
         $queryString = '';
 
         foreach ($this->prepareData($this->data) as $name => $value) {
-            foreach ((array) $value as $v) {
+            foreach ((array)$value as $v) {
                 if ($queryString) {
                     $queryString .= $this->fieldSeparator;
                 }
@@ -235,7 +235,7 @@ class QueryString extends Collection
         } elseif ($this->urlEncode == self::FORM_URLENCODED) {
             return urlencode($value);
         } else {
-            return (string) $value;
+            return (string)$value;
         }
     }
 

@@ -201,14 +201,14 @@ $(function(){
     DiaryCommon.eventHandler();
 
     //初始化页面
-	DiaryCommon.initPage();
+    DiaryCommon.initPage();
 
-	// 计划日期更改
-	$("#da_plan_date").datepicker({
-	    component: $("#da_plan_date_btn")
-	}).on("changeDate", function(evt) {
-	    Diary.changePlanDate(evt.date);
-	});
+    // 计划日期更改
+    $("#da_plan_date").datepicker({
+        component: $("#da_plan_date_btn")
+    }).on("changeDate", function(evt) {
+        Diary.changePlanDate(evt.date);
+    });
 
 
     // 共享人员
@@ -266,18 +266,18 @@ $(function(){
 
         $.data(this, "submiting", true);
     });
-	
-	Ibos.evt.add({
-		// 前后切换计划日期
-		"changePlanDate": function(param){
-			var $dp = $("#da_plan_date"),
-				dpIns = $dp.data("datetimepicker"),
-				oldDate = dpIns.getDate(),
+    
+    Ibos.evt.add({
+        // 前后切换计划日期
+        "changePlanDate": function(param){
+            var $dp = $("#da_plan_date"),
+                dpIns = $dp.data("datetimepicker"),
+                oldDate = dpIns.getDate(),
                 newDate = Ibos.date.calc(oldDate, param.dir === "prev" ? -1 : 1);
 
             Diary.changePlanDate(newDate);
             dpIns.setDate(newDate);
-		},
+        },
 
         // 添加提醒
         "addRemind": function(param, elem){
@@ -344,5 +344,5 @@ $(function(){
             $(elem).closest(".da-remind-bar").remove();
             $planRow.find('[data-node-type="remindInput"]').val("");
         }
-	});
+    });
 });

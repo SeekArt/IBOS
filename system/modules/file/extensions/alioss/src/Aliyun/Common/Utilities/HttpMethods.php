@@ -7,7 +7,8 @@
  */
 namespace Aliyun\Common\Utilities;
 
-class HttpMethods {
+class HttpMethods
+{
     const GET = 'GET';
     const PUT = 'PUT';
     const POST = 'POST';

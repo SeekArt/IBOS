@@ -164,14 +164,14 @@ $.formValidator =
 
 			}
 			var stype = elem.type;
-			if(stype == "password" || stype == "text" || stype == "file")
+			if(stype == "password" || stype == "text" || stype == "file" || stype == "textarea")
 			{
 				jqobj = $(elem);
 				var cls = onShowClass + " " + onFocusClass + " " + onCorrectClass + " " + onErrorClass
-				if(onShowClass!="" && showclass == "onShow"){jqobj.removeClass(cls).addClass(onShowClass)};
-				if(onFocusClass!="" && showclass == "onFocus"){jqobj.removeClass(cls).addClass(onFocusClass)};
-				if(onCorrectClass!="" && showclass == "onCorrect"){jqobj.removeClass(cls).addClass(onCorrectClass)};
-				if(onErrorClass!="" && showclass == "onError"){jqobj.removeClass(cls).addClass(onErrorClass)};
+				if(onShowClass!="" && showclass == "onShow"){jqobj.removeClass(cls).addClass(onShowClass); onShowFn.call(jqobj, showclass); };
+				if(onFocusClass!="" && showclass == "onFocus"){jqobj.removeClass(cls).addClass(onFocusClass); onFocusFn.call(jqobj, showclass); };
+				if(onCorrectClass!="" && showclass == "onCorrect"){jqobj.removeClass(cls).addClass(onCorrectClass); onCorrectFn.call(jqobj, showclass); };
+				if(onErrorClass!="" && showclass == "onError"){jqobj.removeClass(cls).addClass(onErrorClass); onErrorFn.call(jqobj, showclass); };
 			}
 
 			var setting = elem.settings[0],

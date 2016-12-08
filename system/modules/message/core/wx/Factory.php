@@ -21,7 +21,8 @@ use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 
-class Factory extends CApplicationComponent {
+class Factory extends CApplicationComponent
+{
 
     /**
      * 创建处理器
@@ -30,11 +31,12 @@ class Factory extends CApplicationComponent {
      * @param array $properties
      * @return \application\modules\message\core\wx\className
      */
-    public function createHandle( $handleType, $properties = array() ) {
+    public function createHandle($handleType, $properties = array())
+    {
         $className = 'application\modules\message\core\wx\\' . $handleType;
         $instance = new $className();
-        $this->chkInstance( $instance );
-        foreach ( $properties as $name => $value ) {
+        $this->chkInstance($instance);
+        foreach ($properties as $name => $value) {
             $instance->$name = $value;
         }
         return $instance;
@@ -45,9 +47,10 @@ class Factory extends CApplicationComponent {
      * @param object $handle
      * @throws CException
      */
-    private function chkInstance( $handle ) {
-        if ( !$handle instanceof CApplicationComponent ) {
-            throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $handle ) ) ) );
+    private function chkInstance($handle)
+    {
+        if (!$handle instanceof CApplicationComponent) {
+            throw new CException(Ibos::t('error', 'Class "{class}" is illegal.', array('{class}' => get_class($handle))));
         }
     }
 

@@ -12,7 +12,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class CopyObjectResult {
+class CopyObjectResult
+{
     /**
      * @var \DateTime Object最后修改时间
      */
@@ -27,7 +28,8 @@ class CopyObjectResult {
      * @internal
      * @param string $eTag
      */
-    public function setETag($eTag) {
+    public function setETag($eTag)
+    {
         $this->eTag = $eTag;
     }
 
@@ -36,7 +38,8 @@ class CopyObjectResult {
      *
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         return $this->eTag;
     }
 
@@ -44,7 +47,8 @@ class CopyObjectResult {
      * @internal
      * @param \DateTime $lastModified
      */
-    public function setLastModified($lastModified) {
+    public function setLastModified($lastModified)
+    {
         $this->lastModified = $lastModified;
     }
 
@@ -53,7 +57,8 @@ class CopyObjectResult {
      *
      * @return \DateTime
      */
-    public function getLastModified() {
+    public function getLastModified()
+    {
         return $this->lastModified;
     }
 }

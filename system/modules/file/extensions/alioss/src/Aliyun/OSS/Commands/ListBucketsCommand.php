@@ -1,5 +1,6 @@
 <?php
 namespace Aliyun\OSS\Commands;
+
 /**
  * Copyright (C) Alibaba Cloud Computing
  * All rights reserved.
@@ -19,8 +20,10 @@ use Aliyun\OSS\Utilities\OSSRequestBuilder;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class ListBucketsCommand extends OSSCommand {
-    protected function checkOptions($options) {
+class ListBucketsCommand extends OSSCommand
+{
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         if (isset($options[OSSOptions::BUCKET])) {
             unset($options[OSSOptions::BUCKET]);
@@ -33,10 +36,11 @@ class ListBucketsCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         return OSSRequestBuilder::factory()
-                        ->setEndpoint($options[OSSOptions::ENDPOINT])
-                        ->setMethod(HttpMethods::GET)
-                        ->build();
+            ->setEndpoint($options[OSSOptions::ENDPOINT])
+            ->setMethod(HttpMethods::GET)
+            ->build();
     }
 }

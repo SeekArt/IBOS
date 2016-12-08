@@ -65,7 +65,7 @@ class PHPExcel_Reader_Excel5_MD5
 
     /**
      * Get MD5 stream context
-     * 
+     *
      * @return string
      */
     public function getContext()
@@ -85,7 +85,7 @@ class PHPExcel_Reader_Excel5_MD5
 
     /**
      * Add data to context
-     * 
+     *
      * @param string $data Data to add
      */
     public function add($data)
@@ -97,10 +97,10 @@ class PHPExcel_Reader_Excel5_MD5
         $C = $this->c;
         $D = $this->d;
 
-        $F = array('PHPExcel_Reader_Excel5_MD5','F');
-        $G = array('PHPExcel_Reader_Excel5_MD5','G');
-        $H = array('PHPExcel_Reader_Excel5_MD5','H');
-        $I = array('PHPExcel_Reader_Excel5_MD5','I');
+        $F = array('PHPExcel_Reader_Excel5_MD5', 'F');
+        $G = array('PHPExcel_Reader_Excel5_MD5', 'G');
+        $H = array('PHPExcel_Reader_Excel5_MD5', 'H');
+        $I = array('PHPExcel_Reader_Excel5_MD5', 'I');
 
         /* ROUND 1 */
         self::step($F, $A, $B, $C, $D, $words[0], 7, 0xd76aa478);
@@ -183,13 +183,13 @@ class PHPExcel_Reader_Excel5_MD5
 
     private static function F($X, $Y, $Z)
     {
-        return (($X & $Y) | ((~ $X) & $Z)); // X AND Y OR NOT X AND Z
+        return (($X & $Y) | ((~$X) & $Z)); // X AND Y OR NOT X AND Z
     }
 
 
     private static function G($X, $Y, $Z)
     {
-        return (($X & $Z) | ($Y & (~ $Z))); // X AND Z OR Y AND NOT Z
+        return (($X & $Z) | ($Y & (~$Z))); // X AND Z OR Y AND NOT Z
     }
 
 
@@ -201,7 +201,7 @@ class PHPExcel_Reader_Excel5_MD5
 
     private static function I($X, $Y, $Z)
     {
-        return ($Y ^ ($X | (~ $Z))) ; // Y XOR (X OR NOT Z)
+        return ($Y ^ ($X | (~$Z))); // Y XOR (X OR NOT Z)
     }
 
 
@@ -216,6 +216,6 @@ class PHPExcel_Reader_Excel5_MD5
     private static function rotate($decimal, $bits)
     {
         $binary = str_pad(decbin($decimal), 32, "0", STR_PAD_LEFT);
-        return bindec(substr($binary, $bits).substr($binary, 0, $bits));
+        return bindec(substr($binary, $bits) . substr($binary, 0, $bits));
     }
 }

@@ -9,70 +9,74 @@ use application\core\utils\File;
 <!-- load css end-->
 <!-- Mainer -->
 <div class="mc clearfix">
-	<!-- Sidebar -->
-    <div class="aside">
-        <div class="sbbf">
-            <ul class="nav nav-strip nav-stacked">
-                <li class="active">
-                    <a href="<?php echo $this->createUrl( 'default/index'); ?>">
-                        <i class="o-art-doc"></i>
-                        <?php echo $lang['Information center']; ?>
-                    </a>
-                    <ul id="tree" class="ztree posr">
-                    </ul>
-                </li>
-            </ul>
+    <!-- Sidebar -->
+    <?php echo $this->getSidebar(); ?>
+    <!-- Sidebar -->
+
+    <!-- Mainer right -->
+    <div class="mcr">
+        <form action="" class="form-horizontal">
+            <!-- 文章 -->
+            <div class="ct ctview ctview-art"></div>
+        </form>
+    </div>
+</div>
+<script type="text/template" id="art_preview">
+    <div class="art">
+        <div class="art-container">
+            <h1 class="art-title"><%= subject %></h1>
+            <div class="art-ct mb editor-content">
+                <% if (type == 1) { %>
+                <div id="gallery" class="ad-gallery">
+                    <div class="ad-image-wrapper"></div>
+                    <!-- <div class="ad-controls"></div> -->
+                    <div class="ad-nav">
+                        <div class="ad-thumbs">
+                            <ul class="ad-thumb-list">
+                                <% for (var i = 0, len = pics.length; i < len; i += 1) { %>
+                                <li>
+                                    <a href="<%= pics[i].url %>">
+                                        <img
+                                            src="<%= pics[i].url %>"
+                                            alt="<%= pics[i].name %>"/>
+                                        <!-- 此处输出索引和总张数 -->
+                                        <span><em><%= i + 1 %> / <%= len %></em></span>
+                                    </a>
+                                </li>
+                                <% } %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                <%= content %>
+                <% } %>
+            </div>
         </div>
     </div>
-	<!-- Sidebar -->
-
-	<!-- Mainer right -->
-	<div class="mcr">
-		<form action="" class="form-horizontal">
-			<div class="ct ctview ctview-art">
-				<!-- 文章 -->
-				<div class="art">
-					<div class="art-container">
-						<h1 class="art-title"><?php echo $subject; ?></h1>
-						<div class="art-ct mb editor-content">
-							<?php if($type == 1): ?>
-								<div id="gallery" class="ad-gallery">
-									<div class="ad-image-wrapper"></div>
-									<!-- <div class="ad-controls"></div> -->
-									<div class="ad-nav">
-										<div class="ad-thumbs">
-											<ul class="ad-thumb-list">
-												<?php $attachDir = File::getAttachUrl() . '/'; ?>
-												<?php foreach ( $pictureData as $key => $picture ): ?>
-													<li>
-														<a href="<?php echo  $attachDir . File::imageName( $picture['attachment'] ); ?>">
-															<img src="<?php echo $attachDir . File::imageName( $picture['attachment'] ); ?>" alt="<?php echo $picture['filename']; ?>" />
-															<!-- 此处输出索引和总张数 -->
-															<span><em><?php echo $key + 1; ?>/<?php echo count( $pictureData ); ?></em></span>
-														</a>
-													</li>
-												<?php endforeach; ?>
-											</ul>
-										</div>
-									</div>
-								</div>
-							<?php else: ?>
-								<?php echo $content; ?>
-							<?php endif; ?>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+</script>
 <script>
-Ibos.app.setPageParam({
-		"articleType": 1
-	});
+    Ibos.app.setPageParam({
+        "articleType": 1
+    });
 </script>
 <script src='<?php echo STATICURL; ?>/js/app/ibos.treeCategory.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo STATICURL; ?>/js/src/emotion.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/article_default_show.js?<?php echo VERHASH; ?>'></script>
+<script type="text/javascript">
+    (function () {
+        var $tmpl, data = JSON.parse(window.sessionStorage.getItem('preview.article'));
+
+        if (!data) {
+            Ui.tip('预览失效，请重新尝试', 'warning');
+            setTimeout(function () {
+                window.close();
+            }, 1000);
+        }
+
+        $tmpl = $.tmpl('art_preview', data);
+        $('.ctview-art').append($tmpl);
+    })();
+</script>

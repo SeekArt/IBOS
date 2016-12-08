@@ -3,7 +3,7 @@
  * 招聘管理模块JS
  * IBOS
  * @author		inaki
- * @version		$Id: recruit.js 6587 2016-03-11 09:05:52Z gzcsh $
+ * @version		$Id$
  */
 
 var Recruit = {

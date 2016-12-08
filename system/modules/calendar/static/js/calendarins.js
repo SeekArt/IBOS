@@ -242,7 +242,7 @@ var Cld = {
                 // view.calendar.renderEvent(evt, true)
                 view.calendar.refetchEvents();
                 Ui.tip(U.lang("CAL.NEW_EVT_SUCCESS"));
-            }else{
+            } else {
                 Ui.tip(res.msg, 'danger');
             }
             callback && callback(res);
@@ -541,7 +541,7 @@ var calendar = {
      * @return {String}       模板
      */
     getNewTmpl: function($elem, start, end, type, iskeep) {
-        if(!iskeep) {
+        if (!iskeep) {
             if (type == "add") {
                 var startDay = moment(start).add(1, "month").format("YYYY-MM-DD"),
                     endDay = moment(end).add(1, "month").format("YYYY-MM-DD");
@@ -712,9 +712,9 @@ $(function() {
             }
         });
     });
-	// 设置只在个人页面显示
-	if(Ibos.app.g('curPage') === 'Index'){
-    	$("#calendar .fc-header-left").append(settingBtn);
+    // 设置只在个人页面显示
+    if (Ibos.app.g('curPage') === 'Index') {
+        $("#calendar .fc-header-left").append(settingBtn);
     }
 
     var $listButton = $("<button class='btn cld-list-btn'><i class='o-cld-list'></i></button>");
@@ -752,8 +752,8 @@ $(function() {
             "data-end": endDay
         });
     });
-	
-	$("#calendar .fc-header-right").append($listButton);
+
+    $("#calendar .fc-header-right").append($listButton);
 
     //点击日程类型(日，周，月)时，显示范围选择按钮
     $(".fc-button").on("click", function() {
@@ -772,12 +772,18 @@ $(function() {
         "changeTime": function(param, elem) {
             var $elem = $(elem),
                 $range = $("#time_range"),
-                start = $range.attr("data-start"),
+                start = moment($range.attr("data-start")),
                 type = $elem.attr("data-type"),
-                toStart = moment(start).add(1, "month").format('YYYY-MM-DD'),
-                toEnd = moment(toStart).add(1, "month").subtract(1, 'day').format('YYYY-MM-DD');
+                toStart, toEnd, param;
 
-            var param = calendar.getNewTmpl($elem, toStart, toEnd, type, true);
+            if (type === 'add') {
+                toStart = start.add(1, "month").format('YYYY-MM-DD');
+            } else if (type === 'subtract') {
+                toStart = start.subtract(1, "month").format('YYYY-MM-DD');
+            }
+
+            toEnd = moment(toStart).add(1, "month").subtract(1, 'day').format('YYYY-MM-DD');
+            param = calendar.getNewTmpl($elem, toStart, toEnd, type, true);
 
             $range.attr({
                 "data-start": param.start,

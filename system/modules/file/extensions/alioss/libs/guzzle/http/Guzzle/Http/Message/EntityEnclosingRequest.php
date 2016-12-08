@@ -39,7 +39,7 @@ class EntityEnclosingRequest extends Request implements EntityEnclosingRequestIn
     {
         // Only attempt to include the POST data if it's only fields
         if (count($this->postFields) && empty($this->postFiles)) {
-            return parent::__toString() . (string) $this->postFields;
+            return parent::__toString() . (string)$this->postFields;
         }
 
         return parent::__toString() . $this->body;

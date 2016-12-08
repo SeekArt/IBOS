@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogentag//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * Provides a method to implement delayed initialization of objects.
  *
@@ -94,24 +95,19 @@ class ezcBaseInit
      * @param string $identifier
      * @param string $callbackClassname
      */
-    public static function setCallback( $identifier, $callbackClassname )
+    public static function setCallback($identifier, $callbackClassname)
     {
-        if ( array_key_exists( $identifier, self::$callbackMap ) )
-        {
-            throw new ezcBaseInitCallbackConfiguredException( $identifier, self::$callbackMap[$identifier] );
-        }
-        else
-        {
+        if (array_key_exists($identifier, self::$callbackMap)) {
+            throw new ezcBaseInitCallbackConfiguredException($identifier, self::$callbackMap[$identifier]);
+        } else {
             // Check if the passed classname actually exists
-            if ( !ezcBaseFeatures::classExists( $callbackClassname, true ) )
-            {
-                throw new ezcBaseInitInvalidCallbackClassException( $callbackClassname );
+            if (!ezcBaseFeatures::classExists($callbackClassname, true)) {
+                throw new ezcBaseInitInvalidCallbackClassException($callbackClassname);
             }
 
             // Check if the passed classname actually implements the interface.
-            if ( !in_array( 'ezcBaseConfigurationInitializer', class_implements( $callbackClassname ) ) )
-            {
-                throw new ezcBaseInitInvalidCallbackClassException( $callbackClassname );
+            if (!in_array('ezcBaseConfigurationInitializer', class_implements($callbackClassname))) {
+                throw new ezcBaseInitInvalidCallbackClassException($callbackClassname);
             }
 
             self::$callbackMap[$identifier] = $callbackClassname;
@@ -128,14 +124,14 @@ class ezcBaseInit
      * @param object $object
      * @return mixed
      */
-    public static function fetchConfig( $identifier, $object )
+    public static function fetchConfig($identifier, $object)
     {
-        if ( isset( self::$callbackMap[$identifier] ) )
-        {
+        if (isset(self::$callbackMap[$identifier])) {
             $callbackClassname = self::$callbackMap[$identifier];
-            return call_user_func( array( $callbackClassname, 'configureObject' ), $object );
+            return call_user_func(array($callbackClassname, 'configureObject'), $object);
         }
         return null;
     }
 }
+
 ?>

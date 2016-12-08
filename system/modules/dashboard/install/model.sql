@@ -214,6 +214,18 @@ CREATE TABLE `{{approval_step}}` (
 PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `{{approval_record}}`;
+CREATE TABLE `{{approval_record}}` (
+`id`  int NOT NULL AUTO_INCREMENT COMMENT '主键，自增 ID' ,
+`module` varchar(255) NOT NULL DEFAULT '' COMMENT '关联模型',
+`relateid` int NOT NULL  COMMENT '关联ID',
+`uid` int NOT NULL  COMMENT '用户ID',
+`step` int NOT NULL  COMMENT '步骤',
+`time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '审核时间',
+`status` int NOT NULL  COMMENT '审核状态,0表示退回，1表示通过，2表示流程结束，3表示发起',
+`reason` text NOT NULL COMMENT '原因，通过可以没有原因，退回一定有原因',
+PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 INSERT INTO {{credit}} VALUES ('1', '1', '经验', '0', '0', '1');
 INSERT INTO {{credit}} VALUES ('2', '1', '金钱', '0', '0', '1');
 INSERT INTO {{credit}} VALUES ('3', '1', '贡献', '0', '0', '1');

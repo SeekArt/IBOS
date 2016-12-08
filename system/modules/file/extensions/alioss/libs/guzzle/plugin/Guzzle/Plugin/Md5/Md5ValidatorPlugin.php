@@ -21,7 +21,7 @@ class Md5ValidatorPlugin implements EventSubscriberInterface
     protected $contentEncoded;
 
     /**
-     * @param bool     $contentEncoded      Calculating the MD5 hash of an entity body where a Content-Encoding was
+     * @param bool $contentEncoded Calculating the MD5 hash of an entity body where a Content-Encoding was
      *                                      applied is a more expensive comparison because the entity body will need to
      *                                      be compressed in order to get the correct hash.  Set to FALSE to not
      *                                      validate the MD5 hash of an entity body with an applied Content-Encoding.

@@ -7,6 +7,7 @@
  */
 namespace Aliyun\Common\Communication;
 
-interface ResponseHandlerInterface {
+interface ResponseHandlerInterface
+{
     public function handle(HttpResponse $response);
 }

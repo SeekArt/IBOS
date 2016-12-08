@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -75,26 +75,21 @@ abstract class ezcMailMultipart extends ezcMailPart
      * Subclasses must call this method in the constructor.
      * @param array $parts
      */
-    public function __construct( array $parts )
+    public function __construct(array $parts)
     {
         parent::__construct();
 
         $this->noMimeMessage = self::DEFAULT_NO_MIME_MESSAGE;
         $this->boundary = $this->generateBoundary();
-        $this->setHeader( "Content-Type", 'multipart/' . $this->multipartType() . '; '
-                                           . 'boundary="' . $this->boundary . '"' );
-        foreach ( $parts as $part )
-        {
-            if ( $part instanceof ezcMailPart  )
-            {
+        $this->setHeader("Content-Type", 'multipart/' . $this->multipartType() . '; '
+            . 'boundary="' . $this->boundary . '"');
+        foreach ($parts as $part) {
+            if ($part instanceof ezcMailPart) {
                 $this->parts[] = $part;
-            }
-            elseif ( is_array( $part ) ) // add each and everyone of the parts in the array
+            } elseif (is_array($part)) // add each and everyone of the parts in the array
             {
-                foreach ( $part as $array_part )
-                {
-                    if ( $array_part instanceof ezcMailPart )
-                    {
+                foreach ($part as $array_part) {
+                    if ($array_part instanceof ezcMailPart) {
                         $this->parts[] = $array_part;;
                     }
                 }
@@ -111,14 +106,13 @@ abstract class ezcMailMultipart extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'boundary':
                 $this->properties[$name] = $value;
-                $this->setHeader( 'Content-Type', 'multipart/' . $this->multipartType() . '; ' .
-                                  'boundary="' . $this->boundary . '"' );
+                $this->setHeader('Content-Type', 'multipart/' . $this->multipartType() . '; ' .
+                    'boundary="' . $this->boundary . '"');
                 break;
 
             case 'noMimeMessage':
@@ -126,7 +120,7 @@ abstract class ezcMailMultipart extends ezcMailPart
                 break;
 
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -140,17 +134,16 @@ abstract class ezcMailMultipart extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'boundary':
             case 'noMimeMessage':
                 return $this->properties[$name];
                 break;
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -162,16 +155,15 @@ abstract class ezcMailMultipart extends ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'boundary':
             case 'noMimeMessage':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -183,8 +175,7 @@ abstract class ezcMailMultipart extends ezcMailPart
     public function generateBody()
     {
         $data = $this->noMimeMessage . ezcMailTools::lineBreak();
-        foreach ( $this->parts as $part )
-        {
+        foreach ($this->parts as $part) {
             $data .= ezcMailTools::lineBreak() . '--' . $this->boundary . ezcMailTools::lineBreak();
             $data .= $part->generate();
         }
@@ -206,7 +197,8 @@ abstract class ezcMailMultipart extends ezcMailPart
      */
     protected static function generateBoundary()
     {
-        return date( "YmdGHjs" ) . ':' . getmypid() . ':' . self::$counter++;
+        return date("YmdGHjs") . ':' . getmypid() . ':' . self::$counter++;
     }
 }
+
 ?>

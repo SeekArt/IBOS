@@ -11,47 +11,48 @@
 /**
  * 信息中心模块------分类组件 继承ICCategory
  * @package application.modules.article.components
- * @version $Id: ArticleCategory.php 6981 2016-05-03 06:59:07Z gzcsh $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
 namespace application\modules\article\core;
 
-use application\modules\article\model\Article as ArticleModel; 
 use application\core\components\Category;
-use application\core\utils\Ibos;
+use application\modules\article\model\Article as ArticleModel;
 use application\modules\article\model\ArticleCategory as ArticleCategoryModel;
 
-class ArticleCategory extends Category {
+class ArticleCategory extends Category
+{
 
     /**
      * 删除分类
-     * @param integer $catid 
-     * @return boolean 
+     * @param integer $catid
+     * @return boolean
      */
-    public function delete( $catid ) {
+    public function delete($catid)
+    {
         $clear = false;
-        $ids = $this->fetchAllSubId( $catid );
-        $idStr = implode( ',', array_unique( explode( ',', trim( $ids, ',' ) ) ) );
-        if ( empty( $idStr ) ) {
+        $ids = $this->fetchAllSubId($catid);
+        $idStr = implode(',', array_unique(explode(',', trim($ids, ','))));
+        if (empty($idStr)) {
             $idStr = $catid;
         } else {
             $idStr .= ',' . $catid;
         }
         //判断这些分类下是否存在文章
-        $count = ArticleModel::model()->count( "catid IN ($idStr)" );
-        if ( $count ) {
+        $count = ArticleModel::model()->count("catid IN ($idStr)");
+        if ($count) {
             return -1;
         }
         // 有关联表，获取关联表里有无关联分类id
-        if ( !is_null( $this->_related ) ) {
-            $count = $this->_related->count( "`{$this->index}` IN ($idStr)" );
+        if (!is_null($this->_related)) {
+            $count = $this->_related->count("`{$this->index}` IN ($idStr)");
             !$count && $clear = true;
         } else {
             $clear = true;
         }
-        if ( $clear ) {
-            $status = $this->_category->deleteAll( "FIND_IN_SET({$this->index},'$idStr')" );
+        if ($clear) {
+            $status = $this->_category->deleteAll("FIND_IN_SET({$this->index},'$idStr')");
             $this->afterDelete();
             return $status;
         } else {
@@ -64,27 +65,29 @@ class ArticleCategory extends Category {
      * @param array $data
      * @return array
      */
-    public function getAjaxCategory( $data = array( ) ) {
-        foreach ( $data as $row ) {
-			$row['id'] = $row['catid'];
-			$row['pId'] = $row['pid'];
-			$row['name'] = $row['name'];
+    public function getAjaxCategory($data = array())
+    {
+        foreach ($data as $row) {
+            $row['id'] = $row['catid'];
+            $row['pId'] = $row['pid'];
+            $row['name'] = $row['name'];
             $row['target'] = '_self';
-			$row['url'] = 'javascript:;';
+            $row['url'] = 'javascript:;';
             $row['catid'] = $row['catid'];
-			$row['open'] = true;
-			$return[] = $row;
-		}
+            $row['open'] = true;
+            $return[] = $row;
+        }
         return $return;
     }
 
-	/**
-	 * 文章分类树获取数据方法
-	 * @param string $condition 兼容
-	 * @return array
-	 */
-    public function getData( $condition = '' ) {
-		$categoryData = ArticleCategoryModel::model()->fetchAll( $condition );
+    /**
+     * 文章分类树获取数据方法
+     * @param string $condition 兼容
+     * @return array
+     */
+    public function getData($condition = '')
+    {
+        $categoryData = ArticleCategoryModel::model()->fetchAll($condition);
         return $categoryData;
     }
 

@@ -20,12 +20,14 @@ use application\core\utils\Ibos;
 use CApplicationComponent;
 use CException;
 
-class CloudOSSFactory extends CApplicationComponent {
+class CloudOSSFactory extends CApplicationComponent
+{
 
-    public function createDisk( $className, $config = array(), $properties = array() ) {
-        $disk = new $className( $config );
-        $this->chkInstance( $disk );
-        foreach ( $properties as $name => $value ) {
+    public function createDisk($className, $config = array(), $properties = array())
+    {
+        $disk = new $className($config);
+        $this->chkInstance($disk);
+        foreach ($properties as $name => $value) {
             $disk->$name = $value;
         }
         return $disk;
@@ -36,9 +38,10 @@ class CloudOSSFactory extends CApplicationComponent {
      * @param CloudOSS $disk
      * @throws CException
      */
-    private function chkInstance( $disk ) {
-        if ( !$disk instanceof CloudOSS ) {
-            throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $disk ) ) ) );
+    private function chkInstance($disk)
+    {
+        if (!$disk instanceof CloudOSS) {
+            throw new CException(Ibos::t('error', 'Class "{class}" is illegal.', array('{class}' => get_class($disk))));
         }
     }
 

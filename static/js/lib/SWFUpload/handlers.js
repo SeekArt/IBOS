@@ -10,22 +10,34 @@ var Ibos = Ibos || {};
 	}
 	var _removeAttachId = function(targetId, id){
 		var elem = document.getElementById(targetId),
-            defVal,
-            valArr,
-            index;
+			defVal,
+			valArr,
+			index;
 
-        if(elem) {
-        	defVal = elem.value,
-        	valArr = defVal.split(','),
-        	index = valArr.indexOf(id);
-	
-	        if(index !== -1){
-	            valArr.splice(index, 1);
-	        }
+		if(elem) {
+			defVal = elem.value,
+				valArr = defVal.split(','),
+				index = valArr.indexOf(id);
 
-	        elem.value = valArr.join(",")
-        }
-	}
+			if(index !== -1){
+				valArr.splice(index, 1);
+			}
+
+			elem.value = valArr.join(",")
+		}
+	};
+
+	var getCookie = (function(){
+		var obj = {},
+			cookies = document.cookie.split("; "),
+			item, arr;
+		for(var i=0, len = cookies.length; i < len; i++ ){
+			item = cookies[i];
+			arr = item.split("=");
+			obj[arr[0]] = arr[1];
+		};
+		return obj;
+	})();
 
 	var getErrorInfo = (function(){
 		var infos = {};
@@ -128,20 +140,20 @@ var Ibos = Ibos || {};
 
 	//临时扩展Array.prototype
 	Array.prototype.indexOf = Array.prototype.indexOf||function(item, index){
-		if(this.length == undefined){
-			throw new Error("Type Error: not Array!");
+			if(this.length == undefined){
+				throw new Error("Type Error: not Array!");
+			}
+			index = index||0;
+			for(; index < this.length; index++){
+				if(item === this[index])return index;
+			}
+			return -1;
 		}
-		index = index||0;
-		for(; index < this.length; index++){
-			if(item === this[index])return index;
-		}
-		return -1;
-	}
 
 	SWFUpload.defaults = {
 		// Backend Settings
 		upload_url:                                 "",
-		post_params:                                {PHPSESSID: U.getCookie("PHPSESSID")},
+		post_params:                                {PHPSESSID: getCookie.PHPSESSID},
 
 		// File Upload Settings
 		// 默认不限制大小、数目和类型
@@ -189,10 +201,10 @@ var Ibos = Ibos || {};
 	// 图片上传默认的HTML结构
 	// 考虑将cover、progress动态生成，或作为配置项
 	// <div class="img-upload">
-	// 	<div class="img-upload-cover"></div>
-	// 	<div class="img-upload-progress"></div>
-	// 	<div class="img-upload-imgwrap"></div>
-	// 	<span id="button_placeholder_id"></span>
+	//  <div class="img-upload-cover"></div>
+	//  <div class="img-upload-progress"></div>
+	//  <div class="img-upload-imgwrap"></div>
+	//  <span id="button_placeholder_id"></span>
 	// </div>
 	var imgQueueError = function(file, error, message){
 		try{
@@ -237,12 +249,12 @@ var Ibos = Ibos || {};
 				$progress.text("0%")
 				$wrap.removeClass("img-upload-success img-upload-error").addClass("img-upload-start")
 			},
-			upload_progress_handler: function(file, loaded, total){ 
+			upload_progress_handler: function(file, loaded, total){
 				var percent = Math.ceil((loaded / total) * 100);
 				$cover.css("height", percent + "%");
 				$progress.text(percent + "%");
 			},
-			upload_success_handler: function(file, resData){ 
+			upload_success_handler: function(file, resData){
 				var $img = $imgWrap.find("img"),
 					data = $.parseJSON(resData);
 
@@ -250,7 +262,7 @@ var Ibos = Ibos || {};
 				if(!$img.length) {
 					$img = $('<img/>').appendTo($imgWrap);
 				}
-				$img.attr("src", data.thumburl);
+				$img.attr("src", data.url);
 				$wrap.addClass("img-upload-success").removeClass("img-upload-start");
 				this.customSettings.success && this.customSettings.success.call(this, file, data);
 			},
@@ -379,8 +391,8 @@ var Ibos = Ibos || {};
 		var _settings = {
 			// Backend Settings
 			upload_url:                                 Ibos.app.url('main/attach/upload', { "uid": Ibos.app.g("uid"), "hash": uploadConf.hash}),
-			file_post_name: 							"Filedata",
-			post_params:                                {},
+			file_post_name:                             "Filedata",
+			post_params:                                {PHPSESSID: getCookie.PHPSESSID},
 
 			// File Upload Settings
 			// 默认不限制大小、数目和类型
@@ -389,12 +401,12 @@ var Ibos = Ibos || {};
 			file_types_description:                     uploadConf.attachexts.depict,
 			file_upload_limit:                          uploadConf.limit,
 
-			button_image_url:                        	Ibos.app.getStaticUrl("/image/upload_btn_attach.png"),
-			button_placeholder_id:                  	"upload_btn",
-			button_width:                           	40,
-			button_height:                          	40,
+			button_image_url:                           Ibos.app.getStaticUrl("/image/upload_btn_attach.png"),
+			button_placeholder_id:                      "upload_btn",
+			button_width:                               40,
+			button_height:                              40,
 
-			swfupload_loaded_handler: 					_attachLoaded,
+			swfupload_loaded_handler:                   _attachLoaded,
 			file_queued_handler:                        _attachFileQueued,
 			file_queue_error_handler:                   _attachFileQueueError,
 			upload_progress_handler:                    _attachUploadProgress,
@@ -405,10 +417,10 @@ var Ibos = Ibos || {};
 				containerId: '',
 				inputId: '',
 				template: '<div class="attl-item" data-node-type="attachItem">' +
-					'<a href="javascript:;" title="' + U.lang("UPLOAD.DELETE_ATTACH") + '" class="cbtn o-trash" data-id="<%=aid%>" data-node-type="attachRemoveBtn"></a>' +
-					'<i class="atti"><img width="44" height="44" src="<%=icon%>" alt="<%=name%>" title="<%=name%>" /></i>' +
-					'<div class="attc"><%=name%></div>' +
-					'</div>'
+				'<a href="javascript:;" title="' + U.lang("UPLOAD.DELETE_ATTACH") + '" class="cbtn o-trash" data-id="<%=aid%>" data-node-type="attachRemoveBtn"></a>' +
+				'<i class="atti"><img width="44" height="44" src="<%=icon%>" alt="<%=name%>" title="<%=name%>" /></i>' +
+				'<div class="attc"><%=name%></div>' +
+				'</div>'
 			}
 		}
 		return Ibos.fileUpload($.extend(true, {}, _settings, options))
@@ -440,10 +452,10 @@ var Ibos = Ibos || {};
 			modal.onclick = function(){
 				_this.cancelUpload(file.id)
 			}
-			
+
 			modal.appendChild(modalText);
 			progressElem.appendChild(modal);
-			
+
 			$.data(progressElem, "modal", modal);
 			$.data(progressElem, "modalText", modalText);
 		}
@@ -522,7 +534,7 @@ var Ibos = Ibos || {};
 		var _settings = {
 			// Backend Settings
 			upload_url:                                 Ibos.app.url('main/attach/upload', { "uid": Ibos.app.g("uid"), "hash": uploadConf.hash}),
-			file_post_name: 							"Filedata",
+			file_post_name:                             "Filedata",
 			post_params:                                {},
 
 			file_size_limit:                            uploadConf.max, // 不限
@@ -530,20 +542,20 @@ var Ibos = Ibos || {};
 			file_types_description:                     uploadConf.imageexts.depict,
 			file_upload_limit:                          uploadConf.limit,
 
-			button_image_url:                        	Ibos.app.getStaticUrl("/image/upload_btn.png"),
-			button_height:                          	42,
-			button_placeholder_id:                  	"upload_btn",
-			button_width:                           	100,
-			
-			swfupload_loaded_handler: 					null,
-			file_dialog_start_handler: 					null,
-			file_queued_handler: 						null,
-			upload_start_handler: 						_imageUploadStart,
-			upload_progress_handler: 					_imageUploadProgress,
-			file_queue_error_handler: 					_imageFileQueueError,
-			upload_error_handler: 						_imageUploadError,
-			upload_success_handler: 					_imageUploadSuccess,
-			upload_complete_handler: 					_imageUploadComplete,
+			button_image_url:                           Ibos.app.getStaticUrl("/image/upload_btn.png"),
+			button_height:                              42,
+			button_placeholder_id:                      "upload_btn",
+			button_width:                               100,
+
+			swfupload_loaded_handler:                   null,
+			file_dialog_start_handler:                  null,
+			file_queued_handler:                        null,
+			upload_start_handler:                       _imageUploadStart,
+			upload_progress_handler:                    _imageUploadProgress,
+			file_queue_error_handler:                   _imageFileQueueError,
+			upload_error_handler:                       _imageUploadError,
+			upload_success_handler:                     _imageUploadSuccess,
+			upload_complete_handler:                    _imageUploadComplete,
 
 			custom_settings: {
 				targetId: '',

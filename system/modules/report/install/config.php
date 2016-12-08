@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '总结',
@@ -11,14 +11,14 @@ return array(
         'pushMovement' => 1,
         'indexShow' => array(
             'widget' => array(
-				'report/report'
-			),
+                'report/report'
+            ),
             'link' => 'report/default/index'
         )
     ),
     'config' => array(
         'modules' => array(
-            'report' => array( 'class' => 'application\modules\report\ReportModule' )
+            'report' => array('class' => 'application\modules\report\ReportModule')
         ),
         'components' => array(
             'messages' => array(
@@ -34,9 +34,9 @@ return array(
             'name' => '个人工作总结与计划',
             'group' => '工作总结与计划',
             'controllerMap' => array(
-                'default' => array( 'index', 'add', 'edit', 'del', 'show' ),
-                'type' => array( 'add', 'edit', 'del' ),
-                'comment' => array( 'getcommentlist', 'addcomment', 'delcomment' )
+                'default' => array('index', 'add', 'edit', 'del', 'show'),
+                'type' => array('add', 'edit', 'del'),
+                'comment' => array('getcommentlist', 'addcomment', 'delcomment')
             )
         ),
         'review' => array(
@@ -44,7 +44,7 @@ return array(
             'name' => '评阅下属总结与计划',
             'group' => '工作总结与计划',
             'controllerMap' => array(
-                'review' => array( 'index', 'personal', 'add', 'edit', 'del', 'show' )
+                'review' => array('index', 'personal', 'add', 'edit', 'del', 'show')
             )
         ),
         'statistics' => array(
@@ -52,7 +52,7 @@ return array(
             'name' => '查看统计',
             'group' => '工作总结与计划',
             'controllerMap' => array(
-                'stats' => array( 'personal', 'review' )
+                'stats' => array('personal', 'review')
             )
         )
     ),

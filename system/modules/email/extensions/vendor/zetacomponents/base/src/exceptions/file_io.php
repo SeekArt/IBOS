@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogen//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * ezcBaseFileIoException is thrown when a problem occurs while writing
  * and reading to/from an open file.
@@ -36,16 +37,15 @@ class ezcBaseFileIoException extends ezcBaseFileException
      * Constructs a new ezcBaseFileIoException for the file $path.
      *
      * @param string $path The name of the file.
-     * @param int    $mode The mode of the property that is allowed
+     * @param int $mode The mode of the property that is allowed
      *               (ezcBaseFileException::READ, ezcBaseFileException::WRITE,
      *               ezcBaseFileException::EXECUTE or
      *               ezcBaseFileException::CHANGE).
      * @param string $message A string with extra information.
      */
-    function __construct( $path, $mode, $message = null )
+    function __construct($path, $mode, $message = null)
     {
-        switch ( $mode )
-        {
+        switch ($mode) {
             case ezcBaseFileException::READ:
                 $operation = "An error occurred while reading from '{$path}'";
                 break;
@@ -55,12 +55,12 @@ class ezcBaseFileIoException extends ezcBaseFileException
         }
 
         $messagePart = '';
-        if ( $message )
-        {
+        if ($message) {
             $messagePart = " ($message)";
         }
 
-        parent::__construct( "$operation.$messagePart" );
+        parent::__construct("$operation.$messagePart");
     }
 }
+
 ?>

@@ -19,19 +19,21 @@ use application\modules\user\model\UserCount;
 use application\modules\user\model\UserProfile;
 use application\modules\user\model\UserStatus;
 
-class CoSync {
+class CoSync
+{
 
     /**
      * 根据酷办公新增的用户列表，创建 IBOS 的用户同步绑定关系
      * @param  array $userList 跟绑定表对比，酷办公新增的用户列表
      * @return array
      */
-    public static function createUserAndBindRelation($userList) {
+    public static function createUserAndBindRelation($userList)
+    {
         $result = array();
         foreach ($userList as $key => $user) {
             $checkIsExist = User::model()->checkIsExistByMobile($user['mobile']);
             // 手机号不存在，创建一个新用户并建立绑定关系
-            if ($checkIsExist === FALSE) {
+            if ($checkIsExist === false) {
                 $user['salt'] = !empty($user['salt']) ? $user['salt'] : StringUtil::random(6);
                 $user['realname'] = !empty($user['realname']) ? $user['realname'] : '';
                 $user['password'] = !empty($user['password']) ? $user['password'] : md5(md5($user['mobile']) . $user['salt']);
@@ -100,7 +102,8 @@ class CoSync {
      * @param  array $userList 跟绑定表对比，酷办公移除的用户列表
      * @return array
      */
-    public static function removeUserAndBindRelation($userList) {
+    public static function removeUserAndBindRelation($userList)
+    {
         $result = array();
         foreach ($userList as $user) {
             $bindRelation = UserBinding::model()->fetch("`bindvalue` = :bindvalue AND `app` = 'co'", array(':bindvalue' => $user['guid']));
@@ -128,7 +131,8 @@ class CoSync {
      * @param integer $status 是否开启自动同步功能。1是、0否
      * @return boolean
      */
-    public static function setAutoSync($status) {
+    public static function setAutoSync($status)
+    {
         // 参数过滤
         $status = filter_var($status, FILTER_SANITIZE_NUMBER_INT);
 
@@ -157,20 +161,21 @@ class CoSync {
      * @return array 渲染视图需要的参数
      * @throws \CException
      */
-    public static function getCorpListByAccessToken( $accesstoken ) {
+    public static function getCorpListByAccessToken($accesstoken)
+    {
         // 根据 accesstoken 获取用户的企业列表信息
-        $corpArr = CoApi::getInstance()->getCorpListByAccessToken( $accesstoken );
+        $corpArr = CoApi::getInstance()->getCorpListByAccessToken($accesstoken);
         // 获取用户企业列表失败
-        if ( $corpArr['code'] != CodeApi::SUCCESS ) {
+        if ($corpArr['code'] != CodeApi::SUCCESS) {
             throw new \CException($corpArr['message']);
         }
         $currentHost = $_SERVER['HTTP_HOST'];
         // 当用户的企业列表不为空时
-        if ( !empty( $corpArr['data'] ) ) {
-            $aeskey = Setting::model()->fetchSettingValueByKey( 'aeskey' );
+        if (!empty($corpArr['data'])) {
+            $aeskey = Setting::model()->fetchSettingValueByKey('aeskey');
             // 接口调用成功 & 返回的 data 不为空，筛选需要的数据并返回
-            foreach ( $corpArr['data'] as $corp ) {
-                if ( strpos( $corp['systemurl'], $currentHost ) !== false ) {
+            foreach ($corpArr['data'] as $corp) {
+                if (strpos($corp['systemurl'], $currentHost) !== false) {
                     $result['bindCorpid'] = $corp['corpid'];
                 } else {
                     $result['bindCorpid'] = 0;
@@ -185,7 +190,7 @@ class CoSync {
                     'aeskey' => $corp['aeskey'],
                     'systemUrl' => $corp['systemurl'],
                     'mobile' => $corp['mobile'],
-                    'isBindOther' => (!empty( $corp['aeskey'] ) && $corp['aeskey'] !== $aeskey ) ? 1 : 0,
+                    'isBindOther' => (!empty($corp['aeskey']) && $corp['aeskey'] !== $aeskey) ? 1 : 0,
                     'isSuperAdmin' => $corp['role'] == 2 ? 1 : 0,
                 );
             }
@@ -194,7 +199,7 @@ class CoSync {
             $result['corpList'] = array();
         }
         // 如果用户选择新建企业，使用当前 IBOS 的数据作为新企业的默认数据
-        $unit = StringUtil::utf8Unserialize( Setting::model()->fetchSettingValueByKey( 'unit' ) );
+        $unit = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('unit'));
         $result['createCorpInfo']['corpname'] = $unit['fullname'];
         $result['createCorpInfo']['corpshortname'] = $unit['shortname'];
         return $result;

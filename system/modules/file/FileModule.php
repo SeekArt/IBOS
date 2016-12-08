@@ -18,6 +18,7 @@ namespace application\modules\file;
 
 use application\core\modules\Module;
 
-class FileModule extends Module {
-    
+class FileModule extends Module
+{
+
 }

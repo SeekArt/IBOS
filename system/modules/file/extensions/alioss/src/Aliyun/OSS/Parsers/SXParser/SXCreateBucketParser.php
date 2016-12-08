@@ -13,9 +13,11 @@ use Aliyun\OSS\Models\Bucket;
 
 use Aliyun\OSS\Models\OSSOptions;
 
-class SXCreateBucketParser extends SXParser {
+class SXCreateBucketParser extends SXParser
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         return new Bucket($options[OSSOptions::BUCKET]);
     }
 }

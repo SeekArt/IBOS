@@ -21,7 +21,8 @@ use application\modules\diary\model\Diary;
 use application\modules\diary\model\DiaryStats;
 use application\modules\statistics\utils\StatCommon;
 
-class StatDiarySummary extends StatDiaryBase {
+class StatDiarySummary extends StatDiaryBase
+{
 
     // 个人视图
     const PERSONAL = 'application.modules.diary.views.widget.psummary';
@@ -32,13 +33,14 @@ class StatDiarySummary extends StatDiaryBase {
      * 显示视图
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         $time = StatCommon::getCommonTimeScope();
-        if ( $this->inPersonal() ) {
-            $this->renderPersonal( $time );
+        if ($this->inPersonal()) {
+            $this->renderPersonal($time);
         } else {
             $this->checkReviewAccess();
-            $this->renderReview( $time );
+            $this->renderReview($time);
         }
     }
 
@@ -46,29 +48,31 @@ class StatDiarySummary extends StatDiaryBase {
      * 渲染个人视图
      * @param array $time 时间范围
      */
-    protected function renderPersonal( $time ) {
+    protected function renderPersonal($time)
+    {
         $uid = Ibos::app()->user->uid;
         $data = array(
-            'total' => Diary::model()->countDiaryTotalByUid( $uid, $time['start'], $time['end'] ),
-            'beingreviews' => Diary::model()->countReviewTotalByUid( $uid, $time['start'], $time['end'] ),
-            'ontimerate' => Diary::model()->countOnTimeRateByUid( $uid, $time['start'], $time['end'] ),
-            'score' => DiaryStats::model()->countScoreByUid( $uid, $time['start'], $time['end'] )
+            'total' => Diary::model()->countDiaryTotalByUid($uid, $time['start'], $time['end']),
+            'beingreviews' => Diary::model()->countReviewTotalByUid($uid, $time['start'], $time['end']),
+            'ontimerate' => Diary::model()->countOnTimeRateByUid($uid, $time['start'], $time['end']),
+            'score' => DiaryStats::model()->countScoreByUid($uid, $time['start'], $time['end'])
         );
-        $this->render( self::PERSONAL, $data );
+        $this->render(self::PERSONAL, $data);
     }
 
     /**
      * 渲染评阅视图
      * @param array $time 时间范围
      */
-    protected function renderReview( $time ) {
+    protected function renderReview($time)
+    {
         $uid = $this->getUid();
         $data = array(
-            'total' => Diary::model()->countDiaryTotalByUid( $uid, $time['start'], $time['end'] ),
-            'unreviews' => Diary::model()->countUnReviewByUids( $uid, $time['start'], $time['end'] ),
+            'total' => Diary::model()->countDiaryTotalByUid($uid, $time['start'], $time['end']),
+            'unreviews' => Diary::model()->countUnReviewByUids($uid, $time['start'], $time['end']),
         );
-        $data['reviewrate'] = $this->calcReviewRate( $data['unreviews'], $data['total'] );
-        $this->render( self::REVIEW, $data );
+        $data['reviewrate'] = $this->calcReviewRate($data['unreviews'], $data['total']);
+        $this->render(self::REVIEW, $data);
     }
 
     /**
@@ -77,11 +81,12 @@ class StatDiarySummary extends StatDiaryBase {
      * @param integer $total 总数
      * @return integer
      */
-    private function calcReviewRate( $unreview, $total ) {
-        if ( $unreview == 0 && $total ) {
+    private function calcReviewRate($unreview, $total)
+    {
+        if ($unreview == 0 && $total) {
             return 100;
-        } elseif ( $unreview && $total ) {
-            return round( (1 - ($unreview / $total)) * 100 );
+        } elseif ($unreview && $total) {
+            return round((1 - ($unreview / $total)) * 100);
         } else {
             return 0;
         }

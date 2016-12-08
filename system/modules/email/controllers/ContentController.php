@@ -16,6 +16,7 @@ use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\model\EmailWeb;
 use application\modules\email\utils\Email as EmailUtil;
+use application\modules\email\utils\RoleUtils;
 use application\modules\email\utils\WebMail as WebMailUtil;
 use application\modules\officialdoc\model\Officialdoc;
 use application\modules\thread\model\Thread;
@@ -24,9 +25,11 @@ use application\modules\user\utils\User as UserUtil;
 use application\modules\message\model\NotifyMessage;
 use CHtml;
 
-class ContentController extends BaseController {
+class ContentController extends BaseController
+{
 
-    public function init() {
+    public function init()
+    {
         parent::init();
         $this->archiveId = intval(Env::getRequest('archiveid'));
     }
@@ -35,7 +38,8 @@ class ContentController extends BaseController {
      * 列表页
      * @return void
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         //  不做任何事，只跳转收件箱。因为内容控制器不需要索引页
         $this->redirect('list/index');
     }
@@ -58,7 +62,8 @@ class ContentController extends BaseController {
      * 写邮件
      * @return void
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         // bodyId
         $id = intval(Env::getRequest('id'));
         $this->checkUserSize();
@@ -72,11 +77,14 @@ class ContentController extends BaseController {
                 $data = EmailBody::model()->fetchByPk($id);
                 $content = CHtml::encode(Env::getRequest('content'));
                 //根据当前的用户和外部邮箱来得到当前用户外部邮箱的id
-                $row = EmailWeb::model()->find('uid = :uid AND address = :address',array(':uid' => $this->uid,':address' => $data['towebmail']));
+                $row = EmailWeb::model()->find('uid = :uid AND address = :address', array(':uid' => $this->uid, ':address' => $data['towebmail']));
                 $bodyData = EmailBody::model()->getAttributes();
-                $bodyData['fromwebmail'] = $data['towebmail'];
-                $bodyData['towebmail'] = $data['fromwebmail'];
-                $bodyData['fromwebid'] = $row->webid;
+                //快速回复有内部邮件和外部邮件的快速回复，所需的参数不一样
+                if (!empty($row)){
+                    $bodyData['fromwebmail'] = $data['towebmail'];
+                    $bodyData['towebmail'] = $data['fromwebmail'];
+                    $bodyData['fromwebid'] = $row->webid;
+                }
                 $bodyData['issend'] = 1;
                 $bodyData['fromid'] = $this->uid;
                 $bodyData['toids'] = $data['fromid'];
@@ -138,7 +146,7 @@ class ContentController extends BaseController {
                                     if (empty($bodyData['fromid'])) {
                                         //觉得这里有问题，感觉怪怪的
 //                                        $allIds = StringUtil::filterStr($bodyData['toids'] . ',' . $bodyData['copytoids']);
-                                        $allIds = StringUtil::filterStr( $bodyData['fromwebmail']. ',' . $bodyData['copytoids']);
+                                        $allIds = StringUtil::filterStr($bodyData['fromwebmail'] . ',' . $bodyData['copytoids']);
                                         foreach (explode(',', $allIds) as $key => $uid) {
                                             if (!empty($uid)) {
                                                 $tempUid = strpos($uid, '@');
@@ -220,7 +228,8 @@ class ContentController extends BaseController {
      * 编辑
      * @return void
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $id = intval(Env::getRequest('id'));
         if (empty($id)) {
             $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('list/index'));
@@ -254,7 +263,7 @@ class ContentController extends BaseController {
                 'uploadConfig' => Attach::getUploadConfig(),
                 'isInstallThread' => Module::getIsEnabled('thread')
             );
-            
+
             if ($data['isInstallThread']) {
                 $data['threadList'] = Thread::model()->getThreadList(Ibos::app()->user->uid);
             }
@@ -272,28 +281,26 @@ class ContentController extends BaseController {
      * 邮件显示
      * @return void
      */
-    public function actionShow() {
+    public function actionShow()
+    {
         $id = is_null($_GET['id']) ? 0 : intval($_GET['id']);
         if ($id) {
             $data = array();
             // 我发送的邮件
             if (isset($_GET['op']) && $_GET['op'] === 'send') {
                 $email = EmailBody::model()->fetchById($id, $this->archiveId);
-                $data['isSend'] = TRUE;
+                $data['isSend'] = true;
             } // 我接收的邮件
             else {
                 $email = Email::model()->fetchById($id, $this->archiveId);
-                $data['isSend'] = FALSE;
+                $data['isSend'] = false;
             }
             if (!$email) {
                 $this->error(Ibos::lang('Email not exists'), $this->createUrl('list/index'));
             }
-            // 阅读权限判定
-            $isReceiver = $email['toid'] == $this->uid ||
-                $email['fromid'] == $this->uid ||
-                StringUtil::findIn($email['copytoids'], $this->uid) ||
-                StringUtil::findIn($email['toids'], $this->uid);
-            if (!$isReceiver) {
+            // 阅读权限判断
+            $isReceiver = RoleUtils::getInstance()->canRead($this->uid, $email['toid'], $email['fromid'], $email['copytoids'], $email['toids']);
+            if ($isReceiver === false) {
                 $this->error(Ibos::lang('View access invalid'), $this->createUrl('list/index'));
             }
 
@@ -371,19 +378,17 @@ class ContentController extends BaseController {
             }
             !empty($email['attachmentid']) && $data['attach'] = Attach::getAttach($email['attachmentid']);
             // 获取上/下一封邮件,需要考虑已发送和已删除的两种情况
-            if($email['isdel'] == 3){
-                $data['next'] = Email::model()->fetchNextDel($id, $this->uid,$this->archiveId,3,1);
-                $data['prev'] = Email::model()->fetchPrevDel($id, $this->uid,$this->archiveId,3,1);
-            }
-            elseif((isset($_GET['op']) && $_GET['op'] === 'send')){
-                    $sendEmail = EmailBody::model()->fetchById($id, $this->archiveId);
-                    $data['next'] = Email::model()->fetchNextSend($sendEmail['emailid'], $this->uid,$this->archiveId,0,1);
-                    $data['prev'] = Email::model()->fetchPrevSend($sendEmail['emailid'], $this->uid,$this->archiveId,0,1);
-            }elseif (($email['fromid'] == $this->uid && $email['isdel'] == 0)){
-                $data['next'] = Email::model()->fetchNextSend($id,$this->uid,$this->archiveId,0,1);
-                $data['prev'] = Email::model()->fetchPrevSend($id, $this->uid,$this->archiveId,0,1);
-            }
-            else{
+            if ($email['isdel'] == 3) {
+                $data['next'] = Email::model()->fetchNextDel($id, $this->uid, $this->archiveId, 3, 1);
+                $data['prev'] = Email::model()->fetchPrevDel($id, $this->uid, $this->archiveId, 3, 1);
+            } elseif ((isset($_GET['op']) && $_GET['op'] === 'send')) {
+                $sendEmail = EmailBody::model()->fetchById($id, $this->archiveId);
+                $data['next'] = Email::model()->fetchNextSend($sendEmail['emailid'], $this->uid, $this->archiveId, 0, 1);
+                $data['prev'] = Email::model()->fetchPrevSend($sendEmail['emailid'], $this->uid, $this->archiveId, 0, 1);
+            } elseif (($email['fromid'] == $this->uid && $email['isdel'] == 0)) {
+                $data['next'] = Email::model()->fetchNextSend($id, $this->uid, $this->archiveId, 0, 1);
+                $data['prev'] = Email::model()->fetchPrevSend($id, $this->uid, $this->archiveId, 0, 1);
+            } else {
                 $data['next'] = Email::model()->fetchNext($id, $this->uid, $email['fid'], $this->archiveId);
                 $data['prev'] = Email::model()->fetchPrev($id, $this->uid, $email['fid'], $this->archiveId);
             }
@@ -405,7 +410,8 @@ class ContentController extends BaseController {
     /**
      * 导出操作
      */
-    public function actionExport() {
+    public function actionExport()
+    {
         $id = intval(Env::getRequest('id'));
         $op = Env::getRequest('op');
         if ($op == 'eml') {
@@ -418,7 +424,8 @@ class ContentController extends BaseController {
     /**
      * 检查用户邮件使用情况
      */
-    protected function checkUserSize() {
+    protected function checkUserSize()
+    {
         $userSize = EmailUtil::getUserSize($this->uid);
         $usedSize = EmailFolder::model()->getUsedSize($this->uid);
         //如果要比较数字大小，只要其中一个是数字即可
@@ -431,7 +438,8 @@ class ContentController extends BaseController {
      * 保存邮件主体前的处理
      * @return array
      */
-    private function beforeSaveBody() {
+    private function beforeSaveBody()
+    {
         $data = $_POST['emailbody'];
         // 内部收件人与外部收件人不能同时为空
         if (empty($data['towebmail']) && empty($data['toids'])) {
@@ -449,7 +457,8 @@ class ContentController extends BaseController {
      * @param integer $bodyId 邮件主体ID
      * @param array $bodyData 邮件主体数据
      */
-    private function save($bodyId, $bodyData) {
+    private function save($bodyId, $bodyData)
+    {
         // 更新附件使用情况
         if (!empty($bodyData['attachmentid']) && $bodyId) {
             Attach::updateAttach($bodyData['attachmentid'], $bodyId);
@@ -467,7 +476,13 @@ class ContentController extends BaseController {
                 $toUsers = StringUtil::filterStr($bodyData['towebmail'], ';');
                 if (!empty($toUsers)) {
                     $webBox = EmailWeb::model()->fetchByPk($bodyData['fromwebid']);
-                    WebMailUtil::sendWebMail($toUsers, $bodyData, $webBox);
+                    $sendStatus = WebMailUtil::sendWebMail($toUsers, $bodyData, $webBox);
+                    if (true !== $sendStatus) {
+                        // 外部邮件发送失败
+                        // @todo 163 邮箱在测试发信的时候，如果标题、内容中使用简单文字（如：test、123），会被误认为是 SPAM。
+                        // 相关链接：http://help.163.com/09/1224/17/5RAJ4LMH00753VB8.html
+                        $this->error($sendStatus);
+                    }
                 }
             }
             // 更新积分
@@ -495,7 +510,8 @@ class ContentController extends BaseController {
      * @param array $bodyData 邮件主体数据
      * @return string
      */
-    private function handleEmailContentData($bodyData) {
+    private function handleEmailContentData($bodyData)
+    {
         $lang = Ibos::getLangSources();
         $contentData = array(
             'lang' => $lang,
@@ -529,7 +545,8 @@ class ContentController extends BaseController {
      * 获得要转发的新闻的数据
      * @return array
      */
-    private function getForwardNew() {
+    private function getForwardNew()
+    {
         $artId = intval(Env::getRequest('relatedid'));
         $article = Article::model()->fetchByPk($artId);
         if (empty($article)) {
@@ -539,14 +556,15 @@ class ContentController extends BaseController {
     }
 
     /**
-     * 获得要转发的公文的数据
+     * 获得要转发的通知的数据
      * @return array
      */
-    private function getForwardDoc() {
+    private function getForwardDoc()
+    {
         $docId = intval(Env::getRequest('relatedid'));
         $doc = Officialdoc::model()->fetchByPk($docId);
         if (empty($doc)) {
-            $this->error(Ibos::lang('转发的公文不存在或者已删掉'), Ibos::app()->urlManager->createUrl('officialdoc/officialdoc/index'));
+            $this->error(Ibos::lang('转发的通知不存在或者已删掉'), Ibos::app()->urlManager->createUrl('officialdoc/officialdoc/index'));
         }
         return $doc;
     }

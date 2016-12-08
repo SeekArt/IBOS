@@ -12,7 +12,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class MultipartUpload {
+class MultipartUpload
+{
     /**
      * @var string
      */
@@ -32,7 +33,8 @@ class MultipartUpload {
      * @internal
      * @param \DateTime $initiated
      */
-    public function setInitiated($initiated) {
+    public function setInitiated($initiated)
+    {
         $this->initiated = $initiated;
     }
 
@@ -41,7 +43,8 @@ class MultipartUpload {
      *
      * @return \DateTime
      */
-    public function getInitiated() {
+    public function getInitiated()
+    {
         return $this->initiated;
     }
 
@@ -49,7 +52,8 @@ class MultipartUpload {
      * @internal
      * @param string $key
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
@@ -57,7 +61,8 @@ class MultipartUpload {
      * 获取分块上传Object的Key
      * @return string
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
@@ -65,7 +70,8 @@ class MultipartUpload {
      * @internal
      * @param string $uploadId
      */
-    public function setUploadId($uploadId) {
+    public function setUploadId($uploadId)
+    {
         $this->uploadId = $uploadId;
     }
 
@@ -74,7 +80,8 @@ class MultipartUpload {
      *
      * @return string
      */
-    public function getUploadId() {
+    public function getUploadId()
+    {
         return $this->uploadId;
     }
 

@@ -19,9 +19,11 @@ namespace application\core\engines\sae;
 
 use application\core\components\Upload;
 
-class SaeUpload extends Upload {
+class SaeUpload extends Upload
+{
 
-    public function save() {
+    public function save()
+    {
         if ($this->getError() == 0) {
             $storage = new SaeFile();
             $attach = $this->getAttach();

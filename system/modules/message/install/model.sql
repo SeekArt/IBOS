@@ -199,6 +199,7 @@ CREATE TABLE `{{user_data}}` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `{{notify_node}}` (`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`,`sendemail`,`sendmessage`,`sendsms`,`type`) VALUES ('message_digg', '微博的赞', 'message', 'message/default/Digg message title', 'message/default/Digg message content','1','1','1','2');
+INSERT INTO `{{notify_node}}` (`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`,`sendemail`,`sendmessage`,`sendsms`,`type`) VALUES ('message_empty_digg', '微博的无文字赞', 'message', 'message/default/Digg empty message title', 'message/default/Digg empty message content','1','1','1','2');
 INSERT INTO `{{notify_node}}` (`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`,`sendemail`,`sendmessage`,`sendsms`,`type`) VALUES ('user_follow', '新粉丝提醒', 'message', 'message/default/Follow message title', 'message/default/Follow message content','1','1','1','2');
 INSERT INTO `{{notify_node}}` (`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`,`sendemail`,`sendmessage`,`sendsms`,`type`) VALUES ('comment', '评论我的', 'message', 'message/default/Notify comment title', 'message/default/Notify comment content','0','0','0','1');
 INSERT INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`,`extcredits1`, `extcredits2`) VALUES ('评论', 'addcomment', '3', '40','3','1');

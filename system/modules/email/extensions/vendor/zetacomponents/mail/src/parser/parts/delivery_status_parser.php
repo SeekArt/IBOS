@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -62,7 +62,7 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      *
      * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct(ezcMailHeadersHolder $headers)
     {
         $this->headers = $headers;
         $this->section = 0;
@@ -75,10 +75,10 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      *
      * @param string $line
      */
-    public function parseBody( $line )
+    public function parseBody($line)
     {
-        $this->parseHeader( $line, $this->headers );
-        $this->size += strlen( $line );
+        $this->parseHeader($line, $this->headers);
+        $this->size += strlen($line);
     }
 
     /**
@@ -87,31 +87,25 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      * @param string $line
      * @param ezcMailHeadersHolder $headers
      */
-    protected function parseHeader( $line, ezcMailHeadersHolder $headers )
+    protected function parseHeader($line, ezcMailHeadersHolder $headers)
     {
         $matches = array();
-        preg_match_all( "/^([\w-_]*):\s?(.*)/", $line, $matches, PREG_SET_ORDER );
-        if ( count( $matches ) > 0 )
-        {
+        preg_match_all("/^([\w-_]*):\s?(.*)/", $line, $matches, PREG_SET_ORDER);
+        if (count($matches) > 0) {
             $this->lastParsedHeader = $matches[0][1];
-            $this->headerValue = trim( $matches[0][2] );
-        }
-        else if ( isset( $this->lastParsedHeader ) && $this->lastParsedHeader !== null ) // take care of folding
+            $this->headerValue = trim($matches[0][2]);
+        } else if (isset($this->lastParsedHeader) && $this->lastParsedHeader !== null) // take care of folding
         {
             $this->headerValue .= $line;
         }
-        if ( strlen( trim( $line ) ) == 0 )
-        {
+        if (strlen(trim($line)) == 0) {
             $this->section++;
             $this->part->createRecipient();
             return;
         }
-        if ( $this->section == 0 )
-        {
+        if ($this->section == 0) {
             $this->part->message[$this->lastParsedHeader] = $this->headerValue;
-        }
-        else
-        {
+        } else {
             $this->part->recipients[$this->section - 1][$this->lastParsedHeader] = $this->headerValue;
         }
     }
@@ -123,9 +117,10 @@ class ezcMailDeliveryStatusParser extends ezcMailPartParser
      */
     public function finish()
     {
-        unset( $this->part->recipients[$this->section - 1] ); // because one extra recipient is created in parseHeader()
+        unset($this->part->recipients[$this->section - 1]); // because one extra recipient is created in parseHeader()
         $this->part->size = $this->size;
         return $this->part;
     }
 }
+
 ?>

@@ -16,8 +16,8 @@ class PostFile implements PostFileInterface
     protected $filename;
 
     /**
-     * @param string $fieldName   Name of the field
-     * @param string $filename    Path to the file
+     * @param string $fieldName Name of the field
+     * @param string $filename Path to the file
      * @param string $contentType Content-Type of the upload
      */
     public function __construct($fieldName, $filename, $contentType = null)

@@ -4,7 +4,7 @@
  * 用户模块默认语言包
  * @package application.modules.user.language.zh_cn
  * @link http://www.ibos.com.cn/
- * @version $Id: default.php 4949 2015-03-28 02:40:55Z tanghang $
+ * @version $Id$
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author Ring <Ring@ibos.com.cn>
  */

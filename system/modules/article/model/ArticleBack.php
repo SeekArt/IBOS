@@ -19,13 +19,16 @@ namespace application\modules\article\model;
 use application\core\model\Model;
 use application\core\utils\Convert;
 
-class ArticleBack extends Model {
+class ArticleBack extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{article_back}}';
     }
 
@@ -37,22 +40,33 @@ class ArticleBack extends Model {
      * @param integer $time 退回时间
      * @return integer
      */
-    public function addBack( $artId, $uid, $reason, $time = TIMESTAMP ) {
-        return $this->add( array(
-                    'articleid' => $artId,
-                    'uid' => $uid,
-                    'reason' => $reason,
-                    'time' => $time
-        ) );
+    public function addBack($artId, $uid, $reason, $time = TIMESTAMP)
+    {
+        return $this->add(array(
+            'articleid' => $artId,
+            'uid' => $uid,
+            'reason' => $reason,
+            'time' => $time
+        ));
     }
 
     /**
      * 获得所有退回的新闻id数组
      * @return array
      */
-    public function fetchAllBackArtId() {
+    public function fetchAllBackArtId()
+    {
         $record = $this->fetchAll();
-        return Convert::getSubByKey( $record, 'articleid' );
+        return Convert::getSubByKey($record, 'articleid');
     }
 
+    /*
+     * 得到一条退回的新闻数据
+     * @param integer $articleid 新闻ID
+     */
+    public function getBackByArticleId($articleid)
+    {
+        $record = $this->fetch("articleid = :articleid", array(':articleid' => $articleid));
+        return $record;
+    }
 }

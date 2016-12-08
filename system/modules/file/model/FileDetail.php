@@ -19,15 +19,18 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 
-class FileDetail extends Model {
+class FileDetail extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{file_detail}}';
-	}
+    public function tableName()
+    {
+        return '{{file_detail}}';
+    }
 
 
 }

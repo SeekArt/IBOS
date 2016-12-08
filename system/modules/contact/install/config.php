@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '通讯录',
@@ -32,9 +32,15 @@ return array(
             'name' => '通讯录',
             'group' => '通讯录',
             'controllerMap' => array(
-                'default' => array( 'index', 'ajaxapi', 'export' ),
-                'constant' => array( 'index' ),
+                'default' => array('index', 'ajaxapi', 'export', 'printcontact'),
+                'constant' => array('index'),
+                'api' => array('deptlist', 'userlist', 'groupuserlist', 'search', 'corp', 'dept', 'user'),
             )
         )
-    )
+    ),
+    'behaviors' => array(
+        'onUpdateCache' => array(
+            'class' => 'application\modules\contact\behaviors\UpdateContactCache'
+        )
+    ),
 );

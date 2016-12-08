@@ -4,7 +4,7 @@
  * 邮件中心默认语言包 zh_cn
  *
  * @package application.modules.email.language.zh_cn
- * @version $Id: default.php 8575 2016-10-08 08:32:06Z gzhyj $
+ * @version $Id$
  * @author Ring <Ring@ibos.com.cn>
  */
 return array(
@@ -97,6 +97,7 @@ return array(
     'No unread mail' => '没有未读邮件',
     'New unread messages' => '有 {count} 封未读邮件',
     'Reverse selected' => '反选',
+    'Completely remove' => '彻底删除',
     'Recall' => '撤回',
     'Allow recall' => '允许撤回',
     'Number' => '序号',

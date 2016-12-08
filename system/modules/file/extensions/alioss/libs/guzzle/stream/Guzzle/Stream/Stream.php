@@ -44,7 +44,7 @@ class Stream implements StreamInterface
 
     /**
      * @param resource $stream Stream resource to wrap
-     * @param int      $size   Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
+     * @param int $size Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
      *
      * @throws InvalidArgumentException if the stream is not a stream resource
      */
@@ -86,9 +86,9 @@ class Stream implements StreamInterface
     /**
      * Calculate a hash of a Stream
      *
-     * @param StreamInterface $stream    Stream to calculate the hash for
-     * @param string          $algo      Hash algorithm (e.g. md5, crc32, etc)
-     * @param bool            $rawOutput Whether or not to use raw output
+     * @param StreamInterface $stream Stream to calculate the hash for
+     * @param string $algo Hash algorithm (e.g. md5, crc32, etc)
+     * @param bool $rawOutput Whether or not to use raw output
      *
      * @return bool|string Returns false on failure or a hash string on success
      */
@@ -104,7 +104,7 @@ class Stream implements StreamInterface
             hash_update($ctx, $data);
         }
 
-        $out = hash_final($ctx, (bool) $rawOutput);
+        $out = hash_final($ctx, (bool)$rawOutput);
         $stream->seek($pos);
 
         return $out;
@@ -177,7 +177,7 @@ class Stream implements StreamInterface
         } elseif ($this->cache[self::IS_READABLE] && $this->cache[self::SEEKABLE]) {
             // Only get the size based on the content if the the stream is readable and seekable
             $pos = $this->ftell();
-            $this->size = strlen((string) $this);
+            $this->size = strlen((string)$this);
             $this->seek($pos);
             return $this->size;
         }

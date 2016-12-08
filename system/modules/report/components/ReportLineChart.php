@@ -16,19 +16,22 @@
 
 namespace application\modules\report\components;
 
-class ReportLineChart extends ReportChart {
+class ReportLineChart extends ReportChart
+{
 
     /**
      * 获取图表数据序列
      */
-    public function getSeries() {
+    public function getSeries()
+    {
         return $this->getCounter()->getCount();
     }
 
     /**
      * 获取图表X轴数据
      */
-    public function getXaxis() {
+    public function getXaxis()
+    {
         return $this->getCounter()->getDateScope();
     }
 

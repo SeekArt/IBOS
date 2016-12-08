@@ -75,32 +75,19 @@ $(function() {
             });
 
             memberBox = $selectBox.data("selectBox");
-            $(memberBox).on("slbchange", function(evt, data) {
-                if (data.checked) {
-                    //通过选人框选人后，重置选人栏
-                    $initInput.val(data.id).trigger("change");
-                } else {
-                    $initInput.val('').trigger("change");
-                }
+            $(memberBox).on("slbchange.selectBox", function(evt, data) {
+                //通过选人框选人后，重置选人栏
+                data.added.length > 0 && $initInput.val(data.added.join(',')).trigger("change");
+                data.removed.length > 0 && $initInput.val('').trigger("change");
                 menu.show();
             });
             menu = new Ui.PopMenu($selectBtn, $selectBox, {
                 trigger: "click",
-                position: {
-                    at: "left bottom+10",
-                    my: "left top",
-                    of: selectBtn
-                },
+                position: '', //复写position
                 zIndex: 1999
             });
             $(document).on("mousedown", function() {
                 menu.hide();
-            })
-
-            // 打开选人框时即时刷新人员列表
-            $selectBox.on("show", function() {
-                memberBox.refreshList();
-                memberBox.refreshCheckbox();
             })
         },
         resetSelect: function($wrap) {
@@ -209,19 +196,19 @@ $(function() {
                     top: "52%",
                     left: "50%",
                     skin: "call-dialog",
-                    init: function(){
-                    	var tpl = 	"<form action='"+ url +"' method='post' target='Open"+ this.config.id +"'>"+
-                    				"<% for(var i=0; i<data.length; i++){ %>" +
-                    				"<input type='hidden' name='data[<%= i %>][uid]' value='<%= data[i].uid %>' />"+
-                    				"<input type='hidden' name='data[<%= i %>][name]' value='<%= data[i].name %>' />"+
-                    				"<input type='hidden' name='data[<%= i %>][avatar]' value='<%= data[i].avatar %>' />"+
-                    				"<input type='hidden' name='data[<%= i %>][phone]' value='<%= data[i].phone %>' />"+
-                    				"<% } %>" +
-                    				"</form>",
-                    		$form = $.tmpl(tpl, {data: info});
-                    	this.DOM.content.append( $form[0] );
+                    init: function() {
+                        var tpl = "<form action='" + url + "' method='post' target='Open" + this.config.id + "'>" +
+                            "<% for(var i=0; i<data.length; i++){ %>" +
+                            "<input type='hidden' name='data[<%= i %>][uid]' value='<%= data[i].uid %>' />" +
+                            "<input type='hidden' name='data[<%= i %>][name]' value='<%= data[i].name %>' />" +
+                            "<input type='hidden' name='data[<%= i %>][avatar]' value='<%= data[i].avatar %>' />" +
+                            "<input type='hidden' name='data[<%= i %>][phone]' value='<%= data[i].phone %>' />" +
+                            "<% } %>" +
+                            "</form>",
+                            $form = $.tmpl(tpl, { data: info });
+                        this.DOM.content.append($form[0]);
 
-                    	$form.submit();
+                        $form.submit();
                     }
                 });
 

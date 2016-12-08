@@ -72,12 +72,12 @@ class UriTemplate implements UriTemplateInterface
             if ($substrPos) {
                 $varspec['value'] = substr($value, 0, $substrPos);
                 $varspec['modifier'] = ':';
-                $varspec['position'] = (int) substr($value, $substrPos + 1);
+                $varspec['position'] = (int)substr($value, $substrPos + 1);
             } elseif (substr($value, -1) == '*') {
                 $varspec['modifier'] = '*';
                 $varspec['value'] = substr($value, 0, -1);
             } else {
-                $varspec['value'] = (string) $value;
+                $varspec['value'] = (string)$value;
                 $varspec['modifier'] = '';
             }
             $value = $varspec;
@@ -85,7 +85,7 @@ class UriTemplate implements UriTemplateInterface
 
         return array(
             'operator' => $operator,
-            'values'   => $values
+            'values' => $values
         );
     }
 
@@ -99,7 +99,7 @@ class UriTemplate implements UriTemplateInterface
     private function expandMatch(array $matches)
     {
         static $rfc1738to3986 = array(
-            '+'   => '%20',
+            '+' => '%20',
             '%7e' => '~'
         );
 
@@ -226,7 +226,7 @@ class UriTemplate implements UriTemplateInterface
      */
     private function isAssoc(array $array)
     {
-        return (bool) count(array_filter(array_keys($array), 'is_string'));
+        return (bool)count(array_filter(array_keys($array), 'is_string'));
     }
 
     /**

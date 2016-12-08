@@ -9,17 +9,17 @@ class CookieParser implements CookieParserInterface
 {
     /** @var array Cookie part names to snake_case array values */
     protected static $cookieParts = array(
-        'domain'      => 'Domain',
-        'path'        => 'Path',
-        'max_age'     => 'Max-Age',
-        'expires'     => 'Expires',
-        'version'     => 'Version',
-        'secure'      => 'Secure',
-        'port'        => 'Port',
-        'discard'     => 'Discard',
-        'comment'     => 'Comment',
+        'domain' => 'Domain',
+        'path' => 'Path',
+        'max_age' => 'Max-Age',
+        'expires' => 'Expires',
+        'version' => 'Version',
+        'secure' => 'Secure',
+        'port' => 'Port',
+        'discard' => 'Discard',
+        'comment' => 'Comment',
         'comment_url' => 'Comment-Url',
-        'http_only'   => 'HttpOnly'
+        'http_only' => 'HttpOnly'
     );
 
     public function parseCookie($cookie, $host = null, $path = null, $decode = false)
@@ -34,12 +34,12 @@ class CookieParser implements CookieParserInterface
 
         // Create the default return array
         $data = array_merge(array_fill_keys(array_keys(self::$cookieParts), null), array(
-            'cookies'   => array(),
-            'data'      => array(),
-            'path'      => $path ?: '/',
+            'cookies' => array(),
+            'data' => array(),
+            'path' => $path ?: '/',
             'http_only' => false,
-            'discard'   => false,
-            'domain'    => $host
+            'discard' => false,
+            'domain' => $host
         ));
         $foundNonCookies = 0;
 
@@ -78,7 +78,7 @@ class CookieParser implements CookieParserInterface
 
         // Calculate the expires date
         if (!$data['expires'] && $data['max_age']) {
-            $data['expires'] = time() + (int) $data['max_age'];
+            $data['expires'] = time() + (int)$data['max_age'];
         }
 
         return $data;

@@ -22,47 +22,60 @@ use application\core\utils\Ibos;
 use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 
-class DashboardController extends BaseController {
+class DashboardController extends BaseController
+{
 
-    public function getAssetUrl( $module = '' ) {
+    public function getAssetUrl($module = '')
+    {
         $module = 'dashboard';
-        return Ibos::app()->assetManager->getAssetsUrl( $module );
+        return Ibos::app()->assetManager->getAssetsUrl($module);
     }
 
     /**
      * 首页显示
      * @return void
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         //取出所有的配置信息
-        $result = array( );
+        $result = array();
         $fields = array(
-            'articlecommentenable', 'articlevoteenable', 'articlemessageenable', 'articlethumbenable', 'articlethumbwh'
+            'articlecommentenable',
+            'articlevoteenable',
+            'articlemessageenable',
+            'articlethumbenable',
+            'articlethumbwh'
         );
-        foreach ( $fields as $field ) {
-            $result[$field] = Ibos::app()->setting->get( 'setting/' . $field );
+        foreach ($fields as $field) {
+            $result[$field] = Ibos::app()->setting->get('setting/' . $field);
         }
         //缩略图设置
         $thumbOperate = $result['articlethumbwh'];
-        list($result['articlethumbwidth'], $result['articlethumbheight']) = explode( ',', $thumbOperate );
+        list($result['articlethumbwidth'], $result['articlethumbheight']) = explode(',', $thumbOperate);
 
-        $this->render( 'index', array( 'data' => $result ) );
+        $this->render('index', array('data' => $result));
     }
 
     /**
      * 更新数据
      */
-    public function actionEdit() {
-        $data = array( );
+    public function actionEdit()
+    {
+        $data = array();
         $fields = array(
-            'articlecommentenable', 'articlevoteenable', 'articlemessageenable', 'articlethumbenable', 'articlethumbwidth', 'articlethumbheight'
+            'articlecommentenable',
+            'articlevoteenable',
+            'articlemessageenable',
+            'articlethumbenable',
+            'articlethumbwidth',
+            'articlethumbheight'
         );
-        foreach ( $fields as $field ) {
-            if ( isset( $_POST[$field] ) ) {
-                if ( empty( $_POST[$field] ) ) {
+        foreach ($fields as $field) {
+            if (isset($_POST[$field])) {
+                if (empty($_POST[$field])) {
                     $data[$field] = 0;
                 } else {
-                    $data[$field] = intval( $_POST[$field] );
+                    $data[$field] = intval($_POST[$field]);
                 }
             } else {
                 $data[$field] = 0;
@@ -70,14 +83,14 @@ class DashboardController extends BaseController {
         }
         $data['articlethumbwh'] = $data['articlethumbwidth'] . ',' . $data['articlethumbheight'];
 
-        unset( $data['articlethumbwidth'] );
-        unset( $data['articlethumbhieght'] );
+        unset($data['articlethumbwidth']);
+        unset($data['articlethumbhieght']);
 
-        foreach ( $data as $key => $value ) {
-            Setting::model()->updateAll( array( 'svalue' => $value ), 'skey=:skey', array( ':skey' => $key ) );
+        foreach ($data as $key => $value) {
+            Setting::model()->updateAll(array('svalue' => $value), 'skey=:skey', array(':skey' => $key));
         }
-        Cache::update( 'setting' );
-        $this->success( Ibos::lang( 'Update succeed' ), $this->createUrl( 'dashboard/index' ) );
+        Cache::update('setting');
+        $this->success(Ibos::lang('Update succeed'), $this->createUrl('dashboard/index'));
     }
 
 }

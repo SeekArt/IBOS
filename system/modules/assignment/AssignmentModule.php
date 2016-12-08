@@ -19,9 +19,11 @@ namespace application\modules\assignment;
 use application\core\modules\Module;
 use application\core\utils\Env;
 
-class AssignmentModule extends Module {
+class AssignmentModule extends Module
+{
 
-    protected function preinit() {
+    protected function preinit()
+    {
         /*if ( !$this->checkModule( 'assignment' ) ) {
             Env::iExit( '你当前使用的模块为商业模块，请获取正确授权后使用' );
         }*/

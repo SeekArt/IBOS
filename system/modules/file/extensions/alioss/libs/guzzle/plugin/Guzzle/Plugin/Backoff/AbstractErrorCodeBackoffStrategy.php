@@ -14,8 +14,8 @@ abstract class AbstractErrorCodeBackoffStrategy extends AbstractBackoffStrategy
     protected $errorCodes;
 
     /**
-     * @param array                    $codes Array of codes that should be retried
-     * @param BackoffStrategyInterface $next  The optional next strategy
+     * @param array $codes Array of codes that should be retried
+     * @param BackoffStrategyInterface $next The optional next strategy
      */
     public function __construct(array $codes = null, BackoffStrategyInterface $next = null)
     {

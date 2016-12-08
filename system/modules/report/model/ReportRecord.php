@@ -24,13 +24,16 @@ use application\modules\report\model\CalendarRepRecord;
 use application\modules\report\model\Report;
 use CHtml;
 
-class ReportRecord extends Model {
+class ReportRecord extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{report_record}}';
     }
 
@@ -40,12 +43,13 @@ class ReportRecord extends Model {
      * @param integer $planflag 计划类型(0原计划1计划外2下次计划)
      * @return array 返回计划二维数组
      */
-    public function fetchRecordByRepidAndPlanflag( $repid, $planflag ) {
-        $records = $this->fetchAll( array(
+    public function fetchRecordByRepidAndPlanflag($repid, $planflag)
+    {
+        $records = $this->fetchAll(array(
             'condition' => "repid = :repid AND planflag = :planflag",
-            'params' => array( ':repid' => $repid, ':planflag' => $planflag ),
+            'params' => array(':repid' => $repid, ':planflag' => $planflag),
             'order' => 'recordid ASC'
-                ) );
+        ));
         return $records;
     }
 
@@ -58,25 +62,26 @@ class ReportRecord extends Model {
      * @param integer $uid 用户uid
      * @param intger $type 计划类型 0为原计划，1为计划外, 2为下次计划
      */
-    public function addPlans( $plans, $repid, $begindate, $enddate, $uid, $type, $exedetail = '' ) {
-        foreach ( $plans as $plan ) {
-            $remindDate = empty( $plan['reminddate'] ) ? 0 : strtotime( $plan['reminddate'] );
+    public function addPlans($plans, $repid, $begindate, $enddate, $uid, $type, $exedetail = '')
+    {
+        foreach ($plans as $plan) {
+            $remindDate = empty($plan['reminddate']) ? 0 : strtotime($plan['reminddate']);
             $record = array(
                 'repid' => $repid,
-                'content' => CHtml::encode( $plan['content'] ),
+                'content' => CHtml::encode($plan['content']),
                 'uid' => $uid,
-                'flag' => (isset( $plan['process'] ) && $plan['process'] == 10) ? 1 : 0,
+                'flag' => (isset($plan['process']) && $plan['process'] == 10) ? 1 : 0,
                 'planflag' => $type,
-                'process' => isset( $plan['process'] ) ? $plan['process'] : 0,
-                'exedetail' => CHtml::encode( $exedetail ),
+                'process' => isset($plan['process']) ? $plan['process'] : 0,
+                'exedetail' => CHtml::encode($exedetail),
                 'begindate' => $begindate,
                 'enddate' => $enddate,
                 'reminddate' => $remindDate
             );
-            $rid = $this->add( $record, true );
+            $rid = $this->add($record, true);
             //判断是否安装了日程模块，有的话判断有没提醒时间，有就写入日程
-            $isInstallCalendar = Module::getIsEnabled( 'calendar' );
-            if ( $isInstallCalendar && $remindDate ) {
+            $isInstallCalendar = Module::getIsEnabled('calendar');
+            if ($isInstallCalendar && $remindDate) {
                 $calendar = array(
                     'subject' => $record['content'],
                     'starttime' => $remindDate,
@@ -87,9 +92,9 @@ class ReportRecord extends Model {
                     'category' => 4,
                     'isalldayevent' => 1
                 );
-                $cid = Calendars::model()->add( $calendar, true );
+                $cid = Calendars::model()->add($calendar, true);
                 //关联表
-                CalendarRepRecord::model()->add( array( 'rid' => $rid, 'cid' => $cid, 'repid' => $repid ) );
+                CalendarRepRecord::model()->add(array('rid' => $rid, 'cid' => $cid, 'repid' => $repid));
             }
         }
     }
@@ -99,15 +104,16 @@ class ReportRecord extends Model {
      * @param array $report 参照计划
      * @return array 返回计划数组
      */
-    public function fetchAllRecordByRep( $report ) {
+    public function fetchAllRecordByRep($report)
+    {
         // 原计划要读取上一次总结的下次计划
-        $lastRep = Report::model()->fetchLastRepByRepid( $report['repid'], $report['uid'], $report['typeid'] );
+        $lastRep = Report::model()->fetchLastRepByRepid($report['repid'], $report['uid'], $report['typeid']);
         $orgPlanList = array();
-        if ( !empty( $lastRep ) ) {
-            $orgPlanList = $this->fetchRecordByRepidAndPlanflag( $lastRep['repid'], 2 );
+        if (!empty($lastRep)) {
+            $orgPlanList = $this->fetchRecordByRepidAndPlanflag($lastRep['repid'], 2);
         }
-        $outSidePlanList = $this->fetchRecordByRepidAndPlanflag( $report['repid'], 1 );
-        $nextPlanList = $this->fetchRecordByRepidAndPlanflag( $report['repid'], 2 );
+        $outSidePlanList = $this->fetchRecordByRepidAndPlanflag($report['repid'], 1);
+        $nextPlanList = $this->fetchRecordByRepidAndPlanflag($report['repid'], 2);
         $record = array(
             'orgPlanList' => $orgPlanList,
             'outSidePlanList' => $outSidePlanList,

@@ -9,9 +9,9 @@
  */
 /**
  * 用户模块索引文件类
- * 
+ *
  * @author banyan <banyan@ibos.com.cn>
- * @version $Id: UserModule.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @package application.modules.user
  */
 
@@ -19,6 +19,7 @@ namespace application\modules\user;
 
 use application\core\modules\Module;
 
-class UserModule extends Module {
-    
+class UserModule extends Module
+{
+
 }

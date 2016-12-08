@@ -1,0 +1,2 @@
+var Ibos = Ibos || {}; Ibos.data = Ibos.data || {};
+Ibos.data.role = {"r_1":{"id":"r_1","text":"\u7ba1\u7406\u5458"},"r_2":{"id":"r_2","text":"\u7f16\u8f91\u4eba\u5458"},"r_3":{"id":"r_3","text":"\u666e\u901a\u6210\u5458"}};

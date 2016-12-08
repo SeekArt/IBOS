@@ -18,7 +18,7 @@ class DefaultRevalidation implements RevalidationInterface
     protected $canCache;
 
     /**
-     * @param CacheStorageInterface     $cache    Cache storage
+     * @param CacheStorageInterface $cache Cache storage
      * @param CanCacheStrategyInterface $canCache Determines if a message can be cached
      */
     public function __construct(CacheStorageInterface $cache, CanCacheStrategyInterface $canCache = null)
@@ -87,8 +87,8 @@ class DefaultRevalidation implements RevalidationInterface
     /**
      * Creates a request to use for revalidation
      *
-     * @param RequestInterface $request  Request
-     * @param Response         $response Response to revalidate
+     * @param RequestInterface $request Request
+     * @param Response $response Response to revalidate
      *
      * @return RequestInterface returns a revalidation request
      */
@@ -119,8 +119,8 @@ class DefaultRevalidation implements RevalidationInterface
     /**
      * Handles a 200 response response from revalidating. The server does not support validation, so use this response.
      *
-     * @param RequestInterface $request          Request that was sent
-     * @param Response         $validateResponse Response received
+     * @param RequestInterface $request Request that was sent
+     * @param Response $validateResponse Response received
      *
      * @return bool Returns true if valid, false if invalid
      */
@@ -137,9 +137,9 @@ class DefaultRevalidation implements RevalidationInterface
     /**
      * Handle a 304 response and ensure that it is still valid
      *
-     * @param RequestInterface $request          Request that was sent
-     * @param Response         $validateResponse Response received
-     * @param Response         $response         Original cached response
+     * @param RequestInterface $request Request that was sent
+     * @param Response $validateResponse Response received
+     * @param Response $response Original cached response
      *
      * @return bool Returns true if valid, false if invalid
      */

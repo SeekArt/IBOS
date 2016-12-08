@@ -18,7 +18,7 @@ class CallbackCanCacheStrategy extends DefaultCanCacheStrategy
     protected $responseCallback;
 
     /**
-     * @param \Closure|array|mixed $requestCallback  Callable method to invoke for requests
+     * @param \Closure|array|mixed $requestCallback Callable method to invoke for requests
      * @param \Closure|array|mixed $responseCallback Callable method to invoke for responses
      *
      * @throws InvalidArgumentException

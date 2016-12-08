@@ -78,8 +78,8 @@ class Request extends AbstractMessage implements RequestInterface
     }
 
     /**
-     * @param string           $method  HTTP method
-     * @param string|Url       $url     HTTP URL to connect to. The URI scheme, host header, and URI are parsed from the
+     * @param string $method HTTP method
+     * @param string|Url $url HTTP URL to connect to. The URI scheme, host header, and URI are parsed from the
      *                                  full URL. If query string parameters are present they will be parsed as well.
      * @param array|Collection $headers HTTP headers
      */
@@ -99,7 +99,7 @@ class Request extends AbstractMessage implements RequestInterface
                 } elseif ($value instanceof HeaderInterface) {
                     $this->addHeader($key, $value);
                 } else {
-                    foreach ((array) $value as $v) {
+                    foreach ((array)$value as $v) {
                         $this->addHeader($key, $v);
                     }
                 }
@@ -164,8 +164,8 @@ class Request extends AbstractMessage implements RequestInterface
         $protocolVersion = $this->protocolVersion ?: '1.1';
 
         return trim($this->method . ' ' . $this->getResource()) . ' '
-            . strtoupper(str_replace('https', 'http', $this->url->getScheme()))
-            . '/' . $protocolVersion . "\r\n" . implode("\r\n", $this->getHeaderLines());
+        . strtoupper(str_replace('https', 'http', $this->url->getScheme()))
+        . '/' . $protocolVersion . "\r\n" . implode("\r\n", $this->getHeaderLines());
     }
 
     public function setUrl($url)
@@ -206,7 +206,7 @@ class Request extends AbstractMessage implements RequestInterface
     public function getQuery($asString = false)
     {
         return $asString
-            ? (string) $this->url->getQuery()
+            ? (string)$this->url->getQuery()
             : $this->url->getQuery();
     }
 
@@ -297,10 +297,10 @@ class Request extends AbstractMessage implements RequestInterface
     public function setAuth($user, $password = '', $scheme = CURLAUTH_BASIC)
     {
         static $authMap = array(
-            'basic'  => CURLAUTH_BASIC,
+            'basic' => CURLAUTH_BASIC,
             'digest' => CURLAUTH_DIGEST,
-            'ntlm'   => CURLAUTH_NTLM,
-            'any'    => CURLAUTH_ANY
+            'ntlm' => CURLAUTH_NTLM,
+            'any' => CURLAUTH_ANY
         );
 
         // If we got false or null, disable authentication
@@ -338,7 +338,7 @@ class Request extends AbstractMessage implements RequestInterface
     public function getResource()
     {
         $resource = $this->getPath();
-        if ($query = (string) $this->url->getQuery()) {
+        if ($query = (string)$this->url->getQuery()) {
             $resource .= '?' . $query;
         }
 
@@ -347,7 +347,7 @@ class Request extends AbstractMessage implements RequestInterface
 
     public function getUrl($asObject = false)
     {
-        return $asObject ? clone $this->url : (string) $this->url;
+        return $asObject ? clone $this->url : (string)$this->url;
     }
 
     public function getState()
@@ -382,8 +382,8 @@ class Request extends AbstractMessage implements RequestInterface
             case self::STATE_ERROR:
                 if (isset($context['exception'])) {
                     $this->dispatch('request.exception', array(
-                        'request'   => $this,
-                        'response'  => isset($context['response']) ? $context['response'] : $this->response,
+                        'request' => $this,
+                        'response' => isset($context['response']) ? $context['response'] : $this->response,
                         'exception' => isset($context['exception']) ? $context['exception'] : null
                     ));
                 }
@@ -400,7 +400,7 @@ class Request extends AbstractMessage implements RequestInterface
     public function startResponse(Response $response)
     {
         $this->state = self::STATE_TRANSFER;
-        $response->setEffectiveUrl((string) $this->getUrl());
+        $response->setEffectiveUrl((string)$this->getUrl());
         $this->response = $response;
 
         return $this;
@@ -408,7 +408,7 @@ class Request extends AbstractMessage implements RequestInterface
 
     public function setResponse(Response $response, $queued = false)
     {
-        $response->setEffectiveUrl((string) $this->url);
+        $response->setEffectiveUrl((string)$this->url);
 
         if ($queued) {
             $ed = $this->getEventDispatcher();
@@ -420,7 +420,7 @@ class Request extends AbstractMessage implements RequestInterface
             $this->response = $response;
             // If a specific response body is specified, then use it instead of the response's body
             if ($this->responseBody && !$this->responseBody->getCustomData('default') && !$response->isRedirect()) {
-                $this->getResponseBody()->write((string) $this->response->getBody());
+                $this->getResponseBody()->write((string)$this->response->getBody());
             } else {
                 $this->responseBody = $this->response->getBody();
             }
@@ -550,7 +550,7 @@ class Request extends AbstractMessage implements RequestInterface
     protected function getEventArray()
     {
         return array(
-            'request'  => $this,
+            'request' => $this,
             'response' => $this->response
         );
     }

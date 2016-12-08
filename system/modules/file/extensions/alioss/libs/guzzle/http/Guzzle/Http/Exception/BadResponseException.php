@@ -16,8 +16,8 @@ class BadResponseException extends RequestException
     /**
      * Factory method to create a new response exception based on the response code.
      *
-     * @param RequestInterface $request  Request
-     * @param Response         $response Response received
+     * @param RequestInterface $request Request
+     * @param Response $response Response received
      *
      * @return BadResponseException
      */
@@ -36,10 +36,10 @@ class BadResponseException extends RequestException
         }
 
         $message = $label . PHP_EOL . implode(PHP_EOL, array(
-            '[status code] ' . $response->getStatusCode(),
-            '[reason phrase] ' . $response->getReasonPhrase(),
-            '[url] ' . $request->getUrl(),
-        ));
+                '[status code] ' . $response->getStatusCode(),
+                '[reason phrase] ' . $response->getReasonPhrase(),
+                '[url] ' . $request->getUrl(),
+            ));
 
         $e = new $class($message);
         $e->setResponse($response);

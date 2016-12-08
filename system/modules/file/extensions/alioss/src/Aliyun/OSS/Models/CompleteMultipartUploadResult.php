@@ -13,7 +13,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class CompleteMultipartUploadResult {
+class CompleteMultipartUploadResult
+{
     /**
      * @var string
      */
@@ -39,7 +40,8 @@ class CompleteMultipartUploadResult {
      *
      * @param string $bucketName
      */
-    public function setBucketName($bucketName) {
+    public function setBucketName($bucketName)
+    {
         $this->bucketName = $bucketName;
     }
 
@@ -48,7 +50,8 @@ class CompleteMultipartUploadResult {
      *
      * @return string
      */
-    public function getBucketName() {
+    public function getBucketName()
+    {
         return $this->bucketName;
     }
 
@@ -57,7 +60,8 @@ class CompleteMultipartUploadResult {
      *
      * @param string $eTag
      */
-    public function setETag($eTag) {
+    public function setETag($eTag)
+    {
         $this->eTag = $eTag;
     }
 
@@ -66,7 +70,8 @@ class CompleteMultipartUploadResult {
      *
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         return $this->eTag;
     }
 
@@ -75,7 +80,8 @@ class CompleteMultipartUploadResult {
      *
      * @param string $key
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
@@ -84,7 +90,8 @@ class CompleteMultipartUploadResult {
      *
      * @return string
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
@@ -93,7 +100,8 @@ class CompleteMultipartUploadResult {
      *
      * @param string $location
      */
-    public function setLocation($location) {
+    public function setLocation($location)
+    {
         $this->location = $location;
     }
 
@@ -102,7 +110,8 @@ class CompleteMultipartUploadResult {
      *
      * @return string
      */
-    public function getLocation() {
+    public function getLocation()
+    {
         return $this->location;
     }
 

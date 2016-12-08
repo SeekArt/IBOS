@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,7 +60,7 @@ class ezcBaseFileFindContext extends ezcBaseStruct
      * @param int $count
      * @param int $size
      */
-    public function __construct( $elements = array(), $count = 0, $size = 0 )
+    public function __construct($elements = array(), $count = 0, $size = 0)
     {
         $this->elements = $elements;
         $this->count = $count;
@@ -80,9 +80,10 @@ class ezcBaseFileFindContext extends ezcBaseStruct
      * @param array(string=>mixed) $array
      * @return ezcBaseFileFindContext
      */
-    static public function __set_state( array $array )
+    static public function __set_state(array $array)
     {
-        return new ezcBaseFileFindContext( $array['elements'], $array['count'], $array['size'] );
+        return new ezcBaseFileFindContext($array['elements'], $array['count'], $array['size']);
     }
 }
+
 ?>

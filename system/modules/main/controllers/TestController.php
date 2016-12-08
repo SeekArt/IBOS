@@ -17,25 +17,28 @@ use application\modules\user\model\User;
  * @link https://www.ibos.com.cn
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-4-6 11:12:22
- * @version $Id: TestController.php 7509 2016-07-08 08:35:42Z tanghang $
+ * @version $Id$
  */
-class TestController extends Controller {
+class TestController extends Controller
+{
 
-	public function actionIndex() {
-		echo '<meta charset="UTF-8">';
-		$start = microtime( true );
-		$users = User::model()->fetchAllByUids();
-		echo '一共' . count( $users ) . '个用户';
-		echo '<br/>';
-		$end = microtime( true );
-		echo '耗时' . number_format( $end - $start, 6 );
-		echo '<br/>';
-		echo '当前用户的格式：<pre>';
-		print_r( $users[Ibos::app()->user->uid] );
-	}
+    public function actionIndex()
+    {
+        echo '<meta charset="UTF-8">';
+        $start = microtime(true);
+        $users = User::model()->fetchAllByUids();
+        echo '一共' . count($users) . '个用户';
+        echo '<br/>';
+        $end = microtime(true);
+        echo '耗时' . number_format($end - $start, 6);
+        echo '<br/>';
+        echo '当前用户的格式：<pre>';
+        print_r($users[Ibos::app()->user->uid]);
+    }
 
-	public function actionTestfile() {
-		var_dump(File::fileSize( __FILE__ ));
-	}
+    public function actionTestfile()
+    {
+        var_dump(File::fileSize(__FILE__));
+    }
 
 }

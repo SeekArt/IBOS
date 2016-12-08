@@ -18,13 +18,16 @@ namespace application\modules\report\model;
 
 use application\core\model\Model;
 
-class CalendarRepRecord extends Model {
+class CalendarRepRecord extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{calendar_rep_record}}';
     }
 

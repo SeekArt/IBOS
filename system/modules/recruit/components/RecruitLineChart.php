@@ -16,20 +16,23 @@
 
 namespace application\modules\recruit\components;
 
-class RecruitLineChart extends RecruitChart {
+class RecruitLineChart extends RecruitChart
+{
 
     /**
      * 获取图表数据序列
      * @return type
      */
-    public function getSeries() {
+    public function getSeries()
+    {
         return $this->getCounter()->getCount();
     }
 
     /**
      * 获取图表X轴数据
      */
-    public function getXaxis() {
+    public function getXaxis()
+    {
         return $this->getCounter()->getDateScope();
     }
 

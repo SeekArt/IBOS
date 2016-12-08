@@ -52,7 +52,7 @@ var SinglePage = {
 		document.body.removeChild(tempForm);
 	},
 	/**
-	 * 选择公文模板
+	 * 选择通知模板
 	 * @method selectTemplate
 	 * @param  {String} tpl    传入模板
 	 * @param  {String} pageid 页面ID

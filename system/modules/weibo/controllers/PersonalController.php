@@ -16,244 +16,253 @@ use application\modules\message\model\NotifyMessage;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 
-class PersonalController extends HomeBaseController {
+class PersonalController extends HomeBaseController
+{
 
     /**
      * 微博个人页
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $data = array(
-            'movements' => util\Ibos::app()->setting->get( 'setting/wbmovement' ),
-            'colleagues' => $this->getRelation( 'colleague' ),
-            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' )
+            'movements' => util\Ibos::app()->setting->get('setting/wbmovement'),
+            'colleagues' => $this->getRelation('colleague'),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('user'),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('weibo')
         );
         // 如果查看的不是自己，显示共同关注 与 我关注的人也关注TA 两个选项
-        if ( !$this->getIsMe() ) {
-            $data['bothfollow'] = $this->getRelation( 'bothfollow' );
-            $data['secondfollow'] = $this->getRelation( 'secondfollow' );
+        if (!$this->getIsMe()) {
+            $data['bothfollow'] = $this->getRelation('bothfollow');
+            $data['secondfollow'] = $this->getRelation('secondfollow');
         }
         // 模块动态列表
-        $var['movements'] = util\Ibos::app()->setting->get( 'setting/wbmovement' );
+        $var['movements'] = util\Ibos::app()->setting->get('setting/wbmovement');
         // 可用的动态模块列表
         $var['enableMovementModule'] = WbCommonUtil::getMovementModules();
-        $var['type'] = isset( $_GET['type'] ) ? util\StringUtil::filterCleanHtml( $_GET['type'] ) : 'all';
-        $var['feedtype'] = isset( $_GET['feedtype'] ) ? util\StringUtil::filterCleanHtml( $_GET['feedtype'] ) : 'all';
-        $var['feedkey'] = isset( $_GET['feedkey'] ) ? util\StringUtil::filterCleanHtml( urldecode( $_GET['feedkey'] ) ) : '';
-        $var['loadNew'] = isset( $_GET['page'] ) ? 0 : 1;
-        $var['loadMore'] = isset( $_GET['page'] ) ? 0 : 1;
+        $var['type'] = isset($_GET['type']) ? util\StringUtil::filterCleanHtml($_GET['type']) : 'all';
+        $var['feedtype'] = isset($_GET['feedtype']) ? util\StringUtil::filterCleanHtml($_GET['feedtype']) : 'all';
+        $var['feedkey'] = isset($_GET['feedkey']) ? util\StringUtil::filterCleanHtml(urldecode($_GET['feedkey'])) : '';
+        $var['loadNew'] = isset($_GET['page']) ? 0 : 1;
+        $var['loadMore'] = isset($_GET['page']) ? 0 : 1;
         $var['loadId'] = 0;
-        $var['nums'] = isset( $_GET['page'] ) ? WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS : 10;
+        $var['nums'] = isset($_GET['page']) ? WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS : 10;
         $user = $this->getUser();
-        $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
-            array( 'name' => util\Ibos::lang( 'List' ) )
-        ) );
-        NotifyMessage::model()->setReadByUrl( Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl() );
-        $this->render( 'index', array_merge( $data, $var, $this->getData( $var ) ), false, array( 'user.default' ) );
+        $this->setPageState('breadCrumbs', array(
+            array('name' => util\Ibos::lang('Enterprise weibo'), 'url' => $this->createUrl('home/index')),
+            array('name' => $user['realname'] . util\Ibos::lang('sbs feed'), 'url' => $this->createUrl('personal/index', array('uid' => $this->getUid()))),
+            array('name' => util\Ibos::lang('List'))
+        ));
+        NotifyMessage::model()->setReadByUrl(Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl());
+        $this->render('index', array_merge($data, $var, $this->getData($var)), false, array('user.default'));
     }
 
     /**
      * TODO::loadmore与下面的loadnew方法皆从WeiboHomeController复制而来，写的时候暂时没有什么好的
      * 分离方法，后期重构时要把这些改过来。 @banyan
      */
-    public function actionLoadMore() {
+    public function actionLoadMore()
+    {
         // 获取GET与POST数据
         $data = $_GET + $_POST;
         // 查询是否有分页
-        if ( !empty( $data['page'] ) || intval( $data['loadcount'] ) == 2 ) {
-            unset( $data['loadId'] );
+        if (!empty($data['page']) || intval($data['loadcount']) == 2) {
+            unset($data['loadId']);
             $data['nums'] = WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS;
         } else {
-            $return = array( 'status' => -1, 'msg' => util\Ibos::lang( 'Loading ID isnull' ) );
-            $data['loadId'] = intval( $data['loadId'] );
+            $return = array('status' => -1, 'msg' => util\Ibos::lang('Loading ID isnull'));
+            $data['loadId'] = intval($data['loadId']);
             $data['nums'] = 5;
         }
-        $content = $this->getData( $data );
+        $content = $this->getData($data);
         // 查看是否有更多数据
-        if ( empty( $content['html'] ) || (empty( $data['loadId'] ) && intval( $data['loadcount'] ) != 2) ) {
+        if (empty($content['html']) || (empty($data['loadId']) && intval($data['loadcount']) != 2)) {
             // 没有更多的
-            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
+            $return = array('status' => 0, 'msg' => util\Ibos::lang('Weibo is not new'));
         } else {
-            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
+            $return = array('status' => 1, 'msg' => util\Ibos::lang('Weibo success load'));
             $return['data'] = $content['html'];
             $return['loadId'] = $content['lastId'];
-            $return['firstId'] = ( empty( $data['page'] ) && empty( $data['loadId'] ) ) ? $content['firstId'] : 0;
+            $return['firstId'] = (empty($data['page']) && empty($data['loadId'])) ? $content['firstId'] : 0;
             $return['pageData'] = $content['pageData'];
         }
-        $this->ajaxReturn( $return );
+        $this->ajaxReturn($return);
     }
 
     /**
      * 显示最新微博
      * @return  array 最新微博信息、状态和提示
      */
-    public function actionLoadNew() {
-        $return = array( 'status' => -1, 'msg' => '' );
-        $_REQUEST['maxId'] = intval( $_REQUEST['maxId'] );
-        if ( empty( $_REQUEST['maxId'] ) ) {
-            $this->ajaxReturn( $return );
+    public function actionLoadNew()
+    {
+        $return = array('status' => -1, 'msg' => '');
+        $_REQUEST['maxId'] = intval($_REQUEST['maxId']);
+        if (empty($_REQUEST['maxId'])) {
+            $this->ajaxReturn($return);
         }
-        $content = $this->getData( $_REQUEST );
-        if ( empty( $content['html'] ) ) { //没有最新的
-            $return = array( 'status' => 0, 'msg' => util\Ibos::lang( 'Weibo is not new' ) );
+        $content = $this->getData($_REQUEST);
+        if (empty($content['html'])) { //没有最新的
+            $return = array('status' => 0, 'msg' => util\Ibos::lang('Weibo is not new'));
         } else {
-            $return = array( 'status' => 1, 'msg' => util\Ibos::lang( 'Weibo success load' ) );
+            $return = array('status' => 1, 'msg' => util\Ibos::lang('Weibo success load'));
             $return['html'] = $content['html'];
-            $return['maxId'] = intval( $content['firstId'] );
-            $return['count'] = intval( $content['count'] );
+            $return['maxId'] = intval($content['firstId']);
+            $return['count'] = intval($content['count']);
         }
-        $this->ajaxReturn( $return );
+        $this->ajaxReturn($return);
     }
 
     /**
      * ajax加载关注与被关注
      */
-    public function actionLoadFollow() {
-        $type = util\Env::getRequest( 'type' );
-        $offset = intval( util\Env::getRequest( 'offset' ) );
-        $count = Follow::model()->getFollowCount( array( $this->getUid() ) );
-        $list = $this->getFollowData( $type, $offset, WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS );
+    public function actionLoadFollow()
+    {
+        $type = util\Env::getRequest('type');
+        $offset = intval(util\Env::getRequest('offset'));
+        $count = Follow::model()->getFollowCount(array($this->getUid()));
+        $list = $this->getFollowData($type, $offset, WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS);
         $res = array(
             'isSuccess' => true,
-            'data' => $this->renderPartial( 'followlist', array( 'list' => $list ) ),
+            'data' => $this->renderPartial('followlist', array('list' => $list)),
             'offset' => $offset + WbCore\WbCore\WbConst::DEF_LIST_FEED_NUMS,
             'more' => !!($count[$this->getUid()][$type] - $offset > 0) // 是否有更多
         );
-        $this->ajaxReturn( $res );
+        $this->ajaxReturn($res);
     }
 
     /**
      * ajax获取人际关系
      */
-    public function actionGetRelation() {
-        $type = util\Env::getRequest( 'type' );
-        $offset = util\Env::getRequest( 'offset' );
-        $data = $this->getRelation( $type, $offset );
+    public function actionGetRelation()
+    {
+        $type = util\Env::getRequest('type');
+        $offset = util\Env::getRequest('offset');
+        $data = $this->getRelation($type, $offset);
         $res = array(
             'isSuccess' => true,
-            'data' => $this->renderPartial( 'relation', array( 'list' => $data['list'] ), true )
+            'data' => $this->renderPartial('relation', array('list' => $data['list']), true)
         );
-        if ( !empty( $data['count'] ) ) {
-            $res['offset'] = intval( $offset ) + 4;
+        if (!empty($data['count'])) {
+            $res['offset'] = intval($offset) + 4;
         }
-        $this->ajaxReturn( $res );
+        $this->ajaxReturn($res);
     }
 
     /**
      * 微博详细页
      */
-    public function actionFeed() {
-        $feedid = intval( util\Env::getRequest( 'feedid' ) );
-        $feedInfo = Feed::model()->get( $feedid );
-        if ( !$feedInfo ) {
-            $this->error( util\Ibos::lang( 'Weibo not exists' ) );
+    public function actionFeed()
+    {
+        $feedid = intval(util\Env::getRequest('feedid'));
+        $feedInfo = Feed::model()->get($feedid);
+        if (!$feedInfo) {
+            $this->error(util\Ibos::lang('Weibo not exists'));
         }
-        if ( $feedInfo ['isdel'] == '1' ) {
-            $this->error( util\Ibos::lang( 'No relate weibo' ) );
+        if ($feedInfo ['isdel'] == '1') {
+            $this->error(util\Ibos::lang('No relate weibo'));
             exit();
         }
-        if ( $feedInfo['from'] == '1' ) {
-            $feedInfo['from'] = util\Env::getFromClient( 6, $feedInfo ['module'], '3G版' );
+        if ($feedInfo['from'] == '1') {
+            $feedInfo['from'] = util\Env::getFromClient(6, $feedInfo ['module'], '3G版');
         } else {
-            switch ( $feedInfo ['module'] ) {
+            switch ($feedInfo ['module']) {
                 case 'mobile' :
                     break;
                 default :
-                    $feedInfo['from'] = util\Env::getFromClient( $feedInfo ['from'], $feedInfo ['module'] );
+                    $feedInfo['from'] = util\Env::getFromClient($feedInfo ['from'], $feedInfo ['module']);
                     break;
             }
         }
         // 微博图片
-        if ( $feedInfo['type'] === 'postimage' ) {
-            $var = StringUtil::utf8Unserialize( $feedInfo['feeddata'] );
+        if ($feedInfo['type'] === 'postimage') {
+            $var = StringUtil::utf8Unserialize($feedInfo['feeddata']);
             $feedInfo['image_body'] = $var['body'];
-            if ( !empty( $var['attach_id'] ) ) {
-                $attach = util\Attach::getAttachData( $var['attach_id'] );
+            if (!empty($var['attach_id'])) {
+                $attach = util\Attach::getAttachData($var['attach_id']);
                 $attachUrl = util\File::getAttachUrl();
-                foreach ( $attach as $ak => $av ) {
+                foreach ($attach as $ak => $av) {
                     $_attach = array(
                         'attach_id' => $av['aid'],
                         'attach_name' => $av['filename'],
-                        'attach_url' => util\File::fileName( $attachUrl . '/' . $av['attachment'] ),
-                        'extension' => util\StringUtil::getFileExt( $av['filename'] ),
+                        'attach_url' => util\File::fileName($attachUrl . '/' . $av['attachment']),
+                        'extension' => util\StringUtil::getFileExt($av['filename']),
                         'size' => $av['filesize']
                     );
-                    $_attach['attach_small'] = WbCommonUtil::getThumbImageUrl( $av, WbCore\WbConst::ALBUM_DISPLAY_WIDTH, WbCore\WbConst::ALBUM_DISPLAY_HEIGHT );
-                    $_attach['attach_middle'] = WbCommonUtil::getThumbImageUrl( $av, WbCore\WbConst::WEIBO_DISPLAY_WIDTH, WbCore\WbConst::WEIBO_DISPLAY_HEIGHT );
+                    $_attach['attach_small'] = WbCommonUtil::getThumbImageUrl($av, WbCore\WbConst::ALBUM_DISPLAY_WIDTH, WbCore\WbConst::ALBUM_DISPLAY_HEIGHT);
+                    $_attach['attach_middle'] = WbCommonUtil::getThumbImageUrl($av, WbCore\WbConst::WEIBO_DISPLAY_WIDTH, WbCore\WbConst::WEIBO_DISPLAY_HEIGHT);
                     $feedInfo['attachInfo'][$ak] = $_attach;
                 }
             }
         }
         // 赞功能
-        $diggArr = FeedDigg::model()->checkIsDigg( $feedid, util\Ibos::app()->user->uid );
+        $diggArr = FeedDigg::model()->checkIsDigg($feedid, util\Ibos::app()->user->uid);
         $data = array(
             'diggArr' => $diggArr,
             'fd' => $feedInfo,
-            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
-            'colleagues' => $this->getRelation( 'colleague' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('user'),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('weibo'),
+            'colleagues' => $this->getRelation('colleague'),
         );
         // 如果查看的不是自己，显示共同关注 与 我关注的人也关注TA 两个选项
-        if ( !$this->getIsMe() ) {
-            $data['bothfollow'] = $this->getRelation( 'bothfollow' );
-            $data['secondfollow'] = $this->getRelation( 'secondfollow' );
+        if (!$this->getIsMe()) {
+            $data['bothfollow'] = $this->getRelation('bothfollow');
+            $data['secondfollow'] = $this->getRelation('secondfollow');
         }
-        $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $feedInfo['user_info']['realname'] . util\Ibos::lang( 'sbs feed' ), 'url' => $this->createUrl( 'personal/index', array( 'uid' => $this->getUid() ) ) ),
-            array( 'name' => util\Ibos::lang( 'Detail' ) )
-        ) );
-        $this->render( 'detail', $data, false, array( 'user.default' ) );
+        $this->setPageState('breadCrumbs', array(
+            array('name' => util\Ibos::lang('Enterprise weibo'), 'url' => $this->createUrl('home/index')),
+            array('name' => $feedInfo['user_info']['realname'] . util\Ibos::lang('sbs feed'), 'url' => $this->createUrl('personal/index', array('uid' => $this->getUid()))),
+            array('name' => util\Ibos::lang('Detail'))
+        ));
+        $this->render('detail', $data, false, array('user.default'));
     }
 
     /**
      * 粉丝列表
      */
-    public function actionFollower() {
+    public function actionFollower()
+    {
         $user = $this->getUser();
-        $count = Follow::model()->getFollowCount( array( $user['uid'] ) );
-        $list = $this->getFollowData( 'follower', 0, WbCore\WbConst::DEF_LIST_FEED_NUMS );
-        if ( $this->getIsMe() ) {
-            UserData::model()->resetUserCount( $this->getUid(), 'new_folower_count', 0 );
+        $count = Follow::model()->getFollowCount(array($user['uid']));
+        $list = $this->getFollowData('follower', 0, WbCore\WbConst::DEF_LIST_FEED_NUMS);
+        if ($this->getIsMe()) {
+            UserData::model()->resetUserCount($this->getUid(), 'new_folower_count', 0);
         }
         $data = array(
             'count' => $count[$user['uid']],
             'list' => $list,
-            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('user'),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('weibo'),
             'limit' => WbCore\WbConst::DEF_LIST_FEED_NUMS
         );
-        $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs fans' ), 'url' => $this->createUrl( 'personal/follower', array( 'uid' => $user['uid'] ) ) ),
-            array( 'name' => util\Ibos::lang( 'List' ) )
-        ) );
-        NotifyMessage::model()->setReadByUrl( Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl() );
-        $this->render( 'follower', $data, false, array( 'user.default' ) );
+        $this->setPageState('breadCrumbs', array(
+            array('name' => util\Ibos::lang('Enterprise weibo'), 'url' => $this->createUrl('home/index')),
+            array('name' => $user['realname'] . util\Ibos::lang('sbs fans'), 'url' => $this->createUrl('personal/follower', array('uid' => $user['uid']))),
+            array('name' => util\Ibos::lang('List'))
+        ));
+        NotifyMessage::model()->setReadByUrl(Ibos::app()->user->uid, Ibos::app()->getRequest()->getUrl());
+        $this->render('follower', $data, false, array('user.default'));
     }
 
     /**
      * 关注列表
      */
-    public function actionFollowing() {
+    public function actionFollowing()
+    {
         $user = $this->getUser();
-        $count = Follow::model()->getFollowCount( array( $user['uid'] ) );
-        $list = $this->getFollowData( 'following', 0, WbCore\WbConst::DEF_LIST_FEED_NUMS );
+        $count = Follow::model()->getFollowCount(array($user['uid']));
+        $list = $this->getFollowData('following', 0, WbCore\WbConst::DEF_LIST_FEED_NUMS);
         $data = array(
             'count' => $count[$user['uid']],
             'list' => $list,
-            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'user' ),
-            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl( 'weibo' ),
+            'assetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('user'),
+            'moduleAssetUrl' => util\Ibos::app()->assetManager->getAssetsUrl('weibo'),
             'limit' => WbCore\WbConst::DEF_LIST_FEED_NUMS
         );
-        $this->setPageState( 'breadCrumbs', array(
-            array( 'name' => util\Ibos::lang( 'Enterprise weibo' ), 'url' => $this->createUrl( 'home/index' ) ),
-            array( 'name' => $user['realname'] . util\Ibos::lang( 'sbs follow' ), 'url' => $this->createUrl( 'personal/following', array( 'uid' => $user['uid'] ) ) ),
-            array( 'name' => util\Ibos::lang( 'List' ) )
-        ) );
-        $this->render( 'following', $data, false, array( 'user.default' ) );
+        $this->setPageState('breadCrumbs', array(
+            array('name' => util\Ibos::lang('Enterprise weibo'), 'url' => $this->createUrl('home/index')),
+            array('name' => $user['realname'] . util\Ibos::lang('sbs follow'), 'url' => $this->createUrl('personal/following', array('uid' => $user['uid']))),
+            array('name' => util\Ibos::lang('List'))
+        ));
+        $this->render('following', $data, false, array('user.default'));
     }
 
     /**
@@ -263,17 +272,18 @@ class PersonalController extends HomeBaseController {
      * @param integer $limit 每页条数
      * @return array 一个符合列表输出的数组数据
      */
-    protected function getFollowData( $type, $offset, $limit ) {
-        if ( $type == 'follower' ) {
-            $data = Follow::model()->getFollowerList( $this->getUid(), $offset, $limit );
+    protected function getFollowData($type, $offset, $limit)
+    {
+        if ($type == 'follower') {
+            $data = Follow::model()->getFollowerList($this->getUid(), $offset, $limit);
         } else {
-            $data = Follow::model()->getFollowingList( $this->getUid(), $offset, $limit );
+            $data = Follow::model()->getFollowingList($this->getUid(), $offset, $limit);
         }
-        if ( !empty( $data ) ) {
-            $fids = util\Convert::getSubByKey( $data, 'fid' );
-            $followStates = Follow::model()->getFollowStateByFids( util\Ibos::app()->user->uid, $fids );
-            foreach ( $followStates as $uid => &$followState ) {
-                $followState['user'] = User::model()->fetchByUid( $uid );
+        if (!empty($data)) {
+            $fids = util\Convert::getSubByKey($data, 'fid');
+            $followStates = Follow::model()->getFollowStateByFids(util\Ibos::app()->user->uid, $fids);
+            foreach ($followStates as $uid => &$followState) {
+                $followState['user'] = User::model()->fetchByUid($uid);
             }
             $list = &$followStates;
         } else {
@@ -289,49 +299,50 @@ class PersonalController extends HomeBaseController {
      * @param integer $limit 截取条数
      * @return array
      */
-    protected function getRelation( $type, $offset = 0, $limit = 4 ) {
+    protected function getRelation($type, $offset = 0, $limit = 4)
+    {
         $data = array();
         $count = 0;
-        switch ( $type ) {
+        switch ($type) {
             case 'colleague': // 部门同事
                 $user = $this->getUser();
-                $data = $this->getColleagues( $user, false, $offset, $limit );
+                $data = $this->getColleagues($user, false, $offset, $limit);
                 $count = User::model()->count(
-                        array(
-                            'select' => 'uid',
-                            'condition' => "`deptid` = :deptid AND `status` IN (0,1)",
-                            'params' => array( ':deptid' => $user['deptid'] ),
-                        )
+                    array(
+                        'select' => 'uid',
+                        'condition' => "`deptid` = :deptid AND `status` IN (0,1)",
+                        'params' => array(':deptid' => $user['deptid']),
+                    )
                 );
                 break;
             case 'bothfollow': // 互相关注
-                $uidArray = Follow::model()->getBothFollow( $this->getUid(), util\Ibos::app()->user->uid );
-                if ( !empty( $data ) ) {
-                    $uidString = implode( ',', $uidArray );
+                $uidArray = Follow::model()->getBothFollow($this->getUid(), util\Ibos::app()->user->uid);
+                if (!empty($data)) {
+                    $uidString = implode(',', $uidArray);
                     $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
-                    $data = User::model()->findAll( array(
+                    $data = User::model()->findAll(array(
                         'condition' => $condition,
                         'offset' => $offset,
                         'limit' => $limit,
-                            ) );
-                    $count = User::model()->count( array(
+                    ));
+                    $count = User::model()->count(array(
                         'condition' => $condition,
-                            ) );
+                    ));
                 }
                 break;
             case 'secondfollow': // 第二关注(我关注的人也关注TA)
-                $uidArray = Follow::model()->getSecondFollow( util\Ibos::app()->user->uid, $this->getUid() );
-                if ( !empty( $data ) ) {
-                    $uidString = implode( ',', $uidArray );
+                $uidArray = Follow::model()->getSecondFollow(util\Ibos::app()->user->uid, $this->getUid());
+                if (!empty($data)) {
+                    $uidString = implode(',', $uidArray);
                     $condition = "FIND_IN_SET( `uid`,'{$uidString}' )";
-                    $data = User::model()->findAll( array(
+                    $data = User::model()->findAll(array(
                         'condition' => $condition,
                         'offset' => $offset,
                         'limit' => $limit,
-                            ) );
-                    $count = User::model()->count( array(
+                    ));
+                    $count = User::model()->count(array(
                         'condition' => $condition,
-                            ) );
+                    ));
                 }
                 break;
             default :
@@ -348,97 +359,98 @@ class PersonalController extends HomeBaseController {
      * @param array $var
      * @return array
      */
-    protected function getData( $var ) {
+    protected function getData($var)
+    {
         $data = array();
-        $type = isset( $var['new'] ) ? 'new' . $var['type'] : $var['type'];
-        $where = 'isdel = 0 AND uid = ' . $this->getUid() . ($this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ));
-        switch ( $type ) {
+        $type = isset($var['new']) ? 'new' . $var['type'] : $var['type'];
+        $where = 'isdel = 0 AND uid = ' . $this->getUid() . ($this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition(util\Ibos::app()->user->uid));
+        switch ($type) {
             case 'all': // 当前用户的全部微博
-                $pages = util\Page::create( WbCore\WbConst::MAX_VIEW_FEED_NUMS, WbCore\WbConst::DEF_LIST_FEED_NUMS );
-                if ( !empty( $var['feedkey'] ) ) {
-                    $loadId = isset( $var['loadId'] ) ? $var['loadId'] : 0;
-                    $list = Feed::model()->searchFeed( $var['feedkey'], 'all', $loadId, $var['nums'], $pages->getOffset(), '', $this->getUid() );
-                    $count = Feed::model()->countSearchAll( $var['feedkey'], $loadId );
+                $pages = util\Page::create(WbCore\WbConst::MAX_VIEW_FEED_NUMS, WbCore\WbConst::DEF_LIST_FEED_NUMS);
+                if (!empty($var['feedkey'])) {
+                    $loadId = isset($var['loadId']) ? $var['loadId'] : 0;
+                    $list = Feed::model()->searchFeed($var['feedkey'], 'all', $loadId, $var['nums'], $pages->getOffset(), '', $this->getUid());
+                    $count = Feed::model()->countSearchAll($var['feedkey'], $loadId);
                 } else {
-                    if ( isset( $var['loadId'] ) && $var['loadId'] > 0 ) { // 非第一次
-                        $where .=" AND feedid < '" . intval( $var['loadId'] ) . "'";
+                    if (isset($var['loadId']) && $var['loadId'] > 0) { // 非第一次
+                        $where .= " AND feedid < '" . intval($var['loadId']) . "'";
                     }
                     // 动态类型
-                    if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND type = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
+                    if (!empty($var['feedtype']) && $var['feedtype'] !== 'all') {
+                        $where .= " AND type = '" . util\StringUtil::filterCleanHtml($var['feedtype']) . "'";
                     }
-                    $list = Feed::model()->getList( $where, $var['nums'], $pages->getOffset() );
-                    $count = Feed::model()->count( $where );
+                    $list = Feed::model()->getList($where, $var['nums'], $pages->getOffset());
+                    $count = Feed::model()->count($where);
                 }
                 break;
             case 'movement':
-                $pages = util\Page::create( WbCore\WbConst::MAX_VIEW_FEED_NUMS, WbCore\WbConst::DEF_LIST_FEED_NUMS );
-                if ( !empty( $var['feedkey'] ) ) {
-                    $loadId = isset( $var['loadId'] ) ? $var['loadId'] : 0;
-                    $list = Feed::model()->searchFeed( $var['feedkey'], 'movement', $loadId, $var['nums'], $pages->getOffset(), '', $this->getUid() );
-                    $count = Feed::model()->countSearchMovement( $var['feedkey'], $loadId );
+                $pages = util\Page::create(WbCore\WbConst::MAX_VIEW_FEED_NUMS, WbCore\WbConst::DEF_LIST_FEED_NUMS);
+                if (!empty($var['feedkey'])) {
+                    $loadId = isset($var['loadId']) ? $var['loadId'] : 0;
+                    $list = Feed::model()->searchFeed($var['feedkey'], 'movement', $loadId, $var['nums'], $pages->getOffset(), '', $this->getUid());
+                    $count = Feed::model()->countSearchMovement($var['feedkey'], $loadId);
                 } else {
-                    if ( isset( $var['loadId'] ) && $var['loadId'] > 0 ) { //非第一次
-                        $where .=" AND feedid < '" . intval( $var['loadId'] ) . "'";
+                    if (isset($var['loadId']) && $var['loadId'] > 0) { //非第一次
+                        $where .= " AND feedid < '" . intval($var['loadId']) . "'";
                     }
                     // 动态类型
-                    if ( !empty( $var['feedtype'] ) && $var['feedtype'] !== 'all' ) {
-                        $where .=" AND module = '" . util\StringUtil::filterCleanHtml( $var['feedtype'] ) . "'";
+                    if (!empty($var['feedtype']) && $var['feedtype'] !== 'all') {
+                        $where .= " AND module = '" . util\StringUtil::filterCleanHtml($var['feedtype']) . "'";
                     } else {
-                        $where .=" AND module != 'weibo'";
+                        $where .= " AND module != 'weibo'";
                     }
-                    $list = Feed::model()->getList( $where, $var['nums'], $pages->getOffset() );
-                    $count = Feed::model()->count( $where );
+                    $list = Feed::model()->getList($where, $var['nums'], $pages->getOffset());
+                    $count = Feed::model()->count($where);
                 }
                 break;
             case 'newmovement':
-                if ( $var['maxId'] > 0 ) {
-                    $where = sprintf( 'isdel = 0 AND %s AND feedid > %d AND uid = %d', WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ), intval( $var['maxId'] ), $this->uid );
-                    $list = Feed::model()->getList( $where );
-                    $count = Feed::model()->count( $where );
-                    $data['count'] = count( $list );
+                if ($var['maxId'] > 0) {
+                    $where = sprintf('isdel = 0 AND %s AND feedid > %d AND uid = %d', WbfeedUtil::getViewCondition(util\Ibos::app()->user->uid), intval($var['maxId']), $this->uid);
+                    $list = Feed::model()->getList($where);
+                    $count = Feed::model()->count($where);
+                    $data['count'] = count($list);
                 }
                 break;
             case 'newall': // 当前用户最新微博
-                if ( $var['maxId'] > 0 ) {
-                    $where = sprintf( 'isdel = 0 %s AND feedid > %d AND uid = %d', ( $this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition( util\Ibos::app()->user->uid ) ), intval( $var['maxId'] ), $this->getUid() );
-                    $list = Feed::model()->getList( $where );
-                    $count = Feed::model()->count( $where );
-                    $data['count'] = count( $list );
+                if ($var['maxId'] > 0) {
+                    $where = sprintf('isdel = 0 %s AND feedid > %d AND uid = %d', ($this->getIsMe() ? '' : ' AND ' . WbfeedUtil::getViewCondition(util\Ibos::app()->user->uid)), intval($var['maxId']), $this->getUid());
+                    $list = Feed::model()->getList($where);
+                    $count = Feed::model()->count($where);
+                    $data['count'] = count($list);
                 }
                 break;
             default:
                 break;
         }
-        $count = isset( $count ) ? $count : WbCore\WbConst::MAX_VIEW_FEED_NUMS;
-        $pages = util\Page::create( $count, WbCore\WbConst::DEF_LIST_FEED_NUMS );
-        if ( !isset( $var['new'] ) ) {
+        $count = isset($count) ? $count : WbCore\WbConst::MAX_VIEW_FEED_NUMS;
+        $pages = util\Page::create($count, WbCore\WbConst::DEF_LIST_FEED_NUMS);
+        if (!isset($var['new'])) {
             $pages->route = 'personal/index';
             // 替换url
-            $currentUrl = (string) util\Ibos::app()->getRequest()->getUrl();
-            $replaceUrl = str_replace( 'weibo/personal/loadmore', 'weibo/personal/index', $currentUrl );
-            $data['pageData'] = $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages, 'currentUrl' => $replaceUrl ), true );
+            $currentUrl = (string)util\Ibos::app()->getRequest()->getUrl();
+            $replaceUrl = str_replace('weibo/personal/loadmore', 'weibo/personal/index', $currentUrl);
+            $data['pageData'] = $this->widget('application\core\widgets\Page', array('pages' => $pages, 'currentUrl' => $replaceUrl), true);
         }
-        if ( !empty( $list ) ) {
+        if (!empty($list)) {
             $data['firstId'] = $list[0]['feedid'];
-            $data['lastId'] = $list[(count( $list ) - 1)]['feedid'];
+            $data['lastId'] = $list[(count($list) - 1)]['feedid'];
             //赞功能
-            $feedids = util\Convert::getSubByKey( $list, 'feedid' );
-            $diggArr = FeedDigg::model()->checkIsDigg( $feedids, $this->getUid() );
-            foreach ( $list as &$v ) {
+            $feedids = util\Convert::getSubByKey($list, 'feedid');
+            $diggArr = FeedDigg::model()->checkIsDigg($feedids, $this->getUid());
+            foreach ($list as &$v) {
                 // 这一步是赋值 来自XXX，手机端可根据具体哪种设备来赋值
                 // 未来如果动态是来自于不同的模块，该信息也在这里处理
                 // 默认是来自网页，即在微博主页发的
-                switch ( $v['module'] ) {
+                switch ($v['module']) {
                     case 'mobile':
 
                         break;
                     default:
-                        $v['from'] = util\Env::getFromClient( $v['from'], $v['module'] );
+                        $v['from'] = util\Env::getFromClient($v['from'], $v['module']);
                         break;
                 }
             }
-            $data['html'] = $this->renderPartial( 'application.modules.message.views.feed.feedlist', array( 'list' => $list, 'diggArr' => $diggArr ), true );
+            $data['html'] = $this->renderPartial('application.modules.message.views.feed.feedlist', array('list' => $list, 'diggArr' => $diggArr), true);
         } else {
             $data['html'] = '';
             $data['firstId'] = $data['lastId'] = 0;

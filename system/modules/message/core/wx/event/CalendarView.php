@@ -19,14 +19,16 @@ namespace application\modules\message\core\wx\event;
 
 use application\modules\message\core\wx\Event;
 
-class CalendarView extends Event {
+class CalendarView extends Event
+{
 
     /**
      * 回调的处理方法
      * @return string
      */
-    public function handle() {
-        return $this->resText( '' );
+    public function handle()
+    {
+        return $this->resText('');
     }
 
 }

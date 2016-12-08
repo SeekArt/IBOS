@@ -20,23 +20,24 @@ namespace application\modules\message\core\wx\event;
 use application\core\utils\Ibos;
 use application\modules\message\core\wx\Event;
 
-class LocationEvent extends Event {
+class LocationEvent extends Event
+{
 
     /**
      * 纬度
-     * @var string 
+     * @var string
      */
     protected $latitude = '';
 
     /**
      * 经度
-     * @var string 
+     * @var string
      */
     protected $longitude = '';
 
     /**
      * 精度
-     * @var string 
+     * @var string
      */
     protected $precision = '';
 
@@ -44,7 +45,8 @@ class LocationEvent extends Event {
      * 设置纬度
      * @param string $latitude
      */
-    public function setLatitude( $latitude ) {
+    public function setLatitude($latitude)
+    {
         $this->latitude = $latitude;
     }
 
@@ -52,7 +54,8 @@ class LocationEvent extends Event {
      * 获取纬度
      * @return string
      */
-    public function getLatitude() {
+    public function getLatitude()
+    {
         return $this->latitude;
     }
 
@@ -60,7 +63,8 @@ class LocationEvent extends Event {
      * 设置经度
      * @param string $longitude
      */
-    public function setLongitude( $longitude ) {
+    public function setLongitude($longitude)
+    {
         $this->longitude = $longitude;
     }
 
@@ -68,7 +72,8 @@ class LocationEvent extends Event {
      * 获取精度
      * @return string
      */
-    public function getLongitude() {
+    public function getLongitude()
+    {
         return $this->longitude;
     }
 
@@ -76,7 +81,8 @@ class LocationEvent extends Event {
      * 设置精度
      * @param string $precision
      */
-    public function setPrecision( $precision ) {
+    public function setPrecision($precision)
+    {
         $this->precision = $precision;
     }
 
@@ -84,14 +90,16 @@ class LocationEvent extends Event {
      * 获取精度
      * @return type
      */
-    public function getPrecision() {
+    public function getPrecision()
+    {
         return $this->precision;
     }
 
     /**
      * 插入记录
      */
-    public function handle() {
+    public function handle()
+    {
         $var = array(
             'latitude' => $this->getLatitude(),
             'longitude' => $this->getLongitude(),
@@ -100,7 +108,7 @@ class LocationEvent extends Event {
             'uid' => Ibos::app()->user->uid,
             'time' => TIMESTAMP,
         );
-        Ibos::app()->db->createCommand()->insert( '{{user_location}}', $var );
+        Ibos::app()->db->createCommand()->insert('{{user_location}}', $var);
         $this->resText();
     }
 

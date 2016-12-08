@@ -9,9 +9,9 @@
  */
 /**
  * 岗位职责表的数据层操作
- * 
+ *
  * @package application.modules.position.model
- * @version $Id: PositionResponsibility.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -19,13 +19,16 @@ namespace application\modules\position\model;
 
 use application\core\model\Model;
 
-class PositionResponsibility extends Model {
+class PositionResponsibility extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{position_responsibility}}';
     }
 
@@ -34,8 +37,9 @@ class PositionResponsibility extends Model {
      * @param integer $id 岗位id
      * @return array
      */
-    public function fetchAllByPosId( $id ) {
-        return $this->fetchAll( '`positionid` = :id', array( ':id' => $id ) );
+    public function fetchAllByPosId($id)
+    {
+        return $this->fetchAll('`positionid` = :id', array(':id' => $id));
     }
 
 }

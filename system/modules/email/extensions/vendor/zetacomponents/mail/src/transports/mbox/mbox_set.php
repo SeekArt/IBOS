@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -82,11 +82,10 @@ class ezcMailMboxSet implements ezcMailParserSet
      * @param resource(filepointer) $fh
      * @param array(int=>int) $messages
      */
-    public function __construct( $fh, array $messages )
+    public function __construct($fh, array $messages)
     {
-        if ( !is_resource( $fh ) || get_resource_type( $fh ) != 'stream' )
-        {
-            throw new ezcBaseFileIoException( 'filepointer', ezcBaseFileException::READ, "The passed filepointer is not a stream resource." );
+        if (!is_resource($fh) || get_resource_type($fh) != 'stream') {
+            throw new ezcBaseFileIoException('filepointer', ezcBaseFileException::READ, "The passed filepointer is not a stream resource.");
         }
         $this->fh = $fh;
         $this->initialized = false;
@@ -102,7 +101,7 @@ class ezcMailMboxSet implements ezcMailParserSet
      */
     public function isFinished()
     {
-        return feof( $this->fh ) ? true : false;
+        return feof($this->fh) ? true : false;
     }
 
     /**
@@ -116,15 +115,12 @@ class ezcMailMboxSet implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        if ( $this->currentMessagePosition === 0 )
-        {
+        if ($this->currentMessagePosition === 0) {
             $this->nextMail();
         }
-        if ( $this->hasMoreMailData )
-        {
-            $data = fgets( $this->fh );
-            if ( feof( $this->fh ) || substr( $data, 0, 5 ) === "From " )
-            {
+        if ($this->hasMoreMailData) {
+            $data = fgets($this->fh);
+            if (feof($this->fh) || substr($data, 0, 5) === "From ") {
                 $this->hasMoreMailData = false;
 
                 return null;
@@ -141,7 +137,7 @@ class ezcMailMboxSet implements ezcMailParserSet
      */
     public function hasData()
     {
-        return ( $this->hasMoreMailData === true && count( $this->messagePositions ) > 0 );
+        return ($this->hasMoreMailData === true && count($this->messagePositions) > 0);
     }
 
     /**
@@ -154,12 +150,11 @@ class ezcMailMboxSet implements ezcMailParserSet
     public function nextMail()
     {
         // seek to next message if available
-        if ( $this->currentMessagePosition > count( $this->messagePositions ) - 1 )
-        {
+        if ($this->currentMessagePosition > count($this->messagePositions) - 1) {
             $this->hasMoreMailData = false;
             return false;
         }
-        fseek( $this->fh, $this->messagePositions[$this->currentMessagePosition] );
+        fseek($this->fh, $this->messagePositions[$this->currentMessagePosition]);
         $this->currentMessagePosition++;
         $this->hasMoreMailData = true;
 
@@ -173,7 +168,8 @@ class ezcMailMboxSet implements ezcMailParserSet
      */
     public function getMessageNumbers()
     {
-        return array_keys( $this->messagePositions );
+        return array_keys($this->messagePositions);
     }
 }
+
 ?>

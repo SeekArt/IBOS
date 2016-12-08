@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '用户模块',
@@ -18,7 +18,7 @@ return array(
             'user' => array(
                 'allowAutoLogin' => 1,
                 'class' => 'application\modules\user\components\User',
-                'loginUrl' => array( 'user/default/login' )
+                'loginUrl' => array('user/default/login')
             ),
             'messages' => array(
                 'extensionPaths' => array(

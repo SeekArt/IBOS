@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -99,51 +99,58 @@ class ezcMailTools
      * @param ezcMailAddress $item
      * @return string
      */
-    public static function composeEmailAddress( ezcMailAddress $item )
+    public static function composeEmailAddress(ezcMailAddress $item)
     {
-        $name = trim( $item->name );
-        if ( $name !== '' )
-        {
+        $name = trim($item->name);
+        if ($name !== '') {
             // remove the quotes around the name part if they are already there
-            if ( $name{0} === '"' && $name{strlen( $name ) - 1} === '"' )
-            {
-                $name = substr( $name, 1, -1 );
+            if ($name{0} === '"' && $name{strlen($name) - 1} === '"') {
+                $name = substr($name, 1, -1);
             }
 
             // add slashes to " and \ and surround the name part with quotes
-            if ( strpbrk( $name, ",@<>:;'\"" ) !== false )
-            {
-                $name = str_replace( '\\', '\\\\', $name );
-                $name = str_replace( '"', '\"', $name );
+            if (strpbrk($name, ",@<>:;'\"") !== false) {
+                $name = str_replace('\\', '\\\\', $name);
+                $name = str_replace('"', '\"', $name);
                 $name = "\"{$name}\"";
             }
 
-            switch ( strtolower( $item->charset ) )
-            {
+            switch (strtolower($item->charset)) {
                 case 'us-ascii':
                     $text = $name . ' <' . $item->email . '>';
                     break;
 
-                case 'iso-8859-1': case 'iso-8859-2': case 'iso-8859-3': case 'iso-8859-4':
-                case 'iso-8859-5': case 'iso-8859-6': case 'iso-8859-7': case 'iso-8859-8':
-                case 'iso-8859-9': case 'iso-8859-10': case 'iso-8859-11': case 'iso-8859-12':
-                case 'iso-8859-13': case 'iso-8859-14': case 'iso-8859-15' :case 'iso-8859-16':
-                case 'windows-1250': case 'windows-1251': case 'windows-1252':
+                case 'iso-8859-1':
+                case 'iso-8859-2':
+                case 'iso-8859-3':
+                case 'iso-8859-4':
+                case 'iso-8859-5':
+                case 'iso-8859-6':
+                case 'iso-8859-7':
+                case 'iso-8859-8':
+                case 'iso-8859-9':
+                case 'iso-8859-10':
+                case 'iso-8859-11':
+                case 'iso-8859-12':
+                case 'iso-8859-13':
+                case 'iso-8859-14':
+                case 'iso-8859-15' :
+                case 'iso-8859-16':
+                case 'windows-1250':
+                case 'windows-1251':
+                case 'windows-1252':
                 case 'utf-8':
-                    if ( strpbrk( $name, "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff" ) === false )
-                    {
+                    if (strpbrk($name, "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff") === false) {
                         $text = $name . ' <' . $item->email . '>';
                         break;
                     }
-                    // break intentionally missing
+                // break intentionally missing
 
                 default:
-                    $text = self::mimeHeaderEncode( $name, $item->charset ) . ' <' . $item->email . '>';
+                    $text = self::mimeHeaderEncode($name, $item->charset) . ' <' . $item->email . '>';
                     break;
             }
-        }
-        else
-        {
+        } else {
             $text = $item->email;
         }
         return $text;
@@ -160,46 +167,38 @@ class ezcMailTools
      * @param int $foldLength
      * @return string
      */
-    public static function composeEmailAddresses( array $items, $foldLength = null )
+    public static function composeEmailAddresses(array $items, $foldLength = null)
     {
         $textElements = array();
-        foreach ( $items as $item )
-        {
-            $textElements[] = ezcMailTools::composeEmailAddress( $item );
+        foreach ($items as $item) {
+            $textElements[] = ezcMailTools::composeEmailAddress($item);
         }
 
-        if ( $foldLength === null ) // quick version
+        if ($foldLength === null) // quick version
         {
-            return implode( ', ', $textElements );
+            return implode(', ', $textElements);
         }
 
         $result = "";
         $charsSinceFold = 0;
-        foreach ( $textElements as $element )
-        {
-            $length = strlen( $element );
-            if ( ( $charsSinceFold + $length + 2 /* comma, space */ ) > $foldLength )
-            {
+        foreach ($textElements as $element) {
+            $length = strlen($element);
+            if (($charsSinceFold + $length + 2 /* comma, space */) > $foldLength) {
                 // fold last line if there is any
-                if ( $result != '' )
-                {
-                    $result .= "," . ezcMailTools::lineBreak() .' ';
+                if ($result != '') {
+                    $result .= "," . ezcMailTools::lineBreak() . ' ';
                     $charsSinceFold = 0;
                 }
                 $result .= $element;
-            }
-            else
-            {
-                if ( $result == '' )
-                {
+            } else {
+                if ($result == '') {
                     $result = $element;
-                }
-                else
-                {
+                } else {
                     $result .= ', ' . $element;
                 }
             }
-            $charsSinceFold += $length + 1 /*space*/;
+            $charsSinceFold += $length + 1 /*space*/
+            ;
         }
         return $result;
     }
@@ -225,35 +224,31 @@ class ezcMailTools
      * @param string $encoding
      * @return ezcMailAddress
      */
-    public static function parseEmailAddress( $address, $encoding = "mime" )
+    public static function parseEmailAddress($address, $encoding = "mime")
     {
         // we don't care about the "group" part of the address since this is not used anywhere
 
         $matches = array();
         $pattern = '/<?\"?[a-zA-Z0-9!#\$\%\&\'\*\+\-\/=\?\^_`{\|}~\.]+\"?@[a-zA-Z0-9!#\$\%\&\'\*\+\-\/=\?\^_`{\|}~\.]+>?$/';
-        if ( preg_match( trim( $pattern ), $address, $matches, PREG_OFFSET_CAPTURE ) != 1 )
-        {
+        if (preg_match(trim($pattern), $address, $matches, PREG_OFFSET_CAPTURE) != 1) {
             return null;
         }
-        $name = substr( $address, 0, $matches[0][1] );
+        $name = substr($address, 0, $matches[0][1]);
 
         // trim <> from the address and "" from the name
-        $name = trim( $name, '" ' );
-        $mail = trim( $matches[0][0], '<>' );
+        $name = trim($name, '" ');
+        $mail = trim($matches[0][0], '<>');
         // remove any quotes found in mail addresses like "bah,"@example.com
-        $mail = str_replace( '"', '', $mail );
+        $mail = str_replace('"', '', $mail);
 
-        if ( $encoding == 'mime' )
-        {
+        if ($encoding == 'mime') {
             // the name may contain interesting character encoding. We need to convert it.
-            $name = ezcMailTools::mimeDecode( $name );
-        }
-        else
-        {
-            $name = ezcMailCharsetConverter::convertToUTF8( $name, $encoding );
+            $name = ezcMailTools::mimeDecode($name);
+        } else {
+            $name = ezcMailCharsetConverter::convertToUTF8($name, $encoding);
         }
 
-        $address = new ezcMailAddress( $mail, $name, 'utf-8' );
+        $address = new ezcMailAddress($mail, $name, 'utf-8');
         return $address;
     }
 
@@ -273,34 +268,28 @@ class ezcMailTools
      * @param string $encoding
      * @return array(ezcMailAddress)
      */
-    public static function parseEmailAddresses( $addresses, $encoding = "mime" )
+    public static function parseEmailAddresses($addresses, $encoding = "mime")
     {
         $addressesArray = array();
         $inQuote = false;
         $last = 0; // last hit
-        $length = strlen( $addresses );
-        for ( $i = 0; $i < $length; $i++ )
-        {
-            if ( $addresses[$i] == '"' )
-            {
+        $length = strlen($addresses);
+        for ($i = 0; $i < $length; $i++) {
+            if ($addresses[$i] == '"') {
                 $inQuote = !$inQuote;
-            }
-            else if ( $addresses[$i] == ',' && !$inQuote )
-            {
-                $addressesArray[] = substr( $addresses, $last, $i - $last );
+            } else if ($addresses[$i] == ',' && !$inQuote) {
+                $addressesArray[] = substr($addresses, $last, $i - $last);
                 $last = $i + 1; // eat comma
             }
         }
 
         // fetch the last one
-        $addressesArray[] = substr( $addresses, $last );
+        $addressesArray[] = substr($addresses, $last);
 
         $addressObjects = array();
-        foreach ( $addressesArray as $address )
-        {
-            $addressObject = self::parseEmailAddress( $address, $encoding );
-            if ( $addressObject !== null )
-            {
+        foreach ($addressesArray as $address) {
+            $addressObject = self::parseEmailAddress($address, $encoding);
+            if ($addressObject !== null) {
                 $addressObjects[] = $addressObject;
             }
         }
@@ -366,24 +355,18 @@ class ezcMailTools
      * @param bool $checkMxRecords
      * @return bool
      */
-    public static function validateEmailAddress( $address, $checkMxRecords = false )
+    public static function validateEmailAddress($address, $checkMxRecords = false)
     {
         $pattern = '/^((\"[^\"\f\n\r\t\v\b]+\")|([A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+(\.[A-Za-z0-9_\!\#\$\%\&\'\*\+\-\~\/\^\`\|\{\}]+)*))@((\[(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))\])|(((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9]))\.((25[0-5])|(2[0-4][0-9])|([0-1]?[0-9]?[0-9])))|((([A-Za-z0-9\-])+\.)+[A-Za-z\-]{2,}))$/';
 
-        if ( preg_match( $pattern, $address ) )
-        {
-            if ( $checkMxRecords )
-            {
-                return self::validateEmailAddressMx( $address );
-            }
-            else
-            {
+        if (preg_match($pattern, $address)) {
+            if ($checkMxRecords) {
+                return self::validateEmailAddressMx($address);
+            } else {
                 // $address passed through regexp, with no MX checks
                 return true;
             }
-        }
-        else
-        {
+        } else {
             // $address did not pass through regexp
             return false;
         }
@@ -416,79 +399,61 @@ class ezcMailTools
      * @param string $address
      * @return bool
      */
-    protected static function validateEmailAddressMx( $address )
+    protected static function validateEmailAddressMx($address)
     {
-        if ( !ezcBaseFeatures::hasFunction( 'getmxrr' ) || !ezcBaseFeatures::hasFunction( 'checkdnsrr' ) )
-        {
-            throw new ezcBaseFunctionalityNotSupportedException( 'Checking DNS records', 'getmxrr() or checkdnsrr() missing' );
+        if (!ezcBaseFeatures::hasFunction('getmxrr') || !ezcBaseFeatures::hasFunction('checkdnsrr')) {
+            throw new ezcBaseFunctionalityNotSupportedException('Checking DNS records', 'getmxrr() or checkdnsrr() missing');
         }
 
         $timeoutOpen = 3; // for fsockopen()
         $timeoutConnection = 5; // for stream_set_timeout()
 
-        list( $local, $domain ) = explode( '@', $address );
-        if ( !empty( $domain ) )
-        {
-            if ( getmxrr( $domain, $hosts, $weights ) )
-            {
-                for ( $i = 0; $i < count( $hosts ); $i++ )
-                {
+        list($local, $domain) = explode('@', $address);
+        if (!empty($domain)) {
+            if (getmxrr($domain, $hosts, $weights)) {
+                for ($i = 0; $i < count($hosts); $i++) {
                     $mx[$hosts[$i]] = $weights[$i];
                 }
 
-                asort( $mx );
-                $mx = array_keys( $mx );
-            }
-            elseif ( checkdnsrr( $domain, 'A' ) )
-            {
-                $mx[0] = gethostbyname( $domain );
-            }
-            else
-            {
+                asort($mx);
+                $mx = array_keys($mx);
+            } elseif (checkdnsrr($domain, 'A')) {
+                $mx[0] = gethostbyname($domain);
+            } else {
                 $mx = array();
             }
 
-            if ( ( $numberOfMx = count( $mx ) ) > 0 )
-            {
+            if (($numberOfMx = count($mx)) > 0) {
                 $smtp = array(
-                               "HELO " . self::$mxValidateServer,
-                               "MAIL FROM: <" . self::$mxValidateAddress . ">",
-                               "RCPT TO: <{$address}>",
-                               "QUIT",
-                             );
+                    "HELO " . self::$mxValidateServer,
+                    "MAIL FROM: <" . self::$mxValidateAddress . ">",
+                    "RCPT TO: <{$address}>",
+                    "QUIT",
+                );
 
-                for ( $i = 0; $i < $numberOfMx; $i++ )
-                {
-                    if ( $socket = @fsockopen( $mx[$i], 25, $errno = 0, $errstr = 0, $timeoutOpen ) )
-                    {
-                        $response = fgets( $socket );
-                        stream_set_timeout( $socket, $timeoutConnection );
-                        $meta = stream_get_meta_data( $socket );
-                        if ( !$meta['timed_out'] && !preg_match( '/^2\d\d[ -]/', $response ) )
-                        {
+                for ($i = 0; $i < $numberOfMx; $i++) {
+                    if ($socket = @fsockopen($mx[$i], 25, $errno = 0, $errstr = 0, $timeoutOpen)) {
+                        $response = fgets($socket);
+                        stream_set_timeout($socket, $timeoutConnection);
+                        $meta = stream_get_meta_data($socket);
+                        if (!$meta['timed_out'] && !preg_match('/^2\d\d[ -]/', $response)) {
                             return false;
                         }
-                        foreach ( $smtp as $command )
-                        {
-                            fputs( $socket, "{$command}\r\n" );
-                            $response = fgets( $socket, 4096 );
-                            if ( !$meta['timed_out'] && preg_match( '/^5\d\d[ -]/', $response ) )
-                            {
+                        foreach ($smtp as $command) {
+                            fputs($socket, "{$command}\r\n");
+                            $response = fgets($socket, 4096);
+                            if (!$meta['timed_out'] && preg_match('/^5\d\d[ -]/', $response)) {
                                 return false;
                             }
                         }
-                        fclose( $socket );
+                        fclose($socket);
                         return true;
-                    }
-                    elseif ( $i === $numberOfMx - 1 )
-                    {
+                    } elseif ($i === $numberOfMx - 1) {
                         // none of the mail servers could be contacted
                         return false;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // no mail servers found
                 return false;
             }
@@ -506,17 +471,14 @@ class ezcMailTools
      * @param string $hostname
      * @return string
      */
-    public static function generateMessageId( $hostname )
+    public static function generateMessageId($hostname)
     {
-        if ( strpos( $hostname, '@' ) !== false )
-        {
-            $hostname = strstr( $hostname, '@' );
-        }
-        else
-        {
+        if (strpos($hostname, '@') !== false) {
+            $hostname = strstr($hostname, '@');
+        } else {
             $hostname = '@' . $hostname;
         }
-        return date( 'YmdGHjs' ) . '.' . getmypid() . '.' . self::$idCounter++ . $hostname;
+        return date('YmdGHjs') . '.' . getmypid() . '.' . self::$idCounter++ . $hostname;
     }
 
     /**
@@ -531,9 +493,9 @@ class ezcMailTools
      * @param string $partName
      * @return string
      */
-    public static function generateContentId( $partName = "part" )
+    public static function generateContentId($partName = "part")
     {
-        return str_replace( array( '=', '+', '/' ), '', base64_encode( $partName ) ) . '@' .  date( 'His' ) . self::$idCounter++;
+        return str_replace(array('=', '+', '/'), '', base64_encode($partName)) . '@' . date('His') . self::$idCounter++;
     }
 
     /**
@@ -542,7 +504,7 @@ class ezcMailTools
      *
      * @param string $characters
      */
-    public static function setLineBreak( $characters )
+    public static function setLineBreak($characters)
     {
         self::$lineBreak = $characters;
     }
@@ -572,12 +534,11 @@ class ezcMailTools
      * @param string $charset
      * @return string
      */
-    public static function mimeDecode( $text, $charset = 'utf-8' )
+    public static function mimeDecode($text, $charset = 'utf-8')
     {
         $origtext = $text;
-        $text = @iconv_mime_decode( $text, 0, $charset );
-        if ( $text !== false )
-        {
+        $text = @iconv_mime_decode($text, 0, $charset);
+        if ($text !== false) {
             return $text;
         }
 
@@ -585,27 +546,25 @@ class ezcMailTools
         // Try to fix lower case hex digits
         $text = preg_replace_callback(
             '/=(([a-f][a-f0-9])|([a-f0-9][a-f]))/',
-            create_function( '$matches', 'return strtoupper($matches[0]);' ),
+            create_function('$matches', 'return strtoupper($matches[0]);'),
             $origtext
         );
-        $text = @iconv_mime_decode( $text, 0, $charset );
-        if ( $text !== false )
-        {
+        $text = @iconv_mime_decode($text, 0, $charset);
+        if ($text !== false) {
             return $text;
         }
 
         // Workaround a bug in PHP 5.1.0-5.1.3 where the "b" and "q" methods
         // are not understood (but only "B" and "Q")
-        $text = str_replace( array( '?b?', '?q?' ), array( '?B?', '?Q?' ), $origtext );
-        $text = @iconv_mime_decode( $text, 0, $charset );
-        if ( $text !== false )
-        {
+        $text = str_replace(array('?b?', '?q?'), array('?B?', '?Q?'), $origtext);
+        $text = @iconv_mime_decode($text, 0, $charset);
+        if ($text !== false) {
             return $text;
         }
 
         // Try it as latin 1 string
-        $text = preg_replace( '/=\?([^?]+)\?/', '=?iso-8859-1?', $origtext );
-        $text = iconv_mime_decode( $text, 0, $charset );
+        $text = preg_replace('/=\?([^?]+)\?/', '=?iso-8859-1?', $origtext);
+        $text = iconv_mime_decode($text, 0, $charset);
 
         return $text;
     }
@@ -630,39 +589,32 @@ class ezcMailTools
      * @param string $mailClass
      * @return ezcMail
      */
-    static public function replyToMail( ezcMail $mail, ezcMailAddress $from,
-                                        $type = self::REPLY_SENDER, $subjectPrefix = "Re: ",
-                                        $mailClass = "ezcMail" )
+    static public function replyToMail(ezcMail $mail, ezcMailAddress $from,
+                                       $type = self::REPLY_SENDER, $subjectPrefix = "Re: ",
+                                       $mailClass = "ezcMail")
     {
         $reply = new $mailClass();
         $reply->from = $from;
 
         // To = Reply-To if set
-        if ( $mail->getHeader( 'Reply-To' ) != '' )
-        {
-            $reply->to = ezcMailTools::parseEmailAddresses( $mail->getHeader( 'Reply-To' ) );
-        }
-        else  // Else To = From
+        if ($mail->getHeader('Reply-To') != '') {
+            $reply->to = ezcMailTools::parseEmailAddresses($mail->getHeader('Reply-To'));
+        } else  // Else To = From
 
         {
-            $reply->to = array( $mail->from );
+            $reply->to = array($mail->from);
         }
 
-        if ( $type == self::REPLY_ALL )
-        {
+        if ($type == self::REPLY_ALL) {
             // Cc = Cc + To - your own address
             $cc = array();
-            foreach ( $mail->to as $address )
-            {
-                if ( $address->email != $from->email )
-                {
+            foreach ($mail->to as $address) {
+                if ($address->email != $from->email) {
                     $cc[] = $address;
                 }
             }
-            foreach ( $mail->cc as $address )
-            {
-                if ( $address->email != $from->email )
-                {
+            foreach ($mail->cc as $address) {
+                if ($address->email != $from->email) {
                     $cc[] = $address;
                 }
             }
@@ -671,25 +623,20 @@ class ezcMailTools
 
         $reply->subject = $subjectPrefix . $mail->subject;
 
-        if ( $mail->getHeader( 'Message-Id' ) )
-        {
+        if ($mail->getHeader('Message-Id')) {
             // In-Reply-To = Message-Id
-            $reply->setHeader( 'In-Reply-To', $mail->getHeader( 'Message-ID' ) );
+            $reply->setHeader('In-Reply-To', $mail->getHeader('Message-ID'));
 
             // References = References . Message-Id
-            if ( $mail->getHeader( 'References' ) != '' )
-            {
-                $reply->setHeader( 'References', $mail->getHeader( 'References' )
-                                   . ' ' . $mail->getHeader( 'Message-ID' ) );
+            if ($mail->getHeader('References') != '') {
+                $reply->setHeader('References', $mail->getHeader('References')
+                    . ' ' . $mail->getHeader('Message-ID'));
+            } else {
+                $reply->setHeader('References', $mail->getHeader('Message-ID'));
             }
-            else
-            {
-                $reply->setHeader( 'References', $mail->getHeader( 'Message-ID' ) );
-            }
-        }
-        else // original mail is borked. Let's support it anyway.
+        } else // original mail is borked. Let's support it anyway.
         {
-            $reply->setHeader( 'References', $mail->getHeader( 'References' ) );
+            $reply->setHeader('References', $mail->getHeader('References'));
         }
 
         return $reply;
@@ -706,11 +653,10 @@ class ezcMailTools
      * @param string $contentType
      * @param string $mimeType
      */
-    static public function guessContentType( $fileName, &$contentType, &$mimeType )
+    static public function guessContentType($fileName, &$contentType, &$mimeType)
     {
-        $extension = strtolower( pathinfo( $fileName, PATHINFO_EXTENSION ) );
-        switch ( $extension )
-        {
+        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        switch ($extension) {
             case 'gif':
                 $contentType = 'image';
                 $mimeType = 'gif';
@@ -758,7 +704,7 @@ class ezcMailTools
      * $contentIdArray = array( 'consoletools-table.png@1421450' => 'http://localhost/consoletools-table.jpg' );
      * $text = "<html> Embedded image: <img src='cid:consoletools-table.png@1421450'/> </html>";
      * $htmlBody = ezcMailTools::replaceContentIdRefs( $text, $contentIdArray );
-     * // $htmlBody is now: 
+     * // $htmlBody is now:
      * // <html> Embedded image: <img src='http://localhost/consoletools-table.jpg'/> </html>
      * ?>
      * </code>
@@ -774,14 +720,12 @@ class ezcMailTools
      * @param array(string=>string) $contentIdArray
      * @return string
      */
-    static function replaceContentIdRefs( $htmlText, $contentIdArray )
+    static function replaceContentIdRefs($htmlText, $contentIdArray)
     {
-        preg_match_all( '@src=[\'"](cid:(.*?))[\'"]@', $htmlText, $matches );
-        for ( $i = 0; $i < count( $matches[0] ); $i++ )
-        {
-            if ( isset( $contentIdArray[$matches[2][$i]] ) )
-            {
-                $htmlText = str_replace( $matches[1][$i], $contentIdArray[$matches[2][$i]], $htmlText );
+        preg_match_all('@src=[\'"](cid:(.*?))[\'"]@', $htmlText, $matches);
+        for ($i = 0; $i < count($matches[0]); $i++) {
+            if (isset($contentIdArray[$matches[2][$i]])) {
+                $htmlText = str_replace($matches[1][$i], $contentIdArray[$matches[2][$i]], $htmlText);
             }
         }
         return $htmlText;
@@ -795,7 +739,7 @@ class ezcMailTools
      *
      * @return string
      */
-    static public function mimeHeaderEncode( $value, $charset )
+    static public function mimeHeaderEncode($value, $charset)
     {
         $preferences = array(
             'input-charset' => $charset,
@@ -807,19 +751,17 @@ class ezcMailTools
         // Mime encoding can fail with iconv when using multi-byte strings, generating a notice.
         // See https://bugs.php.net/bug.php?id=53891
         // I know, using the silent operator is usually evil, but we have no choice here...
-        $tmpValue = @iconv_mime_encode( 'dummy', $value, $preferences );
-        if ( $tmpValue !== false )
-        {
-            $value = substr( $tmpValue, 7 ); // "dummy: " + 1
-            unset( $tmpValue );
-        }
-        // Try to use mbstring extension if present.
-        else if ( extension_loaded( 'mbstring' ) )
-        {
-            $value = mb_encode_mimeheader( $value, $charset, 'Q', self::lineBreak() );
+        $tmpValue = @iconv_mime_encode('dummy', $value, $preferences);
+        if ($tmpValue !== false) {
+            $value = substr($tmpValue, 7); // "dummy: " + 1
+            unset($tmpValue);
+        } // Try to use mbstring extension if present.
+        else if (extension_loaded('mbstring')) {
+            $value = mb_encode_mimeheader($value, $charset, 'Q', self::lineBreak());
         }
 
         return $value;
     }
 }
+
 ?>

@@ -2,6 +2,7 @@
 
 use application\core\utils\Env;
 use application\core\utils\Ibos;
+
 ?>
 
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
@@ -55,59 +56,63 @@ use application\core\utils\Ibos;
 <!--错误重新设置模板-->
 <script type="text/ibos-template" id="update_confirm">
     <div>
-    <div class="alert alert-error>"><%=msg%></div>
-    <button type="button" data-target="<%=retryUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>" autocomplete="off" data-act="processStep" class="btn btn-large">重试</button>
-    <button type="button" data-target="<%=ftpUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>" autocomplete="off" data-act="processStep" class="btn btn-large mls" id="ftp_setup_btn">设置ftp</button>
+        <div class="alert alert-error>"><%=msg%></div>
+        <button type="button" data-target="<%=retryUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>"
+                autocomplete="off" data-act="processStep" class="btn btn-large">重试
+        </button>
+        <button type="button" data-target="<%=ftpUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>"
+                autocomplete="off" data-act="processStep" class="btn btn-large mls" id="ftp_setup_btn">设置ftp
+        </button>
     </div>
 </script>
 <!--设置ftp-->
 <script type="text/ibos-template" id="ftp_setup">
     <form id="sys_ftp_form" method="post" class="form-horizontal">
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Enabled ssl']; ?></label>
-    <div class="controls">
-    <input type="checkbox" name="ftp[ssl]" value="1" data-toggle="switch" class="visi-hidden" />
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Ftp host']; ?></label>
-    <div class="controls">
-    <input type="text" name="ftp[host]" />
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Ftp port']; ?></label>
-    <div class="controls">
-    <input type="text" name="ftp[port]" value="25" />
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Ftp user']; ?></label>
-    <div class="controls">
-    <input type="text" name="ftp[username]" />
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Ftp pass']; ?></label>
-    <div class="controls">
-    <input type="text" name="ftp[password]" />
-    </div>
-    </div>
-    <div class="control-group">
-    <label class="control-label"><?php echo $lang['Ftp pasv']; ?></label>
-    <div class="controls">
-    <input type="checkbox" name="ftp[pasv]" value="1" data-toggle="switch" class="visi-hidden" />
-    </div>
-    </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Enabled ssl']; ?></label>
+            <div class="controls">
+                <input type="checkbox" name="ftp[ssl]" value="1" data-toggle="switch" class="visi-hidden"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Ftp host']; ?></label>
+            <div class="controls">
+                <input type="text" name="ftp[host]"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Ftp port']; ?></label>
+            <div class="controls">
+                <input type="text" name="ftp[port]" value="25"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Ftp user']; ?></label>
+            <div class="controls">
+                <input type="text" name="ftp[username]"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Ftp pass']; ?></label>
+            <div class="controls">
+                <input type="text" name="ftp[password]"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><?php echo $lang['Ftp pasv']; ?></label>
+            <div class="controls">
+                <input type="checkbox" name="ftp[pasv]" value="1" data-toggle="switch" class="visi-hidden"/>
+            </div>
+        </div>
     </form>
 </script>
 <script type="text/javascript">
     var _ib = _ib || [];
-    _ib.push(['authkey', '<?php echo Ibos::app()->setting->get( 'config/security/authkey' ); ?>']);
+    _ib.push(['authkey', '<?php echo Ibos::app()->setting->get('config/security/authkey'); ?>']);
     _ib.push(['ip', '<?php echo Env::getClientIp(); ?>']);
     _ib.push(['from', '<?php echo $from; ?>']);
     _ib.push(['to', '<?php echo $to; ?>']);
-    _ib.push(['fullname', '<?php echo Ibos::app()->setting->get( 'setting/unit/fullname' ); ?>']);
+    _ib.push(['fullname', '<?php echo Ibos::app()->setting->get('setting/unit/fullname'); ?>']);
     _ib.push(['type', 'upgrade']);
     (function () {
         var ib = document.createElement('script');

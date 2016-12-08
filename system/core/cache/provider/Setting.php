@@ -24,28 +24,31 @@ use application\modules\dashboard\utils\Dashboard;
 use application\modules\main\model\Setting as SettingModel;
 use CBehavior;
 
-class Setting extends CBehavior {
+class Setting extends CBehavior
+{
 
     private $_setting = array();
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleSetting' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleSetting'));
     }
 
     /**
      * 处理全局setting缓存
      * @param type $event
      */
-    public function handleSetting( $event ) {
+    public function handleSetting($event)
+    {
         $settings = SettingModel::model()->fetchAllSetting();
-        $this->_setting = & $settings;
+        $this->_setting = &$settings;
         // credits
         $this->handleCredits();
         // 积分公式转换
         $this->handleCreditsFormula();
         // verhash
-        $this->_setting['verhash'] = StringUtil::random( 3 );
-        Syscache::model()->modifyCache( 'setting', $settings );
+        $this->_setting['verhash'] = StringUtil::random(3);
+        Syscache::model()->modifyCache('setting', $settings);
     }
 
     /**
@@ -53,11 +56,12 @@ class Setting extends CBehavior {
      * @param string $value
      * @return string
      */
-    private function handleCreditsFormula() {
-        if ( !Dashboard::checkFormulaCredits( $this->_setting['creditsformula'] ) ) {
+    private function handleCreditsFormula()
+    {
+        if (!Dashboard::checkFormulaCredits($this->_setting['creditsformula'])) {
             $this->_setting['creditsformula'] = '$user[\'extcredits1\']';
         } else {
-            $this->_setting['creditsformula'] = preg_replace( "/(extcredits[1-5])/", "\$user['\\1']", $this->_setting['creditsformula'] );
+            $this->_setting['creditsformula'] = preg_replace("/(extcredits[1-5])/", "\$user['\\1']", $this->_setting['creditsformula']);
         }
     }
 
@@ -65,18 +69,19 @@ class Setting extends CBehavior {
      * 处理积分
      * @return array
      */
-    private function handleCredits() {
-        $criteria = array( 'condition' => '`enable` = 1', 'order' => '`cid` ASC', 'limit' => 5 );
-        $record = Credit::model()->fetchAll( $criteria );
-        if ( !empty( $record ) ) {
+    private function handleCredits()
+    {
+        $criteria = array('condition' => '`enable` = 1', 'order' => '`cid` ASC', 'limit' => 5);
+        $record = Credit::model()->fetchAll($criteria);
+        if (!empty($record)) {
             $index = 1;
-            foreach ( $record as $credit ) {
+            foreach ($record as $credit) {
                 $this->_setting['extcredits'][$index] = $credit;
-                $this->_setting['creditremind'] && $this->_setting['creditnames'][] = str_replace( "'", "\'", StringUtil::ihtmlSpecialChars( $credit['cid'] . '|' . $credit['name'] ) );
+                $this->_setting['creditremind'] && $this->_setting['creditnames'][] = str_replace("'", "\'", StringUtil::ihtmlSpecialChars($credit['cid'] . '|' . $credit['name']));
                 $index++;
             }
         }
-        $this->_setting['creditnames'] = $this->_setting['creditremind'] ? @implode( ',', $this->_setting['creditnames'] ) : '';
+        $this->_setting['creditnames'] = $this->_setting['creditremind'] ? @implode(',', $this->_setting['creditnames']) : '';
     }
 
 }

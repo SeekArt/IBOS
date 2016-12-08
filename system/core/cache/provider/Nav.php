@@ -21,15 +21,18 @@ use application\modules\dashboard\model\Nav as NavModel;
 use application\modules\dashboard\model\Syscache;
 use CBehavior;
 
-class Nav extends CBehavior {
+class Nav extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleNav' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleNav'));
     }
 
-    public function handleNav( $event ) {
+    public function handleNav($event)
+    {
         $navs = NavModel::model()->fetchAllByAllPid();
-        Syscache::model()->modifyCache( 'nav', $navs );
+        Syscache::model()->modifyCache('nav', $navs);
     }
 
 }

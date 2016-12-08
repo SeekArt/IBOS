@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -168,20 +168,19 @@ class ezcMailComposer extends ezcMail
      *
      * @param ezcMailComposerOptions $options
      */
-    public function __construct( ezcMailComposerOptions $options = null )
+    public function __construct(ezcMailComposerOptions $options = null)
     {
         $this->properties['plainText'] = null;
         $this->properties['htmlText'] = null;
         $this->properties['charset'] = 'us-ascii';
         $this->properties['encoding'] = ezcMail::EIGHT_BIT;
-        if ( $options === null )
-        {
+        if ($options === null) {
             $options = new ezcMailComposerOptions();
         }
 
         $this->options = $options;
 
-        parent::__construct( $options );
+        parent::__construct($options);
     }
 
     /**
@@ -193,10 +192,9 @@ class ezcMailComposer extends ezcMail
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'plainText':
             case 'htmlText':
             case 'charset':
@@ -205,16 +203,15 @@ class ezcMailComposer extends ezcMail
                 break;
 
             case 'options':
-                if ( !$value instanceof ezcMailComposerOptions )
-                {
-                    throw new ezcBaseValueException( $name, $value, 'ezcMailComposerOptions' );
+                if (!$value instanceof ezcMailComposerOptions) {
+                    throw new ezcBaseValueException($name, $value, 'ezcMailComposerOptions');
                 }
 
                 $this->options = $value;
                 break;
 
             default:
-                parent::__set( $name, $value );
+                parent::__set($name, $value);
         }
     }
 
@@ -227,10 +224,9 @@ class ezcMailComposer extends ezcMail
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'plainText':
             case 'htmlText':
             case 'charset':
@@ -241,7 +237,7 @@ class ezcMailComposer extends ezcMail
                 return $this->options;
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
         }
     }
 
@@ -252,21 +248,20 @@ class ezcMailComposer extends ezcMail
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'plainText':
             case 'htmlText':
             case 'charset':
             case 'encoding':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             case 'options':
-                return isset( $this->options );
+                return isset($this->options);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -284,7 +279,7 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @throws ezcBaseFileNotFoundException
      *         if $fileName does not exists.
      * @throws ezcBaseFilePermissionProblem
@@ -298,15 +293,12 @@ class ezcMailComposer extends ezcMail
      *            the Mail component. Use addFileAttachment() and
      *            addStringAttachment() instead.
      */
-    public function addAttachment( $fileName, $content = null, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null )
+    public function addAttachment($fileName, $content = null, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null)
     {
-        if ( is_null( $content ) )
-        {
-            $this->addFileAttachment( $fileName, $contentType, $mimeType, $contentDisposition );
-        }
-        else
-        {
-            $this->addStringAttachment( $fileName, $content, $contentType, $mimeType, $contentDisposition );
+        if (is_null($content)) {
+            $this->addFileAttachment($fileName, $contentType, $mimeType, $contentDisposition);
+        } else {
+            $this->addStringAttachment($fileName, $content, $contentType, $mimeType, $contentDisposition);
         }
     }
 
@@ -320,7 +312,7 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @throws ezcBaseFileNotFoundException
      *         if $fileName does not exists.
      * @throws ezcBaseFilePermissionProblem
@@ -330,21 +322,15 @@ class ezcMailComposer extends ezcMail
      * @param string $mimeType
      * @param ezcMailContentDispositionHeader $contentDisposition
      */
-    public function addFileAttachment( $fileName, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null )
+    public function addFileAttachment($fileName, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null)
     {
-        if ( is_readable( $fileName ) )
-        {
-            $this->attachments[] = array( $fileName, null, $contentType, $mimeType, $contentDisposition );
-        }
-        else
-        {
-            if ( file_exists( $fileName ) )
-            {
-                throw new ezcBaseFilePermissionException( $fileName, ezcBaseFileException::READ );
-            }
-            else
-            {
-                throw new ezcBaseFileNotFoundException( $fileName );
+        if (is_readable($fileName)) {
+            $this->attachments[] = array($fileName, null, $contentType, $mimeType, $contentDisposition);
+        } else {
+            if (file_exists($fileName)) {
+                throw new ezcBaseFilePermissionException($fileName, ezcBaseFileException::READ);
+            } else {
+                throw new ezcBaseFileNotFoundException($fileName);
             }
         }
     }
@@ -362,16 +348,16 @@ class ezcMailComposer extends ezcMail
      * Content-Disposition header set according to the $contentDisposition
      * object and the filename of the attachment in the generated mail will be
      * the one from the $contentDisposition object.
-     * 
+     *
      * @param string $fileName
      * @param string $content
      * @param string $contentType
      * @param string $mimeType
      * @param ezcMailContentDispositionHeader $contentDisposition
      */
-    public function addStringAttachment( $fileName, $content, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null )
+    public function addStringAttachment($fileName, $content, $contentType = null, $mimeType = null, ezcMailContentDispositionHeader $contentDisposition = null)
     {
-        $this->attachments[] = array( $fileName, $content, $contentType, $mimeType, $contentDisposition );
+        $this->attachments[] = array($fileName, $content, $contentType, $mimeType, $contentDisposition);
     }
 
     /**
@@ -387,24 +373,19 @@ class ezcMailComposer extends ezcMail
         $mainPart = false;
 
         // create the text part if there is one
-        if ( $this->plainText != '' )
-        {
-            $mainPart = new ezcMailText( $this->plainText, $this->charset );
+        if ($this->plainText != '') {
+            $mainPart = new ezcMailText($this->plainText, $this->charset);
         }
 
         // create the HTML part if there is one
         $htmlPart = false;
-        if ( $this->htmlText != '' )
-        {
+        if ($this->htmlText != '') {
             $htmlPart = $this->generateHtmlPart();
 
             // create a MultiPartAlternative if a text part exists
-            if ( $mainPart != false )
-            {
-                $mainPart = new ezcMailMultipartAlternative( $mainPart, $htmlPart );
-            }
-            else
-            {
+            if ($mainPart != false) {
+                $mainPart = new ezcMailMultipartAlternative($mainPart, $htmlPart);
+            } else {
                 $mainPart = $htmlPart;
             }
         }
@@ -413,51 +394,35 @@ class ezcMailComposer extends ezcMail
         // special case, mail with no text and one attachment.
         // A fix for issue #14220 was added by wrapping the attachment in
         // an ezcMailMultipartMixed part
-        if ( $mainPart == false && count( $this->attachments ) == 1 )
-        {
-            if ( isset( $this->attachments[0][1] ) )
-            {
-                if ( is_resource( $this->attachments[0][1] ) )
-                {
-                    $mainPart = new ezcMailMultipartMixed( new ezcMailStreamFile( $this->attachments[0][0], $this->attachments[0][1], $this->attachments[0][2], $this->attachments[0][3] ) );
+        if ($mainPart == false && count($this->attachments) == 1) {
+            if (isset($this->attachments[0][1])) {
+                if (is_resource($this->attachments[0][1])) {
+                    $mainPart = new ezcMailMultipartMixed(new ezcMailStreamFile($this->attachments[0][0], $this->attachments[0][1], $this->attachments[0][2], $this->attachments[0][3]));
+                } else {
+                    $mainPart = new ezcMailMultipartMixed(new ezcMailVirtualFile($this->attachments[0][0], $this->attachments[0][1], $this->attachments[0][2], $this->attachments[0][3]));
                 }
-                else
-                {
-                    $mainPart = new ezcMailMultipartMixed( new ezcMailVirtualFile( $this->attachments[0][0], $this->attachments[0][1], $this->attachments[0][2], $this->attachments[0][3] ) );
-                }
-            }
-            else
-            {
-                $mainPart = new ezcMailMultipartMixed( new ezcMailFile( $this->attachments[0][0], $this->attachments[0][2], $this->attachments[0][3] ) );
+            } else {
+                $mainPart = new ezcMailMultipartMixed(new ezcMailFile($this->attachments[0][0], $this->attachments[0][2], $this->attachments[0][3]));
             }
             $mainPart->contentDisposition = $this->attachments[0][4];
-        }
-        else if ( count( $this->attachments ) > 0 )
-        {
-            $mainPart = ( $mainPart == false )
+        } else if (count($this->attachments) > 0) {
+            $mainPart = ($mainPart == false)
                 ? new ezcMailMultipartMixed()
-                : new ezcMailMultipartMixed( $mainPart );
+                : new ezcMailMultipartMixed($mainPart);
 
             // add the attachments to the mixed part
-            foreach ( $this->attachments as $attachment )
-            {
-                if ( isset( $attachment[1] ) )
-                {
-                    if ( is_resource( $attachment[1] ) )
-                    {
-                        $part = new ezcMailStreamFile( $attachment[0], $attachment[1], $attachment[2], $attachment[3] );
+            foreach ($this->attachments as $attachment) {
+                if (isset($attachment[1])) {
+                    if (is_resource($attachment[1])) {
+                        $part = new ezcMailStreamFile($attachment[0], $attachment[1], $attachment[2], $attachment[3]);
+                    } else {
+                        $part = new ezcMailVirtualFile($attachment[0], $attachment[1], $attachment[2], $attachment[3]);
                     }
-                    else
-                    {
-                        $part = new ezcMailVirtualFile( $attachment[0], $attachment[1], $attachment[2], $attachment[3] );
-                    }
-                }
-                else
-                {
-                    $part = new ezcMailFile( $attachment[0], $attachment[2], $attachment[3] );
+                } else {
+                    $part = new ezcMailFile($attachment[0], $attachment[2], $attachment[3]);
                 }
                 $part->contentDisposition = $attachment[4];
-                $mainPart->appendPart( $part );
+                $mainPart->appendPart($part);
             }
         }
 
@@ -479,13 +444,11 @@ class ezcMailComposer extends ezcMail
     protected function generateHtmlPart()
     {
         $result = false;
-        if ( $this->htmlText != '' )
-        {
+        if ($this->htmlText != '') {
             $matches = array();
-            if ( $this->options->automaticImageInclude === true )
-            {
+            if ($this->options->automaticImageInclude === true) {
                 // recognize file:// and file:///, pick out the image, add it as a part and then..:)
-                preg_match_all( '(
+                preg_match_all('(
                     <img \\s+[^>]*
                         src\\s*=\\s*
                             (?:
@@ -495,60 +458,47 @@ class ezcMailComposer extends ezcMail
                                 (?# Match unquoted attribute, which may not contain spaces)
                             |   file://(?P<unquoted>[^>\\s]+)
                         )
-                    [^>]* >)ix', $this->htmlText, $matches );
+                    [^>]* >)ix', $this->htmlText, $matches);
                 // pictures/files can be added multiple times. We only need them once.
-                $matches = array_filter( array_unique( array_merge( $matches['quoted'], $matches['unquoted'] ) ) );
+                $matches = array_filter(array_unique(array_merge($matches['quoted'], $matches['unquoted'])));
             }
 
-            $result = new ezcMailText( $this->htmlText, $this->charset, $this->encoding );
+            $result = new ezcMailText($this->htmlText, $this->charset, $this->encoding);
             $result->subType = "html";
-            if ( count( $matches ) > 0 )
-            {
+            if (count($matches) > 0) {
                 $htmlPart = $result;
                 // wrap already existing message in an alternative part
-                $result = new ezcMailMultipartRelated( $result );
+                $result = new ezcMailMultipartRelated($result);
 
                 // create a filepart and add it to the related part
                 // also store the ID for each part since we need those
                 // when we replace the originals in the HTML message.
-                foreach ( $matches as $fileName )
-                {
-                    if ( is_readable( $fileName ) )
-                    {
+                foreach ($matches as $fileName) {
+                    if (is_readable($fileName)) {
                         // @todo waiting for fix of the fileinfo extension
                         // $contents = file_get_contents( $fileName );
                         $mimeType = null;
                         $contentType = null;
-                        if ( ezcBaseFeatures::hasExtensionSupport( 'fileinfo' ) )
-                        {
+                        if (ezcBaseFeatures::hasExtensionSupport('fileinfo')) {
                             // if fileinfo extension is available
-                            $filePart = new ezcMailFile( $fileName );
-                        }
-                        elseif ( ezcMailTools::guessContentType( $fileName, $contentType, $mimeType ) )
-                        {
+                            $filePart = new ezcMailFile($fileName);
+                        } elseif (ezcMailTools::guessContentType($fileName, $contentType, $mimeType)) {
                             // if fileinfo extension is not available try to get content/mime type
                             // from the file extension
-                            $filePart = new ezcMailFile( $fileName, $contentType, $mimeType );
-                        }
-                        else
-                        {
+                            $filePart = new ezcMailFile($fileName, $contentType, $mimeType);
+                        } else {
                             // fallback in case fileinfo is not available and could not get content/mime
                             // type from file extension
-                            $filePart = new ezcMailFile( $fileName, "application", "octet-stream" );
+                            $filePart = new ezcMailFile($fileName, "application", "octet-stream");
                         }
-                        $cid = $result->addRelatedPart( $filePart );
+                        $cid = $result->addRelatedPart($filePart);
                         // replace the original file reference with a reference to the cid
-                        $this->htmlText = str_replace( 'file://' . $fileName, 'cid:' . $cid, $this->htmlText );
-                    }
-                    else
-                    {
-                        if ( file_exists( $fileName ) )
-                        {
-                            throw new ezcBaseFilePermissionException( $fileName, ezcBaseFileException::READ );
-                        }
-                        else
-                        {
-                            throw new ezcBaseFileNotFoundException( $fileName );
+                        $this->htmlText = str_replace('file://' . $fileName, 'cid:' . $cid, $this->htmlText);
+                    } else {
+                        if (file_exists($fileName)) {
+                            throw new ezcBaseFilePermissionException($fileName, ezcBaseFileException::READ);
+                        } else {
+                            throw new ezcBaseFileNotFoundException($fileName);
                         }
                         // throw
                     }
@@ -560,4 +510,5 @@ class ezcMailComposer extends ezcMail
         return $result;
     }
 }
+
 ?>

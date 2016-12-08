@@ -4,10 +4,10 @@ use application\core\utils\Model;
 use application\core\utils\Module;
 use application\modules\dashboard\model\CreditRule;
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 
-$creditExists = CreditRule::model()->countByAttributes( array( 'action' => 'adddiary' ) );
-if ( !$creditExists ) {
+$creditExists = CreditRule::model()->countByAttributes(array('action' => 'adddiary'));
+if (!$creditExists) {
     $data = array(
         'rulename' => '发表工作日志',
         'action' => 'adddiary',
@@ -17,10 +17,10 @@ if ( !$creditExists ) {
         'extcredits2' => '2',
         'extcredits3' => '1',
     );
-    CreditRule::model()->add( $data );
+    CreditRule::model()->add($data);
 }
-$isInstallCalendar = Module::getIsEnabled( 'calendar' );
-if ( $isInstallCalendar ) {
+$isInstallCalendar = Module::getIsEnabled('calendar');
+if ($isInstallCalendar) {
     $sql = "DROP TABLE IF EXISTS {{calendar_record}};
 			CREATE TABLE IF NOT EXISTS {{calendar_record}} (
 			`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -32,7 +32,7 @@ if ( $isInstallCalendar ) {
 			KEY `rid` (`rid`) USING BTREE,
 			KEY `did` (`did`) USING BTREE
 		  ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
-    Model::executeSqls( $sql );
+    Model::executeSqls($sql);
 }
 
 

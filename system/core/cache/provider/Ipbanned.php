@@ -21,10 +21,12 @@ use application\modules\dashboard\model\IpBanned as IpBannedModel;
 use application\modules\dashboard\model\Syscache;
 use CBehavior;
 
-class Ipbanned extends CBehavior {
+class Ipbanned extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleIpbanned' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleIpbanned'));
     }
 
     /**
@@ -32,24 +34,25 @@ class Ipbanned extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handleIpbanned( $event ) {
-        IpBannedModel::model()->DeleteByExpiration( TIMESTAMP );
+    public function handleIpbanned($event)
+    {
+        IpBannedModel::model()->DeleteByExpiration(TIMESTAMP);
         $data = array();
         $bannedArr = IpBannedModel::model()->fetchAll();
-        if ( !empty( $bannedArr ) ) {
+        if (!empty($bannedArr)) {
             $data['expiration'] = 0;
             $data['regexp'] = $separator = '';
         }
-        foreach ( $bannedArr as $banned ) {
+        foreach ($bannedArr as $banned) {
             $data['expiration'] = !$data['expiration'] || $banned['expiration'] < $data['expiration'] ? $banned['expiration'] : $data['expiration'];
             $data['regexp'] .= $separator .
-                    ($banned['ip1'] == '-1' ? '\\d+\\.' : $banned['ip1'] . '\\.') .
-                    ($banned['ip2'] == '-1' ? '\\d+\\.' : $banned['ip2'] . '\\.') .
-                    ($banned['ip3'] == '-1' ? '\\d+\\.' : $banned['ip3'] . '\\.') .
-                    ($banned['ip4'] == '-1' ? '\\d+' : $banned['ip4']);
+                ($banned['ip1'] == '-1' ? '\\d+\\.' : $banned['ip1'] . '\\.') .
+                ($banned['ip2'] == '-1' ? '\\d+\\.' : $banned['ip2'] . '\\.') .
+                ($banned['ip3'] == '-1' ? '\\d+\\.' : $banned['ip3'] . '\\.') .
+                ($banned['ip4'] == '-1' ? '\\d+' : $banned['ip4']);
             $separator = '|';
         }
-        Syscache::model()->modifyCache( 'ipbanned', $data );
+        Syscache::model()->modifyCache('ipbanned', $data);
     }
 
 }

@@ -10,7 +10,7 @@
 /**
  * 招聘模块------招聘模块基本控制器类，继承ICController
  * @package application.modules.recruit.components
- * @version $Id: BaseController.php 6533 2016-03-07 08:18:31Z gzhyj $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -25,11 +25,12 @@ use application\modules\recruit\model\ResumeDetail;
 use application\modules\recruit\utils\Recruit as RecruitUtil;
 use CJSON;
 
-class BaseController extends Controller {
+class BaseController extends Controller
+{
 
     /**
      * 查询的条件
-     * @var string 
+     * @var string
      */
     protected $condition = '';
 
@@ -37,7 +38,8 @@ class BaseController extends Controller {
      * 取得侧栏视图
      * @return void
      */
-    protected function getSidebar() {
+    protected function getSidebar()
+    {
         $sidebarAlias = 'application.modules.recruit.views.resume.sidebar';
         $params = array(
             'statModule' => Ibos::app()->setting->get('setting/statmodules'),
@@ -50,7 +52,8 @@ class BaseController extends Controller {
      * 取得模块后台配置
      * @return array
      */
-    public function getDashboardConfig() {
+    public function getDashboardConfig()
+    {
         //取得所有配置
         $config = Ibos::app()->setting->get('setting/recruitconfig');
         $result = array();
@@ -66,7 +69,8 @@ class BaseController extends Controller {
      *  检查是否已安装邮件模块
      * @return boolean
      */
-    protected function checkIsInstallEmail() {
+    protected function checkIsInstallEmail()
+    {
         $isInstallEmail = Module::getIsEnabled('email');
         return $isInstallEmail;
     }
@@ -75,7 +79,8 @@ class BaseController extends Controller {
      * 通过查询取得简历id 和 realname
      * @return void
      */
-    public function actionGetRealname() {
+    public function actionGetRealname()
+    {
         if (Ibos::app()->request->isAjaxRequest) {
             $keyword = Env::getRequest('keyword');
             $records = ResumeDetail::model()->fetchPKAndRealnameByKeyword($keyword);
@@ -87,7 +92,8 @@ class BaseController extends Controller {
      * 搜索
      * @return void
      */
-    public function actionSearch() {
+    public function actionSearch()
+    {
         $type = Env::getRequest('type');
 
         $conditionCookie = Main::getCookie('condition');
@@ -119,7 +125,8 @@ class BaseController extends Controller {
      * 异步检查输入的用户名是否存在于已有简历中
      * @return json
      */
-    public function actionCheckRealname() {
+    public function actionCheckRealname()
+    {
         $fullname = Env::getRequest('fullname');
         $fullnameToUnicode = str_replace('%', '\\', $fullname);
         $fullnameToUtf8 = CJSON::unicodeToUTF8($fullnameToUnicode);

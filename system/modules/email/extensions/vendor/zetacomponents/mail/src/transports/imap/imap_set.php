@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -80,7 +80,7 @@ class ezcMailImapSet implements ezcMailParserSet
 
     /**
      * Used to generate a tag for sending commands to the IMAP server.
-     * 
+     *
      * @var string
      */
     private $currentTag = 'A0000';
@@ -132,27 +132,22 @@ class ezcMailImapSet implements ezcMailParserSet
      * @param bool $deleteFromServer
      * @param ezcMailImapSetOptions|array(string=>mixed) $options
      */
-    public function __construct( ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false, $options = array() )
+    public function __construct(ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false, $options = array())
     {
-        if ( $options instanceof ezcMailImapSetOptions )
-        {
+        if ($options instanceof ezcMailImapSetOptions) {
             $this->options = $options;
-        }
-        else if ( is_array( $options ) )
-        {
-            $this->options = new ezcMailImapSetOptions( $options );
-        }
-        else
-        {
-            throw new ezcBaseValueException( "options", $options, "ezcMailImapSetOptions|array" );
+        } else if (is_array($options)) {
+            $this->options = new ezcMailImapSetOptions($options);
+        } else {
+            throw new ezcBaseValueException("options", $options, "ezcMailImapSetOptions|array");
         }
 
         $this->connection = $connection;
         $this->messages = $messages;
         $this->deleteFromServer = $deleteFromServer;
         $this->nextData = null;
-        
-        $this->uid = ( $this->options->uidReferencing ) ? ezcMailImapTransport::UID : ezcMailImapTransport::NO_UID;
+
+        $this->uid = ($this->options->uidReferencing) ? ezcMailImapTransport::UID : ezcMailImapTransport::NO_UID;
     }
 
     /**
@@ -175,35 +170,28 @@ class ezcMailImapSet implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        if ( $this->currentMessage === null )
-        {
+        if ($this->currentMessage === null) {
             // instead of calling $this->nextMail() in the constructor, it is called
             // here, to avoid sending commands to the server when creating the set, and
             // instead send the server commands when parsing the set (see ezcMailParser).
             $this->nextMail();
         }
-        if ( $this->hasMoreMailData )
-        {
-            if ( $this->bytesToRead !== false && $this->bytesToRead >= 0 )
-            {
+        if ($this->hasMoreMailData) {
+            if ($this->bytesToRead !== false && $this->bytesToRead >= 0) {
                 $data = $this->connection->getLine();
-                $this->bytesToRead -= strlen( $data );
+                $this->bytesToRead -= strlen($data);
 
                 // modified for issue #13878 (Endless loop in ezcMailParser):
                 // removed wrong checks (ending in ')' check and ending with tag check (e.g. 'A0002'))
-                if ( $this->bytesToRead <= 0 )
-                {
-                    if ( $this->bytesToRead < 0 )
-                    {
-                        $data = substr( $data, 0, strlen( $data ) + $this->bytesToRead ); //trim( $data, ")\r\n" );
+                if ($this->bytesToRead <= 0) {
+                    if ($this->bytesToRead < 0) {
+                        $data = substr($data, 0, strlen($data) + $this->bytesToRead); //trim( $data, ")\r\n" );
                     }
 
-                    if ( $this->bytesToRead === 0 )
-                    {
+                    if ($this->bytesToRead === 0) {
                         // hack for Microsoft Exchange, which sometimes puts
                         // FLAGS (\Seen)) at the end of a message instead of before (!)
-                        if ( strlen( trim( $data, ")\r\n" ) !== strlen( $data ) - 3 ) )
-                        {
+                        if (strlen(trim($data, ")\r\n") !== strlen($data) - 3)) {
                             // if the last line in a mail does not end with ")\r\n"
                             // then read an extra line and discard it
                             $extraData = $this->connection->getLine();
@@ -212,12 +200,11 @@ class ezcMailImapSet implements ezcMailParserSet
 
                     $this->hasMoreMailData = false;
                     // remove the mail if required by the user.
-                    if ( $this->deleteFromServer === true )
-                    {
+                    if ($this->deleteFromServer === true) {
                         $tag = $this->getNextTag();
-                        $this->connection->sendData( "{$tag} {$this->uid}STORE {$this->currentMessage} +FLAGS (\\Deleted)" );
+                        $this->connection->sendData("{$tag} {$this->uid}STORE {$this->currentMessage} +FLAGS (\\Deleted)");
                         // skip OK response ("{$tag} OK Store completed.")
-                        $response = $this->getResponse( $tag );
+                        $response = $this->getResponse($tag);
                     }
                     return $data;
                 }
@@ -238,48 +225,37 @@ class ezcMailImapSet implements ezcMailParserSet
      */
     public function nextMail()
     {
-        if ( $this->currentMessage === null )
-        {
-            $this->currentMessage = reset( $this->messages );
-        }
-        else
-        {
-            $this->currentMessage = next( $this->messages );
+        if ($this->currentMessage === null) {
+            $this->currentMessage = reset($this->messages);
+        } else {
+            $this->currentMessage = next($this->messages);
         }
         $this->nextData = null;
         $this->bytesToRead = false;
-        if ( $this->currentMessage !== false )
-        {
+        if ($this->currentMessage !== false) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} {$this->uid}FETCH {$this->currentMessage} RFC822" );
+            $this->connection->sendData("{$tag} {$this->uid}FETCH {$this->currentMessage} RFC822");
             $response = $this->connection->getLine();
-            if ( strpos( $response, ' NO ' ) !== false ||
-                 strpos( $response, ' BAD ') !== false )
-            {
-                throw new ezcMailTransportException( "The IMAP server sent a negative reply when requesting mail." );
-            }
-            else
-            {
-                $response = $this->getResponse( 'FETCH (', $response );
-                if ( strpos( $response, 'FETCH (' ) !== false )
-                {
+            if (strpos($response, ' NO ') !== false ||
+                strpos($response, ' BAD ') !== false
+            ) {
+                throw new ezcMailTransportException("The IMAP server sent a negative reply when requesting mail.");
+            } else {
+                $response = $this->getResponse('FETCH (', $response);
+                if (strpos($response, 'FETCH (') !== false) {
                     $this->hasMoreMailData = true;
                     // retrieve the message size from $response, eg. if $response is:
                     // * 2 FETCH (FLAGS (\Answered \Seen) RFC822 {377}
                     // then $this->bytesToRead will be 377
-                    preg_match( '/\{(.*)\}/', $response, $matches );
-                    if ( count( $matches ) > 0 )
-                    {
-                        $this->bytesToRead = (int) $matches[1];
+                    preg_match('/\{(.*)\}/', $response, $matches);
+                    if (count($matches) > 0) {
+                        $this->bytesToRead = (int)$matches[1];
                     }
                     return true;
-                }
-                else
-                {
-                    $response = $this->getResponse( $tag );
-                    if ( strpos( $response, 'OK ' ) === false )
-                    {
-                        throw new ezcMailTransportException( "The IMAP server sent a negative reply when requesting mail." );
+                } else {
+                    $response = $this->getResponse($tag);
+                    if (strpos($response, 'OK ') === false) {
+                        throw new ezcMailTransportException("The IMAP server sent a negative reply when requesting mail.");
                     }
                 }
             }
@@ -312,17 +288,15 @@ class ezcMailImapSet implements ezcMailParserSet
      * @param string $response
      * @return string
      */
-    private function getResponse( $tag = null, $response = null )
+    private function getResponse($tag = null, $response = null)
     {
-        if ( is_null( $response ) )
-        {
+        if (is_null($response)) {
             $response = $this->connection->getLine();
         }
-        while ( strpos( $response, $tag ) === false )
-        {
-            if ( strpos( $response, ' BAD ' ) !== false ||
-                 strpos( $response, ' NO ' ) !== false )
-            {
+        while (strpos($response, $tag) === false) {
+            if (strpos($response, ' BAD ') !== false ||
+                strpos($response, ' NO ') !== false
+            ) {
                 break;
             }
             $response = $this->connection->getLine();
@@ -351,20 +325,18 @@ class ezcMailImapSet implements ezcMailParserSet
      */
     private function getNextTag()
     {
-        $tagLetter = substr( $this->currentTag, 0, 1 );
-        $tagNumber = intval( substr( $this->currentTag, 1 ) );
+        $tagLetter = substr($this->currentTag, 0, 1);
+        $tagNumber = intval(substr($this->currentTag, 1));
         $tagNumber++;
-        if ( $tagLetter == 'Z' && $tagNumber == 10000 )
-        {
+        if ($tagLetter == 'Z' && $tagNumber == 10000) {
             $tagLetter = 'A';
             $tagNumber = 1;
         }
-        if ( $tagNumber == 10000 )
-        {
+        if ($tagNumber == 10000) {
             $tagLetter++;
             $tagNumber = 0;
         }
-        $this->currentTag = $tagLetter . sprintf( "%04s", $tagNumber );
+        $this->currentTag = $tagLetter . sprintf("%04s", $tagNumber);
         return $this->currentTag;
     }
 
@@ -375,7 +347,7 @@ class ezcMailImapSet implements ezcMailParserSet
      */
     public function hasData()
     {
-        return count( $this->messages );
+        return count($this->messages);
     }
 
     /**
@@ -388,4 +360,5 @@ class ezcMailImapSet implements ezcMailParserSet
         return $this->messages;
     }
 }
+
 ?>

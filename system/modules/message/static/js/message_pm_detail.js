@@ -88,6 +88,14 @@ $(function(){
 		});
 	};
 
+
+	// 短轮询加载信息（即时聊天）
+	setInterval(loadNew, 5000);
+
+	var $replyContent = $("#reply_content"),
+		$submitBtn = $("#pm_submit");
+
+
 	// 发送
 	var sendMsg = function(){
 		var $submitBtn = $("#pm_submit"),
@@ -108,6 +116,11 @@ $(function(){
 				submitLock = true;
 				setTimeout(function(){
 					submitLock = false;
+					var len = $replyTextarea.val().length;
+					$replyContent.trigger("countchange", {
+						count: len,
+						remnant: $replyContent.data("opts").max - len
+					});
 				}, 5000);
 				$replyTextarea.val("").focus();
 				// 重读私信列表
@@ -122,12 +135,6 @@ $(function(){
 
 	loadMore();
 	$("#load_more_btn").on("click", loadMore);
-
-	// 短轮询加载信息（即时聊天）
-	setInterval(loadNew, 5000);
-
-	var $replyContent = $("#reply_content"),
-		$submitBtn = $("#pm_submit");
 
 	// 输入字符计数
 	$replyContent.charCount({ display: "pm_charcount" })

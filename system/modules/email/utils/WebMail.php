@@ -8,7 +8,6 @@ use application\core\utils\File;
 use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\core\utils\Xml;
-use application\modules\email\extensions\mailer\EMailer;
 use application\modules\email\model\Email as Email2;
 use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailWeb;
@@ -24,7 +23,8 @@ use ezcMailPop3Transport;
 use ezcMailPop3TransportOptions;
 use ezcMailTransportException;
 
-class WebMail {
+class WebMail
+{
 
     const SERVER_CONF_WEB = 'http://www.ibos.com.cn/resources/email/serverConf.xml'; // 在线服务器配置地址
     const SERVER_CONF_LOCAL = 'system/modules/email/extensions/serverConf.xml'; // 本地服务器配置地址
@@ -58,7 +58,8 @@ class WebMail {
      * @param string $configParse 用何种方式解析账户
      * @return bool
      */
-    public static function checkAccount($address, $password, $postConfig = array(), $configParse = 'LOCAL') {
+    public static function checkAccount($address, $password, $postConfig = array(), $configParse = 'LOCAL')
+    {
         $accountCorrect = false;
         $server = array();
         if (empty($postConfig)) {
@@ -77,7 +78,8 @@ class WebMail {
      * @param array $conf
      * @return boolean
      */
-    private static function connectServer($conf = array()) {
+    private static function connectServer($conf = array())
+    {
         $connected = false;
         // 新认证方法，不依赖 imap 扩展
         require PATH_ROOT . '/system/modules/email/extensions/vendor/autoload.php';
@@ -137,7 +139,8 @@ class WebMail {
      * @param bool $convert 是否需要转换编码？
      * @return string 邮件正文
      */
-    private static function fetchBody($obj, $conn, $folder, $id, $structure, $part) {
+    private static function fetchBody($obj, $conn, $folder, $id, $structure, $part)
+    {
 // fetch body part
         $body = $obj->fetchPartBody($conn, $folder, $id, $part);
 // decode body part
@@ -187,7 +190,8 @@ class WebMail {
      * @param type $header
      * @return string
      */
-    public static function getBody($id, &$conn, &$obj, $header) {
+    public static function getBody($id, &$conn, &$obj, $header)
+    {
         $structure_str = $obj->fetchStructureString($conn, 'INBOX', $id);
         $structure = EmailMime::getRawStructureArray($structure_str);
         $num_parts = EmailMime::getNumParts($structure);
@@ -407,7 +411,8 @@ EOT;
      * @param string $string 要处理的域名
      * @return string
      */
-    public static function getDomin($string) {
+    public static function getDomin($string)
+    {
         $parts = explode('.', $string);
         $count = count($parts);
         if ($count > 2) {
@@ -426,7 +431,8 @@ EOT;
      * @param string $configParse
      * @return array
      */
-    public static function getEmailConfig($address, $password, $configParse = 'LOCAL') {
+    public static function getEmailConfig($address, $password, $configParse = 'LOCAL')
+    {
         $server = array();
         $config = self::getServerConfig($configParse);
         if (!empty($config)) {
@@ -450,7 +456,8 @@ EOT;
      * @param string $domain
      * @return mixed
      */
-    public static function getMailAddress($domain) {
+    public static function getMailAddress($domain)
+    {
 
         $host = $ip = false;
 // first try to get MX records
@@ -506,7 +513,8 @@ EOT;
      * @param string $method LOCAL:本地配置，WEB：网络配置，可保证最新
      * @return array
      */
-    public static function getServerConfig($method) {
+    public static function getServerConfig($method)
+    {
         static $config = array();
         if (empty($config)) {
             switch ($method) {
@@ -531,7 +539,8 @@ EOT;
      * @param array $config
      * @return array
      */
-    public static function mergePostConfig($address, $password, $config) {
+    public static function mergePostConfig($address, $password, $config)
+    {
         $data = array(
             'SMTPNAME' => $config['smtpserver'],
             'SMTPPORT' => $config['smtpport'],
@@ -557,7 +566,8 @@ EOT;
      * @param array $config
      * @return array
      */
-    private static function mergeServerConfig($address, $password, $config) {
+    private static function mergeServerConfig($address, $password, $config)
+    {
         $config = array_merge(self::$defaultConfig, $config);
         $return = array();
         if ($config['POP3EntireAddress'] || $config['IMAPEntireAddress']) {
@@ -584,7 +594,8 @@ EOT;
      * @param string $address 本地服务器配置xml地址别名，必须要用Yii规定的别名样式
      * @return array
      */
-    private static function parseLocalConfig($address) {
+    private static function parseLocalConfig($address)
+    {
         $config = array();
         if (is_file($address)) {
             $fileContent = file_get_contents($address);
@@ -597,7 +608,8 @@ EOT;
      * 解析远程地址的服务器配置
      * @param string $address
      */
-    private static function parseWebConfig($address) {
+    private static function parseWebConfig($address)
+    {
         //todo::完善解析远程地址服务器配置的方法
     }
 
@@ -606,7 +618,8 @@ EOT;
      * @param array $web
      * @return int
      */
-    public static function receiveMail($web) {
+    public static function receiveMail($web)
+    {
         set_time_limit(600);
         self::$_web = $web;
         list($prefix, ,) = explode('.', $web['server']);
@@ -637,7 +650,8 @@ EOT;
         return 0;
     }
 
-    public static function fetchUnreceivedMail($server, $port, $user, $pass, $potions = array(), $max = 10) {
+    public static function fetchUnreceivedMail($server, $port, $user, $pass, $potions = array(), $max = 10)
+    {
         $pop3 = new ezcMailPop3Transport($server, $port, $potions);
         $pop3->authenticate($user, $pass);
         // 获取所有邮件编号（不会接收邮件正文）
@@ -678,22 +692,25 @@ EOT;
      * @param array $web
      * @return mixed boolean|发送成功 string|错误信息
      */
-    public static function sendWebMail($toUser, $body, $web) {
+    public static function sendWebMail($toUser, $body, $web)
+    {
         $user = User::model()->fetchByUid($web['uid']);
         $password = StringUtil::authCode($web['password'], 'DECODE', $user['salt']);
 
-        $mailer = Ibos::createComponent('application\modules\email\extensions\mailer\EMailer');
-        $mailer = new EMailer();
+        require_once PATH_ROOT . '/system/modules/email/extensions/mailer/phpmailer/PHPMailerAutoload.php';
+
+        $mailer = new \PHPMailer();
         $mailer->IsSMTP();
         $mailer->SMTPDebug = 0;
         $mailer->Host = $web['smtpserver'];
         $mailer->Port = $web['smtpport'];
         $mailer->CharSet = 'UTF-8';
+        $mailer->Timeout = 30;
         if ($web['smtpssl']) {
             $mailer->SMTPSecure = 'ssl';
         }
         $mailer->SMTPAuth = true;
-        $mailer->Username = $web['username'];
+        $mailer->Username = $web['address'];
         $mailer->Password = $password;
         $mailer->setFrom($web['address'], $web['nickname']);
         foreach (explode(';', $toUser) as $address) {
@@ -710,6 +727,9 @@ EOT;
                 if (LOCAL) {
                     $mailer->addAttachment($url, $attachment['filename']);
                 } else {
+                    // 获取文件的远程地址
+                    $url = Ibos::engine()->IO()->file()->fileName($url);
+                    // 将远程文件下载到本地，并返回一个本地临时地址
                     $temp = Ibos::engine()->IO()->file()->fetchTemp($url);
                     $mailer->addAttachment($temp, $attachment['filename']);
                 }
@@ -730,7 +750,8 @@ EOT;
      * @throws \ezcMailInvalidLimitException
      * @throws \ezcMailOffsetOutOfRangeException
      */
-    protected static function receivePopMail($web, $pwd) {
+    protected static function receivePopMail($web, $pwd)
+    {
         $options = new ezcMailPop3TransportOptions();
         if ($web['ssl'] == 1) {
             $options->ssl = true;
@@ -746,7 +767,8 @@ EOT;
      * @param array $mails
      * @return true
      */
-    protected static function saveMails($web, $mails) {
+    protected static function saveMails($web, $mails)
+    {
         for ($i = 0; $i < count($mails); $i++) {
             // 是否已经接收过
             if ((!$mails[$i]->timestamp || !$mails[$i]->from->email) || EmailBody::isExist($mails[$i]->timestamp, $mails[$i]->from->email)) {
@@ -829,7 +851,8 @@ EOT;
      * @param $pwd
      * @return mixed
      */
-    protected static function receiveOtherMail($web, $pwd) {
+    protected static function receiveOtherMail($web, $pwd)
+    {
         try {
             return self::receivePopMail($web, $pwd);
         } catch (\Exception $e) {
@@ -845,7 +868,8 @@ EOT;
      * @throws \ezcMailInvalidLimitException
      * @throws \ezcMailOffsetOutOfRangeException
      */
-    protected static function receiveImapMail($web, $pwd) {
+    protected static function receiveImapMail($web, $pwd)
+    {
         $data = array();
         $options = new ezcMailImapTransportOptions();
         if ($web['ssl'] == 1) {
@@ -971,7 +995,8 @@ EOT;
      * @param \ezcMailFilePart $parts
      * @return string 附件id，格式：1,2,3
      */
-    protected static function saveAttach($parts) {
+    protected static function saveAttach($parts)
+    {
         $uid = (int)Ibos::app()->user->uid;
 
         $attachArr = array();
@@ -1007,7 +1032,8 @@ EOT;
      * @param string $filename
      * @return string
      */
-    protected static function getFullName($filename) {
+    protected static function getFullName($filename)
+    {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         return sprintf('email/%s/%s/%s.%s', date('Ym'), date('d'), StringUtil::random(25), $extension);
     }

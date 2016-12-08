@@ -1181,6 +1181,7 @@ class CHttpRequest extends CApplicationComponent
 			echo $content;
 	}
 
+	
 	/**
 	 * Sends existing file to a browser as a download using x-sendfile.
 	 *

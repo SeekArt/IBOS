@@ -9,9 +9,9 @@
  */
 /**
  *  cache表的数据层操作
- * 
+ *
  * @package application.modules.dashboard.model
- * @version $Id: Cache.php 4255 2014-09-27 02:48:12Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,24 +20,28 @@ namespace application\modules\dashboard\model;
 use application\core\model\Model;
 use application\core\utils\StringUtil;
 
-class Cache extends Model {
+class Cache extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{cache}}';
     }
 
     /**
-     * 
+     *
      * @param string $pk
      * @return array
      */
-    public function fetchArrayByPk( $pk ) {
-        $array = $this->fetchByPk( $pk );
-        return StringUtil::utf8Unserialize( $array['cachevalue'] );
+    public function fetchArrayByPk($pk)
+    {
+        $array = $this->fetchByPk($pk);
+        return StringUtil::utf8Unserialize($array['cachevalue']);
     }
 
 }

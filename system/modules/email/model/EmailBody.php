@@ -10,33 +10,38 @@ use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\email\utils\Email as EmailUtil;
 
-class EmailBody extends Model {
+class EmailBody extends Model
+{
 
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{email_body}}';
     }
 
     /**
-     * 
+     *
      * 检查邮件是否已经存在，用于解决外部邮件重复接收问题
      * 使用发送时间和发送人来判断是否重复
-     * 
+     *
      * @param integer $sendtime 发送时间戳
      * @param string $fromwebmail 发送人邮箱地址
      * @return boolean 已经存在返回true，否则返回false
      */
-    public static function isExist($sendtime, $fromwebmail) {
+    public static function isExist($sendtime, $fromwebmail)
+    {
         $result = Ibos::app()->db->createCommand()
-                ->select('bodyid')
-                ->from('{{email_body}}')
-                ->where('`sendtime` = ' . $sendtime . ' AND `fromwebmail` = ' . "'" . $fromwebmail . "'")
-                ->queryRow();
-        if ($result && !empty($result))
+            ->select('bodyid')
+            ->from('{{email_body}}')
+            ->where('`sendtime` = ' . $sendtime . ' AND `fromwebmail` = ' . "'" . $fromwebmail . "'")
+            ->queryRow();
+        if ($result && !empty($result)) {
             return true;
+        }
         return false;
     }
 
@@ -46,13 +51,14 @@ class EmailBody extends Model {
      * @param integer $archiveId 分类存档表ID
      * @return integer 影响的行数
      */
-    public function delBody($bodyIds, $archiveId = 0) {
+    public function delBody($bodyIds, $archiveId = 0)
+    {
         $table = sprintf('{{%s}}', $this->getTableName($archiveId));
         $bodys = Ibos::app()->db->createCommand()
-                ->select('attachmentid')
-                ->from($table)
-                ->where("FIND_IN_SET(bodyid,'{$bodyIds}')")
-                ->queryAll();
+            ->select('attachmentid')
+            ->from($table)
+            ->where("FIND_IN_SET(bodyid,'{$bodyIds}')")
+            ->queryAll();
         $attachIds = Convert::getSubByKey($bodys, 'attachmentid');
         $attachId = StringUtil::filterStr(implode(',', $attachIds));
         if (!empty($attachId)) {
@@ -66,7 +72,8 @@ class EmailBody extends Model {
      * @param array $data 初始邮件主体数据
      * @return array 处理之后的邮件主体数据
      */
-    public function handleEmailBody($data) {
+    public function handleEmailBody($data)
+    {
         $data['toids'] = implode(',', StringUtil::getId($data['toids']));
         $data['sendtime'] = TIMESTAMP;
         $data['isneedreceipt'] = isset($data['isneedreceipt']) ? 1 : 0;
@@ -98,7 +105,8 @@ class EmailBody extends Model {
      * @param integer $target
      * @return boolean|integer
      */
-    public function moveByBodyId($bodyIds, $source, $target) {
+    public function moveByBodyId($bodyIds, $source, $target)
+    {
         $source = intval($source);
         $target = intval($target);
         if ($source != $target) {
@@ -116,7 +124,8 @@ class EmailBody extends Model {
      * @param integer $tableId 存档表id
      * @return string
      */
-    public function getTableName($tableId = 0) {
+    public function getTableName($tableId = 0)
+    {
         $tableId = intval($tableId);
         return $tableId ? "email_body_{$tableId}" : 'email_body';
     }
@@ -126,7 +135,8 @@ class EmailBody extends Model {
      * @param integer $tableId 存档表id
      * @return array
      */
-    public function getTableStatus($tableId = 0) {
+    public function getTableStatus($tableId = 0)
+    {
         return Database::getTableStatus($this->getTableName($tableId));
     }
 
@@ -136,7 +146,8 @@ class EmailBody extends Model {
      * @param boolean $force 强制删除
      * @return boolean
      */
-    public function dropTable($tableId, $force = false) {
+    public function dropTable($tableId, $force = false)
+    {
         $tableId = intval($tableId);
         if ($tableId) {
             $rel = Database::dropTable($this->getTableName($tableId), $force);
@@ -152,7 +163,8 @@ class EmailBody extends Model {
      * @param integer $maxTableId
      * @return boolean
      */
-    public function createTable($maxTableId) {
+    public function createTable($maxTableId)
+    {
         if ($maxTableId) {
             return Database::cloneTable($this->getTableName(), $this->getTableName($maxTableId));
         } else {
@@ -162,36 +174,38 @@ class EmailBody extends Model {
 
     /**
      * 根据 bodyid 获取一封完整的邮件信息
-     * @param  integer $id        bodyid
+     * @param  integer $id bodyid
      * @param  integer $archiveId 判断表
-     * @return array 
+     * @return array
      */
-    public function fetchById($id, $archiveId = 0) {
+    public function fetchById($id, $archiveId = 0)
+    {
         $mainTable = Email::model()->getTableName($archiveId);
         $bodyTable = $this->getTableName($archiveId);
         $field = 'eb.bodyid, fromid, toids, copytoids, secrettoids, subject, content, sendtime, attachmentid, issend, ';
         $field .= 'important, size, fromwebmail, towebmail, issenderdel, isneedreceipt, emailid, toid, isread, isdel, ';
         $field .= 'fid, isreceipt, ismark, isweb';
         $email = Ibos::app()->db->createCommand()
-                ->select($field)
-                ->from('{{' . $bodyTable . '}} eb')
-                ->leftJoin('{{' . $mainTable . '}} e', 'eb.bodyid = e.bodyid')
-                ->where('eb.bodyid = ' . intval($id))
-                ->queryRow();
+            ->select($field)
+            ->from('{{' . $bodyTable . '}} eb')
+            ->leftJoin('{{' . $mainTable . '}} e', 'eb.bodyid = e.bodyid')
+            ->where('eb.bodyid = ' . intval($id))
+            ->queryRow();
         return is_array($email) ? $email : array();
     }
 
     /**
      * debug 718
      * 从已发送的邮箱列表中删除对应的邮件
-     * @param string  $condition  查询条件
+     * @param string $condition 查询条件
      * @return boolen  处理结果
      */
-    public function deleteSenderEmail($condition) {
+    public function deleteSenderEmail($condition)
+    {
         $mainTable = Email::model()->tableName();
         $bodyTable = $this->tableName();
         $sql = sprintf("UPDATE {$bodyTable} SET issenderdel = 1 WHERE %s", $condition);
-        return Ibos::app()->db->createCommand($sql)->query() ? TRUE : FALSE;
+        return Ibos::app()->db->createCommand($sql)->query() ? true : false;
     }
 
 }

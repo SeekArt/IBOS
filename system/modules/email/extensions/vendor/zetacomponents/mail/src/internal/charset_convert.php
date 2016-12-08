@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -92,7 +92,7 @@ class ezcMailCharsetConverter
      *
      * @var callback
      */
-    private static $method = array( __CLASS__, 'convertToUTF8Iconv' );
+    private static $method = array(__CLASS__, 'convertToUTF8Iconv');
 
     /**
      * Sets the callback function used for character set conversion to UTF-8.
@@ -102,7 +102,7 @@ class ezcMailCharsetConverter
      *
      * @param callback $method
      */
-    public static function setConvertMethod( $method )
+    public static function setConvertMethod($method)
     {
         self::$method = $method;
     }
@@ -118,9 +118,9 @@ class ezcMailCharsetConverter
      * @param string $originalCharset
      * @return string
      */
-    public static function convertToUTF8( $text, $originalCharset )
+    public static function convertToUTF8($text, $originalCharset)
     {
-        return call_user_func( self::$method, $text, $originalCharset );
+        return call_user_func(self::$method, $text, $originalCharset);
     }
 
     /**
@@ -133,13 +133,13 @@ class ezcMailCharsetConverter
      * @param string $originalCharset
      * @return string
      */
-    public static function convertToUTF8Iconv( $text, $originalCharset )
+    public static function convertToUTF8Iconv($text, $originalCharset)
     {
-        if ( $originalCharset === 'unknown-8bit' || $originalCharset === 'x-user-defined' )
-        {
+        if ($originalCharset === 'unknown-8bit' || $originalCharset === 'x-user-defined') {
             $originalCharset = "latin1";
         }
-        return iconv( $originalCharset, 'UTF-8//IGNORE', $text );
+        return iconv($originalCharset, 'UTF-8//IGNORE', $text);
     }
 }
+
 ?>

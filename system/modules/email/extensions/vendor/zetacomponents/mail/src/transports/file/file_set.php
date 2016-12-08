@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -75,10 +75,10 @@ class ezcMailFileSet implements ezcMailParserSet
      *
      * @param array(string) $files
      */
-    public function __construct( array $files )
+    public function __construct(array $files)
     {
         $this->files = $files;
-        reset( $this->files );
+        reset($this->files);
         $this->hasMoreMailData = false;
     }
 
@@ -89,9 +89,8 @@ class ezcMailFileSet implements ezcMailParserSet
      */
     public function __destruct()
     {
-        if ( is_resource( $this->fp ) )
-        {
-            fclose( $this->fp );
+        if (is_resource($this->fp)) {
+            fclose($this->fp);
             $this->fp = null;
         }
     }
@@ -103,10 +102,8 @@ class ezcMailFileSet implements ezcMailParserSet
      */
     public function hasData()
     {
-        if ( count( $this->files ) >= 1 )
-        {
-            if ( $this->files[0] === 'php://stdin' || filesize( $this->files[0] ) > 0 )
-            {
+        if (count($this->files) >= 1) {
+            if ($this->files[0] === 'php://stdin' || filesize($this->files[0]) > 0) {
                 return true;
             }
         }
@@ -123,25 +120,21 @@ class ezcMailFileSet implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        if ( $this->hasMoreMailData === false )
-        {
+        if ($this->hasMoreMailData === false) {
             $this->nextMail();
         }
         // finished?
-        if ( $this->fp == null || feof( $this->fp ) )
-        {
-            if ( $this->fp != null )
-            {
-                fclose( $this->fp );
+        if ($this->fp == null || feof($this->fp)) {
+            if ($this->fp != null) {
+                fclose($this->fp);
                 $this->fp = null;
             }
             return null;
         }
 
         // get one line
-        $next = fgets( $this->fp );
-        if ( $next == "" && feof( $this->fp ) )
-        {
+        $next = fgets($this->fp);
+        if ($next == "" && feof($this->fp)) {
             return null;
         }
         return $next;
@@ -156,10 +149,9 @@ class ezcMailFileSet implements ezcMailParserSet
      */
     public function nextMail()
     {
-        if ( $this->hasMoreMailData === false )
-        {
+        if ($this->hasMoreMailData === false) {
             $this->hasMoreMailData = true;
-            return $this->openFile( true );
+            return $this->openFile(true);
         }
         return $this->openFile();
     }
@@ -170,33 +162,30 @@ class ezcMailFileSet implements ezcMailParserSet
      * @param bool $isFirst
      * @return bool
      */
-    private function openFile( $isFirst = false )
+    private function openFile($isFirst = false)
     {
         // cleanup file pointer if needed
-        if ( $this->fp != null )
-        {
-            fclose( $this->fp );
+        if ($this->fp != null) {
+            fclose($this->fp);
             $this->fp = null;
         }
 
         // open the new file
-        $file = $isFirst ? current( $this->files ) : next( $this->files );
+        $file = $isFirst ? current($this->files) : next($this->files);
 
         // loop until we can open a file.
-        while ( $this->fp == null && $file !== false )
-        {
-            if ( $file === 'php://stdin' || file_exists( $file ) )
-            {
-                $fp = fopen( $file, 'r' );
-                if ( $fp !== false )
-                {
+        while ($this->fp == null && $file !== false) {
+            if ($file === 'php://stdin' || file_exists($file)) {
+                $fp = fopen($file, 'r');
+                if ($fp !== false) {
                     $this->fp = $fp;
                     return true;
                 }
             }
-            $file = next( $this->files );
+            $file = next($this->files);
         }
         return false;
     }
 }
+
 ?>

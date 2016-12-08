@@ -28,19 +28,20 @@ use Aliyun\Common\Utilities\AssertUtils;
  *
  * @package Aliyun\OSS\Models
  */
-class Bucket {
+class Bucket
+{
     /**
      * Buket的名字
      * @var string
      */
     private $name;
-    
+
     /**
      * Bucket的所有者
      * @var string
      */
     private $owner;
-    
+
     /**
      * Bucket的创建日期
      * @var \DateTime
@@ -51,7 +52,8 @@ class Bucket {
      * @internal
      * @param $name
      */
-    public function __construct($name) {
+    public function __construct($name)
+    {
         $this->setName($name);
     }
 
@@ -60,10 +62,11 @@ class Bucket {
      *
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
-    
+
     /**
      * 设置Bucket的名字
      *
@@ -71,20 +74,22 @@ class Bucket {
      *
      * @param string $name Bucket的名字
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         AssertUtils::assertString($name, 'name');
         $this->name = $name;
     }
-    
+
     /**
      * 获取Bucket的所有者
      *
      * @return Owner Bucket的所有者
      */
-    public function getOwner() {
+    public function getOwner()
+    {
         return $this->owner;
     }
-    
+
     /**
      * 设置Bucket的所有者
      *
@@ -92,19 +97,21 @@ class Bucket {
      *
      * @param string $owner Bucket的所有者
      */
-    public function setOwner($owner) {
+    public function setOwner($owner)
+    {
         $this->owner = $owner;
     }
-    
+
     /**
      * 返回Bucket的创建时间
      *
      * @return \DateTime Bucket的创建时间
      */
-    public function getCreationDate() {
+    public function getCreationDate()
+    {
         return $this->creationDate;
     }
-    
+
     /**
      * 设置Bucket创建的时间
      *
@@ -112,7 +119,8 @@ class Bucket {
      *
      * @param \DateTime $creationDate Bucket创建的时间
      */
-    public function setCreationDate(\DateTime $creationDate) {
+    public function setCreationDate(\DateTime $creationDate)
+    {
         $this->creationDate = $creationDate;
     }
 }

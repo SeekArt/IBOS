@@ -19,20 +19,22 @@ namespace application\modules\report\core;
 use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
-class ReportType {
+class ReportType
+{
 
     /**
      * 处理汇报类型的添加数据
      * @param array $data 要添加的类型数组
      * @return array 返回填充默认值后的类型数组
      */
-    public static function handleSaveData( $data ) {
+    public static function handleSaveData($data)
+    {
         $type = array(
-            'sort' => intval( $data['sort'] ),
-            'typename' => StringUtil::filterCleanHtml( $data['typename'] ),
+            'sort' => intval($data['sort']),
+            'typename' => StringUtil::filterCleanHtml($data['typename']),
             'uid' => Ibos::app()->user->uid,
-            'intervaltype' => intval( $data['intervaltype'] ),
-            'intervals' => intval( $data['intervals'] ),
+            'intervaltype' => intval($data['intervaltype']),
+            'intervals' => intval($data['intervals']),
             'issystype' => 0
         );
         return $type;
@@ -43,7 +45,8 @@ class ReportType {
      * @param integer $intervalType 总结与计划区间类型(0:周 1:月 2:季 3:半年 4:年)
      * @return string
      */
-    public static function handleShowInterval( $intervalType ) {
+    public static function handleShowInterval($intervalType)
+    {
         $allInterval = array(
             0 => '周',
             1 => '月',

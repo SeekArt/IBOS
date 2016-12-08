@@ -22,7 +22,8 @@ use application\modules\report\utils\Report;
 use application\modules\user\utils\User;
 use CWidget;
 
-class ReportSublist extends CWidget {
+class ReportSublist extends CWidget
+{
 
     // 视图
     const VIEW = 'application.modules.report.views.widget.sublist';
@@ -34,23 +35,25 @@ class ReportSublist extends CWidget {
      * 渲染侧栏挂件视图
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         $data = array(
-            'typeid' => Env::getRequest( 'typeid' ),
-            'lang' => Ibos::getLangSource( 'report.default' ),
-            'deptArr' => User::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
+            'typeid' => Env::getRequest('typeid'),
+            'lang' => Ibos::getLangSource('report.default'),
+            'deptArr' => User::getManagerDeptSubUserByUid(Ibos::app()->user->uid),
             'dashboardConfig' => Report::getSetting(),
             'deptRoute' => $this->inStats() ? 'stats/review' : 'review/index',
             'userRoute' => $this->inStats() ? 'stats/review' : 'review/personal'
         );
-        $this->render( self::VIEW, $data );
+        $this->render(self::VIEW, $data);
     }
 
     /**
      * 判断是否在统计视图
      * @return boolean
      */
-    public function inStats() {
+    public function inStats()
+    {
         return $this->getStats() === true;
     }
 
@@ -58,7 +61,8 @@ class ReportSublist extends CWidget {
      * 设置是否在统计视图变量
      * @param boolean $stats
      */
-    public function setStats( $stats ) {
+    public function setStats($stats)
+    {
         $this->_instats = $stats;
     }
 
@@ -66,8 +70,9 @@ class ReportSublist extends CWidget {
      * 获取是否在统计视图变量
      * @return boolean
      */
-    public function getStats() {
-        return (bool) $this->_instats;
+    public function getStats()
+    {
+        return (bool)$this->_instats;
     }
 
 }

@@ -4,7 +4,7 @@
  * @module		Dashboard
  * @submodule 	frame
  * @modified	2013-04-23
- * @version		$Id: frame.js 920 2013-07-31 10:19:03Z gzzcs $
+ * @version		$Id$
  * @author 		Inaki
  */
 

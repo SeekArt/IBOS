@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -73,17 +73,16 @@ class ezcMailDeliveryStatus extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'message':
             case 'recipients':
                 $this->properties[$name] = $value;
                 break;
 
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -97,17 +96,16 @@ class ezcMailDeliveryStatus extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'message':
             case 'recipients':
                 return $this->properties[$name];
                 break;
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -119,16 +117,15 @@ class ezcMailDeliveryStatus extends ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'message':
             case 'recipients':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -143,7 +140,7 @@ class ezcMailDeliveryStatus extends ezcMailPart
      */
     public function generateHeaders()
     {
-        $this->setHeader( "Content-Type", "message/delivery-status" );
+        $this->setHeader("Content-Type", "message/delivery-status");
         return parent::generateHeaders();
     }
 
@@ -154,10 +151,9 @@ class ezcMailDeliveryStatus extends ezcMailPart
      */
     public function generateBody()
     {
-        $result = $this->addHeadersSection( $this->message ) . ezcMailTools::lineBreak();
-        for ( $i = 0; $i < count( $this->recipients ); $i++ )
-        {
-            $result .= $this->addHeadersSection( $this->recipients[$i] ) . ezcMailTools::lineBreak();
+        $result = $this->addHeadersSection($this->message) . ezcMailTools::lineBreak();
+        for ($i = 0; $i < count($this->recipients); $i++) {
+            $result .= $this->addHeadersSection($this->recipients[$i]) . ezcMailTools::lineBreak();
         }
         return $result;
     }
@@ -168,11 +164,10 @@ class ezcMailDeliveryStatus extends ezcMailPart
      * @param ezcMailHeadersHolder $headers
      * @return string
      */
-    private function addHeadersSection( ezcMailHeadersHolder $headers )
+    private function addHeadersSection(ezcMailHeadersHolder $headers)
     {
         $result = "";
-        foreach ( $headers->getCaseSensitiveArray() as $header => $value )
-        {
+        foreach ($headers->getCaseSensitiveArray() as $header => $value) {
             $result .= $header . ": " . $value . ezcMailTools::lineBreak();
         }
         return $result;
@@ -186,9 +181,10 @@ class ezcMailDeliveryStatus extends ezcMailPart
      */
     public function createRecipient()
     {
-        $result = count( $this->recipients );
+        $result = count($this->recipients);
         $this->recipients[$result] = new ezcMailHeadersHolder();
         return $result;
     }
 }
+
 ?>

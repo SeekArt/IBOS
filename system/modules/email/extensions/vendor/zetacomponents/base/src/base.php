@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogentag//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * Base class implements the methods needed to use the eZ components.
  *
@@ -120,7 +121,7 @@ class ezcBase
      *
      * @param ezcBaseAutoloadOptions $options
      */
-    static public function setOptions( ezcBaseAutoloadOptions $options )
+    static public function setOptions(ezcBaseAutoloadOptions $options)
     {
         self::$options = $options;
     }
@@ -132,37 +133,33 @@ class ezcBase
      * This class caches the requested class names (including the ones who
      * failed to load).
      *
-     * @param string $className  The name of the class that should be loaded.
+     * @param string $className The name of the class that should be loaded.
      *
      * @return bool
      */
-    public static function autoload( $className )
+    public static function autoload($className)
     {
         ezcBase::setPackageDir();
 
         // Check whether the classname is already in the cached autoloadArray.
-        if ( array_key_exists( $className, ezcBase::$autoloadArray ) )
-        {
+        if (array_key_exists($className, ezcBase::$autoloadArray)) {
             // Is it registered as 'unloadable'?
-            if ( ezcBase::$autoloadArray[$className] == false )
-            {
+            if (ezcBase::$autoloadArray[$className] == false) {
                 return false;
             }
-            ezcBase::loadFile( ezcBase::$autoloadArray[$className] );
+            ezcBase::loadFile(ezcBase::$autoloadArray[$className]);
 
             return true;
         }
 
         // Check whether the classname is already in the cached autoloadArray
         // for external repositories.
-        if ( array_key_exists( $className, ezcBase::$externalAutoloadArray ) )
-        {
+        if (array_key_exists($className, ezcBase::$externalAutoloadArray)) {
             // Is it registered as 'unloadable'?
-            if ( ezcBase::$externalAutoloadArray[$className] == false )
-            {
+            if (ezcBase::$externalAutoloadArray[$className] == false) {
                 return false;
             }
-            ezcBase::loadExternalFile( ezcBase::$externalAutoloadArray[$className] );
+            ezcBase::loadExternalFile(ezcBase::$externalAutoloadArray[$className]);
 
             return true;
         }
@@ -170,38 +167,33 @@ class ezcBase
         // Not cached, so load the autoload from the package.
         // Matches the first and optionally the second 'word' from the classname.
         $fileNames = array();
-        if ( preg_match( "/^([a-z0-9]*)([A-Z][a-z0-9]*)?([A-Z][a-z0-9]*)?/", $className, $matches ) !== false )
-        {
+        if (preg_match("/^([a-z0-9]*)([A-Z][a-z0-9]*)?([A-Z][a-z0-9]*)?/", $className, $matches) !== false) {
             $autoloadFile = "";
             // Try to match with both names, if available.
-            switch ( sizeof( $matches ) )
-            {
+            switch (sizeof($matches)) {
                 case 4:
                     // check for x_y_autoload.php
-                    $autoloadFile = strtolower( "{$matches[2]}_{$matches[3]}_autoload.php" );
+                    $autoloadFile = strtolower("{$matches[2]}_{$matches[3]}_autoload.php");
                     $fileNames[] = $autoloadFile;
-                    if ( ezcBase::requireFile( $autoloadFile, $className, $matches[1] ) )
-                    {
+                    if (ezcBase::requireFile($autoloadFile, $className, $matches[1])) {
                         return true;
                     }
-                    // break intentionally missing.
+                // break intentionally missing.
 
                 case 3:
                     // check for x_autoload.php
-                    $autoloadFile = strtolower( "{$matches[2]}_autoload.php" );
+                    $autoloadFile = strtolower("{$matches[2]}_autoload.php");
                     $fileNames[] = $autoloadFile;
-                    if ( ezcBase::requireFile( $autoloadFile, $className, $matches[1] ) )
-                    {
+                    if (ezcBase::requireFile($autoloadFile, $className, $matches[1])) {
                         return true;
                     }
-                    // break intentionally missing.
+                // break intentionally missing.
 
                 case 2:
                     // check for autoload.php
                     $autoloadFile = 'autoload.php';
                     $fileNames[] = $autoloadFile;
-                    if ( ezcBase::requireFile( $autoloadFile, $className, $matches[1] ) )
-                    {
+                    if (ezcBase::requireFile($autoloadFile, $className, $matches[1])) {
                         return true;
                     }
                     break;
@@ -213,19 +205,17 @@ class ezcBase
         }
 
         $path = ezcBase::$packageDir . 'autoload/';
-        $realPath = realpath( $path );
+        $realPath = realpath($path);
 
-        if ( $realPath == '' )
-        {
+        if ($realPath == '') {
             // Can not be tested, because if this happens, then the autoload
             // environment has not been set-up correctly.
-            trigger_error( "Couldn't find autoload directory '$path'", E_USER_ERROR );
+            trigger_error("Couldn't find autoload directory '$path'", E_USER_ERROR);
         }
 
         $dirs = self::getRepositoryDirectories();
-        if ( ezcBase::$options && ezcBase::$options->debug )
-        {
-            throw new ezcBaseAutoloadException( $className, $fileNames, $dirs );
+        if (ezcBase::$options && ezcBase::$options->debug) {
+            throw new ezcBaseAutoloadException($className, $fileNames, $dirs);
         }
 
         return false;
@@ -236,7 +226,7 @@ class ezcBase
      *
      * @param string $directory
      */
-    public static function setWorkingDirectory( $directory )
+    public static function setWorkingDirectory($directory)
     {
         self::$libraryMode = 'custom';
         self::$currentWorkingDirectory = $directory;
@@ -251,25 +241,23 @@ class ezcBase
      */
     protected static function setPackageDir()
     {
-        if ( ezcBase::$packageDir !== null )
-        {
+        if (ezcBase::$packageDir !== null) {
             return;
         }
 
         // Get the path to the components.
-        $baseDir = dirname( __FILE__ );
+        $baseDir = dirname(__FILE__);
 
-        switch ( ezcBase::$libraryMode )
-        {
+        switch (ezcBase::$libraryMode) {
             case "custom":
                 ezcBase::$packageDir = self::$currentWorkingDirectory . '/';
                 break;
             case "devel":
             case "tarball":
-                ezcBase::$packageDir = $baseDir. "/../../";
+                ezcBase::$packageDir = $baseDir . "/../../";
                 break;
             case "pear";
-                ezcBase::$packageDir = $baseDir. "/../";
+                ezcBase::$packageDir = $baseDir . "/../";
                 break;
         }
     }
@@ -277,41 +265,34 @@ class ezcBase
     /**
      * Tries to load the autoload array and, if loaded correctly, includes the class.
      *
-     * @param string $fileName    Name of the autoload file.
-     * @param string $className   Name of the class that should be autoloaded.
-     * @param string $prefix      The prefix of the class repository.
+     * @param string $fileName Name of the autoload file.
+     * @param string $className Name of the class that should be autoloaded.
+     * @param string $prefix The prefix of the class repository.
      *
      * @return bool  True is returned when the file is correctly loaded.
      *                   Otherwise false is returned.
      */
-    protected static function requireFile( $fileName, $className, $prefix )
+    protected static function requireFile($fileName, $className, $prefix)
     {
         $autoloadDir = ezcBase::$packageDir . "autoload/";
 
         // We need the full path to the fileName. The method file_exists() doesn't
         // automatically check the (php.ini) library paths. Therefore:
         // file_exists( "ezc/autoload/$fileName" ) doesn't work.
-        if ( $prefix === 'ezc' && file_exists( "$autoloadDir$fileName" ) )
-        {
-            $array = require( "$autoloadDir$fileName" );
+        if ($prefix === 'ezc' && file_exists("$autoloadDir$fileName")) {
+            $array = require("$autoloadDir$fileName");
 
-            if ( is_array( $array) && array_key_exists( $className, $array ) )
-            {
+            if (is_array($array) && array_key_exists($className, $array)) {
                 // Add the array to the cache, and include the requested file.
-                ezcBase::$autoloadArray = array_merge( ezcBase::$autoloadArray, $array );
-                if ( ezcBase::$options !== null && ezcBase::$options->preload && !preg_match( '/Exception$/', $className ) )
-                {
-                    foreach ( $array as $loadClassName => $file )
-                    {
-                        if ( $loadClassName !== 'ezcBase' && !class_exists( $loadClassName, false ) && !interface_exists( $loadClassName, false ) && !preg_match( '/Exception$/', $loadClassName ) /*&& !class_exists( $loadClassName, false ) && !interface_exists( $loadClassName, false )*/ )
-                        {
-                            ezcBase::loadFile( ezcBase::$autoloadArray[$loadClassName] );
+                ezcBase::$autoloadArray = array_merge(ezcBase::$autoloadArray, $array);
+                if (ezcBase::$options !== null && ezcBase::$options->preload && !preg_match('/Exception$/', $className)) {
+                    foreach ($array as $loadClassName => $file) {
+                        if ($loadClassName !== 'ezcBase' && !class_exists($loadClassName, false) && !interface_exists($loadClassName, false) && !preg_match('/Exception$/', $loadClassName) /*&& !class_exists( $loadClassName, false ) && !interface_exists( $loadClassName, false )*/) {
+                            ezcBase::loadFile(ezcBase::$autoloadArray[$loadClassName]);
                         }
                     }
-                }
-                else
-                {
-                    ezcBase::loadFile( ezcBase::$autoloadArray[$className] );
+                } else {
+                    ezcBase::loadFile(ezcBase::$autoloadArray[$className]);
                 }
                 return true;
             }
@@ -319,33 +300,28 @@ class ezcBase
 
         // It is not in components autoload/ dir.
         // try to search in additional dirs.
-        foreach ( ezcBase::$repositoryDirs as $repositoryPrefix => $extraDir )
-        {
-            if ( gettype( $repositoryPrefix ) === 'string' && $repositoryPrefix !== $prefix )
-            {
+        foreach (ezcBase::$repositoryDirs as $repositoryPrefix => $extraDir) {
+            if (gettype($repositoryPrefix) === 'string' && $repositoryPrefix !== $prefix) {
                 continue;
             }
 
-            if ( file_exists( $extraDir['autoloadDirPath'] . '/' . $fileName ) )
-            {
+            if (file_exists($extraDir['autoloadDirPath'] . '/' . $fileName)) {
                 $array = array();
-                $originalArray = require( $extraDir['autoloadDirPath'] . '/' . $fileName );
+                $originalArray = require($extraDir['autoloadDirPath'] . '/' . $fileName);
 
                 // Building paths.
                 // Resulting path to class definition file consists of:
                 // path to extra directory with autoload file +
                 // basePath provided for current extra directory +
                 // path to class definition file stored in autoload file.
-                foreach ( $originalArray as $class => $classPath )
-                {
+                foreach ($originalArray as $class => $classPath) {
                     $array[$class] = $extraDir['basePath'] . '/' . $classPath;
                 }
 
-                if ( is_array( $array ) && array_key_exists( $className, $array ) )
-                {
+                if (is_array($array) && array_key_exists($className, $array)) {
                     // Add the array to the cache, and include the requested file.
-                    ezcBase::$externalAutoloadArray = array_merge( ezcBase::$externalAutoloadArray, $array );
-                    ezcBase::loadExternalFile( ezcBase::$externalAutoloadArray[$className] );
+                    ezcBase::$externalAutoloadArray = array_merge(ezcBase::$externalAutoloadArray, $array);
+                    ezcBase::loadExternalFile(ezcBase::$externalAutoloadArray[$className]);
                     return true;
                 }
             }
@@ -359,29 +335,25 @@ class ezcBase
      * Loads, require(), the given file name. If we are in development mode,
      * "/src/" is inserted into the path.
      *
-     * @param string $file  The name of the file that should be loaded.
+     * @param string $file The name of the file that should be loaded.
      */
-    protected static function loadFile( $file )
+    protected static function loadFile($file)
     {
-        switch ( ezcBase::$libraryMode )
-        {
+        switch (ezcBase::$libraryMode) {
             case "devel":
             case "tarball":
-                list( $first, $second ) = explode( '/', $file, 2 );
+                list($first, $second) = explode('/', $file, 2);
                 $file = $first . "/src/" . $second;
                 break;
 
             case "custom":
-                list( $first, $second ) = explode( '/', $file, 2 );
+                list($first, $second) = explode('/', $file, 2);
                 // Add the "src/" after the package name.
-                if ( $first == 'Base' || $first == 'UnitTest' )
-                {
-                    list( $first, $second ) = explode( '/', $file, 2 );
+                if ($first == 'Base' || $first == 'UnitTest') {
+                    list($first, $second) = explode('/', $file, 2);
                     $file = $first . "/src/" . $second;
-                }
-                else
-                {
-                    list( $first, $second, $third ) = explode( '/', $file, 3 );
+                } else {
+                    list($first, $second, $third) = explode('/', $file, 3);
                     $file = $first . '/' . $second . "/src/" . $third;
                 }
                 break;
@@ -391,32 +363,26 @@ class ezcBase
                 break;
         }
 
-        if ( file_exists( ezcBase::$packageDir . $file ) )
-        {
-            require( ezcBase::$packageDir . $file );
-        }
-        else
-        {
+        if (file_exists(ezcBase::$packageDir . $file)) {
+            require(ezcBase::$packageDir . $file);
+        } else {
             // Can not be tested, because if this happens, then one of the
             // components has a broken autoload file.
-            throw new ezcBaseFileNotFoundException( ezcBase::$packageDir.$file );
+            throw new ezcBaseFileNotFoundException(ezcBase::$packageDir . $file);
         }
     }
 
     /**
      * Loads, require(), the given file name from an external package.
      *
-     * @param string $file  The name of the file that should be loaded.
+     * @param string $file The name of the file that should be loaded.
      */
-    protected static function loadExternalFile( $file )
+    protected static function loadExternalFile($file)
     {
-        if ( file_exists( $file ) )
-        {
-            require( $file );
-        }
-        else
-        {
-            throw new ezcBaseFileNotFoundException( $file );
+        if (file_exists($file)) {
+            require($file);
+        } else {
+            throw new ezcBaseFileNotFoundException($file);
         }
     }
 
@@ -431,32 +397,25 @@ class ezcBase
      * @param int $type
      * @param mixed $value
      */
-    public static function checkDependency( $component, $type, $value )
+    public static function checkDependency($component, $type, $value)
     {
-        switch ( $type )
-        {
+        switch ($type) {
             case self::DEP_PHP_EXTENSION:
-                if ( extension_loaded( $value ) )
-                {
+                if (extension_loaded($value)) {
                     return;
-                }
-                else
-                {
+                } else {
                     // Can not be tested as it would abort the PHP script.
-                    die( "\nThe {$component} component depends on the default PHP extension '{$value}', which is not loaded.\n" );
+                    die("\nThe {$component} component depends on the default PHP extension '{$value}', which is not loaded.\n");
                 }
                 break;
 
             case self::DEP_PHP_VERSION:
                 $phpVersion = phpversion();
-                if ( version_compare( $phpVersion, $value, '>=' ) )
-                {
+                if (version_compare($phpVersion, $value, '>=')) {
                     return;
-                }
-                else
-                {
+                } else {
                     // Can not be tested as it would abort the PHP script.
-                    die( "\nThe {$component} component depends on the PHP version '{$value}', but the current version is '{$phpVersion}'.\n" );
+                    die("\nThe {$component} component depends on the PHP version '{$value}', but the current version is '{$phpVersion}'.\n");
                 }
                 break;
         }
@@ -475,12 +434,11 @@ class ezcBase
     {
         $autoloadDirs = array();
         ezcBase::setPackageDir();
-        $repositoryDir = self::$currentWorkingDirectory ? self::$currentWorkingDirectory : ( realpath( dirname( __FILE__ ) . '/../../' ) );
-        $autoloadDirs['ezc'] = new ezcBaseRepositoryDirectory( ezcBaseRepositoryDirectory::TYPE_INTERNAL, $repositoryDir, $repositoryDir . "/autoload" );
+        $repositoryDir = self::$currentWorkingDirectory ? self::$currentWorkingDirectory : (realpath(dirname(__FILE__) . '/../../'));
+        $autoloadDirs['ezc'] = new ezcBaseRepositoryDirectory(ezcBaseRepositoryDirectory::TYPE_INTERNAL, $repositoryDir, $repositoryDir . "/autoload");
 
-        foreach ( ezcBase::$repositoryDirs as $extraDirKey => $extraDirArray )
-        {
-            $repositoryDirectory = new ezcBaseRepositoryDirectory( ezcBaseRepositoryDirectory::TYPE_EXTERNAL, realpath( $extraDirArray['basePath'] ), realpath( $extraDirArray['autoloadDirPath'] ) );
+        foreach (ezcBase::$repositoryDirs as $extraDirKey => $extraDirArray) {
+            $repositoryDirectory = new ezcBaseRepositoryDirectory(ezcBaseRepositoryDirectory::TYPE_EXTERNAL, realpath($extraDirArray['basePath']), realpath($extraDirArray['autoloadDirPath']));
             $autoloadDirs[$extraDirKey] = $repositoryDirectory;
         }
 
@@ -563,44 +521,37 @@ class ezcBase
      * @param string $autoloadDirPath
      * @param string $prefix
      */
-    public static function addClassRepository( $basePath, $autoloadDirPath = null, $prefix = null )
+    public static function addClassRepository($basePath, $autoloadDirPath = null, $prefix = null)
     {
         // check if base path exists
-        if ( !is_dir( $basePath ) )
-        {
-            throw new ezcBaseFileNotFoundException( $basePath, 'base directory' );
+        if (!is_dir($basePath)) {
+            throw new ezcBaseFileNotFoundException($basePath, 'base directory');
         }
 
         // calculate autoload path if it wasn't given
-        if ( is_null( $autoloadDirPath ) )
-        {
+        if (is_null($autoloadDirPath)) {
             $autoloadDirPath = $basePath . '/autoload';
         }
 
 
         // check if autoload dir exists
-        if ( !is_dir( $autoloadDirPath ) )
-        {
-            throw new ezcBaseFileNotFoundException( $autoloadDirPath, 'autoload directory' );
+        if (!is_dir($autoloadDirPath)) {
+            throw new ezcBaseFileNotFoundException($autoloadDirPath, 'autoload directory');
         }
 
         // add info to $repositoryDirs
-        if ( $prefix === null )
-        {
-            $array = array( 'basePath' => $basePath, 'autoloadDirPath' => $autoloadDirPath );
+        if ($prefix === null) {
+            $array = array('basePath' => $basePath, 'autoloadDirPath' => $autoloadDirPath);
 
             // add info to the list of extra dirs
             ezcBase::$repositoryDirs[] = $array;
-        }
-        else
-        {
-            if ( array_key_exists( $prefix, ezcBase::$repositoryDirs ) )
-            {
-                throw new ezcBaseDoubleClassRepositoryPrefixException( $prefix, $basePath, $autoloadDirPath );
+        } else {
+            if (array_key_exists($prefix, ezcBase::$repositoryDirs)) {
+                throw new ezcBaseDoubleClassRepositoryPrefixException($prefix, $basePath, $autoloadDirPath);
             }
 
             // add info to the list of extra dirs, and use the prefix to identify the new repository.
-            ezcBase::$repositoryDirs[$prefix] = array( 'basePath' => $basePath, 'autoloadDirPath' => $autoloadDirPath );
+            ezcBase::$repositoryDirs[$prefix] = array('basePath' => $basePath, 'autoloadDirPath' => $autoloadDirPath);
         }
     }
 
@@ -616,9 +567,8 @@ class ezcBase
     {
         self::setPackageDir();
 
-        $path = realpath( self::$packageDir );
-        if ( substr( $path, -1 ) !== DIRECTORY_SEPARATOR )
-        {
+        $path = realpath(self::$packageDir);
+        if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
             $path .= DIRECTORY_SEPARATOR;
         }
         return $path;
@@ -629,11 +579,10 @@ class ezcBase
      *
      * @param int $runMode
      */
-    public static function setRunMode( $runMode )
+    public static function setRunMode($runMode)
     {
-        if ( !in_array( $runMode, array( ezcBase::MODE_PRODUCTION, ezcBase::MODE_DEVELOPMENT ) ) )
-        {
-            throw new ezcBaseValueException( 'runMode', $runMode, 'ezcBase::MODE_PRODUCTION or ezcBase::MODE_DEVELOPMENT' );
+        if (!in_array($runMode, array(ezcBase::MODE_PRODUCTION, ezcBase::MODE_DEVELOPMENT))) {
+            throw new ezcBaseValueException('runMode', $runMode, 'ezcBase::MODE_PRODUCTION or ezcBase::MODE_DEVELOPMENT');
         }
 
         self::$runMode = $runMode;
@@ -672,4 +621,5 @@ class ezcBase
         return self::$libraryMode;
     }
 }
+
 ?>

@@ -33,7 +33,8 @@ use application\modules\message\model\NotifyMessage;
 use application\modules\user\model\User;
 use CJSON;
 
-class DefaultController extends BaseController {
+class DefaultController extends BaseController
+{
 
     /**
      * 图章id(暂定3个，4干得不错，2有进步，3继续努力)
@@ -44,7 +45,8 @@ class DefaultController extends BaseController {
     /**
      * 添加任务
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         //添加是否是post请求类型判断
         //如果不是post类型请求，就不用执行&&后面的代码
         //防止直接访问该页面时在Env::submitCheck里面判断$_SERVER['HTTP_REFERER']错误
@@ -64,7 +66,7 @@ class DefaultController extends BaseController {
             $log = array(
                 'user' => Ibos::app()->user->username,
                 'ip' => Ibos::app()->setting->get('clientip')
-                , 'isSuccess' => 1
+            , 'isSuccess' => 1
             );
             Log::write($log, 'action', 'module.assignment.default.add');
             $this->ajaxReturn(array('isSuccess' => true, 'data' => $returnData));
@@ -74,7 +76,8 @@ class DefaultController extends BaseController {
     /**
      * 编辑任务
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $uid = Ibos::app()->user->uid;
         if (!Env::submitCheck('updatesubmit')) {
             $assignmentId = intval(Env::getRequest('id'));
@@ -132,7 +135,8 @@ class DefaultController extends BaseController {
     /**
      * 删除任务
      */
-    public function actionDel() {
+    public function actionDel()
+    {
         if (Ibos::app()->request->isAjaxRequest) {
             $assignmentId = intval(Env::getRequest('id'));
             $checkRes = $this->checkAvailableById($assignmentId);
@@ -166,7 +170,8 @@ class DefaultController extends BaseController {
     /**
      * 任务详细页
      */
-    public function actionShow() {
+    public function actionShow()
+    {
         $op = Env::getRequest('op');
         $uid = Ibos::app()->user->uid;
         if (empty($op)) {
@@ -223,7 +228,7 @@ class DefaultController extends BaseController {
                 array('name' => Ibos::lang('Assignment'), 'url' => $this->createUrl('unfinished/index')),
                 array('name' => Ibos::lang('Assignment details'))
             ));
-            NotifyMessage::model()->setReadByUrl( $uid, Ibos::app()->getRequest()->getUrl() );
+            NotifyMessage::model()->setReadByUrl($uid, Ibos::app()->getRequest()->getUrl());
             $this->render('show', $params);
         } else {
             $this->$op();
@@ -233,7 +238,8 @@ class DefaultController extends BaseController {
     /**
      * 添加、修改提交前负责人、任务内容是否为空检查
      */
-    protected function beforeSave($postData) {
+    protected function beforeSave($postData)
+    {
         if (empty($postData['chargeuid'])) {
             $this->error(Ibos::lang('Head cannot be empty'), $this->createUrl('unfinished/index'));
         }
@@ -245,42 +251,44 @@ class DefaultController extends BaseController {
         }
     }
 
-	/**
-	 * 处理取消、延期申请的前台数据
-	 * @param array $apply 申请记录
-	 * @return array
-	 */
-	protected function handleApplyData( $assignmentId, $apply ) {
-		$applyData = array();
-		if ( !empty( $apply ) ) {
-			if ( $apply['isdelay'] ) { // 延期申请
-				$applyData = array( 'id' => $assignmentId, 'uid' => $apply['uid'],
-					'reason' => $apply['delayreason'], 'startTime' => date( 'm月d日 H:i', $apply['delaystarttime'] ), 'endTime' => date( 'm月d日 H:i', $apply['delayendtime'] ) );
-			} else { // 取消申请
-				$applyData = array( 'id' => $assignmentId, 'uid' => $apply['uid'],
-					'reason' => $apply['cancelreason'] );
-			}
-		}
-		return $applyData;
-	}
+    /**
+     * 处理取消、延期申请的前台数据
+     * @param array $apply 申请记录
+     * @return array
+     */
+    protected function handleApplyData($assignmentId, $apply)
+    {
+        $applyData = array();
+        if (!empty($apply)) {
+            if ($apply['isdelay']) { // 延期申请
+                $applyData = array('id' => $assignmentId, 'uid' => $apply['uid'],
+                    'reason' => $apply['delayreason'], 'startTime' => date('m月d日 H:i', $apply['delaystarttime']), 'endTime' => date('m月d日 H:i', $apply['delayendtime']));
+            } else { // 取消申请
+                $applyData = array('id' => $assignmentId, 'uid' => $apply['uid'],
+                    'reason' => $apply['cancelreason']);
+            }
+        }
+        return $applyData;
+    }
 
-	/**
-	 * 获取图章信息
-	 * @return array
-	 */
-	public function getStamps() {
-		$stamps = array();
-		foreach ( $this->_stamps as $id ) {
-			$stamp = Stamp::model()->fetchByPk( $id );
-			$stamps[] = array(
-				'path' => $stamp['icon'],
-				'stampPath' => $stamp['stamp'],
-				'stamp' => $stamp['stamp'],
-				'title' => $stamp['code'],
-				'value' => $id
-			);
-		}
-		return $stamps;
-	}
+    /**
+     * 获取图章信息
+     * @return array
+     */
+    public function getStamps()
+    {
+        $stamps = array();
+        foreach ($this->_stamps as $id) {
+            $stamp = Stamp::model()->fetchByPk($id);
+            $stamps[] = array(
+                'path' => $stamp['icon'],
+                'stampPath' => $stamp['stamp'],
+                'stamp' => $stamp['stamp'],
+                'title' => $stamp['code'],
+                'value' => $id
+            );
+        }
+        return $stamps;
+    }
 
 }

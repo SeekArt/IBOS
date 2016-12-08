@@ -19,11 +19,11 @@ use Symfony\Component\Yaml\Exception\ParseException;
  */
 class Parser
 {
-    private $offset         = 0;
-    private $lines          = array();
-    private $currentLineNb  = -1;
-    private $currentLine    = '';
-    private $refs           = array();
+    private $offset = 0;
+    private $lines = array();
+    private $currentLineNb = -1;
+    private $currentLine = '';
+    private $refs = array();
 
     /**
      * Constructor
@@ -38,9 +38,9 @@ class Parser
     /**
      * Parses a YAML string to a PHP value.
      *
-     * @param string  $value                  A YAML string
+     * @param string $value A YAML string
      * @param Boolean $exceptionOnInvalidType true if an exception must be thrown on invalid types (a PHP resource or object), false otherwise
-     * @param Boolean $objectSupport          true if object support is enabled, false otherwise
+     * @param Boolean $objectSupport true if object support is enabled, false otherwise
      *
      * @return mixed  A PHP value
      *
@@ -56,7 +56,7 @@ class Parser
             throw new ParseException('The YAML value does not appear to be valid UTF-8.');
         }
 
-        if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
+        if (function_exists('mb_internal_encoding') && ((int)ini_get('mbstring.func_overload')) & 2) {
             $mbEncoding = mb_internal_encoding();
             mb_internal_encoding('UTF-8');
         }
@@ -94,7 +94,7 @@ class Parser
                 } else {
                     if (isset($values['leadspaces'])
                         && ' ' == $values['leadspaces']
-                        && preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\{\[].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $values['value'], $matches)
+                        && preg_match('#^(?P<key>' . Inline::REGEX_QUOTED_STRING . '|[^ \'"\{\[].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $values['value'], $matches)
                     ) {
                         // this is a compact notation element, add to next block and parse
                         $c = $this->getRealCurrentLineNb();
@@ -103,7 +103,7 @@ class Parser
 
                         $block = $values['value'];
                         if ($this->isNextLineIndented()) {
-                            $block .= "\n".$this->getNextEmbedBlock($this->getCurrentLineIndentation() + 2);
+                            $block .= "\n" . $this->getNextEmbedBlock($this->getCurrentLineIndentation() + 2);
                         }
 
                         $data[] = $parser->parse($block, $exceptionOnInvalidType, $objectSupport);
@@ -111,7 +111,7 @@ class Parser
                         $data[] = $this->parseValue($values['value'], $exceptionOnInvalidType, $objectSupport);
                     }
                 }
-            } elseif (preg_match('#^(?P<key>'.Inline::REGEX_QUOTED_STRING.'|[^ \'"\[\{].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $this->currentLine, $values)) {
+            } elseif (preg_match('#^(?P<key>' . Inline::REGEX_QUOTED_STRING . '|[^ \'"\[\{].*?) *\:(\s+(?P<value>.+?))?\s*$#u', $this->currentLine, $values)) {
                 if ($context && 'sequence' == $context) {
                     throw new ParseException('You cannot define a mapping item when in a sequence');
                 }
@@ -171,7 +171,7 @@ class Parser
                 if ($isProcessed) {
                     // Merge keys
                     $data = $isProcessed;
-                // hash
+                    // hash
                 } elseif (!isset($values['value']) || '' == trim($values['value'], ' ') || 0 === strpos(ltrim($values['value'], ' '), '#')) {
                     // if next line is less indented or equal, then it means that the current value is null
                     if (!$this->isNextLineIndented() && !$this->isNextLineUnIndentedCollection()) {
@@ -365,9 +365,9 @@ class Parser
     /**
      * Parses a YAML value.
      *
-     * @param string  $value                  A YAML value
+     * @param string $value A YAML value
      * @param Boolean $exceptionOnInvalidType True if an exception must be thrown on invalid types false otherwise
-     * @param Boolean $objectSupport          True if object support is enabled, false otherwise
+     * @param Boolean $objectSupport True if object support is enabled, false otherwise
      *
      * @return mixed  A PHP value
      *
@@ -408,8 +408,8 @@ class Parser
     /**
      * Parses a folded scalar.
      *
-     * @param string  $separator   The separator that was used to begin this folded scalar (| or >)
-     * @param string  $indicator   The indicator that was used to begin this folded scalar (+ or -)
+     * @param string $separator The separator that was used to begin this folded scalar (| or >)
+     * @param string $indicator The indicator that was used to begin this folded scalar (+ or -)
      * @param integer $indentation The indentation that was used to begin this folded scalar
      *
      * @return string  The text value

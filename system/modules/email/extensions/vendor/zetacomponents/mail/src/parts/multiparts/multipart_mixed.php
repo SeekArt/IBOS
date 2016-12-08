@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -56,7 +56,7 @@ class ezcMailMultipartMixed extends ezcMailMultipart
     public function __construct()
     {
         $args = func_get_args();
-        parent::__construct( $args );
+        parent::__construct($args);
     }
 
     /**
@@ -64,7 +64,7 @@ class ezcMailMultipartMixed extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function appendPart( ezcMailPart $part )
+    public function appendPart(ezcMailPart $part)
     {
         $this->parts[] = $part;
     }
@@ -89,4 +89,5 @@ class ezcMailMultipartMixed extends ezcMailMultipart
         return "mixed";
     }
 }
+
 ?>

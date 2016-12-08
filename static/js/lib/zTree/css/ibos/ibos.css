@@ -133,3 +133,21 @@ ul.ztree.zTreeDragUL {margin:0; padding:0; position:absolute; z-index:9999; widt
 	background-image: url(img/ztree_ibos_chevron.png);
 	background-position: -40px -2px;
 }
+
+.select-box .ztree li span.button.chk {background-image: url("../../../../../image/component.png"); }
+.select-box .ztree li span.button.switch { top: -2px; width: 20px; height: 20px; }
+.select-box .ztree li span.button.noline_docu {background-image: url();}
+.select-box .ztree li span.button.noline_open, .select-box .ztree li span.button.noline_close { background-image: url(./img/select_box.png); }
+.select-box .ztree li span.button.noline_open {background-position: 0 -60px;}
+.select-box .ztree li span.button.noline_close {background-position: 0 -40px;}
+.select-box .ztree li a { margin-left: 20px; }
+.select-box .ztree li a span.button { background-image: url(./img/user_select.png); width: 20px; height: 20px; margin-right: 5px; background-size: cover; }
+.select-box .ztree li span.button.user_ico_docu, .select-box .ztree li span.button.user_ico_open, .select-box .ztree li span.button.user_ico_close {background-position: 0 -60px;}
+.select-box .ztree li span.button.department_ico_docu, .select-box .ztree li span.button.department_ico_open, .select-box .ztree li span.button.department_ico_close {background-position: 0 -20px;}
+.select-box .ztree li span.button.position_ico_docu, .select-box .ztree li span.button.position_ico_open, .select-box .ztree li span.button.position_ico_close {background-position: 0 -40px;}
+.select-box .ztree li span.button.role_ico_docu, .select-box .ztree li span.button.role_ico_open, .select-box .ztree li span.button.role_ico_close {background-position: 0 -180px;}
+.select-box .ztree li a.curSelectedNode span.button{background-position: 0 -80px;}
+.select-box .ztree li a.curSelectedNode span.button.user_ico_docu, .select-box .ztree li a.curSelectedNode span.button.user_ico_open, .select-box .ztree li a.curSelectedNode span.button.user_ico_close{background-position: 0 -140px;}
+.select-box .ztree li a.curSelectedNode span.button.department_ico_docu, .select-box .ztree li a.curSelectedNode span.button.department_ico_open, .select-box .ztree li a.curSelectedNode span.button.department_ico_close{background-position: 0 -100px;}
+.select-box .ztree li a.curSelectedNode span.button.position_ico_docu, .select-box .ztree li a.curSelectedNode span.button.position_ico_open, .select-box .ztree li a.curSelectedNode span.button.position_ico_close{background-position: 0 -120px;}
+.select-box .ztree li a.curSelectedNode span.button.role_ico_docu, .select-box .ztree li a.curSelectedNode span.button.role_ico_open, .select-box .ztree li a.curSelectedNode span.button.role_ico_close{background-position: 0 -160px;}

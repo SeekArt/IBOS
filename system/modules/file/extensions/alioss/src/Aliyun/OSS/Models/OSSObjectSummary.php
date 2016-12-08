@@ -11,7 +11,8 @@ namespace Aliyun\OSS\Models;
  * Object的概要信息
  * @package Aliyun\OSS\Models
  */
-class OSSObjectSummary {
+class OSSObjectSummary
+{
 
     /**
      * @var string Bucket的名字
@@ -52,7 +53,8 @@ class OSSObjectSummary {
      * @internal
      * @param string $bucketName
      */
-    public function setBucketName($bucketName) {
+    public function setBucketName($bucketName)
+    {
         $this->bucketName = $bucketName;
     }
 
@@ -61,7 +63,8 @@ class OSSObjectSummary {
      *
      * @return string
      */
-    public function getBucketName() {
+    public function getBucketName()
+    {
         return $this->bucketName;
     }
 
@@ -69,7 +72,8 @@ class OSSObjectSummary {
      * @internal
      * @param string $eTag
      */
-    public function setETag($eTag) {
+    public function setETag($eTag)
+    {
         $this->eTag = $eTag;
     }
 
@@ -78,7 +82,8 @@ class OSSObjectSummary {
      *
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         return $this->eTag;
     }
 
@@ -86,7 +91,8 @@ class OSSObjectSummary {
      * @internal
      * @param string $key
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
@@ -95,7 +101,8 @@ class OSSObjectSummary {
      *
      * @return string
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
@@ -103,7 +110,8 @@ class OSSObjectSummary {
      * @internal
      * @param \DateTime $lastModified
      */
-    public function setLastModified($lastModified) {
+    public function setLastModified($lastModified)
+    {
         $this->lastModified = $lastModified;
     }
 
@@ -112,7 +120,8 @@ class OSSObjectSummary {
      *
      * @return \DateTime
      */
-    public function getLastModified() {
+    public function getLastModified()
+    {
         return $this->lastModified;
     }
 
@@ -120,7 +129,8 @@ class OSSObjectSummary {
      * @internal
      * @param Owner $owner
      */
-    public function setOwner(Owner $owner) {
+    public function setOwner(Owner $owner)
+    {
         $this->owner = $owner;
     }
 
@@ -139,7 +149,8 @@ class OSSObjectSummary {
      *
      * @param integer $size
      */
-    public function setSize($size) {
+    public function setSize($size)
+    {
         $this->size = $size;
     }
 
@@ -148,7 +159,8 @@ class OSSObjectSummary {
      *
      * @return integer
      */
-    public function getSize() {
+    public function getSize()
+    {
         return $this->size;
     }
 
@@ -156,7 +168,8 @@ class OSSObjectSummary {
      * @internal
      * @param string $storageClass
      */
-    public function setStorageClass($storageClass) {
+    public function setStorageClass($storageClass)
+    {
         $this->storageClass = $storageClass;
     }
 
@@ -165,7 +178,8 @@ class OSSObjectSummary {
      *
      * @return string
      */
-    public function getStorageClass() {
+    public function getStorageClass()
+    {
         return $this->storageClass;
     }
 

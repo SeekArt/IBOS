@@ -15,12 +15,14 @@ use Aliyun\OSS\Models\CopyObjectResult;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class SXCopyObjectParser extends SXParser {
+class SXCopyObjectParser extends SXParser
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         $xml = $this->getXmlObject($response->getContent());
-        $lastModified = DateUtils::parseDate((string) $xml->LastModified);
-        $eTag = OSSUtils::trimQuotes((string) $xml->ETag);
+        $lastModified = DateUtils::parseDate((string)$xml->LastModified);
+        $eTag = OSSUtils::trimQuotes((string)$xml->ETag);
 
         $copyObjectResult = new CopyObjectResult();
 

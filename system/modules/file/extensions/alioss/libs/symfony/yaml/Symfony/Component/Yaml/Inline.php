@@ -28,9 +28,9 @@ class Inline
     /**
      * Converts a YAML string to a PHP array.
      *
-     * @param string  $value                  A YAML string
+     * @param string $value A YAML string
      * @param Boolean $exceptionOnInvalidType true if an exception must be thrown on invalid types (a PHP resource or object), false otherwise
-     * @param Boolean $objectSupport          true if object support is enabled, false otherwise
+     * @param Boolean $objectSupport true if object support is enabled, false otherwise
      *
      * @return array A PHP array representing the YAML string
      *
@@ -47,7 +47,7 @@ class Inline
             return '';
         }
 
-        if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
+        if (function_exists('mb_internal_encoding') && ((int)ini_get('mbstring.func_overload')) & 2) {
             $mbEncoding = mb_internal_encoding();
             mb_internal_encoding('ASCII');
         }
@@ -81,9 +81,9 @@ class Inline
     /**
      * Dumps a given PHP variable to a YAML string.
      *
-     * @param mixed   $value                  The PHP variable to convert
+     * @param mixed $value The PHP variable to convert
      * @param Boolean $exceptionOnInvalidType true if an exception must be thrown on invalid types (a PHP resource or object), false otherwise
-     * @param Boolean $objectSupport          true if object support is enabled, false otherwise
+     * @param Boolean $objectSupport true if object support is enabled, false otherwise
      *
      * @return string The YAML string representing the PHP array
      *
@@ -100,7 +100,7 @@ class Inline
                 return 'null';
             case is_object($value):
                 if ($objectSupport) {
-                    return '!!php/object:'.serialize($value);
+                    return '!!php/object:' . serialize($value);
                 }
 
                 if ($exceptionOnInvalidType) {
@@ -117,7 +117,7 @@ class Inline
             case false === $value:
                 return 'false';
             case ctype_digit($value):
-                return is_string($value) ? "'$value'" : (int) $value;
+                return is_string($value) ? "'$value'" : (int)$value;
             case is_numeric($value):
                 $locale = setlocale(LC_NUMERIC, 0);
                 if (false !== $locale) {
@@ -147,9 +147,9 @@ class Inline
     /**
      * Dumps a PHP array to a YAML string.
      *
-     * @param array   $value                  The PHP array to dump
+     * @param array $value The PHP array to dump
      * @param Boolean $exceptionOnInvalidType true if an exception must be thrown on invalid types (a PHP resource or object), false otherwise
-     * @param Boolean $objectSupport          true if object support is enabled, false otherwise
+     * @param Boolean $objectSupport true if object support is enabled, false otherwise
      *
      * @return string The YAML string representing the PHP array
      */
@@ -158,7 +158,9 @@ class Inline
         // array
         $keys = array_keys($value);
         if ((1 == count($keys) && '0' == $keys[0])
-            || (count($keys) > 1 && array_reduce($keys, function ($v, $w) { return (integer) $v + $w; }, 0) == count($keys) * (count($keys) - 1) / 2)
+            || (count($keys) > 1 && array_reduce($keys, function ($v, $w) {
+                    return (integer)$v + $w;
+                }, 0) == count($keys) * (count($keys) - 1) / 2)
         ) {
             $output = array();
             foreach ($value as $val) {
@@ -182,7 +184,7 @@ class Inline
      *
      * @param scalar $scalar
      * @param string $delimiters
-     * @param array  $stringDelimiters
+     * @param array $stringDelimiters
      * @param integer &$i
      * @param Boolean $evaluate
      *
@@ -212,7 +214,7 @@ class Inline
                 if (false !== $strpos = strpos($output, ' #')) {
                     $output = rtrim(substr($output, 0, $strpos));
                 }
-            } elseif (preg_match('/^(.+?)('.implode('|', $delimiters).')/', substr($scalar, $i), $match)) {
+            } elseif (preg_match('/^(.+?)(' . implode('|', $delimiters) . ')/', substr($scalar, $i), $match)) {
                 $output = $match[1];
                 $i += strlen($output);
             } else {
@@ -237,7 +239,7 @@ class Inline
      */
     private static function parseQuotedScalar($scalar, &$i)
     {
-        if (!preg_match('/'.self::REGEX_QUOTED_STRING.'/Au', substr($scalar, $i), $match)) {
+        if (!preg_match('/' . self::REGEX_QUOTED_STRING . '/Au', substr($scalar, $i), $match)) {
             throw new ParseException(sprintf('Malformed inline YAML string (%s).', substr($scalar, $i)));
         }
 
@@ -294,7 +296,7 @@ class Inline
                     if (!$isQuoted && false !== strpos($value, ': ')) {
                         // embedded mapping?
                         try {
-                            $value = self::parseMapping('{'.$value.'}');
+                            $value = self::parseMapping('{' . $value . '}');
                         } catch (\InvalidArgumentException $e) {
                             // no, it's not
                         }
@@ -392,7 +394,7 @@ class Inline
             case '~' == $scalar:
                 return null;
             case 0 === strpos($scalar, '!str'):
-                return (string) substr($scalar, 5);
+                return (string)substr($scalar, 5);
             case 0 === strpos($scalar, '! '):
                 return intval(self::parseScalar(substr($scalar, 2)));
             case 0 === strpos($scalar, '!!php/object:'):
@@ -409,18 +411,18 @@ class Inline
                 $raw = $scalar;
                 $cast = intval($scalar);
 
-                return '0' == $scalar[0] ? octdec($scalar) : (((string) $raw == (string) $cast) ? $cast : $raw);
+                return '0' == $scalar[0] ? octdec($scalar) : (((string)$raw == (string)$cast) ? $cast : $raw);
             case '-' === $scalar[0] && ctype_digit(substr($scalar, 1)):
                 $raw = $scalar;
                 $cast = intval($scalar);
 
-                return '0' == $scalar[1] ? octdec($scalar) : (((string) $raw == (string) $cast) ? $cast : $raw);
+                return '0' == $scalar[1] ? octdec($scalar) : (((string)$raw == (string)$cast) ? $cast : $raw);
             case 'true' === strtolower($scalar):
                 return true;
             case 'false' === strtolower($scalar):
                 return false;
             case is_numeric($scalar):
-                return '0x' == $scalar[0].$scalar[1] ? hexdec($scalar) : floatval($scalar);
+                return '0x' == $scalar[0] . $scalar[1] ? hexdec($scalar) : floatval($scalar);
             case 0 == strcasecmp($scalar, '.inf'):
             case 0 == strcasecmp($scalar, '.NaN'):
                 return -log(0);
@@ -431,7 +433,7 @@ class Inline
             case preg_match(self::getTimestampRegex(), $scalar):
                 return strtotime($scalar);
             default:
-                return (string) $scalar;
+                return (string)$scalar;
         }
     }
 

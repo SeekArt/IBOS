@@ -18,9 +18,11 @@ use Aliyun\Common\Communication\ResponseParserInterface;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class SXPutObjectParser implements ResponseParserInterface {
+class SXPutObjectParser implements ResponseParserInterface
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         $putObjectResult = new PutObjectResult();
         $putObjectResult->setETag(OSSUtils::trimQuotes($response->getHeader(OSSHeaders::ETAG)));
         return $putObjectResult;

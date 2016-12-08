@@ -17,22 +17,24 @@ use Aliyun\OSS\Models\MultipartUploadsListing;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class SXListMultipartUploadsParser extends SXParser {
+class SXListMultipartUploadsParser extends SXParser
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         $xml = $this->getXmlObject($response->getContent());
 
         $multipartUploadsListing = new MultipartUploadsListing();
 
-        $bucket = (string) $xml->Bucket;
-        $prefix = (string) $xml->Prefix ? (string) $xml->Prefix : null;
-        $keyMarker = (string) $xml->KeyMarker ? (string) $xml->KeyMarker : null;
-        $uploadIdMarker = (string) $xml->UploadIdMarker ? (string) $xml->UploadIdMarker : null;
-        $nextKeyMarker = (string) $xml->NextKeyMarker ? (string) $xml->NextKeyMarker : null;
-        $nextUploadIdMarker = (string) $xml->NextUploadIdMarker ? (string) $xml->NextUploadIdMarker : null;
-        $maxUploads = $xml->MaxUploads ? (int) $xml->MaxUploads : null;
-        $delimiter = $xml->Delimiter ? (string) $xml->Delimiter : null;
-        $isTruncated = $xml->IsTruncated ? (string) $xml->IsTruncated : null;
+        $bucket = (string)$xml->Bucket;
+        $prefix = (string)$xml->Prefix ? (string)$xml->Prefix : null;
+        $keyMarker = (string)$xml->KeyMarker ? (string)$xml->KeyMarker : null;
+        $uploadIdMarker = (string)$xml->UploadIdMarker ? (string)$xml->UploadIdMarker : null;
+        $nextKeyMarker = (string)$xml->NextKeyMarker ? (string)$xml->NextKeyMarker : null;
+        $nextUploadIdMarker = (string)$xml->NextUploadIdMarker ? (string)$xml->NextUploadIdMarker : null;
+        $maxUploads = $xml->MaxUploads ? (int)$xml->MaxUploads : null;
+        $delimiter = $xml->Delimiter ? (string)$xml->Delimiter : null;
+        $isTruncated = $xml->IsTruncated ? (string)$xml->IsTruncated : null;
 
         if ($isTruncated === 'true') {
             $isTruncated = true;
@@ -54,9 +56,9 @@ class SXListMultipartUploadsParser extends SXParser {
             $uploads = array();
             foreach ($xml->Upload as $upload) {
                 $multipartUpload = new MultipartUpload();
-                $multipartUpload->setKey((string) $upload->Key);
-                $multipartUpload->setUploadId((string) $upload->UploadId);
-                $multipartUpload->setInitiated(DateUtils::parseDate((string) $upload->Initiated));
+                $multipartUpload->setKey((string)$upload->Key);
+                $multipartUpload->setUploadId((string)$upload->UploadId);
+                $multipartUpload->setInitiated(DateUtils::parseDate((string)$upload->Initiated));
                 $uploads[] = $multipartUpload;
             }
             $multipartUploadsListing->setMultipartUploads($uploads);
@@ -65,7 +67,7 @@ class SXListMultipartUploadsParser extends SXParser {
         if ($xml->CommonPrefixes) {
             $commonPrefixes = array();
             foreach ($xml->CommonPrefixes->Prefix as $commonPrefix) {
-                $commonPrefixes[] = (string) $commonPrefix;
+                $commonPrefixes[] = (string)$commonPrefix;
             }
             $multipartUploadsListing->setCommonPrefixes($commonPrefixes);
         }

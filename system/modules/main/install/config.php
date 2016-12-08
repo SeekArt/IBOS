@@ -1,16 +1,16 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '核心模块',
         'description' => '系统核心模块。提供IBOS程序核心流程初始化及处理',
         'author' => 'banyanCheung @ IBOS Team Inc',
         'version' => '1.0',
-		'indexShow' => array(
+        'indexShow' => array(
             'widget' => array(
-				'main/voiceConference'
-			),
+                'main/voiceConference'
+            ),
             'link' => 'main/default/index',
         ),
     ),
@@ -49,3 +49,4 @@ return array(
         )
     ),
 );
+

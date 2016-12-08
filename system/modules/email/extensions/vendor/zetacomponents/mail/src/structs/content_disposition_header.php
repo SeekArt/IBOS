@@ -8,9 +8,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -154,16 +154,16 @@ class ezcMailContentDispositionHeader extends ezcBaseStruct
      * @param string $fileNameLanguage
      * @param string $fileNameCharSet
      */
-    public function __construct( $disposition = 'inline',
-                                 $fileName = null,
-                                 $creationDate = null,
-                                 $modificationDate = null,
-                                 $readDate = null,
-                                 $size = null,
-                                 $additionalParameters = array(),
-                                 $fileNameLanguage = null,
-                                 $fileNameCharSet = null,
-                                 $displayFileName = null )
+    public function __construct($disposition = 'inline',
+                                $fileName = null,
+                                $creationDate = null,
+                                $modificationDate = null,
+                                $readDate = null,
+                                $size = null,
+                                $additionalParameters = array(),
+                                $fileNameLanguage = null,
+                                $fileNameCharSet = null,
+                                $displayFileName = null)
     {
         $this->disposition = $disposition;
         $this->fileName = $fileName;
@@ -190,19 +190,19 @@ class ezcMailContentDispositionHeader extends ezcBaseStruct
      * @param array(string=>mixed) $array
      * @return ezcMailAddress
      */
-    static public function __set_state( array $array )
+    static public function __set_state(array $array)
     {
-        return new ezcMailContentDispositionHeader( $array['disposition'],
-                                                    $array['fileName'],
-                                                    $array['creationDate'],
-                                                    $array['modificationDate'],
-                                                    $array['readDate'],
-                                                    $array['size'],
-                                                    $array['additionalParameters'],
-                                                    $array['fileNameLanguage'],
-                                                    $array['fileNameCharSet'],
-                                                    $array['displayFileName']
-                                                    );
+        return new ezcMailContentDispositionHeader($array['disposition'],
+            $array['fileName'],
+            $array['creationDate'],
+            $array['modificationDate'],
+            $array['readDate'],
+            $array['size'],
+            $array['additionalParameters'],
+            $array['fileNameLanguage'],
+            $array['fileNameCharSet'],
+            $array['displayFileName']
+        );
     }
 }
 

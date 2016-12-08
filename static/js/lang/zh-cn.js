@@ -156,7 +156,7 @@ var L = {
         CALENDAR: "条新日程",
         WORKFLOW: "条新工作流",
         ARTICLE: "篇新闻",
-        OFFICIALDOC: "篇新公文",
+        OFFICIALDOC: "篇新通知",
         ASSIGNMENT: "条新任务",
         EMAIL: "封新邮件",
         MESSAGE: "条新消息",
@@ -227,7 +227,7 @@ var L = {
         PER_POSITION: "按岗位",
         PER_ROLE: "按角色",
         SELECT_ALL: "选择全部",
-        INPUT_TIP: "请输入部门或同事的名称或拼音",
+        INPUT_TIP: "请输入部门、岗位或用户的名称或拼音(全拼)",
         NO_MATCH: "没有查询结果",
         SELECTION_TO_BIG: "你最多只能选择<%=limit%>项",
         PLACEHOLDER_ALL: "请选择部门、岗位、角色或人员",
@@ -235,7 +235,8 @@ var L = {
         DEPARTMENT: "部门",
         USER: "人员",
         POSITION: "岗位",
-        ROLE: "角色"
+        ROLE: "角色",
+        LATELY: "最近"
     },
     // Treemenu
     TREEMENU: {

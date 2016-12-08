@@ -16,11 +16,11 @@ class PeclHttpMessageParser extends AbstractMessageParser
         $parts = http_parse_message($message);
 
         $parsed = array(
-            'method'   => $parts->requestMethod,
+            'method' => $parts->requestMethod,
             'protocol' => 'HTTP',
-            'version'  => number_format($parts->httpVersion, 1),
-            'headers'  => $parts->headers,
-            'body'     => $parts->body
+            'version' => number_format($parts->httpVersion, 1),
+            'headers' => $parts->headers,
+            'body' => $parts->body
         );
 
         $parsed['request_url'] = $this->getUrlPartsFromMessage($parts->requestUrl, $parsed);
@@ -37,12 +37,12 @@ class PeclHttpMessageParser extends AbstractMessageParser
         $parts = http_parse_message($message);
 
         return array(
-            'protocol'      => 'HTTP',
-            'version'       => number_format($parts->httpVersion, 1),
-            'code'          => $parts->responseCode,
+            'protocol' => 'HTTP',
+            'version' => number_format($parts->httpVersion, 1),
+            'code' => $parts->responseCode,
             'reason_phrase' => $parts->responseStatus,
-            'headers'       => $parts->headers,
-            'body'          => $parts->body
+            'headers' => $parts->headers,
+            'body' => $parts->body
         );
     }
 }

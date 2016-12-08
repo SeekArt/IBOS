@@ -23,9 +23,11 @@ use Aliyun\Common\Utilities\AssertUtils;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class AbortMultipartUploadCommand extends OSSCommand {
+class AbortMultipartUploadCommand extends OSSCommand
+{
 
-    protected function checkOptions($options) {
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -37,7 +39,8 @@ class AbortMultipartUploadCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         return OSSRequestBuilder::factory()
             ->setEndpoint($options[OSSOptions::ENDPOINT])
             ->setBucket($options[OSSOptions::BUCKET])

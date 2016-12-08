@@ -11,7 +11,7 @@
 /**
  * 信息中心模块------分类组件 继承ICCategory
  * @package application.modules.article.components
- * @version $Id: OfficialdocCategory.php 6981 2016-05-03 06:59:07Z gzcsh $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -22,36 +22,38 @@ use application\core\utils\Ibos;
 use application\modules\officialdoc\model\Officialdoc as offdoc;
 use application\modules\officialdoc\model\OfficialdocCategory as DocCate;
 
-class OfficialdocCategory extends Category {
+class OfficialdocCategory extends Category
+{
 
     /**
      * 删除分类
-     * @param integer $catid 
-     * @return boolean 
+     * @param integer $catid
+     * @return boolean
      */
-    public function delete( $catid ) {
+    public function delete($catid)
+    {
         $clear = false;
-        $ids = $this->fetchAllSubId( $catid );
-        $idStr = implode( ',', array_unique( explode( ',', trim( $ids, ',' ) ) ) );
-        if ( empty( $idStr ) ) {
+        $ids = $this->fetchAllSubId($catid);
+        $idStr = implode(',', array_unique(explode(',', trim($ids, ','))));
+        if (empty($idStr)) {
             $idStr = $catid;
         } else {
             $idStr .= ',' . $catid;
         }
         //判断这些分类下是否存在文章
-        $count = offdoc::model()->count( "catid IN ($idStr)" );
-        if ( $count ) {
+        $count = offdoc::model()->count("catid IN ($idStr)");
+        if ($count) {
             return -1;
         }
         // 有关联表，获取关联表里有无关联分类id
-        if ( !is_null( $this->_related ) ) {
-            $count = $this->_related->count( "`{$this->index}` IN ($idStr)" );
+        if (!is_null($this->_related)) {
+            $count = $this->_related->count("`{$this->index}` IN ($idStr)");
             !$count && $clear = true;
         } else {
             $clear = true;
         }
-        if ( $clear ) {
-            $status = $this->_category->deleteAll( "FIND_IN_SET({$this->index},'$idStr')" );
+        if ($clear) {
+            $status = $this->_category->deleteAll("FIND_IN_SET({$this->index},'$idStr')");
             $this->afterDelete();
             return $status;
         } else {
@@ -64,23 +66,25 @@ class OfficialdocCategory extends Category {
      * @param array $data
      * @return array
      */
-    public function getAjaxCategory( $data = array( ) ) {
-        $return = array( );
-        foreach ( $data as $row ) {
+    public function getAjaxCategory($data = array())
+    {
+        $return = array();
+        foreach ($data as $row) {
             $row['id'] = $row['catid'];
-			$row['pId'] = $row['pid'];
-			$row['name'] = $row['name'];
+            $row['pId'] = $row['pid'];
+            $row['name'] = $row['name'];
             $row['target'] = '_self';
             $row['url'] = 'javascript:;';
             $row['catid'] = $row['catid'];
             $row['open'] = true;
-			$return[] = $row;
+            $return[] = $row;
         }
         return $return;
     }
 
-    public function getData( $condition = '' ) {
-        $categoryData = DocCate::model()->fetchAll( $condition );
+    public function getData($condition = '')
+    {
+        $categoryData = DocCate::model()->fetchAll($condition);
         return $categoryData;
     }
 

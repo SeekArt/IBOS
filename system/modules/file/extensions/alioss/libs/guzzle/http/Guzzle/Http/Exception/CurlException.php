@@ -17,8 +17,8 @@ class CurlException extends RequestException
     /**
      * Set the cURL error message
      *
-     * @param string $error  Curl error
-     * @param int    $number Curl error number
+     * @param string $error Curl error
+     * @param int $number Curl error number
      *
      * @return self
      */

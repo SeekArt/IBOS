@@ -10,18 +10,23 @@ namespace Aliyun\Common\Auth;
 
 use Aliyun\Common\Utilities\AssertUtils;
 
-abstract class ServiceSignature {
+abstract class ServiceSignature
+{
     public abstract function getSignatureMethod();
+
     public abstract function getSignatureVersion();
+
     protected abstract function computeSignatureCore($key, $data);
-    
-    public function computeSignature($key, $data) {
+
+    public function computeSignature($key, $data)
+    {
         AssertUtils::assertNotEmpty($key, 'key');
         AssertUtils::assertNotEmpty($data, 'data');
         return $this->computeSignatureCore($key, $data);
     }
-    
-    public static function factory() {
+
+    public static function factory()
+    {
         return new HmacSHA1Signature();
     }
 }

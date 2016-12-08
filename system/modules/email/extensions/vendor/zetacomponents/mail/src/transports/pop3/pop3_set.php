@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -89,7 +89,7 @@ class ezcMailPop3Set implements ezcMailParserSet
      * @param array(ezcMail) $messages
      * @param bool $deleteFromServer
      */
-    public function __construct( ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false )
+    public function __construct(ezcMailTransportConnection $connection, array $messages, $deleteFromServer = false)
     {
         $this->connection = $connection;
         $this->messages = $messages;
@@ -116,20 +116,16 @@ class ezcMailPop3Set implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        if ( $this->currentMessage === null )
-        {
+        if ($this->currentMessage === null) {
             $this->nextMail();
         }
-        if ( $this->hasMoreMailData )
-        {
+        if ($this->hasMoreMailData) {
             $data = $this->connection->getLine();
-            if ( rtrim( $data ) === "." )
-            {
+            if (rtrim($data) === ".") {
                 $this->hasMoreMailData = false;
                 // remove the mail if required by the user.
-                if ( $this->deleteFromServer == true )
-                {
-                    $this->connection->sendData( "DELE {$this->currentMessage}" );
+                if ($this->deleteFromServer == true) {
+                    $this->connection->sendData("DELE {$this->currentMessage}");
                     $response = $this->connection->getLine(); // ignore response
                 }
                 return null;
@@ -150,26 +146,19 @@ class ezcMailPop3Set implements ezcMailParserSet
      */
     public function nextMail()
     {
-        if ( $this->currentMessage === null )
-        {
-            $this->currentMessage = reset( $this->messages );
+        if ($this->currentMessage === null) {
+            $this->currentMessage = reset($this->messages);
+        } else {
+            $this->currentMessage = next($this->messages);
         }
-        else
-        {
-            $this->currentMessage = next( $this->messages );
-        }
-        if ( $this->currentMessage !== false )
-        {
-            $this->connection->sendData( "RETR {$this->currentMessage}" );
+        if ($this->currentMessage !== false) {
+            $this->connection->sendData("RETR {$this->currentMessage}");
             $response = $this->connection->getLine();
-            if ( strpos( $response, "+OK" ) === 0 )
-            {
+            if (strpos($response, "+OK") === 0) {
                 $this->hasMoreMailData = true;
                 return true;
-            }
-            else
-            {
-                throw new ezcMailTransportException( "The POP3 server sent a negative reply when requesting mail." );
+            } else {
+                throw new ezcMailTransportException("The POP3 server sent a negative reply when requesting mail.");
             }
         }
         return false;
@@ -182,7 +171,7 @@ class ezcMailPop3Set implements ezcMailParserSet
      */
     public function hasData()
     {
-        return count( $this->messages );
+        return count($this->messages);
     }
 
     /**
@@ -195,4 +184,5 @@ class ezcMailPop3Set implements ezcMailParserSet
         return $this->messages;
     }
 }
+
 ?>

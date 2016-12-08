@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => 'IBOS移动平台',
@@ -10,7 +10,7 @@ return array(
     ),
     'config' => array(
         'modules' => array(
-            'mobile' => array( 'class' => 'application\modules\mobile\MobileModule' )
+            'mobile' => array('class' => 'application\modules\mobile\MobileModule')
         ),
         'components' => array(
             'messages' => array(

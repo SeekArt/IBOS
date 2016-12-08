@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -64,7 +64,7 @@ class ezcBaseMetaDataPearReader
      */
     public function getBundleVersion()
     {
-        @$packageInfo = $this->registry->packageInfo( 'ezcomponents', null, 'components.ez.no' );
+        @$packageInfo = $this->registry->packageInfo('ezcomponents', null, 'components.ez.no');
         return $packageInfo['version']['release'];
     }
 
@@ -76,9 +76,8 @@ class ezcBaseMetaDataPearReader
      */
     public function getRequiredPhpVersion()
     {
-        @$packageInfo = $this->registry->packageInfo( 'ezcomponents', null, 'components.ez.no' );
-        if ( array_key_exists( 'required', $packageInfo['dependencies'] ) )
-        {
+        @$packageInfo = $this->registry->packageInfo('ezcomponents', null, 'components.ez.no');
+        if (array_key_exists('required', $packageInfo['dependencies'])) {
             return $packageInfo['dependencies']['required']['php']['min'];
         }
         return $packageInfo['dependencies']['php']['min'];
@@ -91,10 +90,10 @@ class ezcBaseMetaDataPearReader
      *
      * @return bool
      */
-    public function isComponentInstalled( $componentName )
+    public function isComponentInstalled($componentName)
     {
-        @$packageInfo = $this->registry->packageInfo( $componentName, null, 'components.ez.no' );
-        return is_array( $packageInfo );
+        @$packageInfo = $this->registry->packageInfo($componentName, null, 'components.ez.no');
+        return is_array($packageInfo);
     }
 
     /**
@@ -103,9 +102,9 @@ class ezcBaseMetaDataPearReader
      *
      * @return string
      */
-    public function getComponentVersion( $componentName )
+    public function getComponentVersion($componentName)
     {
-        @$packageInfo = $this->registry->packageInfo( $componentName, null, 'components.ez.no' );
+        @$packageInfo = $this->registry->packageInfo($componentName, null, 'components.ez.no');
         $release = $packageInfo['version']['release'];
         return $release === null ? false : $release;
     }
@@ -120,20 +119,15 @@ class ezcBaseMetaDataPearReader
      *
      * @return array(string=>string).
      */
-    public function getComponentDependencies( $componentName = 'ezcomponents' )
+    public function getComponentDependencies($componentName = 'ezcomponents')
     {
-        @$packageInfo = $this->registry->packageInfo( $componentName, 'dependencies', 'components.ez.no' );
-        if ( isset( $packageInfo['required']['package'] ) )
-        {
+        @$packageInfo = $this->registry->packageInfo($componentName, 'dependencies', 'components.ez.no');
+        if (isset($packageInfo['required']['package'])) {
             $deps = array();
-            if ( isset( $packageInfo['required']['package']['name'] ) )
-            {
+            if (isset($packageInfo['required']['package']['name'])) {
                 $deps[$packageInfo['required']['package']['name']] = $packageInfo['required']['package']['min'];
-            }
-            else
-            {
-                foreach ( $packageInfo['required']['package'] as $package )
-                {
+            } else {
+                foreach ($packageInfo['required']['package'] as $package) {
                     $deps[$package['name']] = $package['min'];
                 }
             }
@@ -142,4 +136,5 @@ class ezcBaseMetaDataPearReader
         return array();
     }
 }
+
 ?>

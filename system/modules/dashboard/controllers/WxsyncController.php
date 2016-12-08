@@ -45,35 +45,38 @@ use application\modules\user\utils\User as UserUtil;
 use CJSON;
 use Exception;
 
-class WxsyncController extends WxController {
+class WxsyncController extends WxController
+{
 
     /**
      * 获取企业号绑定视图
      */
-    public function actionIndex() {
-        if ( false === $this->isBinding ) {
+    public function actionIndex()
+    {
+        if (false === $this->isBinding) {
             return $this->unbindRender();
         }
-        if ( false === $this->wxqyInfo['isLogin'] ) {
-            return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
+        if (false === $this->wxqyInfo['isLogin']) {
+
+            return $this->redirect($this->createUrl('wxbinding/index'));
         }
         //获取已经同步的人员
         $userCount = Ibos::app()->db->createCommand()
-                ->select( 'count(uid)' )
-                ->from( '{{user}}' )
-                ->where( " `status` = '0' " )
-                ->queryScalar();
+            ->select('count(uid)')
+            ->from('{{user}}')
+            ->where(" `status` = '0' ")
+            ->queryScalar();
         $total = Ibos::app()->db->createCommand()
-                ->select( 'count(uid)' )
-                ->from( '{{user_binding}}' )
-                ->where( " `app` = 'wxqy' " )
-                ->queryScalar();
+            ->select('count(uid)')
+            ->from('{{user_binding}}')
+            ->where(" `app` = 'wxqy' ")
+            ->queryScalar();
         $params = array(
             'bindCount' => $total,
-            'localCount' => max( $userCount - $total, 0 ),
+            'localCount' => max($userCount - $total, 0),
             'wxCount' => 0,
-            'unit' => Ibos::app()->setting->get( 'setting/unit' ),
-            'aeskey' => Ibos::app()->setting->get( 'setting/aeskey' ),
+            'unit' => Ibos::app()->setting->get('setting/unit'),
+            'aeskey' => Ibos::app()->setting->get('setting/aeskey'),
             'wxqy' => array(
                 'name' => $this->wxqyInfo['name'],
                 'logo' => $this->wxqyInfo['logo'],
@@ -81,25 +84,26 @@ class WxsyncController extends WxController {
             ),
         );
 
-        $this->render( 'index', $params );
+        $this->render('index', $params);
     }
 
-    public function actionGetwxcount() {
+    public function actionGetwxcount()
+    {
         $wxUsers = $this->getDeptUser();
         $total = Ibos::app()->db->createCommand()
-                ->select( 'count(uid)' )
-                ->from( '{{user_binding}}' )
-                ->where( " `app` = 'wxqy' " )
-                ->queryScalar();
-        $wxCount = max( count( $wxUsers ) - $total, 0 );
-        return $this->ajaxReturn( array(
-                    'isSuccess' => true,
-                    'msg' => '',
-                    'data' => array(
-                        'wxCount' => $wxCount,
-                        'wxuser' => $wxUsers,
-                    ),
-                ) );
+            ->select('count(uid)')
+            ->from('{{user_binding}}')
+            ->where(" `app` = 'wxqy' ")
+            ->queryScalar();
+        $wxCount = max(count($wxUsers) - $total, 0);
+        return $this->ajaxReturn(array(
+            'isSuccess' => true,
+            'msg' => '',
+            'data' => array(
+                'wxCount' => $wxCount,
+                'wxuser' => $wxUsers,
+            ),
+        ));
     }
 
     const DEPT_NUM_PER = 100; //每次从数据库里取的部门数目，默认100
@@ -110,62 +114,72 @@ class WxsyncController extends WxController {
      * @return ajaxReturn
      */
 
-    public function actionSync() {
-        set_time_limit( 120 );
-        $op = Env::getRequest( 'op' );
-        if ( !in_array( $op, array( 'init', 'dept', 'user',
-                    'wxdept', 'wxuser',
-                    'sending' ) ) ) {
+    public function actionSync()
+    {
+        set_time_limit(120);
+        $op = Env::getRequest('op');
+        if (!in_array($op, array(
+            'init',
+            'dept',
+            'user',
+            'wxdept',
+            'wxuser',
+            'sending'
+        ))
+        ) {
             $op = 'init';
         }
-        return $this->{'handle' . ucfirst( $op ) }();
+        return $this->{'handle' . ucfirst($op)}();
     }
 
-    private function deptid_not_in_binding() {
+    private function deptid_not_in_binding()
+    {
         return " `deptid` NOT IN ( SELECT `deptid` FROM {{department_binding}} WHERE `app` = 'wxqy' ) ";
     }
 
-    private function uid_not_in_binding() {
+    private function uid_not_in_binding()
+    {
         return " `uid` NOT IN ( SELECT `uid` FROM {{user_binding}} WHERE `app` = 'wxqy' ) ";
     }
 
-    private function handleInit() {
+    private function handleInit()
+    {
         // 优先检测微信是否授权部门，如果没有直接提示没有权限
         $return = WxApi::getInstance()->getDeptList();
         $id = 1;
         $wxdept = array();
-        if ( !empty( $return['data'] ) ) {
-            if ( !empty( $return['data']['department'] ) ) {
+        if (!empty($return['data'])) {
+            if (!empty($return['data']['department'])) {
                 $id = $return['data']['department'][0]['id'];
                 $wxdept = $return['data']['department'];
             } else {
-                return $this->ajaxReturn( array(
-                            'isSuccess' => false,
-                            'msg' => '请授权至少一个部门的权限'
-                        ) );
+                return $this->ajaxReturn(array(
+                    'isSuccess' => false,
+                    'msg' => '请授权至少一个部门的权限'
+                ));
             }
         }
         $deptCount = Ibos::app()->db->createCommand()
-                ->select( 'count(deptid)' )
-                ->from( '{{department}}' )
-                ->where( $this->deptid_not_in_binding() )
-                ->queryScalar();
+            ->select('count(deptid)')
+            ->from('{{department}}')
+            ->where($this->deptid_not_in_binding())
+            ->queryScalar();
         $userCount = Ibos::app()->db->createCommand()
-                ->select( 'count(uid)' )
-                ->from( '{{user}}' )
-                ->where( $this->uid_not_in_binding() )
-                ->andWhere( " `status` = 0 " )
-                ->queryScalar();
-        $sendMail = Env::getRequest( 'status' );
+            ->select('count(uid)')
+            ->from('{{user}}')
+            ->where($this->uid_not_in_binding())
+            ->andWhere(" `status` = 0 ")
+            ->queryScalar();
+        $sendMail = Env::getRequest('status');
         $dept = Ibos::app()->db->createCommand()
-                ->select( 'deptid,bindvalue' )
-                ->from( '{{department_binding}}' )
-                ->where( " `app` = 'wxqy' " )
-                ->queryAll();
+            ->select('deptid,bindvalue')
+            ->from('{{department_binding}}')
+            ->where(" `app` = 'wxqy' ")
+            ->queryAll();
         $deptRelated = array();
         // 键 => 值 ：部门id => 微信部门id
-        if ( !empty( $dept ) ) {
-            foreach ( $dept as $d ) {
+        if (!empty($dept)) {
+            foreach ($dept as $d) {
                 $deptRelated[$d['deptid']] = $d['bindvalue'];
             }
         }
@@ -184,106 +198,113 @@ class WxsyncController extends WxController {
             'wxdeptinit' => 1,
             'wxuserinit' => 1,
         );
-        Ibos::app()->user->setState( 'wxqy', $wxqy );
+        Ibos::app()->user->setState('wxqy', $wxqy);
         $ajaxReturn = array(
             'isSuccess' => true,
             'data' => array(
-                'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'dept' ) ),
+                'url' => $this->createUrl('wxsync/sync', array('op' => 'dept')),
                 'deptCount' => $deptCount,
                 'userCount' => $userCount,
             ),
             'msg' => '开始同步部门，请耐心等候...',
         );
-        return $this->ajaxReturn( $ajaxReturn );
+        return $this->ajaxReturn($ajaxReturn);
     }
 
     /**
      * 根据部门的层级创建查询的条件
      * @param integer $level
      */
-    private function createConditionByDeptLevel( $level = 0 ) {
+    private function createConditionByDeptLevel($level = 0)
+    {
         $sqlString = Ibos::app()->db->createCommand()
-                ->select( 'deptid' )
-                ->from( '{{department}}' )
-                ->where( " `pid` IN ( <string> )" )
-                ->getText();
+            ->select('deptid')
+            ->from('{{department}}')
+            ->where(" `pid` IN ( <string> )")
+            ->getText();
         $sql = $sqlString;
-        while ( $level-- ) {
-            $sql = str_replace( '<string>', $sqlString, $sql );
+        while ($level--) {
+            $sql = str_replace('<string>', $sqlString, $sql);
         }
-        return str_replace( '<string>', 0, $sql );
+        return str_replace('<string>', 0, $sql);
     }
 
-    private function getPerDept( $level ) {
-        $deptidCondition = $this->createConditionByDeptLevel( $level );
+    private function getPerDept($level)
+    {
+        $deptidCondition = $this->createConditionByDeptLevel($level);
         $return = Ibos::app()->db->createCommand()
-                ->select( 'deptname,deptid,pid,sort' )
-                ->from( '{{department}}' )
-                ->where( " `deptid` IN( {$deptidCondition} )" )
-                ->andWhere( $this->deptid_not_in_binding() )
-                ->order( 'deptid ASC' )
-                ->limit( self::DEPT_NUM_PER )
-                ->queryAll();
+            ->select('deptname,deptid,pid,sort')
+            ->from('{{department}}')
+            ->where(" `deptid` IN( {$deptidCondition} )")
+            ->andWhere($this->deptid_not_in_binding())
+            ->order('deptid ASC')
+            ->limit(self::DEPT_NUM_PER)
+            ->queryAll();
         return $return;
     }
 
-    private function handleDept() {
+    private function handleDept()
+    {
         $wxqy = Ibos::app()->user->wxqy;
         $id = $wxqy['id'];
         $level = $wxqy['deptlevel'];
         $i = 10;
-        while ( $i ) {
+        while ($i) {
             //这个使用子查询的方式去遍历一棵树
-            $deptPer = $this->getPerDept( $level );
-            if ( !empty( $deptPer ) ) {
+            $deptPer = $this->getPerDept($level);
+            if (!empty($deptPer)) {
                 $wxqy['deptlevel'] = $level;
                 break;
             } else {
                 $i--;
                 //当前层级找不到数据，则尝试着下一层级找部门
-                $level ++;
+                $level++;
             }
         }
         //找了10层也没有就认为部门同步完成
-        if ( empty( $deptPer ) ) {
+        if (empty($deptPer)) {
             //下一层也找不到，则表示完成了
-            return $this->ajaxReturn( array(
-                        'isSuccess' => true,
-                        'msg' => '同步部门完成。开始处理用户,请稍后..',
-                        'data' => array(
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'user' ) )
-                ) ) );
+            return $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'msg' => '同步部门完成。开始处理用户,请稍后..',
+                'data' => array(
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'user'))
+                )
+            ));
         }
         //至少有一个部门才会进来这边
         $related = $wxqy['deptrelated'];
         $bindArray = array();
-        $url = $this->createUrlByType( 'syncDept' );
-        foreach ( $deptPer as $dept ) {
-            $wxqy['deptcount'] --;
-            if ( $dept['pid'] == 0 || isset( $related[$dept['pid']] ) ) {
+        $url = $this->createUrlByType('syncDept');
+        foreach ($deptPer as $dept) {
+            $wxqy['deptcount']--;
+            if ($dept['pid'] == 0 || isset($related[$dept['pid']])) {
                 $pid = $dept['pid'] == 0 ? $id : $related[$dept['pid']];
-                $res = WxApi::getInstance()->createDept( $dept['deptname'], $pid, $dept['sort'], $url );
+                $res = WxApi::getInstance()->createDept($dept['deptname'], $pid, $dept['sort'], $url);
 //              $newId = 1;
 //              $res['isSuccess'] = 1;
 //              $res['data']['id'] = $dept['deptid'];
-                if ( $res['isSuccess'] && isset( $res['data']['id'] ) ) {
+                if ($res['isSuccess'] && isset($res['data']['id'])) {
                     $newId = $res['data']['id'];
-                } else if ( !$res['isSuccess'] ) {
-                    return $this->ajaxReturn( array(
-                                'isSuccess' => false,
-                                'msg' => '部门同步失败，错误代码：' . $res['data']['errcode'] . '，错误原因：' . Code::getErrmsg( $res['data']['errcode']
-                        ) ) );
                 } else {
-                    //没有权限或者父部门错了，给授权的部门中的顶级部门
-                    if ( in_array( $res['data']['errcode'], array( '60004', '60011' ) ) ) {
-                        $newId = $id;
-                    }
-                    //如果已经创建，解析返回信息里的部门id……这个，如果微信改了msg，那就gg了
-                    if ( $res['data']['errcode'] == '60008' ) {
-                        if ( preg_match_all( '/\s(\\d+)\s/', $res['data']['errmsg'], $matches ) ) {
-                            $newId = isset( $matches[1] ) ? $matches[1][0] : $id; //如果不给数字了。。。。
-                        } else {
+                    if (!$res['isSuccess']) {
+                        return $this->ajaxReturn(array(
+                            'isSuccess' => false,
+                            'msg' => '部门同步失败，错误代码：' . $res['data']['errcode'] . '，错误原因：' . Code::getErrmsg($res['data']['errcode']
+                                )
+                        ));
+                    } else {
+                        //没有权限或者父部门错了，给授权的部门中的顶级部门
+                        if (in_array($res['data']['errcode'], array('60004', '60011'))) {
                             $newId = $id;
+                        }
+                        //如果已经创建，解析返回信息里的部门id……这个，如果微信改了msg，那就gg了
+                        if ($res['data']['errcode'] == '60008') {
+                            if (preg_match_all('/\s(\\d+)\s/', $res['data']['errmsg'], $matches)) {
+                                $newId = isset($matches[1]) ? $matches[1][0] : $id; //如果不给数字了。。。。
+                            } else {
+                                $newId = $id;
+                            }
                         }
                     }
                 }
@@ -299,63 +320,65 @@ class WxsyncController extends WxController {
         }
         $wxqy['deptrelated'] = $related;
         //这个count只是用来告诉用户还有多少个，别无他用
-        Ibos::app()->user->setState( 'wxqy', $wxqy );
+        Ibos::app()->user->setState('wxqy', $wxqy);
         $connection = Ibos::app()->db;
         $transaction = $connection->beginTransaction();
         try {
-            foreach ( $bindArray as $oaDeptid => $wxDeptid ) {
+            foreach ($bindArray as $oaDeptid => $wxDeptid) {
                 $connection->schema->commandBuilder
-                        ->createInsertCommand( '{{department_binding}}', array(
-                            'deptid' => $oaDeptid,
-                            'bindvalue' => $wxDeptid,
-                            'app' => 'wxqy'
-                        ) )
-                        ->execute();
+                    ->createInsertCommand('{{department_binding}}', array(
+                        'deptid' => $oaDeptid,
+                        'bindvalue' => $wxDeptid,
+                        'app' => 'wxqy'
+                    ))
+                    ->execute();
             }
             $transaction->commit();
         } catch (Exception $e) {
             //$transaction->rollback();
         }
 
-        return $this->ajaxReturn( array(
-                    'isSuccess' => true,
-                    'msg' => '正在同步部门，还剩下' . $wxqy['deptcount'] . '个',
-                    'data' => array(
-                        'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'dept' ) ),
-                        'remain' => $wxqy['deptcount'],
-            ) ) );
+        return $this->ajaxReturn(array(
+            'isSuccess' => true,
+            'msg' => '正在同步部门，还剩下' . $wxqy['deptcount'] . '个',
+            'data' => array(
+                'url' => $this->createUrl('wxsync/sync', array('op' => 'dept')),
+                'remain' => $wxqy['deptcount'],
+            )
+        ));
     }
 
-    private function handleUser() {
+    private function handleUser()
+    {
         $wxqy = Ibos::app()->user->wxqy;
         $id = $wxqy['id'];
         $deptidRelated = $wxqy['deptrelated'];
-        $errorUidString = implode( ',', array_keys( $wxqy['error'] ) );
-        $errorUidCondition = !empty( $errorUidString ) ? " `uid` NOT IN ( {$errorUidString} )" : 1;
+        $errorUidString = implode(',', array_keys($wxqy['error']));
+        $errorUidCondition = !empty($errorUidString) ? " `uid` NOT IN ( {$errorUidString} )" : 1;
         $uidArray = Ibos::app()->db->createCommand()
-                ->select( 'uid' )
-                ->from( '{{user}}' )
-                ->where( $this->uid_not_in_binding() )
-                ->andWhere( " `status` = 0 " )
-                ->andWhere( $errorUidCondition )
-                ->order( " uid ASC " )
-                ->limit( self::USER_NUM_PER )
-                ->queryColumn();
-        if ( !empty( $uidArray ) ) {
+            ->select('uid')
+            ->from('{{user}}')
+            ->where($this->uid_not_in_binding())
+            ->andWhere(" `status` = 0 ")
+            ->andWhere($errorUidCondition)
+            ->order(" uid ASC ")
+            ->limit(self::USER_NUM_PER)
+            ->queryColumn();
+        if (!empty($uidArray)) {
             $bindArray = array();
             //这个是需要绑定的用户UID
-            $userArray = UserUtil::wrapUserInfo( $uidArray, false );
-            foreach ( $userArray as $user ) {
-                $wxqy['usercount'] --;
+            $userArray = UserUtil::wrapUserInfo($uidArray, false);
+            foreach ($userArray as $user) {
+                $wxqy['usercount']--;
                 $wxDeptid = array();
-                foreach ( explode( ',', $user['alldeptid'] ) as $deptid ) {
-                    if ( isset( $deptidRelated[$deptid] ) ) {
+                foreach (explode(',', $user['alldeptid']) as $deptid) {
+                    if (isset($deptidRelated[$deptid])) {
                         $wxDeptid[] = $deptidRelated[$deptid];
                     }
                 }
                 // 如果并没有找到部门关系，直接放在有权限的顶级部门下
-                $deptidString = implode( ',', $wxDeptid );
-                if ( empty( $deptidString ) ) {
+                $deptidString = implode(',', $wxDeptid);
+                if (empty($deptidString)) {
                     $deptidString = $id;
                 }
                 $user['deptid'] = $deptidString;
@@ -363,10 +386,10 @@ class WxsyncController extends WxController {
                 $user['gender'] = $user['gender'] == 1 ? 0 : 1;
 
                 //创建链接
-                $url = $this->createUrlByType( 'syncUser' );
-                $res = WxApi::getInstance()->createUser( $user, $url );
+                $url = $this->createUrlByType('syncUser');
+                $res = WxApi::getInstance()->createUser($user, $url);
                 //$res = ''; //测试用
-                if ( $res !== '' ) {
+                if ($res !== '') {
                     //如果用户名已经存在，是不会返回错误的，因为存在的话直接绑定，此时res = ''
                     //返回值不是空，说明有错误信息，空经过了我的处理了呢
                     $wxqy['error'][$user['uid']] = array(
@@ -386,18 +409,18 @@ class WxsyncController extends WxController {
                     $wxqy['success'][$user['uid']] = $user['mobile'];
                 }
             }
-            Ibos::app()->user->setState( 'wxqy', $wxqy );
-            if ( !empty( $bindArray ) ) {
+            Ibos::app()->user->setState('wxqy', $wxqy);
+            if (!empty($bindArray)) {
                 $connection = Ibos::app()->db;
                 $transaction = $connection->beginTransaction();
                 try {
-                    foreach ( $bindArray as $uid => $bindValue ) {
+                    foreach ($bindArray as $uid => $bindValue) {
                         $connection->schema->commandBuilder
-                                ->createInsertCommand( '{{user_binding}}', array(
-                                    'app' => 'wxqy',
-                                    'uid' => $uid,
-                                    'bindvalue' => $bindValue,
-                                ) )->execute();
+                            ->createInsertCommand('{{user_binding}}', array(
+                                'app' => 'wxqy',
+                                'uid' => $uid,
+                                'bindvalue' => $bindValue,
+                            ))->execute();
                     }
                     $transaction->commit();
                 } catch (Exception $e) {
@@ -412,359 +435,374 @@ class WxsyncController extends WxController {
 //                  ->queryScalar();
 //          $wxqy['usercount'] = $userCount;
             return $this->ajaxReturn(
-                            array(
-                                'isSuccess' => true,
-                                'msg' => '正在同步用户，还剩下' . $wxqy['usercount'] . '个，请稍后...',
-                                'data' => array(
-                                    'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'user' ) ),
-                                    'remain' => $wxqy['usercount']
-                        ) ) );
+                array(
+                    'isSuccess' => true,
+                    'msg' => '正在同步用户，还剩下' . $wxqy['usercount'] . '个，请稍后...',
+                    'data' => array(
+                        'url' => $this->createUrl('wxsync/sync', array('op' => 'user')),
+                        'remain' => $wxqy['usercount']
+                    )
+                ));
         } else {
             return $this->ajaxReturn(
-                            array(
-                                'isSuccess' => true,
-                                'msg' => '正在初始化微信部门……',
-                                'data' => array(
-                                    'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'wxdept' )
-                                    ),
-                        ) ) );
+                array(
+                    'isSuccess' => true,
+                    'msg' => '正在初始化微信部门……',
+                    'data' => array(
+                        'url' => $this->createUrl('wxsync/sync', array('op' => 'wxdept')
+                        ),
+                    )
+                ));
         }
     }
 
-    private function handleWxdept() {
+    private function handleWxdept()
+    {
         $wxqy = Ibos::app()->user->wxqy;
         $wxdept = $wxqy['wxdept'];
         $wxdeptinit = $wxqy['wxdeptinit'];
-        if ( $wxdeptinit == 1 ) {
+        if ($wxdeptinit == 1) {
             $wxqy['wxdeptinit'] = 0;
             $temp = array();
-            foreach ( $wxdept as &$dept ) {
+            foreach ($wxdept as &$dept) {
                 $temp[$dept['id']] = $dept;
             }
             $array = array();
             //找不到的父id，就设置成0
-            foreach ( $temp as $deptid => $dept ) {
-                if ( !isset( $temp[$dept['parentid']] ) ) {
+            foreach ($temp as $deptid => $dept) {
+                if (!isset($temp[$dept['parentid']])) {
                     $dept['parentid'] = 0;
                 }
                 $array[$dept['parentid']][$deptid] = $dept;
             }
             //重新排序wxdept数组
             $wxdept = array();
-            $pidArray = array( 0 );
-            while ( 1 ) {
+            $pidArray = array(0);
+            while (1) {
                 $temp = array();
-                foreach ( $pidArray as $pid ) {
-                    $deptByPid = isset( $array[$pid] ) ? $array[$pid] : array();
+                foreach ($pidArray as $pid) {
+                    $deptByPid = isset($array[$pid]) ? $array[$pid] : array();
                     $wxdept += $deptByPid;
-                    $temp +=array_keys( $deptByPid );
-                    unset( $array[$pid] );
+                    $temp = array_merge($temp, array_keys($deptByPid));
+                    unset($array[$pid]);
                 }
                 $pidArray = $temp;
-                if ( empty( $array ) ) {
+                if (empty($array)) {
                     break;
                 }
             }
             $temp2 = array();
-            foreach ( $wxdept as $dept ) {
+            foreach ($wxdept as $dept) {
                 $temp2[$dept['id']] = $dept;
             }
             $wxqy['wxdept'] = $temp2;
-            Ibos::app()->user->setState( 'wxqy', $wxqy );
-            return $this->ajaxReturn( array(
-                        'isSuccess' => true,
-                        'msg' => '正在同步微信部门到IBOS……',
-                        'data' => array(
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'wxdept' )
-                            ),
-                ) ) );
+            Ibos::app()->user->setState('wxqy', $wxqy);
+            return $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'msg' => '正在同步微信部门到IBOS……',
+                'data' => array(
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'wxdept')
+                    ),
+                )
+            ));
         }
         $deptList = Ibos::app()->db->createCommand()
-                ->select( 'deptid,pid' )
-                ->from( '{{department}}' )
-                ->queryAll();
+            ->select('deptid,pid')
+            ->from('{{department}}')
+            ->queryAll();
         $deptListRelated = array();
-        if ( !empty( $deptList ) ) {
-            foreach ( $deptList as $dept ) {
+        if (!empty($deptList)) {
+            foreach ($deptList as $dept) {
                 $deptListRelated[$dept['deptid']] = $dept['pid'];
             }
         }
         $related = $wxqy['deptrelated']; // deptid =>wxdeptid
-        $deptidRelated = array_flip( $related );
-        set_time_limit( 0 );
+        $deptidRelated = array_flip($related);
+        set_time_limit(0);
         //在初始化的时候已经限制了，如果没有部门是会报错的，所以这里一定有部门
-        foreach ( $wxdept as $dept ) {
-            $pid = isset( $deptidRelated[$dept['parentid']] ) ? $deptidRelated[$dept['parentid']] : 0;
+        foreach ($wxdept as $dept) {
+            $pid = isset($deptidRelated[$dept['parentid']]) ? $deptidRelated[$dept['parentid']] : 0;
             //如果已经存在关联关系，说明已经绑定过了的
-            if ( isset( $deptidRelated[$dept['id']] ) ) {
+            if (isset($deptidRelated[$dept['id']])) {
                 $deptid = $deptidRelated[$dept['id']];
                 //如果绑定过了的部门记录里，pid的值不一样，则更新pid
-                if ( $pid != 0 && empty( $deptListRelated[$deptid] ) ) {
+                if ($pid != 0 && empty($deptListRelated[$deptid])) {
                     Ibos::app()->db->createCommand()
-                            ->update( '{{department}}', array(
-                                'pid' => $pid,
-                                    ), " `deptid` = '{$deptid}' " );
+                        ->update('{{department}}', array(
+                            'pid' => $pid,
+                        ), " `deptid` = '{$deptid}' ");
                 }
                 continue;
             } else {
-                if ( $dept['id'] == 1 ) {
+                if ($dept['id'] == 1) {
                     continue;
                 }
                 // 不存在绑定关系，则创建，先找pid，找不到就设置为0！
                 Ibos::app()->db->createCommand()
-                        ->insert( '{{department}}', array(
-                            'deptname' => $dept['name'],
-                            'pid' => $pid,
-                        ) );
+                    ->insert('{{department}}', array(
+                        'deptname' => $dept['name'],
+                        'pid' => $pid,
+                    ));
                 $deptid = Ibos::app()->db->getLastInsertID();
                 Ibos::app()->db->createCommand()
-                        ->insert( '{{department_binding}}', array(
-                            'deptid' => $deptid,
-                            'bindvalue' => $dept['id'],
-                            'app' => 'wxqy'
-                        ) );
+                    ->insert('{{department_binding}}', array(
+                        'deptid' => $deptid,
+                        'bindvalue' => $dept['id'],
+                        'app' => 'wxqy'
+                    ));
                 $related[$deptid] = $dept['id'];
                 $deptidRelated[$dept['id']] = $deptid;
             }
         }
         $wxqy['deptrelated'] = $related;
-        Ibos::app()->user->setState( 'wxqy', $wxqy );
+        Ibos::app()->user->setState('wxqy', $wxqy);
         return $this->ajaxReturn(
-                        array(
-                            'isSuccess' => true,
-                            'msg' => '正在初始化微信用户……',
-                            'data' => array(
-                                'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'wxuser' )
-                                ),
-                    ) ) );
+            array(
+                'isSuccess' => true,
+                'msg' => '正在初始化微信用户……',
+                'data' => array(
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'wxuser')
+                    ),
+                )
+            ));
     }
 
-    private function handleWxuser() {
+    private function handleWxuser()
+    {
         $wxqy = Ibos::app()->user->wxqy;
         //此时的部门列表已经被处理过了
         //有权限的最顶级的部门已经被设置为parentid = 0
         $wxuserinit = $wxqy['wxuserinit'];
-        if ( $wxuserinit == 1 ) {
+        if ($wxuserinit == 1) {
             $wxqy['wxuserinit'] = 0;
             $wxdept = $wxqy['wxdept'];
             $topDept = array();
-            foreach ( $wxdept as $dept ) {
-                if ( $dept['parentid'] == 0 ) {
+            foreach ($wxdept as $dept) {
+                if ($dept['parentid'] == 0) {
                     $topDept[$dept['id']] = $dept;
                 }
             }
             $wxqy['topdept'] = $topDept;
-            Ibos::app()->user->setState( 'wxqy', $wxqy );
-            return $this->ajaxReturn( array(
-                        'isSuccess' => true,
-                        'msg' => '正在同步微信用户到IBOS……',
-                        'data' => array(
-                            'top' => $topDept,
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'wxuser' )
-                            ),
-                ) ) );
+            Ibos::app()->user->setState('wxqy', $wxqy);
+            return $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'msg' => '正在同步微信用户到IBOS……',
+                'data' => array(
+                    'wxdept' => $wxdept,
+                    'top' => $topDept,
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'wxuser')
+                    ),
+                )
+            ));
         }
         $topDept = $wxqy['topdept'];
-        $deptidRelated = array_flip( $wxqy['deptrelated'] );
+        $deptidRelated = array_flip($wxqy['deptrelated']);
         $userBinding = Ibos::app()->db->createCommand()
-                ->select( 'uid,bindvalue' )
-                ->from( '{{user_binding}}' )
-                ->where( " `app` = 'wxqy' " )
-                ->queryAll();
+            ->select('uid,bindvalue')
+            ->from('{{user_binding}}')
+            ->where(" `app` = 'wxqy' ")
+            ->queryAll();
         $userRelated = array();
-        foreach ( $userBinding as $row ) {
+        foreach ($userBinding as $row) {
             $userRelated[$row['uid']] = $row['bindvalue'];
         }
-        unset( $userBinding );
-        $ip = Ibos::app()->setting->get( 'clientip' );
-        if ( !empty( $topDept ) ) {
-            $dept = array_shift( $topDept );
+        unset($userBinding);
+        $ip = Ibos::app()->setting->get('clientip');
+        if (!empty($topDept)) {
+            $dept = array_shift($topDept);
             $wxqy['topdept'] = $topDept;
-            Ibos::app()->user->setState( 'wxqy', $wxqy );
-            $userArray = $this->getFullDeptUser( $dept['id'], 1 );
-            if ( !empty( $userArray ) ) {
-                foreach ( $userArray as $user ) {
-                    if ( !in_array( $user['userid'], array_values( $userRelated ) ) ) {
+            Ibos::app()->user->setState('wxqy', $wxqy);
+            $userArray = $this->getFullDeptUser($dept['id'], 1);
+            if (!empty($userArray)) {
+                foreach ($userArray as $user) {
+                    if (!in_array($user['userid'], array_values($userRelated))) {
                         $exist = false;
-                        if ( isset( $user['mobile'] ) && !empty( $user['mobile'] ) ) {
+                        if (isset($user['mobile']) && !empty($user['mobile'])) {
                             $findUid = Ibos::app()->db->createCommand()
-                                    ->select( 'uid' )
-                                    ->from( '{{user}}' )
-                                    ->where( " `mobile` = '{$user['mobile']}' " )
-                                    ->queryScalar();
-                            !empty( $findUid ) && $exist = true;
+                                ->select('uid')
+                                ->from('{{user}}')
+                                ->where(" `mobile` = '{$user['mobile']}' ")
+                                ->queryScalar();
+                            !empty($findUid) && $exist = true;
                         } else {
                             //如果微信的用户没有手机号，那么就不能同步下来
                             continue;
                         }
-                        if ( isset( $user['weixinid'] ) ) {
+                        if (isset($user['weixinid'])) {
                             $findUid = Ibos::app()->db->createCommand()
-                                    ->select( 'uid' )
-                                    ->from( '{{user}}' )
-                                    ->where( " `weixin` = '{$user['weixinid']}' " )
-                                    ->andWhere( " `status` != 0 " )
-                                    ->queryScalar();
-                            !empty( $findUid ) && $exist = true;
+                                ->select('uid')
+                                ->from('{{user}}')
+                                ->where(" `weixin` = '{$user['weixinid']}' ")
+                                ->andWhere(" `status` != 0 ")
+                                ->queryScalar();
+                            !empty($findUid) && $exist = true;
                         }
-                        if ( isset( $user['email'] ) ) {
+                        if (isset($user['email'])) {
                             $findUid = Ibos::app()->db->createCommand()
-                                    ->select( 'uid' )
-                                    ->from( '{{user}}' )
-                                    ->where( " `email` = '{$user['email']}' " )
-                                    ->andWhere( " `status` != 0 " )
-                                    ->queryScalar();
-                            !empty( $findUid ) && $exist = true;
+                                ->select('uid')
+                                ->from('{{user}}')
+                                ->where(" `email` = '{$user['email']}' ")
+                                ->andWhere(" `status` != 0 ")
+                                ->queryScalar();
+                            !empty($findUid) && $exist = true;
                         }
-                        if ( true === $exist ) {
+                        if (true === $exist) {
                             $uid = $findUid;
                             Ibos::app()->db->createCommand()
-                                    ->update( '{{user}}', array(
-                                        'status' => 0,
-                                            ), " `uid` = '{$uid}' " );
+                                ->update('{{user}}', array(
+                                    'status' => 0,
+                                ), " `uid` = '{$uid}' ");
                         } else {
-                            $salt = StringUtil::random( 6 );
-                            $userMainDeptid = array_shift( $user['department'] );
+                            $salt = StringUtil::random(6);
+                            $userMainDeptid = array_shift($user['department']);
                             Ibos::app()->db->createCommand()
-                                    ->insert( '{{user}}', array(
-                                        'username' => $user['userid'],
-                                        'deptid' => $deptidRelated[$userMainDeptid],
-                                        'roleid' => 3, //普通成员
-                                        'realname' => $user['name'],
-                                        'password' => md5( md5( $user['userid'] ) . $salt ),
-                                        'gender' => $user['gender'] == '1' ? 1 : 0, //IBOS的0女1男，微信的1男2女,0未知
-                                        'weixin' => isset( $user['weixinid'] ) ? $user['weixinid'] : '',
-                                        'mobile' => isset( $user['mobile'] ) ? $user['mobile'] : '',
-                                        'email' => isset( $user['email'] ) ? $user['email'] : '',
-                                        'createtime' => TIMESTAMP,
-                                        'salt' => $salt,
-                                        'guid' => StringUtil::createGuid(),
-                                    ) );
+                                ->insert('{{user}}', array(
+                                    'username' => $user['userid'],
+                                    'deptid' => $deptidRelated[$userMainDeptid],
+                                    'roleid' => 3, //普通成员
+                                    'realname' => $user['name'],
+                                    'password' => md5(md5($user['userid']) . $salt),
+                                    'gender' => $user['gender'] == '1' ? 1 : 0, //IBOS的0女1男，微信的1男2女,0未知
+                                    'weixin' => isset($user['weixinid']) ? $user['weixinid'] : '',
+                                    'mobile' => isset($user['mobile']) ? $user['mobile'] : '',
+                                    'email' => isset($user['email']) ? $user['email'] : '',
+                                    'createtime' => TIMESTAMP,
+                                    'salt' => $salt,
+                                    'guid' => StringUtil::createGuid(),
+                                ));
                             $uid = Ibos::app()->db->getLastInsertID();
                             Ibos::app()->db->createCommand()
-                                    ->insert( '{{user_count}}', array(
-                                        'uid' => $uid,
-                                    ) );
+                                ->insert('{{user_count}}', array(
+                                    'uid' => $uid,
+                                ));
                             Ibos::app()->db->createCommand()
-                                    ->insert( '{{user_status}}', array(
-                                        'uid' => $uid,
-                                        'regip' => $ip,
-                                        'lastip' => $ip,
-                                    ) );
+                                ->insert('{{user_status}}', array(
+                                    'uid' => $uid,
+                                    'regip' => $ip,
+                                    'lastip' => $ip,
+                                ));
                             Ibos::app()->db->createCommand()
-                                    ->insert( '{{user_profile}}', array(
-                                        'uid' => $uid,
-                                    ) );
+                                ->insert('{{user_profile}}', array(
+                                    'uid' => $uid,
+                                ));
                         }
                         $row = Ibos::app()->db->createCommand()
-                                ->select()
-                                ->from( '{{user_binding}}' )
-                                ->where( " `uid` = '{$uid}' " )
-                                ->queryRow();
-                        if ( empty( $row ) ) {
+                            ->select()
+                            ->from('{{user_binding}}')
+                            ->where(" `uid` = '{$uid}' ")
+                            ->queryRow();
+                        if (empty($row)) {
                             Ibos::app()->db->createCommand()
-                                    ->insert( '{{user_binding}}', array(
-                                        'uid' => $uid,
-                                        'bindvalue' => $user['userid'],
-                                        'app' => 'wxqy',
-                                    ) );
+                                ->insert('{{user_binding}}', array(
+                                    'uid' => $uid,
+                                    'bindvalue' => $user['userid'],
+                                    'app' => 'wxqy',
+                                ));
                         }
-                        if ( !empty( $user['department'] ) ) {
-                            foreach ( $user['department'] as $wxRelatedDeptid ) {
+                        if (!empty($user['department'])) {
+                            foreach ($user['department'] as $wxRelatedDeptid) {
                                 Ibos::app()->db->createCommand()
-                                        ->insert( '{{department_related}}', array(
-                                            'uid' => $uid,
-                                            'deptid' => $deptidRelated[$wxRelatedDeptid],
-                                        ) );
+                                    ->insert('{{department_related}}', array(
+                                        'uid' => $uid,
+                                        'deptid' => $deptidRelated[$wxRelatedDeptid],
+                                    ));
                             }
                         }
                     }
                 }
             }
-            return $this->ajaxReturn( array(
-                        'isSuccess' => true,
-                        'msg' => '正在同步微信用户到IBOS……',
-                        'data' => array(
-                            'top' => $topDept,
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'wxuser' )
-                            ),
-                ) ) );
+            return $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'msg' => '正在同步微信用户到IBOS……',
+                'data' => array(
+                    'top' => $topDept,
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'wxuser')
+                    ),
+                )
+            ));
         } else {
             UserUtil::CacheUser();
             Org::update();
-            Cache::update( 'setting' );
-            return $this->ajaxReturn( array(
-                        'isSuccess' => true,
-                        'msg' => '正在发送邀请，请稍后……',
-                        'data' => array(
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'sending' )
-                            )
-                ) ) );
+            Cache::update('setting');
+            return $this->ajaxReturn(array(
+                'isSuccess' => true,
+                'msg' => '正在发送邀请，请稍后……',
+                'data' => array(
+                    'url' => $this->createUrl('wxsync/sync', array('op' => 'sending')
+                    )
+                )
+            ));
         }
     }
 
-    private function handleSending() {
+    private function handleSending()
+    {
         $wxqy = Ibos::app()->user->wxqy;
-        $success = count( $wxqy['success'] );
-        $error = count( $wxqy['error'] );
-        $downloadlink = $this->createUrl( 'wxsync/downerror' );
+        $success = count($wxqy['success']);
+        $error = count($wxqy['error']);
+        $downloadlink = $this->createUrl('wxsync/downerror');
         $bindCount = Ibos::app()->db->createCommand()
-                ->select( 'count(*)' )
-                ->from( '{{user_binding}}' )
-                ->where( " `app` = 'wxqy' " )
-                ->queryScalar();
-        if ( !empty( $error ) && empty( $success ) ) {
+            ->select('count(*)')
+            ->from('{{user_binding}}')
+            ->where(" `app` = 'wxqy' ")
+            ->queryScalar();
+        if (!empty($error) && empty($success)) {
             $ajaxReturn = $this->ajaxReturn(
-                    array(
-                        'isSuccess' => true,
-                        'msg' => '全部失败',
-                        'data' => array(
-                            'downUrl' => $downloadlink,
-                            'errorCount' => $error,
-                            'bindCount' => $bindCount,
-                            'successCount' => 0,
-                            'tpl' => 'error',
-                        ) ) );
+                array(
+                    'isSuccess' => true,
+                    'msg' => '全部失败',
+                    'data' => array(
+                        'downUrl' => $downloadlink,
+                        'errorCount' => $error,
+                        'bindCount' => $bindCount,
+                        'successCount' => 0,
+                        'tpl' => 'error',
+                    )
+                ));
         }
 
-        $userid = array_shift( $wxqy['success'] );
-        if ( !empty( $userid ) ) {
-            $wxqy['successSending']+= 1;
-            $url = $this->createUrlByType( 'sendInvition' );
-            $res = WxApi::getInstance()->sendInvition( $url, $userid );
-            Ibos::app()->user->setState( 'wxqy', $wxqy );
+        $userid = array_shift($wxqy['success']);
+        if (!empty($userid)) {
+            $wxqy['successSending'] += 1;
+            $url = $this->createUrlByType('sendInvition');
+            $res = WxApi::getInstance()->sendInvition($url, $userid);
+            Ibos::app()->user->setState('wxqy', $wxqy);
             //这里不需要管到底发送成功与否，因为……这个邀请一个星期发一次的。。。失败了也没辙
             $ajaxReturn = $this->ajaxReturn(
+                array(
+                    'isSuccess' => true,
+                    'msg' => '正在发送邀请，请稍后..',
+                    'data' => array(
+                        'url' => $this->createUrl('wxsync/sync', array('op' => 'sending'))
+                    )
+                ));
+        } else {
+            if (!empty($error) && !empty($success)) {
+                $ajaxReturn = $this->ajaxReturn(
                     array(
                         'isSuccess' => true,
-                        'msg' => '正在发送邀请，请稍后..',
+                        'msg' => '成功一半。。',
                         'data' => array(
-                            'url' => $this->createUrl( 'wxsync/sync', array( 'op' => 'sending' ) )
-                        ) ) );
-        } else {
-            if ( !empty( $error ) && !empty( $success ) ) {
-                $ajaxReturn = $this->ajaxReturn(
-                        array(
-                            'isSuccess' => true,
-                            'msg' => '成功一半。。',
-                            'data' => array(
-                                'successCount' => $wxqy['successSending'],
-                                'errorCount' => $error,
-                                'bindCount' => $bindCount,
-                                'downUrl' => $downloadlink,
-                                'tpl' => 'half',
-                            ) ) );
+                            'successCount' => $wxqy['successSending'],
+                            'errorCount' => $error,
+                            'bindCount' => $bindCount,
+                            'downUrl' => $downloadlink,
+                            'tpl' => 'half',
+                        )
+                    ));
             } else {
-                Ibos::app()->user->setState( 'wxqy', NULL );
+                Ibos::app()->user->setState('wxqy', null);
                 $ajaxReturn = $this->ajaxReturn(
-                        array(
-                            'isSuccess' => true,
-                            'msg' => '成功全部完成！',
-                            'data' => array(
-                                'successCount' => $wxqy['successSending'],
-                                'errorCount' => 0,
-                                'bindCount' => $bindCount,
-                                'tpl' => 'success',
-                            ) ) );
+                    array(
+                        'isSuccess' => true,
+                        'msg' => '成功全部完成！',
+                        'data' => array(
+                            'successCount' => $wxqy['successSending'],
+                            'errorCount' => 0,
+                            'bindCount' => $bindCount,
+                            'tpl' => 'success',
+                        )
+                    ));
             }
         }
         return $ajaxReturn;
@@ -775,9 +813,10 @@ class WxsyncController extends WxController {
      * @param string $type 对应官网访问微信接口的方法名
      * @return string url
      */
-    private function createUrlByType( $type ) {
+    private function createUrlByType($type)
+    {
         $aeskey = Wx::getInstance()->getAeskey();
-        $url = WebSite::getInstance()->build( 'Api/Wxsync/' . $type, array( 'aeskey' => $aeskey ) );
+        $url = WebSite::getInstance()->build('Api/Wxsync/' . $type, array('aeskey' => $aeskey));
         return $url;
     }
 
@@ -785,69 +824,77 @@ class WxsyncController extends WxController {
      * 获取部门成员列表
      * @return array 成员列表
      */
-    private function getDeptUser( $deptid = 1, $fetchChild = 1 ) {
-        $url = $this->createUrlByType( 'syncDeptUserSimple' );
-        $wxUsers = WxApi::getInstance()->getDeptUser( $url, $deptid, $fetchChild );
+    private function getDeptUser($deptid = 1, $fetchChild = 1)
+    {
+        $url = $this->createUrlByType('syncDeptUserSimple');
+        $wxUsers = WxApi::getInstance()->getDeptUser($url, $deptid, $fetchChild);
         return $wxUsers;
     }
 
-    private function getFullDeptUser( $deptid = 1, $fetchChild = 1 ) {
-        $url = $this->createUrlByType( 'syncDeptUser' );
-        $wxUsers = WxApi::getInstance()->getDeptUser( $url, $deptid, $fetchChild );
+    private function getFullDeptUser($deptid = 1, $fetchChild = 1)
+    {
+        $url = $this->createUrlByType('syncDeptUser');
+        $wxUsers = WxApi::getInstance()->getDeptUser($url, $deptid, $fetchChild);
         return $wxUsers;
     }
 
     /**
      * 下载导入错误文件
      */
-    public function actionDownerror() {
+    public function actionDownerror()
+    {
         $wxqy = Ibos::app()->user->wxqy;
         $error = $wxqy['error'];
-        $header = array( 'uid', '真实姓名', '错误原因' );
+        $header = array('uid', '真实姓名', '错误原因');
         $body = array();
-        foreach ( $error as $uid => $row ) {
-            $body[] = array( $uid, iconv( 'utf-8', 'gbk', $row['realname'] ), iconv( 'utf-8', 'gbk', $row['msg'] ) );
+        foreach ($error as $uid => $row) {
+            $body[] = array($uid, iconv('utf-8', 'gbk', $row['realname']), iconv('utf-8', 'gbk', $row['msg']));
         }
-        Convert::exportCsv( '导入用户错误记录' . TIMESTAMP, $header, $body );
-        Ibos::app()->user->setState( 'wxqy', NULL );
+        Convert::exportCsv('导入用户错误记录' . TIMESTAMP, $header, $body);
+        Ibos::app()->user->setState('wxqy', null);
     }
 
-    public function actionApp() {
-        if ( false === $this->wxqyInfo['isLogin'] ) {
-            return $this->redirect( $this->createUrl( 'wxbinding/index' ) );
+    public function actionApp()
+    {
+        if (false === $this->wxqyInfo['isLogin']) {
+            return $this->redirect($this->createUrl('wxbinding/index'));
         }
-        $res = WebSite::getInstance()->fetch( 'Wxapi/Api/lists' );
-        $lists = CJSON::decode( $res );
-        $unit = Ibos::app()->setting->get( 'setting/unit' );
-        $aeskey = Ibos::app()->setting->get( 'setting/aeskey' );
+        $res = WebSite::getInstance()->fetch('Wxapi/Api/lists');
+        $lists = CJSON::decode($res);
+        $unit = Ibos::app()->setting->get('setting/unit');
+        $aeskey = Ibos::app()->setting->get('setting/aeskey');
         $app = array();
         $existApp = array();
-        foreach ( $this->wxqyInfo['app'] as $row ) {
+        foreach ($this->wxqyInfo['app'] as $row) {
             $existApp[] = $row['appid'];
         }
-        foreach ( $lists as $suiteid => $row ) {
+        foreach ($lists as $suiteid => $row) {
             $app[$suiteid] = array(
                 'name' => $row['name'],
                 'logo' => $row['logo'],
                 'desc' => $row['desc'],
-                'url' => WebSite::getInstance()->build( 'Wxapi/Api/toWx', array(
-                    'state' => base64_encode( json_encode( array(
+                'url' => WebSite::getInstance()->build('Wxapi/Api/toWx', array(
+                    'state' => base64_encode(json_encode(array(
                         'domain' => $unit['systemurl'],
                         'uid' => $this->wxqyInfo['uid'],
                         'aeskey' => $aeskey,
-                        'version' => strtolower( implode( ',', array( ENGINE, VERSION, VERSION_DATE ) ) )
-                    ) ) ),
+                        'version' => strtolower(implode(',', array(
+                            ENGINE,
+                            VERSION,
+                            VERSION_DATE
+                        )))
+                    ))),
                     'id' => $suiteid
-                ) ),
+                )),
             );
-            if ( !empty( $row['app'] ) ) {
-                foreach ( $row['app'] as $appflag => $value ) {
-                    if ( $value['enable'] ) {
+            if (!empty($row['app'])) {
+                foreach ($row['app'] as $appflag => $value) {
+                    if ($value['enable']) {
                         $app[$suiteid]['app'][] = array(
-                            'img' => 'http://www.ibos.com.cn/Wxapi/image/' . $value['appid'],
+                            'img' => 'http://www.ibos.com.cn/Wxapi/image/' . $value['appid'] . '/' . $suiteid,
                             'name' => $value['name'],
                             'desc' => $value['description'],
-                            'exist' => in_array( $value['appid'], $existApp ),
+                            'exist' => in_array($value['appid'], $existApp),
                         );
                     }
                 }
@@ -856,7 +903,7 @@ class WxsyncController extends WxController {
         $param = array(
             'list' => $app,
         );
-        return $this->render( 'applist', $param );
+        return $this->render('applist', $param);
     }
 
 }

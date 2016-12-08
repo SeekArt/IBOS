@@ -19,7 +19,8 @@ namespace application\modules\statistics\core;
 
 use CApplicationComponent;
 
-abstract class Counter extends CApplicationComponent {
+abstract class Counter extends CApplicationComponent
+{
 
     public abstract function getID();
 

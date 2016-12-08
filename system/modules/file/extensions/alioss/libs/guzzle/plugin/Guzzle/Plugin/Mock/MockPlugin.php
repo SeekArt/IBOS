@@ -29,9 +29,9 @@ class MockPlugin extends AbstractHasDispatcher implements EventSubscriberInterfa
     protected $readBodies;
 
     /**
-     * @param array $items      Array of responses or exceptions to queue
-     * @param bool  $temporary  Set to TRUE to remove the plugin when the queue is empty
-     * @param bool  $readBodies Set to TRUE to consume the entity body when a mock is served
+     * @param array $items Array of responses or exceptions to queue
+     * @param bool $temporary Set to TRUE to remove the plugin when the queue is empty
+     * @param bool $readBodies Set to TRUE to consume the entity body when a mock is served
      */
     public function __construct(array $items = null, $temporary = false, $readBodies = false)
     {
@@ -185,7 +185,7 @@ class MockPlugin extends AbstractHasDispatcher implements EventSubscriberInterfa
         if ($item instanceof Response) {
             if ($this->readBodies && $request instanceof EntityEnclosingRequestInterface) {
                 $request->getEventDispatcher()->addListener('request.sent', $f = function (Event $event) use (&$f) {
-                    while ($data = $event['request']->getBody()->read(8096));
+                    while ($data = $event['request']->getBody()->read(8096)) ;
                     // Remove the listener after one-time use
                     $event['request']->getEventDispatcher()->removeListener('request.sent', $f);
                 });

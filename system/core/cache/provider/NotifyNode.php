@@ -22,20 +22,23 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\message\model\Notify;
 use CBehavior;
 
-class NotifyNode extends CBehavior {
+class NotifyNode extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleNode' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleNode'));
     }
 
     /**
      *
      * @param type $event
      */
-    public function handleNode( $event ) {
-        Cache::set( 'notifyNode', null );
-        $notifyNode = Notify::model()->getNodeList();
-        Syscache::model()->modifyCache( 'notifyNode', $notifyNode );
+    public function handleNode($event)
+    {
+        Cache::set('NotifyNode', null);
+        $notifyNode = Notify::model()->fetchAllSortByPk('node', array('order' => '`module` DESC'));
+        Syscache::model()->modifyCache('notifyNode', $notifyNode);
     }
 
 }

@@ -6,3 +6,7 @@ var onShowClass = "";
 var onFocusClass = "input-focus";
 var onErrorClass = "input-error";
 var onCorrectClass = "input-correct";
+var onShowFn = function() {};
+var onFocusFn = function() {};
+var onErrorFn = function() {};
+var onCorrectFn = function() {};

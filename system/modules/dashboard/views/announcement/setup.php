@@ -2,6 +2,7 @@
 
 use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
+
 ?>
 
 <div class="ct">
@@ -12,7 +13,7 @@ use application\core\utils\StringUtil;
                 <span><?php echo $lang['Manage']; ?></span>
             </li>
             <li>
-                <a href="<?php echo $this->createUrl( 'announcement/add' ); ?>"><?php echo $lang['Add']; ?></a>
+                <a href="<?php echo $this->createUrl('announcement/add'); ?>"><?php echo $lang['Add']; ?></a>
             </li>
         </ul>
     </div>
@@ -23,60 +24,66 @@ use application\core\utils\StringUtil;
                 <h2 class="st"><?php echo $lang['System announcement']; ?></h2>
                 <div class="page-list">
                     <div class="page-list-header">
-                        <div class="row">	
+                        <div class="row">
                             <div class="span8">
-                                <button data-act="del" type="button" class="btn"><?php echo $lang['Delete announcement']; ?></button>
-                                <button data-act="sort" type="button" class="btn mls"><?php echo $lang['Sort']; ?></button>
+                                <button data-act="del" type="button"
+                                        class="btn"><?php echo $lang['Delete announcement']; ?></button>
+                                <button data-act="sort" type="button"
+                                        class="btn mls"><?php echo $lang['Sort']; ?></button>
                             </div>
                         </div>
                     </div>
                     <div class="page-list-mainer">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th width="30">
-                                        <label class="checkbox" for="checkbox_0">
-                                            <input type="checkbox" data-name="id" id="checkbox_0">
-                                        </label>
-                                    </th>
-                                    <th width='60'><?php echo $lang['Sort numbers']; ?></th>
-                                    <th><?php echo $lang['Author']; ?></th>
-                                    <th><?php echo $lang['Subject']; ?></th>
-                                    <th><?php echo $lang['Content']; ?></th>
-                                    <th><?php echo $lang['Announcement type']; ?></th>
-                                    <th><?php echo $lang['Start time']; ?></th>
-                                    <th><?php echo $lang['End time']; ?></th>
-                                    <th width="100"><?php echo $lang['Operation']; ?></th>
-                                </tr>
+                            <tr>
+                                <th width="30">
+                                    <label class="checkbox" for="checkbox_0">
+                                        <input type="checkbox" data-name="id" id="checkbox_0">
+                                    </label>
+                                </th>
+                                <th width='60'><?php echo $lang['Sort numbers']; ?></th>
+                                <th><?php echo $lang['Author']; ?></th>
+                                <th><?php echo $lang['Subject']; ?></th>
+                                <th><?php echo $lang['Content']; ?></th>
+                                <th><?php echo $lang['Announcement type']; ?></th>
+                                <th><?php echo $lang['Start time']; ?></th>
+                                <th><?php echo $lang['End time']; ?></th>
+                                <th width="100"><?php echo $lang['Operation']; ?></th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <?php $typeDesc = array( '0' => $lang['Announcement text'], '1' => $lang['Announcement link'] ); ?>
-                                <?php foreach ( $list as $key => $value ): ?>
-                                    <tr>
-                                        <td>
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="id[<?php echo $value['id']; ?>]" data-check='id' value="<?php echo $value['id']; ?>">
-                                            </label>
-                                        </td>
-                                        <td><input class="input-small" name="sort[<?php echo $value['id']; ?>]" type="text" value="<?php echo $value['sort']; ?>" /></td>
-                                        <td><?php echo $value['author']; ?></td>
-                                        <td><?php echo $value['subject']; ?></td>
-                                        <td><?php echo StringUtil::cutStr( $value['message'], 50 ); ?></td>
-                                        <td><?php echo $typeDesc[$value['type']]; ?></td>
-                                        <td><?php echo date( 'Y-m-d H:i', $value['starttime'] ); ?></td>
-                                        <td><?php echo date( 'Y-m-d H:i', $value['endtime'] ); ?></td>
-                                        <td>
-                                            <a href="<?php echo $this->createUrl( 'announcement/edit', array( 'id' => $value['id'] ) ); ?>" class="cbtn o-edit"></a>
-                                            <a href="<?php echo $this->createUrl( 'announcement/del', array( 'id' => $value['id'] ) ); ?>" class="cbtn o-trash mls"></a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                            <?php $typeDesc = array('0' => $lang['Announcement text'], '1' => $lang['Announcement link']); ?>
+                            <?php foreach ($list as $key => $value): ?>
+                                <tr>
+                                    <td>
+                                        <label class="checkbox">
+                                            <input type="checkbox" name="id[<?php echo $value['id']; ?>]"
+                                                   data-check='id' value="<?php echo $value['id']; ?>">
+                                        </label>
+                                    </td>
+                                    <td><input class="input-small" name="sort[<?php echo $value['id']; ?>]" type="text"
+                                               value="<?php echo $value['sort']; ?>"/></td>
+                                    <td><?php echo $value['author']; ?></td>
+                                    <td><?php echo $value['subject']; ?></td>
+                                    <td><?php echo StringUtil::cutStr($value['message'], 50); ?></td>
+                                    <td><?php echo $typeDesc[$value['type']]; ?></td>
+                                    <td><?php echo date('Y-m-d H:i', $value['starttime']); ?></td>
+                                    <td><?php echo date('Y-m-d H:i', $value['endtime']); ?></td>
+                                    <td>
+                                        <a href="<?php echo $this->createUrl('announcement/edit', array('id' => $value['id'])); ?>"
+                                           class="cbtn o-edit"></a>
+                                        <a href="<?php echo $this->createUrl('announcement/del', array('id' => $value['id'])); ?>"
+                                           class="cbtn o-trash mls"></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                             </tbody>
                         </table>
-                        <input type="hidden" name="announcementSubmit" value="<?php echo FORMHASH; ?>" />
+                        <input type="hidden" name="announcementSubmit" value="<?php echo FORMHASH; ?>"/>
                     </div>
                     <div class="page-list-footer">
-                        <?php $this->widget( 'application\core\widgets\Page', array( 'pages' => $pages ) ); ?>
+                        <?php $this->widget('application\core\widgets\Page', array('pages' => $pages)); ?>
                     </div>
                 </div>
             </div>

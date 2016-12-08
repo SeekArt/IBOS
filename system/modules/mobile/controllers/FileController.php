@@ -8,14 +8,16 @@ use application\modules\file\model\File;
 use application\modules\file\utils\FileData;
 use application\modules\file\controllers\PersonalController;
 
-class FileController extends PersonalController {
+class FileController extends PersonalController
+{
     /**
      * ICAPPLICATION组件会调用各控制器的此方法进行验证，子类可重写这个实现各自的验证
      * 规则
      * @param string $routes
      * @return boolean
      */
-    public function filterRoutes( $routes ) {
+    public function filterRoutes($routes)
+    {
         return true;
     }
 }

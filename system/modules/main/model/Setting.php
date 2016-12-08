@@ -11,7 +11,7 @@
  * setting表的数据层操作类。
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.main.model
- * @version $Id: Setting.php 7831 2016-08-12 02:17:23Z tanghang $
+ * @version $Id$
  */
 
 namespace application\modules\main\model;
@@ -20,13 +20,16 @@ use application\core\model\Model;
 use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
-class Setting extends Model {
+class Setting extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{setting}}';
     }
 
@@ -36,12 +39,13 @@ class Setting extends Model {
      * @return string
      * @author Ring
      */
-    public function fetchSettingValueByKey( $sKey ) {
+    public function fetchSettingValueByKey($sKey)
+    {
         $value = Ibos::app()->db->createCommand()
-                ->select( 'svalue' )
-                ->from( $this->tableName() )
-                ->where( " `skey` = '{$sKey}' " )
-                ->queryScalar();
+            ->select('svalue')
+            ->from($this->tableName())
+            ->where(" `skey` = '{$sKey}' ")
+            ->queryScalar();
         return $value;
     }
 
@@ -50,20 +54,21 @@ class Setting extends Model {
      * @param string $sKeys 逗号分隔的key
      * @return array
      */
-    public function fetchSettingValueByKeys( $sKeys, $autoUnserialize = false, $scope = array() ) {
+    public function fetchSettingValueByKeys($sKeys, $autoUnserialize = false, $scope = array())
+    {
         $return = array();
-        $record = $this->fetchAll( "FIND_IN_SET(skey,'{$sKeys}')" );
-        if ( !empty( $record ) ) {
-            foreach ( $record as $value ) {
-                if ( $autoUnserialize ) {
-                    if ( !empty( $scope ) ) {
-                        if ( in_array( $value['skey'], $scope ) ) {
-                            $return[$value['skey']] = StringUtil::utf8Unserialize( $value['svalue'] );
+        $record = $this->fetchAll("FIND_IN_SET(skey,'{$sKeys}')");
+        if (!empty($record)) {
+            foreach ($record as $value) {
+                if ($autoUnserialize) {
+                    if (!empty($scope)) {
+                        if (in_array($value['skey'], $scope)) {
+                            $return[$value['skey']] = StringUtil::utf8Unserialize($value['svalue']);
                         } else {
                             $return[$value['skey']] = $value['svalue'];
                         }
                     } else {
-                        $return[$value['skey']] = StringUtil::utf8Unserialize( $value['svalue'] );
+                        $return[$value['skey']] = StringUtil::utf8Unserialize($value['svalue']);
                     }
                 } else {
                     $return[$value['skey']] = $value['svalue'];
@@ -80,25 +85,27 @@ class Setting extends Model {
      * @return boolean
      * @author Ring
      */
-    public function updateSettingValueByKey( $sKey, $sValue ) {
-        $sValue = is_array( $sValue ) ? serialize( $sValue ) : $sValue;
-        $updateResult = $this->modify( $sKey, array( 'svalue' => $sValue ) );
-        return (bool) $updateResult;
+    public function updateSettingValueByKey($sKey, $sValue)
+    {
+        $sValue = is_array($sValue) ? serialize($sValue) : $sValue;
+        $updateResult = $this->modify($sKey, array('svalue' => $sValue));
+        return (bool)$updateResult;
     }
 
     /**
      * 获取全部设置
      * @return array
      */
-    public function fetchAllSetting() {
+    public function fetchAllSetting()
+    {
         $setting = array();
         $records = Ibos::app()->db->createCommand()
-                ->select( '*' )
-                ->from( $this->tableName() )
-                ->queryAll();
-        foreach ( $records as $record ) {
-            $isSerialized = ($record['svalue'] == serialize( false ) || StringUtil::utf8Unserialize( $record['svalue'] ) !== false);
-            $setting[$record['skey']] = $isSerialized ? StringUtil::utf8Unserialize( $record['svalue'] ) : $record['svalue'];
+            ->select('*')
+            ->from($this->tableName())
+            ->queryAll();
+        foreach ($records as $record) {
+            $isSerialized = ($record['svalue'] == serialize(false) || StringUtil::utf8Unserialize($record['svalue']) !== false);
+            $setting[$record['skey']] = $isSerialized ? StringUtil::utf8Unserialize($record['svalue']) : $record['svalue'];
         }
         return $setting;
     }
@@ -107,18 +114,20 @@ class Setting extends Model {
      * 设置iboscloud的值里的isopen
      * @param string $isOpen 1或者0
      */
-    public function SetIbosCloudIsOpen( $isOpen ) {
-        $ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
-        $ibosCloudArr = StringUtil::utf8Unserialize( $ibosCloud );
+    public function SetIbosCloudIsOpen($isOpen)
+    {
+        $ibosCloud = $this->fetchSettingValueByKey('iboscloud');
+        $ibosCloudArr = StringUtil::utf8Unserialize($ibosCloud);
         $ibosCloudArr['isopen'] = $isOpen;
-        $str = serialize( $ibosCloudArr );
-        $this->updateSettingValueByKey( 'iboscloud', $str );
+        $str = serialize($ibosCloudArr);
+        $this->updateSettingValueByKey('iboscloud', $str);
     }
 
-    public function getIbosCloudIsOpen() {
-        $ibosCloud = $this->fetchSettingValueByKey( 'iboscloud' );
-        $ibosCloudArray = StringUtil::utf8Unserialize( $ibosCloud );
-        return !empty($ibosCloudArray['isopen']) ;
+    public function getIbosCloudIsOpen()
+    {
+        $ibosCloud = $this->fetchSettingValueByKey('iboscloud');
+        $ibosCloudArray = StringUtil::utf8Unserialize($ibosCloud);
+        return !empty($ibosCloudArray['isopen']);
     }
 
     /**
@@ -126,14 +135,15 @@ class Setting extends Model {
      * @param mixed $settingX skey值，数组或者逗号字符串
      * @return 返回不存在的skey值
      */
-    public function checkSettingExist( $settingX ) {
-        $settingString = is_array( $settingX ) ? implode( ',', $settingX ) : $settingX;
+    public function checkSettingExist($settingX)
+    {
+        $settingString = is_array($settingX) ? implode(',', $settingX) : $settingX;
         $value = Ibos::app()->db->createCommand()
-                ->select( 'skey' )
-                ->from( $this->tableName() )
-                ->where( " FIND_IN_SET( `skey`, '{$settingString}' )" )
-                ->queryColumn();
-        return array_diff( explode( ',', $settingString ), $value );
+            ->select('skey')
+            ->from($this->tableName())
+            ->where(" FIND_IN_SET( `skey`, '{$settingString}' )")
+            ->queryColumn();
+        return array_diff(explode(',', $settingString), $value);
     }
 
     /**
@@ -141,9 +151,10 @@ class Setting extends Model {
      * @param mixed $settingX skey数组或者逗号字符串
      * @return integer 影响的行数
      */
-    public function deleteSettingValue( $settingX ) {
-        $settingString = is_array( $settingX ) ? implode( ',', $settingX ) : $settingX;
-        $count = $this->deleteAll( " FIND_IN_SET( `skey`,'{$settingString}' )" );
+    public function deleteSettingValue($settingX)
+    {
+        $settingString = is_array($settingX) ? implode(',', $settingX) : $settingX;
+        $count = $this->deleteAll(" FIND_IN_SET( `skey`,'{$settingString}' )");
         return $count;
     }
 

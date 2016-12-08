@@ -48,8 +48,8 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
     /**
      * Bind value to a cell
      *
-     * @param  PHPExcel_Cell  $cell   Cell to bind value to
-     * @param  mixed          $value  Value to bind in cell
+     * @param  PHPExcel_Cell $cell Cell to bind value to
+     * @param  mixed $value Value to bind in cell
      * @return boolean
      */
     public function bindValue(PHPExcel_Cell $cell, $value = null)
@@ -60,7 +60,7 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
         }
 
         // Set value explicit
-        $cell->setValueExplicit( $value, self::dataTypeForValue($value) );
+        $cell->setValueExplicit($value, self::dataTypeForValue($value));
 
         // Done!
         return TRUE;
@@ -69,10 +69,11 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
     /**
      * DataType for value
      *
-     * @param   mixed  $pValue
+     * @param   mixed $pValue
      * @return  string
      */
-    public static function dataTypeForValue($pValue = null) {
+    public static function dataTypeForValue($pValue = null)
+    {
         // Match the value against a few data types
         if (is_null($pValue)) {
             return PHPExcel_Cell_DataType::TYPE_NULL;

@@ -8,14 +8,14 @@ use application\modules\user\model\User;
 // 程序根目录路径
 define('PATH_ROOT', dirname(__FILE__) . '/../../');
 $defines = PATH_ROOT . '/system/defines.php';
-define('YII_DEBUG', true);
-define('TIMESTAMP', time());
-define('CALLBACK', true);
+defined('YII_DEBUG') || define('YII_DEBUG', true);
+defined('TIMESTAMP') || define('TIMESTAMP', time());
+defined('CALLBACK') || define('CALLBACK', true);
 $yii = PATH_ROOT . '/library/yii.php';
-require_once ( $defines );
-$mainConfig = require_once PATH_ROOT . '/system/config/common.php';
-require_once ( $yii );
-require_once ( '../login.php' );
+require_once($defines);
+$mainConfig = require PATH_ROOT . '/system/config/common.php';
+require_once($yii);
+require_once('../login.php');
 Yii::setPathOfAlias('application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system');
 Yii::createApplication('application\core\components\Application', $mainConfig);
 // 接收信息处理
@@ -23,27 +23,14 @@ $result = trim(file_get_contents("php://input"), " \t\n\r");
 // 解析
 if (!empty($result)) {
     $msg = CJSON::decode($result, true);
-    if(isset($msg['op'])){
+    if (isset($msg['op'])) {
         switch ($msg['op']) {
             case 'verify':
                 $res = doverify($msg['username'], $msg['password']);
                 if ($res['isSuccess'] == true) {
                     $aeskey = Setting::model()->fetchSettingValueByKey('aeskey');
                     $res['aeskey'] = $aeskey;
-                    if(isset($msg['accesstoken'])){
-                        $coinfo = array(
-                            'accesstoken' => $msg['accesstoken'],
-                            'guid' => $msg['guid'],
-                            'mobile' => $msg['mobile'],
-                            'corpid' => $msg['corpid'],
-                            'corptoken' => $msg['corptoken'],
-                            'corpshortname' => $msg['corpshortname'],
-                            'corpname' => $msg['corpname'],
-                            'corplogo' => $msg['corplogo'],
-                        );
-                        Setting::model()->updateSettingValueByKey('coinfo', serialize($coinfo));
-                        Setting::model()->updateSettingValueByKey('cobinding', 1);
-                    }
+                    Setting::model()->updateSettingValueByKey('cobinding', 1);
                 }
                 break;
 
@@ -51,7 +38,7 @@ if (!empty($result)) {
                 $res = array('isSuccess' => false, 'msg' => '未知操作');
                 break;
         }
-    }else{
+    } else {
         $res = array('isSuccess' => false, 'msg' => '数据请求不合法');
     }
     Env::iExit(json_encode($res));
@@ -63,7 +50,8 @@ if (!empty($result)) {
  * @param string $password 密码
  * @return array
  */
-function doverify($userName, $password) {
+function doverify($userName, $password)
+{
     if (StringUtil::isMobile($userName)) {
         $loginField = 'mobile';
     } else if (StringUtil::isEmail($userName)) {

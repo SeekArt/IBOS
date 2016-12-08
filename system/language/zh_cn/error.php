@@ -4,7 +4,7 @@
  * 提示信息语言包
  * @package application.modules.main.language.zh_cn
  * @link http://www.ibos.com.cn/
- * @version $Id: error.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author Ring <Ring@ibos.com.cn>
  */

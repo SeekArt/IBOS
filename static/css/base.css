@@ -2339,7 +2339,7 @@ fieldset[disabled] .btn-link:focus {
   position: absolute;
   top: 100%;
   left: 0;
-  z-index: 1000;
+  z-index: 3005;
   display: none;
   float: left;
   min-width: 160px;
@@ -5813,137 +5813,224 @@ div.jGrowl div.jGrowl-notification.primary {
   background-position: -125px -45px;
   display: block;
 }
+
+/* SelectBox start */
 .select-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.select-box-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  -webkit-opacity: 0.3;
+  -moz-opacity: 0.3;
+  -khtml-opacity: 0.3;
+  filter:alpha(opacity=30);
+  opacity: 0.3;
+  background: rgba(0, 0, 0, .3);
+}
+.select-box-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  /* IE6 and 7 */ 
+  filter: progid:DXImageTransform.Microsoft.Matrix(
+    M11=1,
+    M12=0,
+    M21=0,
+    M22=1,
+    SizingMethod='auto expand');
+  /* IE8+ - must be on one line, unfortunately */ 
+  -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod='auto expand')";
+  /*
+   * To make the transform-origin be the middle of
+   * the object.    Note: These numbers
+   * are approximations.  For more accurate results,
+   * use Internet Explorer with this tool.
+   */
+  margin-left: -350px\0; 
+  margin-top: -300px\0;
+
   -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   background-color: #fff;
   position: absolute;
-  width: 350px;
+  width: 700px;
 }
 .select-box-header {
+  position: relative;
+  height: 100%;
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
+}
+.select-box-title {
+  height: 58px;
+  line-height: 57px;
+  padding: 0 30px 0 10px;
   background-color: #3497db;
-  overflow: hidden;
+  font-size: 20px;
+  color: #fff;
+  font-family: Tahoma, Arial/9!important;
+  cursor: move;
+}
+.select-box-header, .select-box-title {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.select-box-body {
+  position: relative;
+  width: 100%;
+  zoom: 1;
+}
+.select-box-body:before,
+.select-box-body:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+.select-box-body:after {
+  clear: both;
+}
+.select-box-mainer {
+  position: relative;
+  width: 420px;
+  background: #f5f9fb;
+  float: left;
+}
+.select-box-res{
+  padding-top: 10px 0;
+}
+.select-box-mainer, .select-box-res {
+  height: 480px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+.select-box-footer {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .1);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  background-color: #F8F8F8;
+  padding: 8px;
+  text-align: right;
+  white-space: nowrap;
 }
 .select-box-nav {
-  margin: 0 0 0 -1px;
-  height: 60px;
+  height: 50px;
 }
 .select-box-nav li {
   float: left;
   list-style: none;
   border-left: 1px solid #5fade3;
 }
+.select-box-nav li:first-child {
+  border-left: none;
+}
 .select-box-nav li a {
   display: block;
-  padding: 4px 40px;
+  width: 139px;
+  box-sizing: border-box;
+  padding: 9px 0;
   line-height: 20px;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
+  text-align: center;
+  background: #2f88c5;
 }
 .select-box-nav li a > i {
-  margin: 0 auto;
-  display: block;
+  display: inline-block;
+  vertical-align: middle;
   width: 32px;
   height: 32px;
+  margin-right: 5px;
 }
 .select-box-nav li a:hover,
 .select-box-nav .active a,
 .select-box-nav .active a:hover {
   text-decoration: none;
-  background-color: #258bd1;
+  background-color: #2a7ab1;
 }
-.select-box-mainer {
-  zoom: 1;
-}
-.select-box-mainer:before,
-.select-box-mainer:after {
-  content: " ";
-  /* 1 */
-  display: table;
-  /* 2 */
-}
-.select-box-mainer:after {
-  clear: both;
-}
-.select-box-mainer-aside,
-.select-box-mainer-inner {
-  padding: 10px 0;
-  height: 300px;
-  overflow: auto;
-  /* for Ie
-    scrollBar-face-color: green;
-    scrollBar-hightLight-color: red;
-    scrollBar-3dLight-color: orange;
-    scrollBar-darkshadow-color:blue;
-    scrollBar-shadow-color:yellow;
-    scrollBar-arrow-color:purple;
-    scrollBar-track-color:black;
-    scrollBar-base-color:pink;
-    */
-  /* for webkit
-    -webkit-scrollbar: red; //滚动条整体部分
-    -webkit-scrollbar-button: green; //滚动条两端的按钮
-    -webkit-scrollbar-track //外层轨道
-    -webkit-scrollbar-track-piece// 内层轨道，滚动条中间部分（除去）
-    -webkit-scrollbar-thumb //（拖动条？滑块？滚动条里面可以拖动的那个，肿么翻译好呢？）
-    -webkit-scrollbar-corner //边角
-    -webkit-resizer //定义右下角拖动块的样式
-    */
-}
-.select-box-mainer-aside {
-  background-color: #f9fbff;
-}
-.select-box-mainer-inner {
-  width: 175px;
-  float: right;
-}
-.select-box-area {
-  padding: 5px;
-  font-size: 12px;
-}
-.select-box-area-header {
-  padding: 5px 0;
-  border-bottom: 1px solid #e4edf2;
-}
-.select-box-area-mainer {
-  padding: 10px 0;
+.select-box-query {
+  position: relative;
+  height: 40px;
+  padding: 10px 20px;
 }
 .select-box-list {
-  margin: 0;
+  padding: 0 10px;
+  height: 365px;
+  overflow: auto;
 }
-.select-box-list li {
+.select-box-res {
+  padding: 10px 0;
+}
+.select-box-ctrl {
+  display: block;
+  height: 40px;
+  font-size: 14px;
+  box-sizing: border-box;
+  padding: 10px 0;
+}
+.select-box-ctrl em {
+  font-style: normal;
+}
+.select-box-acheive {
+  margin-top: 5px;
+  height: 415px;
+  overflow: auto;
+}
+.select-box-selected-item {
+  position: relative;
   list-style: none;
-  padding: 3px 0;
+  padding: 3px 20px;
+  font-size: 14px;
+  color: #8a9aa4;
   cursor: pointer;
 }
-.select-box-list li:hover {
+.select-box-selected-item span:hover {
   color: #3497db;
 }
-.select-box-list li .checkbox {
-  margin-bottom: 0;
-  padding-left: 0;
-}
-.select-box-list li .checkbox .icon,
-.select-box-list li .checkbox .icon-to-fade {
-  left: auto;
-  right: 4px;
-  margin-top: 2px;
-}
-.select-box-list li img {
-  width: 24px;
-  height: 24px;
-  margin-right: 5px;
-}
-.select-box-list .offline img {
+.select-box-acheive .offline img {
   /*filter: Gray*/
 }
-.select-box-contact,
+.select-box-close,
+.select-box-item-close {
+  position: absolute;
+  top: 6px;
+  right: 20px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url('../image/component.png');
+  background-position: -210px -90px;
+}
+.select-box-close {
+  top: 17px;
+  width: 24px;
+  height: 24px;
+  background-position: -240px -130px;
+}
+.select-box-close:hover {
+  cursor: pointer;
+  background-position: -240px -90px;
+}
+.select-box-item-close:hover{
+  background-position: -210px -130px;
+}
+.select-box-lately,
 .select-box-department,
-.select-box-position,
-.select-box-role {
+.select-box-position {
   background-image: url('../image/select_box.png');
   background-repeat: no-repeat;
 }
@@ -5952,9 +6039,6 @@ div.jGrowl div.jGrowl-notification.primary {
 }
 .select-box-position {
   background-position: 0 -64px;
-}
-.select-box-role{
-  background-position: 0 -96px;
 }
 .select2-container-multi .select2-choices .select2-operate {
   float: right;
@@ -5968,6 +6052,30 @@ div.jGrowl div.jGrowl-notification.primary {
 .select2-container-multi .select2-choices .select2-operate .operate-btn {
   padding-left: 8px;
   padding-right: 8px;
+}
+.select-box-company-icon,
+.select-box-user-icon,
+.select-box-department-icon,
+.select-box-position-icon,
+.select-box-role-icon {
+  display: inline-block;
+  vertical-align: top;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  background-image: url('../image/user_select.png');
+}
+.select-box-user-icon {
+  background-position: 0 -60px;
+}
+.select-box-department-icon {
+  background-position: 0 -20px;
+}
+.select-box-position-icon {
+  background-position: 0 -40px;
+}
+.select-box-role-icon {
+  background-position: 0 -180px;
 }
 
 /* Toggle */

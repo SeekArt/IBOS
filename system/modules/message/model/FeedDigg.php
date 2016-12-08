@@ -10,13 +10,16 @@ use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
-class FeedDigg extends Model {
+class FeedDigg extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{feed_digg}}';
     }
 
@@ -28,19 +31,20 @@ class FeedDigg extends Model {
      * @param string $order 排序方式
      * @return array 用户数组列表
      */
-    public function fetchUserList( $feedId, $nums, $offset = 0, $order = 'ctime DESC' ) {
+    public function fetchUserList($feedId, $nums, $offset = 0, $order = 'ctime DESC')
+    {
         $criteria = array(
             'select' => 'uid,ctime',
-            'condition' => sprintf( 'feedid = %d', $feedId ),
+            'condition' => sprintf('feedid = %d', $feedId),
             'order' => $order,
             'offset' => $offset,
             'limit' => $nums
         );
-        $result = $this->fetchAll( $criteria );
-        if ( $result ) {
-            foreach ( $result as &$res ) {
-                $res['user'] = User::model()->fetchByUid( $res['uid'] );
-                $res['diggtime'] = Convert::formatDate( $res['ctime'] );
+        $result = $this->fetchAll($criteria);
+        if ($result) {
+            foreach ($result as &$res) {
+                $res['user'] = User::model()->fetchByUid($res['uid']);
+                $res['diggtime'] = Convert::formatDate($res['ctime']);
             }
         } else {
             $result = array();
@@ -54,20 +58,21 @@ class FeedDigg extends Model {
      * @param integer $uid
      * @return array
      */
-    public function checkIsDigg( $feedIds, $uid ) {
-        if ( !is_array( $feedIds ) ) {
-            $feedIds = array( $feedIds );
+    public function checkIsDigg($feedIds, $uid)
+    {
+        if (!is_array($feedIds)) {
+            $feedIds = array($feedIds);
         }
         $res = array();
-        $feedIds = array_filter( $feedIds );
-        if ( !empty( $feedIds ) ) {
+        $feedIds = array_filter($feedIds);
+        if (!empty($feedIds)) {
             $criteria = array(
                 'select' => 'feedid',
-                'condition' => sprintf( "`uid` = %d AND `feedid` IN (%s)", $uid, implode( ',', $feedIds ) ),
+                'condition' => sprintf("`uid` = %d AND `feedid` IN (%s)", $uid, implode(',', $feedIds)),
             );
 
-            $list = $this->fetchAll( $criteria );
-            foreach ( $list as $v ) {
+            $list = $this->fetchAll($criteria);
+            foreach ($list as $v) {
                 $res[$v['feedid']] = 1;
             }
         }
@@ -80,12 +85,13 @@ class FeedDigg extends Model {
      * @param integer $uid 用户ID
      * @return boolean
      */
-    public function getIsExists( $feedId, $uid ) {
+    public function getIsExists($feedId, $uid)
+    {
         $criteria = array(
             'select' => '1',
-            'condition' => sprintf( "feedid = %d AND uid = %d", $feedId, $uid )
+            'condition' => sprintf("feedid = %d AND uid = %d", $feedId, $uid)
         );
-        $result = $this->fetch( $criteria );
+        $result = $this->fetch($criteria);
         return $result ? true : false;
     }
 
@@ -95,39 +101,47 @@ class FeedDigg extends Model {
      * @param integer $uid 用户ID
      * @return boolean 赞成功与否
      */
-    public function addDigg( $feedId, $uid ) {
+    public function addDigg($feedId, $uid)
+    {
         $data ['feedid'] = $feedId;
         $data ['uid'] = $uid;
         $data['uid'] = !$data['uid'] ? Ibos::app()->user->uid : $data['uid'];
-        if ( !$data['uid'] ) {
-            $this->addError( 'addDigg', '未登录不能赞' );
+        if (!$data['uid']) {
+            $this->addError('addDigg', '未登录不能赞');
             return false;
         }
-        $isExit = $this->getIsExists( $feedId, $uid );
-        if ( $isExit ) {
-            $this->addError( 'addDigg', '你已经赞过' );
+        $isExit = $this->getIsExists($feedId, $uid);
+        if ($isExit) {
+            $this->addError('addDigg', '你已经赞过');
             return false;
         }
 
         $data ['ctime'] = time();
-        $res = $this->add( $data );
-        if ( $res ) {
-            $feed = Source::getSourceInfo( 'feed', $feedId );
-            Feed::model()->updateCounters( array( 'diggcount' => 1 ), 'feedid = ' . $feedId );
-            Feed::model()->cleanCache( $feedId );
-            $user = User::model()->fetchByUid( $uid );
+        $res = $this->add($data);
+        if ($res) {
+            $feed = Source::getSourceInfo('feed', $feedId);
+            Feed::model()->updateCounters(array('diggcount' => 1), 'feedid = ' . $feedId);
+            Feed::model()->cleanCache($feedId);
+            $user = User::model()->fetchByUid($uid);
             $config['{user}'] = $user['realname'];
-            $config['{sourceContent}'] = StringUtil::filterCleanHtml( $feed['source_body'] );
-            $config['{sourceContent}'] = str_replace( '◆', '', $config['{sourceContent}'] );
-            $config['{sourceContent}'] = StringUtil::cutStr( $config ['{sourceContent}'], 34 );
+            $config['{sourceContent}'] = strip_tags($feed['source_body']);
+            $config['{sourceContent}'] = str_replace('◆', '', $config['{sourceContent}']);
+            $config['{sourceContent}'] = StringUtil::cutStr($config ['{sourceContent}'], 34);
             $config['{url}'] = $feed['source_url'];
-            $config['{content}'] = Ibos::app()->getController()->renderPartial( 'application.modules.message.views.remindcontent', array(
+            $config['{content}'] = Ibos::app()->getController()->renderPartial('application.modules.message.views.remindcontent', array(
                 'recentFeeds' => Feed::model()->getRecentFeeds(),
-                    ), true );
-            Notify::model()->sendNotify( $feed['uid'], 'message_digg', $config );
+            ), true);
+
+            if (empty($config['{sourceContent}'])) {
+                // 处理无文字微博（纯表情或纯图片）
+                Notify::model()->sendNotify($feed['uid'], 'message_empty_digg', $config);
+            } else {
+                Notify::model()->sendNotify($feed['uid'], 'message_digg', $config);
+
+            }
             //增加积分
-            UserUtil::updateCreditByAction( 'diggweibo', $uid ); //顶
-            UserUtil::updateCreditByAction( 'diggedweibo', $feed['uid'] ); // 被顶
+            UserUtil::updateCreditByAction('diggweibo', $uid); //顶
+            UserUtil::updateCreditByAction('diggedweibo', $feed['uid']); // 被顶
         }
         return $res;
     }
@@ -138,25 +152,26 @@ class FeedDigg extends Model {
      * @param integer $uid 用户ID
      * @return boolean 取消成功与否
      */
-    public function delDigg( $feedId, $uid ) {
+    public function delDigg($feedId, $uid)
+    {
         $data['feedid'] = $feedId;
         $data['uid'] = $uid;
         $data['uid'] = !$data['uid'] ? Ibos::app()->user->uid : $data['uid'];
-        if ( !$data['uid'] ) {
-            $this->addError( 'delDigg', '未登录不能取消赞' );
+        if (!$data['uid']) {
+            $this->addError('delDigg', '未登录不能取消赞');
             return false;
         }
-        $isExit = $this->getIsExists( $feedId, $uid );
-        if ( !$isExit ) {
-            $this->addError( 'delDigg', '取消赞失败，您可能已取消过赞信息' );
+        $isExit = $this->getIsExists($feedId, $uid);
+        if (!$isExit) {
+            $this->addError('delDigg', '取消赞失败，您可能已取消过赞信息');
             return false;
         }
-        $res = $this->deleteAllByAttributes( $data );
-        if ( $res ) {
+        $res = $this->deleteAllByAttributes($data);
+        if ($res) {
             // 该条feed赞数-1
-            Feed::model()->updateCounters( array( 'diggcount' => -1 ), 'feedid=' . $feedId );
+            Feed::model()->updateCounters(array('diggcount' => -1), 'feedid=' . $feedId);
             // 更新缓存
-            Feed::model()->cleanCache( $feedId );
+            Feed::model()->cleanCache($feedId);
         }
         return $res;
     }

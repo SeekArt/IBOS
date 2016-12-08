@@ -11,7 +11,7 @@
  * 岗位表的数据层操作
  *
  * @package application.modules.position.model
- * @version $Id: Position.php 8197 2016-09-01 10:22:14Z tanghang $
+ * @version $Id$
  * @author Ring <Ring@ibos.com.cn>
  */
 
@@ -23,18 +23,22 @@ use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\position\utils\Position as PositionUtil;
 
-class Position extends Model {
+class Position extends Model
+{
 
-    public function init() {
+    public function init()
+    {
         $this->cacheLife = 0;
         parent::init();
     }
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{position}}';
     }
 
@@ -42,9 +46,10 @@ class Position extends Model {
      * 新增或保存单条记录后更新缓存
      * @return void
      */
-    public function afterSave() {
-        CacheUtil::update( 'position' );
-        CacheUtil::load( 'position' );
+    public function afterSave()
+    {
+        CacheUtil::update('position');
+        CacheUtil::load('position');
         parent::afterSave();
     }
 
@@ -52,9 +57,10 @@ class Position extends Model {
      * 删除后单条记录后更新缓存
      * @return void
      */
-    public function afterDelete() {
-        CacheUtil::update( 'position' );
-        CacheUtil::load( 'position' );
+    public function afterDelete()
+    {
+        CacheUtil::update('position');
+        CacheUtil::load('position');
         parent::afterDelete();
     }
 
@@ -65,16 +71,17 @@ class Position extends Model {
      * @param integer $offset 偏移量
      * @return array
      */
-    public function fetchAllByCatId( $catId, $limit, $offset ) {
+    public function fetchAllByCatId($catId, $limit, $offset)
+    {
         $criteria = array(
             'order' => 'sort DESC',
             'limit' => $limit,
             'offset' => $offset
         );
-        if ( $catId ) {
+        if ($catId) {
             $criteria['condition'] = "`catid` = {$catId}";
         }
-        return $this->fetchAll( $criteria );
+        return $this->fetchAll($criteria);
     }
 
     /**
@@ -84,20 +91,21 @@ class Position extends Model {
      * @param boolean $returnFirst 是否返回第一个
      * @return string
      */
-    public function fetchPosNameByPosId( $id, $glue = ',', $returnFirst = false ) {
+    public function fetchPosNameByPosId($id, $glue = ',', $returnFirst = false)
+    {
         $posArr = PositionUtil::loadPosition();
-        $posIds = is_array( $id ) ? $id : explode( ',', StringUtil::filterStr( $id ) );
+        $posIds = is_array($id) ? $id : explode(',', StringUtil::filterStr($id));
         $name = array();
-        if ( $returnFirst ) {
-            if ( isset( $posArr[$posIds[0]] ) ) {
+        if ($returnFirst) {
+            if (isset($posArr[$posIds[0]])) {
                 $name[] = $posArr[$posIds[0]]['posname'];
             }
         } else {
-            foreach ( $posIds as $posId ) {
-                $name[] = isset( $posArr[$posId] ) ? $posArr[$posId]['posname'] : null;
+            foreach ($posIds as $posId) {
+                $name[] = isset($posArr[$posId]) ? $posArr[$posId]['posname'] : null;
             }
         }
-        return implode( $glue, $name );
+        return implode($glue, $name);
     }
 
     /**
@@ -105,24 +113,26 @@ class Position extends Model {
      * @param  integer $uid 用户 uid
      * @return string      职位名，不存在返回空字符串
      */
-    public function fetchPosNameByUid( $uid ) {
-        $posid = PositionRelated::model()->fetchAllPositionIdByUid( $uid );
-        $position = $this->fetchByPk( $posid );
-        if ( empty( $position ) ) {
+    public function fetchPosNameByUid($uid)
+    {
+        $posid = PositionRelated::model()->fetchAllPositionIdByUid($uid);
+        $position = $this->fetchByPk($posid);
+        if (empty($position)) {
             return '';
         }
         return $position['posname'];
     }
 
-    public function findPositionNameIndexByPositionid( $positionidX ) {
-        $positionString = is_array( $positionidX ) ? implode( ',', $positionidX ) : $positionidX;
+    public function findPositionNameIndexByPositionid($positionidX)
+    {
+        $positionString = is_array($positionidX) ? implode(',', $positionidX) : $positionidX;
         $positionArray = Ibos::app()->db->createCommand()
-                ->select( 'positionid,posname' )
-                ->from( $this->tableName() )
-                ->where( " FIND_IN_SET( `positionid`, '{$positionString}')" )
-                ->queryAll();
+            ->select('positionid,posname')
+            ->from($this->tableName())
+            ->where(" FIND_IN_SET( `positionid`, '{$positionString}')")
+            ->queryAll();
         $return = array();
-        foreach ( $positionArray as $position ) {
+        foreach ($positionArray as $position) {
             $return[$position['positionid']] = $position['posname'];
         }
         return $return;
@@ -133,16 +143,26 @@ class Position extends Model {
      * @param  integer $positionid 岗位 ID
      * @return integer             在职人数
      */
-    public function getPositionUserNumById( $positionid )
+    public function getPositionUserNumById($positionid)
     {
-        $position = $this->fetchByPk( $positionid );
-        return !empty( $position ) ? $position['number'] : 0;
+        $position = $this->fetchByPk($positionid);
+        return !empty($position) ? $position['number'] : 0;
     }
 
-    /*
+    /**
      * 根据岗位ID来更新对应的岗位人数
+     *
+     * @param integer $positionId
+     * @param integer $number
+     * @return mixed
      */
-    public function updatePositionNum($positionid,$number){
-        $this->updateAll(array('number' => $number),'`positionid` = :positionid',array(':positionid' => $positionid));
+    public function updatePositionNum($positionId, $number)
+    {
+        $positionId = (int)$positionId;
+        $number = (int)$number;
+
+        return Ibos::app()->db->createCommand()
+            ->update($this->tableName(), array('number' => $number), " `positionid` = '{$positionId}' ");
     }
+
 }

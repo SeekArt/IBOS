@@ -18,13 +18,15 @@ namespace application\modules\recruit\components;
 
 use application\modules\recruit\model\ResumeStats;
 
-class TalentFlowCounter extends TimeCounter {
+class TalentFlowCounter extends TimeCounter
+{
 
     /**
      * 返回当前统计器标识
      * @return string
      */
-    public function getID() {
+    public function getID()
+    {
         return 'talentFlow';
     }
 
@@ -33,23 +35,24 @@ class TalentFlowCounter extends TimeCounter {
      * @staticvar array $return 静态统计结果缓存
      * @return array
      */
-    public function getCount() {
+    public function getCount()
+    {
         static $return = array();
-        if ( empty( $return ) ) {
+        if (empty($return)) {
             $time = $this->getTimeScope();
-            $list = ResumeStats::model()->fetchAllByTime( $time['start'], $time['end'] );
+            $list = ResumeStats::model()->fetchAllByTime($time['start'], $time['end']);
             $statsTemp = array();
-            if ( !empty( $list ) ) {
-                foreach ( $list as $stat ) {
+            if (!empty($list)) {
+                foreach ($list as $stat) {
                     $statsTemp[$stat['datetime']] = $stat;
                 }
             }
             // 补全缺失值
             $type = $this->getType();
-            if ( $type == 'week' || $type == 'month' ) {
-                $return = $this->ReplenishingWeekOrMonth( $statsTemp, $time );
+            if ($type == 'week' || $type == 'month') {
+                $return = $this->ReplenishingWeekOrMonth($statsTemp, $time);
             } else {
-                $return = $this->ReplenishingDay( $statsTemp, $time );
+                $return = $this->ReplenishingDay($statsTemp, $time);
             }
         }
         return $return;
@@ -61,20 +64,21 @@ class TalentFlowCounter extends TimeCounter {
      * @param array $time
      * @return array
      */
-    protected function ReplenishingDay( $stats, $time ) {
-        if ( empty( $stats ) ) {
+    protected function ReplenishingDay($stats, $time)
+    {
+        if (empty($stats)) {
             return $stats;
         }
         $return = array();
-        $startDateTime = strtotime( date( 'Y-m-d', $time['start'] ) );
-        $endDateTime = strtotime( date( 'Y-m-d', $time['end'] ) );
-        for ( $i = $startDateTime; $i <= $endDateTime; $i += 86400 ) {
-            if ( in_array( $i, array_keys( $stats ) ) ) {
-                $return['new']['list'][$i] = intval( $stats[$i]['new'] );
-                $return['pending']['list'][$i] = intval( $stats[$i]['pending'] );
-                $return['interview']['list'][$i] = intval( $stats[$i]['interview'] );
-                $return['employ']['list'][$i] = intval( $stats[$i]['employ'] );
-                $return['eliminate']['list'][$i] = intval( $stats[$i]['eliminate'] );
+        $startDateTime = strtotime(date('Y-m-d', $time['start']));
+        $endDateTime = strtotime(date('Y-m-d', $time['end']));
+        for ($i = $startDateTime; $i <= $endDateTime; $i += 86400) {
+            if (in_array($i, array_keys($stats))) {
+                $return['new']['list'][$i] = intval($stats[$i]['new']);
+                $return['pending']['list'][$i] = intval($stats[$i]['pending']);
+                $return['interview']['list'][$i] = intval($stats[$i]['interview']);
+                $return['employ']['list'][$i] = intval($stats[$i]['employ']);
+                $return['eliminate']['list'][$i] = intval($stats[$i]['eliminate']);
             } else {
                 $return['new']['list'][$i] = 0;
                 $return['pending']['list'][$i] = 0;
@@ -96,15 +100,16 @@ class TalentFlowCounter extends TimeCounter {
      * @param array $list
      * @return type
      */
-    protected function ReplenishingWeekOrMonth( $stats ) {
-        if ( empty( $stats ) ) {
+    protected function ReplenishingWeekOrMonth($stats)
+    {
+        if (empty($stats)) {
             return $stats;
         }
         // 为应该要显示的所有日期显示默认值 '-',并且键值对换
         $dateScopeTmp = $this->getDateScope();
-        $dateScope = array_flip( $dateScopeTmp );
+        $dateScope = array_flip($dateScopeTmp);
         // 获取正确的数据显示
-        $ret = $this->getLegal( $dateScope, $stats );
+        $ret = $this->getLegal($dateScope, $stats);
         return $ret;
     }
 
@@ -113,24 +118,25 @@ class TalentFlowCounter extends TimeCounter {
      * @param array $dateScope 要显示的日期范围，
      * @param array $stats 结果集
      */
-    private function getLegal( $dateScope, $stats ) {
+    private function getLegal($dateScope, $stats)
+    {
         $return = array();
-        foreach ( $dateScope as $k => $date ) {
+        foreach ($dateScope as $k => $date) {
             $return['new']['list'][$k] = 0;
             $return['pending']['list'][$k] = 0;
             $return['interview']['list'][$k] = 0;
             $return['employ']['list'][$k] = 0;
             $return['eliminate']['list'][$k] = 0;
-            list($st, $et) = explode( ':', $date );
-            foreach ( $stats as $datetime => $stat ) {
+            list($st, $et) = explode(':', $date);
+            foreach ($stats as $datetime => $stat) {
                 // 累计所有在内的数量
-                if ( strtotime( $st ) <= $stat['datetime'] && strtotime( $et ) >= $stat['datetime'] ) {
+                if (strtotime($st) <= $stat['datetime'] && strtotime($et) >= $stat['datetime']) {
                     $return['new']['list'][$k] += $stat['new'];
                     $return['pending']['list'][$k] += $stat['pending'];
                     $return['interview']['list'][$k] += $stat['interview'];
                     $return['employ']['list'][$k] += $stat['employ'];
                     $return['eliminate']['list'][$k] += $stat['eliminate'];
-                    unset( $stats[$datetime] );
+                    unset($stats[$datetime]);
                 }
             }
         }

@@ -2,7 +2,7 @@
 
 /**
  * 主模块默认语言包
- * @version $Id: default.php 8231 2016-09-02 09:29:13Z tanghang $
+ * @version $Id$
  */
 return array(
     'not post request' => '不是post请求',

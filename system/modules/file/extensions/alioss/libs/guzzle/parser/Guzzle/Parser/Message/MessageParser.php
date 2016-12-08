@@ -26,11 +26,11 @@ class MessageParser extends AbstractMessageParser
         }
 
         $parsed = array(
-            'method'   => strtoupper($parts['start_line'][0]),
+            'method' => strtoupper($parts['start_line'][0]),
             'protocol' => $protocol,
-            'version'  => $version,
-            'headers'  => $parts['headers'],
-            'body'     => $parts['body']
+            'version' => $version,
+            'headers' => $parts['headers'],
+            'body' => $parts['body']
         );
 
         $parsed['request_url'] = $this->getUrlPartsFromMessage($parts['start_line'][1], $parsed);
@@ -48,12 +48,12 @@ class MessageParser extends AbstractMessageParser
         list($protocol, $version) = explode('/', trim($parts['start_line'][0]));
 
         return array(
-            'protocol'      => $protocol,
-            'version'       => $version,
-            'code'          => $parts['start_line'][1],
+            'protocol' => $protocol,
+            'version' => $version,
+            'code' => $parts['start_line'][1],
             'reason_phrase' => isset($parts['start_line'][2]) ? $parts['start_line'][2] : '',
-            'headers'       => $parts['headers'],
-            'body'          => $parts['body']
+            'headers' => $parts['headers'],
+            'body' => $parts['body']
         );
     }
 
@@ -103,8 +103,8 @@ class MessageParser extends AbstractMessageParser
 
         return array(
             'start_line' => $startLine,
-            'headers'    => $headers,
-            'body'       => $body
+            'headers' => $headers,
+            'body' => $body
         );
     }
 }

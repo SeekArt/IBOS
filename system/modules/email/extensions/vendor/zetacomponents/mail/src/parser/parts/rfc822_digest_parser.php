@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -62,7 +62,7 @@ class ezcMailRfc822DigestParser extends ezcMailPartParser
      *
      * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct(ezcMailHeadersHolder $headers)
     {
         $this->headers = $headers;
         $this->mailParser = new ezcMailRfc822Parser();
@@ -76,10 +76,10 @@ class ezcMailRfc822DigestParser extends ezcMailPartParser
      *
      * @param string $line
      */
-    public function parseBody( $line )
+    public function parseBody($line)
     {
-        $this->mailParser->parseBody( $line );
-        $this->size += strlen( $line );
+        $this->mailParser->parseBody($line);
+        $this->size += strlen($line);
     }
 
     /**
@@ -89,10 +89,11 @@ class ezcMailRfc822DigestParser extends ezcMailPartParser
      */
     public function finish()
     {
-        $digest = new ezcMailRfc822Digest( $this->mailParser->finish() );
-        ezcMailPartParser::parsePartHeaders( $this->headers, $digest );
+        $digest = new ezcMailRfc822Digest($this->mailParser->finish());
+        ezcMailPartParser::parsePartHeaders($this->headers, $digest);
         $digest->size = $this->size;
         return $digest;
     }
 }
+
 ?>

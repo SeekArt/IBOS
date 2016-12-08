@@ -45,26 +45,26 @@ class Cookie implements ToArrayInterface
     public function __construct(array $data = array())
     {
         static $defaults = array(
-            'name'        => '',
-            'value'       => '',
-            'domain'      => '',
-            'path'        => '/',
-            'expires'     => null,
-            'max_age'     => 0,
-            'comment'     => null,
+            'name' => '',
+            'value' => '',
+            'domain' => '',
+            'path' => '/',
+            'expires' => null,
+            'max_age' => 0,
+            'comment' => null,
             'comment_url' => null,
-            'port'        => array(),
-            'version'     => null,
-            'secure'      => false,
-            'discard'     => false,
-            'http_only'   => false
+            'port' => array(),
+            'version' => null,
+            'secure' => false,
+            'discard' => false,
+            'http_only' => false
         );
 
         $this->data = array_merge($defaults, $data);
         // Extract the expires value and turn it into a UNIX timestamp if needed
         if (!$this->getExpires() && $this->getMaxAge()) {
             // Calculate the expires date
-            $this->setExpires(time() + (int) $this->getMaxAge());
+            $this->setExpires(time() + (int)$this->getMaxAge());
         } elseif ($this->getExpires() && !is_numeric($this->getExpires())) {
             $this->setExpires(strtotime($this->getExpires()));
         }
@@ -253,7 +253,7 @@ class Cookie implements ToArrayInterface
      */
     public function setSecure($secure)
     {
-        return $this->setData('secure', (bool) $secure);
+        return $this->setData('secure', (bool)$secure);
     }
 
     /**
@@ -391,7 +391,7 @@ class Cookie implements ToArrayInterface
     /**
      * Set a cookie data attribute
      *
-     * @param string $name  Name of the attribute to set
+     * @param string $name Name of the attribute to set
      * @param string $value Value to set
      *
      * @return Cookie
@@ -447,7 +447,7 @@ class Cookie implements ToArrayInterface
             if (substr($domain, -strlen($realDomain)) === $realDomain) {
                 // Match exact or 1 deep subdomain.
                 return !strcasecmp($domain, $realDomain) ||
-                    substr_count(substr($domain, 0, -strlen($realDomain)), '.') === 1;
+                substr_count(substr($domain, 0, -strlen($realDomain)), '.') === 1;
             }
         }
 
@@ -513,7 +513,7 @@ class Cookie implements ToArrayInterface
     /**
      * Set a value and return the cookie object
      *
-     * @param string $key   Key to set
+     * @param string $key Key to set
      * @param string $value Value to set
      *
      * @return Cookie

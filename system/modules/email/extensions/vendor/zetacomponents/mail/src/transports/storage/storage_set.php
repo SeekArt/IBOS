@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -118,11 +118,11 @@ class ezcMailStorageSet implements ezcMailParserSet
      * @param ezcMailParserSet $set
      * @param string $location
      */
-    public function __construct( ezcMailParserSet $set, $location )
+    public function __construct(ezcMailParserSet $set, $location)
     {
         $this->set = $set;
         $this->location = $location;
-        $this->path = rtrim( $this->location, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+        $this->path = rtrim($this->location, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->hasMoreMailData = false;
         $this->counter = 0;
     }
@@ -134,9 +134,8 @@ class ezcMailStorageSet implements ezcMailParserSet
      */
     public function __destruct()
     {
-        if ( is_resource( $this->writer ) )
-        {
-            fclose( $this->writer );
+        if (is_resource($this->writer)) {
+            fclose($this->writer);
             $this->writer = null;
         }
     }
@@ -155,14 +154,13 @@ class ezcMailStorageSet implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        if ( $this->hasMoreMailData === false )
-        {
+        if ($this->hasMoreMailData === false) {
             $this->nextMail();
             $this->hasMoreMailData = true;
         }
 
         $line = $this->set->getNextLine();
-        fputs( $this->writer, $line );
+        fputs($this->writer, $line);
         return $line;
     }
 
@@ -175,22 +173,19 @@ class ezcMailStorageSet implements ezcMailParserSet
      */
     public function nextMail()
     {
-        if ( $this->writer !== null )
-        {
-            fclose( $this->writer );
+        if ($this->writer !== null) {
+            fclose($this->writer);
             $this->files[] = $this->path . $this->file;
             $this->writer = null;
         }
         $mail = $this->set->nextMail();
-        if ( $mail === true || $this->hasMoreMailData === false )
-        {
+        if ($mail === true || $this->hasMoreMailData === false) {
             $this->counter++;
 
             // Temporary file name for the mail source
             $this->file = getmypid() . '-' . time() . '-' . $this->counter;
-            $writer = fopen( $this->path . $this->file, 'w' );
-            if ( $writer !== false )
-            {
+            $writer = fopen($this->path . $this->file, 'w');
+            if ($writer !== false) {
                 $this->writer = $writer;
             }
             return $mail;
@@ -221,4 +216,5 @@ class ezcMailStorageSet implements ezcMailParserSet
         return $this->files;
     }
 }
+
 ?>

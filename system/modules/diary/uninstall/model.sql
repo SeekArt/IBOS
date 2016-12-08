@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS `{{diary_share}}`;
 DROP TABLE IF EXISTS `{{diary_attention}}`;
 DROP TABLE IF EXISTS `{{diary_statistics}}`;
 DROP TABLE IF EXISTS `{{calendar_record}}`;
+DROP TABLE IF EXISTS `{{diary_direct}}`;
 
 DELETE FROM `{{setting}}` WHERE `skey` = 'diaryconfig';
 DELETE FROM `{{nav}}` WHERE `module` = 'diary';

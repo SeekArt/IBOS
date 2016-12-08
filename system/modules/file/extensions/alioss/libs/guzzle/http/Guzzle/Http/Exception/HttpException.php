@@ -7,4 +7,6 @@ use Guzzle\Common\Exception\GuzzleException;
 /**
  * Http exception interface
  */
-interface HttpException extends GuzzleException {}
+interface HttpException extends GuzzleException
+{
+}

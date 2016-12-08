@@ -18,7 +18,8 @@ namespace application\modules\main\utils;
 
 use application\core\utils\Ibos;
 
-class SinglePage {
+class SinglePage
+{
 
     /**
      * 切换内容模板的内容,模板内一定要有id=page_content的div，否则抛出错误
@@ -26,15 +27,16 @@ class SinglePage {
      * @param string $replace 要替换page_content的html
      * @return object
      */
-    public static function parse( $html, $replace ) {
+    public static function parse($html, $replace)
+    {
         // 加载parser类库
-        Ibos::import( 'application\extensions\simple_html_dom', true );
-        $doc = \application\extensions\str_get_html( $html );
-        if ( !$doc ) {
+        Ibos::import('application\extensions\simple_html_dom', true);
+        $doc = \application\extensions\str_get_html($html);
+        if (!$doc) {
             return null;
         }
-        $e = $doc->find( 'div[id=page_content]', 0 );
-        if ( !$e ) {
+        $e = $doc->find('div[id=page_content]', 0);
+        if (!$e) {
             return null;
         }
         $e->innertext = $replace;
@@ -46,15 +48,16 @@ class SinglePage {
      * @param string $file 模板文件路径
      * @return object
      */
-    public static function getTplEditorContent( $file ) {
+    public static function getTplEditorContent($file)
+    {
         // 加载parser类库
-        Ibos::import( 'application\extensions\simple_html_dom', true );
-        $doc = \application\extensions\str_get_html( $file );
-        if ( !$doc ) {
+        Ibos::import('application\extensions\simple_html_dom', true);
+        $doc = \application\extensions\str_get_html($file);
+        if (!$doc) {
             return null;
         }
-        $e = $doc->find( 'div[id=page_content]', 0 );
-        if ( !$e ) {
+        $e = $doc->find('div[id=page_content]', 0);
+        if (!$e) {
             return null;
         }
         return $e->innertext;
@@ -63,19 +66,20 @@ class SinglePage {
     /**
      * 获取模板
      */
-    public static function getAllTpls() {
+    public static function getAllTpls()
+    {
         $tplPath = "data/page/"; // 单页图文模板目录
-        $allowExt = array( 'php' ); // 允许的单页图文文件后缀
+        $allowExt = array('php'); // 允许的单页图文文件后缀
         // 遍历单页图文所有模板
-        $dir = opendir( $tplPath );
+        $dir = opendir($tplPath);
         $tpls = array();
-        while ( ( $file = readdir( $dir ) ) !== false ) {
-            if ( $file != "." && $file != ".." && in_array( pathinfo( $file, PATHINFO_EXTENSION ), $allowExt ) ) {
+        while (($file = readdir($dir)) !== false) {
+            if ($file != "." && $file != ".." && in_array(pathinfo($file, PATHINFO_EXTENSION), $allowExt)) {
                 $tpls[] = $file;
             }
         }
-        closedir( $dir );
-        return self::handleFileName( $tpls );
+        closedir($dir);
+        return self::handleFileName($tpls);
     }
 
     /**
@@ -83,13 +87,14 @@ class SinglePage {
      * @param array $files 处理的文件数组
      * @return array
      */
-    public static function handleFileName( $files ) {
+    public static function handleFileName($files)
+    {
         $ret = array();
-        if ( !empty( $files ) ) {
-            foreach ( $files as $file ) {
-                $info = pathinfo( $file );
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $info = pathinfo($file);
                 $filename = $info['filename'];
-                $ret[$filename] = Ibos::lang( 'Page_' . $filename );
+                $ret[$filename] = Ibos::lang('Page_' . $filename);
             }
         }
         return $ret;

@@ -9,9 +9,9 @@
  */
 /**
  *  ipbanned表的数据层操作
- * 
+ *
  * @package application.modules.dashboard.model
- * @version $Id: IpBanned.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,35 +20,45 @@ namespace application\modules\dashboard\model;
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 
-class IpBanned extends Model {
+class IpBanned extends Model
+{
 
-    public function init() {
+    public function init()
+    {
         $this->cacheLife = 0;
         parent::init();
     }
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{ipbanned}}';
     }
-    public function afterSave() {
-        CacheUtil::update( 'Ipbanned' );
-        CacheUtil::load( 'Ipbanned' );
+
+    public function afterSave()
+    {
+        CacheUtil::update('Ipbanned');
+        CacheUtil::load('Ipbanned');
         parent::afterSave();
     }
 
-    public function fetchAllOrderDateline() {
-        return parent::fetchAll( array( 'order' => 'dateline DESC' ) );
+    public function fetchAllOrderDateline()
+    {
+        return parent::fetchAll(array('order' => 'dateline DESC'));
     }
 
-    public function updateExpirationById( $id, $expiration, $admin ) {
-        return $this->updateByPk( $id, array( 'expiration' => $expiration ), "admin = '{$admin}'" );
+    public function updateExpirationById($id, $expiration, $admin)
+    {
+        return $this->updateByPk($id, array('expiration' => $expiration), "admin = '{$admin}'");
     }
 
-    public function DeleteByExpiration( $expiration ) {
-        return $this->deleteAll( 'expiration < :exp', array( ':exp' => $expiration ) );
+    public function DeleteByExpiration($expiration)
+    {
+        return $this->deleteAll('expiration < :exp', array(':exp' => $expiration));
     }
 
 }

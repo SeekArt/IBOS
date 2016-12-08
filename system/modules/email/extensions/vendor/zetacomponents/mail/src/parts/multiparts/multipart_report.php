@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -64,7 +64,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
     public function __construct()
     {
         $args = func_get_args();
-        parent::__construct( $args );
+        parent::__construct($args);
         $this->reportType = "delivery-status";
     }
 
@@ -77,19 +77,18 @@ class ezcMailMultipartReport extends ezcMailMultipart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'reportType':
                 $this->properties[$name] = $value;
-                $this->setHeader( 'Content-Type', 'multipart/' . $this->multipartType() . '; ' .
-                                  'report-type=' . $this->reportType . '; ' .
-                                  'boundary="' . $this->boundary . '"' );
+                $this->setHeader('Content-Type', 'multipart/' . $this->multipartType() . '; ' .
+                    'report-type=' . $this->reportType . '; ' .
+                    'boundary="' . $this->boundary . '"');
                 break;
 
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -103,16 +102,15 @@ class ezcMailMultipartReport extends ezcMailMultipart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'reportType':
                 return $this->properties[$name];
                 break;
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -124,15 +122,14 @@ class ezcMailMultipartReport extends ezcMailMultipart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'reportType':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -141,7 +138,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function appendPart( ezcMailPart $part )
+    public function appendPart(ezcMailPart $part)
     {
         $this->parts[] = $part;
     }
@@ -161,7 +158,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function setReadablePart( ezcMailPart $part )
+    public function setReadablePart(ezcMailPart $part)
     {
         $this->parts[0] = $part;
     }
@@ -173,8 +170,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getReadablePart()
     {
-        if ( isset( $this->parts[0] ) )
-        {
+        if (isset($this->parts[0])) {
             return $this->parts[0];
         }
         return null;
@@ -185,7 +181,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function setMachinePart( ezcMailPart $part )
+    public function setMachinePart(ezcMailPart $part)
     {
         $this->parts[1] = $part;
     }
@@ -197,8 +193,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getMachinePart()
     {
-        if ( isset( $this->parts[1] ) )
-        {
+        if (isset($this->parts[1])) {
             return $this->parts[1];
         }
         return null;
@@ -209,7 +204,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function setOriginalPart( ezcMailPart $part )
+    public function setOriginalPart(ezcMailPart $part)
     {
         $this->parts[2] = $part;
     }
@@ -221,8 +216,7 @@ class ezcMailMultipartReport extends ezcMailMultipart
      */
     public function getOriginalPart()
     {
-        if ( isset( $this->parts[2] ) )
-        {
+        if (isset($this->parts[2])) {
             return $this->parts[2];
         }
         return null;
@@ -238,4 +232,5 @@ class ezcMailMultipartReport extends ezcMailMultipart
         return "report";
     }
 }
+
 ?>

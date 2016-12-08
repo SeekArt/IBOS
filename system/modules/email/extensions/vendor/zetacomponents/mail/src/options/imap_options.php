@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -57,11 +57,11 @@ class ezcMailImapTransportOptions extends ezcMailTransportOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct(array $options = array())
     {
         $this->uidReferencing = false;
 
-        parent::__construct( $options );
+        parent::__construct($options);
     }
 
     /**
@@ -75,21 +75,20 @@ class ezcMailImapTransportOptions extends ezcMailTransportOptions
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'uidReferencing':
-                if ( !is_bool( $value ) )
-                {
-                    throw new ezcBaseValueException( $name, $value, 'bool' );
+                if (!is_bool($value)) {
+                    throw new ezcBaseValueException($name, $value, 'bool');
                 }
                 $this->properties[$name] = $value;
                 break;
 
             default:
-                parent::__set( $name, $value );
+                parent::__set($name, $value);
         }
     }
 }
+
 ?>

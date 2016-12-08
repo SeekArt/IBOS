@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -39,9 +39,10 @@ class ezcBaseFunctionalityNotSupportedException extends ezcBaseException
      * @param string $message The message to throw
      * @param string $reason The reason for the exception
      */
-    function __construct( $message, $reason )
+    function __construct($message, $reason)
     {
-        parent::__construct( "{$message} is not supported. Reason: {$reason}." );
+        parent::__construct("{$message} is not supported. Reason: {$reason}.");
     }
 }
+
 ?>

@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -56,10 +56,10 @@ class ezcMailVariableSet implements ezcMailParserSet
      *
      * @param string $mail
      */
-    public function __construct( $mail )
+    public function __construct($mail)
     {
-        $this->mail = preg_split( "/\r\n|\n/", $mail );
-        reset( $this->mail );
+        $this->mail = preg_split("/\r\n|\n/", $mail);
+        reset($this->mail);
     }
 
     /**
@@ -72,11 +72,10 @@ class ezcMailVariableSet implements ezcMailParserSet
      */
     public function getNextLine()
     {
-        $line = current( $this->mail );
-        next( $this->mail );
+        $line = current($this->mail);
+        next($this->mail);
 
-        if ( $line === false )
-        {
+        if ($line === false) {
             return null;
         }
 
@@ -102,7 +101,8 @@ class ezcMailVariableSet implements ezcMailParserSet
      */
     public function hasData()
     {
-        return ( count( $this->mail ) > 1 );
+        return (count($this->mail) > 1);
     }
 }
+
 ?>

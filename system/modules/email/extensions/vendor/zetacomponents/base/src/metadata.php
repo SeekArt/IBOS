@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogentag//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * Base class implements ways of fetching information about the installed
  * eZ Components. It knows whether to use the PEAR registry or the bundled XML
@@ -43,13 +44,12 @@ class ezcBaseMetaData
      *
      * @param string $installMethod
      */
-    public function __construct( $installMethod = NULL )
+    public function __construct($installMethod = NULL)
     {
         $installMethod = $installMethod !== NULL ? $installMethod : ezcBase::getInstallMethod();
 
         // figure out which reader to use
-        switch ( $installMethod )
-        {
+        switch ($installMethod) {
             case 'tarball':
                 $this->reader = new ezcBaseMetaDataTarballReader;
                 break;
@@ -57,7 +57,7 @@ class ezcBaseMetaData
                 $this->reader = new ezcBaseMetaDataPearReader;
                 break;
             default:
-                throw new ezcBaseMetaDataReaderException( "Unknown install method '$installMethod'." );
+                throw new ezcBaseMetaDataReaderException("Unknown install method '$installMethod'.");
                 break;
         }
     }
@@ -95,9 +95,9 @@ class ezcBaseMetaData
      *
      * @return bool
      */
-    public function isComponentInstalled( $componentName )
+    public function isComponentInstalled($componentName)
     {
-        return $this->reader->isComponentInstalled( $componentName );
+        return $this->reader->isComponentInstalled($componentName);
     }
 
     /**
@@ -106,9 +106,9 @@ class ezcBaseMetaData
      *
      * @return string
      */
-    public function getComponentVersion( $componentName )
+    public function getComponentVersion($componentName)
     {
-        return $this->reader->getComponentVersion( $componentName );
+        return $this->reader->getComponentVersion($componentName);
     }
 
     /**
@@ -121,16 +121,14 @@ class ezcBaseMetaData
      *
      * @return array(string=>string).
      */
-    public function getComponentDependencies( $componentName = null )
+    public function getComponentDependencies($componentName = null)
     {
-        if ( $componentName === null )
-        {
+        if ($componentName === null) {
             return $this->reader->getComponentDependencies();
-        }
-        else
-        {
-            return $this->reader->getComponentDependencies( $componentName );
+        } else {
+            return $this->reader->getComponentDependencies($componentName);
         }
     }
 }
+
 ?>

@@ -11,16 +11,19 @@ use application\modules\user\model\UserCount;
 use application\modules\user\model\UserGroup;
 use application\modules\user\utils\User as UserUtil;
 
-class Credit extends System {
+class Credit extends System
+{
 
     private $_coef = 1;
     private $_extraSql = array();
 
-    public static function getInstance($className = __CLASS__) {
+    public static function getInstance($className = __CLASS__)
+    {
         return parent::getInstance($className);
     }
 
-    public function setExtraSql($extra) {
+    public function setExtraSql($extra)
+    {
         $this->_extraSql = $extra;
     }
 
@@ -33,7 +36,8 @@ class Credit extends System {
      * @param integer $update 是否及时更新数据表
      * @return array 积分规则
      */
-    public function execRule($action, $uid = 0, $needle = '', $coef = 1, $update = 1) {
+    public function execRule($action, $uid = 0, $needle = '', $coef = 1, $update = 1)
+    {
         $this->_coef = $coef;
         $uid = intval($uid);
         $rule = $this->getRule($action); //获取积分规则
@@ -185,11 +189,12 @@ class Credit extends System {
         }
         $rule['updateCredit'] = $updateCredit;
         //返回积分规则前，将用户缓存表对应的用户积分更新
-        UserUtil::wrapUserInfo( $uid, true, true, true );
+        UserUtil::wrapUserInfo($uid, true, true, true);
         return $rule;
     }
 
-    public function updateCreditByRule($rule, $uids = 0, $coef = 1) {
+    public function updateCreditByRule($rule, $uids = 0, $coef = 1)
+    {
         $this->_coef = intval($coef);
         $uids = $uids ? $uids : intval(Ibos::app()->user->uid);
         $rule = is_array($rule) ? $rule : $this->getRule($rule);
@@ -203,7 +208,7 @@ class Credit extends System {
             }
         }
         if ($updateCredit || $this->_extraSql) {
-            $this->updateUserCount($creditArr, $uids, is_array($uids) ? false : true, $this->_coef > 0 ? urldecode($rule['rulenameuni']) : '' );
+            $this->updateUserCount($creditArr, $uids, is_array($uids) ? false : true, $this->_coef > 0 ? urldecode($rule['rulenameuni']) : '');
         }
     }
 
@@ -214,7 +219,8 @@ class Credit extends System {
      * @param type $checkGroup
      * @param type $ruletxt
      */
-    public function updateUserCount($creditArr, $uids = 0, $checkGroup = true, $ruletxt = '') {
+    public function updateUserCount($creditArr, $uids = 0, $checkGroup = true, $ruletxt = '')
+    {
         if (Ibos::app()->user->isGuest) {
             return;
         }
@@ -277,7 +283,8 @@ class Credit extends System {
      * @param boolean $update
      * @return int
      */
-    public function countCredit($uid, $update = true) {
+    public function countCredit($uid, $update = true)
+    {
         $credits = 0;
         $creditsformula = Ibos::app()->setting->get('setting/creditsformula');
         if ($uid && !empty($creditsformula)) {
@@ -300,7 +307,8 @@ class Credit extends System {
      * @param integer $uid
      * @return int
      */
-    public function checkUserGroup($uid) {
+    public function checkUserGroup($uid)
+    {
         $uid = intval($uid);
         $user = User::model()->fetchByUid($uid);
         if (empty($user)) {
@@ -337,9 +345,9 @@ class Credit extends System {
         // 发送提醒
         if ($sendNotify) {
             Notify::model()->sendNotify($uid, 'user_group_upgrade', array(
-                '{groupname}' => $newGroup['title'],
-                '{url}' => Ibos::app()->urlManager->createUrl('user/home/credit', array('op' => 'level', 'uid' => $uid))
-                    )
+                    '{groupname}' => $newGroup['title'],
+                    '{url}' => Ibos::app()->urlManager->createUrl('user/home/credit', array('op' => 'level', 'uid' => $uid))
+                )
             );
         }
         return $groupId;
@@ -351,7 +359,8 @@ class Credit extends System {
      * @param type $needle
      * @param type $newCycle
      */
-    protected function updateCheating($ruleLog, $needle, $newCycle) {
+    protected function updateCheating($ruleLog, $needle, $newCycle)
+    {
         if ($needle) {
             $logArr = array();
             switch ($ruleLog['norepeat']) {
@@ -387,7 +396,8 @@ class Credit extends System {
      * @param type $isSql
      * @return type
      */
-    public function addLogArr($logArr, $rule, $isSql = 0) {
+    public function addLogArr($logArr, $rule, $isSql = 0)
+    {
         $extcredits = $this->getExtCredits();
         for ($i = 1; $i <= 5; $i++) {
             if (isset($extcredits[$i]) && !empty($extcredits[$i])) {
@@ -407,7 +417,8 @@ class Credit extends System {
      * @param string $action
      * @return array
      */
-    public function getRule($action) {
+    public function getRule($action)
+    {
         if (empty($action)) {
             return false;
         }
@@ -434,7 +445,8 @@ class Credit extends System {
      * @param integer $uid 用户ID
      * @return array
      */
-    public function getRuleLog($rid, $uid = 0) {
+    public function getRuleLog($rid, $uid = 0)
+    {
         $log = array();
         $uid = $uid ? $uid : Ibos::app()->user->uid;
         if ($rid && $uid) {
@@ -449,7 +461,8 @@ class Credit extends System {
      * @param integer $uid
      * @return array
      */
-    public function getCheckLogByClId($clid, $uid = 0) {
+    public function getCheckLogByClId($clid, $uid = 0)
+    {
         $uid = $uid ? $uid : Ibos::app()->user->uid;
         return CreditRuleLogField::model()->fetchByAttributes(array('uid' => $uid, 'clid' => $clid));
     }
@@ -458,7 +471,8 @@ class Credit extends System {
      *
      * @return array
      */
-    public function getExtCredits() {
+    public function getExtCredits()
+    {
         return Ibos::app()->setting->get('setting/extcredits');
     }
 
@@ -469,7 +483,8 @@ class Credit extends System {
      * @param type $checkType
      * @return boolean
      */
-    protected function checkCheating($ruleLog, $needle, $checkType) {
+    protected function checkCheating($ruleLog, $needle, $checkType)
+    {
         $repeat = false;
         switch ($checkType) {
             case 0:

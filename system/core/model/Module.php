@@ -18,40 +18,45 @@ namespace application\core\model;
 use application\core\utils\Cache;
 use application\core\utils\Ibos;
 
-class Module extends Model {
+class Module extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{module}}';
     }
 
-	/**
-	 * 获得模块名称
-	 * @staticvar null $modules 所有模块缓存
-	 * @param string $moduleName 模块标识
-	 * @return string 
-	 */
-	public function fetchNameByModule( $moduleName ) {
-		static $modules = null;
-		if ( !$modules ) {
-			$modules = $this->fetchAllEnabledModule();
-		}
-		$module = isset( $modules[$moduleName] ) ? $modules[$moduleName] : $this->fetchByAttributes( array( 'module' => $moduleName ) );
-		return (is_array( $module ) && isset( $module['name']) ) ? $module['name'] : '';
-	}
+    /**
+     * 获得模块名称
+     * @staticvar null $modules 所有模块缓存
+     * @param string $moduleName 模块标识
+     * @return string
+     */
+    public function fetchNameByModule($moduleName)
+    {
+        static $modules = null;
+        if (!$modules) {
+            $modules = $this->fetchAllEnabledModule();
+        }
+        $module = isset($modules[$moduleName]) ? $modules[$moduleName] : $this->fetchByAttributes(array('module' => $moduleName));
+        return (is_array($module) && isset($module['name'])) ? $module['name'] : '';
+    }
 
     /**
      * 查找所有非系统模块
      * @return type
      */
-    public function fetchAllNotCoreModule() {
-        $modules = $this->fetchAllSortByPk( 'module', array(
-            'condition' => "`iscore` = 0 AND `disabled` = 0",
-            'order' => '`sort` ASC',
-                )
+    public function fetchAllNotCoreModule()
+    {
+        $modules = $this->fetchAllSortByPk('module', array(
+                'condition' => "`iscore` = 0 AND `disabled` = 0",
+                'order' => '`sort` ASC',
+            )
         );
         return $modules;
     }
@@ -60,11 +65,12 @@ class Module extends Model {
      * 查找所有非系统与非辅助模块
      * @return array
      */
-    public function fetchAllClientModule() {
-        $modules = $this->fetchAllSortByPk( 'module', array(
-            'condition' => "`iscore` = 0 AND `disabled` = 0 AND `category` != ''",
-            'order' => '`sort` ASC',
-                )
+    public function fetchAllClientModule()
+    {
+        $modules = $this->fetchAllSortByPk('module', array(
+                'condition' => "`iscore` = 0 AND `disabled` = 0 AND `category` != ''",
+                'order' => '`sort` ASC',
+            )
         );
         return $modules;
     }
@@ -73,25 +79,28 @@ class Module extends Model {
      * 获取所有可用的模块
      * @return array
      */
-    public function fetchAllEnabledModule() {
-        $module = Cache::get( 'module' );
-        if ( $module == false ) {
+    public function fetchAllEnabledModule()
+    {
+        $module = Cache::get('module');
+        if ($module == false) {
             $criteria = array(
                 'condition' => '`disabled` = 0',
                 'order' => '`sort` ASC'
             );
-            $module = $this->fetchAllSortByPk( 'module', $criteria );
-            Cache::set( 'module', $module );
+            $module = $this->fetchAllSortByPk('module', $criteria);
+            Cache::set('module', $module);
         }
         return $module;
     }
 
-	public function findAllEnabledModuleArray() {
-		return Ibos::app()->db->createCommand()
-						->select()
-						->from( $this->tableName() )
-						->where( " `disabled` = '0' " )
-						->order( " sort ASC " )
-						->queryAll();
-	}
+    public function findAllEnabledModuleArray()
+    {
+        return Ibos::app()->db->createCommand()
+            ->select()
+            ->from($this->tableName())
+            ->where(" `disabled` = '0' ")
+            ->order(" sort ASC ")
+            ->queryAll();
+    }
+
 }

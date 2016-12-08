@@ -1,5 +1,4 @@
-
-<form action="<?php echo $this->createUrl( 'dashboard/index' ); ?>" class="form-horizontal" method="post">
+<form action="<?php echo $this->createUrl('dashboard/index'); ?>" class="form-horizontal" method="post">
     <div class="ct">
         <div class="clearfix">
             <h1 class="mt"><?php echo $lang['Folder']; ?></h1>
@@ -8,10 +7,10 @@
                     <span><?php echo $lang['Folder setting']; ?></span>
                 </li>
                 <!--				<li>
-                                    <a href="<?php echo $this->createUrl( 'dashboard/store' ); ?>"><?php echo $lang['Store setting']; ?></a>
+                                    <a href="<?php echo $this->createUrl('dashboard/store'); ?>"><?php echo $lang['Store setting']; ?></a>
                                 </li>-->
                 <li>
-                    <a href="<?php echo $this->createUrl( 'dashboard/trash' ); ?>"><?php echo $lang['Trash']; ?></a>
+                    <a href="<?php echo $this->createUrl('dashboard/trash'); ?>"><?php echo $lang['Trash']; ?></a>
                 </li>
             </ul>
         </div>
@@ -33,22 +32,26 @@
                     <div class="control-group">
                         <label class="control-label"><?php echo $lang['Specify capacity allocation']; ?></label>
                         <div class="controls file-controls">
-                            <?php if ( !empty( $setting['filecapasity'] ) ): ?>
-                                <?php foreach ( $setting['filecapasity'] as $key => $value ): ?>
+                            <?php if (!empty($setting['filecapasity'])): ?>
+                                <?php foreach ($setting['filecapasity'] as $key => $value): ?>
 
                                     <div class="mbs">
-                                        <input type="text" name="role[<?php echo $key; ?>][mem]" data-id="<?php echo $key; ?>" id="roleallocation_<?php echo $key; ?>" value="<?php echo $value['mem']; ?>">
+                                        <input type="text" name="role[<?php echo $key; ?>][mem]"
+                                               data-id="<?php echo $key; ?>" id="roleallocation_<?php echo $key; ?>"
+                                               value="<?php echo $value['mem']; ?>">
                                         <div id="roleallocation_<?php echo $key; ?>_box"></div>
                                     </div>
                                     <div class="input-group mbs">
                                         <span class="input-group-addon"><?php echo $lang['Everyone']; ?></span>
-                                        <input type="text" name="role[<?php echo $key; ?>][size]" value="<?php echo $value['size']; ?>">
+                                        <input type="text" name="role[<?php echo $key; ?>][size]"
+                                               value="<?php echo $value['size']; ?>">
                                         <span class="input-group-addon">MB</span>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="mbs">
-                                    <input type="text" name="role[0][mem]" id="roleallocation" value="" placeholder="<?php echo $lang['Select user']; ?>">
+                                    <input type="text" name="role[0][mem]" id="roleallocation" value=""
+                                           placeholder="<?php echo $lang['Select user']; ?>">
                                     <div id="roleallocation_box"></div>
                                 </div>
                                 <div class="input-group mbs">
@@ -76,7 +79,8 @@
                     <div class="control-group">
                         <label class="control-label"><?php echo $lang['Folder manager']; ?></label>
                         <div class="controls">
-                            <input type="text" name="filecompmanager" value="<?php echo $setting['filecompmanager']; ?>" id="filecompanymanager" placeholder="<?php echo $lang['Select user']; ?>">
+                            <input type="text" name="filecompmanager" value="<?php echo $setting['filecompmanager']; ?>"
+                                   id="filecompanymanager" placeholder="<?php echo $lang['Select user']; ?>">
                         </div>
                     </div>
 
@@ -90,19 +94,19 @@
             <button type="submit" class="btn btn-primary btn-large btn-submit"> <?php echo $lang['Submit']; ?> </button>
         </div>
     </div>
-    <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" />
+    <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>"/>
 </form>
 
 <!-- 新增容量分配模板 -->
 <script type="text/ibos-template" id="file_template">
     <div class="mbs">
-    <input type="text" name="<%=name%>" id="<%=id%>" value="" placeholder="<?php echo $lang['Select user']; ?>">
-    <div id="<%=boxid%>"></div>
+        <input type="text" name="<%=name%>" id="<%=id%>" value="" placeholder="<?php echo $lang['Select user']; ?>">
+        <div id="<%=boxid%>"></div>
     </div>
     <div class="input-group mbs">
-    <span class="input-group-addon"><?php echo $lang['Everyone']; ?></span>
-    <input type="text" name="<%=size%>" value="">
-    <span class="input-group-addon">MB</span>
+        <span class="input-group-addon"><?php echo $lang['Everyone']; ?></span>
+        <input type="text" name="<%=size%>" value="">
+        <span class="input-group-addon">MB</span>
     </div>
 </script>
 
@@ -115,12 +119,12 @@
             var date = new Date();
             var id = date.getTime();
             var data = {
-                name: 'role[' + id + '][mem]',
-                id: 'roleallocation_' + id,
-                boxid: 'roleallocation_' + id + '_box',
-                size: 'role[' + id + '][size]'
-            },
-            temp = $.template('file_template', data);
+                    name: 'role[' + id + '][mem]',
+                    id: 'roleallocation_' + id,
+                    boxid: 'roleallocation_' + id + '_box',
+                    size: 'role[' + id + '][size]'
+                },
+                temp = $.template('file_template', data);
             $('.file-controls').append(temp);
 
             $('#' + data.id).userSelect({

@@ -19,7 +19,7 @@ class RequestMediator
 
     /**
      * @param RequestInterface $request Request to mediate
-     * @param bool             $emitIo  Set to true to dispatch events on input and output
+     * @param bool $emitIo Set to true to dispatch events on input and output
      */
     public function __construct(RequestInterface $request, $emitIo = false)
     {
@@ -30,8 +30,8 @@ class RequestMediator
     /**
      * Receive a response header from curl
      *
-     * @param resource $curl   Curl handle
-     * @param string   $header Received header
+     * @param resource $curl Curl handle
+     * @param string $header Received header
      *
      * @return int
      */
@@ -60,9 +60,9 @@ class RequestMediator
             $this->request->startResponse($response);
 
             $this->request->dispatch('request.receive.status_line', array(
-                'request'       => $this,
-                'line'          => $header,
-                'status_code'   => $code,
+                'request' => $this,
+                'line' => $header,
+                'status_code' => $code,
                 'reason_phrase' => $status
             ));
 
@@ -79,29 +79,29 @@ class RequestMediator
     /**
      * Received a progress notification
      *
-     * @param int        $downloadSize Total download size
-     * @param int        $downloaded   Amount of bytes downloaded
-     * @param int        $uploadSize   Total upload size
-     * @param int        $uploaded     Amount of bytes uploaded
-     * @param resource   $handle       CurlHandle object
+     * @param int $downloadSize Total download size
+     * @param int $downloaded Amount of bytes downloaded
+     * @param int $uploadSize Total upload size
+     * @param int $uploaded Amount of bytes uploaded
+     * @param resource $handle CurlHandle object
      */
     public function progress($downloadSize, $downloaded, $uploadSize, $uploaded, $handle = null)
     {
         $this->request->dispatch('curl.callback.progress', array(
-            'request'       => $this->request,
-            'handle'        => $handle,
+            'request' => $this->request,
+            'handle' => $handle,
             'download_size' => $downloadSize,
-            'downloaded'    => $downloaded,
-            'upload_size'   => $uploadSize,
-            'uploaded'      => $uploaded
+            'downloaded' => $downloaded,
+            'upload_size' => $uploadSize,
+            'uploaded' => $uploaded
         ));
     }
 
     /**
      * Write data to the response body of a request
      *
-     * @param resource $curl  Curl handle
-     * @param string   $write Data that was received
+     * @param resource $curl Curl handle
+     * @param string $write Data that was received
      *
      * @return int
      */
@@ -110,7 +110,7 @@ class RequestMediator
         if ($this->emitIo) {
             $this->request->dispatch('curl.callback.write', array(
                 'request' => $this->request,
-                'write'   => $write
+                'write' => $write
             ));
         }
 
@@ -120,9 +120,9 @@ class RequestMediator
     /**
      * Read data from the request body and send it to curl
      *
-     * @param resource $ch     Curl handle
-     * @param resource $fd     File descriptor
-     * @param int      $length Amount of data to read
+     * @param resource $ch Curl handle
+     * @param resource $fd File descriptor
+     * @param int $length Amount of data to read
      *
      * @return string
      */
@@ -132,7 +132,7 @@ class RequestMediator
             return '';
         }
 
-        $read = (string) $body->read($length);
+        $read = (string)$body->read($length);
         if ($this->emitIo) {
             $this->request->dispatch('curl.callback.read', array('request' => $this->request, 'read' => $read));
         }

@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -200,30 +200,23 @@ class ezcMailPop3Transport
      * @param int $port
      * @param ezcMailPop3TransportOptions|array(string=>mixed) $options
      */
-    public function __construct( $server, $port = null, $options = array() )
+    public function __construct($server, $port = null, $options = array())
     {
-        if ( $options instanceof ezcMailPop3TransportOptions )
-        {
+        if ($options instanceof ezcMailPop3TransportOptions) {
             $this->options = $options;
-        }
-        else if ( is_array( $options ) )
-        {
-            $this->options = new ezcMailPop3TransportOptions( $options );
-        }
-        else
-        {
-            throw new ezcBaseValueException( "options", $options, "ezcMailPop3TransportOptions|array" );
+        } else if (is_array($options)) {
+            $this->options = new ezcMailPop3TransportOptions($options);
+        } else {
+            throw new ezcBaseValueException("options", $options, "ezcMailPop3TransportOptions|array");
         }
 
-        if ( $port === null )
-        {
-            $port = ( $this->options->ssl === true ) ? 995 : 110;
+        if ($port === null) {
+            $port = ($this->options->ssl === true) ? 995 : 110;
         }
-        $this->connection = new ezcMailTransportConnection( $server, $port, $this->options );
+        $this->connection = new ezcMailTransportConnection($server, $port, $this->options);
         $this->greeting = $this->connection->getLine();
-        if ( !$this->isPositiveResponse( $this->greeting ) )
-        {
-            throw new ezcMailTransportException( "The connection to the POP3 server is ok, but a negative response from server was received: '{$this->greeting}'. Try again later." );
+        if (!$this->isPositiveResponse($this->greeting)) {
+            throw new ezcMailTransportException("The connection to the POP3 server is ok, but a negative response from server was received: '{$this->greeting}'. Try again later.");
         }
         $this->state = self::STATE_AUTHORIZATION;
     }
@@ -235,16 +228,12 @@ class ezcMailPop3Transport
      */
     public function __destruct()
     {
-        if ( $this->state != self::STATE_NOT_CONNECTED )
-        {
-            try 
-            {
-                $this->connection->sendData( 'QUIT' );
+        if ($this->state != self::STATE_NOT_CONNECTED) {
+            try {
+                $this->connection->sendData('QUIT');
                 $this->connection->getLine(); // discard
                 $this->connection->close();
-            }
-            catch ( ezcMailTransportException $e )
-            {
+            } catch (ezcMailTransportException $e) {
                 // Ignore occuring transport exceptions.
             }
         }
@@ -261,20 +250,18 @@ class ezcMailPop3Transport
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
-                if ( !( $value instanceof ezcMailPop3TransportOptions ) )
-                {
-                    throw new ezcBaseValueException( 'options', $value, 'instanceof ezcMailPop3TransportOptions' );
+                if (!($value instanceof ezcMailPop3TransportOptions)) {
+                    throw new ezcBaseValueException('options', $value, 'instanceof ezcMailPop3TransportOptions');
                 }
                 $this->options = $value;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -287,15 +274,14 @@ class ezcMailPop3Transport
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return $this->options;
-            
+
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -306,10 +292,9 @@ class ezcMailPop3Transport
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return true;
 
@@ -323,9 +308,8 @@ class ezcMailPop3Transport
      */
     public function disconnect()
     {
-        if ( $this->state != self::STATE_NOT_CONNECTED )
-        {
-            $this->connection->sendData( 'QUIT' );
+        if ($this->state != self::STATE_NOT_CONNECTED) {
+            $this->connection->sendData('QUIT');
             $this->connection->getLine(); // discard
             $this->state = self::STATE_UPDATE;
 
@@ -363,58 +347,49 @@ class ezcMailPop3Transport
      * @param string $password
      * @param int $method
      */
-    public function authenticate( $user, $password, $method = null )
+    public function authenticate($user, $password, $method = null)
     {
-        if ( $this->state != self::STATE_AUTHORIZATION )
-        {
-            throw new ezcMailTransportException( "Tried to authenticate when there was no connection or when already authenticated." );
+        if ($this->state != self::STATE_AUTHORIZATION) {
+            throw new ezcMailTransportException("Tried to authenticate when there was no connection or when already authenticated.");
         }
 
-        if ( is_null( $method ) )
-        {
+        if (is_null($method)) {
             $method = $this->options->authenticationMethod;
         }
 
-        if ( $method == self::AUTH_PLAIN_TEXT ) // normal plain text login
+        if ($method == self::AUTH_PLAIN_TEXT) // normal plain text login
         {
             // authenticate ourselves
-            $this->connection->sendData( "USER {$user}" );
+            $this->connection->sendData("USER {$user}");
             $response = $this->connection->getLine();
-            if ( !$this->isPositiveResponse( $response ) )
-            {
-                throw new ezcMailTransportException( "The POP3 server did not accept the username: {$response}." );
+            if (!$this->isPositiveResponse($response)) {
+                throw new ezcMailTransportException("The POP3 server did not accept the username: {$response}.");
             }
-            $this->connection->sendData( "PASS {$password}" );
+            $this->connection->sendData("PASS {$password}");
             $response = $this->connection->getLine();
-            if ( !$this->isPositiveResponse( $response ) )
-            {
-                throw new ezcMailTransportException( "The POP3 server did not accept the password: {$response}." );
+            if (!$this->isPositiveResponse($response)) {
+                throw new ezcMailTransportException("The POP3 server did not accept the password: {$response}.");
             }
-        }
-        else if ( $method == self::AUTH_APOP ) // APOP login
+        } else if ($method == self::AUTH_APOP) // APOP login
         {
             // fetch the timestamp from the greeting
             $timestamp = '';
-            preg_match( '/.*(<.*>).*/',
-                        $this->greeting,
-                        $timestamp );
+            preg_match('/.*(<.*>).*/',
+                $this->greeting,
+                $timestamp);
             // check if there was a greeting. If not, apop is not supported
-            if ( count( $timestamp ) < 2 )
-            {
-                throw new ezcMailTransportException( "The POP3 server did not accept the APOP login: No greeting." );
+            if (count($timestamp) < 2) {
+                throw new ezcMailTransportException("The POP3 server did not accept the APOP login: No greeting.");
             }
 
-            $hash = md5( $timestamp[1] . $password );
-            $this->connection->sendData( "APOP {$user} {$hash}" );
+            $hash = md5($timestamp[1] . $password);
+            $this->connection->sendData("APOP {$user} {$hash}");
             $response = $this->connection->getLine();
-            if ( !$this->isPositiveResponse( $response ) )
-            {
-                throw new ezcMailTransportException( "The POP3 server did not accept the APOP login: {$response}." );
+            if (!$this->isPositiveResponse($response)) {
+                throw new ezcMailTransportException("The POP3 server did not accept the APOP login: {$response}.");
             }
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Invalid authentication method provided." );
+        } else {
+            throw new ezcMailTransportException("Invalid authentication method provided.");
         }
         $this->state = self::STATE_TRANSACTION;
     }
@@ -444,24 +419,21 @@ class ezcMailPop3Transport
      */
     public function listMessages()
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call listMessages() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call listMessages() on the POP3 transport when not successfully logged in.");
         }
 
         // send the command
-        $this->connection->sendData( "LIST" );
+        $this->connection->sendData("LIST");
         $response = $this->connection->getLine();
-        if ( !$this->isPositiveResponse( $response ) )
-        {
-            throw new ezcMailTransportException( "The POP3 server sent a negative response to the LIST command: {$response}." );
+        if (!$this->isPositiveResponse($response)) {
+            throw new ezcMailTransportException("The POP3 server sent a negative response to the LIST command: {$response}.");
         }
 
         // fetch the data from the server and prepare it to be returned.
         $messages = array();
-        while ( ( $response = $this->connection->getLine( true ) ) !== "." )
-        {
-            list( $num, $size ) = explode( ' ', $response );
+        while (($response = $this->connection->getLine(true)) !== ".") {
+            list($num, $size) = explode(' ', $response);
             $messages[$num] = $size;
         }
         return $messages;
@@ -499,46 +471,35 @@ class ezcMailPop3Transport
      * @param int $msgNum
      * @return array(string)
      */
-    public function listUniqueIdentifiers( $msgNum = null )
+    public function listUniqueIdentifiers($msgNum = null)
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call ListUniqueIdentifiers() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call ListUniqueIdentifiers() on the POP3 transport when not successfully logged in.");
         }
 
         // send the command
         $result = array();
-        if ( $msgNum !== null )
-        {
-            $this->connection->sendData( "UIDL {$msgNum}" );
-            $response = $this->connection->getLine( true );
-            if ( $this->isPositiveResponse( $response ) )
-            {
+        if ($msgNum !== null) {
+            $this->connection->sendData("UIDL {$msgNum}");
+            $response = $this->connection->getLine(true);
+            if ($this->isPositiveResponse($response)) {
                 // get the single response line from the server
-                list( $dummy, $num, $id ) = explode( ' ', $response );
+                list($dummy, $num, $id) = explode(' ', $response);
                 $result[(int)$num] = $id;
+            } else {
+                throw new ezcMailTransportException("The POP3 server sent a negative response to the UIDL command: {$response}.");
             }
-            else
-            {
-                throw new ezcMailTransportException( "The POP3 server sent a negative response to the UIDL command: {$response}." );
-            }
-        }
-        else
-        {
-            $this->connection->sendData( "UIDL" );
+        } else {
+            $this->connection->sendData("UIDL");
             $response = $this->connection->getLine();
-            if ( $this->isPositiveResponse( $response ) )
-            {
+            if ($this->isPositiveResponse($response)) {
                 // fetch each of the result lines and add it to the result
-                while ( ( $response = $this->connection->getLine( true ) ) !== "." )
-                {
-                    list( $num, $id ) = explode( ' ', $response );
+                while (($response = $this->connection->getLine(true)) !== ".") {
+                    list($num, $id) = explode(' ', $response);
                     $result[(int)$num] = $id;
                 }
-            }
-            else
-            {
-                throw new ezcMailTransportException( "The POP3 server sent a negative response to the UIDL command: {$response}." );
+            } else {
+                throw new ezcMailTransportException("The POP3 server sent a negative response to the UIDL command: {$response}.");
             }
         }
         return $result;
@@ -572,25 +533,21 @@ class ezcMailPop3Transport
      * @param int &$numMessages
      * @param int &$sizeMessages
      */
-    public function status( &$numMessages, &$sizeMessages )
+    public function status(&$numMessages, &$sizeMessages)
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call status() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call status() on the POP3 transport when not successfully logged in.");
         }
 
-        $this->connection->sendData( "STAT" );
+        $this->connection->sendData("STAT");
         $response = $this->connection->getLine();
-        if ( $this->isPositiveResponse( $response ) )
-        {
+        if ($this->isPositiveResponse($response)) {
             // get the single response line from the server
-            list( $dummy, $numMessages, $sizeMessages ) = explode( ' ', $response );
+            list($dummy, $numMessages, $sizeMessages) = explode(' ', $response);
             $numMessages = (int)$numMessages;
             $sizeMessages = (int)$sizeMessages;
-        }
-        else
-        {
-            throw new ezcMailTransportException( "The POP3 server did not respond with a status message: {$response}." );
+        } else {
+            throw new ezcMailTransportException("The POP3 server did not respond with a status message: {$response}.");
         }
     }
 
@@ -612,19 +569,17 @@ class ezcMailPop3Transport
      *         or if the server sent a negative response
      * @param int $msgNum
      */
-    public function delete( $msgNum )
+    public function delete($msgNum)
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call delete() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call delete() on the POP3 transport when not successfully logged in.");
         }
 
-        $this->connection->sendData( "DELE {$msgNum}" );
+        $this->connection->sendData("DELE {$msgNum}");
         $response = $this->connection->getLine();
 
-        if ( !$this->isPositiveResponse( $response ) )
-        {
-            throw new ezcMailTransportException( "The POP3 server could not delete the message: {$response}." );
+        if (!$this->isPositiveResponse($response)) {
+            throw new ezcMailTransportException("The POP3 server could not delete the message: {$response}.");
         }
     }
 
@@ -664,25 +619,22 @@ class ezcMailPop3Transport
      * @param int $numLines
      * @return string
      */
-    public function top( $msgNum, $numLines = 0 )
+    public function top($msgNum, $numLines = 0)
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call top() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call top() on the POP3 transport when not successfully logged in.");
         }
 
         // send the command
-        $this->connection->sendData( "TOP {$msgNum} {$numLines}" );
+        $this->connection->sendData("TOP {$msgNum} {$numLines}");
         $response = $this->connection->getLine();
-        if ( !$this->isPositiveResponse( $response ) )
-        {
-            throw new ezcMailTransportException( "The POP3 server sent a negative response to the TOP command: {$response}." );
+        if (!$this->isPositiveResponse($response)) {
+            throw new ezcMailTransportException("The POP3 server sent a negative response to the TOP command: {$response}.");
         }
 
         // fetch the data from the server and prepare it to be returned.
         $message = "";
-        while ( ( $response = $this->connection->getLine( true ) ) !== "." )
-        {
+        while (($response = $this->connection->getLine(true)) !== ".") {
             $message .= $response . "\n";
         }
         return $message;
@@ -720,10 +672,10 @@ class ezcMailPop3Transport
      * @param bool $deleteFromServer
      * @return ezcMailParserSet
      */
-    public function fetchAll( $deleteFromServer = false )
+    public function fetchAll($deleteFromServer = false)
     {
         $messages = $this->listMessages();
-        return new ezcMailPop3Set( $this->connection, array_keys( $messages ), $deleteFromServer );
+        return new ezcMailPop3Set($this->connection, array_keys($messages), $deleteFromServer);
     }
 
     /**
@@ -759,14 +711,13 @@ class ezcMailPop3Transport
      * @param bool $deleteFromServer
      * @return ezcMailPop3Set
      */
-    public function fetchByMessageNr( $number, $deleteFromServer = false )
+    public function fetchByMessageNr($number, $deleteFromServer = false)
     {
         $messages = $this->listMessages();
-        if ( !isset( $messages[$number] ) )
-        {
-            throw new ezcMailNoSuchMessageException( $number );
+        if (!isset($messages[$number])) {
+            throw new ezcMailNoSuchMessageException($number);
         }
-        return new ezcMailPop3Set( $this->connection, array( $number ), $deleteFromServer );
+        return new ezcMailPop3Set($this->connection, array($number), $deleteFromServer);
     }
 
     /**
@@ -803,26 +754,21 @@ class ezcMailPop3Transport
      * @param bool $deleteFromServer
      * @return ezcMailPop3Set
      */
-    public function fetchFromOffset( $offset, $count = 0, $deleteFromServer = false )
+    public function fetchFromOffset($offset, $count = 0, $deleteFromServer = false)
     {
-        if ( $count < 0 )
-        {
-            throw new ezcMailInvalidLimitException( $offset, $count );
+        if ($count < 0) {
+            throw new ezcMailInvalidLimitException($offset, $count);
         }
-        $messages = array_keys( $this->listMessages() );
-        if ( $count == 0 )
-        {
-            $range = array_slice( $messages, $offset - 1, count( $messages ), true );
+        $messages = array_keys($this->listMessages());
+        if ($count == 0) {
+            $range = array_slice($messages, $offset - 1, count($messages), true);
+        } else {
+            $range = array_slice($messages, $offset - 1, $count, true);
         }
-        else
-        {
-            $range = array_slice( $messages, $offset - 1, $count, true );
+        if (!isset($range[$offset - 1])) {
+            throw new ezcMailOffsetOutOfRangeException($offset, $count);
         }
-        if ( !isset( $range[$offset - 1] ) )
-        {
-            throw new ezcMailOffsetOutOfRangeException( $offset, $count );
-        }
-        return new ezcMailPop3Set( $this->connection, $range, $deleteFromServer );
+        return new ezcMailPop3Set($this->connection, $range, $deleteFromServer);
     }
 
     /**
@@ -838,17 +784,15 @@ class ezcMailPop3Transport
      */
     public function noop()
     {
-        if ( $this->state != self::STATE_TRANSACTION )
-        {
-            throw new ezcMailTransportException( "Can't call noop() on the POP3 transport when not successfully logged in." );
+        if ($this->state != self::STATE_TRANSACTION) {
+            throw new ezcMailTransportException("Can't call noop() on the POP3 transport when not successfully logged in.");
         }
 
         // send the command
-        $this->connection->sendData( "NOOP" );
+        $this->connection->sendData("NOOP");
         $response = $this->connection->getLine();
-        if ( !$this->isPositiveResponse( $response ) )
-        {
-            throw new ezcMailTransportException( "The POP3 server sent a negative response to the NOOP command: {$response}." );
+        if (!$this->isPositiveResponse($response)) {
+            throw new ezcMailTransportException("The POP3 server sent a negative response to the NOOP command: {$response}.");
         }
     }
 
@@ -858,13 +802,13 @@ class ezcMailPop3Transport
      * @param string $line
      * @return bool
      */
-    protected function isPositiveResponse( $line )
+    protected function isPositiveResponse($line)
     {
-        if ( strpos( $line, "+OK" ) === 0 )
-        {
+        if (strpos($line, "+OK") === 0) {
             return true;
         }
         return false;
     }
 }
+
 ?>

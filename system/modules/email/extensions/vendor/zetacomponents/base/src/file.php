@@ -8,9 +8,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -72,11 +72,10 @@ class ezcBaseFile
      * @param string $fileName
      * @param array(stat) $fileInfo
      */
-    static protected function findRecursiveCallback( ezcBaseFileFindContext $context, $sourceDir, $fileName, $fileInfo )
+    static protected function findRecursiveCallback(ezcBaseFileFindContext $context, $sourceDir, $fileName, $fileInfo)
     {
         // ignore if we have a directory
-        if ( $fileInfo['mode'] & 0x4000 )
-        {
+        if ($fileInfo['mode'] & 0x4000) {
             return;
         }
 
@@ -115,11 +114,11 @@ class ezcBaseFile
      * starting and ending delimiters. The Perl Compatible syntax is used as
      * regular expression language.
      *
-     * @param string         $sourceDir
-     * @param array(string)  $includeFilters
-     * @param array(string)  $excludeFilters
-     * @param callback       $callback
-     * @param mixed          $callbackContext
+     * @param string $sourceDir
+     * @param array(string) $includeFilters
+     * @param array(string) $excludeFilters
+     * @param callback $callback
+     * @param mixed $callbackContext
      *
      * @throws ezcBaseFileNotFoundException if the $sourceDir directory is not
      *         a directory or does not exist.
@@ -127,67 +126,52 @@ class ezcBaseFile
      *         not be opened for reading.
      * @return array
      */
-    static public function walkRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), $callback, &$callbackContext )
+    static public function walkRecursive($sourceDir, array $includeFilters = array(), array $excludeFilters = array(), $callback, &$callbackContext)
     {
-        if ( !is_dir( $sourceDir ) )
-        {
-            throw new ezcBaseFileNotFoundException( $sourceDir, 'directory' );
+        if (!is_dir($sourceDir)) {
+            throw new ezcBaseFileNotFoundException($sourceDir, 'directory');
         }
         $elements = array();
-        $d = @dir( $sourceDir );
-        if ( !$d )
-        {
-            throw new ezcBaseFilePermissionException( $sourceDir, ezcBaseFileException::READ );
+        $d = @dir($sourceDir);
+        if (!$d) {
+            throw new ezcBaseFilePermissionException($sourceDir, ezcBaseFileException::READ);
         }
 
-        while ( ( $entry = $d->read() ) !== false )
-        {
-            if ( $entry == '.' || $entry == '..' )
-            {
+        while (($entry = $d->read()) !== false) {
+            if ($entry == '.' || $entry == '..') {
                 continue;
             }
 
-            $fileInfo = @stat( $sourceDir . DIRECTORY_SEPARATOR . $entry );
-            if ( !$fileInfo )
-            {
-                $fileInfo = array( 'size' => 0, 'mode' => 0 );
+            $fileInfo = @stat($sourceDir . DIRECTORY_SEPARATOR . $entry);
+            if (!$fileInfo) {
+                $fileInfo = array('size' => 0, 'mode' => 0);
             }
 
-            if ( $fileInfo['mode'] & 0x4000 )
-            {
+            if ($fileInfo['mode'] & 0x4000) {
                 // We need to ignore the Permission exceptions here as it can
                 // be normal that a directory can not be accessed. We only need
                 // the exception if the top directory could not be read.
-                try
-                {
-                    call_user_func_array( $callback, array( $callbackContext, $sourceDir, $entry, $fileInfo ) );
-                    $subList = self::walkRecursive( $sourceDir . DIRECTORY_SEPARATOR . $entry, $includeFilters, $excludeFilters, $callback, $callbackContext );
-                    $elements = array_merge( $elements, $subList );
+                try {
+                    call_user_func_array($callback, array($callbackContext, $sourceDir, $entry, $fileInfo));
+                    $subList = self::walkRecursive($sourceDir . DIRECTORY_SEPARATOR . $entry, $includeFilters, $excludeFilters, $callback, $callbackContext);
+                    $elements = array_merge($elements, $subList);
+                } catch (ezcBaseFilePermissionException $e) {
                 }
-                catch ( ezcBaseFilePermissionException $e )
-                {
-                }
-            }
-            else
-            {
+            } else {
                 // By default a file is included in the return list
                 $ok = true;
                 // Iterate over the $includeFilters and prohibit the file from
                 // being returned when atleast one of them does not match
-                foreach ( $includeFilters as $filter )
-                {
-                    if ( !preg_match( $filter, $sourceDir . DIRECTORY_SEPARATOR . $entry ) )
-                    {
+                foreach ($includeFilters as $filter) {
+                    if (!preg_match($filter, $sourceDir . DIRECTORY_SEPARATOR . $entry)) {
                         $ok = false;
                         break;
                     }
                 }
                 // Iterate over the $excludeFilters and prohibit the file from
                 // being returns when atleast one of them matches
-                foreach ( $excludeFilters as $filter )
-                {
-                    if ( preg_match( $filter, $sourceDir . DIRECTORY_SEPARATOR . $entry ) )
-                    {
+                foreach ($excludeFilters as $filter) {
+                    if (preg_match($filter, $sourceDir . DIRECTORY_SEPARATOR . $entry)) {
                         $ok = false;
                         break;
                     }
@@ -195,14 +179,13 @@ class ezcBaseFile
 
                 // If everything's allright, call the callback and add the
                 // entry to the elements array
-                if ( $ok )
-                {
-                    call_user_func( $callback, $callbackContext, $sourceDir, $entry, $fileInfo );
+                if ($ok) {
+                    call_user_func($callback, $callbackContext, $sourceDir, $entry, $fileInfo);
                     $elements[] = $sourceDir . DIRECTORY_SEPARATOR . $entry;
                 }
             }
         }
-        sort( $elements );
+        sort($elements);
         return $elements;
     }
 
@@ -225,10 +208,10 @@ class ezcBaseFile
      * argument is passed by reference, you *have* to pass a variable and you
      * can not pass a constant value such as "array()".
      *
-     * @param string         $sourceDir
-     * @param array(string)  $includeFilters
-     * @param array(string)  $excludeFilters
-     * @param array()        $statistics
+     * @param string $sourceDir
+     * @param array(string) $includeFilters
+     * @param array(string) $excludeFilters
+     * @param array() $statistics
      *
      * @throws ezcBaseFileNotFoundException if the $sourceDir directory is not
      *         a directory or does not exist.
@@ -236,25 +219,24 @@ class ezcBaseFile
      *         not be opened for reading.
      * @return array
      */
-    static public function findRecursive( $sourceDir, array $includeFilters = array(), array $excludeFilters = array(), &$statistics = null )
+    static public function findRecursive($sourceDir, array $includeFilters = array(), array $excludeFilters = array(), &$statistics = null)
     {
         // init statistics array
-        if ( !is_array( $statistics ) || !array_key_exists( 'size', $statistics ) || !array_key_exists( 'count', $statistics ) )
-        {
-            $statistics['size']  = 0;
+        if (!is_array($statistics) || !array_key_exists('size', $statistics) || !array_key_exists('count', $statistics)) {
+            $statistics['size'] = 0;
             $statistics['count'] = 0;
         }
 
         // create the context, and then start walking over the array
         $context = new ezcBaseFileFindContext;
-        self::walkRecursive( $sourceDir, $includeFilters, $excludeFilters, array( 'ezcBaseFile', 'findRecursiveCallback' ), $context );
+        self::walkRecursive($sourceDir, $includeFilters, $excludeFilters, array('ezcBaseFile', 'findRecursiveCallback'), $context);
 
         // collect the statistics
         $statistics['size'] = $context->size;
         $statistics['count'] = $context->count;
 
         // return the found and pattern-matched files
-        sort( $context->elements );
+        sort($context->elements);
         return $context->elements;
     }
 
@@ -268,120 +250,104 @@ class ezcBaseFile
      *
      * @param string $directory
      */
-    static public function removeRecursive( $directory )
+    static public function removeRecursive($directory)
     {
-        $sourceDir = realpath( $directory );
-        if ( !$sourceDir )
-        {
-            throw new ezcBaseFileNotFoundException( $directory, 'directory' );
+        $sourceDir = realpath($directory);
+        if (!$sourceDir) {
+            throw new ezcBaseFileNotFoundException($directory, 'directory');
         }
-        $d = @dir( $sourceDir );
-        if ( !$d )
-        {
-            throw new ezcBaseFilePermissionException( $directory, ezcBaseFileException::READ );
+        $d = @dir($sourceDir);
+        if (!$d) {
+            throw new ezcBaseFilePermissionException($directory, ezcBaseFileException::READ);
         }
         // check if we can remove the dir
-        $parentDir = realpath( $directory . DIRECTORY_SEPARATOR . '..' );
-        if ( !is_writable( $parentDir ) )
-        {
-            throw new ezcBaseFilePermissionException( $parentDir, ezcBaseFileException::WRITE );
+        $parentDir = realpath($directory . DIRECTORY_SEPARATOR . '..');
+        if (!is_writable($parentDir)) {
+            throw new ezcBaseFilePermissionException($parentDir, ezcBaseFileException::WRITE);
         }
         // loop over contents
-        while ( ( $entry = $d->read() ) !== false )
-        {
-            if ( $entry == '.' || $entry == '..' )
-            {
+        while (($entry = $d->read()) !== false) {
+            if ($entry == '.' || $entry == '..') {
                 continue;
             }
 
-            if ( is_dir( $sourceDir . DIRECTORY_SEPARATOR . $entry ) )
-            {
-                self::removeRecursive( $sourceDir . DIRECTORY_SEPARATOR . $entry );
-            }
-            else
-            {
-                if ( @unlink( $sourceDir . DIRECTORY_SEPARATOR . $entry ) === false )
-                {
-                    throw new ezcBaseFilePermissionException( $directory . DIRECTORY_SEPARATOR . $entry, ezcBaseFileException::REMOVE );
+            if (is_dir($sourceDir . DIRECTORY_SEPARATOR . $entry)) {
+                self::removeRecursive($sourceDir . DIRECTORY_SEPARATOR . $entry);
+            } else {
+                if (@unlink($sourceDir . DIRECTORY_SEPARATOR . $entry) === false) {
+                    throw new ezcBaseFilePermissionException($directory . DIRECTORY_SEPARATOR . $entry, ezcBaseFileException::REMOVE);
                 }
             }
         }
         $d->close();
-        rmdir( $sourceDir );
+        rmdir($sourceDir);
     }
 
     /**
-    * Recursively copy a file or directory.
-    *
-    * Recursively copy a file or directory in $source to the given
-    * destination. If a depth is given, the operation will stop, if the given
-    * recursion depth is reached. A depth of -1 means no limit, while a depth
-    * of 0 means, that only the current file or directory will be copied,
-    * without any recursion.
-    *
-    * You may optionally define modes used to create files and directories.
-    *
-    * @throws ezcBaseFileNotFoundException
-    *      If the $sourceDir directory is not a directory or does not exist.
-    * @throws ezcBaseFilePermissionException
-    *      If the $sourceDir directory could not be opened for reading, or the
-    *      destination is not writeable.
-    *
-    * @param string $source
-    * @param string $destination
-    * @param int $depth
-    * @param int $dirMode
-    * @param int $fileMode
-    * @return void
-    */
-    static public function copyRecursive( $source, $destination, $depth = -1, $dirMode = 0775, $fileMode = 0664 )
+     * Recursively copy a file or directory.
+     *
+     * Recursively copy a file or directory in $source to the given
+     * destination. If a depth is given, the operation will stop, if the given
+     * recursion depth is reached. A depth of -1 means no limit, while a depth
+     * of 0 means, that only the current file or directory will be copied,
+     * without any recursion.
+     *
+     * You may optionally define modes used to create files and directories.
+     *
+     * @throws ezcBaseFileNotFoundException
+     *      If the $sourceDir directory is not a directory or does not exist.
+     * @throws ezcBaseFilePermissionException
+     *      If the $sourceDir directory could not be opened for reading, or the
+     *      destination is not writeable.
+     *
+     * @param string $source
+     * @param string $destination
+     * @param int $depth
+     * @param int $dirMode
+     * @param int $fileMode
+     * @return void
+     */
+    static public function copyRecursive($source, $destination, $depth = -1, $dirMode = 0775, $fileMode = 0664)
     {
         // Check if source file exists at all.
-        if ( !is_file( $source ) && !is_dir( $source ) )
-        {
-            throw new ezcBaseFileNotFoundException( $source );
+        if (!is_file($source) && !is_dir($source)) {
+            throw new ezcBaseFileNotFoundException($source);
         }
 
         // Destination file should NOT exist
-        if ( is_file( $destination ) || is_dir( $destination ) )
-        {
-            throw new ezcBaseFilePermissionException( $destination, ezcBaseFileException::WRITE );
+        if (is_file($destination) || is_dir($destination)) {
+            throw new ezcBaseFilePermissionException($destination, ezcBaseFileException::WRITE);
         }
 
         // Skip non readable files in source directory
-        if ( !is_readable( $source ) )
-        {
+        if (!is_readable($source)) {
             return;
         }
 
         // Copy
-        if ( is_dir( $source ) )
-        {
-            mkdir( $destination );
+        if (is_dir($source)) {
+            mkdir($destination);
             // To ignore umask, umask() should not be changed with
             // multithreaded servers...
-            chmod( $destination, $dirMode );
-        }
-        elseif ( is_file( $source ) )
-        {
-            copy( $source, $destination );
-            chmod( $destination, $fileMode );
+            chmod($destination, $dirMode);
+        } elseif (is_file($source)) {
+            copy($source, $destination);
+            chmod($destination, $fileMode);
         }
 
-        if ( ( $depth === 0 ) ||
-            ( !is_dir( $source ) ) )
-        {
+        if (($depth === 0) ||
+            (!is_dir($source))
+        ) {
             // Do not recurse (any more)
             return;
         }
 
         // Recurse
-        $dh = opendir( $source );
-        while ( ( $file = readdir( $dh ) ) !== false )
-        {
-            if ( ( $file === '.' ) ||
-                ( $file === '..' ) )
-            {
+        $dh = opendir($source);
+        while (($file = readdir($dh)) !== false) {
+            if (($file === '.') ||
+                ($file === '..')
+            ) {
                 continue;
             }
 
@@ -406,47 +372,42 @@ class ezcBaseFile
      * @param string $base
      * @return string
      */
-    static public function calculateRelativePath( $path, $base )
+    static public function calculateRelativePath($path, $base)
     {
         // Sanitize the paths to use the correct directory separator for the platform
-        $path = strtr( $path, '\\/', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR );
-        $base = strtr( $base, '\\/', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR );
+        $path = strtr($path, '\\/', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
+        $base = strtr($base, '\\/', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
 
-        $base = explode( DIRECTORY_SEPARATOR, $base );
-        $path = explode( DIRECTORY_SEPARATOR, $path );
+        $base = explode(DIRECTORY_SEPARATOR, $base);
+        $path = explode(DIRECTORY_SEPARATOR, $path);
 
         // If the paths are the same we return
-        if ( $base === $path )
-        {
+        if ($base === $path) {
             return '.';
         }
 
         $result = '';
 
-        $pathPart = array_shift( $path );
-        $basePart = array_shift( $base );
-        while ( $pathPart == $basePart )
-        {
-            $pathPart = array_shift( $path );
-            $basePart = array_shift( $base );
+        $pathPart = array_shift($path);
+        $basePart = array_shift($base);
+        while ($pathPart == $basePart) {
+            $pathPart = array_shift($path);
+            $basePart = array_shift($base);
         }
 
-        if ( $pathPart != null )
-        {
-            array_unshift( $path, $pathPart );
+        if ($pathPart != null) {
+            array_unshift($path, $pathPart);
         }
-        if ( $basePart != null )
-        {
-            array_unshift( $base, $basePart );
+        if ($basePart != null) {
+            array_unshift($base, $basePart);
         }
 
-        $result = str_repeat( '..' . DIRECTORY_SEPARATOR, count( $base ) );
+        $result = str_repeat('..' . DIRECTORY_SEPARATOR, count($base));
         // prevent a trailing DIRECTORY_SEPARATOR in case there is only a ..
-        if ( count( $path ) == 0 )
-        {
-            $result = substr( $result, 0, -strlen( DIRECTORY_SEPARATOR ) );
+        if (count($path) == 0) {
+            $result = substr($result, 0, -strlen(DIRECTORY_SEPARATOR));
         }
-        $result .= join( DIRECTORY_SEPARATOR, $path );
+        $result .= join(DIRECTORY_SEPARATOR, $path);
 
         return $result;
     }
@@ -463,34 +424,29 @@ class ezcBaseFile
      * @param string $os
      * @return bool
      */
-    public static function isAbsolutePath( $path, $os = null )
+    public static function isAbsolutePath($path, $os = null)
     {
-        if ( $os === null )
-        {
+        if ($os === null) {
             $os = ezcBaseFeatures::os();
         }
 
         // Stream wrapper like phar can also be considered absolute paths
-        if ( preg_match( '(^[a-z]{3,}://)S', $path ) )
-        {
+        if (preg_match('(^[a-z]{3,}://)S', $path)) {
             return true;
         }
 
-        switch ( $os )
-        {
+        switch ($os) {
             case 'Windows':
                 // Sanitize the paths to use the correct directory separator for the platform
-                $path = strtr( $path, '\\/', '\\\\' );
+                $path = strtr($path, '\\/', '\\\\');
 
                 // Absolute paths with drive letter: X:\
-                if ( preg_match( '@^[A-Z]:\\\\@i', $path ) )
-                {
+                if (preg_match('@^[A-Z]:\\\\@i', $path)) {
                     return true;
                 }
 
                 // Absolute paths with network paths: \\server\share\
-                if ( preg_match( '@^\\\\\\\\[A-Z]+\\\\[^\\\\]@i', $path ) )
-                {
+                if (preg_match('@^\\\\\\\\[A-Z]+\\\\[^\\\\]@i', $path)) {
                     return true;
                 }
                 break;
@@ -499,14 +455,14 @@ class ezcBaseFile
             case 'FreeBSD':
             default:
                 // Sanitize the paths to use the correct directory separator for the platform
-                $path = strtr( $path, '\\/', '//' );
+                $path = strtr($path, '\\/', '//');
 
-                if ( $path[0] == '/' )
-                {
+                if ($path[0] == '/') {
                     return true;
                 }
         }
         return false;
     }
 }
+
 ?>

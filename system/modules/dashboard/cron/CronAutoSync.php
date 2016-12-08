@@ -15,13 +15,12 @@ use application\modules\user\model\User;
 set_time_limit(120);
 $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
 $coBindType = 'ibos';
-if ( !isset( $coinfo['corpid'] ) ) {
+if (!isset($coinfo['corpid'])) {
     Setting::model()->updateSettingValueByKey('cobinding', 0);
 }
-if ( Setting::model()->fetchSettingValueByKey('cobinding') == 0 ) {
+if (Setting::model()->fetchSettingValueByKey('cobinding') == 0) {
     return;
-}
-else {
+} else {
     // 根据酷办公需要的格式，获取 IBOS 的用户列表
     // $userList = getUserList();
     // 获取用户同步数据列表
@@ -34,8 +33,8 @@ else {
     Cache::model()->updateByPk('ibosremovelist', array('cachevalue' => serialize($syncList['third']['delete'])));
     $coids = User::model()->fetchUnbind(50);
     $removeids = User::model()->fetchDeletebind();
-    $coCreateList = User::model()->findThreeByUid( $coids );
-    $coRemoveList = User::model()->findThreeByUid( $removeids );
+    $coCreateList = User::model()->findThreeByUid($coids);
+    $coRemoveList = User::model()->findThreeByUid($removeids);
     // Cache::model()->updateByPk('cocreatelist', array('cachevalue' => serialize($syncList['co']['add'])));
     // Cache::model()->updateByPk('coremovelist', array('cachevalue' => serialize($syncList['co']['delete'])));
     // 初始化同步需要的相关数据
@@ -66,7 +65,7 @@ else {
             addBindRelation($relation['uid_2'], $relation['uid_1']['guid']);
             $coRelation[] = array('uid' => $relation['uid_1']['uid'], 'bindvalue' => $relation['uid_2']);
         }
-        if ( !empty( $coRelation ) ) {
+        if (!empty($coRelation)) {
             coCreateRelation($coRelation);
         }
     }
@@ -76,7 +75,8 @@ else {
  * 获取 IBOS 目前启用状态下的用户列表
  * @return arrya 用户列表
  */
-function getUserList() {
+function getUserList()
+{
     $userList = User::model()->fetchAll('status = 0');
     foreach ($userList as $user) {
         $result[] = array(
@@ -93,7 +93,8 @@ function getUserList() {
  * @param  array $userList IBOS 用户列表
  * @return array           同步用户列表
  */
-function getSyncList($corpid) {
+function getSyncList($corpid)
+{
     // 查出Ibos新增和禁用的用户 
     $add = $delete = '';
     $result = array();
@@ -106,19 +107,19 @@ function getSyncList($corpid) {
         'type' => $coBindType,
         'corpid' => $corpid,
     );
-    $getSync = CoApi::getInstance()->getCoUsers( $post );
-    if ( $getSync['errorcode'] == CodeApi::SUCCESS ) {
-        $result['data'] = array( 
-            'co' => array( 
-                'add' => $add['0'], 
-                'delete' => $delete['0'], 
-                'count' => $count 
-                ), 
-            'third' => $getSync['data']['third'] 
-            );
+    $getSync = CoApi::getInstance()->getCoUsers($post);
+    if ($getSync['errorcode'] == CodeApi::SUCCESS) {
+        $result['data'] = array(
+            'co' => array(
+                'add' => $add['0'],
+                'delete' => $delete['0'],
+                'count' => $count
+            ),
+            'third' => $getSync['data']['third']
+        );
         return $result['data'];
     } else {
-       die;
+        die;
     }
 
     // $post = array(
@@ -139,7 +140,8 @@ function getSyncList($corpid) {
  * @param  array $ibosRemoveList 从差异化分析接口返回的酷办公移除用户列表
  * @return array                 过滤后的用户列表
  */
-function removeAdminUidFromIbosRemoveList($ibosRemoveList) {
+function removeAdminUidFromIbosRemoveList($ibosRemoveList)
+{
     $bindvalue = UserBinding::model()->fetchBindValue(1, 'co');
     if (!empty($bindvalue)) {
         foreach ($ibosRemoveList as $key => $user) {
@@ -159,25 +161,26 @@ function removeAdminUidFromIbosRemoveList($ibosRemoveList) {
  * cocreatelist 需要酷办公新增的用户
  * coremovelist 需要酷办公移除的用户
  */
-function readySync() {
+function readySync()
+{
     // 准备同步结果数据记录字段
-    if (Cache::model()->fetchArrayByPk('successinfo') === FALSE) {
+    if (Cache::model()->fetchArrayByPk('successinfo') === false) {
         Cache::model()->add(array('cachekey' => 'successinfo', 'cachevalue' => serialize(array())));
     }
     // 需要 IBOS 新增的用户
-    if (Cache::model()->fetchArrayByPk('iboscreatelist') === FALSE) {
+    if (Cache::model()->fetchArrayByPk('iboscreatelist') === false) {
         Cache::model()->add(array('cachekey' => 'iboscreatelist', 'cachevalue' => serialize(array())));
     }
     // 需要 IBOS 移除的用户
-    if (Cache::model()->fetchArrayByPk('ibosremovelist') === FALSE) {
+    if (Cache::model()->fetchArrayByPk('ibosremovelist') === false) {
         Cache::model()->add(array('cachekey' => 'ibosremovelist', 'cachevalue' => serialize(array())));
     }
     // 需要酷办公新增的用户
-    if (Cache::model()->fetchArrayByPk('cocreatelist') === FALSE) {
+    if (Cache::model()->fetchArrayByPk('cocreatelist') === false) {
         Cache::model()->add(array('cachekey' => 'cocreatelist', 'cachevalue' => serialize(array())));
     }
     // 需要酷办公移除的用户
-    if (Cache::model()->fetchArrayByPk('coremovelist') === FALSE) {
+    if (Cache::model()->fetchArrayByPk('coremovelist') === false) {
         Cache::model()->add(array('cachekey' => 'coremovelist', 'cachevalue' => serialize(array())));
     }
 }
@@ -190,7 +193,8 @@ function readySync() {
  * @param  array $userList_2 包含 mobile 的用户数组
  * @return array
  */
-function removeIdenticalByMobile($userList_1, $userList_2) {
+function removeIdenticalByMobile($userList_1, $userList_2)
+{
     $identical = array();
     if (!is_array($userList_1) || !is_array($userList_2)) {
         return array();
@@ -198,7 +202,7 @@ function removeIdenticalByMobile($userList_1, $userList_2) {
     foreach ($userList_1 as $key_1 => $user_1) {
         foreach ($userList_2 as $key_2 => $user_2) {
             if ($user_1['mobile'] === $user_2['mobile']) {
-                $identical[] = array('uid_1' => array( 'uid' => $user_1['uid'], 'guid' => $user_1['guid'] ), 'uid_2' => $user_2['uid']);
+                $identical[] = array('uid_1' => array('uid' => $user_1['uid'], 'guid' => $user_1['guid']), 'uid_2' => $user_2['uid']);
                 unset($userList_1[$key_1]);
                 unset($userList_2[$key_2]);
                 break;
@@ -223,7 +227,8 @@ function removeIdenticalByMobile($userList_1, $userList_2) {
  * )
  * @param  array $relationCreateList IBOS 的绑定关系列表
  */
-function coCreateRelation($relationCreateList, $corpid) {
+function coCreateRelation($relationCreateList, $corpid)
+{
     $post = array(
         'type' => $coBindType,
         'corpid' => $corpid,
@@ -244,7 +249,8 @@ function coCreateRelation($relationCreateList, $corpid) {
  * @param  array $relationRemoveList 需要酷办公删除的绑定关系列表
  * @return [type]                     [description]
  */
-function coRemoveRelation($relationRemoveList, $corpid) {
+function coRemoveRelation($relationRemoveList, $corpid)
+{
     $post = array(
         'type' => $coBindType,
         'corpid' => $corpid,
@@ -276,7 +282,8 @@ function coRemoveRelation($relationRemoveList, $corpid) {
  * @param  array $coreadysynclist IBOS 新增的用户列表
  * @return array
  */
-function createCoUser($userCreateList, $corpid) {
+function createCoUser($userCreateList, $corpid)
+{
     $post = array(
         'type' => $coBindType,
         'corpid' => $corpid,
@@ -315,7 +322,8 @@ function createCoUser($userCreateList, $corpid) {
  * @param  array $ibosRemoveList IBOS 移除的用户列表
  * @return array
  */
-function removeCoUser($userRemoveList, $corpid) {
+function removeCoUser($userRemoveList, $corpid)
+{
     $post = array(
         'type' => $coBindType,
         'corpid' => $corpid,
@@ -333,11 +341,12 @@ function removeCoUser($userRemoveList, $corpid) {
 
 /**
  * 添加绑定关系
- * @param integer $uid       IBOS uid
+ * @param integer $uid IBOS uid
  * @param integer $bindvalue 酷办公 uid
  * @return integer 成功数
  */
-function addBindRelation($uid, $bindvalue) {
+function addBindRelation($uid, $bindvalue)
+{
     static $successNum = 0;
     $condition = "`uid` = :uid AND `app` = 'co'";
     $params = array(':uid' => $uid);

@@ -10,13 +10,13 @@ var lockDetection = {
         this.op.installCheck().done(function(res){
             $(".version-info").text(res.data.version);
             if( res.isSuccess ){
-                _this.next();
+                _this.nextStep();
             }else{
                 result.error(res.msg);
             }
         });
     },
-    next: function(){
+    nextStep: function(){
         envCheck.init();
     }
 };
@@ -39,7 +39,7 @@ var envCheck = {
         this.op.validate().done(function(res){
             if(res.isSuccess){
                 _this.$el.remove();
-                _this.next();
+                _this.nextStep();
             }else{
                 _this.render(res.data);
             }
@@ -52,11 +52,11 @@ var envCheck = {
 
         if(this.first){
             _this.first = 0;
-            _this.do();
+            _this.next();
         }
         _this.$el.show();
     },
-    do: function(){
+    next: function(){
         var _this = this;
         this.$el.on("click", "button", function(){
             _this.init();
@@ -75,9 +75,9 @@ var envCheck = {
 				$elem.find("span").text("收起")
 				$elem.parent().next().slideDown(200);
 			}
-		})
+		});
     },
-    next: function(){
+    nextStep: function(){
         this.$el.remove();
         dbInit.init();
     }
@@ -100,6 +100,7 @@ var dbInit = {
     },
     init: function(){
         $("#customInitMoudle").hide();
+        $("#user_form").data("submiting", false)
         $("#tablepre_exist_tip").hide().find("input").label("uncheck");
         var _this = this;
         if( this.first ){
@@ -112,7 +113,7 @@ var dbInit = {
                     $("#dbname").val(data.dbname);
                     _this.$el.show();
                     $.getScript("static/js/db_init.js");
-                    _this.do();
+                    _this.next();
                     _this.first = 0;
                 }
             });
@@ -120,28 +121,44 @@ var dbInit = {
             _this.$el.show();
         }
     },
-    do: function(){
+    next: function(){
         var _this = this;
         $("#user_form").on("validate", function(evt,data){
+            var that = this;
+            if( $.data(this, "submiting") ) return;
+
+            $.data(this, "submiting", true);
             _this.op.validate(data).done(function(res){
                 if (res.isSuccess) {
                     _this.data = data;
-                    _this.next(data);
+                    _this.nextStep(data);
                 } else {
-                    switch (res.data.type) {
-                        case "dbpre":
-                            // 显示强制数据库插入信息
-                            $("#enforce_info").html(res.msg);
-                            $("#tablepre_exist_tip").show();
-                            break;
-                        default:
-                            $("[name='"+res.data.type +"']").blink().siblings(".nomatch-tip").text(res.msg).show();
-                    }
+                    $.data(that, "submiting", false);
+                    _this.errorInfo(res);
                 }
+            }).error(function(res){
+                $.data(that, "submiting", false);
+                var data = JSON.parse(res.responseText.match(/{(.*?)}$/)[0]);
+                _this.errorInfo(data);
             });
         });
     },
-    next: function(data){
+    errorInfo: function(res){
+        switch (res.data.type) {
+            case "dbpre":
+                // 显示强制数据库插入信息
+                $("#enforce_info").html(res.msg);
+                $("#tablepre_exist_tip").show();
+                break;
+            case "dbHost":
+                $("[name='"+res.data.type +"']").blink();
+                Ui.tip(res.msg, "danger");
+                break;
+            default:
+                $("[name='"+res.data.type +"']").blink().siblings(".nomatch-tip").text(res.msg).show();
+        }
+    },
+    nextStep: function(data){
         this.$el.hide();
         if(data.custom == "0"){
             customModules.init(data);
@@ -188,14 +205,14 @@ var customModules = {
                     _this.$el.find("[type='checkbox']").label();
                     _this.$el.show();
                     _this.first = 0;
-                    _this.do();
+                    _this.next();
                 }
             });
         }else{
             _this.$el.show();
         }
     },
-    do: function(){
+    next: function(){
         var _this = this;
         this.$el.on("click", "[type='submit']", function(){
             var customModules = U.getCheckedValue("customModules[]");
@@ -207,12 +224,12 @@ var customModules = {
             _this.data["customModules[]"] = modules;
             _this.op.handleInstall(_this.data).done(function(res){
                 if(res.isSuccess){
-                    _this.next(modules);
+                    _this.nextStep(modules);
                 }
             });
         });
     },
-    next: function(modules){
+    nextStep: function(modules){
         this.$el.hide();
         installing.init(modules);
     }

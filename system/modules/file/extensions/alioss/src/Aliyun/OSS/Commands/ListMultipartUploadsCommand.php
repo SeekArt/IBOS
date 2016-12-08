@@ -21,8 +21,10 @@ use Aliyun\Common\Utilities\AssertUtils;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class ListMultipartUploadsCommand extends OSSCommand {
-    protected function checkOptions($options) {
+class ListMultipartUploadsCommand extends OSSCommand
+{
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -41,7 +43,8 @@ class ListMultipartUploadsCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         $builder = OSSRequestBuilder::factory();
 
         $builder->addParameter(OSSUtils::SUBRESOURCE_UPLOADS, null);
@@ -55,7 +58,7 @@ class ListMultipartUploadsCommand extends OSSCommand {
         }
 
         if (isset($options[OSSOptions::MAX_UPLOADS])) {
-            $builder->addParameter('max-uploads', (string) intval($options[OSSOptions::MAX_UPLOADS]));
+            $builder->addParameter('max-uploads', (string)intval($options[OSSOptions::MAX_UPLOADS]));
         }
 
         if (isset($options[OSSOptions::PREFIX])) {

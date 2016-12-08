@@ -1,6 +1,7 @@
 <!-- 未授权 -->
 <?php
 use application\core\utils\Ibos;
+
 ?>
 <div id="license_unauthorized_cert">
     <form class="form-horizontal form-compact">
@@ -48,7 +49,7 @@ use application\core\utils\Ibos;
         </tr>
         <tr>
             <th></th>
-            <td><a href="<?php echo Ibos::app()->urlManager->createUrl( 'dashboard/default/index' ); ?>" target="_blank"><?php echo $lang['Application for authorization']; ?></a></td>
+            <td><a href="<?php echo Ibos::app()->urlManager->createUrl('dashboard/default/index'); ?>" target="_blank"><?php echo $lang['Application for authorization']; ?></a></td>
         </tr>
     </table>
 </div>

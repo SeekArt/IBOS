@@ -27,9 +27,10 @@ use CHtml;
  *
  * @package application.modules.dashboard.controllers
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: IndexController.php 7023 2016-05-10 08:01:05Z Aeolus $
+ * @version $Id$
  */
-class IndexController extends BaseController {
+class IndexController extends BaseController
+{
 
     const SECURITY_URL = 'http://www.ibos.com.cn/security.php';
 
@@ -38,31 +39,32 @@ class IndexController extends BaseController {
      * @todo 附件统计
      * @todo 授权信息读取
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         // 系统信息
         $systemInfo = Env::getSystemInfo();
         // 数据库大小
         $databaseSize = Database::getDatabaseSize();
-        list($dataSize, $dataUnit) = explode( ' ', $databaseSize );
+        list($dataSize, $dataUnit) = explode(' ', $databaseSize);
         // 系统关闭
-        $appClosed = Setting::model()->fetchSettingValueByKey( 'appclosed' );
+        $appClosed = Setting::model()->fetchSettingValueByKey('appclosed');
         // 新版本提示升级
-        $newVersion = Ibos::app()->setting->get( 'newversion' );
+        $newVersion = Ibos::app()->setting->get('newversion');
         // 安全信息获取URL
-        $getSecurityUrl = Ibos::app()->urlManager->createUrl( 'dashboard/index/getsecurity' );
+        $getSecurityUrl = Ibos::app()->urlManager->createUrl('dashboard/index/getsecurity');
         // 安装日期
-        $mainModule = Module::model()->fetchByPk( 'main' );
+        $mainModule = Module::model()->fetchByPk('main');
         // 授权信息
-        $authkey = Ibos::app()->setting->get( 'config/security/authkey' );
-        $unit = Setting::model()->fetchSettingValueByKey( 'unit' );
-        if ( isset( $_GET['attachsize'] ) ) {
+        $authkey = Ibos::app()->setting->get('config/security/authkey');
+        $unit = Setting::model()->fetchSettingValueByKey('unit');
+        if (isset($_GET['attachsize'])) {
             $attachSize = Attachment::model()->getTotalFilesize();
-            $attachSize = is_numeric( $attachSize ) ? Convert::sizeCount( $attachSize ) : Ibos::lang( 'Unknow' );
+            $attachSize = is_numeric($attachSize) ? Convert::sizeCount($attachSize) : Ibos::lang('Unknow');
         } else {
             $attachSize = '';
         }
         $data = array(
-            'unit' => StringUtil::utf8Unserialize( $unit ),
+            'unit' => StringUtil::utf8Unserialize($unit),
             'sys' => $systemInfo,
             'dataSize' => $dataSize,
             'dataUnit' => $dataUnit,
@@ -73,19 +75,20 @@ class IndexController extends BaseController {
             'authkey' => $authkey,
             'attachSize' => $attachSize
         );
-        $this->render( 'index', $data );
+        $this->render('index', $data);
     }
 
     /**
      * 切换系统开关状态
      * @return void
      */
-    public function actionSwitchstatus() {
-        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
-            $val = Env::getRequest( 'val' );
-            $result = Setting::model()->updateSettingValueByKey( 'appclosed', (int) $val );
-            Cache::update( array( 'setting' ) );
-            return $this->ajaxReturn( array( 'IsSuccess' => $result ), 'json' );
+    public function actionSwitchstatus()
+    {
+        if (Ibos::app()->getRequest()->getIsAjaxRequest()) {
+            $val = Env::getRequest('val');
+            $result = Setting::model()->updateSettingValueByKey('appclosed', (int)$val);
+            Cache::update(array('setting'));
+            return $this->ajaxReturn(array('IsSuccess' => $result), 'json');
         }
     }
 
@@ -93,12 +96,12 @@ class IndexController extends BaseController {
      * 获取远程服务器安全提示
      * @return void
      */
-    public function actionGetSecurity() {
-        if ( Ibos::app()->getRequest()->getIsAjaxRequest() ) {
-            $return = File::fileSockOpen( self::SECURITY_URL, 0, 'charset=' . CHARSET );
-            $this->ajaxReturn( $return, 'EVAL' );
+    public function actionGetSecurity()
+    {
+        if (Ibos::app()->getRequest()->getIsAjaxRequest()) {
+            $return = File::fileSockOpen(self::SECURITY_URL, 0, 'charset=' . CHARSET);
+            $this->ajaxReturn($return, 'EVAL');
         }
     }
-
 
 }

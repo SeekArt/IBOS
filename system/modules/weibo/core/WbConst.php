@@ -2,7 +2,8 @@
 
 namespace application\modules\weibo\core;
 
-class WbConst {
+class WbConst
+{
 
     const ALL_VIEW_SCOPE = 0;  // 全公司可见范围标识
     const SELF_VIEW_SCOPE = 1;  // 仅自己可见范围标识

@@ -22,14 +22,14 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
 
     public function __toString()
     {
-        return (string) $this->body;
+        return (string)$this->body;
     }
 
     /**
      * Allow decorators to implement custom methods
      *
      * @param string $method Missing method name
-     * @param array  $args   Method arguments
+     * @param array $args Method arguments
      *
      * @return mixed
      */

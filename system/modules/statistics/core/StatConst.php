@@ -17,7 +17,8 @@
 
 namespace application\modules\statistics\core;
 
-class StatConst {
+class StatConst
+{
 
     const SIDEBAR_WIDGET = 'sidebar';
     const SIDEBAR_HEADER = 'header';

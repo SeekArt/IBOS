@@ -12,7 +12,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class ObjectListing {
+class ObjectListing
+{
     /**
      * @var array Object 信息列表
      */
@@ -62,7 +63,8 @@ class ObjectListing {
      * @internal
      * @param string $bucketName
      */
-    public function setBucketName($bucketName) {
+    public function setBucketName($bucketName)
+    {
         $this->bucketName = $bucketName;
     }
 
@@ -71,7 +73,8 @@ class ObjectListing {
      *
      * @return string
      */
-    public function getBucketName() {
+    public function getBucketName()
+    {
         return $this->bucketName;
     }
 
@@ -79,7 +82,8 @@ class ObjectListing {
      * @internal
      * @param array $commonPrefixes
      */
-    public function setCommonPrefixes($commonPrefixes) {
+    public function setCommonPrefixes($commonPrefixes)
+    {
         $this->commonPrefixes = $commonPrefixes;
     }
 
@@ -88,7 +92,8 @@ class ObjectListing {
      *
      * @return array
      */
-    public function getCommonPrefixes() {
+    public function getCommonPrefixes()
+    {
         return $this->commonPrefixes;
     }
 
@@ -97,7 +102,8 @@ class ObjectListing {
      *
      * @param string $delimiter
      */
-    public function setDelimiter($delimiter) {
+    public function setDelimiter($delimiter)
+    {
         $this->delimiter = $delimiter;
     }
 
@@ -106,7 +112,8 @@ class ObjectListing {
      *
      * @return string
      */
-    public function getDelimiter() {
+    public function getDelimiter()
+    {
         return $this->delimiter;
     }
 
@@ -115,7 +122,8 @@ class ObjectListing {
      *
      * @param bool $isTruncated
      */
-    public function setIsTruncated($isTruncated) {
+    public function setIsTruncated($isTruncated)
+    {
         $this->isTruncated = $isTruncated;
     }
 
@@ -124,7 +132,8 @@ class ObjectListing {
      *
      * @return bool
      */
-    public function getIsTruncated() {
+    public function getIsTruncated()
+    {
         return $this->isTruncated;
     }
 
@@ -132,7 +141,8 @@ class ObjectListing {
      * @internal
      * @param string $marker
      */
-    public function setMarker($marker) {
+    public function setMarker($marker)
+    {
         $this->marker = $marker;
     }
 
@@ -141,7 +151,8 @@ class ObjectListing {
      *
      * @return string
      */
-    public function getMarker() {
+    public function getMarker()
+    {
         return $this->marker;
     }
 
@@ -149,7 +160,8 @@ class ObjectListing {
      * @internal
      * @param int $maxKeys
      */
-    public function setMaxKeys($maxKeys) {
+    public function setMaxKeys($maxKeys)
+    {
         $this->maxKeys = $maxKeys;
     }
 
@@ -158,7 +170,8 @@ class ObjectListing {
      *
      * @return int
      */
-    public function getMaxKeys() {
+    public function getMaxKeys()
+    {
         return $this->maxKeys;
     }
 
@@ -167,7 +180,8 @@ class ObjectListing {
      *
      * @param string $nextMarker
      */
-    public function setNextMarker($nextMarker) {
+    public function setNextMarker($nextMarker)
+    {
         $this->nextMarker = $nextMarker;
     }
 
@@ -176,7 +190,8 @@ class ObjectListing {
      *
      * @return string
      */
-    public function getNextMarker() {
+    public function getNextMarker()
+    {
         return $this->nextMarker;
     }
 
@@ -184,7 +199,8 @@ class ObjectListing {
      * @internal
      * @param array $objectSummarys
      */
-    public function setObjectSummarys($objectSummarys) {
+    public function setObjectSummarys($objectSummarys)
+    {
         $this->objectSummarys = $objectSummarys;
     }
 
@@ -193,7 +209,8 @@ class ObjectListing {
      *
      * @return array
      */
-    public function getObjectSummarys() {
+    public function getObjectSummarys()
+    {
         return $this->objectSummarys;
     }
 
@@ -201,7 +218,8 @@ class ObjectListing {
      * @internal
      * @param string $prefix
      */
-    public function setPrefix($prefix) {
+    public function setPrefix($prefix)
+    {
         $this->prefix = $prefix;
     }
 
@@ -210,7 +228,8 @@ class ObjectListing {
      *
      * @return string
      */
-    public function getPrefix() {
+    public function getPrefix()
+    {
         return $this->prefix;
     }
 }

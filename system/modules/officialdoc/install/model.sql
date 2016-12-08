@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS {{doc}} (
   `uptime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
   `clickcount` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '点击数',
   `attachmentid` text NOT NULL COMMENT '附件ID',
-  `docno` text NOT NULL COMMENT '公文号', 
+  `docno` text NOT NULL COMMENT '通知号', 
   `commentstatus` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '评论状态，1为开启0为关闭',
   `catid` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '所属分类',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '文章状态，1为公开2为审核3为草稿',
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS {{doc_category}} (
 DROP TABLE IF EXISTS {{doc_approval}};
 CREATE TABLE IF NOT EXISTS {{doc_approval}} (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水id',
-  `docid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '公文id',
+  `docid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '通知id',
   `uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '签收人id',
   `step` varchar(10) NOT NULL DEFAULT '' COMMENT '签收步骤(1,2,3,4,5对应approval表level1,level2,level3,level4,level5)',
   PRIMARY KEY (`id`),
@@ -124,16 +124,16 @@ CREATE TABLE IF NOT EXISTS {{doc_back}} (
 REPLACE INTO `{{setting}}` (`skey`,`svalue`) VALUES ('docconfig','a:2:{s:11:"docapprover";i:0;s:16:"doccommentenable";i:1;}');
 REPLACE INTO `{{syscache}}`(`name`, `type`, `dateline`, `value`) VALUES ('officialdoccategory','1','0','');
 INSERT INTO `{{doc_category}}`(`pid`, `name`, `sort`) VALUES ('0','默认分类','0');
-INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('5','公文','officialdoc/officialdoc/index','0','1','0','2','officialdoc');
-INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('公文','0','officialdoc','dashboard','index','','10','0');
-INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_message','公文消息提醒','officialdoc','officialdoc/default/New message title','officialdoc/default/New message content','1','1','1','2');
-INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_verify_message','信息中心公文审核提醒','officialdoc','officialdoc/default/New verify message title','officialdoc/default/New verify message content','1','1','1','2');
-INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_sign_remind','公文签收提醒','officialdoc','officialdoc/default/Sign message title','officialdoc/default/Sign message content','1','1','1','2');
-INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('official_back_message','公文中心审核退回提醒','officialdoc','officialdoc/default/New back title','officialdoc/default/New back content','1','1','1','2');
-REPLACE INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表公文', 'addofficialdoc', '3', '2', '0', '2','1');
+INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('5','通知公告','officialdoc/officialdoc/index','0','1','0','2','officialdoc');
+INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('通知公告','0','officialdoc','dashboard','index','','10','0');
+INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_message','通知消息提醒','officialdoc','officialdoc/default/New message title','officialdoc/default/New message content','1','1','1','2');
+INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_verify_message','信息中心通知审核提醒','officialdoc','officialdoc/default/New verify message title','officialdoc/default/New verify message content','1','1','1','2');
+INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('officialdoc_sign_remind','通知签收提醒','officialdoc','officialdoc/default/Sign message title','officialdoc/default/Sign message content','1','1','1','2');
+INSERT INTO `{{notify_node}}`(`node`, `nodeinfo`, `module`, `titlekey`, `contentkey`, `sendemail`, `sendmessage`, `sendsms`, `type`) VALUES ('official_back_message','通知中心审核退回提醒','officialdoc','officialdoc/default/New back title','officialdoc/default/New back content','1','1','1','2');
+REPLACE INTO `{{credit_rule}}` (`rulename`, `action`, `cycletype`, `rewardnum`, `extcredits1`,`extcredits2`, `extcredits3`) VALUES ('发表通知', 'addofficialdoc', '3', '2', '0', '2','1');
 INSERT INTO `{{rc_type}}` (`name`, `classname`, `content`, `escape_content`) VALUES 
 ('默认套红', '', '套红A模板xxx( xxx )xx号关于 xxx 的通知xxxx公司   xxxx年xx月xx日', '<div><div style=\"border-bottom:4px solid #e26f50;\"><h2 style=\"text-align:center;font:700 36px/1.8 &#39;fangsong&#39;,&#39;simsun&#39;;color:#e26f50;margin-top:40px;margin-bottom:15px;\">套红A模板</h2><div style=\"padding:15px 0;text-align:center;\"><em style=\"font-style:normal;font-size:20px;font-family:&#39;fangsong&#39;,&#39;simsun&#39;;letter-spacing:3px\">xxx( xxx )xx号</em></div></div><div style=\"border-top:1px solid #e26f50;margin-top:4px;\"><div><h1 style=\"text-align:center;font:700 24px/2 &#39;fangsong&#39;,&#39;simsun&#39;;color:#666\">关于 xxx 的通知</h1><div id=\"original-content\" style=\"min-height:400px;font:16px/2 &#39;fangsong&#39;,&#39;simsun&#39;;color:#666;\"></div><div style=\"border-top:1px dotted #ddd;margin:20px 0;\"></div><div style=\"padding:20px 0;text-align:right;color:#666;letter-spacing:3px;font:18px/2 &#39;fangsong&#39;,&#39;simsun&#39;\">xxxx公司 &nbsp; <br />xxxx年xx月xx日</div></div></div></div>');
-INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('officialdoc','公文','officialdoc/officialdoc/index','提供企业公文信息发布，以及版本记录','6','1');
+INSERT INTO `{{menu_common}}`( `module`, `name`, `url`, `description`, `sort`, `iscommon`) VALUES ('officialdoc','通知公告','officialdoc/officialdoc/index','提供企业通知信息发布，以及版本记录','6','1');
 INSERT INTO `{{auth_item}}` (`name`, `type`, `description`, `bizrule`, `data`) VALUES ('officialdoc/officialdoc/move', '0', '', 'return UserUtil::checkDataPurv($purvId);', 's:0:\"\";');
 INSERT INTO `{{auth_item_child}}` (`parent`, `child`) VALUES ('1', 'officialdoc/officialdoc/move');
 UPDATE `{{node}}` SET `routes`='officialdoc/officialdoc/edit,officialdoc/officialdoc/move' WHERE (`node`='edit' AND `module`='officialdoc');

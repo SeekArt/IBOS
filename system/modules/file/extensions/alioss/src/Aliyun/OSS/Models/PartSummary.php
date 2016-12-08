@@ -12,7 +12,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class PartSummary {
+class PartSummary
+{
 
     /**
      * @var integer
@@ -38,7 +39,8 @@ class PartSummary {
      * @internal
      * @param string $eTag
      */
-    public function setETag($eTag) {
+    public function setETag($eTag)
+    {
         $this->eTag = $eTag;
     }
 
@@ -47,7 +49,8 @@ class PartSummary {
      *
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         return $this->eTag;
     }
 
@@ -55,7 +58,8 @@ class PartSummary {
      * @internal
      * @param \DateTime $lastModified
      */
-    public function setLastModified($lastModified) {
+    public function setLastModified($lastModified)
+    {
         $this->lastModified = $lastModified;
     }
 
@@ -64,7 +68,8 @@ class PartSummary {
      *
      * @return \DateTime
      */
-    public function getLastModified() {
+    public function getLastModified()
+    {
         return $this->lastModified;
     }
 
@@ -73,7 +78,8 @@ class PartSummary {
      *
      * @param int $partNumber
      */
-    public function setPartNumber($partNumber) {
+    public function setPartNumber($partNumber)
+    {
         $this->partNumber = $partNumber;
     }
 
@@ -82,7 +88,8 @@ class PartSummary {
      *
      * @return int
      */
-    public function getPartNumber() {
+    public function getPartNumber()
+    {
         return $this->partNumber;
     }
 
@@ -91,7 +98,8 @@ class PartSummary {
      *
      * @param int $size
      */
-    public function setSize($size) {
+    public function setSize($size)
+    {
         $this->size = $size;
     }
 
@@ -100,7 +108,8 @@ class PartSummary {
      *
      * @return int
      */
-    public function getSize() {
+    public function getSize()
+    {
         return $this->size;
     }
 }

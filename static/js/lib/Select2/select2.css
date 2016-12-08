@@ -396,11 +396,13 @@ disabled look for already selected choices in the results dropdown
       margin: 0;
       /*padding: 0 75px 0 0;*/
       cursor: text;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       height: auto !important;
       height: 1%;
       position: relative;
       min-height: 26px;
+      max-height: 116px;
 }
 
 

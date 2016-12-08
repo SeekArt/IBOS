@@ -20,12 +20,14 @@ use application\core\utils\Ibos;
 use application\modules\statistics\core\ChartFactory;
 use application\modules\statistics\utils\StatCommon;
 
-class StatDiaryCount extends StatDiaryBase {
+class StatDiaryCount extends StatDiaryBase
+{
 
     // widget视图
     const VIEW = 'application.modules.diary.views.widget.count';
 
-    public function init() {
+    public function init()
+    {
         $this->checkReviewAccess();
     }
 
@@ -33,19 +35,20 @@ class StatDiaryCount extends StatDiaryBase {
      * 渲染图表视图
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         $factory = new ChartFactory();
-        $properties = array( 'uid' => $this->getUid(), 'timeScope' => StatCommon::getCommonTimeScope() );
-        $timeCounter = $this->createComponent( 'application\modules\diary\components\SubmitTimeCounter', $properties );
-        $scoreCounter = $this->createComponent( 'application\modules\diary\components\ScoreTimeCounter', $properties );
-        $stampCounter = $this->createComponent( 'application\modules\diary\components\StampCounter', $properties );
+        $properties = array('uid' => $this->getUid(), 'timeScope' => StatCommon::getCommonTimeScope());
+        $timeCounter = $this->createComponent('application\modules\diary\components\SubmitTimeCounter', $properties);
+        $scoreCounter = $this->createComponent('application\modules\diary\components\ScoreTimeCounter', $properties);
+        $stampCounter = $this->createComponent('application\modules\diary\components\StampCounter', $properties);
         $data = array(
-            'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl( 'statistics' ),
-            'time' => $factory->createChart( $timeCounter, 'application\modules\diary\components\LineChart' ),
-            'score' => $factory->createChart( $scoreCounter, 'application\modules\diary\components\LineChart' ),
-            'stamp' => $factory->createChart( $stampCounter, 'application\modules\diary\components\BarChart' )
+            'statAssetUrl' => Ibos::app()->assetManager->getAssetsUrl('statistics'),
+            'time' => $factory->createChart($timeCounter, 'application\modules\diary\components\LineChart'),
+            'score' => $factory->createChart($scoreCounter, 'application\modules\diary\components\LineChart'),
+            'stamp' => $factory->createChart($stampCounter, 'application\modules\diary\components\BarChart')
         );
-        $this->render( self::VIEW, $data );
+        $this->render(self::VIEW, $data);
     }
 
 }

@@ -12,25 +12,159 @@
      * @param  {Array}     options.values      默认值
      * @return {Object}                        SelectBox实例对象
      */
+    var KEY = {
+            BACKSPACE: 8,
+            ENTER: 13
+        },
+        TypeMap = {
+            c: "company",
+            d: "department",
+            p: "position",
+            u: "user",
+            r: "role"
+        },
+        COMPANY = 'c_0',
+        ALL = 'all',
+        USER = 'user';
+
+    // 辅助函数
+    var _queryMatcher, _diffArr, _publicArr, _fixEmptyArr, _getUnique, _mergeArr, _getOthersFromArr, _evtKill;
+
+    /**
+     * 中文拼音匹配搜索
+     * @param  {[String]} str  [搜索字符]
+     * @param  {[Object]} data [搜索对象(格式参照Ibos.data.get()返回)]
+     * @return {[Array]}      [description]
+     */
+    _queryMatcher = function(str, data) {
+        if (!str) return [];
+
+        var userData = Ibos.data.filter(data, function(data) {
+            var text = data.text;
+            if (text && data.id) {
+                // 岗位分类应排除在数据集中
+                if (data.id.charAt(0) === 'f') {
+                    return false;
+                }
+
+                text += "," + pinyinEngine.toPinyin(text, false, ",");
+                return text.toUpperCase().indexOf(str.toUpperCase()) >= 0;
+            }
+            return false;
+        }, 15);
+
+        return Ibos.data.converToArray(userData);
+    };
+
+    /**
+     * 数组差异比较
+     * @param  {[Array]} src    [源数组]
+     * @param  {[Array]} target [目标数组]
+     * @return {[Object]}        [{ added: [], removed: [] }]
+     */
+    _diffArr = function(src, target) {
+        if (!$.isArray(src) || !$.isArray(target)) {
+            console.error('parameter error');
+            return false;
+        }
+
+        var len = Math.max(src.length, target.length),
+            key, _src = {},
+            _target = {},
+            _diffObj = {
+                added: [],
+                removed: []
+            };
+
+        for (; len--;) {
+            src[len] && (_src[src[len]] = '');
+            target[len] && (_target[target[len]] = '');
+        }
+
+        for (key in _src) {
+            !(key in _target) && _diffObj.removed.push(key);
+        }
+
+        for (key in _target) {
+            !(key in _src) && _diffObj.added.push(key);
+        }
+
+        return _diffObj;
+    };
+
+    /**
+     * 数组取交集
+     */
+    _publicArr = function(src, target) {
+        var len, _flip = {},
+            item, _public = [];
+
+        for (len = src.length; len--;) {
+            (item = src[len]) && (_flip[item] = '');
+        }
+
+        for (len = target.length; len--;) {
+            (item = target[len]) in _flip && _public.push(item);
+        }
+
+        return _public;
+    };
+
+    _fixEmptyArr = function(vals) {
+        return (vals.length && vals.length > 0) ? vals : null;
+    };
+
+    _getUnique = function(vals) {
+        return $.unique(vals);
+    };
+
+    _mergeArr = function(src, target) {
+        if (!$.isArray(src)) {
+            src = [src];
+        }
+
+        return _getUnique(src.concat(target));
+    };
+
+    _evtKill = function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+    };
+
+    /**
+     * 获取数组差值
+     * @param  {[Array]} src    
+     * @param  {[Array]} target
+     * @return {[Array]} 返回src中target不存在的值集合
+     */
+    _getOthersFromArr = function(src, target) {
+        return _diffArr(src, target).removed;
+    };
+
     var SelectBox = function($element, options) {
+        var types = ['all', 'user', 'department', 'position', 'role'];
+
         if (!Ibos || !Ibos.data) {
             $.error("(SelectBox): 未定义数据Ibos.data");
         }
-        var _this = this;
-        this.$element = $element;
+
+        if (!(this instanceof SelectBox)) {
+            return new SelectBox($element, options);
+        }
+
+        this.$el = $element;
+        this.el = $element.get(0);
         this.options = $.extend(true, {}, SelectBox.defaults, options);
 
-        this.hasInit = false;
-        this.currentType = "";
-        this.currentId = "";
-        this.values = this.options.values;
-        this.options.type = (function() {
-            var types = _this.options.type;
-            if ($.isArray(types)) {
-                return types;
-            }
-            return types.split(",");
-        })();
+        this.values = [];
+        this.trees = [];
+        // 兼容数组或字符串
+        // 仅允许单类型
+        this.options.type = typeof this.options.type !== 'string' ? this.options.type.toString() : this.options.type;
+        if (!~$.inArray(this.options.type, types)) {
+            this.options.type = ALL;
+        }
+
         this._init();
     };
     /**
@@ -42,11 +176,36 @@
         data: [],
         size: 2000,
         navSettings: [{
+            // id: "select_box_role",
+            icon: "select-box-lately",
+            text: U.lang("US.LATELY"),
+            data: function() {
+                var _cookies, userData, self = this;
+
+                _cookies = (this._cookie('lately.SelectBox') && this._cookie('lately.SelectBox').split(',')) || [];
+                this.options.type === 'user' && (_cookies = $.grep(_cookies, function(v) {
+                    return v.charAt(0) == 'u' && ~$.inArray(v, self.uids);
+                }));
+                userData = Ibos.data.includes(_cookies);
+
+                return $.each(Ibos.data.converToArray(userData), function(i, v) {
+                    delete v.pid;
+                    v.iconSkin = TypeMap[v.id.charAt(0)];
+                });
+            },
+            type: "lately"
+        }, {
             // id: "select_box_department",
             icon: "select-box-department",
             text: U.lang("US.PER_DEPARTMENT"),
             data: function() {
-                return Ibos.data.get("department") || {};
+                var userOnly = this.options.type === 'user';
+                return Ibos.data.converToArray(Ibos.data.filter(this.depts, function(data) {
+                    userOnly && (data.nocheck = true);
+                    data.isParent = true;
+                    data.iconSkin = TypeMap[data.id.charAt(0)];
+                    return true;
+                }));
             },
             type: "department"
         }, {
@@ -54,26 +213,19 @@
             icon: "select-box-position",
             text: U.lang("US.PER_POSITION"),
             data: function() {
-                return Ibos.data.get("position", "positioncategory") || {};
+                var userOnly = this.options.type === 'user';
+                return Ibos.data.converToArray(Ibos.data.get('position', 'positioncategory', function(data) {
+                    userOnly && (data.nocheck = true);
+                    data.isParent = true;
+                    data.iconSkin = 'position';
+                    return true;
+                })) || [];
             },
             type: "position"
-        }, {
-            // id: "select_box_role",
-            icon: "select-box-role",
-            text: U.lang("US.PER_ROLE"),
-            data: function() {
-                return Ibos.data.get("role") || {};
-            },
-            type: "role"
         }],
         values: [],
         // 拓展-导航栏隐藏,自定义导航栏
-        noNav: false,
-        showLong: false,
-        // 只可选用户
-        // userOnly: false
-        // maximumSelectionSize: 1, // 最大选项数只能在type 为 "user" 下使用
-        type: "all" //"user" "position" "department"
+        type: ALL //"user" "position" "department" "role"
     };
     /**
      * SelectBox语言包
@@ -92,7 +244,21 @@
          * @return {Object} 当前调用对象
          */
         _init: function() {
-            this._createSelectBox();
+            var len, val, vals, max;
+
+            max = this.options.maximumSelectionSize || Math.pow(2, 18);
+            // 初始化限制过滤
+            if (vals = $.trim(this.options.values).split(',')) {
+                for (len = vals.length; len--;) {
+                    (val = vals[len]) && this._getText(val) && this.values.length <= max && this.values.push(val);
+                }
+
+                delete this.options.values;
+            }
+
+            //缓存一份数据，用于恢复原有状态
+            this.saveValue()
+                ._createSelectBox();
         },
         /**
          * 创建选择窗
@@ -102,698 +268,706 @@
          * @return {Object} 当前调用对象
          */
         _createSelectBox: function() {
-            var //$selectBox = $("#select_box"),
-                hasInit = this.$element.attr("data-init") === "1",
-                lang = SelectBox.lang,
-                selectBoxTpl;
+            var selectBoxTpl,
+                hasInit = this.$el.attr("data-init") === "1",
+                titleConfig = {
+                    'all': '请选择发布范围',
+                    'user': '请选择相关人员',
+                    'department': '请选择部门',
+                    'position': '请选择岗位',
+                    'role': '请选择角色'
+                };
+
             if (!hasInit) {
                 selectBoxTpl = [
-                    '   <div class="select-box-header">',
-                    '       <ul class="select-box-nav"></ul>',
-                    '   </div>',
-                    '   <div class="select-box-mainer">',
-                    '       <div class="select-box-mainer-inner scroll">',
-                    '           <div class="select-box-area">',
-                    '               <div class="select-box-area-header">' + U.lang("US.SELECT_ALL"),
-                    '                   <label class="checkbox pull-right"><span class="icon"></span><span class="icon-to-fade"></span><input type="checkbox" data-type="checkall"/></label>',
+                    '   <div class="select-box-modal"></div>',
+                    '   <div class="select-box-content">',
+                    '       <div class="select-box-header">',
+                    '           <p class="select-box-title">' + titleConfig[this.options.type] + '</p>',
+                    '           <i class="select-box-close"></i>',
+                    '       </div>',
+                    '       <div class="select-box-body">',
+                    '           <div class="select-box-mainer">',
+                    '               <div class="select-box-nav"></div>',
+                    '               <div class="select-box-query">',
+                    '                   <div class="search"><input type="text" placeholder="请输入姓名、部门或岗位，按回车进行搜索" id="us_search"/></div>',
                     '               </div>',
-                    '               <div class="select-box-area-mainer">',
-                    '                   <ul class="select-box-list"></ul>',
+                    '               <div class="select-box-list scroll"></div>',
+                    '           </div>',
+                    '           <div class="select-box-res">',
+                    '               <div class="select-box-ctrl">',
+                    '                   <span class="ml">已选择：<em class="select-box-selected-num">0</em> 项</span>',
+                    '                   <a href="javascript:;" class="select-box-clear pull-right mr">清空</a>',
                     '               </div>',
+                    '               <div class="select-box-acheive scroll"></div>',
                     '           </div>',
                     '       </div>',
-                    '       <div class="select-box-mainer-aside scroll"></div>',
+                    '       <div class="select-box-footer">',
+                    '           <button class="btn">取消</button>',
+                    '           <button class="btn btn-primary">确定</button>',
+                    '       </div>',
                     '   </div>'
-                ].join("");
-                this.$element.addClass("select-box")
+                ].join('');
+
+                this.$el.addClass("select-box")
                     .attr("data-init", "1")
                     .append(selectBoxTpl)
                     .css("z-index", SelectBox.zIndex++)
-                    .mousedown(function(evt) { evt.stopPropagation() });
+                    .mousedown(function(evt) {
+                        evt.stopPropagation();
+                    });
 
                 this._initSelectBox();
+                this.hasInit = true;
             }
 
             return this;
         },
+
         /**
          * 初始化选择窗
-         * @method _initSelectBox
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
          */
         _initSelectBox: function() {
-            // @Todo: 让其可配置
-            var settings = this.options.navSettings,
-                types = this.options.type,
-                // 有右侧栏
-                userSelectable = ~$.inArray("all", types) || ~$.inArray("user", types),
-                len = settings.length,
-                typesLen = settings.length,
-                i, j, setting, type;
+            var navSettings = this.options.navSettings,
+                type = this.options.type,
+                i, len, setting;
 
-            this.$header = this.$element.find(".select-box-header");
-            this.$nav = this.$header.find(".select-box-nav");
-            this.$mainer = this.$element.find(".select-box-mainer");
-            this.$aside = this.$mainer.find(".select-box-mainer-aside");
-            this.$inner = this.$mainer.find(".select-box-mainer-inner");
-            this.$checkbox = this.$inner.find(".select-box-area-header input");
-            this.$list = this.$inner.find(".select-box-list");
+            this.$header = this.$el.find('.select-box-header');
+            this.$nav = this.$el.find('.select-box-nav');
+            this.$query = this.$el.find('.select-box-query input');
+            this.$mainer = this.$el.find('.select-box-mainer');
+            this.$list = this.$mainer.find('.select-box-list');
+            this.$res = this.$el.find('.select-box-res');
+            this.$acheive = this.$res.find('.select-box-acheive');
+            this.$num = this.$res.find('.select-box-selected-num');
+            this.$footer = this.$el.find('.select-box-footer');
 
-            for (i = 0; i < len; i++) {
-                setting = settings[i];
-                // 只输出对应选择方式的导航
-                if (userSelectable) {
-                    this._createNavItem(setting);
-                    this._createTree(setting.type, setting.data());
-                } else {
-                    for (j = 0; j < typesLen; j++) {
-                        type = types[j];
-                        if (type === setting.type) {
-                            this._createNavItem(setting);
-                            this._createTree(setting.type, setting.data());
-                        }
-                    }
+            if (USER == type || ALL == type) {
+                this.createTreePath();
+                for (i = 0, len = navSettings.length; i < len; i += 1) {
+                    setting = navSettings[i];
+
+                    this._createNav(setting);
+                    this._createTree(setting.type, setting.data.call(this));
                 }
-            }
 
-            // 当可选择用户时，需要绑定导航切换事件及列表刷新事件
-            if (types[0]) {
-                this._bindChangeEvent();
-                this._bindNavEvent();
-                this._bindScrollEvt();
+                this._bindNavEvt()
+                    ._setNav(0);
             } else {
-                // 否则，隐藏右侧栏
-                this.$inner.hide();
+                this.$nav.hide();
+                this._createTree(type, this._dataSetting(type));
+                this._setCheckedNodes();
             }
-            this.setNav(0);
-            // 隐藏导航栏
-            this.options.noNav && this.$header.hide();
-            if (this.options.showLong) {
-                $(doc).off("mousedown.userselect.hideall", UserSelect.hideAllBox);
-            }
-        },
-        /**
-         * 绑定右侧复选框change时的事件
-         * @method _bindChangeEvent
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
-         */
-        _bindChangeEvent: function() {
-            var that = this;
-            this.$inner.on("change", "input[type='checkbox']", function(evt) {
-                var results = [],
-                    $checkbox = $(this),
-                    type = $checkbox.attr("data-type"), //此属性用于判断此复选框是否全选
-                    isChecked = $checkbox.prop("checked"),
-                    val = $checkbox.val();
 
-                isChecked ? that._toCheck($checkbox) : that._toUnCheck($checkbox);
-                if (type && type === "checkall") {
-                    results = that._toggleListCheckboxes(isChecked);
-                } else {
-                    if (isChecked) {
-                        if (!that.options.maximumSelectionSize || that.values.length < that.options.maximumSelectionSize) {
-                            that.addValue(val);
-                        } else {
-                            Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
-                            that._toUnCheck($checkbox);
-                        }
+            this._bindSelectedEvt()
+                ._initSelectedList()
+                ._bindBtnEvt()
+                ._query();
+        },
+
+        /**
+         * 创建部门结构路径
+         */
+        createTreePath: function() {
+            // 部门导航顶级为 deptid == 'c_0'
+            var userOnly = this.options.type === 'user',
+                _tree = function(id) {
+                    // 节点已缓存时返回空对象
+                    if (collectionDept['department'][id]) {
+                        return {};
+                    }
+
+                    var ret;
+                    if (id === COMPANY) {
+                        return Ibos.data.getItem(id);
                     } else {
-                        that.removeValue(val);
+                        ret = Ibos.data.getItem(id);
+                        return $.extend(true, {}, ret, _tree(ret['department'][id]['pid']));
                     }
-                    results.push(val);
-                }
-                $(that).trigger("slblistchange", { values: results, checked: isChecked });
-                evt.stopPropagation();
-            });
-            return this;
-        },
+                },
+                collectionDept = {
+                    department: {}
+                },
+                uids = [];
 
-        /**
-         * 修改复选框的状态, 全选或全取消选择
-         * @_toggleListCheckboxes
-         * @param  {String} toCheck true为选中， false为取消选中
-         * @private
-         * @return {Array}      发生改变的复选框值
-         */
-        _toggleListCheckboxes: function(toCheck) {
-            var that = this,
-                res = 0,
-                len = this.values.length,
-                max = that.options.maximumSelectionSize,
-                $inputItem = this.$list.find('input'),
-                values;
-
-            var getListValue = function() {
-                return $.map(that._listdatas, function(d) {
-                    return d.id;
+            if (userOnly) {
+                // 因为数据量大时性能消耗严重，暂时不对部门做过滤
+                $.each(this.options.data.user, function(i, v) {
+                    uids.push(v.id);
+                    // $.extend(true, collectionDept, _tree(v.deptid));
                 });
-            };
-
-            // cancel refreshList in order to save dom_create time
-            values = getListValue();
-            if (toCheck) {
-                this.addValue(values);
-                if (!max) this._toCheck($inputItem);
-                // if over the maximum, the rest will not be selected
-                if (len <= max) this._toCheck($inputItem.slice(0, max - len));
+                collectionDept = Ibos.data.get('department');
             } else {
-                this.removeValue(values);
-                this._toUnCheck($inputItem);
+                collectionDept = Ibos.data.get('department');
             }
 
-            return values;
-        },
-        /**
-         * 绑定导航点击事件
-         * @method _bindNavEvent
-         * @private
-         * @chainable
-         * @return {Objec} 当前调用对象
-         */
-        _bindNavEvent: function() {
-            var that = this;
-            this._unBindNavEvent();
-            this.$nav.on("click.userSelect.nav", "li", function() {
-                var index = $(this).index();
-                that.setNav(index);
-                return false;
-            });
+            this.uids = _getUnique(uids);
+            this.depts = collectionDept;
             return this;
         },
+
         /**
-         * 解绑导航点击事件
-         * @method _unBindNavEvent
-         * @private
-         * @chainable
-         * @return {Objec} 当前调用对象
+         * 创建导航模板
          */
-        _unBindNavEvent: function() {
-            this.$nav.off("click.userSelect.nav");
+        _createNav: function(setting) {
+            var navTpl;
+
+            navTpl = [
+                '<li data-type="' + setting.type + '">',
+                '    <a href="javascript:;">',
+                '        <i class="' + setting.icon + '"></i>',
+                '        <span>' + setting.text + '</span>',
+                '    </a>',
+                '</li>'
+            ].join('');
+
+            this.$nav.append(navTpl);
             return this;
         },
+
         /**
-         * 创建导航项
-         * @method _createNavItem
-         * @private
-         * @chainable
-         * @param  {Key-Value} setting 配置
-         * @param  {String} settings.type 导航项的标识，相当于ID
-         * @param  {String} settings.icon 图标样式类
-         * @param  {String} settings.data 用于生成树的数据
-         * @param  {String} settings.text 导航项的文本
-         * @return {Objec}         当前调用对象
+         * 导航切换
          */
-        _createNavItem: function(setting) {
-            // if (this.options.type === "all" || this.options.type === setting.type) {
-            var tpl = '<li data-type="' + setting.type + '"><a href="javascript:;"><i class="' + setting.icon + '"></i><span>' + setting.text + '</span></a></li>';
-            // }
-            this.$nav.append(tpl);
+        _setNav: function(idx) {
+            var navs = this.$nav.find('li'),
+                trees = this.$list.find('.ztree'),
+                currentType;
+
+            if (idx < 0 || idx > navs.length - 1) {
+                idx = 0;
+            }
+
+            this.$query.val('');
+
+            if (typeof idx == 'number') {
+                currentType = navs.removeClass("active")
+                    .eq(idx).addClass("active")
+                    .attr('data-type');
+                trees.hide()
+                    .eq(idx).show();
+                this.currentTree = $.fn.zTree.getZTreeObj(this.el.id + '_' + currentType + '_tree');
+                // 切换导航时先取消所有勾选再正确勾选所有值
+                // 确保数据的正确
+                this._setCheckedNodes();
+                // 保存当前导航
+                this.nav = idx;
+            } else {
+                this._setNav(0);
+            }
+
             return this;
         },
+
+        _setCheckedNodes: function() {
+            var _cacheValues;
+            // @TODO: 差异化比较，减少勾选操作，但是在导航切换时要关联id
+            _cacheValues = [].concat(this.values);
+            this.setValue($.map(this.currentTree.getCheckedNodes(), function(v) {
+                return v.id;
+            }), false);
+            this.setValue(_cacheValues, true);
+            this.currentTree.cancelSelectedNode();
+        },
+
         /**
-         * 创建树
-         * @method _createTree
-         * @private
-         * @chainable
-         * @param  {String} type 与导航项对应的标识
-         * @param  {Array}  data 用于生成树的数据
-         * @return {Object}      当前调用对象
+         * 创建左侧树
          */
         _createTree: function(type, data) {
-            //@Debug
             if (!$.fn.zTree) {
-                $.error("(UserSelect): 缺少zTree组件")
+                $.error("(SelectBox): 缺少zTree组件");
             }
-            if (!data || !$.isArray(data)) {
-                data = Ibos.data.converToArray(data);
-            }
-            var that = this,
-                treeidPrefix = this.$element[0].id,
-                treeClick = function(evt, treeid, node) {
-                    var type = that.options.type,
-                        userSelectable = (~$.inArray("user", type) || ~$.inArray("all", type));
-                    // 当用户可选择时，点击树项为刷新右侧列表
-                    if (userSelectable) {
-                        that.currentId = node.id;
-                        that.refreshList(node.id);
-                        // 否则，为选中该项
-                    } else {
-                        // 排除不可选中的项
-                        if (!node.nocheck) {
-                            if (node.checked) {
-                                that.removeValue(node.id);
-                                node.checked = false;
-                                // lastChecked = null;
-                            } else {
-                                // 当超过最大可选数时，将不再继续选择
-                                if (that.options.maximumSelectionSize && that.options.maximumSelectionSize <= that.values.length) {
-                                    Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
-                                    return true;
-                                }
-                                that.addValue(node.id);
-                                node.checked = true;
-                            }
-                        }
-                    }
-                },
-                treeCheck = function(evt, treeid, node) {
-                    // 排除不可选中的项
-                    if (!node.nocheck) {
-                        if (!node.checked) {
-                            that.removeValue(node.id);
-                        } else {
-                            // 当超过最大可选数时，将不再继续选择
-                            if (that.options.maximumSelectionSize && that.options.maximumSelectionSize <= that.values.length) {
-                                node.checked = false;
-                                Ui.tip("已超过选择最大数，请先取消原有勾选", "warning");
-                                return true;
-                            }
-                            that.addValue(node.id);
-                        }
-                    }
-                },
-                treeSetting = {
-                    check: {
-                        enable: true,
-                        chkboxType: {
-                            "Y": "",
-                            "N": ""
-                        }
-                    },
-                    data: {
-                        key: {
-                            name: 'text'
-                        },
-                        simpleData: {
-                            enable: true,
-                            pIdKey: 'pid'
-                        }
-                    },
-                    callback: {
-                        onClick: treeClick,
-                        onCheck: treeCheck
-                    },
-                    view: {
-                        showLine: false,
-                        showIcon: false,
-                        selectedMulti: false
-                    }
-                },
-                $tree = $('<ul id="' + treeidPrefix + '_' + type + '_tree" class="ztree user-ztree"></ul>'),
-                types = this.options.type;
-            if (types[0] === "user" && types.length === 1) {
-                treeSetting.check.enable = false;
-            }
-            this.$aside.append($tree);
-            $.fn.zTree.init($tree, treeSetting, data);
 
-            data = null;
-            return this;
-        },
-        /**
-         * 设置当前导航，相当于tab功能
-         * @method setNav 
-         * @param  {Number} index 导航项下标
-         * @chainable
-         * @return {Object} 当前调用对象
-         */
-        setNav: function(index) {
-            var items = this.$nav.find("li"),
-                trees = this.$aside.find(".ztree"),
-                fixNumber = function() {
-                    if (index > items.length - 1) {
-                        index = 0;
-                    } else if (index < 0) {
-                        index += items.length;
-                        fixNumber();
-                    }
-                },
-                currentTree,
-                currentZTreeObj,
-                currentSelected,
-                currentSelectedId;
-            this.currentId = "";
-            if (typeof index === "number") {
-                fixNumber();
-                this.currentType = items.removeClass("active").eq(index).addClass("active").attr("data-type");
-                currentTree = trees.hide().eq(index).show();
-                // 根据当前树选中的节点ID刷新列表
-                currentZTreeObj = $.fn.zTree.getZTreeObj(currentTree[0].id);
-                currentSelected = currentZTreeObj.getSelectedNodes()[0];
-                currentSelectedId = (currentSelected && currentSelected.id) || "";
-                this.refreshList(currentSelectedId);
-                this.refreshCheckbox();
-            } else {
-                this.setNav(0);
-            }
-        },
-        /**
-         * 根据id刷新右侧列表
-         * @method refreshList
-         * @param  {String} id 目标id
-         * @return {Object}    当前调用对象
-         */
-        refreshList: function(id) {
-            id = id || this.currentId || "";
-            this.clearList();
-            this._initListItem(Ibos.data.getRelated(id));
-            return this;
-        },
-        /**
-         * 获取当前显示的树
-         * @method _getCurrentTree 
-         * @param  {String} type 导航标识
-         * @return {Objec}       当前调用对象
-         */
-        _getCurrentTree: function(type) {
-            type = type || this.currentType;
-            var treeidPrefix = this.$element[0].id,
-                treeid = treeidPrefix + "_" + type + "_tree",
-                treeObj = $.fn.zTree.getZTreeObj(treeid);
-            return treeObj || null;
-        },
-        /**
-         * 根据ID选中或取消左侧项的选中
-         * @method _checkNode
-         * @private
-         * @chainable
-         * @param  {String} id       数据id
-         * @param  {boolean} toCheck 是否选中
-         * @return {Object}          当前调用对象
-         */
-        _checkNode: function(id, toCheck) {
-            var type = this.currentType,
-                values = this.values,
-                treeObj = this._getCurrentTree(),
-                treeNode;
-            toCheck = typeof toCheck === 'undefined' ? true : toCheck;
-            if (id) {
-                treeNode = treeObj.getNodeByParam("id", id);
-                if (treeNode !== null) {
-                    treeObj.checkNode(treeNode, toCheck, false);
+            var treeClick, treeCheck, beforeExpand, beforeCheck;
+            var $tree, treeSetting, treeid,
+                self = this;
+
+            treeClick = function(evt, treeid, node) {
+                if (!node.nocheck) {
+                    self._checkNode(node.id, !node.checked);
                 }
-            }
-        },
-        /**
-         * 更新对应标识下，整体的checkbox状态
-         * @method refreshCheckbox
-         * @chainable 
-         * @param  {String} [type] 导航项标识，不存在此参数时，设置为此前标识 
-         * @return {Object}        当前调用对象
-         */
-        refreshCheckbox: function(type) {
-            type = type || this.currentType;
-            var values = this.values,
-                treeObj = this._getCurrentTree(type);
-            treeObj.checkAllNodes(false);
-            for (var i = 0, len = values.length; i < len; i++) {
-                this._checkNode(values[i], true);
-            }
-            // 统一触发更改
-            $(this).trigger("slbchange", { id: values.slice(0), checked: true });
-            return this;
-        },
-        dataFilter: function(datas) {
-            var selfData = this.options.data,
-                res = {},
-                key, idx, items;
+            };
 
-            for (key in datas) {
-                items = selfData[key];
-                if (items) {
-                    res[key] = {};
-                    for (idx in datas[key]) {
-                        idx in items && (res[key][idx] = datas[key][idx]);
+            treeCheck = function(evt, treeid, node) {
+                // 排除不可选中的项
+                if (!node.nocheck) {
+                    node.checked ? self.addValue(node.id) : self.removeValue(node.id);
+                    self.$num.text(self.values.length);
+                }
+            };
+
+            beforeCheck = function(treeid, node) {
+                var len, children = self.currentTree.getNodesByParamFuzzy('id', '', node);
+
+                if (!node.nocheck) {
+                    if (!node.checked && !~$.inArray(node.id, self.values) &&
+                        self.options.maximumSelectionSize &&
+                        self.options.maximumSelectionSize < self.values.length + 1) {
+                        Ui.tip('已超过选择限制最大值，若要选择请先取消原有勾选', 'warning');
+                        return false;
                     }
-                }
-            }
 
-            selfData = null;
-            datas = null;
-            return res;
-        },
-        /**
-         * 创建列表项
-         * @method _initListItem
-         * @private
-         * @param  {Key-Value} data 列表项数据
-         * @return {Jquery}      列表项jq对象
-         */
-        _initListItem: function(datas) {
-            var that = this,
-                values = this.values,
-                max = this.options.maximumSelectionSize,
-                listTpl = [];
-
-            // 判断初始化传入的值是否超过最大值
-            if (max && values.length > max) {
-                values.splice(max);
-            }
-
-            datas = this.dataFilter(datas);
-            if (!$.isArray(datas)) {
-                datas = Ibos.data.converToArray(datas);
-            }
-
-            this._listdatas = datas.slice(0);
-            this._cachedatas = datas.slice(0);
-            this._cachedatas.length && this._createListTmpl(this._cachedatas.splice(0, this.options.size));
-
-            datas = null;
-            return this;
-        },
-        /**
-         * 创建列表模板
-         */
-        _createListTmpl: function(datas) {
-            var i, len, data, $list,
-                values = this.values,
-                checked,
-                listTpl = [];
-
-            for (i = 0, len = datas.length; i < len; i++) {
-                data = datas[i];
-                checked = $.inArray(data.id, values) < 0;
-                listTpl.push([
-                    '<li class="', (data.online === '1' ? "online" : "offline"), '">',
-                    '<label class="checkbox ', (checked ? '' : 'checked'), '">',
-                    '<span class="icon"></span><span class="icon-to-fade"></span>',
-                    '<input type="checkbox" value="', data.id, '"', (checked ? '' : 'checked'), '/>',
-                    '<img src="', data.avatar, '" />',
-                    '<span>', data.text, '</span>',
-                    '</label>',
-                    '</li>'
-                ].join(''));
-            }
-
-            $list = $(listTpl.join(''));
-
-            this.$list.append($list);
-            return this;
-        },
-
-        _toCheck: function($input) {
-            var $label, $this;
-            if ($input[0].tagName.toLowerCase() !== 'input') {
-                $input = $input.find('input');
-            }
-
-            $input.each(function(i, e) {
-                $this = $(this);
-                $label = $this.closest('label');
-                $label.addClass('checked');
-                $this.prop('checked', true);
-
-                $label = null;
-            });
-
-            $input = null;
-            return true;
-        },
-
-        _toUnCheck: function($input) {
-            var $label, $this;
-            if ($input[0].tagName.toLowerCase() !== 'input') {
-                $input = $input.find('input');
-            }
-
-            $input.each(function(i, e) {
-                $this = $(this);
-                $label = $this.closest('label');
-                $label.removeClass('checked');
-                $this.prop('checked', false);
-
-                $label = null;
-            });
-
-            $input = null;
-            return true;
-        },
-        /**
-         * 按需加载
-         */
-        _cacheListData: function() {
-            var datas = this._cachedatas;
-            datas.length && this._createListTmpl(datas.splice(0, this.options.size));
-        },
-        /**
-         * 滚动监听
-         */
-        _bindScrollEvt: function() {
-            var that = this,
-                innerTable = this.$inner[0];
-
-            this.$inner.on('scroll', function(evt) {
-                if ((innerTable.scrollHeight - innerTable.clientHeight - 600) <= innerTable.scrollTop) {
-                    that._cacheListData();
-                }
-            });
-        },
-        /**
-         * 清空列表
-         * @method clearList
-         * @chainable
-         * @return {Object} 当前调用对象
-         */
-        clearList: function() {
-            this.$list.empty();
-            this._toUnCheck(this.$checkbox);
-            return this;
-        },
-        /**
-         * 修改当前选中值
-         * @method setValue
-         * @param  {String||Array} val 一个或一组有效值
-         * @return {Array}     已选中的值
-         */
-        setValue: function(val) {
-            this.values = $.isArray(val) ? val : [val];
-            this.refreshList();
-            this.refreshCheckbox();
-            return this.values;
-        },
-
-        /**
-         * 增加选中值
-         * @method addValue
-         * @param  {String||Array} val 一个或一组有效值
-         * @return {Array}     已选中的值
-         */
-        addValue: function(val) {
-            // 若传入数组，则循环迭代
-            var that = this,
-                res = [],
-                // 当插入数组时禁止多次触发slbchange
-                add_unit = function(value) {
-                    // 如果 val 还未被增加 且 此前允许增加， 且推入values数组
-                    if ($.inArray(value, that.values) === -1) {
-                        // 验证是否超过选项最大长度，超过部分不处理
-                        if (!that.options.maximumSelectionSize || that.values.length < that.options.maximumSelectionSize) {
-                            that.values.push(value);
-                            res.push(value);
-                            that._checkNode(value, true);
-                        } else {
-                            return false;
+                    // 在勾选之前先对子集进行锁定或解锁
+                    if (self.options.type == ALL) {
+                        for (len = children.length; len--;) {
+                            self.currentTree.setChkDisabled(children[len], !node.checked, false, false);
                         }
                     }
 
                     return true;
-                };
+                }
+            };
 
-            if (!$.isArray(val)) { val = [val]; }
-            AddValue:
-                for (var i = 0, len = val.length; i < len; i++) {
-                    if (!add_unit(val[i])) {
-                        break AddValue;
+            // 用于处理自定义添加节点
+            // 将部门和岗位用户的数据分开添加
+            // type === 'user' || type === 'all'
+            beforeExpand = (function() {
+                return ~$.inArray(self.options.type, [ALL, USER]) ? function(treeid, node) {
+                    var userData, relatedids = [],
+                        parentCheck = node.checked,
+                        chkDisabled = node.chkDisabled,
+                        nodeid = node.id === COMPANY ? 'd_0' : node.id,
+                        that = this;
+
+                    if (!node.extendChild) {
+                        // 获取关联人员
+                        // 人员过滤
+                        userData = Ibos.data.filter(Ibos.data.getRelated(nodeid), function(data) {
+                            data.iconSkin = 'user';
+                            data.id && relatedids.push(data.id);
+                            (parentCheck || chkDisabled) && (data.chkDisabled = true);
+                            return self.uids.length > 0 ? ~$.inArray(data.id, self.uids) : true;
+                        });
+
+                        that.getZTreeObj(treeid).addNodes(node, Ibos.data.converToArray(userData), true);
+                        // 展开节点时将关联树节点都勾选上
+                        // 获取公有数值并勾选
+                        self.setValue(_publicArr(relatedids, self.values), true);
+                        node.extendChild = true;
                     }
+
+                    return true;
+                } : function() {};
+            })();
+
+            treeid = this.el.id + '_' + type + '_tree';
+            $tree = $('<ul id="' + treeid + '" class="ztree user-ztree"></ul>');
+            treeSetting = {
+                check: {
+                    enable: true,
+                    chkboxType: {
+                        Y: '',
+                        N: ''
+                    }
+                },
+                data: {
+                    key: {
+                        name: 'text'
+                    },
+                    simpleData: {
+                        enable: true,
+                        pIdKey: 'pid'
+                    }
+                },
+                callback: {
+                    onClick: treeClick,
+                    onCheck: treeCheck,
+                    beforeExpand: beforeExpand,
+                    beforeCheck: beforeCheck
+                },
+                view: {
+                    showLine: false,
+                    showIcon: true,
+                    selectedMulti: true,
+                    dblClickExpand: false
+                }
+            };
+
+            $tree.appendTo(self.$list);
+            this.currentTree = $.fn.zTree.init($tree, treeSetting, data);
+
+            if (this.currentTree) {
+                this.trees.push(treeid);
+            }
+
+            data = null;
+            return $tree;
+        },
+
+        /**
+         * 左侧树数据获取 for department/position/role
+         */
+        _dataSetting: function(type) {
+            var userData, src;
+
+            src = type === 'position' ? $.extend(this.options.data, Ibos.data.get('positioncategory')) : this.options.data;
+            userData = Ibos.data.filter(src, function(data) {
+                data.iconSkin = type;
+                return true;
+            });
+
+            return Ibos.data.converToArray(userData);
+        },
+
+        /**
+         * 侧栏树勾选操作
+         */
+        _checkNode: function(id, toCheck) {
+            var treeObj, treeNode, _inside, self = this,
+                hasValue = false,
+                curTreeId = this.currentTree.setting.treeId;
+
+            _inside = function(treeid) {
+                treeObj = $.fn.zTree.getZTreeObj(treeid);
+                treeNode = treeObj.getNodeByParam("id", id);
+                if (treeNode !== null) {
+                    treeObj.checkNode(treeNode, toCheck, false, true);
+                    return true;
                 }
 
-            $(this).trigger("slbchange", { id: res, checked: true });
-            return this.values;
-        },
-        /**
-         * 删除已选中值
-         * @method removeValue
-         * @param  {String||Array} val 一个或一组有效值
-         * @return {Array}     已选中的值
-         */
-        removeValue: function(val) {
-            var that = this,
-                res = [],
-                remove_unit = function(value) {
-                    var index;
-                    index = $.inArray(value, that.values);
-                    if (index !== -1) {
-                        that.values.splice(index, 1);
-                        res.push(value);
-                        that._checkNode(value, false);
-                    }
-                };
-            // 若传入数组，则循环迭代
-            if (!$.isArray(val)) { val = [val]; }
-            RemoveValue:
-                for (var i = 0, len = val.length; i < len; i++) {
-                    remove_unit(val[i]);
-                }
+                return false;
+            };
 
-            $(this).trigger("slbchange", { id: res, checked: false });
-            return this.values;
+            toCheck = typeof toCheck === 'undefined' ? true : toCheck;
+            if (!id) {
+                return false;
+            }
+            // 对type === 'all'时，要遍历所有树
+            // 以当前树为优先，找不到节点的条件下再搜索其他树
+            if (!(hasValue = _inside(curTreeId))) {
+                $.each(_getOthersFromArr(this.trees, [curTreeId]), function(i, v) {
+                    ~$.inArray(id, self.values) && _inside(v) && (hasValue = true);
+                });
+            }
+
+            if (!hasValue) {
+                toCheck ? this.addValue(id) : this.removeValue(id);
+            }
+
+            return true;
         },
+
         /**
-         * 显示选人窗
-         * @method show
-         * @chainable
-         * @param  {Function} callback 回调
-         * @return {Object}            当前调用对象
+         * 初始化已选列表
          */
-        show: function(callback) {
-            this.$element.show();
-            // this.refreshList();
-            callback && callback.call(this, this.$element);
+        _initSelectedList: function() {
+            var vals = this.values;
+
+            this._createSelectedList(vals);
+            return this;
         },
+
         /**
-         * 隐藏选人窗
-         * @method hide
-         * @chainable
-         * @param  {Function} callback 回调
-         * @return {Object}            当前调用对象
+         * 创建已选列表模板
          */
-        hide: function(callback) {
-            this.$element.hide();
-            callback && callback.call(this, this.$element);
+        _createSelectedList: function(vals) {
+            var len, data, tpl = [],
+                userData = Ibos.data.converToArray(Ibos.data.includes(vals));
+
+            for (len = userData.length; len--;) {
+                data = userData[len];
+                tpl.push([
+                    '   <div class="select-box-selected-item" data-val=' + data.id + '>',
+                    '       <i class="select-box-' + TypeMap[data.id.charAt(0)] + '-icon"></i>',
+                    '       <span>' + data.text + '</span>',
+                    '       <i class="select-box-item-close"></i>',
+                    '   </div>'
+                ].join(''));
+            }
+
+            this.$acheive.append(tpl);
+            return this;
         },
+
         /**
-         * 执行options中定义的回调函数
-         * @param  {String} name 函数名
-         * @return {Object}      当前调用对象
+         * 移除已选列表模板
          */
-        _trigger: function(name /*,...*/ ) {
-            var argu = Array.prototype.slice.call(arguments, 1);
-            if (this.options[name] && typeof this.options[name] === "function") {
-                this.options[name].apply(this, argu);
+        _removeSelectedList: function(vals) {
+            var $v, $items = this.$acheive.find('.select-box-selected-item');
+
+            $items.each(function(i, v) {
+                $v = $(v);
+                if (~$.inArray($v.attr('data-val'), vals)) {
+                    $v.remove();
+                }
+            });
+
+            return this;
+        },
+
+        /**
+         * 添加值
+         */
+        addValue: function(val) {
+            var idx = $.inArray(val, this.values);
+            if (!~idx) {
+                this._createSelectedList([val])
+                    .values.push(val);
             }
             return this;
+        },
+
+        /**
+         * 移除值
+         */
+        removeValue: function(val) {
+            var idx = $.inArray(val, this.values);
+            if (~idx) {
+                this._removeSelectedList([val])
+                    .values.splice(idx, 1);
+            }
+            return this;
+        },
+
+        /**
+         * 多值设置
+         * 提供给外部修改内部值的一个方法
+         */
+        setValue: function(vals, checked) {
+            if (!$.isArray(vals)) {
+                vals = [vals];
+            }
+
+            var len;
+            for (len = vals.length; len--;) {
+                this._checkNode(vals[len], checked);
+            }
+
+            return this;
+        },
+
+        saveValue: function() {
+            var _cookie = (this._cookie('lately.SelectBox') && this._cookie('lately.SelectBox').split(',')) || [];
+            this._previous = [].concat(this.values);
+            this._cookie('lately.SelectBox', _mergeArr(_cookie, this.values).join(','));
+            return this;
+        },
+
+        /**
+         * 清空所有值
+         */
+        clearAll: function() {
+            this.setValue([].concat(this.values), false);
+            return this;
+        },
+
+        _query: function() {
+            var self = this,
+                results, $this, $tree = $(''),
+                $trees = this.$list.find('.ztree');
+
+            // 对输入进行监听
+            this.$query.on('keyup', function(evt) {
+                evt.stopPropagation();
+                $this = $(this);
+
+                if (evt.which === KEY.BACKSPACE && $this.val().length < 1) {
+                    $tree.remove();
+
+                    if (self.$nav.is(':hidden')) {
+                        $trees.eq(0).show();
+                        self.currentTree = $.fn.zTree.getZTreeObj(self.el.id + '_' + self.options.type + '_tree');
+                        self._setCheckedNodes();
+                    } else {
+                        self._setNav(self.nav);
+                    }
+
+                    return false;
+                }
+
+                if (evt.which === KEY.ENTER) {
+                    $tree.remove();
+                    $trees.hide();
+
+                    results = _queryMatcher($this.val(), self.options.data);
+                    $.each(results, function(i, v) {
+                        delete v.pid;
+                        !v.iconSkin && (v.iconSkin = TypeMap[v.id.charAt(0)]);
+                    });
+
+                    $tree = self._createTree('query', results);
+                    self._setCheckedNodes();
+                }
+
+                return false;
+            });
+        },
+
+        /**
+         * 获取已选列表的当前值
+         */
+        getSelectedList: function() {
+            return this.values;
+        },
+
+        /**
+         * 获取最近的选择值
+         */
+        getLatelyList: function() {
+            return this._cookie('lately.SelectBox') || [];
+        },
+
+        /**
+         * 选人框按钮事件监听：取消、确定、关闭窗口(取消)
+         */
+        _bindBtnEvt: function() {
+            var self = this;
+
+            this.$header.on('click', 'i.select-box-close', function(evt) {
+                _evtKill(evt);
+                self.doCancel();
+            });
+
+            this.$res.on('click', 'a', function(evt) {
+                _evtKill(evt);
+                self.clearAll();
+            });
+
+            this.$footer.on('click', 'button', function(evt) {
+                _evtKill(evt);
+                $(this).index() === 0 ? self.doCancel() : self.doOk();
+            });
+
+            return this;
+        },
+
+        /**
+         * 右侧已选列表的点击监听
+         * 取消原有勾选状态
+         */
+        _bindSelectedEvt: function() {
+            var $this, val, self = this;
+
+            this._unBindSelectedEvt();
+            this.$acheive.on('click.selectBox', 'i.select-box-item-close', function() {
+                $this = $(this);
+                val = $this.closest('.select-box-selected-item').attr('data-val');
+                self._checkNode(val, false);
+            });
+
+            return this;
+        },
+
+        _unBindSelectedEvt: function() {
+            this.$acheive.off('click.selectBox');
+            return this;
+        },
+
+        _bindNavEvt: function() {
+            var self = this;
+
+            this._unBindNavEvt();
+            this.$nav.on('click.nav.selectBox', 'li', function() {
+                var index = $(this).index();
+                self._setNav(index);
+                return false;
+            });
+
+            return this;
+        },
+
+        _unBindNavEvt: function() {
+            this.$nav.off('click.nav.selectBox');
+            return this;
+        },
+
+        /**
+         * 右侧已选列表
+         * 不存在列表多次所有值更新的情况，所有暂时不需要这个事件
+         */
+        _bindScrollEvt: function() {
+            var self = this,
+                selectedList = this.$acheive.get(0);
+
+            this._unBindScrollEvt();
+            this.$acheive.on('scroll.selectBox', function() {
+                if ((selectedList.scrollHeight - selectedList.clientHeight - 600) <= selectedList.scrollTop) {
+                    self._cacheListData();
+                }
+            });
+
+            return this;
+        },
+
+        _unBindScrollEvt: function() {
+            this.$acheive.off('scroll.selectBox');
+            return this;
+        },
+
+        /**
+         * cookie设置
+         * 用于缓存最近联系人
+         */
+        _cookie: function(name, val) {
+            if (!name) {
+                return false;
+            }
+
+            if (name && !val) {
+                return unescape(U.getCookie(name));
+            }
+
+            // 缓存周期为一个月
+            U.setCookie(name, escape(val));
+            return this;
+        },
+
+        _getText: function(val) {
+            return Ibos.data.getText(val);
+        },
+
+        doOk: function() {
+            var diffObj = _diffArr(this._previous, this.values);
+
+            $(this).trigger('slbchange.selectBox', {
+                added: diffObj.added,
+                removed: diffObj.removed
+            });
+            this.saveValue().hide();
+            return true;
+        },
+
+        /**
+         * 取消操作
+         * 恢复原有值，关闭弹窗
+         */
+        doCancel: function() {
+            var diffObj = _diffArr(this._previous, this.values); // 数组差异化比较
+
+            // 新增的值移除
+            // 移除的值添加回去
+            this.setValue(diffObj.added, false)
+                .setValue(diffObj.removed, true)
+                .hide();
+            return true;
+        },
+
+        show: function(silent, callback) {
+            this.$el.show();
+            !silent && $(this).trigger('showbox.selectBox');
+            callback && callback.call(this, this.$element);
+        },
+
+        hide: function(silent, callback) {
+            this.$el.hide();
+            !silent && $(this).trigger('hidebox.selectBox');
+            callback && callback.call(this, this.$element);
         }
-    }
+    };
 
     $.fn.selectBox = function(options) {
-        var argu = Array.prototype.slice.call(arguments, 1);
+        var args = Array.prototype.slice.call(arguments, 1);
+
         return this.each(function() {
-            var $el = $(this),
-                data = $el.data("selectBox");
+            var $element = $(this),
+                data = $element.data("selectBox");
+
             if (!data) {
-                $el.data("selectBox", data = new SelectBox($el, options))
+                $element.data("selectBox", data = new SelectBox($element, options));
             } else {
-                if (typeof options === "string" && $.isFunction(data[options])) {
-                    data[options].apply(data, argu)
-                }
+                typeof options === "string" && $.isFunction(data[options]) && data[options].apply(data, args);
             }
-        })
-    }
+        });
+    };
 
     /**
      * 用户选择
@@ -804,345 +978,204 @@
      * @param  {Jquery}    $element     选择框对应jq对象
      * @param  {Key-value} options      配置，具体参考Select2
      *     @param  {Jquery}    options.box      弹窗对应jq对象
-     *     @param  {Array}     options.contacts 常用联系人数组
      * @return {Object}                 UserSelect实例对象
      */
     var UserSelect = function($element, options) {
-            // @Debug:
-            if (!Ibos || !Ibos.data) {
-                throw new Error("(SelectBox): 未找到全局数据Ibos.data")
-            }
-            var initialValue = $element.val(),
-                max = options.maximumSelectionSize,
-                i, values;
-
-            this.$element = $element;
-            if (!this.$element.get(0).id) {
-                this.$element.attr("id", "userselect_" + U.uniqid());
-            }
-
-            this.options = options;
-            if (!this.options.box || !this.options.box.length) {
-                var $box = $("#" + $element[0].id + "_box");
-                $box.length && $box.remove();
-                this.options.box = $('<div id="' + $element[0].id + '_box"></div>').appendTo(doc.body);
-            }
-
-            this.btns = [];
-            this.values = [];
-            this.data = $.extend({}, this.options.data);
-            delete this.options.data;
-
-            if ($.trim(initialValue)) {
-                this.values = initialValue.split(",");
-                // 防止后端输出未名数据
-                for (var i = 0; i < this.values.length; i++) {
-                    if (!this._getText(this.values[i])) {
-                        this.values.splice(i--, 1);
-                    }
-                }
-                // 超过限定人数处理
-                if (max && this.values.length > max) {
-                    this.values.splice(max);
-                }
-                this.$element.val(this.values.join(','));
-            }
-            this._init();
+        if (!Ibos || !Ibos.data) {
+            $.error("(UserSelect): 未定义数据Ibos.data");
         }
-        /**
-         * UserSelect默认配置
-         * @property defaults
-         * @type {Object}
-         */
 
-    UserSelect.showAllBox = function() {
-        $(".select-box").show();
-        $(".operate-btn .glyphicon-user").parent().addClass("active");
-    }
-    UserSelect.hideAllBox = function() {
-        $(".select-box").hide();
-        $(".operate-btn.active .glyphicon-user").parent().removeClass("active");
-    }
+        if (!(this instanceof UserSelect)) {
+            return new UserSelect($element, options);
+        }
+
+        this.$el = $element;
+        this.el = $element.get(0);
+        this.options = options;
+
+        this.btns = [];
+        this.values = [];
+        this.data = this.options.data;
+
+        this._init();
+    };
 
     UserSelect.prototype = {
         constructor: UserSelect,
+
         /**
-         * 初始化
-         * @method _init
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
+         * 用户选择器初始化
          */
         _init: function() {
-            var boxSelector = "";
+            var initVal = this.$el.val(),
+                max = this.options.maximumSelectionSize || Math.pow(2, 18),
+                $box, len, val, vals, self = this;
 
-            this._createSelect();
+            // 初始化限制过滤
+            if (vals = $.trim(initVal).split(',')) {
+                for (len = vals.length; len--;) {
+                    (val = vals[len]) && this._getText(val) && this.values.length <= max && this.values.push(val);
+                }
 
-            // 配置了box属性并拥有长度时，假设其为一个jq对象
-            if (!this.options.box) {
-                boxSelector = this.$element.attr("data-box");
-                this.options.box = $(boxSelector);
+                this.$el.val(this.values.join(','));
             }
 
-            if (this.options.box && this.options.box.length) {
-                this._createSelectBox();
+            // selectBox初始化准备
+            if (!this.options.box || !this.options.box.length) {
+                $box = $('#' + this.el.id + '_box');
+                $box.length && $box.remove();
+
+                this.options.box = $('<div id="' + this.el.id + '_box"></div>').appendTo(doc.body);
+                // this.$el.data('box', this.options.box);
             }
+
+            this._createSelect2();
+            // 延迟加载
+            setTimeout(function() {
+                self._createSelectBox();
+            }, 600);
             return this;
         },
+
         /**
-         * 创建Select2实例
-         * @method _createSelect
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
+         * 创建select2实例
          */
-        _createSelect: function() {
-            var that = this,
-                lang = UserSelect.lang,
-                formatResult = function(data, $ct, query, _cache, oFragement) {
-                    var $results = that.$element.data().select2.results,
-                        type = data.id.charAt(0), //类别，c => company, u => user, d => department, p => position, r => role
-                        tpl = "";
+        _createSelect2: function() {
+            var self = this,
+                lang = U.lang;
 
-                    if (_cache[type]) return data.text;
+            var formatResult, formatSelection, formatNoMatches, formatSelectionTooBig, initSelection, query, getPlaceholder;
 
-                    if (!_cache.tip) {
-                        // Tips
-                        _cache.tip = 1;
-                        tpl = '<li class="select2-tip">' + U.lang("US.INPUT_TIP") + '</li>';
-                        oFragement.appendChild($(tpl)[0]);
-                    }
+            formatResult = function(data, $ct, query, _cache, oFragement) {
+                //类别，c => company, u => user, d => department, p => position, r => role
+                var type = TypeMap[data.id.charAt(0)],
+                    tpl = "";
 
-                    switch (type) {
-                        case "c": // Company
-                            tpl = '<li class="select2-company">' + U.lang("COMPANY") + '</li>';
-                            break;
-                        case "u": // User
-                            tpl = '<li class="select2-user">' + U.lang("STAFF") + '</li>';
-                            break;
-                        case "d": // Department
-                            tpl = '<li class="select2-department">' + L.DEPARTMENT + '</li>';
-                            break;
-                        case "p": // Position
-                            tpl = '<li class="select2-position">' + U.lang("POSITION") + '</li>';
-                            break;
-                        case "r": // Role
-                            tpl = '<li class="select2-role">' + U.lang("ROLE") + '</li>';
-                            break;
-                    }
+                if (_cache[type]) return data.text;
 
-                    _cache[type] = 1;
-                    oFragement.appendChild($(tpl)[0]);
-
-                    return data.text;
-                },
-                formatSelection = function(data, $ct) {
-                    var type = data.id.charAt(0),
-                        typeMap = {
-                            c: "company",
-                            d: "department",
-                            p: "position",
-                            u: "user",
-                            r: "role"
-                        },
-                        text = '<i class="select2-icon-' + typeMap[type] + '"></i>' + data.text;
-                    return text;
-                },
-                formatNoMatches = function() {
-                    return U.lang("US.NO_MATCH");
-                },
-                formatSelectionTooBig = function(limit) {
-                    return U.lang("US.SELECTION_TO_BIG", { limit: limit });
-                },
-                initSelection = function(element, callback) {
-                    var data,
-                        val = (element.val() || element.context.value).split(",");
-
-                    data = Ibos.data.includes(val);
-                    callback(Ibos.data.converToArray(data));
-                    data = null;
-                },
-                query = function(query) {
-                    var data = {
-                            results: []
-                        },
-                        term = query.term,
-                        userData;
-                    // 提供拼音搜索功能
-                    query.matcher = function(data) {
-                        // 岗位分类应排除在数据集中
-                        if (data.id && data.id.charAt(0) === 'f') {
-                            return false;
-                        }
-                        if( data.text && data.id ){
-                           var text = data.text,
-                               textArr = pinyinEngine.toPinyin(text, false),
-                               termArr = term.split("");
-                           for (var i = 0; i < termArr.length; i++) {
-                               var inside = false;
-                               //假设使用首字母拼音搜索
-                               for (var j = 0; j < textArr.length; j++) {
-                                   if (textArr[j][i] && textArr[j][i].charAt(0) == termArr[i]) {
-                                       inside = true;
-                                   }
-                               }
-                               //假设全拼或完全匹配
-                               if (!inside) {
-                                   text += "," + pinyinEngine.toPinyin(text, false, ",");
-                                   return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
-                               }
-                           }
-                           return true; 
-                        }
-                    };
-
-                    data.results = Ibos.data.converToArray(Ibos.data.filter(that.data, query.matcher));
-                    query.callback(data);
-                    data = null;
-                },
-                getPlaceholder = function(type) {
-                    var types = (function() {
-                            var types = type || "";
-                            if ($.isArray(types)) {
-                                return types;
-                            }
-                            return types.split(",");
-                        })(),
-                        lang = U.lang,
-                        str = lang("US.PLACEHOLDER");
-
-                    type = types[0] ? (~$.inArray("all", types) ? ["all"] : types) : ["all"];
-
-                    if (type[0] === "all") {
-                        str = lang("US.PLACEHOLDER_ALL");
-                    } else {
-                        for (var i = 0, len = type.length; i < len; i++) {
-                            str += lang("US." + type[i].toUpperCase());
-                            if (i != len - 1) {
-                                str += "、";
-                            }
-                        }
-                    }
-
-                    return str;
-                },
-                select2Defaults = {
-                    width: "100%",
-                    formatResult: formatResult,
-                    formatSelection: formatSelection,
-                    formatSelectionTooBig: formatSelectionTooBig,
-                    formatNoMatches: formatNoMatches,
-                    initSelection: initSelection,
-                    placeholder: getPlaceholder(this.options.type),
-                    query: query
-                },
-                select2Options = $.extend({}, select2Defaults, this.options, { data: Ibos.data.converToArray(this.data) });
-
-            this.$element.select2(select2Options).on("change", function(evt) {
-                if (evt.added && evt.added.id) {
-                    that.addValue(evt.added.id);
-                } else if (evt.removed && evt.removed.id) {
-                    that.removeValue(evt.removed.id);
+                if (!_cache.tip) {
+                    // Tips
+                    _cache.tip = 1;
+                    tpl = '<li class="select2-tip">' + lang("US.INPUT_TIP") + '</li>';
+                    oFragement.appendChild($(tpl).get(0));
                 }
+
+                tpl = '<li class="select2-' + type + '">' + lang('US.' + type.toUpperCase()) + '</li>';
+                oFragement.appendChild($(tpl)[0]);
+
+                _cache[type] = 1;
+                return data.text;
+            };
+
+            formatSelection = function(data) {
+                return '<i class="select2-icon-' + TypeMap[data.id.charAt(0)] + '"></i>' + data.text;
+            };
+
+            formatNoMatches = function() {
+                return lang("US.NO_MATCH");
+            };
+
+            formatSelectionTooBig = function(limit) {
+                return lang("US.SELECTION_TO_BIG", {
+                    limit: limit
+                });
+            };
+
+            initSelection = function(element, callback) {
+                var val = (element.val() || element.context.value).split(","),
+                    data = Ibos.data.includes(val);
+
+                callback(Ibos.data.converToArray(data));
+                data = null;
+            };
+
+            query = function(query) {
+                var data = {
+                    results: []
+                };
+
+                data.results = _queryMatcher(query.term, self.data);
+                query.callback(data);
+                data = null;
+            };
+
+            getPlaceholder = function(type) {
+                var types = (function() {
+                        var types = type || "";
+                        if ($.isArray(types)) {
+                            return types;
+                        }
+                        return types.split(",");
+                    })(),
+                    str = lang("US.PLACEHOLDER");
+
+                type = types[0] ? (~$.inArray(ALL, types) ? ["all"] : types) : ["all"];
+
+                if (type[0] === ALL) {
+                    str = lang("US.PLACEHOLDER_ALL");
+                } else {
+                    for (var i = 0, len = type.length; i < len; i++) {
+                        str += lang("US." + type[i].toUpperCase());
+                        if (i != len - 1) {
+                            str += "、";
+                        }
+                    }
+                }
+
+                return str;
+            };
+
+            this.$el.select2($.extend({
+                width: "100%",
+                formatResult: formatResult,
+                formatSelection: formatSelection,
+                formatSelectionTooBig: formatSelectionTooBig,
+                formatNoMatches: formatNoMatches,
+                initSelection: initSelection,
+                placeholder: getPlaceholder(self.options.type),
+                query: query,
+                data: Ibos.data.converToArray(self.data)
+            }, self.options)).on("change", function(e) {
+                self.evtLinked('select2', e);
             });
-            this.select = this.$element.data("select2");
-            this._initSelectOperate();
+
+            this.select = this.$el.data("select2");
+            this._initOpBtn();
+
+            return this;
         },
 
         /**
-         * 创建SelectBox实例
-         * @method _createSelectBox
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
+         * 创建selectBox实例
          */
         _createSelectBox: function() {
-            var that = this,
+            var self = this,
                 options = this.options;
 
             this.selectBox = new SelectBox(options.box, {
-                contact: that.options.contact,
-                data: that.data,
-                values: [].concat(that.values),
-                type: that.options.type,
-                maximumSelectionSize: this.options.maximumSelectionSize
+                data: self.data,
+                values: [].concat(self.values),
+                type: options.type,
+                maximumSelectionSize: options.maximumSelectionSize
             });
 
-            $(this.selectBox).on("slbchange", function(evt, data) {
-                // if selectBox trigger this event, ignore to refresh
-                data.checked ? that.addValue(data.id, null, true) : that.removeValue(data.id, null, true);
+            $(this.selectBox).on("slbchange.selectBox", function(evt, data) {
+                self.evtLinked('selectBox', data);
             });
 
-            this.selectBox.hide();
+            $(this.selectBox).on('hidebox.selectBox', function() {
+                self.select.selection.find('.operate-btn .glyphicon-user').click();
+            });
+
+            this.selectBox.hide(true);
             return this;
         },
+
         /**
-         * 初始化操作层，默认会创建控件弹窗的按钮
-         * @method _initSelectOperate
-         * @private
-         * @chainable
-         * @return {Object} 当前调用对象
-         */
-        _initSelectOperate: function() {
-            var that = this,
-                options = this.options,
-                $operateWrap = this._createSelectOperate(),
-                $openBoxBtn, $clearBtn;
-
-            var setPosition = function($el, $target) {
-                var select2Obj = that.select,
-                    select2Container = select2Obj.container,
-                    // 当定义relative属性且指一个JQ对象时，则相对该JQ对象定位，否则相对select2Container;
-                    relative = (options.relative && options.relative.length) ? options.relative : select2Container;
-                // 如果有额外绑定显示位置，则显示在该位置上
-                if ($target) relative = $target;
-                $el.position($.extend({
-                    of: relative
-                }, options.position));
-            };
-
-            // 弹出框按钮
-            $openBoxBtn = this._createOperateBtn({
-                handler: function($btn) {
-                    // 打开弹窗选择器时，关闭下拉列表
-                    that.$element.select2("close");
-                    if ($btn.hasClass("active")) {
-                        that.selectBox && that.selectBox.hide();
-                        $btn.removeClass("active");
-                    } else {
-                        UserSelect.hideAllBox();
-                        that.selectBox && that.selectBox.show(function($el) {
-                            setPosition($el, $btn);
-                        });
-                        $btn.addClass("active");
-                    }
-                }
-            });
-            $operateWrap.append($openBoxBtn);
-
-            if (options.clearable) {
-                $clearBtn = this._createOperateBtn({
-                    cls: "operate-btn",
-                    iconCls: "glyphicon-trash",
-                    handler: function() {
-                        that.setValue();
-                    }
-                });
-                $operateWrap.append($clearBtn);
-            }
-        },
-        /**
-         * 创建一个操作按钮
-         * @method _createOperateBtn
-         * @private
-         * @param {Key-Value} options         按钮配置
-         * @param {String}    options.cls     按钮对应样式类名
-         * @param {String}    options.iconCls 按钮对应图标的样式类名
-         * @param {Function}  options.handler 按钮点击时的处理函数
-         * @return {Jquery}                   生成的Jq对象
+         * 创建外部操作按钮
          */
         _createOperateBtn: function(options) {
-            var that = this,
+            var self = this,
                 defaults = {
                     cls: "operate-btn",
                     iconCls: "glyphicon-user"
@@ -1152,203 +1185,140 @@
 
             if (typeof opt.handler === "function") {
                 $btn.on("click", function(evt) {
-                    opt.handler.call(that, $btn);
+                    _evtKill(evt);
+                    opt.handler.call(self, $btn);
                 });
                 // 阻止冒泡触发下拉菜单
                 $btn.on("mousedown", function(evt) {
-                    evt.stopPropagation();
-                })
+                    _evtKill(evt);
+                });
             }
 
-            that.btns.push($btn);
+            self.btns.push($btn);
             return $btn;
         },
-        /**
-         * 创建操作层
-         * @method _createSelectOperate
-         * @private
-         * @return {Jquery} 操作层对应jq对象
-         */
+
         _createSelectOperate: function() {
             var $selection = this.select.selection,
                 $operateWrap = $('<li class="select2-operate"></li>');
             return $operateWrap.prependTo($selection);
         },
-        /**
-         * 刷新对应SelectBox，选中或取消左侧的选中，并刷新右侧菜单
-         * @method refreshSelectBox
-         * @param  {String||Array} id     左侧树的要操作的一个或一组ID
-         * @param  {boolean} toCheck       true为选中，false为取消选中
-         * @chainable
-         * @return {Object} 当前调用对象
-         */
-        refreshSelectBox: function(id, toCheck) {
-            var that = this,
-                i, len;
 
-            var refresh_unit = function(u_id, u_toCheck) {
-                that.selectBox.values = that.values;
-                // 传入ID时, 更新左侧对应选择框选中状态
-                that.selectBox._checkNode(u_id, u_toCheck);
-            };
+        _initOpBtn: function() {
+            var self = this,
+                options = this.options,
+                $operateWrap = this._createSelectOperate();
 
-            if (this.selectBox) {
-                if (!id) {
-                    // 传入id为空
-                    this.selectBox.refreshCheckbox();
-                } else {
-                    if (!$.isArray(id)) { id = [id]; }
-                    i = 0;
-                    len = id.length;
+            // 弹出框按钮
+            this._createOperateBtn({
+                handler: function($btn) {
+                    // 打开弹窗选择器时，关闭下拉列表
+                    self.$el.select2("close");
 
-                    while (i < len) {
-                        id[i] && refresh_unit(id[i], toCheck);
-                        i++;
+                    if ($btn.hasClass("active")) {
+                        self.selectBox && self.selectBox.hide(true);
+                        $btn.removeClass("active");
+                    } else {
+                        self.selectBox && self.selectBox.show(true);
+                        $btn.addClass("active");
                     }
                 }
-                // 更新右边列表
-                this.selectBox.refreshList();
-            }
+            }).appendTo($operateWrap);
+            // 清空按钮
+            options.clearable && this._createOperateBtn({
+                cls: "operate-btn",
+                iconCls: "glyphicon-trash",
+                handler: function() {
+                    self.clearAll();
+                }
+            }).appendTo($operateWrap);
+            return this;
         },
 
-        /**
-         * 根据数据的ID获取其对应文本
-         * @param  {String} id 数据ID
-         * @return {String}    对应文本
-         */
-        _getText: function(id) {
-            if (!id) {
-                return false;
+        addValue: function(val) {
+            var idx = $.inArray(val, this.values);
+            if (!~idx) {
+                this.values.push(val);
             }
-
-            var type, item;
-            type = Ibos.data.getType(id);
-            return this.data[type][id] && ['text'];
+            return this;
         },
 
-        /**
-         * 修改已选中的值
-         * @method setValue
-         * @param  {String||Array} val 单个值或一组值
-         * @return {Array}             已选中值的数组
-         */
-        setValue: function(val, slient) {
-            this.removeValue([].concat(this.values), slient);
-            if (val) {
-                this.addValue(val, slient);
+        removeValue: function(val) {
+            var idx = $.inArray(val, this.values);
+            if (~idx) {
+                this.values.splice(idx, 1);
             }
-            this.select.close();
+            return this;
+        },
+
+        setValue: function(vals, checked, silent) {
+            if (!$.isArray(vals)) {
+                vals = [vals];
+            }
+
+            var len, fn = checked ? this.addValue : this.removeValue;
+            for (len = vals.length; len--;) {
+                fn.call(this, vals[len]);
+            }
+
+            if (!silent) {
+                this.evtLinked('outside', (checked ? {
+                    added: vals
+                } : {
+                    removed: vals
+                }), true);
+            }
+
+            return this;
+        },
+
+        getSelectedList: function() {
             return this.values;
         },
-        /**
-         * 获取已选中的值
-         * @method getValue
-         * @return {Array}  已选中值的数组
-         */
-        getValue: function() {
-            return this.values;
-        },
 
-        getUnique: function(arr) {
-            var unique = [],
-                i, len, temp;
-
-            if (!$.isArray(arr)) return unique;
-            for (i = 0, len = arr.length; i < len; i++) {
-                temp = arr[i];
-                $.inArray(temp, unique) < 0 && unique.push(temp);
-            }
-            return unique;
-        },
-        /* 合并数组 */
-        _mergeArray: function(source, val) {
-            if (!$.isArray(source)) {
-                source = [source];
-            }
-
-            return this.getUnique(source.concat(val));
+        clearAll: function() {
+            this.setValue([].concat(this.values), false);
+            return this;
         },
 
         /**
-         * 从源数组中删除部分值，该数组必须各值单一
-         * @method _resolveArray
-         * @private
-         * @param  {Array}  source 源数组
-         * @param  {Any}    val    要从数组中删除的值，当为数组时，将删除两个数组中共有的值
-         * @return {Array}         经过删除的源数组
+         * 负责实例之间的通信
          */
-        _resolveArray: function(source, val) {
-            // 如果val为数组
-            if (!$.isArray(val)) {
-                val = [val];
+        evtLinked: function(src, data, silent) {
+            var checkid;
+
+            switch (src) {
+                case 'selectBox':
+                    this.setValue(data.added, true, true);
+                    this.setValue(data.removed, false, true);
+                    this.select.val(_fixEmptyArr(this.values));
+                    break;
+                case 'select2':
+                    data.added = (data.added && [data.added.id]) || [];
+                    data.removed = (data.removed && [data.removed.id]) || [];
+                    checkid = data.added.length > 0 ? data.added : data.removed;
+                    this.setValue(checkid, !!data.added.length, true) && this.selectBox.setValue(checkid, !!data.added.length).saveValue();
+                    break;
+                default:
+                    checkid = data.added || data.removed;
+                    this.select.val(_fixEmptyArr(this.values));
+                    this.selectBox.setValue(checkid, !!data.added).saveValue();
+                    break;
             }
-            // 将val从源数组中删除
-            $(val).each(function(i, e) {
-                var index = $.inArray(e, source);
-                index !== -1 && source.splice(index, 1);
-            });
-            return source;
-        },
-        /**
-         * 判断数组是否空数组，当是时，返回null
-         * @method _fixEmptyArray
-         * @private 
-         * @param  {Array} arr     源数组
-         * @return {Array||null}   源数组或null
-         */
-        _fixEmptyArray: function(arr) {
-            return (arr.length && arr.length > 0) ? arr : null;
-        },
-        /**
-         * 添加要选中的值
-         * @method addValue
-         * @param  {String||Array} val  一个或一组要选中的值
-         * @param  {Boolean} ignore     判断是否checkbox触发，避免二次重绘
-         * @return {Array}              已选中的值
-         */
-        addValue: function(val, slient, ignore) {
-            if (typeof val !== "undefined") {
-                if (!$.isArray(val)) {
-                    val = [val];
-                }
-                this.values = this._mergeArray(this.values, val);
-                if (!ignore) {
-                    this.refreshSelectBox(val, true);
-                }
-                this.select.val(this._fixEmptyArray(this.values));
-                if (!slient) {
-                    this.$element.trigger("uschange", { added: val, val: this.values })
-                }
+
+            if (!silent) {
+                this.$el.trigger('uschange.userSelect', data);
             }
-            return this.values;
+
+            return this;
         },
-        /**
-         * 移除已选中的值
-         * @method removeValue
-         * @param  {String||Array}  val  一个或一组要移除的值，当参数为空时，将清空已选中的值
-         * @return {Array}     已选中的值
-         */
-        removeValue: function(val, slient, ignore) {
-            if (typeof val !== "undefined") {
-                if (!$.isArray(val)) {
-                    val = [val];
-                }
-                this._resolveArray(this.values, val);
-                if (!ignore) {
-                    this.refreshSelectBox(val, false);
-                }
-                this.select.val(this._fixEmptyArray(this.values));
-                if (!slient) {
-                    this.$element.trigger("uschange", { removed: val, val: this.values })
-                }
-            }
-            return this.values;
+
+        _getText: function(val) {
+            return Ibos.data.getText(val);
         },
+
         /**
-         * 启用选择框
-         * @method setEnabled
-         * @chainable
-         * @return {Object} 当前调用对象
+         * 启用选择窗
          */
         setEnabled: function() {
             this.select.enable();
@@ -1356,11 +1326,9 @@
             this.btns[0].show();
             return this;
         },
+
         /**
-         * 禁用选择框
-         * @method setDisabled
-         * @chainable
-         * @return {Object} 当前调用对象
+         * 禁用选择窗
          */
         setDisabled: function() {
             this.select.disable();
@@ -1368,46 +1336,31 @@
             this.btns[0].hide();
             return this;
         },
-        /**
-         * TODO:修正enabled,disabled,readonly的方法 
-         * @returns {_L1.UserSelect.prototype}
-         */
-        setReadOnly: function() {
-            this.select.disable();
-            // 隐藏操作按钮
-            this.btns[0].hide();
-            this.btns[1].hide();
-            return this;
-        }
-    }
+    };
+
     $.fn.userSelect = function(options) {
         if (!$ || !$.fn.select2) {
-            // @Debug;
             throw new Error("($.fn.userSelect): 未定义 '$' 或 '$.fn.select2'");
         }
-        var argu = Array.prototype.slice.call(arguments, 1);
+
+        var args = Array.prototype.slice.call(arguments, 1);
+
         return this.each(function() {
             var $el = $(this),
                 data = $el.data("userSelect");
+
             if (!data) {
                 $el.data("userSelect", data = new UserSelect($el, $.extend({}, $.fn.userSelect.defaults, options)));
             }
-            if (typeof options === "string" && $.isFunction(data[options])) {
-                data[options].apply(data, argu)
-            }
-        })
-    }
-    $.fn.userSelect.Constructor = UserSelect;
+
+            typeof options === "string" && $.isFunction(data[options]) && data[options].apply(data, args);
+        });
+    };
+
+    $.fn.userSelect.constructor = UserSelect;
     $.fn.userSelect.defaults = {
-        contact: $.parseJSON(G.contact),
         data: {},
         multiple: true,
-        position: {
-            my: "right top",
-            at: "right bottom"
-        },
         clearable: true
-    }
-
-    $(doc).on("mousedown.userselect.hideall", UserSelect.hideAllBox);
+    };
 })(document, Ibos);

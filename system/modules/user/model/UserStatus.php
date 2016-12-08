@@ -9,9 +9,9 @@
  */
 /**
  * user_status表的数据层操作
- * 
+ *
  * @package application.app.user.model
- * @version $Id: UserStatus.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyan <banyan@ibos.com.cn>
  */
 
@@ -19,13 +19,16 @@ namespace application\modules\user\model;
 
 use application\core\model\Model;
 
-class UserStatus extends Model {
+class UserStatus extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{user_status}}';
     }
 

@@ -11,6 +11,7 @@ if ( version_compare( PHP_VERSION, '5.3.0', '<' ) ) {
 	die( 'require PHP > 5.3.0 !' );
 }
 
+
 // 程序根目录路径
 define( 'PATH_ROOT', dirname( __FILE__ ) );
 
@@ -24,6 +25,7 @@ $config = PATH_ROOT . '/system/config/common.php';
 
 require_once ( $defines );
 require_once ( $yii );
+require_once PATH_ROOT . '/library/globals.php';
 
 Yii::setPathOfAlias( 'application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system' );
 

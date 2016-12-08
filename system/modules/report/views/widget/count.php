@@ -4,18 +4,18 @@ use application\core\utils\StringUtil;
 
 ?>
 <div class="statistics-box">
-	<span class="fsl log-title">总结得分</span>
-	<div class="statistics-area">
-		<div id="log_score" class="statistics-content">
-		</div>
-	</div>
+    <span class="fsl log-title">总结得分</span>
+    <div class="statistics-area">
+        <div id="log_score" class="statistics-content">
+        </div>
+    </div>
 </div>
 <div class="statistics-box">
-	<span class="fsl log-title">图章分布</span>
-	<div class="statistics-area">
-		<div id="seal_distribute" class="statistics-content">
-		</div>
-	</div>
+    <span class="fsl log-title">图章分布</span>
+    <div class="statistics-area">
+        <div id="seal_distribute" class="statistics-content">
+        </div>
+    </div>
 </div>
 <script src='<?php echo STATICURL; ?>/js/lib/echarts/echarts.min.js?<?php echo VERHASH; ?>'></script>
 <script>
@@ -40,9 +40,13 @@ use application\core\utils\StringUtil;
         }
     };
 
-    
+
     Ibos.app.s({
-        isPersonal: <?php if($score->getIsPersonal()){ echo 1; }else{ echo 0; }; ?>,
+        isPersonal: <?php if ($score->getIsPersonal()) {
+        echo 1;
+    } else {
+        echo 0;
+    }; ?>,
         // 日志得分
         score: {
             userName: [<?php echo $score->getUserName(); ?>],
@@ -56,16 +60,16 @@ use application\core\utils\StringUtil;
                     itemStyle: {
                         normal: {
                             lineStyle: {        // 系列级个性化折线样式
-                                width: 2,            
+                                width: 2,
                             }
                         },
                         emphasis: {
                             lineStyle: {        // 系列级个性化折线样式
-                                width: 4,                             
+                                width: 4,
                             }
                         }
-                    },   
-                    data: [<?php echo implode(',', $series['list']); ?>],
+                    },
+                    data: [<?php echo '"' . implode('","', $series['list']) . '"'; ?>],
                 },
                 <?php endforeach; ?>
             ]
@@ -74,7 +78,7 @@ use application\core\utils\StringUtil;
         seal: {
             stampName: [<?php echo $stamp->getStampName(); ?>],
             userName: [<?php echo $stamp->getUserName(); ?>],
-            series: 
+            series:
             <?php if( $stamp->getIsPersonal() ): ?>
                 [
                     {
@@ -91,25 +95,25 @@ use application\core\utils\StringUtil;
                         data: [<?php foreach ($stamp->getSeries() as $series): ?>'<?php echo $series['count']; ?>',<?php endforeach; ?>]
                     }
                 ]
-            <?php else: ?>
-                [
-                    <?php foreach ($stamp->getSeries() as $series): ?>
-                    <?php $count = explode( ',', trim($series['count'],',')); ?>
+                <?php else: ?>
+                    [
+                <?php foreach ($stamp->getSeries() as $series): ?>
+                <?php $count = explode(',', trim($series['count'], ',')); ?>
                     {
-                        name:'<?php echo $series['name']; ?>',
-                        type:'bar',
+                        name: '<?php echo $series['name']; ?>',
+                        type: 'bar',
                         stack: '总量',
-                        itemStyle : dataStyle,
+                        itemStyle: dataStyle,
                         label: {
                             normal: {
                                 position: 'inside'
                             }
                         },
-                        data:[<?php echo StringUtil::iImplode( $count); ?>]
+                        data: [<?php echo StringUtil::iImplode($count); ?>]
                     },
                     {
-                        name:'<?php echo $series['name']; ?>',
-                        type:'bar',
+                        name: '<?php echo $series['name']; ?>',
+                        type: 'bar',
                         stack: '总量',
                         itemStyle: placeHoledStyle,
                         label: {
@@ -117,10 +121,10 @@ use application\core\utils\StringUtil;
                                 position: 'inside'
                             }
                         },
-                        data:[<?php foreach ( $count as $number ): ?><?php echo $stamp->getMax()-$number; ?>,<?php endforeach; ?>]
+                        data: [<?php foreach ( $count as $number ): ?><?php echo $stamp->getMax() - $number; ?>,<?php endforeach; ?>]
                     },
-                    <?php endforeach; ?>
-                ]
+                <?php endforeach; ?>
+                    ]
             <?php endif; ?>
         }
     });

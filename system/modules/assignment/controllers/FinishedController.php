@@ -24,12 +24,14 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
 use application\modules\main\utils\Main as MainUtil;
 use application\modules\user\model\User;
 
-class FinishedController extends BaseController {
+class FinishedController extends BaseController
+{
 
     // 查询条件
     protected $_condition;
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $uid = Ibos::app()->user->uid;
         //是否搜索，并且必须是post类型请求
         if (Env::getRequest('param') == 'search' && Ibos::app()->request->isPostRequest) {
@@ -54,7 +56,8 @@ class FinishedController extends BaseController {
      * @param array $datas 已完成的任务数组
      * @return array
      */
-    protected function groupByFinishtime($datas) {
+    protected function groupByFinishtime($datas)
+    {
         $res = array();
         foreach ($datas as $k => $v) {
             $finishDate = strtotime(date('Y-m-d', $v['finishtime']));
@@ -72,7 +75,8 @@ class FinishedController extends BaseController {
      * 搜索
      * @return void
      */
-    protected function search() {
+    protected function search()
+    {
         $conditionCookie = MainUtil::getCookie('condition');
         if (empty($conditionCookie)) {
             MainUtil::setCookie('condition', $this->_condition, 10 * 60);

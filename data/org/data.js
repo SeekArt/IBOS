@@ -44,6 +44,7 @@
                 success: callback
             });
         };
+
         dataFetch = function(ids) {
             var i = 0,
                 len = ids.length,
@@ -59,8 +60,9 @@
 
             return ret;
         };
+
         getType = function(id) {
-            var _first = id.charAt(0),
+            var _first = id && id.charAt(0),
                 type;
 
             switch (_first) {
@@ -84,9 +86,11 @@
 
             return type || 'user';
         };
+
         makeName = function(type, id) {
             return "Ibos.related." + type + '.' + id;
         };
+
         getValues = function(type, ids) {
             var ret = {},
                 key;
@@ -102,11 +106,12 @@
                     ret[id] = $.extend({}, allData[type][id]);
                 }
             } else {
-                ret = $.extend({}, allData[type]);
+                ret = $.extend(true, {}, allData[type]);
             }
 
             return ret;
         };
+
         getKeys = function(obj) {
             if (Object.keys) {
                 return Object.keys(obj);
@@ -118,21 +123,22 @@
             }
             return ret;
         };
+
         getText = function(id) {
             if (!id) {
                 return false;
             }
             var type = getType(id);
 
-            return allData[type][id]['text'];
+            return (allData[type][id] && allData[type][id]['text']) || '';
         };
 
-        _filter = function(datas, matcher) {
+        _filter = function(datas, matcher, limit) {
             if (!matcher || !$.isFunction(matcher)) {
                 return datas;
             }
 
-            var i, key, data, item,
+            var i, key, data, item, counter = 0,
                 ret = {};
 
             for (key in datas) {
@@ -140,7 +146,11 @@
                 ret[key] = {};
                 for (i in data) {
                     item = data[i];
-                    matcher.call(datas, item) && (ret[key][i] = item);
+                    matcher.call(datas, item) && (ret[key][i] = item) && (counter += 1);
+
+                    if (limit && limit < counter + 1) {
+                        return ret;
+                    }
                 }
             }
 
@@ -170,7 +180,7 @@
                     for (i = 0; i < len; i++) {
                         key = arg[i];
                         if (key in allData) {
-                            ret[key] = $.extend({}, allData[key]);
+                            ret[key] = $.extend(true, {}, allData[key]);
                         }
                     }
                     return _filter(ret, matcher);
@@ -230,10 +240,9 @@
 
                 // for contact
                 var idsArray = id.split(','),
-                    type, nameSpace, data, ret = {};
+                    type, nameSpace, data, key, ret = {};
                 if (idsArray.length > 1) {
                     type = getType(id);
-                    var key;
                     getRelatedUids(type, id, function(res) {
                         if (res.isSuccess) {
                             data = res.data;
@@ -302,6 +311,10 @@
                     return console.error("param must be an Array");
                 }
                 return this.getItem.apply(this, ids);
+            },
+
+            clear: function() {
+                win.sessionStorage.clear();
             }
         };
     } catch (error) {

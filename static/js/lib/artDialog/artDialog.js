@@ -1216,6 +1216,11 @@ $.load = $.dialog.load = function(url, options, cache){
             $.ajax({
                 url: url,
                 success: function (content) {
+                    if( content && content.isSucess == false ){
+                        api._listeners.ok = null;
+                        api.DOM.content.html(content.msg);
+                        return
+                    }
                     api.content(content);
                     opt.init && opt.init.call(api, here);       
                 },

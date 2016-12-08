@@ -21,7 +21,8 @@ use application\modules\report\model\Report;
 use application\modules\report\model\ReportStats;
 use application\modules\statistics\utils\StatCommon;
 
-class StatReportSummary extends StatReportBase {
+class StatReportSummary extends StatReportBase
+{
 
     // 个人视图
     const PERSONAL = 'application.modules.report.views.widget.psummary';
@@ -32,14 +33,15 @@ class StatReportSummary extends StatReportBase {
      * 显示视图
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         $time = StatCommon::getCommonTimeScope();
         $typeid = $this->getTypeid();
-        if ( $this->inPersonal() ) {
-            $this->renderPersonal( $time, $typeid );
+        if ($this->inPersonal()) {
+            $this->renderPersonal($time, $typeid);
         } else {
             $this->checkReviewAccess();
-            $this->renderReview( $time, $typeid );
+            $this->renderReview($time, $typeid);
         }
     }
 
@@ -48,15 +50,16 @@ class StatReportSummary extends StatReportBase {
      * @param integer $typeid 总结类型id
      * @param array $time 时间范围
      */
-    protected function renderPersonal( $time, $typeid ) {
+    protected function renderPersonal($time, $typeid)
+    {
         $uid = Ibos::app()->user->uid;
         $data = array(
-            'title' => $this->handleTitleByTypeid( $typeid ),
-            'total' => Report::model()->countReportTotalByUid( $uid, $time['start'], $time['end'], $typeid ),
-            'beingreviews' => Report::model()->countReviewTotalByUid( $uid, $time['start'], $time['end'], $typeid ),
-            'score' => ReportStats::model()->countScoreByUid( $uid, $time['start'], $time['end'], $typeid )
+            'title' => $this->handleTitleByTypeid($typeid),
+            'total' => Report::model()->countReportTotalByUid($uid, $time['start'], $time['end'], $typeid),
+            'beingreviews' => Report::model()->countReviewTotalByUid($uid, $time['start'], $time['end'], $typeid),
+            'score' => ReportStats::model()->countScoreByUid($uid, $time['start'], $time['end'], $typeid)
         );
-        $this->render( self::PERSONAL, $data );
+        $this->render(self::PERSONAL, $data);
     }
 
     /**
@@ -64,15 +67,16 @@ class StatReportSummary extends StatReportBase {
      * @param integer $typeid 总结类型id
      * @param array $time 时间范围
      */
-    protected function renderReview( $time, $typeid ) {
+    protected function renderReview($time, $typeid)
+    {
         $uid = $this->getUid();
         $data = array(
-            'title' => $this->handleTitleByTypeid( $typeid ),
-            'total' => Report::model()->countReportTotalByUid( $uid, $time['start'], $time['end'], $typeid ),
-            'unreviews' => Report::model()->countUnReviewByUids( $uid, $time['start'], $time['end'], $typeid ),
+            'title' => $this->handleTitleByTypeid($typeid),
+            'total' => Report::model()->countReportTotalByUid($uid, $time['start'], $time['end'], $typeid),
+            'unreviews' => Report::model()->countUnReviewByUids($uid, $time['start'], $time['end'], $typeid),
         );
-        $data['reviewrate'] = $this->calcReviewRate( $data['unreviews'], $data['total'] );
-        $this->render( self::REVIEW, $data );
+        $data['reviewrate'] = $this->calcReviewRate($data['unreviews'], $data['total']);
+        $this->render(self::REVIEW, $data);
     }
 
     /**
@@ -81,11 +85,12 @@ class StatReportSummary extends StatReportBase {
      * @param integer $total 总数
      * @return integer
      */
-    private function calcReviewRate( $unreview, $total ) {
-        if ( $unreview == 0 && $total ) {
+    private function calcReviewRate($unreview, $total)
+    {
+        if ($unreview == 0 && $total) {
             return 100;
-        } elseif ( $unreview && $total ) {
-            return round( (1 - ($unreview / $total)) * 100 );
+        } elseif ($unreview && $total) {
+            return round((1 - ($unreview / $total)) * 100);
         } else {
             return 0;
         }
@@ -96,14 +101,15 @@ class StatReportSummary extends StatReportBase {
      * @param integer $typeid 总结类型id
      * @return string
      */
-    protected function handleTitleByTypeid( $typeid ) {
+    protected function handleTitleByTypeid($typeid)
+    {
         $title = array(
             1 => '周报',
             2 => '月报',
             3 => '季报',
             4 => '年报'
         );
-        if ( in_array( $typeid, array_keys( $title ) ) ) {
+        if (in_array($typeid, array_keys($title))) {
             return $title[$typeid];
         } else {
             return $title[1];

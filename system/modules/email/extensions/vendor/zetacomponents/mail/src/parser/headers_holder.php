@@ -58,12 +58,11 @@ class ezcMailHeadersHolder implements ArrayAccess
      *
      * @param array(string=>string) $map
      */
-    public function __construct( array $map = array() )
+    public function __construct(array $map = array())
     {
         $this->map = $map;
-        foreach ( $map as $key => $value )
-        {
-            $this->lookup[strtolower( $key )] = $key;
+        foreach ($map as $key => $value) {
+            $this->lookup[strtolower($key)] = $key;
         }
     }
 
@@ -73,9 +72,9 @@ class ezcMailHeadersHolder implements ArrayAccess
      * @param string $key
      * @return bool
      */
-    public function offsetExists( $key )
+    public function offsetExists($key)
     {
-        return array_key_exists( strtolower( $key ), $this->lookup );
+        return array_key_exists(strtolower($key), $this->lookup);
     }
 
     /**
@@ -84,11 +83,10 @@ class ezcMailHeadersHolder implements ArrayAccess
      * @param string $key
      * @return mixed
      */
-    public function offsetGet( $key )
+    public function offsetGet($key)
     {
-        $key = strtolower( $key );
-        if ( !array_key_exists( $key, $this->lookup ) )
-        {
+        $key = strtolower($key);
+        if (!array_key_exists($key, $this->lookup)) {
             return null;
         }
         return $this->map[$this->lookup[$key]];
@@ -103,15 +101,13 @@ class ezcMailHeadersHolder implements ArrayAccess
      * @param string $key
      * @param mixed $value
      */
-    public function offsetSet( $key, $value )
+    public function offsetSet($key, $value)
     {
-        $lowerKey = strtolower( $key );
-        if ( !array_key_exists( $lowerKey, $this->lookup ) )
-        {
+        $lowerKey = strtolower($key);
+        if (!array_key_exists($lowerKey, $this->lookup)) {
             $this->map[$key] = $this->trimRecursive($value);
             $this->lookup[$lowerKey] = $key;
-        }
-        else // use old case
+        } else // use old case
         {
             $this->map[$this->lookup[$lowerKey]] = $this->trimRecursive($value);
         }
@@ -121,7 +117,8 @@ class ezcMailHeadersHolder implements ArrayAccess
      * @param string|array $value
      * @return array|string
      */
-    private function trimRecursive($value) {
+    private function trimRecursive($value)
+    {
         if (is_array($value)) {
             return array_map(array($this, 'trimRecursive'), $value);
         }
@@ -133,13 +130,12 @@ class ezcMailHeadersHolder implements ArrayAccess
      *
      * @param string $key
      */
-    public function offsetUnset( $key )
+    public function offsetUnset($key)
     {
-        $key = strtolower( $key );
-        if ( array_key_exists( $key, $this->lookup ) )
-        {
-            unset( $this->map[$this->lookup[$key]] );
-            unset( $this->lookup[$key] );
+        $key = strtolower($key);
+        if (array_key_exists($key, $this->lookup)) {
+            unset($this->map[$this->lookup[$key]]);
+            unset($this->lookup[$key]);
         }
     }
 
@@ -153,4 +149,5 @@ class ezcMailHeadersHolder implements ArrayAccess
         return $this->map;
     }
 }
+
 ?>

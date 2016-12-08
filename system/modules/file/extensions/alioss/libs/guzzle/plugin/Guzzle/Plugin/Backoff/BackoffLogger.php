@@ -28,8 +28,8 @@ class BackoffLogger implements EventSubscriberInterface
     protected $formatter;
 
     /**
-     * @param LogAdapterInterface $logger    Logger used to log the retries
-     * @param MessageFormatter    $formatter Formatter used to format log messages
+     * @param LogAdapterInterface $logger Logger used to log the retries
+     * @param MessageFormatter $formatter Formatter used to format log messages
      */
     public function __construct(LogAdapterInterface $logger, MessageFormatter $formatter = null)
     {
@@ -69,7 +69,7 @@ class BackoffLogger implements EventSubscriberInterface
             $event['handle'],
             array(
                 'retries' => $event['retries'],
-                'delay'   => $event['delay']
+                'delay' => $event['delay']
             )
         ));
     }

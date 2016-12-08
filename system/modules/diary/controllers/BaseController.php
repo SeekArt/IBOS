@@ -10,7 +10,7 @@
 /**
  * 工作日志模块------工作日志基础控制器，继承Controller
  * @package application.modules.diary.components
- * @version $Id: BaseController.php 6533 2016-03-07 08:18:31Z gzhyj $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -28,7 +28,8 @@ use application\modules\user\utils\User as UserUtil;
 use CHtml;
 use CJSON;
 
-class BaseController extends Controller {
+class BaseController extends Controller
+{
 
     /**
      * 查询条件
@@ -44,7 +45,8 @@ class BaseController extends Controller {
      * 获取日志模块后台设置
      * @return array
      */
-    public function getDiaryConfig() {
+    public function getDiaryConfig()
+    {
         return DiaryUtil::getSetting();
     }
 
@@ -52,7 +54,8 @@ class BaseController extends Controller {
      * 获取未评阅的数量
      * @param type $uid 上司UID
      */
-    public function getUnreviews() {
+    public function getUnreviews()
+    {
         //获取所有直属下属id
         $uidArr = User::model()->fetchSubUidByUid(Ibos::app()->user->uid);
         $count = 0;
@@ -70,7 +73,8 @@ class BaseController extends Controller {
      * 通过ajax取得侧栏日历数据
      * @return void
      */
-    protected function getAjaxSidebar() {
+    protected function getAjaxSidebar()
+    {
         if (Ibos::app()->request->isAjaxRequest) {
             $sidebarView = $this->getSidebarData();
             $this->ajaxReturn($sidebarView);
@@ -81,14 +85,15 @@ class BaseController extends Controller {
      * 通过日历数据
      * @return array
      */
-    protected function getSidebarData() {
+    protected function getSidebarData()
+    {
         $uid = Ibos::app()->user->uid;
         $ym = date('Ym');
         if (array_key_exists('ym', $_GET)) {
             $ym = $_GET['ym'];
         }
         if (array_key_exists('diaryDate', $_GET)) {
-            list($year, $month, ) = explode('-', $_GET['diaryDate']);
+            list($year, $month,) = explode('-', $_GET['diaryDate']);
             $ym = $year . $month;
         }
         $currentDay = 0;
@@ -108,12 +113,13 @@ class BaseController extends Controller {
      * 取得侧栏视图
      * @return string
      */
-    protected function getSidebar() {
+    protected function getSidebar()
+    {
         $sidebarAlias = 'application.modules.diary.views.sidebar';
 
         $month = date('m');
         if (array_key_exists('diaryDate', $_GET)) {
-            list(, $m, ) = explode('-', $_GET['diaryDate']);
+            list(, $m,) = explode('-', $_GET['diaryDate']);
             $month = $m;
         }
         $monthName = array("一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二");
@@ -132,7 +138,8 @@ class BaseController extends Controller {
      * 获取后台勾选的图章
      * @return array  返回后台选中好的图章
      */
-    protected function getStamp() {
+    protected function getStamp()
+    {
         $config = $this->getDiaryConfig();
         //取得所有图章
         if ($config['stampenable']) {
@@ -157,7 +164,7 @@ class BaseController extends Controller {
                 $temp[$stampid]['title'] = $stamp['code'];
                 $temp[$stampid]['stamp'] = $stamp['stamp'];
                 $temp[$stampid]['value'] = $stamp['id'];
-				$temp[$stampid]['path'] = $stamp['icon'];
+                $temp[$stampid]['path'] = $stamp['icon'];
             }
             $result = array();
             if (!empty($stamps)) {
@@ -177,7 +184,8 @@ class BaseController extends Controller {
     /**
      * 检查是否开启图章功能
      */
-    protected function issetStamp() {
+    protected function issetStamp()
+    {
         $config = $this->getDiaryConfig();
         return !!$config['stampenable'];
     }
@@ -186,7 +194,8 @@ class BaseController extends Controller {
      * 检查是否开启自动评阅
      * @return boolean
      */
-    protected function issetAutoReview() {
+    protected function issetAutoReview()
+    {
         $config = $this->getDiaryConfig();
         return !!$config['autoreview'];
     }
@@ -195,7 +204,8 @@ class BaseController extends Controller {
      * 检查是否开启关注功能
      * @return boolean
      */
-    protected function issetAttention() {
+    protected function issetAttention()
+    {
         $config = $this->getDiaryConfig();
         return !!$config['attention'];
     }
@@ -204,7 +214,8 @@ class BaseController extends Controller {
      * 检查是否开启共享功能
      * @return boolean
      */
-    protected function issetShare() {
+    protected function issetShare()
+    {
         $config = $this->getDiaryConfig();
         return !!$config['sharepersonnel'];
     }
@@ -213,7 +224,8 @@ class BaseController extends Controller {
      * 检查是否开启允许点评共享日志
      * @return boolean
      */
-    protected function issetSharecomment() {
+    protected function issetSharecomment()
+    {
         $config = $this->getDiaryConfig();
         return !!$config['sharecomment'];
     }
@@ -222,7 +234,8 @@ class BaseController extends Controller {
      * 获取自动评阅的图章id
      * @return integer
      */
-    protected function getAutoReviewStamp() {
+    protected function getAutoReviewStamp()
+    {
         $config = $this->getDiaryConfig();
         return intval($config['autoreviewstamp']);
     }
@@ -234,7 +247,8 @@ class BaseController extends Controller {
      * @param array $diary
      * @return integer
      */
-    protected function getIsAllowComment($controller, $uid, $diary) {
+    protected function getIsAllowComment($controller, $uid, $diary)
+    {
         $ret = 0;
         if ($controller == 'review') {
             $ret = 1;
@@ -248,7 +262,8 @@ class BaseController extends Controller {
      * 搜索操作
      * @return void
      */
-    protected function search() {
+    protected function search()
+    {
         $type = Env::getRequest('type');
         $conditionCookie = MainUtil::getCookie('condition');
         if (empty($conditionCookie)) {
@@ -259,7 +274,7 @@ class BaseController extends Controller {
             $this->_condition = DiaryUtil::joinSearchCondition($search);
         } else if ($type == 'normal_search') {
             //添加转义，防止SQL错误
-			$keyword = CHtml::encode( isset( $_POST['keyword'] ) ? $_POST['keyword'] : null  );
+            $keyword = CHtml::encode(isset($_POST['keyword']) ? $_POST['keyword'] : null);
             MainUtil::setCookie('keyword', $keyword, 10 * 60);
             $this->_condition = " content LIKE '%$keyword%' ";
         } else {
@@ -275,7 +290,8 @@ class BaseController extends Controller {
      * 判断是否有下属
      * @return boolean
      */
-    protected function checkIsHasSub() {
+    protected function checkIsHasSub()
+    {
         return DiaryUtil::checkIsHasSub();
     }
 

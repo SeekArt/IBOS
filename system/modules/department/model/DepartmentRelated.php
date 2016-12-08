@@ -21,55 +21,65 @@ use application\core\model\Model;
 use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
-class DepartmentRelated extends Model {
+class DepartmentRelated extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    /**
+     * @param string $className
+     * @return DepartmentRelated
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{department_related}}';
-	}
+    public function tableName()
+    {
+        return '{{department_related}}';
+    }
 
-	/**
-	 * 根据uid查找辅助部门ID
-	 * @staticvar array $uids 用户数组缓存
-	 * @param integer $uid 用户id
-	 * @return array
-	 */
-	public function fetchAllDeptIdByUid( $uid ) {
-		return User::model()->findAllDeptidByUid( $uid, true );
-	}
+    /**
+     * 根据uid查找辅助部门ID
+     * @staticvar array $uids 用户数组缓存
+     * @param integer $uid 用户id
+     * @return array
+     */
+    public function fetchAllDeptIdByUid($uid)
+    {
+        return User::model()->findAllDeptidByUid($uid, true);
+    }
 
-	/**
-	 *
-	 * @param type $deptId
-	 * @return type
-	 */
-	public function fetchAllUidByDeptId( $deptId ) {
-		return User::model()->fetchAllUidByDeptids( $deptId, true, true );
-	}
+    /**
+     *
+     * @param type $deptId
+     * @return type
+     */
+    public function fetchAllUidByDeptId($deptId)
+    {
+        return User::model()->fetchAllUidByDeptids($deptId, true, true);
+    }
 
-	public function findDeptidIndexByUidX( $uidX = NULL ) {
-		if ( NULL === $uidX ) {
-			$condition = 1;
-		} else if ( empty( $uidX ) ) {
-			return array();
-		} else {
-			$condition = User::model()->uid_find_in_set( $uidX );
-		}
-		$related = Ibos::app()->db->createCommand()
-				->select( 'uid,deptid' )
-				->from( $this->tableName() )
-				->where( $condition )
-				->queryAll();
-		$return = array();
-		if ( !empty( $related ) ) {
-			foreach ( $related as $row ) {
-				$return[$row['uid']][] = $row['deptid'];
-			}
-		}
-		return $return;
-	}
+    public function findDeptidIndexByUidX($uidX = null)
+    {
+        if (null === $uidX) {
+            $condition = 1;
+        } else if (empty($uidX)) {
+            return array();
+        } else {
+            $condition = User::model()->uid_find_in_set($uidX);
+        }
+        $related = Ibos::app()->db->createCommand()
+            ->select('uid,deptid')
+            ->from($this->tableName())
+            ->where($condition)
+            ->queryAll();
+        $return = array();
+        if (!empty($related)) {
+            foreach ($related as $row) {
+                $return[$row['uid']][] = $row['deptid'];
+            }
+        }
+        return $return;
+    }
 
 }

@@ -11,29 +11,33 @@ use Aliyun\Common\Utilities\AssertUtils;
 
 use Aliyun\Common\Models\ServiceOptions;
 
-class RetryableServiceClient {
+class RetryableServiceClient
+{
 
     private $client;
 
     private $maxErrotRetry;
 
-    public function __construct(ServiceClientInterface $client, array $config = array()) {
+    public function __construct(ServiceClientInterface $client, array $config = array())
+    {
         AssertUtils::assertSet(ServiceOptions::MAX_ERROR_RETRY, $config);
         $this->client = $client;
         $this->maxErrotRetry = $config[ServiceOptions::MAX_ERROR_RETRY];
     }
 
-    public function sendRequest(HttpRequest $request, ExecutionContext $context) {
+    public function sendRequest(HttpRequest $request, ExecutionContext $context)
+    {
         return $this->sendRequestImpl($request, $context, 0);
     }
 
-    private function sendRequestImpl(HttpRequest $request, ExecutionContext $context, $retries) {
+    private function sendRequestImpl(HttpRequest $request, ExecutionContext $context, $retries)
+    {
         try {
             return $this->client->sendRequest($request, $context);
         } catch (\Exception $ex) {
             if ($this->shouldRetry($request, $ex, $retries)) {
                 $request->rewind();
-                $retries ++;
+                $retries++;
                 $this->pause($request, $ex, $retries);
                 return $this->sendRequestImpl($request, $context, $retries);
             }
@@ -41,11 +45,13 @@ class RetryableServiceClient {
         }
     }
 
-    private function pause(HttpRequest $request, \Exception $ex, $retries) {
+    private function pause(HttpRequest $request, \Exception $ex, $retries)
+    {
         return 0;
     }
 
-    private function shouldRetry(HttpRequest $request, \Exception $ex, $retries) {
+    private function shouldRetry(HttpRequest $request, \Exception $ex, $retries)
+    {
         if ($retries > $this->maxErrotRetry) {
             return false;
         }

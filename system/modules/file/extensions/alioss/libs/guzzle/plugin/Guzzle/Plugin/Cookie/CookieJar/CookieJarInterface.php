@@ -20,8 +20,8 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
      * specified name, path and domain is removed.
      *
      * @param string $domain Set to clear only cookies matching a domain
-     * @param string $path   Set to clear only cookies matching a domain and path
-     * @param string $name   Set to clear only cookies matching a domain, path, and name
+     * @param string $path Set to clear only cookies matching a domain and path
+     * @param string $name Set to clear only cookies matching a domain, path, and name
      *
      * @return CookieJarInterface
      */
@@ -56,8 +56,8 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
     /**
      * Add cookies from a {@see Guzzle\Http\Message\Response} object
      *
-     * @param Response         $response Response object
-     * @param RequestInterface $request  Request that received the response
+     * @param Response $response Response object
+     * @param RequestInterface $request Request that received the response
      */
     public function addCookiesFromResponse(Response $response, RequestInterface $request = null);
 
@@ -73,11 +73,11 @@ interface CookieJarInterface extends \Countable, \IteratorAggregate
     /**
      * Get all of the matching cookies
      *
-     * @param string $domain          Domain of the cookie
-     * @param string $path            Path of the cookie
-     * @param string $name            Name of the cookie
-     * @param bool   $skipDiscardable Set to TRUE to skip cookies with the Discard attribute.
-     * @param bool   $skipExpired     Set to FALSE to include expired
+     * @param string $domain Domain of the cookie
+     * @param string $path Path of the cookie
+     * @param string $name Name of the cookie
+     * @param bool $skipDiscardable Set to TRUE to skip cookies with the Discard attribute.
+     * @param bool $skipExpired Set to FALSE to include expired
      *
      * @return array Returns an array of Cookie objects
      */

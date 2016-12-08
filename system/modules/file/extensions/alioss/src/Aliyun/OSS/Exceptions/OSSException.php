@@ -14,8 +14,10 @@ use Aliyun\Common\Exceptions\ServiceException;
  *
  * @package Aliyun\OSS\Exceptions
  */
-class OSSException extends ServiceException {
-    public function __construct($code, $message, $requestId, $hostId) {
+class OSSException extends ServiceException
+{
+    public function __construct($code, $message, $requestId, $hostId)
+    {
         parent::__construct($code, $message, $requestId, $hostId);
     }
 }

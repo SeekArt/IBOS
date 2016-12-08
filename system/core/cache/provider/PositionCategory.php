@@ -21,10 +21,12 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\position\model\PositionCategory as PCModel;
 use CBehavior;
 
-class PositionCategory extends CBehavior {
+class PositionCategory extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handlePositionCategory' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handlePositionCategory'));
     }
 
     /**
@@ -32,16 +34,17 @@ class PositionCategory extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handlePositionCategory( $event ) {
+    public function handlePositionCategory($event)
+    {
         $categorys = array();
-        $records = PCModel::model()->findAll( array( 'order' => 'sort ASC' ) );
-        if ( !empty( $records ) ) {
-            foreach ( $records as $record ) {
+        $records = PCModel::model()->findAll(array('order' => 'sort ASC'));
+        if (!empty($records)) {
+            foreach ($records as $record) {
                 $cat = $record->attributes;
                 $categorys[$cat['catid']] = $cat;
             }
         }
-        Syscache::model()->modifyCache( 'positioncategory', $categorys );
+        Syscache::model()->modifyCache('positioncategory', $categorys);
     }
 
 }

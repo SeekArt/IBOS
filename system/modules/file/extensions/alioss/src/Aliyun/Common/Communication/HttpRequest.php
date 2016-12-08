@@ -12,37 +12,38 @@ use Aliyun\Common\Utilities\AssertUtils;
 
 use Aliyun\Common\Utilities\HttpMethods;
 
-class HttpRequest extends HttpMessage {
+class HttpRequest extends HttpMessage
+{
 
-	/**
-	 * URI for http service.
-	 * @var string 
-	 */
-	protected $endpoint;
-	
-	/**
-	 * Method for http request.
-	 * @var string
-	 */
-	protected $method = HttpMethods::GET;
-	
-	/**
-	 * Query path of http request.
-	 * @var string
-	 */
-	protected $resourcePath;
-	
-	/**
-	 * Query params 
-	 * @var array
-	 */
-	protected $parameters = array();
-	
-	/**
-	 * The content for request body
-	 * @var mixed
-	 */
-	protected $content;
+    /**
+     * URI for http service.
+     * @var string
+     */
+    protected $endpoint;
+
+    /**
+     * Method for http request.
+     * @var string
+     */
+    protected $method = HttpMethods::GET;
+
+    /**
+     * Query path of http request.
+     * @var string
+     */
+    protected $resourcePath;
+
+    /**
+     * Query params
+     * @var array
+     */
+    protected $parameters = array();
+
+    /**
+     * The content for request body
+     * @var mixed
+     */
+    protected $content;
 
     /**
      * The original position of the content.
@@ -61,15 +62,17 @@ class HttpRequest extends HttpMessage {
      */
     protected $responseBody;
 
-	
-	public function getEndpoint() {
-		return $this->endpoint;
-	}
-	
-	public function setEndpoint($endpoint) {
+
+    public function getEndpoint()
+    {
+        return $this->endpoint;
+    }
+
+    public function setEndpoint($endpoint)
+    {
         $urlParameters = parse_url($endpoint);
         if ($urlParameters === false) {
-            throw new \InvalidArgumentException('Invalid endpoint: '.$endpoint.'.');
+            throw new \InvalidArgumentException('Invalid endpoint: ' . $endpoint . '.');
         }
 
         if (!isset($urlParameters['scheme'])) {
@@ -84,64 +87,71 @@ class HttpRequest extends HttpMessage {
             throw new \InvalidArgumentException('The scheme of endpoint must be http or https');
         }
 
-		$this->endpoint = $urlParameters['scheme'].'://'.$urlParameters['host'];
-	}
-	
-	public function getResourcePath() {
-		return $this->resourcePath;
-	}
-	
-	public function setResourcePath($resourcePath) {
-	    AssertUtils::assertString($resourcePath, 'resourcePath');
-	    AssertUtils::assertNotEmpty($resourcePath, 'resourcePath');
-	    if (substr($resourcePath, 0, 1) != '/') {
-	        throw new \InvalidArgumentException('Resource path must start with /');
-	    }
-		$this->resourcePath = $resourcePath;
-	}
-	
-	public function getMethod() {
-		return $this->method;
-	}
-	
-	public function setMethod($method) {
-		$allowMethods = array(
-			HttpMethods::GET,
+        $this->endpoint = $urlParameters['scheme'] . '://' . $urlParameters['host'];
+    }
+
+    public function getResourcePath()
+    {
+        return $this->resourcePath;
+    }
+
+    public function setResourcePath($resourcePath)
+    {
+        AssertUtils::assertString($resourcePath, 'resourcePath');
+        AssertUtils::assertNotEmpty($resourcePath, 'resourcePath');
+        if (substr($resourcePath, 0, 1) != '/') {
+            throw new \InvalidArgumentException('Resource path must start with /');
+        }
+        $this->resourcePath = $resourcePath;
+    }
+
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    public function setMethod($method)
+    {
+        $allowMethods = array(
+            HttpMethods::GET,
             HttpMethods::PUT,
             HttpMethods::POST,
             HttpMethods::DELETE,
             HttpMethods::HEAD,
-		);
-		
-		if (!in_array($method, $allowMethods)) {
-		    throw new \InvalidArgumentException("Http method '{$method}' is not allowed.");
-		}
-		
-		if (in_array($method, $allowMethods)) {
-			$this->method = strtoupper($method); 
-		}
-	}
-	
-	public function getParameters() {
-		return $this->parameters;
-	}
-	
-	public function addParameter($key, $value) {
-	    AssertUtils::assertString($key, 'HttpParameterName');
-	    if ($value !== null) {
-	        AssertUtils::assertString($value, 'HttpParameterValue');
-	    }
-		$this->parameters[$key] = $value;
-	}
+        );
+
+        if (!in_array($method, $allowMethods)) {
+            throw new \InvalidArgumentException("Http method '{$method}' is not allowed.");
+        }
+
+        if (in_array($method, $allowMethods)) {
+            $this->method = strtoupper($method);
+        }
+    }
+
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    public function addParameter($key, $value)
+    {
+        AssertUtils::assertString($key, 'HttpParameterName');
+        if ($value !== null) {
+            AssertUtils::assertString($value, 'HttpParameterValue');
+        }
+        $this->parameters[$key] = $value;
+    }
 
     /**
      * @return The full url of http request.
      */
-    public function getFullUrl() {
-        $fullUrl =  $this->endpoint.$this->resourcePath;
+    public function getFullUrl()
+    {
+        $fullUrl = $this->endpoint . $this->resourcePath;
         $parameterString = $this->getParameterString();
         if (!empty($parameterString)) {
-            $fullUrl .='?'.$parameterString;
+            $fullUrl .= '?' . $parameterString;
         }
         return $fullUrl;
     }
@@ -149,21 +159,24 @@ class HttpRequest extends HttpMessage {
     /**
      * @param \Aliyun\Common\Communication\HttpResponse $response
      */
-    public function setResponse($response) {
+    public function setResponse($response)
+    {
         $this->response = $response;
     }
 
     /**
      * @return \Aliyun\Common\Communication\HttpResponse
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
     /**
      * @return string parameter string
      */
-    public function getParameterString() {
+    public function getParameterString()
+    {
         $sections = array();
         foreach ($this->parameters as $key => $value) {
             $section = rawurlencode($key);
@@ -176,15 +189,18 @@ class HttpRequest extends HttpMessage {
         return join('&', $sections);
     }
 
-    public function isParameterInUrl() {
+    public function isParameterInUrl()
+    {
         return ($this->content !== null) || ($this->method !== HttpMethods::POST);
     }
 
-    public function getResponseBody() {
+    public function getResponseBody()
+    {
         return $this->responseBody;
     }
 
-    public function setResponseBody($responseBody) {
+    public function setResponseBody($responseBody)
+    {
         $this->responseBody = $responseBody;
     }
 }

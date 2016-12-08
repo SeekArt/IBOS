@@ -10,7 +10,7 @@
 /**
  * 主模块函数库类
  * @package application.modules.main.utils
- * @version $Id: Main.php 7478 2016-07-02 08:26:28Z Aeolus $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,97 +20,102 @@ use application\core\model\Module;
 use application\core\utils\Ibos;
 use application\modules\user\model\User;
 
-class Main {
+class Main
+{
 
-	/**
-	 * 设置cookie
-	 * @param string $var 变量名
-	 * @param string $value 变量值
-	 * @param integer $life 生命期
-	 * @param integer $prefix 前缀
-	 * @param boolean $httpOnly 安全属性
-	 */
-	public static function setCookie( $var, $value = '', $life = 0, $prefix = 1, $httpOnly = false ) {
-		$global = Ibos::app()->setting->toArray();
-		// 写入全局设置组件
-		Ibos::app()->setting->set( 'cookie/' . $var, $value );
-		$config = $global['config']['cookie'];
-		// 写入全局cookie数组
-		$var = ($prefix ? $config['cookiepre'] : '') . $var;
-		$_COOKIE[$var] = $value;
-		// 值为空或生命期为-1，视作取消一个cookie
-		if ( $value == '' || $life < 0 ) {
-			$value = '';
-			$life = -1;
-		}
-		$life = $life > 0 ? $global['timestamp'] + $life : ($life < 0 ? $global['timestamp'] - 31536000 : 0);
-		$path = $config['cookiepath'];
+    /**
+     * 设置cookie
+     * @param string $var 变量名
+     * @param string $value 变量值
+     * @param integer $life 生命期
+     * @param integer $prefix 前缀
+     * @param boolean $httpOnly 安全属性
+     */
+    public static function setCookie($var, $value = '', $life = 0, $prefix = 1, $httpOnly = false)
+    {
+        $global = Ibos::app()->setting->toArray();
+        // 写入全局设置组件
+        Ibos::app()->setting->set('cookie/' . $var, $value);
+        $config = $global['config']['cookie'];
+        // 写入全局cookie数组
+        $var = ($prefix ? $config['cookiepre'] : '') . $var;
+        $_COOKIE[$var] = $value;
+        // 值为空或生命期为-1，视作取消一个cookie
+        if ($value == '' || $life < 0) {
+            $value = '';
+            $life = -1;
+        }
+        $life = $life > 0 ? $global['timestamp'] + $life : ($life < 0 ? $global['timestamp'] - 31536000 : 0);
+        $path = $config['cookiepath'];
 
-		if ( !isset( $_SERVER['SERVER_PORT'] ) ) {
-			$secure = 0;
-		} else {
-			$secure = $_SERVER['SERVER_PORT'] == 443 ? 1 : 0;
-		}
-		@setcookie( $var, $value, $life, $path, $config['cookiedomain'], $secure, $httpOnly );
-	}
+        if (!isset($_SERVER['SERVER_PORT'])) {
+            $secure = 0;
+        } else {
+            $secure = $_SERVER['SERVER_PORT'] == 443 ? 1 : 0;
+        }
+        @setcookie($var, $value, $life, $path, $config['cookiedomain'], $secure, $httpOnly);
+    }
 
-	/**
-	 * 取得cookie
-	 * @param string $var
-	 * @param integer $prefix
-	 * @return mixed
-	 */
-	public static function getCookie( $var, $prefix = 1 ) {
-		$global = Ibos::app()->setting->toArray();
-		$config = $global['config']['cookie'];
-		$var = ($prefix ? $config['cookiepre'] : '') . $var;
-		if ( array_key_exists( $var, $_COOKIE ) ) {
-			return $_COOKIE[$var];
-		} else {
-			return null;
-		}
-	}
+    /**
+     * 取得cookie
+     * @param string $var
+     * @param integer $prefix
+     * @return mixed
+     */
+    public static function getCookie($var, $prefix = 1)
+    {
+        $global = Ibos::app()->setting->toArray();
+        $config = $global['config']['cookie'];
+        $var = ($prefix ? $config['cookiepre'] : '') . $var;
+        if (array_key_exists($var, $_COOKIE)) {
+            return $_COOKIE[$var];
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * 清除所有cookie
-	 * @return void
-	 */
-	public static function clearCookies() {
-		$global = Ibos::app()->setting->toArray();
-		foreach ( $global['cookie'] as $key => &$value ) {
-			self::setCookie( $key );
-			$value = '';
-		}
-		Ibos::app()->setting->copyFrom( $global );
-	}
+    /**
+     * 清除所有cookie
+     * @return void
+     */
+    public static function clearCookies()
+    {
+        $global = Ibos::app()->setting->toArray();
+        foreach ($global['cookie'] as $key => &$value) {
+            self::setCookie($key);
+            $value = '';
+        }
+        Ibos::app()->setting->copyFrom($global);
+    }
 
-	/**
-	 * 获取随机名言
-	 * @return string
-	 */
-	public static function getIncentiveWord() {
-		$useIncentiveword = Ibos::app()->params->incentiveword;
-		if ( true === $useIncentiveword ) {
-			$words = Ibos::getLangSource( 'incentiveword' );
-			$luckyOne = array_rand( $words );
-			$source = $words[$luckyOne];
-			return Ibos::lang( 'Custom title', 'main.default' ) . $source[array_rand( $source )];
-		} else {
-			$title = ' ';
-			$unit = Ibos::app()->setting->get( 'setting/unit' );
-			if ( !empty( $unit ) && isset( $unit['shortname'] ) ) {
-				$title = $unit['shortname'] . '- IBOS协同办公平台';
-			}
-			return $title;
-		}
-	}
+    /**
+     * 获取随机名言
+     * @return string
+     */
+    public static function getIncentiveWord()
+    {
+        $useIncentiveword = Ibos::app()->params->incentiveword;
+        if (true === $useIncentiveword) {
+            $words = Ibos::getLangSource('incentiveword');
+            $luckyOne = array_rand($words);
+            $source = $words[$luckyOne];
+            return Ibos::lang('Custom title', 'main.default') . $source[array_rand($source)];
+        } else {
+            $title = ' ';
+            $unit = Ibos::app()->setting->get('setting/unit');
+            if (!empty($unit) && isset($unit['shortname'])) {
+                $title = $unit['shortname'] . '- IBOS协同办公平台';
+            }
+            return $title;
+        }
+    }
 
-	/**
-	 * api执行方法
-	 * @param string $method 要执行的方法名
-	 * @param array $moduleArr 模块名称的一维数组
-	 * @return array
-	 */
+    /**
+     * api执行方法
+     * @param string $method 要执行的方法名
+     * @param array $moduleArr 模块名称的一维数组
+     * @return array
+     */
 //	public static function execApiMethod( $method, $moduleArr ) {
 //		$data = array();
 //		$paramNum = func_num_args();
@@ -137,52 +142,62 @@ class Main {
 //		return $data;
 //	}
 
-	/**
-	 * api执行方法
-	 * @param string $method 要执行的方法名
-	 * @param array $widgetArr widget数组
-	 * @return array
-	 */
-	public static function execLoadSetting( $method, $widgetArr ) {
-		$data = array();
-		foreach ( $widgetArr as $widget ) {
-			$info = explode( '/', $widget );
-			if ( count( $info ) == 2 ) {
-				$module = $info[0];
-				$file = $info[1];
-				$class = 'application\modules\\' . $module . '\\utils\\' . ucfirst( $file ) . 'Api';
-				if ( class_exists( $class ) ) {
-					$api = new $class;
-					$close = false;
-					if ( method_exists( $api, 'close' ) ):
-						$close = $api->close();
-					endif;
-					if ( true === $close ):
-						continue;
-					endif;
-					$data[$widget] = $api->$method();
-				}
-			}
-		}
-		return $data;
-	}
+    /**
+     * api执行方法
+     * @param string $method 要执行的方法名
+     * @param array $widgetArr widget数组
+     * @return array
+     */
+    public static function execLoadSetting($method, $widgetArr)
+    {
+        $data = array();
+        foreach ($widgetArr as $widget) {
+            $info = explode('/', $widget);
+            if (count($info) == 2) {
+                $module = $info[0];
+                $file = $info[1];
+                $class = 'application\modules\\' . $module . '\\utils\\' . ucfirst($file) . 'Api';
+                if (class_exists($class)) {
+                    $api = new $class;
+                    $close = false;
+                    if (method_exists($api, 'close')):
+                        $close = $api->close();
+                    endif;
+                    if (true === $close):
+                        continue;
+                    endif;
+                    $data[$widget] = $api->$method();
+                }
+            }
+        }
+        return $data;
+    }
 
-	public static function checkLicenseLimit( $logout = false, $addNums = 0, $url = 'http://www.ibos.com.cn/' ) {
+    /**
+     * 临时： 检查授权人数,在以后版本中可能废除
+     */
 
-	}
+    /**
+     *
+     * @param type $logout
+     * @param type $addNums 如果再添加“addNums”人，会不会超出授权人数
+     */
+    public static function checkLicenseLimit($logout = false, $addNums = 0, $url = 'http://www.ibos.com.cn/')
+    {
+    }
 
-
-	/**
-	 * 为JS提供全局的一些模块参数
-	 * @return array
-	 */
-	public static function getModuleParamsForJs() {
-		$modules = Module::model()->fetchAllEnabledModule();
-		$params = array();
-		foreach ( $modules as $moduleName => $module ) {
-			$params[$moduleName]['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl( $module['module'] );
-		}
-		return $params;
-	}
+    /**
+     * 为JS提供全局的一些模块参数
+     * @return array
+     */
+    public static function getModuleParamsForJs()
+    {
+        $modules = Module::model()->fetchAllEnabledModule();
+        $params = array();
+        foreach ($modules as $moduleName => $module) {
+            $params[$moduleName]['assetUrl'] = Ibos::app()->assetManager->getAssetsUrl($module['module']);
+        }
+        return $params;
+    }
 
 }

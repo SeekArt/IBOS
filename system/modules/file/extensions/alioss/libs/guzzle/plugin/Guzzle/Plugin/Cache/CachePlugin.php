@@ -89,9 +89,9 @@ class CachePlugin implements EventSubscriberInterface
     {
         return array(
             'request.before_send' => array('onRequestBeforeSend', -255),
-            'request.sent'        => array('onRequestSent', 255),
-            'request.error'       => array('onRequestError', 0),
-            'request.exception'   => array('onRequestException', 0),
+            'request.sent' => array('onRequestSent', 255),
+            'request.error' => array('onRequestError', 0),
+            'request.exception' => array('onRequestException', 0),
         );
     }
 
@@ -127,7 +127,7 @@ class CachePlugin implements EventSubscriberInterface
             $params['cache.lookup'] = true;
             $response->setHeader(
                 'Age',
-                time() - strtotime($response->getDate() ? : $response->getLastModified() ?: 'now')
+                time() - strtotime($response->getDate() ?: $response->getLastModified() ?: 'now')
             );
             // Validate that the response satisfies the request
             if ($this->canResponseSatisfyRequest($request, $response)) {
@@ -175,7 +175,7 @@ class CachePlugin implements EventSubscriberInterface
         if ($response = $this->storage->fetch($request)) {
             $response->setHeader(
                 'Age',
-                time() - strtotime($response->getLastModified() ? : $response->getDate() ?: 'now')
+                time() - strtotime($response->getLastModified() ?: $response->getDate() ?: 'now')
             );
 
             if ($this->canResponseSatisfyFailedRequest($request, $response)) {
@@ -206,7 +206,7 @@ class CachePlugin implements EventSubscriberInterface
         }
 
         if ($response = $this->storage->fetch($request)) {
-            $response->setHeader('Age', time() - strtotime($response->getDate() ? : 'now'));
+            $response->setHeader('Age', time() - strtotime($response->getDate() ?: 'now'));
             if (!$this->canResponseSatisfyFailedRequest($request, $response)) {
                 return;
             }
@@ -220,8 +220,8 @@ class CachePlugin implements EventSubscriberInterface
     /**
      * Check if a cache response satisfies a request's caching constraints
      *
-     * @param RequestInterface $request  Request to validate
-     * @param Response         $response Response to validate
+     * @param RequestInterface $request Request to validate
+     * @param Response $response Response to validate
      *
      * @return bool
      */
@@ -233,7 +233,8 @@ class CachePlugin implements EventSubscriberInterface
 
         // Check the request's max-age header against the age of the response
         if ($reqc && $reqc->hasDirective('max-age') &&
-            $responseAge > $reqc->getDirective('max-age')) {
+            $responseAge > $reqc->getDirective('max-age')
+        ) {
             return false;
         }
 
@@ -266,8 +267,8 @@ class CachePlugin implements EventSubscriberInterface
     /**
      * Check if a cache response satisfies a failed request's caching constraints
      *
-     * @param RequestInterface $request  Request to validate
-     * @param Response         $response Response to validate
+     * @param RequestInterface $request Request to validate
+     * @param Response $response Response to validate
      *
      * @return bool
      */
@@ -308,8 +309,8 @@ class CachePlugin implements EventSubscriberInterface
     /**
      * Add the plugin's headers to a response
      *
-     * @param RequestInterface $request  Request
-     * @param Response         $response Response to add headers to
+     * @param RequestInterface $request Request
+     * @param Response $response Response to add headers to
      */
     protected function addResponseHeaders(RequestInterface $request, Response $response)
     {

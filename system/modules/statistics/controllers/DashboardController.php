@@ -23,30 +23,32 @@ use application\modules\dashboard\controllers\BaseController;
 use application\modules\main\model\Setting;
 use application\modules\statistics\utils\StatCommon as StatCommonUtil;
 
-class DashboardController extends BaseController {
+class DashboardController extends BaseController
+{
 
     /**
      * 开关统计设置
      * @return void
      */
-    public function actionIndex() {
-        if ( Env::submitCheck( 'formhash' ) ) {
-            if ( isset( $_POST['statmodules'] ) ) {
+    public function actionIndex()
+    {
+        if (Env::submitCheck('formhash')) {
+            if (isset($_POST['statmodules'])) {
                 // do nothing
             } else {
                 $_POST['statmodules'] = array();
             }
-            Setting::model()->updateSettingValueByKey( 'statmodules', $_POST['statmodules'] );
-            Cache::update( 'setting' );
-            $this->success( Ibos::lang( 'Operation succeed', 'message' ) );
+            Setting::model()->updateSettingValueByKey('statmodules', $_POST['statmodules']);
+            Cache::update('setting');
+            $this->success(Ibos::lang('Operation succeed', 'message'));
         } else {
-            $res = Setting::model()->fetchSettingValueByKey( 'statmodules' );
-            $statModules = $res ? StringUtil::utf8Unserialize( $res ) : array();
+            $res = Setting::model()->fetchSettingValueByKey('statmodules');
+            $statModules = $res ? StringUtil::utf8Unserialize($res) : array();
             $data = array(
                 'statModules' => $statModules,
                 'enabledModules' => StatCommonUtil::getStatisticsModules()
             );
-            $this->render( 'index', $data );
+            $this->render('index', $data);
         }
     }
 

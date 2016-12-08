@@ -166,9 +166,24 @@ $(document).ready(function() {
         },
         "updateUserInfo": function(param, elem) {
             var uid = U.getCheckedValue("user"),
-                deptid = $("[name=deptid]"),
-                posid = $("[name=posid]"),
-                type = $("[name=type]");
+                deptTree = $.fn.zTree.getZTreeObj('dept_tree'),
+                posTree = $.fn.zTree.getZTreeObj('pos_tree'),
+                URL = {
+                    dept: Ibos.app.url("dashboard/department/batchalteruserdept"),
+                    pos: Ibos.app.url("dashboard/position/batchalteruserpos")
+                };
+
+            if (!uid) {
+                Ui.tip('请先勾选需要修改信息的用户', 'warning');
+                return false;
+            }
+
+            // 清空原有勾选
+            $.each([deptTree, posTree], function(idx, tree) {
+                $.each(tree.getCheckedNodes(), function(i, v) {
+                    tree.checkNode(v, false);
+                })
+            });
 
             uid = uid.split(",").map(function(val) {
                 return "u_" + val;
@@ -182,20 +197,26 @@ $(document).ready(function() {
                 lock: false,
                 content: document.getElementById("update_userinfo_dialog"),
                 ok: function() {
-                    var url = type.val() === "dept" ? Ibos.app.url("dashboard/department/batchalteruserdept") : Ibos.app.url("dashboard/position/batchalteruserpos"),
-                        param = {
-                            member: uid,
-                            id: type.val() === "dept" ? deptid.val() : posid.val()
-                        };
+                    var deptid = $('input[name=deptid]').val(),
+                        posid = $('input[name=posid]').val();
 
-                    $.post(url, param, function(res) {
+                    deptid && $.post(URL.dept, { member: uid, id: deptid }, function(res) {
                         if (res.isSuccess) {
-                            Ui.tip("操作设置成功");
+                            Ui.tip("部门设置成功");
+                            userTable.draw();
                         } else {
                             Ui.tip(res.msg, "warning");
                         }
-                        userTable.draw();
-                    }, "json");
+                    });
+
+                    posid && $.post(URL.pos, { member: uid, id: posid }, function(res) {
+                        if (res.isSuccess) {
+                            Ui.tip("岗位设置成功");
+                            userTable.draw();
+                        } else {
+                            Ui.tip(res.msg, "warning");
+                        }
+                    });
                 }
             });
         },
@@ -481,124 +502,67 @@ $(document).ready(function() {
      *
      */
     var deptAndposOrg = (function() {
-        var valueManager = function(values) {
-            // 必须为Array
-            if (!$.isArray(values)) {
-                values = [];
-            }
-            var _add = function(id, callback) {
-                // 已存在Id时返回
-                if ($.inArray(id, values) === -1) {
-                    values.push(id);
-                    if ($.isFunction(callback)) {
-                        callback(id);
-                    }
-                }
-            };
-            var _remove = function(id, callback) {
-                // 已存在Id时返回
-                var index = $.inArray(id, values);
-                if (index !== -1) {
-                    values.splice(index, 1);
-                    if ($.isFunction(callback)) {
-                        callback(id);
-                    }
-                }
-            };
+        var $dept_box = $('#dept_tree'),
+            $pos_box = $('#pos_tree'),
+            TreeSetting;
 
+        var treeCheckBefore, treeCheck, init;
 
-            return {
-                add: function(ids, callback) {
-                    ids = $.isArray(ids) ? ids : [ids];
-                    for (var i = 0; i < ids.length; i++) {
-                        _add(ids[i], callback);
-                    }
-                },
-                remove: function(ids, callback) {
-                    ids = $.isArray(ids) ? ids : [ids];
-                    for (var i = 0; i < ids.length; i++) {
-                        _remove(ids[i], callback);
-                    }
-                },
-                get: function() {
-                    return values.join(",");
-                }
+        treeCheckBefore = function(treeId, node) {
+            var checkeds = $.fn.zTree.getZTreeObj(treeId).getCheckedNodes();
+
+            if (!node.checked && checkeds.length > 0) {
+                Ui.tip('已超过选择限制最大值，若要选择请先取消原有勾选', 'warning');
+                return false;
             }
         };
 
-        var init = function() {
-            var $user_dept = $("#update_user_dept"),
-                $user_pos = $("#update_user_pos"),
-                deptid = $("[name=deptid]"),
-                posid = $("[name=posid]"),
-                type = $("[name=type]"),
-                deptVal = valueManager(),
-                posVal = valueManager();
+        treeCheck = function(evt, treeId, node) {
+            var $dom;
 
-            $user_dept.selectBox({
-                data: Ibos.data && Ibos.data.get("department"),
-                type: "department",
-                noNav: true,
-                showLong: true,
-                values: [],
-                maximumSelectionSize: 1
-            });
+            $dom = /^dept/.test(treeId) ? $('input[name=deptid]') : $('input[name=posid]');
+            $dom.val(node.id);
+        };
 
-            $user_pos.selectBox({
-                data: Ibos.data && Ibos.data.get("position"),
-                type: "position",
-                noNav: true,
-                showLong: true,
-                values: [],
-                maximumSelectionSize: 1
-            });
-
-            deptBox = $user_dept.data("selectBox");
-            posBox = $user_pos.data("selectBox");
-
-            // 监控selectBox
-            $(deptBox).on("slbchange", function(evt, data) {
-                if (data.checked) {
-                    deptVal.add(data.id);
-                } else {
-                    deptVal.remove(data.id);
+        TreeSetting = {
+            data: {
+                key: {
+                    name: 'text'
+                },
+                simpleData: {
+                    enable: true,
+                    pIdKey: 'pid'
                 }
-                deptid.val(deptVal.get());
-            });
+            },
+            check: {
+                enable: true,
+                chkboxType: { Y: '', N: '' }
+            },
+            view: {
+                showLine: false,
+                selectedMulti: false,
+                showIcon: false,
+            },
+            callback: {
+                beforeCheck: treeCheckBefore,
+                onCheck: treeCheck
+            }
+        };
 
-            $(posBox).on("slbchange", function(evt, data) {
-                if (data.checked) {
-                    posVal.add(data.id);
-                } else {
-                    posVal.remove(data.id);
-                }
-                posid.val(posVal.get());
-            });
+        init = function() {
+            $dept_box.waiting(null, 'mini');
+            $.fn.zTree.init($dept_box, TreeSetting, Ibos.data.converToArray(Ibos.data.get('department', function(data) {
+                delete data.isParent;
+                return true;
+            })));
+            $.fn.zTree.init($pos_box, TreeSetting, Ibos.data.converToArray(Ibos.data.get('position', 'positioncategory', function(data) {
+                delete data.isParent;
+                return true;
+            })));
+            $dept_box.waiting(false);
+        };
 
-            // 监控tab
-            $(".dialog-form-header a").on("click", function() {
-                var $this = $(this),
-                    parentLi = $this.parent(),
-                    tabType = $this.data("type");
-
-                type.val(tabType);
-                parentLi.siblings().removeClass('active');
-                parentLi.addClass('active');
-
-                if (tabType === "dept") {
-                    deptBox.show();
-                    posBox.hide();
-                } else {
-                    deptBox.hide();
-                    posBox.show();
-                }
-            })
-        }
-
-        return {
-            init: init
-        }
-
+        return { init: init }
     })();
 
     deptAndposOrg.init();

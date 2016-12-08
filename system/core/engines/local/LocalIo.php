@@ -9,7 +9,7 @@
  */
 /**
  * 本地IO,实现IO接口
- * 
+ *
  * @package ext.enginedriver.local
  * @author banyanCheung <banyan@ibos.com.cn>
  * @version $Id: LocalIO.php 3557 2014-06-04 07:54:57Z zhangrong $
@@ -20,7 +20,8 @@ namespace application\core\engines\local;
 use application\core\components\Upload;
 use application\core\engines\Io;
 
-class LocalIo extends Io {
+class LocalIo extends Io
+{
 
     /**
      * 本地IO上传接口
@@ -28,15 +29,17 @@ class LocalIo extends Io {
      * @param string $module 对应的模块
      * @return \upload
      */
-    public function upload( $fileArea, $module ) {
-        return new Upload( $fileArea, $module );
+    public function upload($fileArea, $module)
+    {
+        return new Upload($fileArea, $module);
     }
 
     /**
      * 本地IO文件操作接口
      * @return object
      */
-    public function file() {
+    public function file()
+    {
         return LocalFile::getInstance();
     }
 

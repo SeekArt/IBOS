@@ -48,12 +48,12 @@ class Unescaper
     public function unescapeDoubleQuotedString($value)
     {
         $self = $this;
-        $callback = function($match) use ($self) {
+        $callback = function ($match) use ($self) {
             return $self->unescapeCharacter($match[0]);
         };
 
         // evaluate the string
-        return preg_replace_callback('/'.self::REGEX_ESCAPED_CHARACTER.'/u', $callback, $value);
+        return preg_replace_callback('/' . self::REGEX_ESCAPED_CHARACTER . '/u', $callback, $value);
     }
 
     /**
@@ -125,8 +125,8 @@ class Unescaper
      * Convert a string from one encoding to another.
      *
      * @param string $value The string to convert
-     * @param string $to    The input encoding
-     * @param string $from  The output encoding
+     * @param string $to The input encoding
+     * @param string $from The output encoding
      *
      * @return string The string with the new encoding
      *

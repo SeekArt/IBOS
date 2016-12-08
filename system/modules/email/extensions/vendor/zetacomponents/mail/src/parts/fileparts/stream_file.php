@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -49,17 +49,14 @@ class ezcMailStreamFile extends ezcMailFilePart
      * @param string $contentType
      * @param string $mimeType
      */
-    public function __construct( $fileName, $stream, $contentType = null, $mimeType = null )
+    public function __construct($fileName, $stream, $contentType = null, $mimeType = null)
     {
-        parent::__construct( $fileName );
+        parent::__construct($fileName);
         $this->stream = $stream;
-        if ( $contentType != null && $mimeType != null )
-        {
+        if ($contentType != null && $mimeType != null) {
             $this->contentType = $contentType;
             $this->mimeType = $mimeType;
-        }
-        else
-        {
+        } else {
             // default to mimetype application/octet-stream
             $this->contentType = self::CONTENT_TYPE_APPLICATION;
             $this->mimeType = "octet-stream";
@@ -75,15 +72,14 @@ class ezcMailStreamFile extends ezcMailFilePart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'stream':
                 $this->properties[$name] = $value;
                 break;
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -97,15 +93,14 @@ class ezcMailStreamFile extends ezcMailFilePart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'stream':
                 return $this->properties[$name];
                 break;
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -117,15 +112,14 @@ class ezcMailStreamFile extends ezcMailFilePart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'stream':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -138,8 +132,9 @@ class ezcMailStreamFile extends ezcMailFilePart
      */
     public function generateBody()
     {
-        $contents = stream_get_contents( $this->stream );
-        return chunk_split( base64_encode( $contents ), 76, ezcMailTools::lineBreak() );
+        $contents = stream_get_contents($this->stream);
+        return chunk_split(base64_encode($contents), 76, ezcMailTools::lineBreak());
     }
 }
+
 ?>

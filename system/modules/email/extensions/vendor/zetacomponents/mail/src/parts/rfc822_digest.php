@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -57,13 +57,13 @@ class ezcMailRfc822Digest extends ezcMailPart
      *
      * @param ezcMail $mail
      */
-    public function __construct( ezcMail $mail )
+    public function __construct(ezcMail $mail)
     {
         parent::__construct();
 
         $this->mail = $mail;
-        $this->setHeader( 'Content-Type', 'message/rfc822' );
-        $this->setHeader( 'Content-Disposition', 'inline' );
+        $this->setHeader('Content-Type', 'message/rfc822');
+        $this->setHeader('Content-Disposition', 'inline');
     }
 
     /**
@@ -75,15 +75,14 @@ class ezcMailRfc822Digest extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'mail':
                 $this->properties[$name] = $value;
                 break;
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -97,15 +96,14 @@ class ezcMailRfc822Digest extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'mail':
                 return $this->properties[$name];
                 break;
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -117,15 +115,14 @@ class ezcMailRfc822Digest extends ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'mail':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -139,4 +136,5 @@ class ezcMailRfc822Digest extends ezcMailPart
         return $this->mail->generate();
     }
 }
+
 ?>

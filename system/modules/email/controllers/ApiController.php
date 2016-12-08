@@ -9,17 +9,20 @@ use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
 use application\modules\message\model\Notify;
 
-class ApiController extends BaseController {
+class ApiController extends BaseController
+{
 
-    public function filterRoutes($routes) {
+    public function filterRoutes($routes)
+    {
         return true;
     }
 
     /**
      * 初始化文件夹ID与存档ID
-     * @return void 
+     * @return void
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
         // 文件夹ID
         $this->fid = intval(Env::getRequest('fid'));
@@ -29,9 +32,10 @@ class ApiController extends BaseController {
 
     /**
      * 获取左侧sidebar统计
-     * @return void 
+     * @return void
      */
-    public function actionGetCount() {
+    public function actionGetCount()
+    {
         $uid = $this->uid;
         $data = array();
         // 收件箱
@@ -45,9 +49,10 @@ class ApiController extends BaseController {
 
     /**
      * 设置指定人员的所有邮件为已读
-     * @return void 
+     * @return void
      */
-    public function actionSetAllRead() {
+    public function actionSetAllRead()
+    {
         $uid = $this->uid;
         Email::model()->setAllRead($uid);
         $this->ajaxReturn(array('isSuccess' => true));
@@ -56,7 +61,8 @@ class ApiController extends BaseController {
     /**
      * 撤回操作
      */
-    public function actionRecall() {
+    public function actionRecall()
+    {
         $ids = Env::getRequest('emailids');
         $id = StringUtil::filterStr($ids);
         $status = false;
@@ -69,9 +75,10 @@ class ApiController extends BaseController {
 
     /**
      * 删除草稿
-     * @return void 
+     * @return void
      */
-    public function actionDelDraft() {
+    public function actionDelDraft()
+    {
         $ids = Env::getRequest('emailids');
         $id = StringUtil::filterStr($ids);
         $status = false;
@@ -86,7 +93,8 @@ class ApiController extends BaseController {
      * 彻底删除
      * @return void
      */
-    public function actionCpDel() {
+    public function actionCpDel()
+    {
         $ids = Env::getRequest('emailids');
         $id = StringUtil::filterStr($ids);
         $status = false;
@@ -100,7 +108,8 @@ class ApiController extends BaseController {
     /**
      * 标记动作
      */
-    public function actionMark() {
+    public function actionMark()
+    {
         $op = Env::getRequest('op');
         $opList = array(
             'todo', 'read', 'unread', 'sendreceipt',
@@ -155,11 +164,11 @@ class ApiController extends BaseController {
                 break;
             case 'sendreceipt': // 发送回执
                 $fromInfo = Ibos::app()->db->createCommand()
-                        ->select('eb.bodyid,eb.subject,eb.fromid')
-                        ->from('{{email_body}} eb')
-                        ->leftJoin('{{email}} e', 'e.bodyid = eb.bodyid')
-                        ->where('e.emailid = ' . intval($id))
-                        ->queryRow();
+                    ->select('eb.bodyid,eb.subject,eb.fromid')
+                    ->from('{{email_body}} eb')
+                    ->leftJoin('{{email}} e', 'e.bodyid = eb.bodyid')
+                    ->where('e.emailid = ' . intval($id))
+                    ->queryRow();
                 if ($fromInfo) {
                     $config = array(
                         '{reader}' => Ibos::app()->user->realname,

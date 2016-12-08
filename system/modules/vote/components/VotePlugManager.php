@@ -21,12 +21,14 @@ namespace application\modules\vote\components;
 use application\core\components\PlugManager;
 use application\modules\article\core\ArticleVote;
 
-class VotePlugManager extends PlugManager{
-	
-	/**
-	 * 取得文章投票对象
-	 */
-	public static function getArticleVote(){
-		return new ArticleVote();
-	}
+class VotePlugManager extends PlugManager
+{
+
+    /**
+     * 取得文章投票对象
+     */
+    public static function getArticleVote()
+    {
+        return new ArticleVote();
+    }
 }
