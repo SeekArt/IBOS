@@ -159,45 +159,7 @@ use application\core\utils\StringUtil;
         </div>
     </div>
 </div>
-<div id="input_auth_code_dialog" style="display: none">
-    <form action="<?php echo $this->createUrl('index/license'); ?>" method="post"
-          class="license-form form-horizontal form-compact license-info" target="main">
-        <textarea name="licensekey" rows="4" style="width: 360px;"
-                  placeholder="<?php echo $lang['Enter licensekey']; ?>" id="license_key"></textarea>
-        <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>"/>
-    </form>
-</div>
-<div id="show_auth_info_dialog" class="license-cert">
-    <a href="javascript:;" class="license-cert-close" data-click="hideAuthInfo"></a>
-    <?php if (defined('LICENCE_VER')): ?>
-        <table>
-            <tr>
-                <th><?php echo $lang['License ver']; ?></th>
-                <td><?php echo LICENCE_VERNAME; ?></td>
-            </tr>
-            <tr>
-                <th><?php echo $lang['Company name']; ?></th>
-                <td><?php echo LICENCE_FULLNAME; ?></td>
-            </tr>
-            <tr>
-                <th><?php echo $lang['Company shortname']; ?></th>
-                <td><?php echo LICENCE_NAME; ?></td>
-            </tr>
-            <tr>
-                <th><?php echo $lang['The number of users']; ?></th>
-                <td><?php echo LICENCE_LIMIT; ?></td>
-            </tr>
-            <tr>
-                <th><?php echo $lang['License time']; ?></th>
-                <td><?php echo date('Y-m-d', LICENCE_STIME); ?><?php echo $lang['To']; ?><?php echo date('Y-m-d', LICENCE_ETIME); ?></td>
-            </tr>
-            <tr>
-                <th><?php echo $lang['License url']; ?></th>
-                <td><?php echo LICENCE_URL; ?></td>
-            </tr>
-        </table>
-    <?php endif; ?>
-</div>
+
 <script>
     var _ib = _ib || [];
     _ib.push(['authkey', '<?php echo Ibos::app()->setting->get('config/security/authkey'); ?>']);
