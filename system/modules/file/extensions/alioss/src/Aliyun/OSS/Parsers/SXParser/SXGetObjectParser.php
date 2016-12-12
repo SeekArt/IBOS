@@ -19,9 +19,11 @@ use Aliyun\OSS\Models\OSSOptions;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class SXGetObjectParser extends SXParser {
+class SXGetObjectParser extends SXParser
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         $object = new OSSObject();
         $object->setBucketName($options[OSSOptions::BUCKET]);
         $object->setKey($options[OSSOptions::KEY]);
@@ -33,7 +35,7 @@ class SXGetObjectParser extends SXParser {
             if ($key == OSSHeaders::LAST_MODIFIED) {
                 $object->addMetadata(OSSHeaders::LAST_MODIFIED, DateUtils::parseDate($value));
             } else if ($key == OSSHeaders::CONTENT_LENGTH) {
-                $object->addMetadata(OSSHeaders::CONTENT_LENGTH, (int) $value);
+                $object->addMetadata(OSSHeaders::CONTENT_LENGTH, (int)$value);
             } else if ($key == OSSHeaders::ETAG) {
                 $object->addMetadata(OSSHeaders::ETAG, OSSUtils::trimQuotes($value));
             } else if (strpos($key, OSSHeaders::OSS_USER_META_PREFIX) === 0) {

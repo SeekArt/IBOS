@@ -12,7 +12,7 @@
  *
  * @package application.modules.main.model
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Syscache.php 7478 2016-07-02 08:26:28Z Aeolus $
+ * @version $Id$
  */
 
 namespace application\modules\dashboard\model;
@@ -22,13 +22,20 @@ use application\core\utils\Cache;
 use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 
-class Syscache extends Model {
+class Syscache extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    /**
+     * @param string $className
+     * @return Syscache
+     */
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{syscache}}';
     }
 
@@ -37,29 +44,32 @@ class Syscache extends Model {
      * @param string $cacheName 缓存名称
      * @param mixed $data 缓存数据
      */
-    public function addCache( $cacheName, $data ) {
-        $this->add( array(
+    public function addCache($cacheName, $data)
+    {
+        $this->add(array(
             'name' => $cacheName,
-            'type' => is_array( $data ) ? 1 : 0,
+            'type' => is_array($data) ? 1 : 0,
             'dateline' => TIMESTAMP,
-            'value' => is_array( $data ) ? serialize( $data ) : $data,
-                ), false, true );
+            'value' => is_array($data) ? serialize($data) : $data,
+        ), false, true);
 
-        if ( Cache::get( $cacheName ) !== false ) {
-            Cache::set( $cacheName, $data );
+        if (Cache::get($cacheName) !== false) {
+            Cache::set($cacheName, $data);
         }
     }
 
     /**
      * 实现更新与保存操作
+     *
+     * @param $pk
      * @param array $attributes 要插入的数据
-     * @param boolean $returnNewId 是否返回插入的ID
      * @return mixed
      */
-    public function modifyCache( $pk, $attributes = null ) {
-        $data = $this->handleData( $attributes );
-        Cache::set( $pk, $data['value'] );
-        return $this->updateAll( $data, 'name = :name', array( ':name' => $pk ) );
+    public function modifyCache($pk, $attributes = null)
+    {
+        $data = $this->handleData($attributes);
+        Cache::set($pk, $data['value']);
+        return $this->updateAll($data, 'name = :name', array(':name' => $pk));
     }
 
     /**
@@ -67,43 +77,45 @@ class Syscache extends Model {
      * @param mixed $cacheNames
      * @return null
      */
-    public function fetchAllCache( $cacheNames ) {
-        $cacheNames = is_array( $cacheNames ) ? $cacheNames : array( $cacheNames );
+    public function fetchAllCache($cacheNames)
+    {
+        $cacheNames = is_array($cacheNames) ? $cacheNames : array($cacheNames);
         // 从内存中读取缓存
-        $data = Cache::mget( $cacheNames );
-        if ( is_array( $data ) && in_array( false, $data, true ) || !$data ) {
+        $data = Cache::mget($cacheNames);
+        if (is_array($data) && in_array(false, $data, true) || !$data) {
             $data = array();
         }
-        $newArray = array_diff( $cacheNames, array_keys( $data ) );
+        $newArray = array_diff($cacheNames, array_keys($data));
         //如果缓存中存在数据
-        if ( empty( $newArray ) ) {
-            foreach ( $data as &$cache ) {
-                $isSerialized = StringUtil::utf8Unserialize( $cache ) !== false;
-                $cache = $isSerialized ? StringUtil::utf8Unserialize( $cache ) : $cache;
+        if (empty($newArray)) {
+            foreach ($data as &$cache) {
+                $isSerialized = StringUtil::utf8Unserialize($cache) !== false;
+                $cache = $isSerialized ? StringUtil::utf8Unserialize($cache) : $cache;
             }
             //返回数据
             return $data;
         }
         // 不存在缓存中，则查找syscache中的信息
-        $caches = $this->fetchAll( sprintf( "FIND_IN_SET(name,'%s')", implode( ',', $newArray ) ) );
-        if ( $caches ) {
-            foreach ( $caches as $sysCache ) {
-                $data[$sysCache['name']] = $sysCache['type'] ? StringUtil::utf8Unserialize( $sysCache['value'] ) : $sysCache['value'];
+        $caches = $this->fetchAll(sprintf("FIND_IN_SET(name,'%s')", implode(',', $newArray)));
+        if ($caches) {
+            foreach ($caches as $sysCache) {
+                $data[$sysCache['name']] = $sysCache['type'] ? StringUtil::utf8Unserialize($sysCache['value']) : $sysCache['value'];
                 //把数据写到缓存中
-                Cache::set( $sysCache['name'], $data[$sysCache['name']] );
+                Cache::set($sysCache['name'], $data[$sysCache['name']]);
             }
         }
         return $data;
     }
 
-    public function fetchAllCacheA( $cacheA = array() ) {
-        if ( empty( $cacheA ) ) {
+    public function fetchAllCacheA($cacheA = array())
+    {
+        if (empty($cacheA)) {
             $cacheA = Ibos::app()->db->createCommand()
-                    ->select( 'name' )
-                    ->from( Syscache::model()->tableName() )
-                    ->queryColumn();
+                ->select('name')
+                ->from(Syscache::model()->tableName())
+                ->queryColumn();
         }
-        return $this->fetchAllCache( $cacheA );
+        return $this->fetchAllCache($cacheA);
     }
 
     /**
@@ -111,10 +123,11 @@ class Syscache extends Model {
      * @param array $attributes 数据
      * @return array 处理后的数据
      */
-    private function handleData( $attributes ) {
-        $value = is_array( $attributes ) ? serialize( $attributes ) : $attributes;
+    private function handleData($attributes)
+    {
+        $value = is_array($attributes) ? serialize($attributes) : $attributes;
         $data = array(
-            'type' => is_array( $attributes ) ? 1 : 0,
+            'type' => is_array($attributes) ? 1 : 0,
             'dateline' => time(),
             'value' => $value,
         );

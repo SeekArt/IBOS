@@ -3,8 +3,8 @@
 use application\core\utils\Model;
 use application\core\utils\Module;
 
-$isInstallCalendar = Module::getIsEnabled( 'calendar' );
-if ( $isInstallCalendar ) {
+$isInstallCalendar = Module::getIsEnabled('calendar');
+if ($isInstallCalendar) {
     $sql = "DROP TABLE IF EXISTS {{calendar_rep_record}};
 			CREATE TABLE IF NOT EXISTS {{calendar_rep_record}} (
 			`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -16,5 +16,5 @@ if ( $isInstallCalendar ) {
 			KEY `rid` (`rid`) USING BTREE,
 			KEY `repid` (`repid`) USING BTREE
 		  ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;";
-    Model::executeSqls( $sql );
+    Model::executeSqls($sql);
 }

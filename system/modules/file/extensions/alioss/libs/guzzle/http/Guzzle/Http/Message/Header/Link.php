@@ -12,9 +12,9 @@ class Link extends Header
     /**
      * Add a link to the header
      *
-     * @param string $url    Link URL
-     * @param string $rel    Link rel
-     * @param array  $params Other link parameters
+     * @param string $url Link URL
+     * @param string $rel Link rel
+     * @param array $params Other link parameters
      *
      * @return self
      */

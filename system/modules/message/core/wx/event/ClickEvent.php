@@ -19,15 +19,18 @@ namespace application\modules\message\core\wx\event;
 
 use application\modules\message\core\wx\Event;
 
-abstract class ClickEvent extends Event {
+abstract class ClickEvent extends Event
+{
 
     protected $key = '';
 
-    public function setKey( $key ) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 

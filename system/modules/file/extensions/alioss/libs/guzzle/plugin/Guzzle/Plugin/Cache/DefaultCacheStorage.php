@@ -25,9 +25,9 @@ class DefaultCacheStorage implements CacheStorageInterface
     protected $defaultTtl;
 
     /**
-     * @param mixed  $cache      Cache used to store cache data
-     * @param string $keyPrefix  Provide an optional key prefix to prefix on all cache keys
-     * @param int    $defaultTtl Default cache TTL
+     * @param mixed $cache Cache used to store cache data
+     * @param string $keyPrefix Provide an optional key prefix to prefix on all cache keys
+     * @param int $defaultTtl Default cache TTL
      */
     public function __construct($cache, $keyPrefix = '', $defaultTtl = 3600)
     {
@@ -70,7 +70,7 @@ class DefaultCacheStorage implements CacheStorageInterface
         $bodyDigest = null;
         if ($response->getBody() && $response->getBody()->getContentLength() > 0) {
             $bodyDigest = $this->getBodyKey($request->getUrl(), $response->getBody());
-            $this->cache->save($bodyDigest, (string) $response->getBody(), $ttl);
+            $this->cache->save($bodyDigest, (string)$response->getBody(), $ttl);
         }
 
         array_unshift($entries, array(
@@ -181,7 +181,7 @@ class DefaultCacheStorage implements CacheStorageInterface
     /**
      * Create a cache key for a response's body
      *
-     * @param string              $url  URL of the entry
+     * @param string $url URL of the entry
      * @param EntityBodyInterface $body Response body
      *
      * @return string
@@ -195,8 +195,8 @@ class DefaultCacheStorage implements CacheStorageInterface
      * Determines whether two Request HTTP header sets are non-varying
      *
      * @param string $vary Response vary header
-     * @param array  $r1   HTTP header array
-     * @param array  $r2   HTTP header array
+     * @param array $r1 HTTP header array
+     * @param array $r2 HTTP header array
      *
      * @return bool
      */
@@ -244,7 +244,9 @@ class DefaultCacheStorage implements CacheStorageInterface
         $headers = $message->getHeaders()->getAll();
         $headers = array_diff_key($headers, $noCache);
         // Cast the headers to a string
-        $headers = array_map(function ($h) { return (string) $h; }, $headers);
+        $headers = array_map(function ($h) {
+            return (string)$h;
+        }, $headers);
 
         return $headers;
     }

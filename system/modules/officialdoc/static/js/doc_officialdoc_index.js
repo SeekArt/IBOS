@@ -7,7 +7,7 @@ var OfficialIndex = {
         // 获取传送地址
         getUrl: Ibos.app.url('officialdoc/officialdoc/edit'),
         /**
-         * 移动公文
+         * 移动通知
          * @method moveDoc
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -18,7 +18,7 @@ var OfficialIndex = {
             return $.post(url, param, $.noop);
         },
         /**
-         * 高亮公文
+         * 高亮通知
          * @method highlightDoc
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -29,7 +29,7 @@ var OfficialIndex = {
             return $.post(url, param, $.noop);
         },
         /**
-         * 顶置公文
+         * 顶置通知
          * @method topDoc
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -40,7 +40,7 @@ var OfficialIndex = {
             return $.post(url, param, $.noop);
         },
         /**
-         * 验证公文
+         * 验证通知
          * @method verifyDoc
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -51,7 +51,7 @@ var OfficialIndex = {
             return $.post(url, param, $.noop);
         },
         /**
-         * 回退公文
+         * 回退通知
          * @method backDocs
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -278,7 +278,7 @@ $(function() {
         doc_base = $('#doc_base'),
         doc_approval = $('#doc_approval');
 
-    // 选中一条或多条公文时，出现操作菜单
+    // 选中一条或多条通知时，出现操作菜单
     $(document).on("change", 'input[type="checkbox"][name="officialdoc[]"]', function() {
         var $opBtn = $('#doc_more'),
             hasSelected = !!U.getChecked('officialdoc[]').length;
@@ -342,7 +342,7 @@ $(function() {
             tableConfig.curType = type;
             tableConfig.ajaxSearch();
         },
-        // 移动公文
+        // 移动通知
         "moveDoc": function(param) {
             Ui.ajaxDialog(Ibos.app.url("officialdoc/officialdoc/move"), $.extend({},
                 {
@@ -366,7 +366,7 @@ $(function() {
                 },
             param));
         },
-        // 高亮公文
+        // 高亮通知
         "highlightDoc": function() {
             Ui.dialog({
                 id: "d_art_highlight",
@@ -424,7 +424,7 @@ $(function() {
                 }
             });
         },
-        // 置顶公文
+        // 置顶通知
         "topDoc": function() {
             Ui.dialog({
                 id: "d_art_top",
@@ -450,7 +450,7 @@ $(function() {
                 }
             });
         },
-        // 删除一条公文
+        // 删除一条通知
         "removeDoc": function(param, elem) {
             Ui.confirm(Ibos.l("DOC.SURE_DEL_DOC"), function() {
                 Official.op.removeDocs($(elem).data('id')).done(function(res) {
@@ -461,7 +461,7 @@ $(function() {
                 });
             });
         },
-        // 删除多条公文
+        // 删除多条通知
         "removeDocs": function() {
             var docids = U.getCheckedValue("officialdoc[]");
 
@@ -474,7 +474,7 @@ $(function() {
                 });
             });
         },
-        // 审核公文
+        // 审核通知
         "verifyDoc": function() {
             var docids = U.getCheckedValue("approval[]", $("#approval_table"));
             if (docids.length > 0) {
@@ -489,7 +489,7 @@ $(function() {
                 Ui.tip(Ibos.l("SELECT_AT_LEAST_ONE_ITEM"), 'warning');
             }
         },
-        // 回退公文
+        // 回退通知
         "backDocs": function() {
             var docids = U.getCheckedValue("approval[]", $("#approval_table"));
             if (docids.length > 0) {

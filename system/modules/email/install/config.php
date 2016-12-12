@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '邮件',
@@ -10,8 +10,8 @@ return array(
         'version' => '1.0',
         'indexShow' => array(
             'widget' => array(
-				'email/email'
-			),
+                'email/email'
+            ),
             'link' => 'email/list/index'
         )
     ),
@@ -35,9 +35,9 @@ return array(
             'name' => '内部邮箱',
             'group' => '邮件管理',
             'controllerMap' => array(
-                'list' => array( 'index', 'search' ),
-                'folder' => array( 'index', 'add', 'edit', 'del' ),
-                'content' => array( 'index', 'add', 'edit', 'show', 'export' ),
+                'list' => array('index', 'search'),
+                'folder' => array('index', 'add', 'edit', 'del'),
+                'content' => array('index', 'add', 'edit', 'show', 'export'),
             )
         ),
         'webinbox' => array(
@@ -45,7 +45,7 @@ return array(
             'name' => '外部邮箱',
             'group' => '邮件管理',
             'controllerMap' => array(
-                'web' => array( 'index', 'add', 'edit', 'del', 'receive', 'show' )
+                'web' => array('index', 'add', 'edit', 'del', 'receive', 'show')
             )
         )
     )

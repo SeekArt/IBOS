@@ -1,7 +1,7 @@
 <?php
 
-header( "Content-type:text/html;charset=utf-8" );
-define( 'IC_VERNAME', '中文版' );
+header("Content-type:text/html;charset=utf-8");
+define('IC_VERNAME', '中文版');
 $lang = array(
     'Install guide' => 'IBOS 安装引导',
     'None' => '无',

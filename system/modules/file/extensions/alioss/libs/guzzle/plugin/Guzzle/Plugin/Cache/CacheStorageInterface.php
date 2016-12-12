@@ -22,8 +22,8 @@ interface CacheStorageInterface
     /**
      * Cache an HTTP request
      *
-     * @param RequestInterface $request  Request being cached
-     * @param Response         $response Response to cache
+     * @param RequestInterface $request Request being cached
+     * @param Response $response Response to cache
      */
     public function cache(RequestInterface $request, Response $response);
 

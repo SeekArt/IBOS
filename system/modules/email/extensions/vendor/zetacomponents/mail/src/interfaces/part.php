@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -101,20 +101,19 @@ abstract class ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contentDisposition':
             case 'size':
                 $this->properties[$name] = $value;
                 break;
 
             case 'headers':
-                throw new ezcBasePropertyPermissionException( $name, ezcBasePropertyPermissionException::READ );
+                throw new ezcBasePropertyPermissionException($name, ezcBasePropertyPermissionException::READ);
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -127,19 +126,18 @@ abstract class ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contentDisposition':
             case 'size':
-                return isset( $this->properties[$name] ) ? $this->properties[$name] : null;
+                return isset($this->properties[$name]) ? $this->properties[$name] : null;
 
             case "headers":
                 return $this->headers;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
 
         }
     }
@@ -151,16 +149,15 @@ abstract class ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contentDisposition':
             case 'size':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             case "headers":
-                return isset( $this->headers );
+                return isset($this->headers);
 
             default:
                 return false;
@@ -188,22 +185,16 @@ abstract class ezcMailPart
      * @param bool $returnAllValues
      * @return mixed
      */
-    public function getHeader( $name, $returnAllValues = false )
+    public function getHeader($name, $returnAllValues = false)
     {
-        if ( isset( $this->headers[$name] ) )
-        {
-            if ( $returnAllValues === true )
-            {
+        if (isset($this->headers[$name])) {
+            if ($returnAllValues === true) {
                 return $this->headers[$name];
-            }
-            else if ( is_array( $this->headers[$name] ) )
-            {
+            } else if (is_array($this->headers[$name])) {
                 // return only the first value in order to not break compatibility
                 // see issue #14257
                 return $this->headers[$name][0];
-            }
-            else
-            {
+            } else {
                 return $this->headers[$name];
             }
         }
@@ -231,10 +222,10 @@ abstract class ezcMailPart
      * @param string $value
      * @param string $charset
      */
-    public function setHeader( $name, $value, $charset = 'us-ascii' )
+    public function setHeader($name, $value, $charset = 'us-ascii')
     {
         $this->headers[$name] = $value;
-        $this->setHeaderCharset( $name, $charset );
+        $this->setHeaderCharset($name, $charset);
     }
 
     /**
@@ -254,20 +245,16 @@ abstract class ezcMailPart
      *
      * @param array(string=>mixed) $headers
      */
-    public function setHeaders( array $headers )
+    public function setHeaders(array $headers)
     {
-        foreach ( $headers as $key => $value )
-        {
-            if ( is_array( $value ) )
-            {
+        foreach ($headers as $key => $value) {
+            if (is_array($value)) {
                 $this->headers[$key] = $value[0];
-                $charset = isset( $value[1] ) ? $value[1] : 'us-ascii';
-                $this->setHeaderCharset( $key, $charset );
-            }
-            else
-            {
+                $charset = isset($value[1]) ? $value[1] : 'us-ascii';
+                $this->setHeaderCharset($key, $charset);
+            } else {
                 $this->headers[$key] = $value;
-                $this->setHeaderCharset( $key );
+                $this->setHeaderCharset($key);
             }
         }
     }
@@ -294,109 +281,105 @@ abstract class ezcMailPart
     public function generateHeaders()
     {
         // set content disposition header
-        if ( $this->contentDisposition !== null &&
-            ( $this->contentDisposition instanceof ezcMailContentDispositionHeader ) )
-        {
+        if ($this->contentDisposition !== null &&
+            ($this->contentDisposition instanceof ezcMailContentDispositionHeader)
+        ) {
             $cdHeader = $this->contentDisposition;
             $cd = "{$cdHeader->disposition}";
-            if ( $cdHeader->fileName !== null )
-            {
+            if ($cdHeader->fileName !== null) {
                 $fileInfo = null;
-                if ( $cdHeader->fileNameCharSet !== null )
-                {
+                if ($cdHeader->fileNameCharSet !== null) {
                     $fileInfo .= "*0*=\"{$cdHeader->fileNameCharSet}";
-                    if ( $cdHeader->fileNameLanguage !== null )
-                    {
+                    if ($cdHeader->fileNameLanguage !== null) {
                         $fileInfo .= "'{$cdHeader->fileNameLanguage}'";
-                    }
-                    else
-                    {
+                    } else {
                         // RFC 2184: the single quote delimiters MUST be present
                         // even when one of the field values is omitted
                         $fileInfo .= "''";
                     }
                 }
-                if ( $fileInfo !== null )
-                {
+                if ($fileInfo !== null) {
                     $cd .= "; filename{$fileInfo}{$cdHeader->fileName}\"";
-                }
-                else
-                {
+                } else {
                     $cd .= "; filename=\"{$cdHeader->fileName}\"";
                 }
             }
 
-            if ( $cdHeader->creationDate !== null )
-            {
+            if ($cdHeader->creationDate !== null) {
                 $cd .= "; creation-date=\"{$cdHeader->creationDate}\"";
             }
 
-            if ( $cdHeader->modificationDate !== null )
-            {
+            if ($cdHeader->modificationDate !== null) {
                 $cd .= "; modification-date=\"{$cdHeader->modificationDate}\"";
             }
 
-            if ( $cdHeader->readDate !== null )
-            {
+            if ($cdHeader->readDate !== null) {
                 $cd .= "; read-date=\"{$cdHeader->readDate}\"";
             }
 
-            if ( $cdHeader->size !== null )
-            {
+            if ($cdHeader->size !== null) {
                 $cd .= "; size={$cdHeader->size}";
             }
 
-            foreach ( $cdHeader->additionalParameters as $addKey => $addValue )
-            {
-                $cd .="; {$addKey}=\"{$addValue}\"";
+            foreach ($cdHeader->additionalParameters as $addKey => $addValue) {
+                $cd .= "; {$addKey}=\"{$addValue}\"";
             }
 
-            $this->setHeader( 'Content-Disposition', $cd );
+            $this->setHeader('Content-Disposition', $cd);
         }
 
         // generate headers
         $text = "";
-        foreach ( $this->headers->getCaseSensitiveArray() as $header => $value )
-        {
-            if ( is_array( $value ) )
-            {
+        foreach ($this->headers->getCaseSensitiveArray() as $header => $value) {
+            if (is_array($value)) {
                 $value = $value[0];
             }
 
             // here we encode every header, even the ones that we don't add to
             // the header set directly. We do that so that transports sill see
             // all the encoded headers which they then can use accordingly.
-            $charset = $this->getHeaderCharset( $header );
-            switch ( strtolower( $charset ) )
-            {
+            $charset = $this->getHeaderCharset($header);
+            switch (strtolower($charset)) {
                 case 'us-ascii':
-                    $value = ezcMailHeaderFolder::foldAny( $value );
+                    $value = ezcMailHeaderFolder::foldAny($value);
                     break;
 
-                case 'iso-8859-1': case 'iso-8859-2': case 'iso-8859-3': case 'iso-8859-4':
-                case 'iso-8859-5': case 'iso-8859-6': case 'iso-8859-7': case 'iso-8859-8':
-                case 'iso-8859-9': case 'iso-8859-10': case 'iso-8859-11': case 'iso-8859-12':
-                case 'iso-8859-13': case 'iso-8859-14': case 'iso-8859-15' :case 'iso-8859-16':
-                case 'windows-1250': case 'windows-1251': case 'windows-1252':
+                case 'iso-8859-1':
+                case 'iso-8859-2':
+                case 'iso-8859-3':
+                case 'iso-8859-4':
+                case 'iso-8859-5':
+                case 'iso-8859-6':
+                case 'iso-8859-7':
+                case 'iso-8859-8':
+                case 'iso-8859-9':
+                case 'iso-8859-10':
+                case 'iso-8859-11':
+                case 'iso-8859-12':
+                case 'iso-8859-13':
+                case 'iso-8859-14':
+                case 'iso-8859-15' :
+                case 'iso-8859-16':
+                case 'windows-1250':
+                case 'windows-1251':
+                case 'windows-1252':
                 case 'utf-8':
-                    if ( strpbrk( $value, "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff" ) === false )
-                    {
-                        $value = ezcMailHeaderFolder::foldAny( $value );
+                    if (strpbrk($value, "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff") === false) {
+                        $value = ezcMailHeaderFolder::foldAny($value);
                         break;
                     }
-                    // break intentionally missing
+                // break intentionally missing
 
                 default:
                     // just to keep compatibility with code which might read
                     // the headers after generateHeaders() has been called
-                    $value = ezcMailTools::mimeHeaderEncode( $value, $charset );
-                    $this->setHeader( $header, $value, $charset );
+                    $value = ezcMailTools::mimeHeaderEncode($value, $charset);
+                    $this->setHeader($header, $value, $charset);
                     break;
             }
 
-            if ( in_array( strtolower( $header ), $this->excludeHeaders ) === false )
-            {
-                 $text .= "$header: $value" . ezcMailTools::lineBreak();
+            if (in_array(strtolower($header), $this->excludeHeaders) === false) {
+                $text .= "$header: $value" . ezcMailTools::lineBreak();
             }
         }
 
@@ -410,14 +393,13 @@ abstract class ezcMailPart
      *
      * @param array(string) $headers
      */
-    public function appendExcludeHeaders( array $headers )
+    public function appendExcludeHeaders(array $headers)
     {
         $lowerCaseHeaders = array();
-        foreach ( $headers as $header )
-        {
-            $lowerCaseHeaders[] = strtolower( $header );
+        foreach ($headers as $header) {
+            $lowerCaseHeaders[] = strtolower($header);
         }
-        $this->excludeHeaders = array_merge( $this->excludeHeaders, $lowerCaseHeaders );
+        $this->excludeHeaders = array_merge($this->excludeHeaders, $lowerCaseHeaders);
     }
 
     /**
@@ -447,10 +429,9 @@ abstract class ezcMailPart
      * @param string $name
      * @return string
      */
-    protected function getHeaderCharset( $name )
+    protected function getHeaderCharset($name)
     {
-        if ( isset( $this->headerCharsets[$name] ) )
-        {
+        if (isset($this->headerCharsets[$name])) {
             return $this->headerCharsets[$name];
         }
 
@@ -466,9 +447,10 @@ abstract class ezcMailPart
      * @param string $name
      * @param string $value
      */
-    protected function setHeaderCharset( $name, $value = 'us-ascii' )
+    protected function setHeaderCharset($name, $value = 'us-ascii')
     {
         $this->headerCharsets[$name] = $value;
     }
 }
+
 ?>

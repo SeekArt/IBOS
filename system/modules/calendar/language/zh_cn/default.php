@@ -2,7 +2,7 @@
 
 /**
  * 信息中心默认语言包 zh_cn
- * 
+ *
  * @package application.modules.officialdoc.language.zh_cn
  * @version $Id: default.php 1597 2013-10-28 13:15:54Z gzzcs $
  * @author gzhzh <gzhzh@ibos.com.cn>
@@ -15,7 +15,7 @@ return array(
     'Subordinate schedule' => '下属日程',
     'Personal task' => '个人待办',
     'Subordinate task' => '下属待办',
-	'Task' => '待办',
+    'Task' => '待办',
     'Share' => '共享给我',
     //----------------schedule/index.php&subschedule.php-------------------
     'day' => '日',
@@ -80,11 +80,11 @@ return array(
     'New task message title' => '{sender} 给您添加了一个新待办 {subject}',
     'New task message content' => '{sender} 给您添加了一个新待办 {subject}',
     'From task' => '(来自待办)',
-	//--------------setup.php------------------------------------------
-	'Read permission setting for schedule' => '日程查看权限人员设置',
-	'Edit permission setting for schedule' => '日程编辑权限人员设置',
-	'Editor own permission of read and edit' => '(编辑权限人员同时具有查看权限)',
-	//--------------sharesidebar.php---------------------------------------
-	'You do not share personnel' => '抱歉，还没有人分享日程给您',
-	'No permission to view shareschedule' => '抱歉，您没权力访问该用户分享的日程',
+    //--------------setup.php------------------------------------------
+    'Read permission setting for schedule' => '日程查看权限人员设置',
+    'Edit permission setting for schedule' => '日程编辑权限人员设置',
+    'Editor own permission of read and edit' => '(编辑权限人员同时具有查看权限)',
+    //--------------sharesidebar.php---------------------------------------
+    'You do not share personnel' => '抱歉，还没有人分享日程给您',
+    'No permission to view shareschedule' => '抱歉，您没权力访问该用户分享的日程',
 );

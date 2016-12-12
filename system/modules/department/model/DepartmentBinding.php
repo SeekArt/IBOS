@@ -15,24 +15,28 @@ use application\core\utils\Ibos;
  * @link https://github.com/forsona
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-6-16 15:40:17
- * @version $Id: DepartmentBinding.php 7551 2016-07-14 12:51:06Z php_lxy $
+ * @version $Id$
  */
-class DepartmentBinding extends Model {
+class DepartmentBinding extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{department_binding}}';
-	}
+    public function tableName()
+    {
+        return '{{department_binding}}';
+    }
 
     /**
-    * 获取所有的uid
-    * @param str $type 绑定的第三方应用名称
-    * @return array
-    */
-    public function fetchAllBindvalue( $type ) {
+     * 获取所有的uid
+     * @param str $type 绑定的第三方应用名称
+     * @return array
+     */
+    public function fetchAllBindvalue($type)
+    {
         $return = Ibos::app()->db->createCommand()
             ->select('deptid,bindvalue')
             ->from($this->tableName())

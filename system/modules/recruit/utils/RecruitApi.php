@@ -5,25 +5,27 @@ namespace application\modules\recruit\utils;
 use application\core\utils\Ibos;
 use application\modules\recruit\model\Resume;
 
-class RecruitApi {
+class RecruitApi
+{
 
-    private $_indexTab = array( 'TalentManagement', 'InterviewManagement' );
+    private $_indexTab = array('TalentManagement', 'InterviewManagement');
 
     /**
      * 渲染首页视图
      * @return type
      */
-    public function renderIndex() {
+    public function renderIndex()
+    {
         $data = array(
-            'lant' => Ibos::getLangSource( 'recruit.default' ),
-            'assetUrl' => Ibos::app()->assetManager->getAssetUrl( 'recruit' )
+            'lant' => Ibos::getLangSource('recruit.default'),
+            'assetUrl' => Ibos::app()->assetManager->getAssetUrl('recruit')
         );
-        foreach ( $this->_indexTab as $tab ) {
-            $data['recruits'] = $this->loadRecruit( $tab );
+        foreach ($this->_indexTab as $tab) {
+            $data['recruits'] = $this->loadRecruit($tab);
             $data['tab'] = $tab;
         }
         $viewAlias = 'application.modules.recruit.views.indexapi.recruit';
-        $return['recruit'] = Ibos::app()->getController()->renderPartial( $viewAlias, $data, true );
+        $return['recruit'] = Ibos::app()->getController()->renderPartial($viewAlias, $data, true);
         return $return;
     }
 
@@ -31,17 +33,19 @@ class RecruitApi {
      * 提供给接口的模块首页配置方法
      * @return array
      */
-    public function loadSetting() {
+    public function loadSetting()
+    {
         return array(
             'name' => 'recruit',
-            'title' => Ibos::lang( 'Recruitment management', 'recruit.default' ),
+            'title' => Ibos::lang('Recruitment management', 'recruit.default'),
             'style' => 'in-recruit'
         );
     }
 
-    private function loadRecruit( $type = 'TalentManagement', $num = 4 ) {
+    private function loadRecruit($type = 'TalentManagement', $num = 4)
+    {
         $uid = Ibos::app()->user->uid;
-        switch ( $type ) {
+        switch ($type) {
             case 'TalentManagement':
                 $status = 4;
                 break;
@@ -58,8 +62,8 @@ class RecruitApi {
             'offset' => 0,
             'limit' => $num
         );
-        $resume = Resume::model()->findAll( $criteria );
-        var_dump( $resume );
+        $resume = Resume::model()->findAll($criteria);
+        var_dump($resume);
         die;
     }
 

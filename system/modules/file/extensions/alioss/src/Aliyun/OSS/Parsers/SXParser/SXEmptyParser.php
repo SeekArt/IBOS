@@ -17,8 +17,10 @@ use Aliyun\Common\Communication\HttpResponse;
  * do nothing for the service that need not be parsed.
  * @package Aliyun\OSS\Parsers\SXParser
  */
-class SXEmptyParser implements  ResponseParserInterface {
-    public function parse(HttpResponse $response, $options) {
+class SXEmptyParser implements ResponseParserInterface
+{
+    public function parse(HttpResponse $response, $options)
+    {
         // Do nothing...
     }
 }

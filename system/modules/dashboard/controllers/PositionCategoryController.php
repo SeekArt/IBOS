@@ -23,7 +23,8 @@ use application\modules\position\components\PositionCategory as ICPositionCatego
 use application\modules\position\model\PositionCategory;
 use application\modules\position\model\Position;
 
-class PositioncategoryController extends OrganizationBaseController {
+class PositioncategoryController extends OrganizationBaseController
+{
 
     /**
      * 当前分类对象
@@ -35,7 +36,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 初始化当前分类对象
      * @return void
      */
-    public function init() {
+    public function init()
+    {
         $this->useConfig = true;
         if ($this->_category === null) {
             $this->_category = new ICPositionCategory('application\modules\position\model\PositionCategory');
@@ -46,7 +48,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 获取分类树
      * @return void
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         if (Ibos::app()->request->getIsAjaxRequest()) {
             $data = $this->_category->getData();
             $this->ajaxReturn($this->_category->getAjaxCategory($data), 'json');
@@ -57,7 +60,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 新建分类
      * @return void
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $pid = Env::getRequest('pid');
         $name = \CHtml::encode(trim(Env::getRequest('name')));
         $id = $this->_category->add($pid, $name);
@@ -80,7 +84,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 编辑分类
      * @return void
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $pid = Env::getRequest('pid');
         $catid = Env::getRequest('catid');
         if (Env::getRequest('op') === 'move') {
@@ -104,7 +109,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 删除分类
      * @return void
      */
-    public function actionDelete() {
+    public function actionDelete()
+    {
         $catid = Env::getRequest('catid');
         // 判断顶级分类少于一个不给删除
         $category = PositionCategory::model()->fetchByPk($catid);
@@ -113,7 +119,7 @@ class PositioncategoryController extends OrganizationBaseController {
             $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('Leave at least a Category')), 'json');
         }
         $ret = $this->_category->delete($catid);
-        Position::model()->updateAll( array( 'catid' => 1 ), '`catid` = ' . $catid );
+        Position::model()->updateAll(array('catid' => 1), '`catid` = ' . $catid);
         $msg = $ret ? Ibos::lang('Operation succeed', 'message') : Ibos::lang('Operation failure', 'message');
         $this->ajaxReturn(array('isSuccess' => !!$ret, 'msg' => $msg), 'json');
     }
@@ -122,7 +128,8 @@ class PositioncategoryController extends OrganizationBaseController {
      * 移动分类
      * @return void
      */
-    protected function move($index, $catid, $pid) {
+    protected function move($index, $catid, $pid)
+    {
         $cates = PositionCategory::model()->fetchAll(array('condition' => "`pid`={$pid} AND `catid`!={$catid}", 'order' => "`sort` ASC")); // 把移动到的父级原有的分类找出来
         foreach ($cates as $k => $cate) {
             $newSort = $k;

@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogen//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * ezcBaseInitCallbackConfiguredException is thrown when you try to assign a
  * callback clasname to an identifier, while there is already a callback class
@@ -39,9 +40,10 @@ class ezcBaseInitCallbackConfiguredException extends ezcBaseException
      * @param string $identifier
      * @param string $originalCallbackClassName
      */
-    function __construct( $identifier, $originalCallbackClassName )
+    function __construct($identifier, $originalCallbackClassName)
     {
-        parent::__construct( "The '{$identifier}' is already configured with callback class '{$originalCallbackClassName}'." );
+        parent::__construct("The '{$identifier}' is already configured with callback class '{$originalCallbackClassName}'.");
     }
 }
+
 ?>

@@ -14,7 +14,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class AccessControlPolicy {
+class AccessControlPolicy
+{
     /**
      * @var Owner
      */
@@ -29,7 +30,8 @@ class AccessControlPolicy {
      * @internal
      * @param array $grants
      */
-    public function setGrants($grants) {
+    public function setGrants($grants)
+    {
         $this->grants = $grants;
     }
 
@@ -38,7 +40,8 @@ class AccessControlPolicy {
      *
      * @return array
      */
-    public function getGrants() {
+    public function getGrants()
+    {
         return $this->grants;
     }
 
@@ -46,7 +49,8 @@ class AccessControlPolicy {
      * @internal
      * @param \Aliyun\OSS\Models\Owner $owner
      */
-    public function setOwner($owner) {
+    public function setOwner($owner)
+    {
         $this->owner = $owner;
     }
 
@@ -55,7 +59,8 @@ class AccessControlPolicy {
      *
      * @return \Aliyun\OSS\Models\Owner
      */
-    public function getOwner() {
+    public function getOwner()
+    {
         return $this->owner;
     }
 }

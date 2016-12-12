@@ -19,7 +19,8 @@ namespace application\modules\message\core;
 
 use application\core\utils\Api;
 
-class BQQApi {
+class BQQApi
+{
 
     // 获取企业基本信息
     const CORPORATION_BASE_URL = 'https://openapi.b.qq.com/api/corporation/get';
@@ -38,7 +39,7 @@ class BQQApi {
 
     /**
      * 公共参数
-     * @var array 
+     * @var array
      */
     private $_publicParam = array(
         'company_id' => '{id}',
@@ -52,10 +53,11 @@ class BQQApi {
      * 构造函数，初始化公共参数里的可变变量
      * @param array $param
      */
-    public function __construct( $param = array() ) {
+    public function __construct($param = array())
+    {
         $publicParam = &$this->_publicParam;
-        foreach ( $param as $key => $value ) {
-            if ( isset( $publicParam[$key] ) ) {
+        foreach ($param as $key => $value) {
+            if (isset($publicParam[$key])) {
                 $publicParam[$key] = $value;
             }
         }
@@ -64,11 +66,12 @@ class BQQApi {
     /**
      * 增加一个企业QQ账户
      * @link http://wiki.open.b.qq.com/api:api_dept_adduser 该api介绍
-     * @param array $acountData 要增加的用户信息 
+     * @param array $acountData 要增加的用户信息
      * @return array
      */
-    public function addAccount( $acountData ) {
-        return $this->fetchResult( self::ADD_ACCOUNT_URL, array_merge( $this->_publicParam, $acountData ), 'post' );
+    public function addAccount($acountData)
+    {
+        return $this->fetchResult(self::ADD_ACCOUNT_URL, array_merge($this->_publicParam, $acountData), 'post');
     }
 
     /**
@@ -77,9 +80,10 @@ class BQQApi {
      * @param string $openId 每个绑定用户的openId
      * @param string $flag 1为启用，2为禁用
      */
-    public function setStatus( $openId, $flag ) {
-        $param = array_merge( array( 'open_id' => $openId, 'status' => intval( $flag ) ), $this->_publicParam );
-        return $this->fetchResult( self::SET_USERSTATUS_URL, $param, 'post' );
+    public function setStatus($openId, $flag)
+    {
+        $param = array_merge(array('open_id' => $openId, 'status' => intval($flag)), $this->_publicParam);
+        return $this->fetchResult(self::SET_USERSTATUS_URL, $param, 'post');
     }
 
     /**
@@ -88,9 +92,10 @@ class BQQApi {
      * @param array $param 要配置的参数
      * @return array
      */
-    public function sendNotify( $param ) {
-        $param = array_merge( $param, $this->_publicParam );
-        return $this->fetchResult( self::SEND_TIPS_URL, $param, 'post' );
+    public function sendNotify($param)
+    {
+        $param = array_merge($param, $this->_publicParam);
+        return $this->fetchResult(self::SEND_TIPS_URL, $param, 'post');
     }
 
     /**
@@ -98,9 +103,10 @@ class BQQApi {
      * @link http://wiki.open.b.qq.com/api:corporation_get 该api介绍
      * @return array
      */
-    public function getCorBase() {
-        $url = $this->buildUrl( self::CORPORATION_BASE_URL );
-        return $this->fetchResult( $url );
+    public function getCorBase()
+    {
+        $url = $this->buildUrl(self::CORPORATION_BASE_URL);
+        return $this->fetchResult($url);
     }
 
     /**
@@ -109,20 +115,22 @@ class BQQApi {
      * @param array $param
      * @return array
      */
-    public function getVerifyStatus( $param ) {
-        $url = $this->buildUrl( self::VERIFY_HASH_URL, $param );
-        return $this->fetchResult( $url );
+    public function getVerifyStatus($param)
+    {
+        $url = $this->buildUrl(self::VERIFY_HASH_URL, $param);
+        return $this->fetchResult($url);
     }
 
     /**
      * 获取员工基本资料列表
      * @link http://wiki.open.b.qq.com/api:user_list 该api介绍
-     * @param array $param 
+     * @param array $param
      * @return array
      */
-    public function getUserList( $param ) {
-        $url = $this->buildUrl( self::USER_LIST_URL, $param );
-        return $this->fetchResult( $url );
+    public function getUserList($param)
+    {
+        $url = $this->buildUrl(self::USER_LIST_URL, $param);
+        return $this->fetchResult($url);
     }
 
     /**
@@ -131,9 +139,10 @@ class BQQApi {
      * @param array $param
      * @return array
      */
-    public function getRefreshToken( $param ) {
-        $url = $this->buildUrl( self::REFRESH_TOKEN_URL, $param, false );
-        return $this->fetchResult( $url );
+    public function getRefreshToken($param)
+    {
+        $url = $this->buildUrl(self::REFRESH_TOKEN_URL, $param, false);
+        return $this->fetchResult($url);
     }
 
     /**
@@ -143,8 +152,9 @@ class BQQApi {
      * @param string $type 发送类型,get或者post
      * @return array 结果集
      */
-    protected function fetchResult( $url, $param = array(), $type = 'get' ) {
-        return Api::getInstance()->fetchResult( $url, $param, $type );
+    protected function fetchResult($url, $param = array(), $type = 'get')
+    {
+        return Api::getInstance()->fetchResult($url, $param, $type);
     }
 
     /**
@@ -154,11 +164,12 @@ class BQQApi {
      * @param boolean $includePublic 是否包含公共参数
      * @return string 创建后的URL
      */
-    protected function buildUrl( $url, $param = array(), $includePublic = true ) {
-        if ( $includePublic ) {
-            $param = array_merge( $this->_publicParam, $param );
+    protected function buildUrl($url, $param = array(), $includePublic = true)
+    {
+        if ($includePublic) {
+            $param = array_merge($this->_publicParam, $param);
         }
-        return Api::getInstance()->buildUrl( $url, $param );
+        return Api::getInstance()->buildUrl($url, $param);
     }
 
 }

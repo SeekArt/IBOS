@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -77,40 +77,30 @@ class ezcMailTransportConnection
      * @param int $port
      * @param ezcMailTransportOptions $options
      */
-    public function __construct( $server, $port, ezcMailTransportOptions $options = null )
+    public function __construct($server, $port, ezcMailTransportOptions $options = null)
     {
         $errno = null;
         $errstr = null;
-        if ( $options === null )
-        {
+        if ($options === null) {
             $this->options = new ezcMailTransportOptions();
-        }
-        else
-        {
+        } else {
             $this->options = $options;
         }
-        if ( $this->options->ssl )
-        {
-            if ( ezcBaseFeatures::hasExtensionSupport( 'openssl' ) !== true )
-            {
-                throw new ezcBaseExtensionNotFoundException( 'openssl', null, "PHP not configured --with-openssl." );
+        if ($this->options->ssl) {
+            if (ezcBaseFeatures::hasExtensionSupport('openssl') !== true) {
+                throw new ezcBaseExtensionNotFoundException('openssl', null, "PHP not configured --with-openssl.");
             }
-            $this->connection = @stream_socket_client( "ssl://{$server}:{$port}",
-                                                       $errno, $errstr, $this->options->timeout );
-        }
-        else
-        {
-            $this->connection = @stream_socket_client( "tcp://{$server}:{$port}",
-                                                       $errno, $errstr, $this->options->timeout );
+            $this->connection = @stream_socket_client("ssl://{$server}:{$port}",
+                $errno, $errstr, $this->options->timeout);
+        } else {
+            $this->connection = @stream_socket_client("tcp://{$server}:{$port}",
+                $errno, $errstr, $this->options->timeout);
         }
 
-        if ( is_resource( $this->connection ) )
-        {
-            stream_set_timeout( $this->connection, $this->options->timeout );
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Failed to connect to the server: {$server}:{$port}." );
+        if (is_resource($this->connection)) {
+            stream_set_timeout($this->connection, $this->options->timeout);
+        } else {
+            throw new ezcMailTransportException("Failed to connect to the server: {$server}:{$port}.");
         }
     }
 
@@ -125,20 +115,18 @@ class ezcMailTransportConnection
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
-                if ( !( $value instanceof ezcMailTransportOptions ) )
-                {
-                    throw new ezcBaseValueException( 'options', $value, 'instanceof ezcMailTransportOptions' );
+                if (!($value instanceof ezcMailTransportOptions)) {
+                    throw new ezcBaseValueException('options', $value, 'instanceof ezcMailTransportOptions');
                 }
                 $this->options = $value;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -150,15 +138,14 @@ class ezcMailTransportConnection
      * @param string $name
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return $this->options;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -169,10 +156,9 @@ class ezcMailTransportConnection
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return true;
 
@@ -190,14 +176,13 @@ class ezcMailTransportConnection
      *         if there is no valid connection.
      * @param string $data
      */
-    public function sendData( $data )
+    public function sendData($data)
     {
-        if ( is_resource( $this->connection ) )
-        {
-            if ( fwrite( $this->connection, $data . self::CRLF,
-                        strlen( $data ) + strlen( self::CRLF  ) ) === false )
-            {
-                throw new ezcMailTransportException( 'Could not write to the stream. It was probably terminated by the host.' );
+        if (is_resource($this->connection)) {
+            if (fwrite($this->connection, $data . self::CRLF,
+                    strlen($data) + strlen(self::CRLF)) === false
+            ) {
+                throw new ezcMailTransportException('Could not write to the stream. It was probably terminated by the host.');
             }
         }
     }
@@ -212,40 +197,34 @@ class ezcMailTransportConnection
      * @param bool $trim
      * @return string
      */
-    public function getLine( $trim = false )
+    public function getLine($trim = false)
     {
         $data = '';
         $line = '';
 
-        if ( is_resource( $this->connection ) )
-        {
+        if (is_resource($this->connection)) {
             // in case there is a problem with the connection fgets() returns false
-            while ( strpos( $data, self::CRLF ) === false )
-            {
-                $line = fgets( $this->connection, 512 );
+            while (strpos($data, self::CRLF) === false) {
+                $line = fgets($this->connection, 512);
 
                 /* If the mail server aborts the connection, fgets() will
                  * return false. We need to throw an exception here to prevent
                  * the calling code from looping indefinitely. */
-                if ( $line === false )
-                {
+                if ($line === false) {
                     $this->connection = null;
-                    throw new ezcMailTransportException( 'Could not read from the stream. It was probably terminated by the host.' );
+                    throw new ezcMailTransportException('Could not read from the stream. It was probably terminated by the host.');
                 }
 
                 $data .= $line;
             }
 
-            if ( $trim == false )
-            {
+            if ($trim == false) {
                 return $data;
-            }
-            else
-            {
-                return rtrim( $data, "\r\n" );
+            } else {
+                return rtrim($data, "\r\n");
             }
         }
-        throw new ezcMailTransportException( 'Could not read from the stream. It was probably terminated by the host.' );
+        throw new ezcMailTransportException('Could not read from the stream. It was probably terminated by the host.');
     }
 
     /**
@@ -255,7 +234,7 @@ class ezcMailTransportConnection
      */
     public function isConnected()
     {
-        return is_resource( $this->connection );
+        return is_resource($this->connection);
     }
 
     /**
@@ -263,11 +242,11 @@ class ezcMailTransportConnection
      */
     public function close()
     {
-        if ( is_resource( $this->connection ) )
-        {
-            fclose( $this->connection );
+        if (is_resource($this->connection)) {
+            fclose($this->connection);
             $this->connection = null;
         }
     }
 }
+
 ?>

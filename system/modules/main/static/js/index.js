@@ -3,7 +3,7 @@
  * 前台首页
  * IBOS
  * @author		inaki
- * @version		$Id: index.js 6576 2016-03-11 03:02:38Z gzzz $
+ * @version		$Id$
  */
 
 /**

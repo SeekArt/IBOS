@@ -21,10 +21,12 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\user\model\UserGroup as UGModel;
 use CBehavior;
 
-class UserGroup extends CBehavior {
+class UserGroup extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleUserGroup' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleUserGroup'));
     }
 
     /**
@@ -32,16 +34,17 @@ class UserGroup extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handleUserGroup( $event ) {
+    public function handleUserGroup($event)
+    {
         $usergroup = array();
-        $records = UGModel::model()->findAll( array( 'order' => 'creditslower ASC' ) );
-        if ( !empty( $records ) ) {
-            foreach ( $records as $record ) {
+        $records = UGModel::model()->findAll(array('order' => 'creditslower ASC'));
+        if (!empty($records)) {
+            foreach ($records as $record) {
                 $group = $record->attributes;
                 $usergroup[$group['gid']] = $group;
             }
         }
-        Syscache::model()->modifyCache( 'usergroup', $usergroup );
+        Syscache::model()->modifyCache('usergroup', $usergroup);
     }
 
 }

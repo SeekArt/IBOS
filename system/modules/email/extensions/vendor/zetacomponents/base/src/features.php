@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -48,30 +48,30 @@
 class ezcBaseFeatures
 {
     /**
-      * Used to store the path of the ImageMagick convert utility.
-      *
-      * It is initialized in the {@link getImageConvertExecutable()} function.
-      *
-      * @var string
-      */
+     * Used to store the path of the ImageMagick convert utility.
+     *
+     * It is initialized in the {@link getImageConvertExecutable()} function.
+     *
+     * @var string
+     */
     private static $imageConvert = null;
 
     /**
-      * Used to store the path of the ImageMagick identify utility.
-      *
-      * It is initialized in the {@link getImageIdentifyExecutable()} function.
-      *
-      * @var string
-      */
+     * Used to store the path of the ImageMagick identify utility.
+     *
+     * It is initialized in the {@link getImageIdentifyExecutable()} function.
+     *
+     * @var string
+     */
     private static $imageIdentify = null;
 
     /**
-      * Used to store the operating system.
-      *
-      * It is initialized in the {@link os()} function.
-      *
-      * @var string
-      */
+     * Used to store the operating system.
+     *
+     * It is initialized in the {@link os()} function.
+     *
+     * @var string
+     */
     private static $os = null;
 
     /**
@@ -81,7 +81,7 @@ class ezcBaseFeatures
      */
     public static function supportsLink()
     {
-        return function_exists( 'link' );
+        return function_exists('link');
     }
 
     /**
@@ -91,7 +91,7 @@ class ezcBaseFeatures
      */
     public static function supportsSymLink()
     {
-        return function_exists( 'symlink' );
+        return function_exists('symlink');
     }
 
     /**
@@ -101,7 +101,7 @@ class ezcBaseFeatures
      */
     public static function supportsUserId()
     {
-        return function_exists( 'posix_getpwuid' );
+        return function_exists('posix_getpwuid');
     }
 
     /**
@@ -111,7 +111,7 @@ class ezcBaseFeatures
      */
     public static function hasImageConvert()
     {
-        return !is_null( self::getImageConvertExecutable() );
+        return !is_null(self::getImageConvertExecutable());
     }
 
     /**
@@ -124,11 +124,10 @@ class ezcBaseFeatures
      */
     public static function getImageConvertExecutable()
     {
-        if ( !is_null( self::$imageConvert ) )
-        {
+        if (!is_null(self::$imageConvert)) {
             return self::$imageConvert;
         }
-        return ( self::$imageConvert = self::findExecutableInPath( 'convert' ) );
+        return (self::$imageConvert = self::findExecutableInPath('convert'));
     }
 
     /**
@@ -138,7 +137,7 @@ class ezcBaseFeatures
      */
     public static function hasImageIdentify()
     {
-        return !is_null( self::getImageIdentifyExecutable() );
+        return !is_null(self::getImageIdentifyExecutable());
     }
 
     /**
@@ -151,11 +150,10 @@ class ezcBaseFeatures
      */
     public static function getImageIdentifyExecutable()
     {
-        if ( !is_null( self::$imageIdentify ) )
-        {
+        if (!is_null(self::$imageIdentify)) {
             return self::$imageIdentify;
         }
-        return ( self::$imageIdentify = self::findExecutableInPath( 'identify' ) );
+        return (self::$imageIdentify = self::findExecutableInPath('identify'));
     }
 
     /**
@@ -179,13 +177,12 @@ class ezcBaseFeatures
      * @param string $version
      * @return bool
      */
-    public static function hasExtensionSupport( $extension, $version = null )
+    public static function hasExtensionSupport($extension, $version = null)
     {
-        if ( is_null( $version ) )
-        {
-            return extension_loaded( $extension );
+        if (is_null($version)) {
+            return extension_loaded($extension);
         }
-        return extension_loaded( $extension ) && version_compare( phpversion( $extension ), $version, ">=" ) ;
+        return extension_loaded($extension) && version_compare(phpversion($extension), $version, ">=");
     }
 
     /**
@@ -201,9 +198,9 @@ class ezcBaseFeatures
      * @param string $functionName
      * @return bool
      */
-    public static function hasFunction( $functionName )
+    public static function hasFunction($functionName)
     {
-        return function_exists( $functionName );
+        return function_exists($functionName);
     }
 
     /**
@@ -215,18 +212,14 @@ class ezcBaseFeatures
      * @param bool $autoload True to use __autoload(), otherwise false.
      * @return bool True if the class exists. Otherwise false.
      */
-    public static function classExists( $className, $autoload = true )
+    public static function classExists($className, $autoload = true)
     {
-        try
-        {
-            if ( class_exists( $className, $autoload ) )
-            {
+        try {
+            if (class_exists($className, $autoload)) {
                 return true;
             }
             return false;
-        }
-        catch ( ezcBaseAutoloadException $e )
-        {
+        } catch (ezcBaseAutoloadException $e) {
             return false;
         }
     }
@@ -243,27 +236,17 @@ class ezcBaseFeatures
      */
     public static function os()
     {
-        if ( is_null( self::$os ) )
-        {
-            $uname = php_uname( 's' );
-            if ( substr( $uname, 0, 7 ) == 'Windows' )
-            {
+        if (is_null(self::$os)) {
+            $uname = php_uname('s');
+            if (substr($uname, 0, 7) == 'Windows') {
                 self::$os = 'Windows';
-            }
-            elseif ( substr( $uname, 0, 3 ) == 'Mac' )
-            {
+            } elseif (substr($uname, 0, 3) == 'Mac') {
                 self::$os = 'Mac';
-            }
-            elseif ( strtolower( $uname ) == 'linux' )
-            {
+            } elseif (strtolower($uname) == 'linux') {
                 self::$os = 'Linux';
-            }
-            elseif ( strtolower( substr( $uname, 0, 7 ) ) == 'freebsd' )
-            {
+            } elseif (strtolower(substr($uname, 0, 7)) == 'freebsd') {
                 self::$os = 'FreeBSD';
-            }
-            else
-            {
+            } else {
                 self::$os = PHP_OS;
             }
         }
@@ -283,23 +266,18 @@ class ezcBaseFeatures
      * @param string $fileName
      * @return string
      */
-    public static function findExecutableInPath( $fileName )
+    public static function findExecutableInPath($fileName)
     {
-        if ( array_key_exists( 'PATH', $_ENV ) )
-        {
-            $envPath = trim( $_ENV['PATH'] );
+        if (array_key_exists('PATH', $_ENV)) {
+            $envPath = trim($_ENV['PATH']);
+        } else if (($envPath = getenv('PATH')) !== false) {
+            $envPath = trim($envPath);
         }
-        else if ( ( $envPath = getenv( 'PATH' ) ) !== false )
-        {
-            $envPath = trim( $envPath );
-        }
-        if ( is_string( $envPath ) && strlen( trim( $envPath ) ) == 0 )
-        {
+        if (is_string($envPath) && strlen(trim($envPath)) == 0) {
             $envPath = false;
         }
 
-        switch ( self::os() )
-        {
+        switch (self::os()) {
             case 'Unix':
             case 'FreeBSD':
             case 'Mac':
@@ -307,18 +285,15 @@ class ezcBaseFeatures
             case 'Darwin':
             case 'Linux':
             case 'SunOS':
-                if ( $envPath )
-                {
-                    $dirs = explode( ':', $envPath );
-                    foreach ( $dirs as $dir )
-                    {
+                if ($envPath) {
+                    $dirs = explode(':', $envPath);
+                    foreach ($dirs as $dir) {
                         // The @-operator is used here mainly to avoid
                         // open_basedir warnings. If open_basedir (or any other
                         // circumstance) prevents the desired file from being
                         // accessed, it is fine for file_exists() to return
                         // false, since it is useless for use then, anyway.
-                        if ( file_exists( "{$dir}/{$fileName}" ) )
-                        {
+                        if (file_exists("{$dir}/{$fileName}")) {
                             return "{$dir}/{$fileName}";
                         }
                     }
@@ -328,24 +303,20 @@ class ezcBaseFeatures
                 // prevents the desired file from being accessed, it is fine
                 // for file_exists() to return false, since it is useless for
                 // use then, anyway.
-                elseif ( @file_exists( "./{$fileName}" ) )
-                {
+                elseif (@file_exists("./{$fileName}")) {
                     return $fileName;
                 }
                 break;
             case 'Windows':
-                if ( $envPath )
-                {
-                    $dirs = explode( ';', $envPath );
-                    foreach ( $dirs as $dir )
-                    {
+                if ($envPath) {
+                    $dirs = explode(';', $envPath);
+                    foreach ($dirs as $dir) {
                         // The @-operator is used here mainly to avoid
                         // open_basedir warnings. If open_basedir (or any other
                         // circumstance) prevents the desired file from being
                         // accessed, it is fine for file_exists() to return
                         // false, since it is useless for use then, anyway.
-                        if ( @file_exists( "{$dir}\\{$fileName}.exe" ) )
-                        {
+                        if (@file_exists("{$dir}\\{$fileName}.exe")) {
                             return "{$dir}\\{$fileName}.exe";
                         }
                     }
@@ -355,8 +326,7 @@ class ezcBaseFeatures
                 // prevents the desired file from being accessed, it is fine
                 // for file_exists() to return false, since it is useless for
                 // use then, anyway.
-                elseif ( @file_exists( "{$fileName}.exe" ) )
-                {
+                elseif (@file_exists("{$fileName}.exe")) {
                     return "{$fileName}.exe";
                 }
                 break;
@@ -365,8 +335,8 @@ class ezcBaseFeatures
     }
 
     /**
-     * Reset the cached information. 
-     * 
+     * Reset the cached information.
+     *
      * @return void
      * @access private
      * @ignore
@@ -374,8 +344,9 @@ class ezcBaseFeatures
     public static function reset()
     {
         self::$imageIdentify = null;
-        self::$imageConvert  = null;
-        self::$os            = null;
+        self::$imageConvert = null;
+        self::$os = null;
     }
 }
+
 ?>

@@ -14,10 +14,11 @@ use Aliyun\Common\Utilities\HttpHeaders;
  *
  * @package Aliyun\OSS\Models
  */
-class OSSHeaders extends HttpHeaders {
+class OSSHeaders extends HttpHeaders
+{
     const OSS_PREFIX = 'x-oss-';
     const OSS_USER_META_PREFIX = 'x-oss-meta-';
-    
+
     const OSS_CANNED_ACL = 'x-oss-acl';
     const OSS_STORAGE_CLASS = 'x-oss-storage-class';
     const OSS_VERSION_ID = 'x-oss-version-id';
@@ -26,13 +27,13 @@ class OSSHeaders extends HttpHeaders {
     const GET_OBJECT_IF_UNMODIFIED_SINCE = 'If-Unmodified-Since';
     const GET_OBJECT_IF_MATCH = 'If-Match';
     const GET_OBJECT_IF_NONE_MATCH = 'If-None-Match';
-    
+
     const COPY_OBJECT_SOURCE = "x-oss-copy-source";
     const COPY_OBJECT_SOURCE_IF_MATCH = "x-oss-copy-source-if-match";
     const COPY_OBJECT_SOURCE_IF_NONE_MATCH = "x-oss-copy-source-if-none-match";
     const COPY_OBJECT_SOURCE_IF_UNMODIFIED_SINCE = "x-oss-copy-source-if-unmodified-since";
     const COPY_OBJECT_SOURCE_IF_MODIFIED_SINCE = "x-oss-copy-source-if-modified-since";
     const COPY_OBJECT_METADATA_DIRECTIVE = "x-oss-metadata-directive";
-    
+
     const OSS_HEADER_REQUEST_ID = "x-oss-request-id";
 }

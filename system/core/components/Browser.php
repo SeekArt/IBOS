@@ -12,7 +12,8 @@ namespace application\core\components;
 
 use CApplicationComponent;
 
-class Browser extends CApplicationComponent {
+class Browser extends CApplicationComponent
+{
 
     /**
      * 浏览器名称
@@ -45,7 +46,8 @@ class Browser extends CApplicationComponent {
     /**
      * 调用父类的初始化方法，然后检测用户的浏览信息
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
         $this->detect();
     }
@@ -54,34 +56,35 @@ class Browser extends CApplicationComponent {
      * 通过$_SERVER['HTTP_USER_AGENT']检测用户浏览信息，分别赋值于四个私有变量
      * @access protected
      */
-    protected function detect() {
+    protected function detect()
+    {
         $userAgent = null;
-        if ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) {
-            $userAgent = strtolower( $_SERVER['HTTP_USER_AGENT'] );
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
         }
-        if ( preg_match( '/opera/', $userAgent ) ) {
+        if (preg_match('/opera/', $userAgent)) {
             $name = 'opera';
-        } elseif ( preg_match( '/chrome/', $userAgent ) ) {
+        } elseif (preg_match('/chrome/', $userAgent)) {
             $name = 'chrome';
-        } elseif ( preg_match( '/apple/', $userAgent ) ) {
+        } elseif (preg_match('/apple/', $userAgent)) {
             $name = 'safari';
-        } elseif ( preg_match( '/msie/', $userAgent ) ) {
+        } elseif (preg_match('/msie/', $userAgent)) {
             $name = 'msie';
-        } elseif ( preg_match( '/mozilla/', $userAgent ) && !preg_match( '/compatible/', $userAgent ) ) {
+        } elseif (preg_match('/mozilla/', $userAgent) && !preg_match('/compatible/', $userAgent)) {
             $name = 'mozilla';
         } else {
             $name = 'unrecognized';
         }
-        if ( preg_match( '/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/', $userAgent, $matches ) ) { // Not Coding Standard
+        if (preg_match('/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/', $userAgent, $matches)) { // Not Coding Standard
             $version = $matches[1];
         } else {
             $version = 'unknown';
         }
-        if ( preg_match( '/linux/', $userAgent ) ) {
+        if (preg_match('/linux/', $userAgent)) {
             $platform = 'linux';
-        } elseif ( preg_match( '/macintosh|mac os x/', $userAgent ) ) {
+        } elseif (preg_match('/macintosh|mac os x/', $userAgent)) {
             $platform = 'mac';
-        } elseif ( preg_match( '/windows|win32/', $userAgent ) ) {
+        } elseif (preg_match('/windows|win32/', $userAgent)) {
             $platform = 'windows';
         } else {
             $platform = 'unrecognized';
@@ -96,7 +99,8 @@ class Browser extends CApplicationComponent {
      * 获取浏览器名称
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -104,7 +108,8 @@ class Browser extends CApplicationComponent {
      * 获取浏览器版本
      * @return string
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return $this->version;
     }
 
@@ -112,7 +117,8 @@ class Browser extends CApplicationComponent {
      * 获取用户系统
      * @return string
      */
-    public function getPlatform() {
+    public function getPlatform()
+    {
         return $this->platform;
     }
 
@@ -120,7 +126,8 @@ class Browser extends CApplicationComponent {
      * 获取用户代理接口信息
      * @return string
      */
-    public function getUserAgent() {
+    public function getUserAgent()
+    {
         return $this->userAgent;
     }
 

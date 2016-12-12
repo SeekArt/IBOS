@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '消息模块',
@@ -9,7 +9,7 @@ return array(
         'version' => '1.0'
     ),
     'config' => array(
-        'modules' => array( 'message' => array( 'class' => 'application\modules\message\MessageModule' ) ),
+        'modules' => array('message' => array('class' => 'application\modules\message\MessageModule')),
         'components' => array(
             'messages' => array(
                 'extensionPaths' => array(

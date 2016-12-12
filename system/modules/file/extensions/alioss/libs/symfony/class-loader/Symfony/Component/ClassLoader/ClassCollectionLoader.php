@@ -25,12 +25,12 @@ class ClassCollectionLoader
     /**
      * Loads a list of classes and caches them in one big file.
      *
-     * @param array   $classes    An array of classes to load
-     * @param string  $cacheDir   A cache directory
-     * @param string  $name       The cache name prefix
+     * @param array $classes An array of classes to load
+     * @param string $cacheDir A cache directory
+     * @param string $name The cache name prefix
      * @param Boolean $autoReload Whether to flush the cache when the cache is stale or not
-     * @param Boolean $adaptive   Whether to remove already declared classes or not
-     * @param string  $extension  File extension of the resulting file
+     * @param Boolean $adaptive Whether to remove already declared classes or not
+     * @param string $extension File extension of the resulting file
      *
      * @throws \InvalidArgumentException When class can't be loaded
      */
@@ -53,17 +53,17 @@ class ClassCollectionLoader
             $classes = array_diff($classes, $declared);
 
             // the cache is different depending on which classes are already declared
-            $name = $name.'-'.substr(md5(implode('|', $classes)), 0, 5);
+            $name = $name . '-' . substr(md5(implode('|', $classes)), 0, 5);
         }
 
         $classes = array_unique($classes);
 
-        $cache = $cacheDir.'/'.$name.$extension;
+        $cache = $cacheDir . '/' . $name . $extension;
 
         // auto-reload
         $reload = false;
         if ($autoReload) {
-            $metadata = $cache.'.meta';
+            $metadata = $cache . '.meta';
             if (!is_file($metadata) || !is_file($cache)) {
                 $reload = true;
             } else {
@@ -106,10 +106,10 @@ class ClassCollectionLoader
 
             // fakes namespace declaration for global code
             if (!$class->inNamespace()) {
-                $c = "\nnamespace\n{\n".$c."\n}\n";
+                $c = "\nnamespace\n{\n" . $c . "\n}\n";
             }
 
-            $c = self::fixNamespaceDeclarations('<?php '.$c);
+            $c = self::fixNamespaceDeclarations('<?php ' . $c);
             $c = preg_replace('/^\s*<\?php/', '', $c);
 
             $content .= $c;
@@ -119,7 +119,7 @@ class ClassCollectionLoader
         if (!is_dir(dirname($cache))) {
             mkdir(dirname($cache), 0777, true);
         }
-        self::writeCacheFile($cache, '<?php '.$content);
+        self::writeCacheFile($cache, '<?php ' . $content);
 
         if ($autoReload) {
             // save the resources
@@ -138,7 +138,7 @@ class ClassCollectionLoader
     {
         if (!function_exists('token_get_all') || !self::$useTokenizer) {
             if (preg_match('/namespace(.*?)\s*;/', $source)) {
-                $source = preg_replace('/namespace(.*?)\s*;/', "namespace$1\n{", $source)."}\n";
+                $source = preg_replace('/namespace(.*?)\s*;/', "namespace$1\n{", $source) . "}\n";
             }
 
             return $source;
@@ -169,11 +169,11 @@ class ClassCollectionLoader
                     $inNamespace = false;
                     prev($tokens);
                 } else {
-                    $rawChunk = rtrim($rawChunk)."\n{";
+                    $rawChunk = rtrim($rawChunk) . "\n{";
                     $inNamespace = true;
                 }
             } elseif (T_START_HEREDOC === $token[0]) {
-                $output .= self::compressCode($rawChunk).$token[1];
+                $output .= self::compressCode($rawChunk) . $token[1];
                 do {
                     $token = next($tokens);
                     $output .= is_string($token) ? $token : $token[1];
@@ -181,7 +181,7 @@ class ClassCollectionLoader
                 $output .= "\n";
                 $rawChunk = '';
             } elseif (T_CONSTANT_ENCAPSED_STRING === $token[0]) {
-                $output .= self::compressCode($rawChunk).$token[1];
+                $output .= self::compressCode($rawChunk) . $token[1];
                 $rawChunk = '';
             } else {
                 $rawChunk .= $token[1];
@@ -192,7 +192,7 @@ class ClassCollectionLoader
             $rawChunk .= "}\n";
         }
 
-        return $output.self::compressCode($rawChunk);
+        return $output . self::compressCode($rawChunk);
     }
 
     /**
@@ -200,7 +200,7 @@ class ClassCollectionLoader
      */
     public static function enableTokenizer($bool)
     {
-        self::$useTokenizer = (Boolean) $bool;
+        self::$useTokenizer = (Boolean)$bool;
     }
 
     /**
@@ -222,7 +222,7 @@ class ClassCollectionLoader
     /**
      * Writes a cache file.
      *
-     * @param string $file    Filename
+     * @param string $file Filename
      * @param string $content Temporary file content
      *
      * @throws \RuntimeException when a cache file cannot be written
@@ -335,10 +335,10 @@ class ClassCollectionLoader
      * This function does not check for circular dependencies as it should never
      * occur with PHP traits.
      *
-     * @param array             $tree       The dependency tree
-     * @param \ReflectionClass  $node       The node
-     * @param \ArrayObject      $resolved   An array of already resolved dependencies
-     * @param \ArrayObject      $unresolved An array of dependencies to be resolved
+     * @param array $tree The dependency tree
+     * @param \ReflectionClass $node The node
+     * @param \ArrayObject $resolved An array of already resolved dependencies
+     * @param \ArrayObject $unresolved An array of dependencies to be resolved
      *
      * @return \ArrayObject The dependencies for the given node
      *

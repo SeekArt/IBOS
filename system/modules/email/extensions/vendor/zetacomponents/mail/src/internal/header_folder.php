@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -76,7 +76,7 @@ class ezcMailHeaderFolder
      *
      * @param int $numCharacters
      */
-    static public function setLimit( $numCharacters )
+    static public function setLimit($numCharacters)
     {
         self::$limit = $numCharacters;
     }
@@ -100,11 +100,10 @@ class ezcMailHeaderFolder
      * @param string $text
      * @return string
      */
-    static public function foldAny( $text )
+    static public function foldAny($text)
     {
         // Don't fold unless we have to (e.g. when text is already folded or it doesn't reach the limit).
-        if ( strpos( $text, ezcMailTools::lineBreak() ) !== false || strlen( $text ) <= self::$limit )
-        {
+        if (strpos($text, ezcMailTools::lineBreak()) !== false || strlen($text) <= self::$limit) {
             return $text;
         }
 
@@ -112,51 +111,44 @@ class ezcMailHeaderFolder
         // search back to whitespace
         // fold
 
-        $length = strlen( $text );
+        $length = strlen($text);
         $folded = "";
         // find first occurence of whitespace searching backwards
         $search = 0;
         $previousFold = 0;
 
-        while ( ( $search + self::$limit ) < $length )
-        {
+        while (($search + self::$limit) < $length) {
             // search from the max possible length of the substring
             $search += self::$limit;
-            while ( $text[$search] != " " && $text[$search] != "\t" && $search > $previousFold )
-            {
+            while ($text[$search] != " " && $text[$search] != "\t" && $search > $previousFold) {
                 $search--;
             }
 
-            if ( $search == $previousFold )
-            {
+            if ($search == $previousFold) {
                 // continuous string of more than limit chars.
                 // We will just have to continue searching forwards to the next whitespace instead
                 // This is not confirming to standard.. but what can we do?
                 $search += self::$limit; // back to where we started
-                while ( $search < $length && $text[$search] != " " && $text[$search] != "\t" )
-                {
+                while ($search < $length && $text[$search] != " " && $text[$search] != "\t") {
                     $search++;
                 }
             }
 
             // lets fold
-            if ( $folded === "" )
-            {
-                $folded = substr( $text, $previousFold, $search - $previousFold );
-            }
-            else
-            {
+            if ($folded === "") {
+                $folded = substr($text, $previousFold, $search - $previousFold);
+            } else {
                 $folded .= ezcMailTools::lineBreak() .
-                           substr( $text, $previousFold, $search - $previousFold );
+                    substr($text, $previousFold, $search - $previousFold);
             }
             $previousFold = $search;
         }
         // we need to append the rest if there is any
-        if ( $search < $length )
-        {
-            $folded .= ezcMailTools::lineBreak() . substr( $text, $search );
+        if ($search < $length) {
+            $folded .= ezcMailTools::lineBreak() . substr($text, $search);
         }
         return $folded;
     }
 }
+
 ?>

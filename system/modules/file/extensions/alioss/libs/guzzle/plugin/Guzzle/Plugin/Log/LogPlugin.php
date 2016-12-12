@@ -30,16 +30,17 @@ class LogPlugin implements EventSubscriberInterface
     protected $wireBodies;
 
     /**
-     * @param LogAdapterInterface     $logAdapter Adapter object used to log message
-     * @param string|MessageFormatter $formatter  Formatter used to format log messages or the formatter template
-     * @param bool                    $wireBodies Set to true to track request and response bodies using a temporary
+     * @param LogAdapterInterface $logAdapter Adapter object used to log message
+     * @param string|MessageFormatter $formatter Formatter used to format log messages or the formatter template
+     * @param bool $wireBodies Set to true to track request and response bodies using a temporary
      *                                            buffer if the bodies are not repeatable.
      */
     public function __construct(
         LogAdapterInterface $logAdapter,
         $formatter = null,
         $wireBodies = false
-    ) {
+    )
+    {
         $this->logAdapter = $logAdapter;
         $this->formatter = $formatter instanceof MessageFormatter ? $formatter : new MessageFormatter($formatter);
         $this->wireBodies = $wireBodies;
@@ -48,8 +49,8 @@ class LogPlugin implements EventSubscriberInterface
     /**
      * Get a log plugin that outputs full request, response, and curl error information to stderr
      *
-     * @param bool     $wireBodies Set to false to disable request/response body output when they use are not repeatable
-     * @param resource $stream     Stream to write to when logging. Defaults to STDERR when it is available
+     * @param bool $wireBodies Set to false to disable request/response body output when they use are not repeatable
+     * @param resource $stream Stream to write to when logging. Defaults to STDERR when it is available
      *
      * @return self
      */
@@ -72,9 +73,9 @@ class LogPlugin implements EventSubscriberInterface
     {
         return array(
             'curl.callback.write' => array('onCurlWrite', 255),
-            'curl.callback.read'  => array('onCurlRead', 255),
+            'curl.callback.read' => array('onCurlRead', 255),
             'request.before_send' => array('onRequestBeforeSend', 255),
-            'request.sent'        => array('onRequestSent', 255)
+            'request.sent' => array('onRequestSent', 255)
         );
     }
 
@@ -154,9 +155,9 @@ class LogPlugin implements EventSubscriberInterface
         $priority = $response && $response->isError() ? LOG_ERR : LOG_DEBUG;
         $message = $this->formatter->format($request, $response, $handle);
         $this->logAdapter->log($message, $priority, array(
-            'request'  => $request,
+            'request' => $request,
             'response' => $response,
-            'handle'   => $handle
+            'handle' => $handle
         ));
     }
 }

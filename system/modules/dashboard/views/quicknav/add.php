@@ -4,7 +4,8 @@
         <h1 class="mt"><?php echo $lang['Quicknav setting']; ?></h1>
     </div>
     <div>
-        <form action="<?php echo $this->createUrl('quicknav/add'); ?>" method="post" id="quick_nav_form" class="form-horizontal">
+        <form action="<?php echo $this->createUrl('quicknav/add'); ?>" method="post" id="quick_nav_form"
+              class="form-horizontal">
             <div class="ctb">
                 <h2 class="st"><?php echo $lang['Custom navigation']; ?></h2>
                 <!-- @Todo: 据说这里需要程序端做判断 -->
@@ -30,7 +31,8 @@
                     <div class="control-group">
                         <label class="control-label"><?php echo $lang['The link address']; ?></label>
                         <div class="controls">
-                            <input type="text" name="url" placeholder="<?php echo $lang['The link example']; ?>" id="qn_url">
+                            <input type="text" name="url" placeholder="<?php echo $lang['The link example']; ?>"
+                                   id="qn_url">
                         </div>
                     </div>
 
@@ -39,7 +41,8 @@
                         <label class="control-label"><?php echo $lang['Effect of icon preview']; ?></label>
                         <div class="controls">
                             <div class="pull-left posr" id="qn_preview">
-                                <div id="qn_icon_preview" class="quicknav-icon-preview" style="background-color: #3497DB;"></div>
+                                <div id="qn_icon_preview" class="quicknav-icon-preview"
+                                     style="background-color: #3497DB;"></div>
                                 <input type="hidden" id="qn_icon_color" name="quicknavcolor" value="#3497DB">
                                 <input type="hidden" id="qn_icon_text" name="fontvalue" value="">
                                 <div id="qn_img_preview" class="quicknav-img-preview"></div>
@@ -47,15 +50,17 @@
                             </div>
                             <div class="pull-right">
                                 <span id="qn_upload"></span>
-                                <button type="button" id="reset_qn_upload" class="btn vat" style="display: none;"><?php echo $lang['Reset']; ?></button>
+                                <button type="button" id="reset_qn_upload" class="btn vat"
+                                        style="display: none;"><?php echo $lang['Reset']; ?></button>
                             </div>
                         </div>
                     </div>
                     <div class="control-group">
                         <label for="" class="control-label"></label>
                         <div class="controls">
-                            <button type="submit" class="btn btn-primary btn-large btn-submit"><?php echo $lang['Submit']; ?></button>
-                            <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>" />
+                            <button type="submit"
+                                    class="btn btn-primary btn-large btn-submit"><?php echo $lang['Submit']; ?></button>
+                            <input type="hidden" name="formhash" value="<?php echo FORMHASH; ?>"/>
                         </div>
                     </div>
                 </div>

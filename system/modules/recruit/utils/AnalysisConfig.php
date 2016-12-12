@@ -5,14 +5,16 @@ namespace application\modules\recruit\utils;
 /**
  * 一建分析字段配置类
  * 配置格式说明
- * id		字段的唯一标识，不能与其它字段重复
- * field	字段名数组，如果简历中包含这些字段，将会返回该字段的内容，字段越多匹配率越高，但同时也影响其它字段的匹配结果，所以要慎重。字段名不需要考虑字符之间的空格和制表符，即 '求职意向' 同等于 '求	职 意  向'、'求 职 意 向'... 程序会自动作出处理
- * type		特殊字段，特殊字段用于一些有固定规则的字段，提高匹配率，例如邮箱、身份证、手机号等。同一特殊字段的类型只能声明一次，目前已有的特殊字段有： 'name', 'gender', 'email', 'age', 'mobile', 'phone', 'idcard', 'maritalstatus'，默认是'normal'
- * 
+ * id        字段的唯一标识，不能与其它字段重复
+ * field    字段名数组，如果简历中包含这些字段，将会返回该字段的内容，字段越多匹配率越高，但同时也影响其它字段的匹配结果，所以要慎重。字段名不需要考虑字符之间的空格和制表符，即 '求职意向' 同等于 '求    职 意  向'、'求 职 意 向'... 程序会自动作出处理
+ * type        特殊字段，特殊字段用于一些有固定规则的字段，提高匹配率，例如邮箱、身份证、手机号等。同一特殊字段的类型只能声明一次，目前已有的特殊字段有： 'name', 'gender', 'email', 'age', 'mobile', 'phone', 'idcard', 'maritalstatus'，默认是'normal'
+ *
  */
-class AnalysisConfig {
+class AnalysisConfig
+{
 
-    public static function getAnalconf() {
+    public static function getAnalconf()
+    {
         $config = array(
             array(
                 'id' => 'name',

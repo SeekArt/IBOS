@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -111,7 +111,7 @@ class ezcMailFileParser extends ezcMailPartParser
      * @param string $subType
      * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( $mainType, $subType, ezcMailHeadersHolder $headers )
+    public function __construct($mainType, $subType, ezcMailHeadersHolder $headers)
     {
         $this->mainType = $mainType;
         $this->subType = $subType;
@@ -120,26 +120,22 @@ class ezcMailFileParser extends ezcMailPartParser
         // figure out the base filename
         // search Content-Disposition first as specified by RFC 2183
         $matches = array();
-        if ( preg_match( '/\s*filename="?([^;"]*);?/i',
-                        $this->headers['Content-Disposition'], $matches ) )
-        {
-            $fileName = trim( $matches[1], '"' );
-        }
-        // fallback to the name parameter in Content-Type as specified by RFC 2046 4.5.1
-        else if ( preg_match( '/\s*name="?([^;"]*);?/i',
-                             $this->headers['Content-Type'], $matches ) )
-        {
-            $fileName = trim( $matches[1], '"' );
-        }
-        else // default
+        if (preg_match('/\s*filename="?([^;"]*);?/i',
+            $this->headers['Content-Disposition'], $matches)) {
+            $fileName = trim($matches[1], '"');
+        } // fallback to the name parameter in Content-Type as specified by RFC 2046 4.5.1
+        else if (preg_match('/\s*name="?([^;"]*);?/i',
+            $this->headers['Content-Type'], $matches)) {
+            $fileName = trim($matches[1], '"');
+        } else // default
         {
             $fileName = "filename";
         }
 
         // clean file name (replace unsafe characters with underscores)
-        $fileName = strtr( $fileName, "/\\\0\"|?*<:;>+[]", '______________' );
+        $fileName = strtr($fileName, "/\\\0\"|?*<:;>+[]", '______________');
 
-        $this->fp = $this->openFile( $fileName ); // propagate exception
+        $this->fp = $this->openFile($fileName); // propagate exception
     }
 
     /**
@@ -153,24 +149,22 @@ class ezcMailFileParser extends ezcMailPartParser
      * @param string $fileName
      * @return resource
      */
-    private function openFile( $fileName )
+    private function openFile($fileName)
     {
         // The filename is now relative, we need to extend it with the absolute path.
         // To provide uniqueness we put the file in a directory based on processID and rand.
         $dirName = ezcMailParser::getTmpDir() . getmypid() . '-' . self::$counter++ . '/';
-        if ( !is_dir( $dirName ) )
-        {
-            mkdir( $dirName, 0700 );
+        if (!is_dir($dirName)) {
+            mkdir($dirName, 0700);
         }
 
         // remove the directory and the file when PHP shuts down
-        ezcMailParserShutdownHandler::registerForRemoval( $dirName );
+        ezcMailParserShutdownHandler::registerForRemoval($dirName);
         $this->fileName = $dirName . $fileName;
 
-        $fp = fopen( $this->fileName, 'w' );
-        if ( $this->fp === false )
-        {
-            throw new ezcBaseFileNotFoundException( $this->fileName );
+        $fp = fopen($this->fileName, 'w');
+        if ($this->fp === false) {
+            throw new ezcBaseFileNotFoundException($this->fileName);
         }
         return $fp;
     }
@@ -184,13 +178,11 @@ class ezcMailFileParser extends ezcMailPartParser
     {
         // finish() was not called. The mail is completely broken.
         // we will clean up the mess
-        if ( $this->fp !== null )
-        {
-            fclose( $this->fp );
+        if ($this->fp !== null) {
+            fclose($this->fp);
             $this->fp = null;
-            if ( $this->fileName !== null && file_exists( $this->fileName ) )
-            {
-                unlink( $this->fileName );
+            if ($this->fileName !== null && file_exists($this->fileName)) {
+                unlink($this->fileName);
             }
         }
     }
@@ -203,22 +195,21 @@ class ezcMailFileParser extends ezcMailPartParser
      *
      * @param string $line
      */
-    private function appendStreamFilters( $line )
+    private function appendStreamFilters($line)
     {
         // append the correct decoding filter
-        switch ( strtolower( $this->headers['Content-Transfer-Encoding'] ) )
-        {
+        switch (strtolower($this->headers['Content-Transfer-Encoding'])) {
             case 'base64':
-                stream_filter_append( $this->fp, 'convert.base64-decode' );
+                stream_filter_append($this->fp, 'convert.base64-decode');
                 break;
             case 'quoted-printable':
                 // fetch the type of linebreak
-                preg_match( "/(\r\n|\r|\n)$/", $line, $matches );
-                $lb = count( $matches ) > 0 ? $matches[0] : ezcMailTools::lineBreak();
+                preg_match("/(\r\n|\r|\n)$/", $line, $matches);
+                $lb = count($matches) > 0 ? $matches[0] : ezcMailTools::lineBreak();
 
-                $param = array( 'line-break-chars' => $lb );
-                stream_filter_append( $this->fp, 'convert.quoted-printable-decode',
-                                      STREAM_FILTER_WRITE, $param );
+                $param = array('line-break-chars' => $lb);
+                stream_filter_append($this->fp, 'convert.quoted-printable-decode',
+                    STREAM_FILTER_WRITE, $param);
                 break;
             case '7bit':
             case '8bit':
@@ -243,17 +234,15 @@ class ezcMailFileParser extends ezcMailPartParser
      *
      * @param string $line
      */
-    public function parseBody( $line )
+    public function parseBody($line)
     {
-        if ( $line !== '' )
-        {
-            if ( $this->dataWritten === false )
-            {
-                $this->appendStreamFilters( $line );
+        if ($line !== '') {
+            if ($this->dataWritten === false) {
+                $this->appendStreamFilters($line);
                 $this->dataWritten = true;
             }
 
-            fwrite( $this->fp, $line );
+            fwrite($this->fp, $line);
         }
     }
 
@@ -266,29 +255,28 @@ class ezcMailFileParser extends ezcMailPartParser
      */
     public function finish()
     {
-        fclose( $this->fp );
+        fclose($this->fp);
         $this->fp = null;
 
 
         // FIXME: DIRTY PGP HACK
         // When we have PGP support these lines should be removed. They are here now to hide
         // PGP parts since they will show up as file attachments if not.
-        if ( $this->mainType == "application" &&
-            ( $this->subType == 'pgp-signature'
-              || $this->subType == 'pgp-keys'
-              || $this->subType == 'pgp-encrypted' ) )
-        {
+        if ($this->mainType == "application" &&
+            ($this->subType == 'pgp-signature'
+                || $this->subType == 'pgp-keys'
+                || $this->subType == 'pgp-encrypted')
+        ) {
             return null;
         }
         // END DIRTY PGP HACK
 
-        $filePart = new self::$fileClass( $this->fileName );
+        $filePart = new self::$fileClass($this->fileName);
 
         // set content type
-        $filePart->setHeaders( $this->headers->getCaseSensitiveArray() );
-        ezcMailPartParser::parsePartHeaders( $this->headers, $filePart );
-        switch ( strtolower( $this->mainType ) )
-        {
+        $filePart->setHeaders($this->headers->getCaseSensitiveArray());
+        ezcMailPartParser::parsePartHeaders($this->headers, $filePart);
+        switch (strtolower($this->mainType)) {
             case 'image':
                 $filePart->contentType = ezcMailFile::CONTENT_TYPE_IMAGE;
                 break;
@@ -308,18 +296,17 @@ class ezcMailFileParser extends ezcMailPartParser
 
         // set inline disposition mode if set.
         $matches = array();
-        if ( preg_match( '/^\s*inline;?/i',
-                        $this->headers['Content-Disposition'], $matches ) )
-        {
+        if (preg_match('/^\s*inline;?/i',
+            $this->headers['Content-Disposition'], $matches)) {
             $filePart->dispositionType = ezcMailFile::DISPLAY_INLINE;
         }
-        if ( preg_match( '/^\s*attachment;?/i',
-                        $this->headers['Content-Disposition'], $matches ) )
-        {
+        if (preg_match('/^\s*attachment;?/i',
+            $this->headers['Content-Disposition'], $matches)) {
             $filePart->dispositionType = ezcMailFile::DISPLAY_ATTACHMENT;
         }
-        $filePart->size = filesize( $this->fileName );
+        $filePart->size = filesize($this->fileName);
         return $filePart;
     }
 }
+
 ?>

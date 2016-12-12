@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use application\core\utils\StringUtil;
 use application\modules\diary\utils\Diary;
@@ -28,12 +28,12 @@ use application\modules\diary\utils\Diary;
 <script src='<?php echo STATICURL; ?>/js/lib/echarts/echarts.min.js?<?php echo VERHASH; ?>'></script>
 <script>
     //上交时间图表的初始化
-    <?php 
-        $offWorkTimes = '';
-        $offTime = Diary::getOffTime();
-        for( $i = 1; $i <= count( $time->getXaxis() ); $i ++ ){
-            $offWorkTimes .= $offTime . ',';
-        } 
+    <?php
+    $offWorkTimes = '';
+    $offTime = Diary::getOffTime();
+    for ($i = 1; $i <= count($time->getXaxis()); $i++) {
+        $offWorkTimes .= $offTime . ',';
+    }
     ?>
 
     //图表统计中鼠标悬停切换时，图表样式的设置
@@ -57,9 +57,13 @@ use application\modules\diary\utils\Diary;
         }
     };
 
-    
+
     Ibos.app.s({
-        isPersonal: <?php if($score->getIsPersonal()){ echo 1; }else{ echo 0; }; ?>,
+        isPersonal: <?php if ($score->getIsPersonal()) {
+        echo 1;
+    } else {
+        echo 0;
+    }; ?>,
         // 上交时间
         time: {
             userName: [<?php echo $time->getUserName(); ?>],
@@ -68,38 +72,42 @@ use application\modules\diary\utils\Diary;
                 <?php foreach ($time->getSeries() as $series): ?>
                 {
                     name: '<?php echo $series['name']; ?>',
-                    type:'line',
+                    type: 'line',
                     symbol: 'circle',
                     symbolSize: 3,
                     lineStyle: {        // 系列级个性化折线样式
                         normal: {
-                            width: 2,                               
+                            width: 2,
                         },
                         emphasis: {     // 系列级个性化折线样式
-                             width: 4, 
+                            width: 4,
                         }
                     },
-                    data: [<?php foreach ($series['list'] as $data): ?><?php if(!$data):?>{value : <?php echo $data ?>,symbol: 'emptypin'},<?php else: ?><?php echo $data; ?>,<?php endif; ?><?php endforeach; ?>]},<?php endforeach; ?>
+                    data: [<?php foreach ($series['list'] as $data): ?><?php if(!$data):?>{
+                        value: <?php echo $data ?>,
+                        symbol: 'emptypin'
+                    },<?php else: ?><?php echo $data; ?>,<?php endif; ?><?php endforeach; ?>]
+                },<?php endforeach; ?>
 
                 //下班时间，作为分割线，data数组里面的数值统一都为日程后台设置的下班时间
                 {
-                    name:'下班时间',
-                    type:'line',
+                    name: '下班时间',
+                    type: 'line',
                     symbol: 'none',
                     lineStyle: {        // 系列级个性化折线样式
                         normal: {
                             width: 2,
-                            type:'dashed'
+                            type: 'dashed'
                         }
                     },
                     itemStyle: {
                         normal: {
-                            color:'#e26f50'
+                            color: '#e26f50'
                         }
                     },
                     //后台输出日程后台设置的下班时间作为一条额外数据
                     //data:[18.00, 18.00, 18.00, 18.00, 18.00, 18.00, 18.00]
-                    data:[<?php echo trim($offWorkTimes, ','); ?>]
+                    data: [<?php echo trim($offWorkTimes, ','); ?>]
                 }
             ]
         },
@@ -116,15 +124,15 @@ use application\modules\diary\utils\Diary;
                     itemStyle: {
                         normal: {
                             lineStyle: {        // 系列级个性化折线样式
-                                width: 2,            
+                                width: 2,
                             }
                         },
                         emphasis: {
                             lineStyle: {        // 系列级个性化折线样式
-                                width: 4,                             
+                                width: 4,
                             }
                         }
-                    },   
+                    },
                     data: [<?php echo implode(',', $series['list']); ?>],
                 },
                 <?php endforeach; ?>
@@ -134,7 +142,7 @@ use application\modules\diary\utils\Diary;
         seal: {
             stampName: [<?php echo $stamp->getStampName(); ?>],
             userName: [<?php echo $stamp->getUserName(); ?>],
-            series: 
+            series:
             <?php if( $stamp->getIsPersonal() ): ?>
                 [
                     {
@@ -151,25 +159,25 @@ use application\modules\diary\utils\Diary;
                         data: [<?php foreach ($stamp->getSeries() as $series): ?>'<?php echo $series['count']; ?>',<?php endforeach; ?>]
                     }
                 ]
-            <?php else: ?>
-                [
-                    <?php foreach ($stamp->getSeries() as $series): ?>
-                    <?php $count = explode( ',', trim($series['count'],',')); ?>
+                <?php else: ?>
+                    [
+                <?php foreach ($stamp->getSeries() as $series): ?>
+                <?php $count = explode(',', trim($series['count'], ',')); ?>
                     {
-                        name:'<?php echo $series['name']; ?>',
-                        type:'bar',
+                        name: '<?php echo $series['name']; ?>',
+                        type: 'bar',
                         stack: '总量',
-                        itemStyle : dataStyle,
+                        itemStyle: dataStyle,
                         label: {
                             normal: {
                                 position: 'inside'
                             }
                         },
-                        data:[<?php echo StringUtil::iImplode( $count); ?>]
+                        data: [<?php echo StringUtil::iImplode($count); ?>]
                     },
                     {
-                        name:'<?php echo $series['name']; ?>',
-                        type:'bar',
+                        name: '<?php echo $series['name']; ?>',
+                        type: 'bar',
                         stack: '总量',
                         itemStyle: placeHoledStyle,
                         label: {
@@ -177,10 +185,10 @@ use application\modules\diary\utils\Diary;
                                 position: 'inside'
                             }
                         },
-                        data:[<?php foreach ( $count as $number ): ?><?php echo $stamp->getMax()-$number; ?>,<?php endforeach; ?>]
+                        data: [<?php foreach ( $count as $number ): ?><?php echo $stamp->getMax() - $number; ?>,<?php endforeach; ?>]
                     },
-                    <?php endforeach; ?>
-                ]
+                <?php endforeach; ?>
+                    ]
             <?php endif; ?>
         }
     });

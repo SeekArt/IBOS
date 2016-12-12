@@ -23,9 +23,11 @@ use application\modules\calendar\model\Calendars;
 use application\modules\calendar\utils\Calendar as CalendarUtil;
 use CHtml;
 
-Class LoopController extends BaseController {
+Class LoopController extends BaseController
+{
 
-    public function init() {
+    public function init()
+    {
         parent::init();
         // 权限检查
         if (!$this->checkIsMe()) {
@@ -36,7 +38,8 @@ Class LoopController extends BaseController {
     /**
      * 周期性事务列表
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         //取得周期性事务并分页
         $loopList = Calendars::model()->fetchLoopsAndPage('uid=' . $this->uid . ' AND instancetype = 1');
         $datas = $loopList['datas'];
@@ -56,10 +59,11 @@ Class LoopController extends BaseController {
 
     /**
      * 处理周期性事务，用于输出显示
-     * @param array $loops  周期性事务二维数组
+     * @param array $loops 周期性事务二维数组
      * @return array  处理过后的二维数组
      */
-    private function handleLoops($loops) {
+    private function handleLoops($loops)
+    {
         if (!empty($loops)) {
             foreach ($loops as $k => $v) {
                 $loops[$k]['subject'] = StringUtil::cutStr($v['subject'], 12);
@@ -87,7 +91,8 @@ Class LoopController extends BaseController {
      * 新增周期性事务
      * 返回状态和信息
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $data = $this->beforeSave();
         $insertId = Calendars::model()->add($data, true);
         if ($insertId) {
@@ -104,7 +109,8 @@ Class LoopController extends BaseController {
     /**
      * 编辑
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $op = Env::getRequest('op');
         $editCalendarid = Env::getRequest('editCalendarid');  //编辑的(周期性事务)日程ID
         if (empty($editCalendarid)) {
@@ -128,7 +134,8 @@ Class LoopController extends BaseController {
     /**
      * 删除周期性事务
      */
-    public function actionDel() {
+    public function actionDel()
+    {
         if (!Ibos::app()->request->getIsAjaxRequest()) {
             $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
         }
@@ -148,7 +155,8 @@ Class LoopController extends BaseController {
      * 异步添加和编辑所提交的数据
      * @return array  返回处理过后的数据数组
      */
-    private function beforeSave() {
+    private function beforeSave()
+    {
         if (!Ibos::app()->request->getIsAjaxRequest()) {
             $this->error(Ibos::lang('Parameters error', 'error'), $this->createUrl('schedule/index'));
         }

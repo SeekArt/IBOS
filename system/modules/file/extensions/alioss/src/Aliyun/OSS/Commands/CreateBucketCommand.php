@@ -18,9 +18,11 @@ use Aliyun\OSS\Utilities\OSSRequestBuilder;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class CreateBucketCommand extends OSSCommand {
+class CreateBucketCommand extends OSSCommand
+{
 
-    protected function checkOptions($options) {
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -35,7 +37,8 @@ class CreateBucketCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         return OSSRequestBuilder::factory()
             ->setEndpoint($options[OSSOptions::ENDPOINT])
             ->setBucket($options[OSSOptions::BUCKET])

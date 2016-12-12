@@ -22,10 +22,12 @@ use application\modules\dashboard\model\CreditRule as CRModel;
 use application\modules\dashboard\model\Syscache;
 use CBehavior;
 
-class CreditRule extends CBehavior {
+class CreditRule extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleCreditRule' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleCreditRule'));
     }
 
     /**
@@ -33,16 +35,17 @@ class CreditRule extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handleCreditRule( $event ) {
+    public function handleCreditRule($event)
+    {
         $rules = array();
         $records = CRModel::model()->fetchAll();
-        if ( !empty( $records ) ) {
-            foreach ( $records as $rule ) {
-                $rule['rulenameuni'] = urlencode( Convert::iIconv( $rule['rulename'], CHARSET, 'UTF-8', true ) );
+        if (!empty($records)) {
+            foreach ($records as $rule) {
+                $rule['rulenameuni'] = urlencode(Convert::iIconv($rule['rulename'], CHARSET, 'UTF-8', true));
                 $rules[$rule['action']] = $rule;
             }
         }
-        Syscache::model()->modifyCache( 'creditrule', $rules );
+        Syscache::model()->modifyCache('creditrule', $rules);
     }
 
 }

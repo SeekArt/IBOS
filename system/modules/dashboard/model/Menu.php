@@ -9,9 +9,9 @@
  */
 /**
  *  menu表的数据层操作
- * 
+ *
  * @package application.modules.dashboard.model
- * @version $Id: Menu.php 5159 2015-06-16 08:25:25Z tanghang $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -19,25 +19,30 @@ namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
 
-class Menu extends Model {
+class Menu extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{menu}}';
     }
 
-    public function fetchByModule( $module ) {
+    public function fetchByModule($module)
+    {
         //assert( '!empty($module)' );
         $condition = "`m` = '{$module}' AND `pid` = 0 AND `disabled` = 0";
-        return parent::fetch( $condition );
+        return parent::fetch($condition);
     }
 
-    public function fetchAllRootMenu() {
+    public function fetchAllRootMenu()
+    {
         $condition = 'pid = 0 AND disabled = 0';
-        $result = $this->fetchAll( $condition );
+        $result = $this->fetchAll($condition);
         return $result;
     }
 

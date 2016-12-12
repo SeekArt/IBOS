@@ -7,12 +7,14 @@ use application\core\utils\Env;
 use application\core\utils\StringUtil;
 use application\core\utils\Database;
 
-class DatabaseController extends BaseController {
+class DatabaseController extends BaseController
+{
 
     /**
      * 必须是本地引擎才能进行此操作
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
         if (!LOCAL) {
             die(Ibos::lang('Not compatible service', 'message'));
@@ -22,7 +24,8 @@ class DatabaseController extends BaseController {
     /**
      * 备份
      */
-    public function actionBackup() {
+    public function actionBackup()
+    {
         $formSubmit = Env::submitCheck('dbSubmit');
         $type = $msg = $url = '';
         $param = array();
@@ -30,11 +33,10 @@ class DatabaseController extends BaseController {
             $status = Database::databaseBackup();
             extract($status);
             $type = '';
-            if ( !empty( $type ) ) {
+            if (!empty($type)) {
                 $this->$type($msg, $url, $param);
-            }
-            else {
-                $this->success( empty( $msg ) ? '备份出了点问题，请重试' : $msg, $url, $param );
+            } else {
+                $this->success(empty($msg) ? '备份出了点问题，请重试' : $msg, $url, $param);
             }
         } else {
             $data = array();
@@ -44,11 +46,10 @@ class DatabaseController extends BaseController {
                 $status = Database::databaseBackup();
                 extract($status);
                 $type = '';
-                if ( !empty( $type ) ) {
+                if (!empty($type)) {
                     $this->$type($msg, $url, $param);
-                }
-                else {
-                    $this->success( empty( $msg ) ? '备份出了点问题，请重试' : $msg, $url, $param );
+                } else {
+                    $this->success(empty($msg) ? '备份出了点问题，请重试' : $msg, $url, $param);
                 }
             }
             $data['defaultFileName'] = date('Y-m-d') . '_' . StringUtil::random(8);
@@ -60,7 +61,8 @@ class DatabaseController extends BaseController {
     /**
      * 恢复备份
      */
-    public function actionRestore() {
+    public function actionRestore()
+    {
         $formSubmit = Env::submitCheck('dbSubmit');
         if ($formSubmit) {
             $backupDir = Database::getBackupDir();
@@ -92,7 +94,8 @@ class DatabaseController extends BaseController {
     /**
      * 优化数据表
      */
-    public function actionOptimize() {
+    public function actionOptimize()
+    {
         $formSubmit = Env::submitCheck('dbSubmit');
         if ($formSubmit) {
             $tables = $_POST['optimizeTables'];

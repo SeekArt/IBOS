@@ -7,7 +7,8 @@
  */
 namespace Aliyun\Common\Utilities;
 
-class HttpHeaders {
+class HttpHeaders
+{
     const AUTHORIZATION = 'Authorization';
     const CACHE_CONTROL = 'Cache-Control';
     const CONTENT_DISPOSITION = 'Content-Disposition';

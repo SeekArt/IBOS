@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -88,7 +88,7 @@ abstract class ezcMailFilePart extends ezcMailPart
      *
      * @param string $fileName
      */
-    public function __construct( $fileName )
+    public function __construct($fileName)
     {
         parent::__construct();
 
@@ -111,10 +111,9 @@ abstract class ezcMailFilePart extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'fileName':
                 $this->properties['fileName'] = $value;
                 break;
@@ -133,11 +132,11 @@ abstract class ezcMailFilePart extends ezcMailPart
 
             case 'contentId':
                 $this->properties['contentId'] = $value;
-                $this->setHeader( 'Content-ID', '<' . $value . '>' );
+                $this->setHeader('Content-ID', '<' . $value . '>');
                 break;
 
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -151,10 +150,9 @@ abstract class ezcMailFilePart extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'fileName':
             case 'mimeType':
             case 'contentType':
@@ -164,7 +162,7 @@ abstract class ezcMailFilePart extends ezcMailPart
                 break;
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -176,19 +174,18 @@ abstract class ezcMailFilePart extends ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'fileName':
             case 'mimeType':
             case 'contentType':
             case 'dispositionType':
             case 'contentId':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -199,14 +196,13 @@ abstract class ezcMailFilePart extends ezcMailPart
      */
     private function setHeaderContentType()
     {
-        $fileName = basename( $this->fileName );
-        if ( $this->contentDisposition !== null && $this->contentDisposition->fileName !== null )
-        {
+        $fileName = basename($this->fileName);
+        if ($this->contentDisposition !== null && $this->contentDisposition->fileName !== null) {
             $fileName = $this->contentDisposition->fileName;
         }
 
-        $this->setHeader( 'Content-Type',
-                          $this->contentType . '/' . $this->mimeType . '; ' . 'name="' . $fileName . '"' );
+        $this->setHeader('Content-Type',
+            $this->contentType . '/' . $this->mimeType . '; ' . 'name="' . $fileName . '"');
     }
 
     /**
@@ -218,19 +214,17 @@ abstract class ezcMailFilePart extends ezcMailPart
      */
     private function setHeaderContentDisposition()
     {
-        if ( !isset( $this->dispositionType ) )
-        {
+        if (!isset($this->dispositionType)) {
             $this->dispositionType = self::DISPLAY_ATTACHMENT;
         }
-        if ( $this->contentDisposition == null )
-        {
+        if ($this->contentDisposition == null) {
             $this->contentDisposition = new ezcMailContentDispositionHeader();
 
             // modified for issue #14025: set the file name and disposition
             // only if the contentDisposition was null (to not overwrite
             // the value set by the user)
             $this->contentDisposition->disposition = $this->dispositionType;
-            $this->contentDisposition->fileName = basename( $this->fileName );
+            $this->contentDisposition->fileName = basename($this->fileName);
         }
     }
 
@@ -243,9 +237,10 @@ abstract class ezcMailFilePart extends ezcMailPart
     public function generate()
     {
         $this->setHeaderContentType();
-        $this->setHeader( 'Content-Transfer-Encoding', 'base64' );
+        $this->setHeader('Content-Transfer-Encoding', 'base64');
         $this->setHeaderContentDisposition();
         return parent::generate();
     }
 }
+
 ?>

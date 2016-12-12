@@ -10,34 +10,40 @@
 
 namespace application\modules\email\core;
 
-class WebMailBase {
+class WebMailBase
+{
 
     private $_error = array();
     private $_log = array();
 
-    public function clearError() {
+    public function clearError()
+    {
         $this->_error = array();
     }
 
-    public function getError() {
+    public function getError()
+    {
         return $this->_error;
     }
 
-    public function setError($errorMsg = '') {
+    public function setError($errorMsg = '')
+    {
         $this->_error[] = $errorMsg;
     }
 
-    public function log($log = '') {
+    public function log($log = '')
+    {
         $this->_log[] = $log;
     }
 
     /**
-     * 
+     *
      * @param type $string
      * @param type $string2
      * @return type
      */
-    public function _XOR($string, $string2) {
+    public function _XOR($string, $string2)
+    {
         $result = "";
         $size = strlen($string);
         for ($i = 0; $i < $size; $i++) {
@@ -47,25 +53,27 @@ class WebMailBase {
     }
 
     /**
-     * 
+     *
      * @param type $fp
      * @param type $size
      * @return type
      */
-    public function readLine($fp, $size = 1024) {
+    public function readLine($fp, $size = 1024)
+    {
         $line = "";
         if ((is_resource($fp)) && (!feof($fp))) {
             do {
                 $buffer = fgets($fp, $size);
                 $endID = strlen($buffer) - 1;
                 $end = (($buffer[$endID] == "\n") || (feof($fp)));
-                $line.=$buffer;
+                $line .= $buffer;
             } while (!$end);
         }
         return $line;
     }
 
-    public function splitHeaderLine($string) {
+    public function splitHeaderLine($string)
+    {
         $pos = strpos($string, ":");
         if ($pos > 0) {
             $res[0] = substr($string, 0, $pos);
@@ -76,7 +84,8 @@ class WebMailBase {
         }
     }
 
-    public function explodeQuotedString($delimiter, $string) {
+    public function explodeQuotedString($delimiter, $string)
+    {
         $quotes = explode("\"", $string);
         while (list($key, $val) = each($quotes)) {
             if (($key % 2) == 1) {
@@ -93,7 +102,8 @@ class WebMailBase {
         return $result;
     }
 
-    public function strToTime($str) {
+    public function strToTime($str)
+    {
         //replace double spaces with single space
         $str = trim($str);
         $str = str_replace("  ", " ", $str);
@@ -118,7 +128,7 @@ class WebMailBase {
         $tz_str = $a[4];
         $tz = substr($tz_str, 0, 3);
         $ta = explode(":", $time);
-        $hour = (int) $ta[0] - (int) $tz;
+        $hour = (int)$ta[0] - (int)$tz;
         $minute = $ta[1];
         $second = $ta[2];
 
@@ -126,7 +136,8 @@ class WebMailBase {
         return mktime($hour, $minute, $second, $month, $day, $year);
     }
 
-    public function sortHeaders($a, $field, $flag) {
+    public function sortHeaders($a, $field, $flag)
+    {
         if (empty($field)) {
             $field = "uid";
         }
@@ -179,11 +190,12 @@ class WebMailBase {
     }
 
     /**
-     * 
+     *
      * @param type $fp
      * @return type
      */
-    public function readReply($fp) {
+    public function readReply($fp)
+    {
         do {
             $line = chop(trim($this->readLine($fp, 1024)));
         } while ($line[0] == "*");
@@ -193,7 +205,8 @@ class WebMailBase {
 
 }
 
-class ICWebMailConnection {
+class ICWebMailConnection
+{
 
     public $fp;
     public $login;
@@ -208,7 +221,8 @@ class ICWebMailConnection {
 
 }
 
-class ICWebMailBasicHeader {
+class ICWebMailBasicHeader
+{
 
     public $id;
     public $uid;

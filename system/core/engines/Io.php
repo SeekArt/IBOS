@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * IO抽象父类文件
  * @author banyanCheung <banyan@ibos.com.cn>
  * @link http://www.ibos.com.cn/
@@ -16,12 +16,13 @@
 
 namespace application\core\engines;
 
-abstract class Io {
+abstract class Io
+{
 
     /**
      * 上传接口
      */
-    abstract function upload( $fileArea, $module );
+    abstract function upload($fileArea, $module);
 
     /**
      * 文件及文件夹处理接口

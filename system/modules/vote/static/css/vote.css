@@ -1,29 +1,705 @@
-.vote .img-upload{
+.mc-header .mnv li a{
+    position: relative;
+}
+.mc-header .mnv li a .bubble{
+    top: 4px;
+    right: 12px;
+}
+.bubble:empty{
+    display: none;
+}
+
+/* 表格省略 */
+.page-list .table {
+    table-layout: fixed;
+}
+.page-list table.dataTable thead .sorting_asc{
+    background: none;
+}
+/* 添加新项目 */
+.vote .add-one {
+    border: 1px dashed #dadce6;
+    border-radius: 5px;
+    padding: 14px 0;
+    display: block;
+    text-align: center;
+}
+
+.add-one i {
+    background-position: -40px -40px;
+}
+
+.vote .controls {
+    margin-right: 75px;
+}
+
+.custom-list .o-vote-remove,
+.custom-list .o-vote-add {
+    position: absolute;
+    top: 10px;
+}
+
+.vote .controls .o-vote-remove {
+    right: -30px;
+}
+
+.vote .controls .o-vote-add {
+    right: -60px;
+}
+
+.vote-project {
+    border: 1px dashed #dadce6;
+    border-radius: 5px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.vote .img-upload {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
     overflow: hidden;
 }
+
 .votepic-upload,
-.votepic-upload-error{ 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 78px; 
-    height: 58px; 
+.votepic-upload-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 78px;
+    height: 58px;
     border: 1px dashed #DADCE6;
     font-size: 12px;
     text-align: center;
 }
-.votepic-upload p{  color: #B2C0D1; }
-.votepic-upload .o-plus{ margin-top: 5px; }
-.vote .img-upload:hover .votepic-upload{ border-color: #3497DB; }
-.vote .img-upload:hover .votepic-upload p{ color: #3497DB; }
-.vote .img-upload:hover .o-plus{ background-position: 0 -40px; }
+
+.votepic-upload p {
+    color: #B2C0D1;
+}
+
+.votepic-upload .o-plus {
+    margin-top: 5px;
+}
+
+.vote .img-upload:hover .votepic-upload {
+    border-color: #3497DB;
+}
+
+.vote .img-upload:hover .votepic-upload p {
+    color: #3497DB;
+}
+
+.vote .img-upload:hover .o-plus {
+    background-position: 0 -40px;
+}
 
 .vote .img-upload-start .votepic-upload,
 .vote .img-upload-error .votepic-upload,
-.vote .img-upload-success .votepic-upload{ visibility: hidden; }
+.vote .img-upload-success .votepic-upload {
+    visibility: hidden;
+}
 
-.votepic-upload-error{ border-color: #E26F50; visibility: hidden; line-height: 58px; color: #E26F50;}
-.vote .img-upload-error .votepic-upload-error{ visibility: visible; }
+.votepic-upload-error {
+    border-color: #E26F50;
+    visibility: hidden;
+    line-height: 58px;
+    color: #E26F50;
+}
+
+.vote .img-upload-error .votepic-upload-error {
+    visibility: visible;
+}
+
+.vote-item-title {
+    font-size: 18px;
+    color: #82939e;
+    margin: 0 0 10px;
+    font-weight: 700;
+}
+
+.add-one i,
+.o-vote-add,
+.o-vote-remove,
+.o-vote-ing,
+.o-vote-finish,
+.o-vote-all,
+.o-vote-vote,
+.o-vote-my,
+.o-vote-manage,
+.o-vote-normal,
+.o-vote-read,
+.o-vote-has,
+.o-vote-no,
+.o-image,
+.o-vote-joined,
+.o-vote-unjoined,
+.o-vote-down {
+    display: inline-block;
+    background-image: url(../image/vote.png);
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+
+.add-one i,
+.o-vote-add,
+.o-vote-remove,
+.o-vote-vote,
+.o-vote-my,
+.o-vote-manage,
+.o-image,
+.o-vote-down {
+    width: 20px;
+    height: 20px;
+}
+
+.o-vote-joined,
+.o-vote-unjoined {
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-block !important;
+
+}
+
+.o-image {
+    background-position: -80px -40px;
+}
+
+.o-vote-remove {
+    background-position: -20px -40px;
+}
+
+.o-vote-add {
+    background-position: 0 -40px;
+}
+
+.o-vote-vote {
+    background-position: 0 -60px;
+}
+
+.active .o-vote-vote {
+    background-position: -20px -60px;
+}
+
+.o-vote-my {
+    background-position: -40px -60px;
+}
+
+.active .o-vote-my {
+    background-position: -60px -60px;
+}
+
+.o-vote-manage {
+    background-position: -80px -60px;
+}
+
+.active .o-vote-manage {
+    background-position: -100px -60px;
+}
+
+.o-vote-joined{
+    background-position: 0px -80px;
+}
+.active .o-vote-joined{
+    background-position: -20px -80px;
+}
+.o-vote-unjoined{
+    background-position: -40px -80px;
+
+}
+.active .o-vote-unjoined{
+    background-position: -60px -80px;
+}
+
+.o-vote-ing,
+.o-vote-finish,
+.o-vote-all,
+.o-vote-has,
+.o-vote-no {
+    width: 24px;
+    height: 28px;
+}
+
+.o-vote-down{
+    background-position: -100px -40px;
+}
+.o-vote-ing {
+    background-position: 0 0;
+}
+
+.o-vote-finish {
+    background-position: -32px 0;
+}
+
+.o-vote-all {
+    background-position: -64px 0;
+}
+
+.o-vote-has {
+    background-position: -96px 0;
+}
+
+.o-vote-no {
+    background-position: -128px 0;
+}
+
+.o-vote-normal,
+.o-vote-read {
+    width: 28px;
+    height: 32px;
+}
+
+.o-vote-normal {
+    background-position: -128px -32px;
+}
+
+.o-vote-read {
+    background-position: -156px -32px;
+}
+
+.vote-table tr:hover .vote-opt-btnbar {
+    display: block;
+}
+
+.vote-table tr:hover .vote-opt-btnbar + span {
+    display: none;
+}
+
+.vote-table .vote-opt-btnbar {
+    display: none;
+}
+
+/* 时间调整 */
+.adjust-info-top {
+    background-color: #f9fbff;
+    padding: 10px 20px;
+    border-bottom: 1px #ebeff6 solid;
+}
+
+.avatar-wrap {
+    border: 1px #dadfe6 solid;
+    padding: 2px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+}
+
+.avatar-wrap img {
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.form-adjust .info-title {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.form-adjust .control-group > .control-label {
+    width: 85px;
+}
+
+.form-adjust .control-group > .controls {
+    margin-left: 105px;
+}
+
+.form-adjust .control-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-adjust .info-title {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+/*图片类型位置调整*/
+.vote-image-item .media-body{
+    margin-top: 10px;
+}
+.vote-image-item .o-vote-remove,
+.vote-image-item .o-vote-add{
+    top: 18px;
+}
+
+
+/* 文章主体 */
+.vote-container {
+    position: relative;
+    padding: 40px 20px 20px;
+}
+.vote-finish{
+    position: absolute;
+    top: 50px;
+    right: 64px;
+}
+
+.vote-close {
+    -webkit-box-shadow: -1px 1px 20px rgba(0, 0, 0, .2);
+    -moz-box-shadow: -1px 1px 20px rgba(0, 0, 0, .2);
+    box-shadow: -1px 1px 20px rgba(0, 0, 0, .2);
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    background: url(../image/vote_close.png) no-repeat;
+}
+
+.vote-close:hover {
+    background-position: -40px 0;
+}
+
+.vote-title {
+    margin-bottom: 15px;
+    font-size: 32px;
+    text-align: center;
+    color: #58585C;
+}
+
+.vote-ct {
+    color: #58585C;
+}
+
+.vote-desc {
+    border-top: 1px solid #DADFE6;
+    padding: 0 20px;
+}
+
+.vote-desc-list {
+}
+
+.vote-desc-list li {
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+.vote-desc-list li strong {
+    float: left;
+    font-size: 14px;
+}
+
+.vote-desc-body {
+    margin-left: 60px;
+    font-size: 12px;
+}
+
+.vote-table-dep {
+    font-weight: 700;
+    color: #BDC9D7;
+}
+
+.vote-sign-list {
+}
+
+.vote-sign-list li {
+    float: left;
+    margin: 0 15px 5px 0;
+}
+
+.vote-sign-time {
+    font-size: 12px;
+}
+
+.vote-list-funbar {
+    display: none;
+}
+
+.article-table > tbody > tr:hover .vote-list-funbar {
+    display: block;
+}
+
+.article-table > tbody > tr:hover .vote-list-clickcount {
+    display: none;
+}
+
+.vote .plate-item {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #EBEFF6;
+}
+
+.vote .vote-body:first-child {
+    border-top: none;
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+.vote .vote-body {
+    border-top: 1px solid #ebeff6;
+    padding-top: 10px;
+    margin-top: 20px;
+}
+
+/* Progressbar 进度条，目前只有投票用到 */
+.pgb {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    position: relative;
+    height: 20px;
+    background-color: #EBEFF6;
+}
+
+.pgbr {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    position: relative;
+    height: 20px;
+}
+
+.pgbr:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, .1);
+    /*  opacity: .1;
+        filter: Alpha(opacity=10);*/
+}
+
+.pgbs {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    padding: 0 15px;
+}
+
+/* @Todo: 投票的样式应该独立出来？ */
+/* @module: Vote */
+/*-- Vote start --*/
+/* 文字投票 */
+.vote-text .vote-item {
+    margin-bottom: 10px;
+}
+
+.vote-text .vote-item label {
+    float: left;
+    width: 300px;
+}
+.checkbox.disabled, 
+.radio.disabled{
+    color: #82939e;
+}
+.radio.disabled.checked .icon{
+    background-position: -90px -90px !important;
+}
+.radio.disabled .icon-to-fade{
+    background-position: -50px -90px !important;
+}
+.checkbox.disabled.checked .icon {
+    background-position: -90px -130px !important;
+}
+.checkbox.disabled .icon-to-fade{
+    background-position: -50px -130px !important;
+}
+
+.vote-text .vote-item .pgb {
+    margin-left: 300px;
+    width: 280px;
+}
+
+/* 图片投票 */
+.vote-pic-list {
+    margin-left: -16px;
+    *float: left;
+}
+
+.vote-pic-list li {
+    float: left;
+    margin-left: 16px;
+    width: 162px;
+}
+
+.vote-pic-list li a {
+    color: #82939E;
+}
+
+.vote-pic-list .active a,
+.vote-pic-list li a:focus,
+.vote-pic-list li a:hover {
+    color: #3497DB;
+    text-decoration: none;
+}
+
+.vote-pic-img {
+    margin-bottom: 10px;
+    padding: 2px;
+    border: 1px solid #DADFE6;
+}
+
+.vote-pic-desc {
+    height: 40px;
+    overflow: hidden;
+}
+
+/* 避免Firefox下alt属性扰乱布局 */
+.vote-pic-img,
+.vote-pic-img img {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    width: 156px;
+    height: 116px;
+}
+
+.vote-pic-img {
+    position: relative;
+    display: block;
+}
+
+.vote-pic-img img {
+    background-color: #FFF;
+}
+
+.vote-pic-list .o-checked {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.vote-pic-list li a:hover .vote-pic-img,
+.vote-pic-list .active .vote-pic-img {
+    -webkit-box-shadow: 0 0 5px rgba(130, 147, 158, .6);
+    -moz-box-shadow: 0 0 5px rgba(130, 147, 158, .6);
+    box-shadow: 0 0 5px rgba(130, 147, 158, .6);
+    background-color: #3497DB;
+}
+
+.vote-pic-list .active .o-checked {
+    display: block;
+}
+
+.vote-pic-list .pgb {
+    margin-bottom: 5px;
+}
+
+.media-heading {
+    letter-spacing: 2px;
+}
+
+/*-- Vote end --*/
+.vote-pic-list .attc {
+    margin-left: 140px;
+}
+
+.vote-pic-list .attl-item .checkbox {
+    float: left;
+    margin-right: 5px;
+}
+
+.vote-pic-list .attl-item .o-trash {
+    visibility: hidden;
+}
+
+.vote-pic-list .attl-item:hover .o-trash {
+    visibility: visible;
+}
+
+.vote-ct .ad-gallery {
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    width: 738px;
+    border: 1px solid #EBEFF6;
+    background-color: #F9FBFF;
+}
+
+.vote-ct .ad-gallery .ad-nav {
+    width: 600px;
+    padding: 20px 70px;
+}
+
+.vote-related-nav li a i {
+    margin: 0 -2px -7px 0;
+    width: 22px;
+    height: 21px;
+    display: inline-block;
+}
+
+.vote-type-title {
+    padding: 5px 20px;
+    background-color: #f9fafa;
+    border-bottom: 1px #ebeff6 solid;
+    font-weight: 700;
+}
+
+.vote-reader-dep {
+    margin: 0;
+    padding: 5px 20px;
+    background-color: #F9FAFA;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.vote-reader-list {
+    padding: 10px 20px;
+}
+
+.vote-reader-list li {
+    float: left;
+    width: 185px;
+    padding: 10px 0;
+}
+
+.vote-reader-more {
+    position: relative;
+}
+
+.vote-reader-more:before {
+    background: -webkit-linear-gradient(top, transparent, #FFF);
+    background: -moz-linear-gradient(top, transparent, #FFF);
+    background: -ms-linear-gradient(top, transparent, #FFF);
+    background: -o-linear-gradient(top, transparent, #FFF);
+    background: linear-gradient(top, transparent, #FFF);
+    content: "";
+    position: absolute;
+    top: -50px;
+    left: 0;
+    height: 50px;
+    width: 100%;
+}
+
+.vote-reader-table {
+    height: auto;
+    overflow: hidden;
+}
+
+.vote-halving-line {
+    height: 20px;
+    background-color: #F6F8F9;
+    border-top: 1px solid #DADFE6;
+}
+
+.vote-funbar {
+    line-height: 60px;
+    vertical-align: middle;
+}
+
+.noallow-tip {
+    display: inline-block;
+    padding: 0 4px;
+    border-radius: 5px;
+    background-color: #E26F50;
+    color: #fff;
+    font-size: 12px;
+}
+/* js中所需要的样式 */
+.h-auto {
+    height: auto;
+}
+
+.reader-tab-h {
+    height: 300px;
+}
+/* 空值 */
+.empty-info{
+    padding: 20px;
+    height: 60px;
+    background: url(../image/empty_info.png) no-repeat center center;
+    text-indent: -9999px;
+}

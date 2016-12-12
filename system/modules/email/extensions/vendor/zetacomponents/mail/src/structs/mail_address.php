@@ -8,9 +8,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -64,7 +64,7 @@ class ezcMailAddress extends ezcBaseStruct
      * @param string $name
      * @param string $charset
      */
-    public function __construct( $email, $name = '', $charset = 'us-ascii' )
+    public function __construct($email, $name = '', $charset = 'us-ascii')
     {
         $this->name = $name;
         $this->email = $email;
@@ -84,9 +84,9 @@ class ezcMailAddress extends ezcBaseStruct
      * @param array(string=>mixed) $array
      * @return ezcMailAddress
      */
-    static public function __set_state( array $array )
+    static public function __set_state(array $array)
     {
-        return new ezcMailAddress( $array['email'], $array['name'] );
+        return new ezcMailAddress($array['email'], $array['name']);
     }
 
     /**
@@ -101,7 +101,8 @@ class ezcMailAddress extends ezcBaseStruct
      */
     public function __toString()
     {
-        return ( !empty( $this->name ) ? "{$this->name} " : "" ) . "<{$this->email}>";
+        return (!empty($this->name) ? "{$this->name} " : "") . "<{$this->email}>";
     }
 }
+
 ?>

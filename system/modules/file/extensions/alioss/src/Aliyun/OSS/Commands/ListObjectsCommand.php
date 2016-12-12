@@ -22,9 +22,11 @@ use Aliyun\Common\Utilities\AssertUtils;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class ListObjectsCommand extends OSSCommand {
+class ListObjectsCommand extends OSSCommand
+{
 
-    protected function checkOptions($options) {
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -43,7 +45,8 @@ class ListObjectsCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         $builder = OSSRequestBuilder::factory();
 
         if (isset($options[OSSOptions::PREFIX])) {
@@ -59,7 +62,7 @@ class ListObjectsCommand extends OSSCommand {
         }
 
         if (isset($options[OSSOptions::MAX_KEYS])) {
-            $builder->addParameter('max-keys', (string) intval($options[OSSOptions::MAX_KEYS]));
+            $builder->addParameter('max-keys', (string)intval($options[OSSOptions::MAX_KEYS]));
         }
 
 

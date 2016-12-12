@@ -2,7 +2,7 @@
 
 /**
  * 信息中心默认语言包 zh_cn
- * 
+ *
  * @package application.modules.officialdoc.language.zh_cn
  * @version $Id: default.php 481 2013-05-30 08:04:10Z gzwwb $
  * @author gzwwb <gzwwb@ibos.com.cn>
@@ -10,17 +10,18 @@
 return array(
     //----------------golabs-------------------
     'Information center' => '信息中心',
-    'Officialdoc' => '公文',
-    'Officialdoc list' => '公文列表',
-    'Add officialdoc' => '新建公文',
-    'Edit officialdoc' => '编辑公文',
-    'Show officialdoc' => '查看公文',
-    'Preview officialdoc' => '预览公文',
+    'Officialdoc' => '通知公告',
+    'Officialdoc list' => '通知列表',
+    'Add officialdoc' => '新建通知',
+    'Edit officialdoc' => '编辑通知',
+    'Show officialdoc' => '查看通知',
+    'Preview officialdoc' => '预览通知',
     //----------------ContentController-------------------
-    'No permission or officialdoc not exists' => '没有权限操作或者公文不存在',
+    'No permission or officialdoc not exists' => '没有权限操作或者通知不存在',
     'No_permission' => '没有权限操作',
     'No_exists' => '文章不存在',
     //----------------list-------------------
+    'New doc' => '发布通知',
     'All' => '全部',
     'Published' => '已发布',
     'No sign' => '未签收',
@@ -58,18 +59,18 @@ return array(
     'Move failed' => '移动失败',
     'Sure Operating' => '确认操作',
     'Sure delete' => '确认要删除吗',
-    'Did not select any document' => '未选择任何公文',
-    'You do not have the right to audit the documents' => '你没有审核该公文的权利',
+    'Did not select any document' => '未选择任何通知',
+    'You do not have the right to audit the documents' => '你没有审核该通知的权利',
     'You do not have permission to verify the official' => '抱歉，您不是该审核步骤的审核人',
-    'New message title' => '{sender} 在公文-{category}发布了“{subject}”的公文！',
+    'New message title' => '{sender} 在通知公告-{category}发布了“{subject}”的通知！',
     'New message content' => '{content}',
-    'New verify message title' => '{sender} 在公文-{category}发布了“{subject}”的公文，请您审核！',
+    'New verify message title' => '{sender} 在通知公告-{category}发布了“{subject}”的通知，请您审核！',
     'New verify message content' => '{content}',
-    'New back title' => ' 您发表的公文“{subject}”被退回 ',
+    'New back title' => ' 您发表的通知“{subject}”被退回 ',
     'New back content' => ' {content}',
-    'Sign message title' => '{name} 提醒您签收公文 “{title}”',
+    'Sign message title' => '{name} 提醒您签收通知 “{title}”',
     'Sign message content' => '{content}',
-	'Do not need approval' => '无需审核，请编辑直接发布',
+    'Do not need approval' => '无需审核，请编辑直接发布',
     //----------------show-------------------
     'Close' => '关闭',
     'Print' => '打印',
@@ -82,7 +83,7 @@ return array(
     'Category' => '分类',
     'Scope' => '范围',
     'Cc' => '抄送',
-    'This officialdoc requires you to sign' => '本公文需要您',
+    'This officialdoc requires you to sign' => '本通知需要您',
     'Next reminder' => '下次提醒',
     'You have to sign this document' => '您已签收',
     'Comment' => '评论',
@@ -95,17 +96,16 @@ return array(
     'Publish time' => '发布时间',
     'Temporarily no' => '暂无',
     'Sign failed' => '签收失败',
-    'You do not have permission to read the officialdoc' => '你没有查看该公文的权限，谢谢',
+    'You do not have permission to read the officialdoc' => '你没有查看该通知的权限，谢谢',
     'No user to remind' => '没有未签收人员可提醒',
-    'Remind title' => '提醒您签收公文',
+    'Remind title' => '提醒您签收通知',
     'Remind succeed' => '提醒成功',
     'Now sign' => '立即签收',
     'Sign time' => '签收时间为:',
     'Sign staff' => '签收人员',
     'Unsign staff' => '未签收人员',
-	'Comment my doc' => '评论{realname}的公文<a href=\"{url}\">&nbsp;“{title}”</a>',
+    'Comment my doc' => '评论{realname}的通知<a href=\"{url}\">&nbsp;“{title}”</a>',
     //----------------sidebar-------------------
-    'Officialdoc' => '公文',
     'None' => '无',
     'New' => '新建',
     'Contents under this classification only be deleted when no content' => '该分类下有内容，仅当无内容时才可删除',
@@ -122,19 +122,19 @@ return array(
     'Preview' => '预览',
     'Submit' => '提交',
     'Wait verify' => '待审核',
-	'File size limit' => '&nbsp;&nbsp;&nbsp;&nbsp;文件大小限制',
+    'File size limit' => '&nbsp;&nbsp;&nbsp;&nbsp;文件大小限制',
     //----------------后台-------------------
-    'Officialdoc setting' => '公文设置',
-    'Officialdoc approver' => '公文审批人',
+    'Officialdoc setting' => '通知设置',
+    'Officialdoc approver' => '通知审批人',
     'Enable' => '启用',
     'Disabled' => '禁用',
     'NO.' => '序号',
     'Template name' => '模板名称',
-    'Officialdoc template edit' => '公文模板编辑',
-    'See more docs' => '查看更多公文',
+    'Officialdoc template edit' => '通知模板编辑',
+    'See more docs' => '查看更多通知',
     'Year' => '年',
     'Month' => '月',
     'Day' => '日',
-    'Post officialdoc' => '发表了一篇公文',
+    'Post officialdoc' => '发表了一篇通知',
     'Feed title' => '<a href="{url}" class="xwb anchor">{subject}</a>'
 );

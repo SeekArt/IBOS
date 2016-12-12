@@ -15,9 +15,9 @@ class AsyncPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'request.before_send'    => 'onBeforeSend',
-            'request.exception'      => 'onRequestTimeout',
-            'request.sent'           => 'onRequestSent',
+            'request.before_send' => 'onBeforeSend',
+            'request.exception' => 'onRequestTimeout',
+            'request.sent' => 'onRequestSent',
             'curl.callback.progress' => 'onCurlProgress'
         );
     }

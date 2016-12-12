@@ -1,158 +1,227 @@
-var Vote = {
-	$tab: $('#vote_tab'),
-	$type: $("#vote_type"),
-	// votetype: 投票类型 "1"为文字投票，"2"为图片投票
-	/**
-	 * 获取投票的类型
-	 * @method getVoteType
-	 * @return {Object} 返回Jquery节点对象
-	 */
-	getVoteType: function(){
-		return this.$type.val();
-	},
-	/**
-	 * 设置投票类型
-	 * @method setVoteType
-	 * @param {String} val 传入投票类型
-	 */
-	setVoteType: function(val){
-		this.$type.val(val);
-	},
-	/**
-	 * 获取时间戳
-	 * @method getPeriodTimestamp
-	 * @param  {String} type 传入投票类型
-	 * @return {Number}      传出时间数字      
-	 */
-	getPeriodTimestamp: function(type){
-		var now = +new Date,
-			MS_PER_DAY = 86400000,
-			dayCount = {
-				"1": 7,
-				"2": 30,
-				"3": 182,
-				"4": 365
-			};
-		return now + (dayCount[type] ? dayCount[type] * MS_PER_DAY : 0);
-	},
-	/**
-	 * 获取最大选择模板
-	 * @method getMaxSelectTpl
-	 * @param  {Number} count 传入最大值
-	 * @return {String}       传出模块内容
-	 */
-	getMaxSelectTpl: function(count){
-		var tpl = "";
-		for(var i = 1; i <= count; i++){
-			tpl += '<option value="' + i + '">' + (i === 1 ? Ibos.l("VOTE.SINGLE_ITEM") : Ibos.l("VOTE.MAX_ITEM", { count: i})) + '</option>';
-		}	
-		return tpl;
-	},
-	/**
-	 * 拿到当前投票类型有效的项数，即不为空的项数
-	 * @method getValidItem
-	 * @return {Object} 返回jquery节点对象
-	 */
-	getValidItem: function(){
-		var type = this.getVoteType();
-		return $("[name*='" + (type == "1" ? "vote" : "imageVote") + "[voteItem]'][value!='']");
-	}
-};
+﻿(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(function() {
+            root.Vote = factory(root);
+        });
+    } else if (typeof exports !== 'undefined') {
+        factory(root);
+    } else {
+        root.Vote = factory(root);
+    }
+})(this, function() {
+    var VoteList = {
+        voteid: 0
+    };
 
-//设置投票项类型，内容/图片
-Vote.tab = new P.Tab(Vote.$tab, "a", function($elem){
-	$elem.parent().addClass("active").siblings().removeClass("active");
-	Vote.setVoteType($elem.attr("data-value"));
+    /**
+     * 添加题目
+     * [Vote description]
+     */
+    var Vote = function() {
+        this.$list = $("#vote_list");
+        this.init();
+    };
+    Vote.prototype.init = function() {
+        this.Vote = new Ibos.OrderList(this.$list, "vote_tpl");
+
+        this.bind();
+    };
+    Vote.prototype.bind = function() {
+        var _this = this;
+        this.$list
+            .on("click", ".vote-close", function() {
+                _this.Vote.removeItem($(this).attr("data-id"));
+            })
+            .on("update", function(evt, data) {
+                var type = data.checked ? 'image' : 'text';
+                VoteList[data.id].type = type;
+                VoteList[data.id].itemid = 0;
+                VoteList[data.id].VoteProject.clear();
+                for (var i = 0; i < 3; i++) {
+                    VoteList[data.id].add();
+                }
+            })
+            .on("change", "[data-toggle='switch']", function() {
+                var $this = $(this);
+                _this.changeType($this);
+            });
+
+        this.$list.on("list.add", function(evt, res) {
+            $(_this).trigger("list.add", res.data);
+        });
+    };
+    Vote.prototype.changeType = function($this) {
+        var id = $this.attr("data-id"),
+            checked = $this.prop("checked");
+        $(".vote-item-" + id).val(checked ? "2" : "1");
+        this.$list.trigger("update", {
+            checked: checked,
+            id: id
+        });
+    };
+    Vote.prototype.add = function(data) {
+        data = $.extend({
+            type: "text",
+            voteid: VoteList.voteid,
+            subject: "",
+            maxselectnum: ""
+        }, data);
+
+        this.Vote.addItem(data);
+        VoteList.voteid++;
+        $('[data-toggle="switch"]').iSwitch();
+    };
+
+    /**
+     * 添加项目
+     * [VoteProject description]
+     * @param {[type]} data [description]
+     */
+    var VoteProject = function(data) {
+        this.id = data.id;
+        this.type = data.type;
+        this.$list = $("#vote_project_" + data.id);
+        this.voteid = VoteList.voteid;
+        this.itemid = 0;
+        this.init();
+    };
+    VoteProject.prototype.init = function() {
+        this.VoteProject = new Ibos.OrderList(this.$list, "vote_project_tpl");
+
+        this.bind();
+        return this;
+    };
+    VoteProject.prototype.bind = function() {
+        var _this = this;
+        this.$list
+            .on("click", "[data-item-remove]", function() {
+                _this.VoteProject.removeItem($.attr(this, "data-item-remove"));
+            })
+
+        .on("click", "[data-item-add]", function() {
+                _this.add();
+            })
+            .on("list.add", function(evt, d) {
+                if (_this.type == "image") {
+                    _this.picVote(d);
+                }
+                // refreshPicMaxSelect();
+            });
+        return this;
+    };
+    VoteProject.prototype.picVote = function(d) {
+        var picUploadSettings = $.extend({
+            file_post_name: 'Filedata',
+            post_params: {
+                module: 'vote'
+            },
+            button_width: "80",
+            button_height: "60",
+            custom_settings: {
+                success: function(file, data) {
+                    $(this.movieElement).siblings("[data-picpath]").val(data.url);
+                }
+            }
+        }, Ibos.app.g("voteUploadSettings"));
+        var settings = $.extend({
+            button_placeholder_id: "vote_pic_upload_" + d.data.id
+        }, picUploadSettings);
+        Ibos.imgUpload(settings);
+
+        return this;
+    };
+    VoteProject.prototype.add = function(data) {
+        if (data && data.voteid) {
+            this.voteid = data.voteid;
+        }
+        data = $.extend({
+            type: this.type,
+            voteid: this.voteid,
+            itemid: this.itemid++,
+            content: "",
+            picpath: ""
+        }, data);
+        this.VoteProject.addItem(data);
+        return this;
+    };
+    VoteProject.prototype.newadd = function() {
+        for (var i = 0; i < 3; i++) {
+            this.add();
+        }
+        return this;
+    };
+
+    return {
+        Vote: Vote,
+        VoteProject: VoteProject,
+        VoteList: VoteList
+    };
 });
-	
-(function(){
-	/* 文字投票 start */
-	var txtVoteDom = {
-	    $list: $("#vote_text_list"),
-	    $add: $("#vote_text_add")
-	};
-	var txtVoteList = new Ibos.OrderList(txtVoteDom.$list, "vote_text_tpl");
-	var refreshTxtMaxSelect = function(){
-	    $('#vote_max_select').html(Vote.getMaxSelectTpl(txtVoteList.getItemData().length));
-	};
-	// 添加一个投票项
-	txtVoteDom.$add.on("click", function() {
-	    txtVoteList.addItem({ content: "" });
-	});
-	// 删除一个投票项
-	txtVoteDom.$list.on("click", "[data-item-remove]", function(){
-	    txtVoteList.removeItem($.attr(this, "data-item-remove"));
-	})
-	// 更新最大可数数
-	.on("list.add list.remove", function(){
-	    refreshTxtMaxSelect();
-	});
 
-	Vote.textList = txtVoteList;
-})();
 
-(function(){
-	/* 图片投票 start */
-	var picVoteDom = {
-	        $list: $("#vote_pic_list"),
-	        $add: $("#vote_pic_add")
-	    },
-	    picVoteList = new Ibos.OrderList(picVoteDom.$list, "vote_pic_tpl"),
-	    refreshPicMaxSelect = function(){
-	        $('#picvote_max_select').html(Vote.getMaxSelectTpl(picVoteList.getItemData().length));
-	    },
-	    picUploadSettings = $.extend({
-	        file_post_name:                 'Filedata',
-	        post_params:                    {module:'vote'},
-	        button_width:                   "80",
-	        button_height:                  "60",
-	        custom_settings: {
-	            success: function(file, data){
-	                $(this.movieElement).siblings("[data-picpath]").val(data.url);
-	            }
-	        }
-	    }, Ibos.app.getPageParam("voteUploadSettings"));
 
-	picVoteDom.$list.on("list.add", function(evt, d){
-	    var settings = $.extend({
-	        button_placeholder_id: "vote_pic_upload_" + d.data.id
-	    }, picUploadSettings);
-	    Ibos.imgUpload(settings);
-	    refreshPicMaxSelect();
-	})
-	// 删除一个投票项
-	.on("click", "[data-item-remove]", function(evt, d){
-	    picVoteList.removeItem($.attr(this, "data-item-remove"));
-	})
-	.on("list.remove", function(){
-	    refreshPicMaxSelect();
-	});
+$(function() {
 
-	// 添加一个投票项
-	picVoteDom.$add.on("click", function() {
-	    picVoteList.addItem({ thumburl: "", picpath: "", content: "" });
-	});
-	/* 图片投票 end */
-	Vote.picList = picVoteList;
-})();
-	
-$(function(){
-	// 自定义日期
-	$('#vote_txt_deadline_date, #vote_pic_deadline_date').datepicker({ startDate: new Date() });
+    var vote = new Vote.Vote();
+    $(vote).on("list.add", function(evt, data) {
+        if (data.itemid === undefined) {
+            Vote.VoteList[data.id] = new Vote.VoteProject(data);
+            if (data.subject == "") {
+                Vote.VoteList[data.id].newadd();
+            }
+        }
+    });
+    $("#vote_add").on("click", function() {
+        vote.add();
+    });
+    var voteEditData = Ibos.app.g("voteEditData");
+    if (voteEditData.length) {
+        for (var i = 0, topic; i < voteEditData.length; i++) {
+            topic = voteEditData[i];
+            vote.add({
+                subject: topic.subject,
+                maxselectnum: topic.maxselectnum,
+                type: topic.type == 1 ? "text" : "image",
+                voteid: topic.topicid
+            });
+        }
+        for (var i = voteEditData.length - 1, topic; i >= 0; i--) {
+            topic = voteEditData[i];
+            for (var j = 0, item; j < topic.items.length; j++) {
+                item = topic.items[j];
+                Vote.VoteList[i].add({
+                    voteid: item.topicid,
+                    content: item.content,
+                    picpath: item.picpath
+                });
+            }
+        }
+        Vote.VoteList.voteid = +voteEditData[ voteEditData.length - 1 ].topicid + 1;
+    }else{
+        vote.add();
+    }
 
-	$('#vote_txt_deadline, #vote_pic_deadline').change(function(){
-	    var $date = $("#" + this.id + "_date");
-	    // 显示日期选择器
-	    $date.datepicker("setDate", new Date(Vote.getPeriodTimestamp(this.value)));
-	});
-	
-	$('#vote_max_select').on('change',function(){
-	    $('#vote_ismulti').val(this.value === "1" ? 0 : 1);
-	});
-	$('#picvote_max_select').on('change',function(){
-	    $('#picvote_ismulti').val(this.value === "1" ? 0 : 1);
-	});
+    // 截止时间
+    $('#vot_deadline_date').datepicker({
+        startDate: new Date(),
+        format: "yyyy-mm-dd hh:ii",
+        pickTime: true,
+        pickSeconds: false
+    }).on("hide", function() {
+        $(this).find("input").trigger("blur");
+    });
+
+    if( $.formValidator ){
+        $.getScript(Ibos.app.getAssetUrl("vote") + "/js/lang/zh-cn.js", function(){
+            $("#vot_deadline_date input").formValidator({
+                relativeID: "endtime",
+                onFocus: Ibos.l("VOTE.SELECT_ENDTIME")
+            }).regexValidator({
+                regExp: "notempty",
+                dataType: "enum",
+                onError: Ibos.l("VOTE.ENDTIME_EMPTY")
+            });
+        });
+    
+    }
 });
-
-
-

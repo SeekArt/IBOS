@@ -146,6 +146,7 @@ CREATE TABLE `{{cache_user_detail}}` (
   PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
 
+
 INSERT INTO `{{user_group}}` (`grade`, `title`, `system`, `creditshigher`, `creditslower`) VALUES ('1', '乞丐', '1', '-9999999', '0');
 INSERT INTO `{{user_group}}` (`grade`, `title`, `system`, `creditshigher`, `creditslower`) VALUES ('2', '初入江湖', '1', '0', '50');
 INSERT INTO `{{user_group}}` (`grade`, `title`, `system`, `creditshigher`, `creditslower`) VALUES ('3', '小有名气', '1', '50', '200');

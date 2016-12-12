@@ -62,7 +62,7 @@ interface RequestInterface extends MessageInterface, HasDispatcherInterface
     /**
      * Set the URL of the request
      *
-     * @param string $url|Url Full URL to set including query string
+     * @param string $url |Url Full URL to set including query string
      *
      * @return self
      */
@@ -179,9 +179,9 @@ interface RequestInterface extends MessageInterface, HasDispatcherInterface
     /**
      * Set HTTP authorization parameters
      *
-     * @param string|bool $user     User name or false disable authentication
-     * @param string      $password Password
-     * @param string      $scheme   Authentication scheme ('Basic', 'Digest', or a CURLAUTH_* constant (deprecated))
+     * @param string|bool $user User name or false disable authentication
+     * @param string $password Password
+     * @param string $scheme Authentication scheme ('Basic', 'Digest', or a CURLAUTH_* constant (deprecated))
      *
      * @return self
      * @link http://www.ietf.org/rfc/rfc2617.txt
@@ -220,7 +220,7 @@ interface RequestInterface extends MessageInterface, HasDispatcherInterface
      * Manually setting a response will bypass the actual sending of a request.
      *
      * @param Response $response Response object to set
-     * @param bool     $queued   Set to TRUE to keep the request in a state of not having been sent, but queue the
+     * @param bool $queued Set to TRUE to keep the request in a state of not having been sent, but queue the
      *                           response for send()
      *
      * @return self Returns a reference to the object.
@@ -267,8 +267,8 @@ interface RequestInterface extends MessageInterface, HasDispatcherInterface
     /**
      * Set the state of the request
      *
-     * @param string $state   State of the request ('complete', 'transfer', 'new', 'error')
-     * @param array  $context Contextual information about the state change
+     * @param string $state State of the request ('complete', 'transfer', 'new', 'error')
+     * @param array $context Contextual information about the state change
      *
      * @return string Returns the current state of the request (which may have changed due to events being fired)
      */
@@ -300,7 +300,7 @@ interface RequestInterface extends MessageInterface, HasDispatcherInterface
     /**
      * Add a Cookie value by name to the Cookie header
      *
-     * @param string $name  Name of the cookie to add
+     * @param string $name Name of the cookie to add
      * @param string $value Value to set
      *
      * @return self

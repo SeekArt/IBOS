@@ -182,21 +182,21 @@ class UniversalClassLoader
     public function registerNamespaces(array $namespaces)
     {
         foreach ($namespaces as $namespace => $locations) {
-            $this->namespaces[$namespace] = (array) $locations;
+            $this->namespaces[$namespace] = (array)$locations;
         }
     }
 
     /**
      * Registers a namespace.
      *
-     * @param string       $namespace The namespace
-     * @param array|string $paths     The location(s) of the namespace
+     * @param string $namespace The namespace
+     * @param array|string $paths The location(s) of the namespace
      *
      * @api
      */
     public function registerNamespace($namespace, $paths)
     {
-        $this->namespaces[$namespace] = (array) $paths;
+        $this->namespaces[$namespace] = (array)$paths;
     }
 
     /**
@@ -209,21 +209,21 @@ class UniversalClassLoader
     public function registerPrefixes(array $classes)
     {
         foreach ($classes as $prefix => $locations) {
-            $this->prefixes[$prefix] = (array) $locations;
+            $this->prefixes[$prefix] = (array)$locations;
         }
     }
 
     /**
      * Registers a set of classes using the PEAR naming convention.
      *
-     * @param string       $prefix The classes prefix
-     * @param array|string $paths  The location(s) of the classes
+     * @param string $prefix The classes prefix
+     * @param array|string $paths The location(s) of the classes
      *
      * @api
      */
     public function registerPrefix($prefix, $paths)
     {
-        $this->prefixes[$prefix] = (array) $paths;
+        $this->prefixes[$prefix] = (array)$paths;
     }
 
     /**
@@ -267,14 +267,14 @@ class UniversalClassLoader
             // namespaced class name
             $namespace = substr($class, 0, $pos);
             $className = substr($class, $pos + 1);
-            $normalizedClass = str_replace('\\', DIRECTORY_SEPARATOR, $namespace).DIRECTORY_SEPARATOR.str_replace('_', DIRECTORY_SEPARATOR, $className).'.php';
+            $normalizedClass = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
             foreach ($this->namespaces as $ns => $dirs) {
                 if (0 !== strpos($namespace, $ns)) {
                     continue;
                 }
 
                 foreach ($dirs as $dir) {
-                    $file = $dir.DIRECTORY_SEPARATOR.$normalizedClass;
+                    $file = $dir . DIRECTORY_SEPARATOR . $normalizedClass;
                     if (is_file($file)) {
                         return $file;
                     }
@@ -282,7 +282,7 @@ class UniversalClassLoader
             }
 
             foreach ($this->namespaceFallbacks as $dir) {
-                $file = $dir.DIRECTORY_SEPARATOR.$normalizedClass;
+                $file = $dir . DIRECTORY_SEPARATOR . $normalizedClass;
                 if (is_file($file)) {
                     return $file;
                 }
@@ -290,14 +290,14 @@ class UniversalClassLoader
 
         } else {
             // PEAR-like class name
-            $normalizedClass = str_replace('_', DIRECTORY_SEPARATOR, $class).'.php';
+            $normalizedClass = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
             foreach ($this->prefixes as $prefix => $dirs) {
                 if (0 !== strpos($class, $prefix)) {
                     continue;
                 }
 
                 foreach ($dirs as $dir) {
-                    $file = $dir.DIRECTORY_SEPARATOR.$normalizedClass;
+                    $file = $dir . DIRECTORY_SEPARATOR . $normalizedClass;
                     if (is_file($file)) {
                         return $file;
                     }
@@ -305,7 +305,7 @@ class UniversalClassLoader
             }
 
             foreach ($this->prefixFallbacks as $dir) {
-                $file = $dir.DIRECTORY_SEPARATOR.$normalizedClass;
+                $file = $dir . DIRECTORY_SEPARATOR . $normalizedClass;
                 if (is_file($file)) {
                     return $file;
                 }

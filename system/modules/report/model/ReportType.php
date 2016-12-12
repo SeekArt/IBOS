@@ -18,24 +18,28 @@ namespace application\modules\report\model;
 
 use application\core\model\Model;
 
-class ReportType extends Model {
+class ReportType extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{report_type}}';
     }
 
     /**
      * 通过用户id查找其所有汇报类型
-     * @param  mixed $uids  uid数组或者逗号隔开的用户id
+     * @param  mixed $uids uid数组或者逗号隔开的用户id
      * @return array 返回该用户的汇报类型，包括系统自带类型
      */
-    public function fetchAllTypeByUid( $uids ) {
-        $ids = is_array( $uids ) ? implode( ',', $uids ) : trim( $uids, ',' );
-        $types = $this->fetchAll( "uid = 0 OR FIND_IN_SET(uid, '{$ids}') ORDER BY issystype DESC, sort ASC, typeid ASC" );
+    public function fetchAllTypeByUid($uids)
+    {
+        $ids = is_array($uids) ? implode(',', $uids) : trim($uids, ',');
+        $types = $this->fetchAll("uid = 0 OR FIND_IN_SET(uid, '{$ids}') ORDER BY issystype DESC, sort ASC, typeid ASC");
         return $types;
     }
 
@@ -44,8 +48,9 @@ class ReportType extends Model {
      * @param integer $typeid 汇报类型
      * @return integer 返回汇报区间(0:周 1:月 2:季 3:半年 4:年)
      */
-    public function fetchIntervaltypeByTypeid( $typeid ) {
-        $type = $this->fetchByPk( $typeid );
+    public function fetchIntervaltypeByTypeid($typeid)
+    {
+        $type = $this->fetchByPk($typeid);
         return $type['intervaltype'];
     }
 
@@ -53,8 +58,9 @@ class ReportType extends Model {
      * 获取所有系统汇报类型
      * @return array
      */
-    public function fetchSysType() {
-        return $this->fetchAllByAttributes( array( 'issystype' => 1 ) );
+    public function fetchSysType()
+    {
+        return $this->fetchAllByAttributes(array('issystype' => 1));
     }
 
 }

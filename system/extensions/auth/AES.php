@@ -9,12 +9,13 @@
 
 namespace application\extensions\auth;
 
-class AES {
+class AES
+{
 
     var $rcon = array(
         0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8,
         0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4,
-        0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91 );
+        0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91);
     // S盒变换
     var $S = array(
         99, 124, 119, 123, 242, 107, 111, 197, 48, 1, 103, 43, 254, 215, 171, 118,
@@ -71,7 +72,7 @@ class AES {
         147, 145, 151, 149, 139, 137, 143, 141, 131, 129, 135, 133, 187, 185, 191,
         189, 179, 177, 183, 181, 171, 169, 175, 173, 163, 161, 167, 165, 219, 217,
         223, 221, 211, 209, 215, 213, 203, 201, 207, 205, 195, 193, 199, 197, 251,
-        249, 255, 253, 243, 241, 247, 245, 235, 233, 239, 237, 227, 225, 231, 229 );
+        249, 255, 253, 243, 241, 247, 245, 235, 233, 239, 237, 227, 225, 231, 229);
     var $T3 = array(
         0, 3, 6, 5, 12, 15, 10, 9, 24, 27, 30, 29, 20, 23, 18, 17,
         48, 51, 54, 53, 60, 63, 58, 57, 40, 43, 46, 45, 36, 39, 34,
@@ -89,7 +90,7 @@ class AES {
         87, 84, 81, 82, 67, 64, 69, 70, 79, 76, 73, 74, 107, 104, 109,
         110, 103, 100, 97, 98, 115, 112, 117, 118, 127, 124, 121, 122, 59, 56,
         61, 62, 55, 52, 49, 50, 35, 32, 37, 38, 47, 44, 41, 42, 11,
-        8, 13, 14, 7, 4, 1, 2, 19, 16, 21, 22, 31, 28, 25, 26 );
+        8, 13, 14, 7, 4, 1, 2, 19, 16, 21, 22, 31, 28, 25, 26);
     // 线性混合层列变换逆矩阵
     var $T9 = array(
         0, 9, 18, 27, 36, 45, 54, 63, 72, 65, 90, 83, 108, 101, 126, 119,
@@ -108,7 +109,7 @@ class AES {
         190, 183, 172, 165, 210, 219, 192, 201, 246, 255, 228, 237, 10, 3, 24,
         17, 46, 39, 60, 53, 66, 75, 80, 89, 102, 111, 116, 125, 161, 168,
         179, 186, 133, 140, 151, 158, 233, 224, 251, 242, 205, 196, 223, 214, 49,
-        56, 35, 42, 21, 28, 7, 14, 121, 112, 107, 98, 93, 84, 79, 70 );
+        56, 35, 42, 21, 28, 7, 14, 121, 112, 107, 98, 93, 84, 79, 70);
 
     /* Definicion de 0x0b*state[i][j] en GF(2^8)(para InvMixColumns) */
     var $T11 = array(
@@ -128,7 +129,7 @@ class AES {
         45, 38, 59, 48, 89, 82, 79, 68, 117, 126, 99, 104, 177, 186, 167,
         172, 157, 150, 139, 128, 233, 226, 255, 244, 197, 206, 211, 216, 122, 113,
         108, 103, 86, 93, 64, 75, 34, 41, 52, 63, 14, 5, 24, 19, 202,
-        193, 220, 215, 230, 237, 240, 251, 146, 153, 132, 143, 190, 181, 168, 163 );
+        193, 220, 215, 230, 237, 240, 251, 146, 153, 132, 143, 190, 181, 168, 163);
 
     /* Definicion de 0x0d*state[i][j] en GF(2^8) (para InvMixColumns) */
     var $T13 = array(
@@ -148,7 +149,7 @@ class AES {
         131, 142, 153, 148, 223, 210, 197, 200, 235, 230, 241, 252, 103, 106, 125,
         112, 83, 94, 73, 68, 15, 2, 21, 24, 59, 54, 33, 44, 12, 1,
         22, 27, 56, 53, 34, 47, 100, 105, 126, 115, 80, 93, 74, 71, 220,
-        209, 198, 203, 232, 229, 242, 255, 180, 185, 174, 163, 128, 141, 154, 151 );
+        209, 198, 203, 232, 229, 242, 255, 180, 185, 174, 163, 128, 141, 154, 151);
     var $T14 = array(
         0, 14, 28, 18, 56, 54, 36, 42, 112, 126, 108, 98, 72, 70, 84, 90,
         224, 238, 252, 242, 216, 214, 196, 202, 144, 158, 140, 130, 168, 166, 180,
@@ -166,13 +167,13 @@ class AES {
         212, 218, 200, 198, 156, 146, 128, 142, 164, 170, 184, 182, 12, 2, 16,
         30, 52, 58, 40, 38, 124, 114, 96, 110, 68, 74, 88, 86, 55, 57,
         43, 37, 15, 1, 19, 29, 71, 73, 91, 85, 127, 113, 99, 109, 215,
-        217, 203, 197, 239, 225, 243, 253, 167, 169, 187, 181, 159, 145, 131, 141 );
+        217, 203, 197, 239, 225, 243, 253, 167, 169, 187, 181, 159, 145, 131, 141);
     var $Nr = 10; // 轮变换圈数
     var $Nb = 4; // 存放中间结果状态的矩阵列数
     var $Nk = 4;
-    var $state = array( array() ); // 存放中间结果状态
-    var $shifts_r = array( array( 0, 1, 2, 3 ), array( 3, 0, 1, 2 ), array( 2, 3, 0, 1 ), array( 1, 2, 3, 0 ) );
-    var $shifts_l = array( array( 0, 1, 2, 3 ), array( 1, 2, 3, 0 ), array( 2, 3, 0, 1 ), array( 3, 0, 1, 2 ) );
+    var $state = array(array()); // 存放中间结果状态
+    var $shifts_r = array(array(0, 1, 2, 3), array(3, 0, 1, 2), array(2, 3, 0, 1), array(1, 2, 3, 0));
+    var $shifts_l = array(array(0, 1, 2, 3), array(1, 2, 3, 0), array(2, 3, 0, 1), array(3, 0, 1, 2));
     var $debug = false;
     var $toHex = false;
 
@@ -182,7 +183,8 @@ class AES {
      * @param: debug 是否打印调试信息 true：打印调试信息
      */
 
-    function __construct( $hex = false, $debug = false ) {
+    function __construct($hex = false, $debug = false)
+    {
         $this->debug = $debug;
         $this->toHex = $hex;
     }
@@ -191,11 +193,12 @@ class AES {
     /*
      * @function toHexString 把字符串中的每个字符转换成十六进制数
      */
-    private function toHexString( $sa ) {
+    private function toHexString($sa)
+    {
         $buf = "";
-        for ( $i = 0; $i < strlen( $sa ); $i++ ) {
-            $val = dechex( ord( $sa{$i} ) );
-            if ( strlen( $val ) < 2 )
+        for ($i = 0; $i < strlen($sa); $i++) {
+            $val = dechex(ord($sa{$i}));
+            if (strlen($val) < 2)
                 $val = "0" . $val;
             $buf .= $val;
         }
@@ -206,10 +209,11 @@ class AES {
     /*
      * @function fromHexString 把十六进制数转换成字符串
      */
-    private function fromHexString( $sa ) {
+    private function fromHexString($sa)
+    {
         $buf = "";
-        for ( $i = 0; $i < strlen( $sa ); $i += 2 ) {
-            $val = chr( hexdec( substr( $sa, $i, 2 ) ) );
+        for ($i = 0; $i < strlen($sa); $i += 2) {
+            $val = chr(hexdec(substr($sa, $i, 2)));
             $buf .= $val;
         }
         return $buf;
@@ -219,15 +223,16 @@ class AES {
     /*
      * @function showInt 输出调试信息
      */
-    private function showInt( $texto ) {
-        if ( $this->debug ) {
+    private function showInt($texto)
+    {
+        if ($this->debug) {
             echo($texto . ": ");
-            for ( $i = 0; $i < 4; $i++ ) {
-                for ( $j = 0; $j < 4; $j++ ) {
-                    echo(dechex( $this->state[$j][$i] ) . " ");
+            for ($i = 0; $i < 4; $i++) {
+                for ($j = 0; $j < 4; $j++) {
+                    echo(dechex($this->state[$j][$i]) . " ");
                 }
             }
-            echo ("<br/>");
+            echo("<br/>");
         }
     }
 
@@ -237,32 +242,32 @@ class AES {
      * @param hash　密钥
      * @return array　返回三维数组
      */
-    public function makeKey( $hash ) {
-        if ( strlen( $hash ) < 16 )
-            for ( $i = strlen( $hash ); $i < 16; $i++ )
+    public function makeKey($hash)
+    {
+        if (strlen($hash) < 16)
+            for ($i = strlen($hash); $i < 16; $i++)
                 $hash .= " ";
         $rconpocharer = 0;
-        $tk = array( array() );
-        ;
-        $rk = array( array( array() ) );
-        for ( $j = 0; $j < $this->Nk; $j++ )
-            for ( $i = 0; $i < 4; $i++ )
-                $tk[$i][$j] = ord( $hash[$j * 4 + $i] ) > 256 ? ord( $hash[$j * 4 + $i] ) % 256 : ord( $hash[$j * 4 + $i] );// 转换成ASCII码值
-                $t = 0;
-        for ( $j = 0; ($j < $this->Nk) && ($t < ($this->Nr + 1) * $this->Nb); $j++, $t++ )
-            for ( $i = 0; $i < 4; $i++ )
+        $tk = array(array());;
+        $rk = array(array(array()));
+        for ($j = 0; $j < $this->Nk; $j++)
+            for ($i = 0; $i < 4; $i++)
+                $tk[$i][$j] = ord($hash[$j * 4 + $i]) > 256 ? ord($hash[$j * 4 + $i]) % 256 : ord($hash[$j * 4 + $i]);// 转换成ASCII码值
+        $t = 0;
+        for ($j = 0; ($j < $this->Nk) && ($t < ($this->Nr + 1) * $this->Nb); $j++, $t++)
+            for ($i = 0; $i < 4; $i++)
                 $rk[$t / $this->Nb][$i][$t % $this->Nb] = $tk[$i][$j];
 
-        while ( $t < ($this->Nr + 1) * $this->Nb ) {
-            for ( $i = 0; $i < 4; $i++ )
+        while ($t < ($this->Nr + 1) * $this->Nb) {
+            for ($i = 0; $i < 4; $i++)
                 $tk[$i][0] ^= $this->S[$tk[($i + 1) % 4][$this->Nk - 1]];
             $tk[0][0] ^= $this->rcon[$rconpocharer++];
-            for ( $j = 1; $j < $this->Nk; $j++ )
-                for ( $i = 0; $i < 4; $i++ )
+            for ($j = 1; $j < $this->Nk; $j++)
+                for ($i = 0; $i < 4; $i++)
                     $tk[$i][$j] ^= $tk[$i][$j - 1];
 
-            for ( $j = 0; ($j < $this->Nk) && ($t < ($this->Nr + 1) * $this->Nb); $j++, $t++ )
-                for ( $i = 0; $i < 4; $i++ )
+            for ($j = 0; ($j < $this->Nk) && ($t < ($this->Nr + 1) * $this->Nb); $j++, $t++)
+                for ($i = 0; $i < 4; $i++)
                     $rk[$t / $this->Nb][$i][$t % $this->Nb] = $tk[$i][$j];
         }
         return $rk;
@@ -275,20 +280,21 @@ class AES {
      * @param: expandedKeys 扩展后的密钥
      * @return: 返回加密后的字符串
      */
-    public function encryptString( $excodeStr, $expandedKeys ) {
-        if ( strlen( $excodeStr ) % 16 == 0 )
-            $cnt = strlen( $excodeStr ) / 16;
+    public function encryptString($excodeStr, $expandedKeys)
+    {
+        if (strlen($excodeStr) % 16 == 0)
+            $cnt = strlen($excodeStr) / 16;
         else {
-            $cnt = ceil( strlen( $excodeStr ) / 16 );
-            for ( $i = strlen( $excodeStr ); $i < $cnt * 16; $i++ )
+            $cnt = ceil(strlen($excodeStr) / 16);
+            for ($i = strlen($excodeStr); $i < $cnt * 16; $i++)
                 $excodeStr .= " ";
         }
         $out = "";
-        for ( $i = 0; $i < $cnt; $i++ )
-            $out .= $this->blockEncrypt( substr( $excodeStr, $i * 16, 16 ), $expandedKeys );
+        for ($i = 0; $i < $cnt; $i++)
+            $out .= $this->blockEncrypt(substr($excodeStr, $i * 16, 16), $expandedKeys);
 
-        if ( $this->toHex )
-            $out = $this->toHexString( $out );
+        if ($this->toHex)
+            $out = $this->toHexString($out);
 
         return $out;
     }
@@ -297,28 +303,29 @@ class AES {
     /*
      * @function blockEncrypt　分块加密
      */
-    public function blockEncrypt( $in, $keys ) {
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < $this->Nb; $j++ )
-                $this->state[$j][$i] = ord( $in{$i * 4 + $j} );
-        $this->showInt( "Cifrado: <br/> State Inicial" );
-        $this->KeyAddition( $keys[0] );
+    public function blockEncrypt($in, $keys)
+    {
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < $this->Nb; $j++)
+                $this->state[$j][$i] = ord($in{$i * 4 + $j});
+        $this->showInt("Cifrado: <br/> State Inicial");
+        $this->KeyAddition($keys[0]);
 
-        $this->showInt( "Ronda 0 :: KeyAddition" );
-        for ( $r = 1; $r < $this->Nr; $r++ ) {
+        $this->showInt("Ronda 0 :: KeyAddition");
+        for ($r = 1; $r < $this->Nr; $r++) {
             $this->ByteSubShiftRow();
-            $this->showInt( "Ronda $r :: ByteSubShiftRow" );
-            $this->MixColumnKeyAddition( $keys[$r] );
-            $this->showInt( "Ronda $r :: MixColumnKeyAddition" );
+            $this->showInt("Ronda $r :: ByteSubShiftRow");
+            $this->MixColumnKeyAddition($keys[$r]);
+            $this->showInt("Ronda $r :: MixColumnKeyAddition");
         }
         $this->ByteSubShiftRow();
-        $this->showInt( "Ronda final :: ByteSubShiftRow" );
-        $this->KeyAddition( $keys[$this->Nr] );
-        $this->showInt( "Ronda final :: KeyAddition ==> Resultado" );
+        $this->showInt("Ronda final :: ByteSubShiftRow");
+        $this->KeyAddition($keys[$this->Nr]);
+        $this->showInt("Ronda final :: KeyAddition ==> Resultado");
         $out = "";
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < 4; $j++ )
-                $out .=chr( $this->state[$j][$i] );
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < 4; $j++)
+                $out .= chr($this->state[$j][$i]);
         return $out;
     }
 
@@ -329,47 +336,49 @@ class AES {
      * @param: expandedKeys 扩展后的密钥
      * @return: 返回解密后的字符串
      */
-    public function decryptString( $decodeStr, $expandedKeys ) {
-        if ( $this->toHex )
-            $decodeStr = $this->fromHexString( $decodeStr );
-        if ( strlen( $decodeStr ) % 16 == 0 )
-            $cnt = strlen( $decodeStr ) / 16;
+    public function decryptString($decodeStr, $expandedKeys)
+    {
+        if ($this->toHex)
+            $decodeStr = $this->fromHexString($decodeStr);
+        if (strlen($decodeStr) % 16 == 0)
+            $cnt = strlen($decodeStr) / 16;
         else
             return;
         $out = "";
-        for ( $i = 0; $i < $cnt; $i++ ) {
-            $out .= $this->blockDecrypt( substr( $decodeStr, $i * 16, 16 ), $expandedKeys );
+        for ($i = 0; $i < $cnt; $i++) {
+            $out .= $this->blockDecrypt(substr($decodeStr, $i * 16, 16), $expandedKeys);
         }
-        return trim( $out );
+        return trim($out);
     }
 
     //////////////////////////////////////////////////////////////////
     /*
      * @function blockDecrypt 分块解密
      */
-    private function blockDecrypt( $in, $keys ) {
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < $this->Nb; $j++ )
-                $this->state[$j][$i] = ord( $in{$i * 4 + $j} );
-        $this->showInt( "Descifrado: <br/> State Inicial" );
-        $this->KeyAddition( $keys[$this->Nr] );
-        $this->showInt( "Ronda 0 :: KeyAddition" );
-        for ( $r = $this->Nr - 1; $r > 0; $r-- ) {
+    private function blockDecrypt($in, $keys)
+    {
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < $this->Nb; $j++)
+                $this->state[$j][$i] = ord($in{$i * 4 + $j});
+        $this->showInt("Descifrado: <br/> State Inicial");
+        $this->KeyAddition($keys[$this->Nr]);
+        $this->showInt("Ronda 0 :: KeyAddition");
+        for ($r = $this->Nr - 1; $r > 0; $r--) {
             $this->InvShiftRowInvByteSub();
-            $this->showInt( "Ronda " . ($this->Nr - $r) . " :: InvShiftRowInvByteSub" );
-            $this->KeyAddition( $keys[$r] );
-            $this->showInt( "Ronda " . ($this->Nr - $r) . " :: KeyAddition" );
+            $this->showInt("Ronda " . ($this->Nr - $r) . " :: InvShiftRowInvByteSub");
+            $this->KeyAddition($keys[$r]);
+            $this->showInt("Ronda " . ($this->Nr - $r) . " :: KeyAddition");
             $this->InvMixColumn();
-            $this->showInt( "Ronda " . ($this->Nr - $r) . " :: InvMiColumn" );
+            $this->showInt("Ronda " . ($this->Nr - $r) . " :: InvMiColumn");
         }
         $this->InvShiftRowInvByteSub();
-        $this->showInt( "Ronda final :: InvShiftRowInvByteSub" );
-        $this->KeyAddition( $keys[0] );
-        $this->showInt( "Ronda final :: KeyAddition ==> Resultado" );
+        $this->showInt("Ronda final :: InvShiftRowInvByteSub");
+        $this->KeyAddition($keys[0]);
+        $this->showInt("Ronda final :: KeyAddition ==> Resultado");
         $out = "";
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < 4; $j++ )
-                $out .= chr( $this->state[$j][$i] );
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < 4; $j++)
+                $out .= chr($this->state[$j][$i]);
         return $out;
     }
 
@@ -377,10 +386,11 @@ class AES {
     /*
      * @function ByteSubShiftRow 作用在状态中每个字节上的一种非线性字节转换
      */
-    private function ByteSubShiftRow() {
-        $tmp = array( array() );
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < $this->Nb; $j++ )
+    private function ByteSubShiftRow()
+    {
+        $tmp = array(array());
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < $this->Nb; $j++)
                 $tmp[$i][$this->shifts_r[$i][$j]] = $this->S[$this->state[$i][$j]];
         $this->state = $tmp;
     }
@@ -389,9 +399,10 @@ class AES {
     /*
      * @function KeyAddition 将圈密钥状态中的对应字节按位"异或"
      */
-    private function KeyAddition( $rk ) {
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < $this->Nb; $j++ )
+    private function KeyAddition($rk)
+    {
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < $this->Nb; $j++)
                 $this->state[$i][$j] ^= $rk[$i][$j];
     }
 
@@ -399,10 +410,11 @@ class AES {
     /*
      * @function InvShiftRowInvByteSub 作用在状态中每个字节上的一种非线性字节反转换，与ByteSubShiftRow()互逆
      */
-    private function InvShiftRowInvByteSub() {
-        $tmp = array( array() );
-        for ( $i = 0; $i < 4; $i++ )
-            for ( $j = 0; $j < $this->Nb; $j++ )
+    private function InvShiftRowInvByteSub()
+    {
+        $tmp = array(array());
+        for ($i = 0; $i < 4; $i++)
+            for ($j = 0; $j < $this->Nb; $j++)
                 $tmp[$i][$this->shifts_l[$i][$j]] = $this->Si[$this->state[$i][$j]];
         $this->state = $tmp;
     }
@@ -411,10 +423,11 @@ class AES {
     /*
      * @function MixColumnKeyAddition 混合列变换
      */
-    private function MixColumnKeyAddition( $rk ) {
-        $b = array( array() );
-        for ( $j = 0; $j < 4; $j++ )
-            for ( $i = 0; $i < $this->Nb; $i++ ) {
+    private function MixColumnKeyAddition($rk)
+    {
+        $b = array(array());
+        for ($j = 0; $j < 4; $j++)
+            for ($i = 0; $i < $this->Nb; $i++) {
                 $b[$i][$j] = $this->T2[$this->state[$i][$j]] ^ $this->T3[$this->state[($i + 1) % 4][$j]] ^ $this->state[($i + 2) % 4][$j] ^ $this->state[($i + 3) % 4][$j];
                 $b[$i][$j] ^= $rk[$i][$j];
             }
@@ -425,10 +438,11 @@ class AES {
     /*
      * @function InvMixColumn 混合列逆变换
      */
-    private function InvMixColumn() {
-        $b = array( array() );
-        for ( $j = 0; $j < 4; $j++ )
-            for ( $i = 0; $i < $this->Nb; $i++ )
+    private function InvMixColumn()
+    {
+        $b = array(array());
+        for ($j = 0; $j < 4; $j++)
+            for ($i = 0; $i < $this->Nb; $i++)
                 $b[$i][$j] = $this->T14[$this->state[$i][$j]] ^ $this->T11[$this->state[($i + 1) % 4][$j]] ^ $this->T13[$this->state[($i + 2) % 4][$j]] ^ $this->T9[$this->state[($i + 3) % 4][$j]];
         $this->state = $b;
     }
@@ -443,7 +457,8 @@ class AES {
      * @param: encodeFile 加密后的文件名称
      * @return: boolean
      */
-    public function encryptFile( $sourcePath, $filename, $expandKeys, $destPath = "", $encodeFile = "" ) {
+    public function encryptFile($sourcePath, $filename, $expandKeys, $destPath = "", $encodeFile = "")
+    {
         $destPath = $sourcePath;
         $encodeFile = "en" . $filename;
     }

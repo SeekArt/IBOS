@@ -21,10 +21,12 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\role\model\Node;
 use CBehavior;
 
-class AuthItem extends CBehavior {
+class AuthItem extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleAuthItem' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleAuthItem'));
     }
 
     /**
@@ -33,30 +35,31 @@ class AuthItem extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handleAuthItem( $event ) {
+    public function handleAuthItem($event)
+    {
         $categorys = array();
         // 获取所有根节点，node字段为空表明这是普通节点，不为空表示是数据类型的子节点
         $nodes = Node::model()->fetchAllEmptyNode();
-        foreach ( $nodes as $node ) {
-            if ( empty( $node['category'] ) ) {
+        foreach ($nodes as $node) {
+            if (empty($node['category'])) {
                 continue;
             }
             // category 一般是中文字符，所以编码一下，以防出现问题
-            $category = base64_encode( $node['category'] );
+            $category = base64_encode($node['category']);
             $categorys[$category]['category'] = $node['category'];
-            if ( $node['type'] == 'data' && empty( $node['node'] ) ) {
-                $node['node'] = Node::model()->fetchAllNotEmptyNodeByModuleKey( $node['module'], $node['key'] );
+            if ($node['type'] == 'data' && empty($node['node'])) {
+                $node['node'] = Node::model()->fetchAllNotEmptyNodeByModuleKey($node['module'], $node['key']);
             }
-            if ( !empty( $node['group'] ) ) {
+            if (!empty($node['group'])) {
                 // 同上
-                $group = base64_encode( $node['group'] );
+                $group = base64_encode($node['group']);
                 $categorys[$category]['group'][$group]['groupName'] = $node['group'];
                 $categorys[$category]['group'][$group]['node'][] = $node;
             } else {
                 $categorys[$category]['node'][] = $node;
             }
         }
-        Syscache::model()->modifyCache( 'authitem', $categorys );
+        Syscache::model()->modifyCache('authitem', $categorys);
     }
 
 }

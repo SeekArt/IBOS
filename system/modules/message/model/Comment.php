@@ -9,13 +9,16 @@ use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use CHtml;
 
-class Comment extends Model {
+class Comment extends Model
+{
 
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{comment}}';
     }
 
@@ -24,13 +27,15 @@ class Comment extends Model {
      * @param integer $cid
      * @return array
      */
-    public function fetchReplyIdByCid($cid) {
+    public function fetchReplyIdByCid($cid)
+    {
         $criteria = array(
             'select' => 'cid',
             'condition' => '`rowid` = :rowid',
             'params' => array(':rowid' => $cid),
         );
         $result = $this->fetchAll($criteria);
+
         return util\Convert::getSubByKey($result, 'cid');
     }
 
@@ -41,16 +46,20 @@ class Comment extends Model {
      * @param array $lessUids 除去@用户ID
      * @return boolean 是否添加评论成功
      */
-    public function addComment($data, $forApi = false, $notCount = false, $lessUids = null) {
+    public function addComment($data, $forApi = false, $notCount = false, $lessUids = null)
+    {
         // 检测数据安全性
         $add = $this->escapeData($data);
         if ($add['content'] === '') {
             // 评论内容不可为空
-            $this->addError('comment', util\Ibos::lang('Required comment content', 'message.default'));
+            $this->addError('comment',
+                util\Ibos::lang('Required comment content', 'message.default'));
+
             return false;
         }
         $add['isdel'] = 0;
-        $add['detail'] = isset($data['detail']) ? str_replace("{realname}", '我', $data['detail']) : '';
+        $add['detail'] = isset($data['detail']) ? str_replace("{realname}", '我',
+            $data['detail']) : '';
         $res = $this->add($add, true);
 
         if ($res) {
@@ -60,8 +69,11 @@ class Comment extends Model {
             $scream = explode('//', $data['content']);
             // 发送@消息
             $url = isset($data['url']) ? $data['url'] : '';
-            $detail = isset($data['detail']) ? str_replace("{realname}", User::model()->fetchRealnameByUid($data['touid']), $data['detail']) : '';
-            Atme::model()->addAtme('message', 'comment', trim($scream[0]), $res, null, $lessUids, $url, $detail);
+            $detail = isset($data['detail']) ? str_replace("{realname}",
+                User::model()->fetchRealnameByUid($data['touid']),
+                $data['detail']) : '';
+            Atme::model()->addAtme('message', 'comment', trim($scream[0]), $res,
+                null, $lessUids, $url, $detail);
             // 被评论内容的“评论统计数”加1，同时可检测出module，table，rowid的有效性
             if ($add['table'] == 'feed') {
                 $table = 'application\modules\message\model\Feed';
@@ -69,20 +81,25 @@ class Comment extends Model {
                 $table = 'application\modules\\' . $add['module'] . '\\model\\' . ucfirst($add['table']);
             }
             $pk = $table::model()->getTableSchema()->primaryKey;
-            $table::model()->updateCounters(array('commentcount' => 1), "`{$pk}` = {$add['rowid']}");
+            $table::model()->updateCounters(array('commentcount' => 1),
+                "`{$pk}` = {$add['rowid']}");
             // 给模块UID添加一个未读的评论数 原作者
             if (util\Ibos::app()->user->uid != $add['moduleuid'] && $add['moduleuid'] != '') {
-                !$notCount && UserData::model()->updateKey('unread_comment', 1, true, $add['moduleuid']);
+                !$notCount && UserData::model()->updateKey('unread_comment', 1,
+                    true, $add['moduleuid']);
             }
             // 回复发送提示信息
             if (!empty($add['touid']) && $add['touid'] != util\Ibos::app()->user->uid && $add['touid'] != $add['moduleuid']) {
-                !$notCount && UserData::model()->updateKey('unread_comment', 1, true, $add['touid']);
+                !$notCount && UserData::model()->updateKey('unread_comment', 1,
+                    true, $add['touid']);
             }
             // 加积分操作
             if ($add['table'] == 'feed') {
                 if (util\Ibos::app()->user->uid != $add['uid']) {
-                    UserUtil::updateCreditByAction('addcomment', util\Ibos::app()->user->uid);
-                    UserUtil::updateCreditByAction('getcomment', $data['moduleuid']);
+                    UserUtil::updateCreditByAction('addcomment',
+                        util\Ibos::app()->user->uid);
+                    UserUtil::updateCreditByAction('getcomment',
+                        $data['moduleuid']);
                 }
                 Feed::model()->cleanCache($add['rowid']);
             }
@@ -96,16 +113,19 @@ class Comment extends Model {
                 if (!empty($add['touid'])) {
                     // 回复
                     $config['{commentType}'] = '回复了我的评论:';
-                    Notify::model()->sendNotify($add['touid'], 'comment', $config);
+                    Notify::model()->sendNotify($add['touid'], 'comment',
+                        $config);
                 } else {
                     // 评论
                     $config['{commentType}'] = '评论了我的微博:';
                     if (!empty($add['moduleuid'])) {
-                        Notify::model()->sendNotify($add['moduleuid'], 'comment', $config);
+                        Notify::model()->sendNotify($add['moduleuid'],
+                            'comment', $config);
                     }
                 }
             }
         }
+
         return $res;
     }
 
@@ -116,21 +136,23 @@ class Comment extends Model {
      * @param array $module 评论所属应用   积分加减时用到
      * @return boolean 是否删除评论成功
      */
-    public function deleteComment($ids, $uid = null, $module = '') {
+    public function deleteComment($ids, $uid = null, $module = '')
+    {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
         $map = array('and');
         $map[] = array('in', 'cid', $ids);
         $comments = $this->getDbConnection()->createCommand()
-                ->select('cid,module,table,rowid,moduleuid,uid')
-                ->from($this->tableName())
-                ->where($map)
-                ->queryAll();
+            ->select('cid,module,table,rowid,moduleuid,uid')
+            ->from($this->tableName())
+            ->where($map)
+            ->queryAll();
         if (empty($comments)) {
             return false;
         }
         // 删除@信息
         foreach ($comments as $value) {
-            Atme::model()->deleteAtme($value['table'], null, $value['cid'], null);
+            Atme::model()->deleteAtme($value['table'], null, $value['cid'],
+                null);
         }
 
         // 模块回调，减少模块的评论计数
@@ -141,9 +163,10 @@ class Comment extends Model {
             $_comments[$comment['table']][$comment['rowid']]['id'] = $comment['cid'];
             $_comments[$comment['table']][$comment['rowid']]['module'] = $comment['module'];
         }
-        // 删除评论：先删除评论，在处理统计
+        // 删除评论：先删除评论，再处理统计
         $cids = util\Convert::getSubByKey($comments, 'cid');
-        $res = $this->updateAll(array('isdel' => 1), "`cid` IN (" . implode(',', $cids) . ")");
+        $res = $this->updateAll(array('isdel' => 1),
+            "`cid` IN (" . implode(',', $cids) . ")");
         if ($res) {
             // 更新统计数目
             foreach ($_comments as $tableName => $rows) {
@@ -158,7 +181,8 @@ class Comment extends Model {
                     if (empty($field)) {
                         $field = $tableName . 'id';
                     }
-                    $_table::model()->updateCounters(array('commentcount' => -count($c['id'])), "`{$field}`={$rowid}");
+                    $_table::model()->updateCounters(array('commentcount' => -count($c['id'])),
+                        "`{$field}`={$rowid}");
                     if ($module == 'weibo' || $module == 'feed') {
                         $_table::model()->cleanCache($rowid);
                     }
@@ -168,7 +192,10 @@ class Comment extends Model {
                 UserUtil::updateCreditByAction('delcomment', $uid);
             }
         }
-        $this->addError('deletecomment', $res != false ? util\Ibos::lang('Operation succeed', 'message') : util\Ibos::lang('Operation failure', 'message') );
+        $this->addError('deletecomment',
+            $res != false ? util\Ibos::lang('Operation succeed',
+                'message') : util\Ibos::lang('Operation failure', 'message'));
+
         return $res;
     }
 
@@ -180,31 +207,45 @@ class Comment extends Model {
      * @param boolean $isReply 是否显示回复信息
      * @return array 评论列表信息
      */
-    public function getCommentList($map = null, $order = 'cid ASC', $limit = 10, $offset = 0, $isReply = false) {
+    public function getCommentList($map = null, $order = 'cid ASC', $limit = 10, $offset = 0, $isReply = false)
+    {
+        if ($this->getCurrentModule() == "message"){
+            $confilter = array();
+        }else{
+            $confilter = array('in', 'module', array('message', $this->getCurrentModule()));
+        }
         $list = $this->getDbConnection()->createCommand()
-                ->select('*')
-                ->from($this->tableName())
-                ->where($map)
-                ->order($order)
-                ->limit($limit)
-                ->offset($offset)
-                ->queryAll();
+            ->select('*')
+            ->from($this->tableName())
+            ->where($map)
+            ->andWhere('isdel = 0')
+            ->andWhere($confilter)
+            ->order($order)
+            ->limit($limit)
+            ->offset($offset)
+            ->queryAll();
         $uid = util\Ibos::app()->user->uid;
         $isAdministrator = util\Ibos::app()->user->isadministrator;
         foreach ($list as $k => &$v) {
             if (!empty($v['tocid']) && $isReply) {
-                $replyInfo = $this->getCommentInfo($v['tocid'], false);
+                $replyInfo = $this->getCommentInfo($v['cid'], false);
 //				$v['replyInfo'] = "<a class='anchor' data-toggle='usercard' data-param='uid={$replyInfo['user_info']['uid']}' href='{$replyInfo['user_info']['space_url']}' target='_blank'>" . $replyInfo['user_info']['realname'] . '</a>' . '：' . $replyInfo['content'];
-                $v['replyInfo'] = util\Ibos::lang('Reply comment', 'message.default', array(
-                            '{param}' => "uid=" . $replyInfo['user_info']['uid'],
-                            '{space_url}' => $replyInfo['user_info']['space_url'],
-                            '{realname}' => $replyInfo['user_info']['realname'],
-                            '{url}' => $v['url'],
-                            '{detail}' => util\StringUtil::cutStr($replyInfo['content'], 50)
-                ));
+                $v['replyInfo'] = util\Ibos::lang('Reply comment',
+                    'message.default', array(
+                        '{param}' => "uid=" . $replyInfo['user_info']['uid'],
+                        '{space_url}' => $replyInfo['user_info']['space_url'],
+                        '{realname}' => $replyInfo['user_info']['realname'],
+                        '{url}' => $v['url'],
+                        '{detail}' => util\StringUtil::cutStr($replyInfo['content'],
+                            50)
+                    ));
             } else {
                 $v['replyInfo'] = '';
             }
+            // 解析评论表情
+            $v['content'] = util\StringUtil::parseHtml($v['content']);
+            $v['content'] = util\StringUtil::purify($v['content']);
+
             $v['isCommentDel'] = $isAdministrator || $uid === $v['uid'];
             $v['user_info'] = User::model()->fetchByUid($v['uid']);
 //			$v['content'] = StringUtil::parseHtml( $v['content'] . $v['replyInfo'] );
@@ -215,6 +256,7 @@ class Comment extends Model {
                 $v['attach'] = util\Attach::getAttach($v['attachmentid']);
             }
         }
+
         return $list;
     }
 
@@ -224,10 +266,12 @@ class Comment extends Model {
      * @param boolean $source 是否显示资源信息，默认为true
      * @return array 获取评论信息
      */
-    public function getCommentInfo($id, $source = true) {
+    public function getCommentInfo($id, $source = true)
+    {
         $id = intval($id);
         if (empty($id)) {
-            $this->addError('get', util\Ibos::lang('Parameters error', 'error'));  // 错误的参数
+            $this->addError('get',
+                util\Ibos::lang('Parameters error', 'error'));  // 错误的参数
             return false;
         }
         $info = util\Cache::get('comment_info_' . $id);
@@ -238,7 +282,8 @@ class Comment extends Model {
             $info['user_info'] = User::model()->fetchByUid($info['uid']);
             $info['content'] = $info['content'];
             $source && $info['sourceInfo'] = Source::getCommentSource($info);
-            $source && util\Cache::set('comment_info_' . $id, $info); // (回复)没有读全所有评论信息则不缓存 by hzh
+            $source && util\Cache::set('comment_info_' . $id,
+                $info); // (回复)没有读全所有评论信息则不缓存 by hzh
             return $info;
         }
     }
@@ -248,12 +293,13 @@ class Comment extends Model {
      * @param array $map
      * @return integer
      */
-    public function countCommentByMap($map) {
+    public function countCommentByMap($map)
+    {
         return $this->getDbConnection()->createCommand()
-                        ->select('count(cid)')
-                        ->from($this->tableName())
-                        ->where($map)
-                        ->queryScalar();
+            ->select('count(cid)')
+            ->from($this->tableName())
+            ->where($map)
+            ->queryScalar();
     }
 
     /**
@@ -261,7 +307,8 @@ class Comment extends Model {
      * @param array $data 待检测的数据
      * @return array 验证后的数据
      */
-    private function escapeData($data) {
+    private function escapeData($data)
+    {
         $add['module'] = $data['module'];
         $add['table'] = $data['table'];
         $add['rowid'] = intval($data['rowid']);
@@ -270,11 +317,12 @@ class Comment extends Model {
         $add['content'] = $data['content'];
         $add['tocid'] = isset($data['tocid']) ? intval($data['tocid']) : 0;
         $add['touid'] = isset($data['touid']) ? intval($data['touid']) : 0;
-        $add['data'] = serialize(isset($data['data']) ? $data['data'] : array() );
+        $add['data'] = serialize(isset($data['data']) ? $data['data'] : array());
         $add['ctime'] = TIMESTAMP;
         $add['from'] = isset($data['from']) ? intval($data['from']) : util\Env::getVisitorClient();
         $add['attachmentid'] = isset($data['attachmentid']) ? $data['attachmentid'] : '';
         $add['url'] = isset($data['url']) ? $data['url'] : '';
+
         return $add;
     }
 
@@ -284,7 +332,8 @@ class Comment extends Model {
      * @param string $type 操作类型，delComment假删除、deleteComment彻底删除、commentRecover恢复
      * @return array 评论处理后，返回的数组操作信息
      */
-    public function doEditComment($id, $type) {
+    public function doEditComment($id, $type)
+    {
         $return = false;
         if (empty($id)) {
             // do nothing
@@ -304,6 +353,7 @@ class Comment extends Model {
                 $return = true;
             }
         }
+
         return $return;
     }
 
@@ -312,7 +362,8 @@ class Comment extends Model {
      * @param integer $id 评论ID
      * @return boolean 评论是否恢复成功
      */
-    public function commentRecover($id) {
+    public function commentRecover($id)
+    {
         if (empty($id)) {
             return false;
         }
@@ -330,19 +381,81 @@ class Comment extends Model {
             if (empty($field)) {
                 $field = $tableName . 'id';
             }
-            $_table::model()->updateCounters(array('commentcount' => 1), "`" . $field . "`=" . $comment['rowid']);
+            $_table::model()->updateCounters(array('commentcount' => 1),
+                "`" . $field . "`=" . $comment['rowid']);
             // 删除微博缓存
             switch ($comment['table']) {
                 case 'feed':
-                    $feedIds = $this->fetch(array('select' => 'rowid', 'condition' => $con));
+                    $feedIds = $this->fetch(array(
+                        'select' => 'rowid',
+                        'condition' => $con
+                    ));
                     $feedId = array($feedIds['rowid']);
                     Feed::model()->cleanCache($feedId);
                     break;
             }
+
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * 拿出新闻或者日志或者其他id的第一层评论
+     * @param  integer $id 新闻或者日志或者其他id
+     * @return array  外层评论cid
+     */
+    public function getCidsByRowId($id)
+    {
+        $correctModuleName = $this->getCurrentModule();
+        $list = $this->getDbConnection()->createCommand()
+            ->select('cid')
+            ->from($this->tableName())
+            ->where("rowid = :id", array(':id' => $id))
+            ->andWhere('module = :module', array(':module' => $correctModuleName))
+            ->queryColumn();
+        return $list;
+    }
+
+
+    /**
+     * 获取 getCommentList 需要的条件（$map）
+     *
+     * @param integer $rowid
+     * @return string
+     */
+    public function getMapForGetCommentList($rowid)
+    {
+        // 获取该条新闻下的所有评论（包括回复）
+        $cidList = $this->getCidsByRowId($rowid);
+        array_push($cidList, $rowid);
+
+        // 过滤 cid，确保所有 cid 为 integer 类型
+        $cidList = array_map(function ($item) {
+            return (int)$item;
+        }, $cidList);
+
+        $cids = implode(',', $cidList);
+        $map = "`rowid` IN ({$cids})";
+
+        return $map;
+    }
+
+    /**
+     * 返回当前模块（如，article）
+     * 备注：主要用于过滤多余的评论。当不同模块的 rowid 一致的时候，如果不通过模块名过滤，就会出现其他模块的评论。
+     *
+     * @return array
+     */
+    public function getCurrentModule()
+    {
+        $correctModuleName = util\Ibos::app()->setting->get('correctModuleName');
+        if (empty($correctModuleName)) {
+            $correctModuleName = util\Ibos::getCurrentModuleName();
+        }
+
+        return $correctModuleName;
     }
 
 }

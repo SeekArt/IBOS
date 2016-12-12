@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -70,13 +70,13 @@ class ezcMailParserOptions extends ezcBaseOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct(array $options = array())
     {
         $this->mailClass = 'ezcMail'; // default value for mail class is 'ezcMail'
         $this->fileClass = 'ezcMailFile'; // default value for file attachment class is 'ezcMailFile'
         $this->parseTextAttachmentsAsFiles = false; // default is to parse text attachments in ezcMailTextPart objects
 
-        parent::__construct( $options );
+        parent::__construct($options);
     }
 
     /**
@@ -93,56 +93,51 @@ class ezcMailParserOptions extends ezcBaseOptions
      *         if the class name passed as replacement fileClass does not
      *         inherit from ezcMailFile.
      * @param string $propertyName
-     * @param mixed  $propertyValue
+     * @param mixed $propertyValue
      * @ignore
      */
-    public function __set( $propertyName, $propertyValue )
+    public function __set($propertyName, $propertyValue)
     {
-        switch ( $propertyName )
-        {
+        switch ($propertyName) {
             case 'mailClass':
-                if ( !is_string( $propertyValue ) )
-                {
-                    throw new ezcBaseValueException( $propertyName, $propertyValue, 'string that contains a class name' );
+                if (!is_string($propertyValue)) {
+                    throw new ezcBaseValueException($propertyName, $propertyValue, 'string that contains a class name');
                 }
 
                 // Check if the passed classname actually implements the
                 // correct parent class.
-                if ( 'ezcMail' !== $propertyValue && !in_array( 'ezcMail', class_parents( $propertyValue ) ) )
-                {
-                    throw new ezcBaseInvalidParentClassException( 'ezcMail', $propertyValue );
+                if ('ezcMail' !== $propertyValue && !in_array('ezcMail', class_parents($propertyValue))) {
+                    throw new ezcBaseInvalidParentClassException('ezcMail', $propertyValue);
                 }
                 $this->properties[$propertyName] = $propertyValue;
                 break;
 
             case 'fileClass':
-                if ( !is_string( $propertyValue ) )
-                {
-                    throw new ezcBaseValueException( $propertyName, $propertyValue, 'string that contains a class name' );
+                if (!is_string($propertyValue)) {
+                    throw new ezcBaseValueException($propertyName, $propertyValue, 'string that contains a class name');
                 }
 
                 // Check if the passed classname actually implements the
                 // correct parent class.
-                if ( 'ezcMailFile' !== $propertyValue && !in_array( 'ezcMailFile', class_parents( $propertyValue ) ) )
-                {
-                    throw new ezcBaseInvalidParentClassException( 'ezcMailFile', $propertyValue );
+                if ('ezcMailFile' !== $propertyValue && !in_array('ezcMailFile', class_parents($propertyValue))) {
+                    throw new ezcBaseInvalidParentClassException('ezcMailFile', $propertyValue);
                 }
                 $this->properties[$propertyName] = $propertyValue;
                 ezcMailFileParser::$fileClass = $propertyValue;
                 break;
 
             case 'parseTextAttachmentsAsFiles':
-                if ( !is_bool( $propertyValue ) )
-                {
-                    throw new ezcBaseValueException( $propertyName, $propertyValue, 'bool' );
+                if (!is_bool($propertyValue)) {
+                    throw new ezcBaseValueException($propertyName, $propertyValue, 'bool');
                 }
                 $this->properties[$propertyName] = $propertyValue;
                 ezcMailPartParser::$parseTextAttachmentsAsFiles = $propertyValue;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $propertyName );
+                throw new ezcBasePropertyNotFoundException($propertyName);
         }
     }
 }
+
 ?>

@@ -106,130 +106,24 @@ use application\modules\role\utils\Role as RoleUtil;
 		</div>
 	</div>
 </div>
-<!--
-<div id="batch_import_dialog" style="display:none;">
-	<div class="batch-import-wrap" id="batch_import_wrap">
-		<div class="fill-nn" id="upload_wrap">
-			<div class="mb clearfix">
-				<div class="pull-left">
-					<i class="o-step-one"></i>
-				</div>
-				<div class="pull-right dialog-import-tip">
-					<p class="xwb mbs">准备组织与成员信息</p>
-					<p class="mbs">
-						<span>使用数据模板文件，录入组织与成员信息。为了保证导入成功，请根据表格中批注的数据格式要求进行录入。</span>
-						<span class="tcm">若您已准备好数据文件，请直接进行步骤二</span>
-					</p>
-					<p class="mbs">
-						<span>您当前的可登录用户数为</span>
-						<span class="current-num xcbu xwb fsm"></span>
-						<span>人，可再导入用户数为</span>
-						<span class="remain-num xco xwb fsm"></span>
-						<span>人。</span>
-					</p>
-					<a href="<?php //echo $this->createUrl( 'user/import', array( 'op' => 'downloadTpl' ) ); ?>" class="btn">下载模版</a>
-				</div>
-			</div>
-			<div class="clearfix">
-				<div class="pull-left">
-					<i class="o-step-two"></i>
-				</div>
-				<div class="pull-right dialog-import-tip">
-					<p class="xwb fsl mbs">上传数据文件</p>
-					<p class="mbs">
-						<span>上传数据文件，目前支持的文件类型为(*.xls、*.xlsx)</span>
-					</p>
-					<div class="att">
-                        <div class="attb">
-                            <a href="javascript:;" id="upload_btn">上传附件</a>
-                            <input type="hidden" id="attachmentid" name="attachmentid" value="">
-                        </div>
-                        <div>
-                            <div class="attl" id="file_target"></div>
-                        </div>
-                    </div>
-				</div>
-			</div>
-		</div>
-		<div class="import-dialog-footer clearfix">
-			<div class="pull-right">
-				<a href="javascript:;" class="btn" data-action="closeDialog">取消</a>
-				<a href="javascript:;" class="btn btn-primary" data-action="importExel">导入</a>
-			</div>
-		</div>
-	</div>
-	<div class="batch-result-wrap" id="batch_result_wrap" style="display:none;">
-		<div class="fill-nn">
-			<div class="xac batch-result-content">
-				<p class="mbs">
-					<i class="o-result-tip"></i>
-				</p>
-				<div class="fsl xwb mbs xac">
-					<span>成功导入</span>
-					<span class="xcbu" id="import_success">0</span>
-					<span>个员工，</span>
-					<span class="xco" id="import_failure">0</span>
-					<span>个员工无法导入</span>
-				</div>
-				<div class="xac mbs">
-					<span id="download_error_tip">请根据错误信息修正并重新导入文件。</span>
-				</div>
-				<div class="xac">
-					<a href="" class="btn" id="download_error_info">下载错误信息</a>
-				</div>
-			</div>
-		</div>
-		<div class="import-dialog-footer clearfix">
-			<div class="pull-right">
-				<a href="javascript:;" class="btn" data-action="closeDialog">关闭</a>
-				<a href="javascript:;" class="btn" data-action="againImport" data-param='{"type": "success"}'>重新导入</a>
-			</div>
-		</div>
-	</div>
-	<div class="batch-falure-wrap" id="batch_falure_wrap" style="display:none;">
-		<div class="fill-nn">
-			<div class="xac batch-result-content">
-				<p class="mbs">
-					<i class="o-failure-tip"></i>
-				</p>
-				<div class="xwb mbs xac">
-					<span class="info-wrap"></span>
-				</div>
-				<div class="xac mbs">
-					<span>访问地址：</span>
-					<a href="" class="website-address xcbu" target="_blink"></a>
-				</div>
-			</div>
-		</div>
-		<div class="import-dialog-footer clearfix">
-			<div class="pull-right">
-				<a href="javascript:;" class="btn" data-action="closeDialog">关闭</a>
-				<a href="javascript:;" class="btn" data-action="againImport" data-param='{"type": "failure"}'>重新导入</a>
-			</div>
-		</div>
-	</div>
-</div>
--->
-<div id="update_userinfo_dialog" style="display:none;">
+
+<div id="update_userinfo_dialog" style="width:350px; display:none;">
     <div class="user-form-con">
         <form class="form-horizontal" id="update_userinfo_form">
-        	<div class="dialog-form-header">
-        		<ul>
-        			<li class="active">
-        				<a class="form-head-list" data-type="dept" href="javascript:;">按部门</a>
-        			</li>
-        			<li>
-        				<a class="form-head-list" data-type="pos" href="javascript:;">按岗位</a>
-        			</li>
-        		</ul>
-        	</div>
-        	<div class="dialog-form-content">
-        		<div id="update_user_dept"></div>
-        		<div id="update_user_pos" style="display:none;"></div>
-        		<input type="hidden" name="deptid" value=""/>
-        		<input type="hidden" name="posid" value=""/>
-        		<input type="hidden" name="type" value="dept"/>
-        	</div>
+	        <ul class="nav nav-skid nav-skid-inverse">
+	            <li class="active"><a href="#update_user_dept" data-toggle="tab">按部门</a></li>
+	            <li><a href="#update_user_pos" data-toggle="tab">按岗位</a></li>
+	        </ul>
+	        <div class="tab-content">
+	        	<div id="update_user_dept" class="tab-pane tab-pane-block fill active">
+	        		<ul id="dept_tree" class="ztree dept-ztree"></ul>
+	        	</div>
+	        	<div id="update_user_pos" class="tab-pane tab-pane-block fill">
+	        		<ul id="pos_tree" class="ztree pos-ztree"></ul>
+	        	</div>
+	        </div>
+    		<input type="hidden" name="deptid" value=""/>
+    		<input type="hidden" name="posid" value=""/>
         </form>
     </div>
 </div>

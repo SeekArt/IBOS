@@ -21,7 +21,8 @@ use application\modules\diary\utils\Diary as DiaryUtil;
 use application\modules\user\utils\User as UserUtil;
 use CWidget;
 
-class DiarySublist extends CWidget {
+class DiarySublist extends CWidget
+{
 
     // 视图
     const VIEW = 'application.modules.diary.views.widget.sublist';
@@ -30,11 +31,13 @@ class DiarySublist extends CWidget {
     private $_instats;
     private $_fromController = 'review';
 
-    public function setFromController( $fromController ) {
+    public function setFromController($fromController)
+    {
         $this->_fromController = $fromController;
     }
 
-    public function getFromController() {
+    public function getFromController()
+    {
         return $this->_fromController;
     }
 
@@ -42,22 +45,24 @@ class DiarySublist extends CWidget {
      * 渲染侧栏挂件视图
      * @return void
      */
-    public function run() {
+    public function run()
+    {
         $data = array(
-            'deptArr' => UserUtil::getManagerDeptSubUserByUid( Ibos::app()->user->uid ),
+            'deptArr' => UserUtil::getManagerDeptSubUserByUid(Ibos::app()->user->uid),
             'dashboardConfig' => DiaryUtil::getSetting(),
             'deptRoute' => $this->inStats() ? 'stats/review' : 'review/index',
             'userRoute' => $this->inStats() ? 'stats/review' : 'review/personal',
             'fromController' => $this->getController()->getId()
         );
-        $this->render( self::VIEW, $data );
+        $this->render(self::VIEW, $data);
     }
 
     /**
      * 判断是否在统计视图
      * @return boolean
      */
-    public function inStats() {
+    public function inStats()
+    {
         return $this->getStats() === true;
     }
 
@@ -65,7 +70,8 @@ class DiarySublist extends CWidget {
      * 设置是否在统计视图变量
      * @param boolean $stats
      */
-    public function setStats( $stats ) {
+    public function setStats($stats)
+    {
         $this->_instats = $stats;
     }
 
@@ -73,8 +79,9 @@ class DiarySublist extends CWidget {
      * 获取是否在统计视图变量
      * @return boolean
      */
-    public function getStats() {
-        return (bool) $this->_instats;
+    public function getStats()
+    {
+        return (bool)$this->_instats;
     }
 
 }

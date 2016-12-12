@@ -36,7 +36,8 @@
 	$.fn.progressbar = function(options) {
 		var ret, argu = Array.prototype.slice.call(arguments, 1);
 		this.each(function() {
-			var $elem = $(this), data = $elem.data("progressbar");
+			var $elem = $(this),
+				data = $elem.data("progressbar");
 			if (!data) {
 				$elem.data("progressbar", data = new Progressbar(this, $.extend({}, $.fn.progressbar.defaults, options)));
 			}
@@ -87,8 +88,8 @@ var Wb = (function() {
 		var charcountTpl = "<strong><%=count%></strong>/<%=maxcount%>";
 		$txts.on("countchange", function(evt, data) {
 			var $elem = $(this),
-					$commentBox = $elem.closest('[data-node-type="commentBox"]'),
-					$commentBtn = $commentBox.find('[data-node-type="commentBtn"]');
+				$commentBox = $elem.closest('[data-node-type="commentBox"]'),
+				$commentBtn = $commentBox.find('[data-node-type="commentBtn"]');
 
 			var isSendable = 0 < data.count && data.count <= 140;
 			$commentBtn.toggleClass("btn-warning", isSendable).prop("disabled", !isSendable);
@@ -98,7 +99,9 @@ var Wb = (function() {
 			countdown: false
 		});
 		// 初始化 @ 或功能
-		Ibos.atwho($txts, {url: Ibos.app.url( 'message/api/searchat' )});
+		Ibos.atwho($txts, {
+			url: Ibos.app.url('message/api/searchat')
+		});
 	}
 	/**
 	 * 初始化新加载的微博
@@ -132,10 +135,12 @@ var Wb = (function() {
 	 */
 	function initCommentEmotion($context) {
 		//按钮[data-node-type="commentEmotion"]
-		$('[data-node-type="commentEmotion"]', $context).each(function(){
+		$('[data-node-type="commentEmotion"]', $context).each(function() {
 			var $elem = $(this),
 				$target = $elem.closest('[data-node-type="commentBox"]').find('[data-node-type="commentText"]');
-			$elem.ibosEmotion({ target: $target });
+			$elem.ibosEmotion({
+				target: $target
+			});
 		});
 	}
 
@@ -145,10 +150,12 @@ var Wb = (function() {
 	 * @param  {Object} $context 传入Jquery节点对象
 	 */
 	function initForwardEmotion($context) {
-		$('[data-node-type="forwardEmotion"]', $context).each(function(){
+		$('[data-node-type="forwardEmotion"]', $context).each(function() {
 			var $elem = $(this),
 				$target = $elem.closest('[data-node-type="feedForwardBox"]').find('[data-node-type="textarea"]');
-			$elem.ibosEmotion({ target: $target });
+			$elem.ibosEmotion({
+				target: $target
+			});
 		});
 	}
 
@@ -164,7 +171,7 @@ var Wb = (function() {
 		MAX_LOAD_TIMES: 3, // 最大可加载次数
 		/**
 		 * 发布
-	 	 * @method publish
+		 * @method publish
 		 * @param  {Object} param 传入JSON格式数据
 		 * @return {Object}       返回deffered对象
 		 */
@@ -179,8 +186,8 @@ var Wb = (function() {
 		 */
 		insertFeedBefore: function(html) {
 			var $feedList = $('[data-node-type="feedList"]'),
-					$newBar = $feedList.children().eq(0),
-					$node = $(html).hide();
+				$newBar = $feedList.children().eq(0),
+				$node = $(html).hide();
 			initFeedBox($node);
 			initCommentEmotion($node);
 			// 如果列表中有新微博提醒栏，则插入在提醒栏之后
@@ -209,10 +216,10 @@ var Wb = (function() {
 			var that = this;
 			$.get(Wb.loadNewUrl, {
 				maxId: Wb.maxId,
-				"new" : 1,
+				"new": 1,
 				type: Wb.type,
 				feedtype: Wb.feedType,
-				uid:Ibos.app.g('uid')
+				uid: Ibos.app.g('uid')
 			}, function(res) {
 				that.updateNewBar(res);
 			}, 'json');
@@ -242,7 +249,7 @@ var Wb = (function() {
 		 * @method updateFeed
 		 */
 		updateFeed: function() {
-			var $newBar = $("[data-node-type='feedNewBar']"), 
+			var $newBar = $("[data-node-type='feedNewBar']"),
 				html = $newBar.data('html');
 			Wb.maxId = $newBar.data("maxId");
 			this.insertFeedBefore(html);
@@ -272,7 +279,9 @@ var Wb = (function() {
 						$fwBtn.toggleClass("btn-primary", isSendable).prop("disabled", !isSendable);
 					}).charCount();
 					// 初始化 At 功能
-					Ibos.atwho($fwText, {url: Ibos.app.url( 'message/api/searchat' )});
+					Ibos.atwho($fwText, {
+						url: Ibos.app.url('message/api/searchat')
+					});
 
 					initForwardEmotion($content);
 
@@ -359,7 +368,7 @@ var Wb = (function() {
 			},
 			// 转发微博
 			"feedForward": function(param, elem) {
-				var $form = $(elem.form), 
+				var $form = $(elem.form),
 					$forwardBox = $form.closest("[data-node-type='feedForwardBox']");
 				$forwardBox.waiting(null, 'normal', true);
 				Wb.feedForward($form.serializeArray()).done(function(res) {
@@ -374,9 +383,9 @@ var Wb = (function() {
 			// 展开评论框
 			"openFeedComment": function(param, elem) {
 				var $elem = $(elem),
-						$feedBox = $elem.closest('[data-node-type="feedBox"]'),
-						$commentText = $feedBox.find('[data-node-type="commentText"]'),
-						$target = $feedBox.find('[data-node-type="commentBox"]');
+					$feedBox = $elem.closest('[data-node-type="feedBox"]'),
+					$commentText = $feedBox.find('[data-node-type="commentText"]'),
+					$target = $feedBox.find('[data-node-type="commentBox"]');
 				$commentText.trigger("focus");
 				if (!$target.hasClass('loaded')) {
 					// modify by banyan：修改为只执行一个进程只执行一次加载
@@ -387,10 +396,11 @@ var Wb = (function() {
 			// 发布评论
 			"comment": function(param, elem) {
 				var $elem = $(elem),
-						$target = $elem.closest('[data-node-type="commentBox"]'),
-						$cmList = $target.find(".cmt-sub"),
-						$commentText = $target.find('textarea'),
-						interval = Ibos.app.g("submitInterval") || 0;
+					$target = $elem.closest('[data-node-type="commentBox"]'),
+					$cmList = $target.find(".cmt-sub"),
+					$commentText = $target.find('textarea'),
+					interval = Ibos.app.g("submitInterval") || 0;
+
 				if (!$elem.data("disabledSubmit")) {
 					param.content = $commentText.val();
 					param.tocid = $elem.data('tocid');
@@ -417,11 +427,16 @@ var Wb = (function() {
 							Ui.tip(res.msg, 'danger');
 						}
 					}, "json");
+				} else {
+					Ui.tip(Ibos.l('WB.PUBLISH_TIME_LIMIT', {
+						time: interval / 1000
+					}), 'warning');
 				}
 			},
 			// 赞, 取消赞
 			"feedDigg": function(param, elem) {
-				var $elem = $(elem), $diggBox, $diggList;
+				var $elem = $(elem),
+					$diggBox, $diggList;
 				Wb.feedDigg(param).done(function(res) {
 					var $items;
 					if (res.isSuccess) {
@@ -460,9 +475,9 @@ var Wb = (function() {
 				Wb.feedDigg(param).done(function(res) {
 					if (res.isSuccess && !res.digg) {
 						var $feedBox = $('[data-node-type="feedBox"][data-feed-id="' + param.feedid + '"]'),
-								$feedDiggBtn = $feedBox.find('[data-node-type="feedDiggBtn"]'),
-								$diggItem = $(elem).parent(),
-								$diggBox = $diggItem.closest('[data-node-type="feedDiggBox"]');
+							$feedDiggBtn = $feedBox.find('[data-node-type="feedDiggBtn"]'),
+							$diggItem = $(elem).parent(),
+							$diggBox = $diggItem.closest('[data-node-type="feedDiggBox"]');
 						// 更新赞状态
 						$feedDiggBtn.html('<i class="o-wbi-good"></i>' + Ibos.l('WB.DIGG') + '（' + res.count + '）');
 
@@ -500,7 +515,8 @@ var Wb = (function() {
 			},
 			// 删除一篇微博
 			"removeFeed": function(param, elem) {
-				var $elem = $(elem), $feedBox = $elem.closest('[data-node-type="feedBox"]');
+				var $elem = $(elem),
+					$feedBox = $elem.closest('[data-node-type="feedBox"]');
 				Ui.confirm(Ibos.l("WB.REMOVE_FEED_CONFIRM"), function() {
 					Wb.removeFeed(param).done(function(res) {
 						if (res.isSuccess) {
@@ -509,7 +525,9 @@ var Wb = (function() {
 							});
 							Ui.showCreditPrompt(); //提醒积分变动
 							if (param.redirectToUid) {
-								var url = Ibos.app.url('weibo/personal/index', {uid: param.redirectToUid});
+								var url = Ibos.app.url('weibo/personal/index', {
+									uid: param.redirectToUid
+								});
 								window.location.href = url;
 							}
 						} else {
@@ -522,9 +540,9 @@ var Wb = (function() {
 			// 点击回复后的操作
 			"reply": function(param, elem) {
 				var $elem = $(elem),
-						$feedBox = $elem.closest('[data-node-type="feedBox"]'),
-						$commentText = $feedBox.find('[data-node-type="commentText"]'),
-						$commentBtn = $feedBox.find('[data-node-type="commentBtn"]');
+					$feedBox = $elem.closest('[data-node-type="feedBox"]'),
+					$commentText = $feedBox.find('[data-node-type="commentText"]'),
+					$commentBtn = $feedBox.find('[data-node-type="commentBtn"]');
 				$commentBtn.attr({
 					'data-touid': param.touid,
 					'data-tocid': param.tocid
@@ -546,7 +564,8 @@ var Wb = (function() {
 		// 评论框展开
 		$doc.on({
 			"focus": function() {
-				var $elem = $(this), $commentBox = $elem.closest('[data-node-type="commentBox"]');
+				var $elem = $(this),
+					$commentBox = $elem.closest('[data-node-type="commentBox"]');
 				$commentBox.addClass("open");
 			}
 		}, '[data-node-type="commentText"]');
@@ -554,8 +573,8 @@ var Wb = (function() {
 		// 点赞
 		(function() {
 			var $diggBox = $('#menu_digg_box'),
-					$diggList = $diggBox.find('[data-node-type="feedDiggList"]'),
-					timerId;
+				$diggList = $diggBox.find('[data-node-type="feedDiggList"]'),
+				timerId;
 			var _hide = function() {
 				clearTimeout(timerId);
 				timerId = setTimeout(function() {
@@ -564,7 +583,8 @@ var Wb = (function() {
 			};
 			$(document).on({
 				"mouseenter": function() {
-					var param = Ibos.app.getEvtParams(this), $elem = $(this);
+					var param = Ibos.app.getEvtParams(this),
+						$elem = $(this);
 					clearTimeout(timerId);
 					timerId = setTimeout(function() {
 						$.get(Ibos.app.url('message/feed/simpledigglist'), param, function(res) {
@@ -594,13 +614,15 @@ var Wb = (function() {
 		})();
 
 		// 初始化字数统计
-		if($.fn.charCount) {
+		if ($.fn.charCount) {
 			$(".wb-pub-text").charCount();
 		}
 		// 初始化tooltip
 		$("[data-toggle='tooltip']").tooltip();
 		// 初始化 @ 功能
-		Ibos.atwho && Ibos.atwho($('[data-node-type="textarea"]'), {url: Ibos.app.url( 'message/api/searchat' )});
+		Ibos.atwho && Ibos.atwho($('[data-node-type="textarea"]'), {
+			url: Ibos.app.url('message/api/searchat')
+		});
 		// 初始化所有微博状态
 		initFeedBox($('[data-node-type="feedBox"]'));
 		(function() {
@@ -608,21 +630,21 @@ var Wb = (function() {
 			// 最多可以加载3次
 			// 翻页后不出现
 			var $feedList = $('[data-node-type="feedList"]'),
-					$loadMoreFeed = $('[data-node-type="loadMoreFeed"]'),
-					$loadMoreFeedTip = $loadMoreFeed.find("[data-node-type='loadMoreFeedTip']"),
-					isLoading = false;
+				$loadMoreFeed = $('[data-node-type="loadMoreFeed"]'),
+				$loadMoreFeedTip = $loadMoreFeed.find("[data-node-type='loadMoreFeedTip']"),
+				isLoading = false;
 			var loadMore = function() {
 				// 按钮改变为读取中状态
 				$loadMoreFeedTip.show();
 				isLoading = true;
 				var param = {
-						loadcount: Wb.loadCount,
-						loadId: Wb.loadId,
-						type: Wb.type,
-						uid: Ibos.app.g('uid'),
-						feedkey: Ibos.app.g('feedkey'),
-						feedtype: Wb.feedType
-					};
+					loadcount: Wb.loadCount,
+					loadId: Wb.loadId,
+					type: Wb.type,
+					uid: Ibos.app.g('uid'),
+					feedkey: Ibos.app.g('feedkey'),
+					feedtype: Wb.feedType
+				};
 				Wb.loadMoreFeed(param).done(function(res) {
 					var $temp;
 					if (res.status == 1) {
@@ -640,7 +662,7 @@ var Wb = (function() {
 							// 初始化表情
 							initCommentEmotion($temp);
 							$feedList.children().eq(-2).before($temp);
-							
+
 						}
 						isLoading = false;
 					} else if (res.status == 0) {

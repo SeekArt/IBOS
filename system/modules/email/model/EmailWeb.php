@@ -6,13 +6,16 @@ use application\core\model\Model;
 use application\core\utils\Convert;
 use application\core\utils\Ibos;
 
-class EmailWeb extends Model {
+class EmailWeb extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{email_web}}';
     }
 
@@ -41,12 +44,13 @@ class EmailWeb extends Model {
      * @param integer $uid 用户id
      * @return array
      */
-    public function fetchAllByUid( $uid ) {
+    public function fetchAllByUid($uid)
+    {
         $data = array(
             'condition' => "uid = $uid",
             'order' => 'isdefault DESC',
         );
-        return $this->fetchAllSortByPk( 'webid', $data );
+        return $this->fetchAllSortByPk('webid', $data);
     }
 
     /**
@@ -54,18 +58,19 @@ class EmailWeb extends Model {
      * @param string $id
      * @return type
      */
-    public function delClear( $id, $uid ) {
+    public function delClear($id, $uid)
+    {
         $fidArr = Ibos::app()->db->createCommand()
-                ->select( 'fid' )
-                ->from( $this->tableName() )
-                ->where( "FIND_IN_SET(webid,'{$id}') AND uid = {$uid}" )
-                ->queryAll();
-        $fids = Convert::getSubByKey( $fidArr, 'fid' );
-        if ( !empty( $fids ) ) {
-            $fid = implode( ',', $fids );
-            Ibos::app()->db->createCommand()->delete( '{{email_folder}}', "FIND_IN_SET(fid,'{$fid}') AND uid = {$uid}" );
-            Ibos::app()->db->createCommand()->update( '{{email}}', array( 'fid' => 1 ), "FIND_IN_SET(fid,'{$fid}') AND toid = {$uid}" );
-            return $this->deleteAll( "FIND_IN_SET(webid,'{$id}')" );
+            ->select('fid')
+            ->from($this->tableName())
+            ->where("FIND_IN_SET(webid,'{$id}') AND uid = {$uid}")
+            ->queryAll();
+        $fids = Convert::getSubByKey($fidArr, 'fid');
+        if (!empty($fids)) {
+            $fid = implode(',', $fids);
+            Ibos::app()->db->createCommand()->delete('{{email_folder}}', "FIND_IN_SET(fid,'{$fid}') AND uid = {$uid}");
+            Ibos::app()->db->createCommand()->update('{{email}}', array('fid' => 1), "FIND_IN_SET(fid,'{$fid}') AND toid = {$uid}");
+            return $this->deleteAll("FIND_IN_SET(webid,'{$id}')");
         } else {
             return 0;
         }
@@ -74,16 +79,17 @@ class EmailWeb extends Model {
     /**
      * 列表页取数据
      * @param integer $uid 用户ID
-     * @param integer $offset 
+     * @param integer $offset
      * @param integer $limit
      * @return array
      */
-    public function fetchByList( $uid, $offset = 0, $limit = 10 ) {
-        $list = $this->fetchAll( array(
-            'condition' => 'uid = ' . intval( $uid ),
-            'offset' => intval( $offset ),
-            'limit' => intval( $limit )
-                )
+    public function fetchByList($uid, $offset = 0, $limit = 10)
+    {
+        $list = $this->fetchAll(array(
+                'condition' => 'uid = ' . intval($uid),
+                'offset' => intval($offset),
+                'limit' => intval($limit)
+            )
         );
         return $list;
     }

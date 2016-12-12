@@ -10,18 +10,19 @@ namespace Aliyun\Common\Communication;
 
 use Aliyun\Common\Utilities\AssertUtils;
 
-abstract class HttpMessage {
-    
+abstract class HttpMessage
+{
+
     /**
      * Headers in http head.
      * @var array
-    */
+     */
     protected $headers = array();
-    
+
     /**
      * The content for http body
      * @var string|resource
-    */
+     */
     protected $content = null;
 
     /**
@@ -35,29 +36,34 @@ abstract class HttpMessage {
     protected $contentMeta;
 
 
-    public function getHeaders() {
+    public function getHeaders()
+    {
         return $this->headers;
     }
 
-    public function getHeader($name) {
+    public function getHeader($name)
+    {
         AssertUtils::assertString($name, 'HttpHeaderName');
         if (!isset($this->headers[$name])) {
             return null;
         }
         return $this->headers[$name];
     }
-    
-    public function addHeader($header, $value) {
+
+    public function addHeader($header, $value)
+    {
         AssertUtils::assertString($header, 'HttpHeaderName');
         AssertUtils::assertString($value, 'HttpHeaderValue');
         $this->headers[$header] = $value;
     }
-    
-    public function getContent() {
+
+    public function getContent()
+    {
         return $this->content;
     }
-    
-    public function setContent($content) {
+
+    public function setContent($content)
+    {
 
         if ($content == null) return;
 
@@ -79,14 +85,16 @@ abstract class HttpMessage {
     /**
      * @return bool|int The original offset of content.
      */
-    public function getOffset() {
+    public function getOffset()
+    {
         return $this->offset;
     }
 
     /**
      * @return bool
      */
-    public function seekable() {
+    public function seekable()
+    {
         if (is_string($this->content) || $this->content === null) return true;
         return $this->contentMeta['seekable'];
     }
@@ -94,7 +102,8 @@ abstract class HttpMessage {
     /**
      * @return bool
      */
-    public function rewind() {
+    public function rewind()
+    {
         if (is_string($this->content) || $this->content === null) {
             return true;
         }
@@ -110,7 +119,8 @@ abstract class HttpMessage {
      * Close the content.
      * @return bool Returns true on success or false on failure.
      */
-    public function close() {
+    public function close()
+    {
         if (is_resource($this->content)) {
             return fclose($this->content);
         }

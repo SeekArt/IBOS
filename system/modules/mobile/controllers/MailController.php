@@ -9,10 +9,10 @@
  */
 /**
  * 移动端控制器文件
- * 
+ *
  * @package application.modules.mobile.controllers
  * @author Aeolus <Aeolus@ibos.com.cn>
- * @version $Id: MailController.php 7023 2016-05-10 08:01:05Z Aeolus $
+ * @version $Id$
  */
 
 namespace application\modules\mobile\controllers;
@@ -26,65 +26,69 @@ use application\modules\email\model\Email;
 use application\modules\email\model\EmailBody;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\utils\Email as EmailUtil;
+use application\modules\email\utils\RoleUtils;
 use application\modules\mobile\utils\Mobile;
 use application\modules\user\model\User;
 
-class MailController extends BaseController {
+class MailController extends BaseController
+{
 
-	/**
-	 * 默认页,获取主页面各项数据统计
-	 * @return void 
-	 */
-	public function actionIndex() {
-		$type = isset( $_GET["type"] ) ? $_GET["type"] : "";
-		$keyword = isset( $_GET["search"] ) ? $_GET["search"] : "";
-		$lastid = isset( $_GET["lastid"] ) ? intval( $_GET["lastid"] ) : 0;
+    /**
+     * 默认页,获取主页面各项数据统计
+     * @return void
+     */
+    public function actionIndex()
+    {
+        $type = isset($_GET["type"]) ? $_GET["type"] : "";
+        $keyword = isset($_GET["search"]) ? $_GET["search"] : "";
+        $lastid = isset($_GET["lastid"]) ? intval($_GET["lastid"]) : 0;
 
-		$uid = Ibos::app()->user->uid;
-		$list = $this->page( $type, $uid, $lastid, $keyword );
-		$this->ajaxReturn( array( 'data' => $list['list'], 'lastid' => $list['minid'] ), Mobile::dataType() );
-	}
+        $uid = Ibos::app()->user->uid;
+        $list = $this->page($type, $uid, $lastid, $keyword);
+        $this->ajaxReturn(array('data' => $list['list'], 'lastid' => $list['minid']), Mobile::dataType());
+    }
 
-	public function page( $type, $uid, $lastid, $keyword = '' ) {
-		$param = Email::model()->getListParam( $type, $uid );
-		$condition = $param['condition'];
-		if ( !empty( $keyword ) ) {
-			$condition .= " AND (eb.subject LIKE '%{$keyword}%' OR eb.content LIKE '%{$keyword}%') ";
-		}
-		$where = $lastid ? $condition . " and e.emailid < {$lastid}" : $condition;
-		$group = isset( $param['group'] ) ? $param['group'] : '';
-		$list = Ibos::app()->db->createCommand()
-				->select( "*" )
-				->from( "{{email}} e" )
-				->leftJoin( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
-				->where( $where )
-				->order( "e.emailid desc" )
-				->group( $group )
-				->limit( 10 )
-				->queryAll();
-		$ids = array();
-		foreach ( $list as &$value ) {
-			$ids[] = $value['emailid'];
-			if ( !empty( $value['fromid'] ) ) {
-				$value['fromuser'] = User::model()->fetchRealnameByUid( $value['fromid'] );
-			} else {
-				$value['fromuser'] = $value['fromwebmail'];
-			}
-		}
-		$minid = !empty( $ids ) ? min( $ids ) : '';
-		$email = Ibos::app()->db->createCommand()
-				->select( "*" )
-				->from( "{{email}} e" )
-				->join( "{{email_body}} eb", "e.bodyid = eb.bodyid " )
-				->where( sprintf( "%s and e.emailid < %d", $where, intval( $minid ) ) )
-				->queryRow();
-		$data = array(
-			'list' => $list,
-			'email' => $email,
-			'minid' => empty( $email ) ? '' : $minid // 没有更多了返回空
-		);
-		return $data;
-	}
+    public function page($type, $uid, $lastid, $keyword = '')
+    {
+        $param = Email::model()->getListParam($type, $uid);
+        $condition = $param['condition'];
+        if (!empty($keyword)) {
+            $condition .= " AND (eb.subject LIKE '%{$keyword}%' OR eb.content LIKE '%{$keyword}%') ";
+        }
+        $where = $lastid ? $condition . " and e.emailid < {$lastid}" : $condition;
+        $group = isset($param['group']) ? $param['group'] : '';
+        $list = Ibos::app()->db->createCommand()
+            ->select("*")
+            ->from("{{email}} e")
+            ->leftJoin("{{email_body}} eb", "e.bodyid = eb.bodyid ")
+            ->where($where)
+            ->order("e.emailid desc")
+            ->group($group)
+            ->limit(10)
+            ->queryAll();
+        $ids = array();
+        foreach ($list as &$value) {
+            $ids[] = $value['emailid'];
+            if (!empty($value['fromid'])) {
+                $value['fromuser'] = User::model()->fetchRealnameByUid($value['fromid']);
+            } else {
+                $value['fromuser'] = $value['fromwebmail'];
+            }
+        }
+        $minid = !empty($ids) ? min($ids) : '';
+        $email = Ibos::app()->db->createCommand()
+            ->select("*")
+            ->from("{{email}} e")
+            ->join("{{email_body}} eb", "e.bodyid = eb.bodyid ")
+            ->where(sprintf("%s and e.emailid < %d", $where, intval($minid)))
+            ->queryRow();
+        $data = array(
+            'list' => $list,
+            'email' => $email,
+            'minid' => empty($email) ? '' : $minid // 没有更多了返回空
+        );
+        return $data;
+    }
 
 //	public function searchPage( $type, $uid, $lastid, $condition ) {
 //		$where = " e.isdel = 0 ";
@@ -163,106 +167,119 @@ class MailController extends BaseController {
 //		$this->ajaxReturn( $datas, Mobile::dataType() );
 //	}
 
-	public function actionCategory() {
-		$uid = Ibos::app()->user->uid;
-		$myFolders = EmailFolder::model()->fetchAllUserFolderByUid( $uid );
-		// 获取未读邮件数目
-		$notReadCount = Email::model()->countUnreadByListParam( 'inbox', $uid );
-		//$notReadCount = Email::model()->countNotReadByToid( $uid, 'web' );
-		$return = array(
-			'folders' => $myFolders,
-			'notread' => $notReadCount
-		);
-		$this->ajaxReturn( $return, Mobile::dataType() );
-	}
+    public function actionCategory()
+    {
+        $uid = Ibos::app()->user->uid;
+        $myFolders = EmailFolder::model()->fetchAllUserFolderByUid($uid);
+        // 获取未读邮件数目
+        $notReadCount = Email::model()->countUnreadByListParam('inbox', $uid);
+        //$notReadCount = Email::model()->countNotReadByToid( $uid, 'web' );
+        $return = array(
+            'folders' => $myFolders,
+            'notread' => $notReadCount
+        );
+        $this->ajaxReturn($return, Mobile::dataType());
+    }
 
-	public function actionShow() {
-		$id = isset( $_GET["id"] ) ? $_GET['id'] : 0;
+    public function actionShow()
+    {
+        $id = (int)Env::getRequest('id');
 
-		$email = Email::model()->fetchById( $id, 0 );
-		//处理附件
-		if ( !empty( $email ) ) {
-			if ( !empty( $email['attachmentid'] ) ) {
-				$email["attach"] = Attach::getAttach( $email["attachmentid"], TRUE, FALSE, FALSE, FALSE, TRUE );
-				$attachmentArr = explode( ",", $email['attachmentid'] );
-			}
-		}
-		Email::model()->setRead( $id, Ibos::app()->user->uid );
+        $email = Email::model()->fetchById($id, 0);
+        // 阅读权限判断
+        $isReceiver = RoleUtils::getInstance()->canRead($this->uid, $email['toid'], $email['fromid'], $email['copytoids'], $email['toids']);
+        if ($isReceiver === false) {
+            return $this->ajaxBaseReturn(false, array(), Ibos::lang('View access invalid'));
+        }
+        //处理附件
+        if (!empty($email)) {
+            if (!empty($email['attachmentid'])) {
+                $email["attach"] = Attach::getAttach($email["attachmentid"], true, false, false, false, true);
+                $attachmentArr = explode(",", $email['attachmentid']);
+            }
+        }
+        Email::model()->setRead($id, Ibos::app()->user->uid);
 
-		$this->ajaxReturn( $email, Mobile::dataType() );
-	}
+        $this->ajaxReturn($email, Mobile::dataType());
+    }
 
-	public function actionDraftShow() {
-		$id = isset( $_GET["bodyid"] ) ? $_GET['bodyid'] : 0;
-		$emailBody = EmailBody::model()->fetchByPk( $id );
+    public function actionDraftShow()
+    {
+        $id = isset($_GET["bodyid"]) ? $_GET['bodyid'] : 0;
+        $emailBody = EmailBody::model()->fetchByPk($id);
 
-		$this->ajaxReturn( $emailBody, Mobile::dataType() );
-	}
+        $this->ajaxReturn($emailBody, Mobile::dataType());
+    }
 
-	public function actionEdit() {
-		$bodyData["subject"] = Env::getRequest( 'subject' );
-		$bodyData["content"] = Env::getRequest( 'content' );
-		$bodyData["toids"] = Env::getRequest( 'toids' );
-		$bodyData["copytoids"] = Env::getRequest( 'ccids' );
-		$bodyData["secrettoids"] = Env::getRequest( 'mcids' );
-		$bodyData["isneedreceipt"] = 0;
-		$bodyData['issend'] = 1;
-		$bodyData["fromid"] = Ibos::app()->user->uid;
-		$bodyData["sendtime"] = time();
+    public function actionEdit()
+    {
+        $bodyData["subject"] = Env::getRequest('subject');
+        $bodyData["content"] = Env::getRequest('content');
+        $bodyData["toids"] = Env::getRequest('toids');
+        $bodyData["copytoids"] = Env::getRequest('ccids');
+        $bodyData["secrettoids"] = Env::getRequest('mcids');
+        $bodyData["isneedreceipt"] = 0;
+        $bodyData['issend'] = 1;
+        $bodyData["fromid"] = Ibos::app()->user->uid;
+        $bodyData["sendtime"] = time();
 
-		$bodyId = EmailBody::model()->add( $bodyData, true );
-		Email::model()->send( $bodyId, $bodyData );
-		$emailBody = EmailBody::model()->fetch( "bodyid = {$bodyId}" );
-		$this->ajaxReturn( $emailBody, Mobile::dataType() );
-	}
+        $bodyId = EmailBody::model()->add($bodyData, true);
+        Email::model()->send($bodyId, $bodyData);
+        $emailBody = EmailBody::model()->fetch("bodyid = {$bodyId}");
+        $this->ajaxReturn($emailBody, Mobile::dataType());
+    }
 
-	public function actionDel() {
-		$ids = Env::getRequest( 'emailid' );
-		$id = StringUtil::filterStr( $ids );
-		$status = false;
-		if ( !empty( $id ) ) {
-			$condition = 'toid = ' . intval( Ibos::app()->user->uid ) . ' AND FIND_IN_SET(emailid,"' . $id . '")';
-			$status = Email::model()->setField( 'isdel', 1, $condition );
-		}
-		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
-		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
-	}
+    public function actionDel()
+    {
+        $ids = Env::getRequest('emailid');
+        $id = StringUtil::filterStr($ids);
+        $status = false;
+        if (!empty($id)) {
+            $condition = 'toid = ' . intval(Ibos::app()->user->uid) . ' AND FIND_IN_SET(emailid,"' . $id . '")';
+            $status = Email::model()->setField('isdel', 1, $condition);
+        }
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
+        $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg), Mobile::dataType());
+    }
 
-	public function actionMark() {
-		$id = Env::getRequest( 'emailid' );
-		$status = false;
-		if ( !empty( $id ) ) {
-			$condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
-			$markFlag = Env::getRequest( 'ismark' );
-			$ismark = strcasecmp( $markFlag, 'true' ) == 0 ? 1 : 0;
-			$status = Email::model()->setField( 'ismark', $ismark, $condition );
-		}
-		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
-		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
-	}
+    public function actionMark()
+    {
+        $id = Env::getRequest('emailid');
+        $status = false;
+        if (!empty($id)) {
+            $condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
+            $markFlag = Env::getRequest('ismark');
+            $ismark = strcasecmp($markFlag, 'true') == 0 ? 1 : 0;
+            $status = Email::model()->setField('ismark', $ismark, $condition);
+        }
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
+        $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg), Mobile::dataType());
+    }
 
-	// 彻底删除邮件
-	public function actionDelete() {
-		$ids = Env::getRequest( 'emailid' );
-		$id = StringUtil::filterStr( $ids );
-		$status = false;
-		if ( !empty( $id ) ) {
-			$status = Email::model()->completelyDelete( explode( ',', $id ), Ibos::app()->user->uid );
-		}
-		$this->ajaxReturn( array( 'isSuccess' => !!$status ), Mobile::dataType() );
-	}
+    // 彻底删除邮件
+    public function actionDelete()
+    {
+        $ids = Env::getRequest('emailid');
+        $id = StringUtil::filterStr($ids);
+        $status = false;
+        if (!empty($id)) {
+            $status = Email::model()->completelyDelete(explode(',', $id), Ibos::app()->user->uid);
+        }
+        $this->ajaxReturn(array('isSuccess' => !!$status), Mobile::dataType());
+    }
 
-	// 恢复邮件
-	public function actionRecovery() {
-		$ids = Env::getRequest( 'emailid' );
-		$id = StringUtil::filterStr( $ids );
-		$status = false;
-		if ( !empty( $id ) ) {
-			$condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
-			$status = Email::model()->setField( 'isdel', 0, $condition );
-		}
-		$errorMsg = !$status ? Ibos::lang( 'Operation failure', 'message' ) : '';
-		$this->ajaxReturn( array( 'isSuccess' => !!$status, 'errorMsg' => $errorMsg ), Mobile::dataType() );
-	}
+    // 恢复邮件
+    public function actionRecovery()
+    {
+        $ids = Env::getRequest('emailid');
+        $id = StringUtil::filterStr($ids);
+        $status = false;
+        if (!empty($id)) {
+            $condition = 'toid = ' . $this->uid . ' AND FIND_IN_SET(emailid,"' . $id . '")';
+            $status = Email::model()->setField('isdel', 0, $condition);
+        }
+        $errorMsg = !$status ? Ibos::lang('Operation failure', 'message') : '';
+        $this->ajaxReturn(array('isSuccess' => !!$status, 'errorMsg' => $errorMsg), Mobile::dataType());
+    }
 
 }

@@ -30,39 +30,44 @@ namespace Aliyun\Common\Exceptions;
  *
  * @package Aliyun\Common\Exceptions
  */
-class ServiceException extends \RuntimeException {
+class ServiceException extends \RuntimeException
+{
     protected $requestId;
     protected $hostId;
     protected $errorCode;
-    
-    public function __construct($errorCode, $message, $requestId, $hostId) {
+
+    public function __construct($errorCode, $message, $requestId, $hostId)
+    {
         parent::__construct($message);
         $this->requestId = $requestId;
         $this->hostId = $hostId;
         $this->errorCode = $errorCode;
     }
-    
+
     /**
      * 返回错误代码
      * @return 错误代码
      */
-    public function getErrorCode() {
+    public function getErrorCode()
+    {
         return $this->errorCode;
     }
-    
+
     /**
      * 返回Request标识。
      * @return Request标识。
      */
-    public function getRequestId() {
+    public function getRequestId()
+    {
         return $this->requestId;
     }
-    
+
     /**
      * 返回Host标识。
      * @return Host标识。
      */
-    public function getHostId() {
+    public function getHostId()
+    {
         return $this->hostId;
     }
 }

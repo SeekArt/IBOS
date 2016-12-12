@@ -15,9 +15,9 @@ class ParserRegistry
 
     /** @var array Mapping of parser name to default class */
     protected $mapping = array(
-        'message'      => 'Guzzle\\Parser\\Message\\MessageParser',
-        'cookie'       => 'Guzzle\\Parser\\Cookie\\CookieParser',
-        'url'          => 'Guzzle\\Parser\\Url\\UrlParser',
+        'message' => 'Guzzle\\Parser\\Message\\MessageParser',
+        'cookie' => 'Guzzle\\Parser\\Cookie\\CookieParser',
+        'url' => 'Guzzle\\Parser\\Url\\UrlParser',
         'uri_template' => 'Guzzle\\Parser\\UriTemplate\\UriTemplate',
     );
 
@@ -65,8 +65,8 @@ class ParserRegistry
     /**
      * Register a custom parser by name with the register
      *
-     * @param string $name   Name or handle of the parser to register
-     * @param mixed  $parser Instantiated parser to register
+     * @param string $name Name or handle of the parser to register
+     * @param mixed $parser Instantiated parser to register
      */
     public function registerParser($name, $parser)
     {

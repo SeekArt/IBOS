@@ -14,13 +14,15 @@ use application\core\utils\Ibos;
 use CHttpException;
 use CHttpRequest;
 
-class Request extends CHttpRequest {
+class Request extends CHttpRequest
+{
     /**
      * Returns whether this is an AJAX (XMLHttpRequest) request.
      *
      * @return boolean whether this is an AJAX (XMLHttpRequest) request.
      */
-    public function getIsAjaxRequest() {
+    public function getIsAjaxRequest()
+    {
         return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') || isset($_SERVER['HTTP_ISCORS']);
     }
 
@@ -33,7 +35,8 @@ class Request extends CHttpRequest {
      * @param bool $terminate
      * @throws CHttpException
      */
-    public function sendFile($fileName, $content, $mimeType = null, $terminate = true) {
+    public function sendFile($fileName, $content, $mimeType = null, $terminate = true)
+    {
         if ($mimeType === null) {
             if (($mimeType = \CFileHelper::getMimeTypeByExtension($fileName)) === null)
                 $mimeType = 'text/plain';
@@ -135,4 +138,24 @@ class Request extends CHttpRequest {
         } else
             echo $content;
     }
+
+    /**
+     * 重写 getHostInfo 方法
+     *
+     * @param string $schema
+     * @return string
+     */
+    public function getHostInfo($schema = '')
+    {
+        if (strtolower(ENGINE) == 'saas') {
+            $unit = Ibos::app()->setting->get('setting/unit');
+            if (isset($unit['systemurl']) && !empty($unit['systemurl'])) {
+                return $unit['systemurl'];
+            }
+        }
+
+        return parent::getHostInfo($schema);
+    }
+
+
 }

@@ -42,8 +42,8 @@ class HistoryPlugin implements EventSubscriberInterface, \IteratorAggregate, \Co
     /**
      * Add a request to the history
      *
-     * @param RequestInterface $request  Request to add
-     * @param Response         $response Response of the request
+     * @param RequestInterface $request Request to add
+     * @param Response $response Response of the request
      *
      * @return HistoryPlugin
      */
@@ -70,7 +70,7 @@ class HistoryPlugin implements EventSubscriberInterface, \IteratorAggregate, \Co
      */
     public function setLimit($limit)
     {
-        $this->limit = (int) $limit;
+        $this->limit = (int)$limit;
 
         return $this;
     }

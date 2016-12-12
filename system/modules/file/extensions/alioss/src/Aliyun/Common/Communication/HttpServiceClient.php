@@ -25,17 +25,19 @@ use Guzzle\Http\Message\EntityEnclosingRequest;
 
 use Guzzle\Http\ReadLimitEntityBody;
 
-class HttpServiceClient implements ServiceClientInterface {
-	/**
-	 * @var \Guzzle\Http\Client.
-	 */
-	protected $client;
+class HttpServiceClient implements ServiceClientInterface
+{
+    /**
+     * @var \Guzzle\Http\Client.
+     */
+    protected $client;
 
-	public function __construct($config = array()) {
+    public function __construct($config = array())
+    {
 
         // Create internal client.
-		$this->client = new \Guzzle\Http\Client(null, array(
-		    'curl.options' => $config[ServiceOptions::CURL_OPTIONS],
+        $this->client = new \Guzzle\Http\Client(null, array(
+            'curl.options' => $config[ServiceOptions::CURL_OPTIONS],
         ));
 
         // Strict redirect.
@@ -44,12 +46,13 @@ class HttpServiceClient implements ServiceClientInterface {
         ));
 
         // Stop error dispatcher.
-		$this->client->getEventDispatcher()->addListener('request.error', function(Event $event) {
-			$event->stopPropagation();
-		});
-	}
-	
-	public function sendRequest(HttpRequest $request, ExecutionContext $context) {
+        $this->client->getEventDispatcher()->addListener('request.error', function (Event $event) {
+            $event->stopPropagation();
+        });
+    }
+
+    public function sendRequest(HttpRequest $request, ExecutionContext $context)
+    {
         $response = new HttpResponse($request);
         try {
 
@@ -79,11 +82,11 @@ class HttpServiceClient implements ServiceClientInterface {
             fclose($fakedResource);
 
             for ($iter = $coreResponse->getHeaders()->getIterator();
-                    $iter->valid();
-                    $iter->next()) {
+                 $iter->valid();
+                 $iter->next()) {
 
                 $header = $iter->current();
-                $response->addHeader($header->getName(), (string) $header);
+                $response->addHeader($header->getName(), (string)$header);
             }
 
             $request->setResponse($response);
@@ -92,9 +95,10 @@ class HttpServiceClient implements ServiceClientInterface {
             $response->close();
             throw new ClientException($e->getMessage(), $e);
         }
-	}
-	
-	protected function buildCoreRequest(HttpRequest $request) {
+    }
+
+    protected function buildCoreRequest(HttpRequest $request)
+    {
 
         $headers = $request->getHeaders();
         $contentLength = 0;
@@ -105,12 +109,12 @@ class HttpServiceClient implements ServiceClientInterface {
             $body = $request->getContent();
             if ($body !== null) {
                 AssertUtils::assertSet(HttpHeaders::CONTENT_LENGTH, $headers);
-                $contentLength = (int) $headers[HttpHeaders::CONTENT_LENGTH];
+                $contentLength = (int)$headers[HttpHeaders::CONTENT_LENGTH];
             }
         }
 
         $entity = null;
-        $headers[HttpHeaders::CONTENT_LENGTH] = (string) $contentLength;
+        $headers[HttpHeaders::CONTENT_LENGTH] = (string)$contentLength;
         if ($body !== null) {
             $entity = new ReadLimitEntityBody(EntityBody::factory($body), $contentLength,
                 $request->getOffset() !== false ? $request->getOffset() : 0);
@@ -123,5 +127,5 @@ class HttpServiceClient implements ServiceClientInterface {
         }
 
         return $coreRequest;
-	}
+    }
 }

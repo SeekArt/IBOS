@@ -10,7 +10,7 @@
 /**
  * 主模块配置文件类
  * @package application.modules.main
- * @version $Id: MainModule.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -18,6 +18,11 @@ namespace application\modules\main;
 
 use application\core\modules\Module;
 
-class MainModule extends Module {
-    
+class MainModule extends Module
+{
+
+    protected function preinit()
+    {
+
+    }
 }

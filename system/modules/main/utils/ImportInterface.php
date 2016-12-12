@@ -12,9 +12,10 @@ namespace application\modules\main\utils;
  * @link https://github.com/forsona
  * @copyright Copyright &copy; 2012-2015 IBOS Inc
  * @datetime 2016-4-12 12:15:03
- * @version $Id: ImportInterface.php 6943 2016-04-26 07:41:07Z tanghang $
+ * @version $Id$
  */
-interface ImportInterface {
+interface ImportInterface
+{
 
     public function rules();
 

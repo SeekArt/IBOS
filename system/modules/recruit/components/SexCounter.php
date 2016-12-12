@@ -19,13 +19,15 @@ namespace application\modules\recruit\components;
 use application\modules\recruit\model\Resume;
 use application\modules\recruit\model\ResumeDetail;
 
-class SexCounter extends TimeCounter {
+class SexCounter extends TimeCounter
+{
 
     /**
      * 返回当前统计器标识
      * @return string
      */
-    public function getID() {
+    public function getID()
+    {
         return 'sex';
     }
 
@@ -34,19 +36,20 @@ class SexCounter extends TimeCounter {
      * @staticvar array $return 静态统计结果缓存
      * @return array
      */
-    public function getCount() {
+    public function getCount()
+    {
         static $return = array();
-        if ( empty( $return ) ) {
+        if (empty($return)) {
             $time = $this->getTimeScope();
-            $resumeids = Resume::model()->fetchAllByTime( $time['start'], $time['end'] );
-            $genders = ResumeDetail::model()->fetchFieldByRerumeids( $resumeids, 'gender' );
-            $ac = array_count_values( $genders );
+            $resumeids = Resume::model()->fetchAllByTime($time['start'], $time['end']);
+            $genders = ResumeDetail::model()->fetchFieldByRerumeids($resumeids, 'gender');
+            $ac = array_count_values($genders);
             $return['male'] = array(
-                'count' => isset( $ac['1'] ) ? $ac['1'] : 0,
+                'count' => isset($ac['1']) ? $ac['1'] : 0,
                 'sex' => '男'
             );
             $return['female'] = array(
-                'count' => isset( $ac['2'] ) ? $ac['2'] : 0,
+                'count' => isset($ac['2']) ? $ac['2'] : 0,
                 'sex' => '女'
             );
         }

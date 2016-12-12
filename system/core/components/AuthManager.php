@@ -9,7 +9,7 @@
  */
 /**
  * 全局授权认证组件管理类,继承自CDbAuthManager。
- * 
+ *
  * @package application.core.components
  * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -19,7 +19,8 @@ namespace application\core\components;
 
 use CDbAuthManager;
 
-class AuthManager extends CDbAuthManager {
+class AuthManager extends CDbAuthManager
+{
 
     /**
      * @var string 存储认证项目的表
@@ -32,7 +33,7 @@ class AuthManager extends CDbAuthManager {
     public $itemChildTable = '{{auth_item_child}}';
 
     /**
-     * @var string the name of the table storing authorization item assignments. 
+     * @var string the name of the table storing authorization item assignments.
      */
     public $assignmentTable = '{{auth_assignment}}';
 

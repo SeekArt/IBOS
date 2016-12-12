@@ -3,7 +3,7 @@
  * 后台模块
  * @module Dashboard
  * @author inaki
- * @version $Id: dashboard.js 5453 2015-08-14 10:25:36Z gzzz $
+ * @version $Id$
  * @modified 2013-05-04
  */
 

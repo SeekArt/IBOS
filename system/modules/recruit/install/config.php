@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '招聘',
@@ -11,7 +11,7 @@ return array(
     ),
     'config' => array(
         'modules' => array(
-            'recruit' => array( 'class' => 'application\modules\recruit\RecruitModule' )
+            'recruit' => array('class' => 'application\modules\recruit\RecruitModule')
         ),
         'components' => array(
             'messages' => array(
@@ -27,7 +27,7 @@ return array(
             'name' => '人才管理',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'resume' => array( 'index', 'add', 'show', 'edit', 'sendemail', 'del' )
+                'resume' => array('index', 'add', 'show', 'edit', 'sendemail', 'del')
             )
         ),
         'contact' => array(
@@ -35,7 +35,7 @@ return array(
             'name' => '联系记录',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'contact' => array( 'index', 'add', 'edit', 'del', 'export' )
+                'contact' => array('index', 'add', 'edit', 'del', 'export')
             )
         ),
         'interview' => array(
@@ -43,7 +43,7 @@ return array(
             'name' => '面试记录',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'interview' => array( 'index', 'add', 'edit', 'del', 'export' )
+                'interview' => array('index', 'add', 'edit', 'del', 'export')
             )
         ),
         'bgchecks' => array(
@@ -51,7 +51,7 @@ return array(
             'name' => '背景调查',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'bgchecks' => array( 'index', 'add', 'edit', 'del', 'export' )
+                'bgchecks' => array('index', 'add', 'edit', 'del', 'export')
             )
         ),
         'statistics' => array(
@@ -59,7 +59,7 @@ return array(
             'name' => '招聘统计',
             'group' => '招聘管理',
             'controllerMap' => array(
-                'stats' => array( 'index' )
+                'stats' => array('index')
             )
         )
     ),

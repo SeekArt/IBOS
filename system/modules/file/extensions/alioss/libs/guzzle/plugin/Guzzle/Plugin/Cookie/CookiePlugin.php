@@ -27,7 +27,7 @@ class CookiePlugin implements EventSubscriberInterface
     {
         return array(
             'request.before_send' => array('onRequestBeforeSend', 125),
-            'request.sent'        => array('onRequestSent', 125)
+            'request.sent' => array('onRequestSent', 125)
         );
     }
 

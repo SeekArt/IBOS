@@ -8,7 +8,7 @@ var Official = {
 	// 数据操作
 	op: {
 		/**
-		 * 删除一篇或多篇公文
+		 * 删除一篇或多篇通知
 		 * @method removeDocs
 		 * @param  {String} ids 传入删除的IDs
 		 * @return {Object}     返回deffered对象
@@ -64,7 +64,7 @@ var Official = {
 			return $.post(url, param, $.noop, "json");
 		},
 		/**
-		 * 签收公文
+		 * 签收通知
 		 * @method sign
 		 * @param  {String} id 传入删除的ID
 		 * @return {Object}    返回deffered对象
@@ -101,7 +101,7 @@ var Official = {
 
 	},
 	/**
-	 * 选择公文模板
+	 * 选择通知模板
 	 * @method selectTemplate
 	 * @param  {Object} ue    编辑器对象
 	 * @param  {String} tplId 传入模块的id

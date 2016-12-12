@@ -36,7 +36,7 @@ class DefaultCacheKeyProvider implements CacheKeyProviderInterface
                 }
             }
 
-            $raw = (string) $cloned;
+            $raw = (string)$cloned;
             $key = 'GZ' . md5($raw);
             $request->getParams()->set(self::CACHE_KEY, $key)->set(self::CACHE_KEY_RAW, $raw);
         }

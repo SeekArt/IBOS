@@ -19,15 +19,18 @@ namespace application\modules\message\core\wx;
 
 use application\modules\message\core\wx\Callback;
 
-abstract class Event extends Callback {
+abstract class Event extends Callback
+{
 
     protected $event = '';
 
-    public function setEventType( $eventType ) {
+    public function setEventType($eventType)
+    {
         $this->event = $eventType;
     }
 
-    public function getEventType() {
+    public function getEventType()
+    {
         return $this->event;
     }
 

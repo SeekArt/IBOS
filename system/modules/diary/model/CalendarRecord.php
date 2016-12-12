@@ -19,13 +19,16 @@ namespace application\modules\diary\model;
 
 use application\core\model\Model;
 
-class CalendarRecord extends Model {
+class CalendarRecord extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{calendar_record}}';
-	}
+    public function tableName()
+    {
+        return '{{calendar_record}}';
+    }
 }

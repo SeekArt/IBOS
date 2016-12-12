@@ -9,9 +9,9 @@
  */
 /**
  *  stamp表的数据层操作
- * 
+ *
  * @package application.modules.dashboard.model
- * @version $Id: Stamp.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -21,22 +21,25 @@ use application\core\model\Model;
 use application\core\utils\File;
 use application\core\utils\Convert;
 
-class Stamp extends Model {
+class Stamp extends Model
+{
 
     const STAMP_PATH = 'data/stamp/'; // 图章存放地址
 
     /**
      * 允许缓存
-     * @var boolean 
+     * @var boolean
      */
 
     protected $allowCache = true;
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{stamp}}';
     }
 
@@ -44,30 +47,33 @@ class Stamp extends Model {
      * 返回最大排序号
      * @return integer
      */
-    public function getMaxSort() {
-        $record = $this->fetch( array( 'order' => 'sort DESC', 'select' => 'sort' ) );
-        return !empty( $record ) ? intval( $record['sort'] ) : 0;
+    public function getMaxSort()
+    {
+        $record = $this->fetch(array('order' => 'sort DESC', 'select' => 'sort'));
+        return !empty($record) ? intval($record['sort']) : 0;
     }
 
-	/**
-	 * 获取图章地址
-	 * @param integer $id
-	 * @return string
-	 */
-	public function fetchStampById( $id ) {
-		$stamp = $this->findByPk( $id );
-		return $stamp['stamp'];
-	}
+    /**
+     * 获取图章地址
+     * @param integer $id
+     * @return string
+     */
+    public function fetchStampById($id)
+    {
+        $stamp = $this->findByPk($id);
+        return $stamp['stamp'];
+    }
 
-	/**
-	 * 获取图标地址
-	 * @param integer $id
-	 * @return string
-	 */
-	public function fetchIconById( $id ) {
-		$stamp = $this->findByPk( $id );
-		return $stamp['icon'];
-	}
+    /**
+     * 获取图标地址
+     * @param integer $id
+     * @return string
+     */
+    public function fetchIconById($id)
+    {
+        $stamp = $this->findByPk($id);
+        return $stamp['icon'];
+    }
 
     /**
      * 采用静态缓存方法封装
@@ -75,10 +81,11 @@ class Stamp extends Model {
      * @param type $pk
      * @return array
      */
-    public function fetchByPk( $pk ) {
+    public function fetchByPk($pk)
+    {
         static $stamps = array();
-        if ( !isset( $stamps[$pk] ) ) {
-            $stamps[$pk] = parent::fetchByPk( $pk );
+        if (!isset($stamps[$pk])) {
+            $stamps[$pk] = parent::fetchByPk($pk);
         }
         return $stamps[$pk];
     }
@@ -88,11 +95,12 @@ class Stamp extends Model {
      * @param integer $id 图章ID
      * @param string $index 文件类型的索引
      */
-    public function delImg( $id, $index = '' ) {
-        $stamp = $this->fetchByPk( $id );
-        if ( !empty( $stamp[$index] ) ) {
-			if ( File::fileExists( $stamp[$index] ) ) {
-				File::deleteFile( $stamp[$index] );
+    public function delImg($id, $index = '')
+    {
+        $stamp = $this->fetchByPk($id);
+        if (!empty($stamp[$index])) {
+            if (File::fileExists($stamp[$index])) {
+                File::deleteFile($stamp[$index]);
             }
         }
     }
@@ -101,24 +109,25 @@ class Stamp extends Model {
      * 根据ID删除记录与图章和图标
      * @param array $ids id数组
      * @param string $stampPath 图章与图标所在路径
-     * @return void 
+     * @return void
      */
-    public function deleteByIds( $ids ) {
+    public function deleteByIds($ids)
+    {
         $id = $files = array();
-        foreach ( $ids as $removeId ) {
-            $record = $this->fetchByPk( $removeId );
-            if ( !empty( $record['stamp'] ) ) {
+        foreach ($ids as $removeId) {
+            $record = $this->fetchByPk($removeId);
+            if (!empty($record['stamp'])) {
                 $files[] = $record['stamp'];
             }
-            if ( !empty( $record['icon'] ) ) {
+            if (!empty($record['icon'])) {
                 $files[] = $record['icon'];
             }
             $id[] = $record['id'];
         }
-        $this->deleteByPk( $id );
-        foreach ( $files as $file ) {
-			if ( File::fileExists( $file ) ) {
-				File::deleteFile( $file );
+        $this->deleteByPk($id);
+        foreach ($files as $file) {
+            if (File::fileExists($file)) {
+                File::deleteFile($file);
             }
         }
     }
@@ -127,9 +136,10 @@ class Stamp extends Model {
      * 获取所有图章id
      * @return array
      */
-    public function fetchAllIds() {
+    public function fetchAllIds()
+    {
         $stamps = $this->fetchAll();
-        $ids = Convert::getSubByKey( $stamps, 'id' );
+        $ids = Convert::getSubByKey($stamps, 'id');
         return $ids;
     }
 

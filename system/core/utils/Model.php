@@ -14,19 +14,21 @@ namespace application\core\utils;
  * @datetime 2016-3-17 17:56:11
  * @version $Id$
  */
-class Model {
+class Model
+{
 
     /**
      * 表是否存在
      * @param string $tableName 支持如{{user}}和ibos_user两种形式
      * @return boolean
      */
-    public static function tableExists( $tableName ) {
+    public static function tableExists($tableName)
+    {
         $isExist = Ibos::app()->db
-                ->createCommand()
-                ->setText( sprintf( "SHOW TABLES LIKE '%s'", $tableName ) )
-                ->execute();
-        return (bool) $isExist;
+            ->createCommand()
+            ->setText(sprintf("SHOW TABLES LIKE '%s'", $tableName))
+            ->execute();
+        return (bool)$isExist;
     }
 
     /**
@@ -34,13 +36,14 @@ class Model {
      * @param string $tableName
      * @return boolean
      */
-    public static function dropTable( $tableName ) {
+    public static function dropTable($tableName)
+    {
         $res = false;
-        if ( self::tableExists( $tableName ) ) {
+        if (self::tableExists($tableName)) {
             $res = Ibos::app()->db
-                            ->createCommand()->dropTable( $tableName );
+                ->createCommand()->dropTable($tableName);
         }
-        return (bool) $res;
+        return (bool)$res;
     }
 
     /**
@@ -49,23 +52,25 @@ class Model {
      * @param string $sql 创建语句
      * @return boolean
      */
-    public static function createTable( $tableName, $sql ) {
+    public static function createTable($tableName, $sql)
+    {
         $res = false;
-        if ( !self::tableExists( $tableName ) ) {
+        if (!self::tableExists($tableName)) {
             Ibos::app()->db
-                    ->createCommand()->setText( $sql )->execute();
+                ->createCommand()->setText($sql)->execute();
         }
-        return (bool) $res;
+        return (bool)$res;
     }
 
     /**
      * 获取当前数据库名
      * @return string 数据库名
      */
-    public static function getCurrentDbName() {
+    public static function getCurrentDbName()
+    {
         $sql = "select database();";
         return Ibos::app()->db
-                        ->createCommand()->setText( $sql )->queryScalar();
+            ->createCommand()->setText($sql)->queryScalar();
     }
 
     /**
@@ -74,30 +79,32 @@ class Model {
      * @param mixed $columnMixed 需要检测的列，数组或者逗号字符串
      * @return array 返回不存在的列
      */
-    public static function checkColumnExist( $tableName, $columnMixed ) {
-        $columnArray = is_array( $columnMixed ) ? $columnMixed : explode( ',', $columnMixed );
-        $conditionString = " `COLUMN_NAME` = '" . implode( "' OR `COLUMN_NAME` = '", $columnArray ) . "' ";
+    public static function checkColumnExist($tableName, $columnMixed)
+    {
+        $columnArray = is_array($columnMixed) ? $columnMixed : explode(',', $columnMixed);
+        $conditionString = " `COLUMN_NAME` = '" . implode("' OR `COLUMN_NAME` = '", $columnArray) . "' ";
         $currentDbName = self::getCurrentDbName();
         $sql = "SELECT `COLUMN_NAME` FROM information_schema.`COLUMNS`"
-                . " WHERE `TABLE_SCHEMA` = '{$currentDbName}'"
-                . " AND `TABLE_NAME` = '{$tableName}' AND ( {$conditionString} )";
+            . " WHERE `TABLE_SCHEMA` = '{$currentDbName}'"
+            . " AND `TABLE_NAME` = '{$tableName}' AND ( {$conditionString} )";
         $existColumnArray = Ibos::app()->db
-                        ->createCommand()->setText( $sql )->queryColumn();
-        $notExistArray = array_diff( $columnArray, $existColumnArray );
+            ->createCommand()->setText($sql)->queryColumn();
+        $notExistArray = array_diff($columnArray, $existColumnArray);
         return $notExistArray;
     }
 
-    public static function executeSqls( $sqlString ) {
-        $sqlArray = StringUtil::splitSql( $sqlString );
+    public static function executeSqls($sqlString)
+    {
+        $sqlArray = StringUtil::splitSql($sqlString);
         $command = Ibos::app()->db->createCommand();
-        if ( is_array( $sqlArray ) ) {
-            foreach ( $sqlArray as $sql ) {
-                if ( trim( $sql ) != '' ) {
-                    $result = $command->setText( $sql )->execute();
+        if (is_array($sqlArray)) {
+            foreach ($sqlArray as $sql) {
+                if (trim($sql) != '') {
+                    $result = $command->setText($sql)->execute();
                 }
             }
         } else {
-            $result = $command->setText( $sqlArray )->execute();
+            $result = $command->setText($sqlArray)->execute();
         }
         return $result;
     }

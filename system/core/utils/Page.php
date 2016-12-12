@@ -9,9 +9,9 @@
  */
 /**
  * 分页工具类,提供封装分页对象方法。
- * 
+ *
  * @package application.core.utils
- * @version $Id: Page.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,11 +20,12 @@ namespace application\core\utils;
 use CDbCriteria;
 use CPagination;
 
-class Page extends CPagination {
+class Page extends CPagination
+{
 
     /**
      * 静态pagination实例
-     * @var mixed 
+     * @var mixed
      */
     private static $instance;
 
@@ -32,8 +33,9 @@ class Page extends CPagination {
      * 静态调用单例模式
      * @return mixed
      */
-    public static function getInstance() {
-        if ( self::$instance == null ) {
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -45,14 +47,15 @@ class Page extends CPagination {
      * @param integer $pageSize 每页显示条数
      * @return mixed
      */
-    public static function create( $count, $pageSize = self::DEFAULT_PAGE_SIZE, $usingDb = true ) {
-        self::getInstance()->setPageSize( $pageSize );
-        self::getInstance()->setItemCount( $count );
-        if ( $usingDb ) {
+    public static function create($count, $pageSize = self::DEFAULT_PAGE_SIZE, $usingDb = true)
+    {
+        self::getInstance()->setPageSize($pageSize);
+        self::getInstance()->setItemCount($count);
+        if ($usingDb) {
             $criteria = new CDbCriteria(
-                    array( 'limit' => self::getInstance()->getLimit(), 'offset' => self::getInstance()->getOffset() )
+                array('limit' => self::getInstance()->getLimit(), 'offset' => self::getInstance()->getOffset())
             );
-            self::getInstance()->applyLimit( $criteria );
+            self::getInstance()->applyLimit($criteria);
         }
         return self::$instance;
     }

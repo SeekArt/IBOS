@@ -24,7 +24,8 @@ use application\core\utils\StringUtil;
 use application\core\utils\Xml;
 use CWidget;
 
-class Office extends CWidget {
+class Office extends CWidget
+{
 
     // 渲染的视图alias
     const VIEW = 'application.modules.main.views.attach.office';
@@ -61,15 +62,17 @@ class Office extends CWidget {
      * 设置参数
      * @param array $param
      */
-    public function setParam( $param ) {
-        $this->_param = $this->formatParam( $param );
+    public function setParam($param)
+    {
+        $this->_param = $this->formatParam($param);
     }
 
     /**
      * 获取参数
      * @return array
      */
-    public function getParam() {
+    public function getParam()
+    {
         return $this->_param;
     }
 
@@ -77,7 +80,8 @@ class Office extends CWidget {
      * 设置附件
      * @param type $attach
      */
-    public function setAttach( $attach ) {
+    public function setAttach($attach)
+    {
         $this->_attach = $attach;
     }
 
@@ -85,58 +89,62 @@ class Office extends CWidget {
      * 获取附件
      * @return array
      */
-    public function getAttach() {
+    public function getAttach()
+    {
         return $this->_attach;
     }
 
     /**
      *
      */
-    public function init() {
+    public function init()
+    {
         $attach = $this->getAttach();
         $var = array(
             'assetUrl' => $this->getController()->getAssetUrl(),
             'lang' => Ibos::getLangSources(),
             'attach' => $attach,
             'param' => $this->getParam(),
-            'isNew' => empty( $attach )
+            'isNew' => empty($attach)
         );
-        $var = array_merge( $this->getDocFile( $var ), $var );
+        $var = array_merge($this->getDocFile($var), $var);
         $this->_var = $var;
     }
 
     /**
      * 实例化widget
      */
-    public function run() {
+    public function run()
+    {
         $var = $this->_var;
         $licence = $this->getLicence();
-        $correct = $this->chkLicence( $licence );
-        if ( $correct ) {
+        $correct = $this->chkLicence($licence);
+        if ($correct) {
             $var['licence'] = $licence['officelicence'];
             $var['officePath'] = self::OFFICE_PATH;
             $var['assetUrl'] = $this->getController()->getAssetUrl();
-            $this->render( self::VIEW, $var );
+            $this->render(self::VIEW, $var);
         } else {
-            $this->getController()->error( Ibos::lang( 'Illegal office license', 'main.default' ), '', array( 'autoJump' => 0 ) );
+            $this->getController()->error(Ibos::lang('Illegal office license', 'main.default'), '', array('autoJump' => 0));
         }
     }
 
     /**
      * @todo 完成 handleRequest 方法
      */
-    public function handleRequest() {
-        $allowedOps = array( 'lock', 'save' );
-        $op = filter_input( INPUT_GET, 'op', FILTER_SANITIZE_STRING );
+    public function handleRequest()
+    {
+        $allowedOps = array('lock', 'save');
+        $op = filter_input(INPUT_GET, 'op', FILTER_SANITIZE_STRING);
 
         // if($op == 'save') {
         $bool = $this->save();
         // }
 
-        if ( $bool ) {
-            return json_encode( array( 'isSuccess' => true, 'msg' => '保存成功' ) );
+        if ($bool) {
+            return json_encode(array('isSuccess' => true, 'msg' => '保存成功'));
         } else {
-            return json_encode( array( 'isSuccess' => false, 'msg' => '保存失败' ) );
+            return json_encode(array('isSuccess' => false, 'msg' => '保存失败'));
         }
     }
 
@@ -144,29 +152,30 @@ class Office extends CWidget {
      * 文件保存
      * @return boolean
      */
-    private function save() {
+    private function save()
+    {
 
         $file = 'Filedata';
 
-        if ( empty( $_FILES ) || $_FILES[$file]['error'] != 0 ) {
+        if (empty($_FILES) || $_FILES[$file]['error'] != 0) {
             return false;
         }
 
-        $filepath = Env::getRequest( 'filepath' );
-        if ( empty( $filepath ) ) {
+        $filepath = Env::getRequest('filepath');
+        if (empty($filepath)) {
             return false;
         }
         //$filename = filename($filepath);
 
-        if ( file_exists( $filepath ) && is_file( $filepath ) && is_writable( $filepath ) ) {
-            $bak = rename( $filepath, $filepath . '.bak' );
-            $bool = $bak && move_uploaded_file( $_FILES[$file]['tmp_name'], $filepath );
-            if ( $bool ) {
+        if (file_exists($filepath) && is_file($filepath) && is_writable($filepath)) {
+            $bak = rename($filepath, $filepath . '.bak');
+            $bool = $bak && move_uploaded_file($_FILES[$file]['tmp_name'], $filepath);
+            if ($bool) {
                 // 保存新文件成功，删除掉原来的文件
-                @unlink( $filepath . '.bak' );
+                @unlink($filepath . '.bak');
             } else {
                 // 保存新文件失败，重命名备份文件回原文件名
-                rename( $filepath . '.bak', $filepath );
+                rename($filepath . '.bak', $filepath);
             }
             return $bool;
         }
@@ -179,9 +188,10 @@ class Office extends CWidget {
      * @param type $var
      * @return array
      */
-    private function getDocFile( $var ) {
-        if ( $var['isNew'] ) {
-            $typeId = Attach::attachType( $var['param']['filetype'], 'id' );
+    private function getDocFile($var)
+    {
+        if ($var['isNew']) {
+            $typeId = Attach::attachType($var['param']['filetype'], 'id');
             $map = array(
                 self::DOC_WORD => array(
                     'fileName' => $var['lang']['New doc'] . '.doc',
@@ -202,9 +212,9 @@ class Office extends CWidget {
             return $map[$typeId];
         } else {
             return array(
-                'typeId' => Attach::attachType( StringUtil::getFileExt( $var['attach']['attachment'] ), 'id' ),
+                'typeId' => Attach::attachType(StringUtil::getFileExt($var['attach']['attachment']), 'id'),
                 'fileName' => $var['attach']['filename'],
-                'fileUrl' => File::fileName( File::getAttachUrl() . '/' . $var['attach']['attachment'] )
+                'fileUrl' => File::fileName(File::getAttachUrl() . '/' . $var['attach']['attachment'])
             );
         }
     }
@@ -214,22 +224,23 @@ class Office extends CWidget {
      * @param array $param
      * @return array
      */
-    private function formatParam( $param ) {
+    private function formatParam($param)
+    {
         $return = array();
-        if ( isset( $param[0] ) ) {
-            $return['aid'] = intval( $param[0] );
+        if (isset($param[0])) {
+            $return['aid'] = intval($param[0]);
         }
-        if ( isset( $param[1] ) ) {
-            $return['tableid'] = intval( $param[1] );
+        if (isset($param[1])) {
+            $return['tableid'] = intval($param[1]);
         }
-        if ( isset( $param[2] ) ) {
-            $return['timestamp'] = intval( $param[2] );
+        if (isset($param[2])) {
+            $return['timestamp'] = intval($param[2]);
         }
-        if ( isset( $param[3] ) ) {
-            $ext = StringUtil::utf8Unserialize( $param[3] );
-            $return = array_merge( $return, $ext );
+        if (isset($param[3])) {
+            $ext = StringUtil::utf8Unserialize($param[3]);
+            $return = array_merge($return, $ext);
         }
-        if ( isset( $param['op'] ) ) {
+        if (isset($param['op'])) {
             $return['op'] = $param['op'];
         }
         return $return;
@@ -239,12 +250,13 @@ class Office extends CWidget {
      *
      * @return boolean
      */
-    private function getLicence() {
+    private function getLicence()
+    {
         $file = self::OFFICE_PATH . 'licence.xml';
-        if ( file_exists( $file ) ) {
-            $content = file_get_contents( $file );
-            if ( is_string( $content ) ) {
-                $licence = Xml::xmlToArray( $content );
+        if (file_exists($file)) {
+            $content = file_get_contents($file);
+            if (is_string($content)) {
+                $licence = Xml::xmlToArray($content);
                 return $licence;
             }
         } else {
@@ -257,11 +269,12 @@ class Office extends CWidget {
      * @param type $licence
      * @return boolean
      */
-    private function chkLicence( $licence ) {
-        if ( is_array( $licence ) ) {
-            if ( isset( $licence['officelicence'] ) ) {
+    private function chkLicence($licence)
+    {
+        if (is_array($licence)) {
+            if (isset($licence['officelicence'])) {
                 $data = $licence['officelicence'];
-                return !empty( $data['ProductCaption'] ) && !empty( $data['ProductKey'] );
+                return !empty($data['ProductCaption']) && !empty($data['ProductKey']);
             }
         }
         return false;

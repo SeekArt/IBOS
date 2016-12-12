@@ -22,7 +22,7 @@ class EntityBody extends Stream implements EntityBodyInterface
      * Create a new EntityBody based on the input type
      *
      * @param resource|string|EntityBody $resource Entity body data
-     * @param int                        $size     Size of the data contained in the resource
+     * @param int $size Size of the data contained in the resource
      *
      * @return EntityBody
      * @throws InvalidArgumentException if the $resource arg is not a resource or string
@@ -40,7 +40,7 @@ class EntityBody extends Stream implements EntityBodyInterface
                 return new static($resource, $size);
             case 'object':
                 if (method_exists($resource, '__toString')) {
-                    return self::fromString((string) $resource);
+                    return self::fromString((string)$resource);
                 }
                 break;
             case 'array':
@@ -136,9 +136,9 @@ class EntityBody extends Stream implements EntityBodyInterface
     /**
      * Calculate the MD5 hash of an entity body
      *
-     * @param EntityBodyInterface $body         Entity body to calculate the hash for
-     * @param bool                $rawOutput    Whether or not to use raw output
-     * @param bool                $base64Encode Whether or not to base64 encode raw output (only if raw output is true)
+     * @param EntityBodyInterface $body Entity body to calculate the hash for
+     * @param bool $rawOutput Whether or not to use raw output
+     * @param bool $base64Encode Whether or not to base64 encode raw output (only if raw output is true)
      *
      * @return bool|string Returns an MD5 string on success or FALSE on failure
      * @deprecated This will be deprecated soon

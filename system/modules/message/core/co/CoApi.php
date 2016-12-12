@@ -19,7 +19,8 @@ use application\core\utils\Api;
 use application\core\utils\ApiCode;
 use CJSON;
 
-class CoApi extends Api {
+class CoApi extends Api
+{
 
     // 。。。。
     const IBOS_KEY = '3569c4ee701cb512fef319fc16ec88af';
@@ -76,7 +77,8 @@ class CoApi extends Api {
      *
      * @param void $param
      */
-    public function setSignParam($param) {
+    public function setSignParam($param)
+    {
         $this->_signParam = $param;
     }
 
@@ -84,7 +86,8 @@ class CoApi extends Api {
      *
      * @return string
      */
-    public function getSignParam() {
+    public function getSignParam()
+    {
         return $this->_signParam;
     }
 
@@ -97,7 +100,8 @@ class CoApi extends Api {
      *
      * @param string $param
      */
-    public function setSignTypeParam($param) {
+    public function setSignTypeParam($param)
+    {
         $this->_signTypeParam = $param;
     }
 
@@ -105,7 +109,8 @@ class CoApi extends Api {
      *
      * @return string
      */
-    public function getSignTypeParam() {
+    public function getSignTypeParam()
+    {
         return $this->_signTypeParam;
     }
 
@@ -119,7 +124,8 @@ class CoApi extends Api {
      * 设置验证签名用的私钥
      * @param string $key
      */
-    public function setAuthKey($key) {
+    public function setAuthKey($key)
+    {
         $this->_authkey = $key;
     }
 
@@ -127,7 +133,8 @@ class CoApi extends Api {
      * 返回私钥
      * @return string
      */
-    public function getAuthKey() {
+    public function getAuthKey()
+    {
         return $this->_authkey;
     }
 
@@ -141,7 +148,8 @@ class CoApi extends Api {
      * 设置签名方法
      * @param string $type
      */
-    public function setSignType($type) {
+    public function setSignType($type)
+    {
         $this->_signType = $type;
     }
 
@@ -149,11 +157,13 @@ class CoApi extends Api {
      * 返回签名方法
      * @return string
      */
-    public function getSignType() {
+    public function getSignType()
+    {
         return $this->_signType;
     }
 
-    public static function getInstance($className = __CLASS__) {
+    public static function getInstance($className = __CLASS__)
+    {
         return parent::getInstance($className);
     }
 
@@ -163,7 +173,8 @@ class CoApi extends Api {
      * @param string $password
      * @return array
      */
-    public function getCoToken($mobile, $password) {
+    public function getCoToken($mobile, $password)
+    {
         $post = array(
             'mobile' => $mobile,
             'password' => md5($password),
@@ -181,7 +192,8 @@ class CoApi extends Api {
      * @param string $uid
      * @return array
      */
-    public function getUserInfo($accesstoken, $uid = '') {
+    public function getUserInfo($accesstoken, $uid = '')
+    {
         $param = array(
             'accesstoken' => $accesstoken,
         );
@@ -197,7 +209,8 @@ class CoApi extends Api {
      * @param type $corptoken
      * @return type
      */
-    public function getCorpByCorpToken($corptoken) {
+    public function getCorpByCorpToken($corptoken)
+    {
         $param = array(
             'corptoken' => $corptoken,
         );
@@ -210,7 +223,8 @@ class CoApi extends Api {
      * @param  string $accesstoken 用户的 accesstoken
      * @return array              解析后的接口返回 json 数据
      */
-    public function getCorpListByAccessToken($accesstoken) {
+    public function getCorpListByAccessToken($accesstoken)
+    {
         $param = array(
             'accesstoken' => $accesstoken,
         );
@@ -224,7 +238,8 @@ class CoApi extends Api {
      * @param $post
      * @return type
      */
-    public function whetherBind($accesstoken, $post) {
+    public function whetherBind($accesstoken, $post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::API_WHETHER_BIND . '?accesstoken=' . $accesstoken, $postJson, 'post');
         return $this->returnJsonDecode($result);
@@ -235,7 +250,8 @@ class CoApi extends Api {
      * @param $post
      * @return type
      */
-    public function judgeBind($post) {
+    public function judgeBind($post)
+    {
         $postJson = json_encode($post);
         $param = $this->returnSignParam();
         $url = $this->buildUrl(self::API_JUDGE_BIND, $param);
@@ -260,7 +276,8 @@ class CoApi extends Api {
      * @param type $post
      * @return type
      */
-    public function updateCorpByCorpToken($corptoken, $post) {
+    public function updateCorpByCorpToken($corptoken, $post)
+    {
         $postData = json_encode($post);
         $res = $this->fetchResult(self::API_CORP_UPDATE_INFO . '?corptoken=' . $corptoken, $postData, 'post');
         return $this->returnJsonDecode($res);
@@ -270,10 +287,11 @@ class CoApi extends Api {
      * 根据 corptoken & corpcode 更新对应酷办公企业的企业代码
      * 被用于 IBOS 后台绑定酷办公企业出现企业代码不一致时统一企业代码
      * @param  string $corptoken corptoken
-     * @param  string $corpcode  统一后的企业代码
+     * @param  string $corpcode 统一后的企业代码
      * @return array            解析后的接口返回 json 数据
      */
-    public function updateCorpCodeByCorpToken($corptoken, $corpcode) {
+    public function updateCorpCodeByCorpToken($corptoken, $corpcode)
+    {
         $url = sprintf('%s?corptoken=%s&corpcode=%s', self::API_CORP_UPDATE_CODE, $corptoken, $corpcode);
         $result = $this->fetchResult($url);
         return $this->returnJsonDecode($result);
@@ -284,7 +302,8 @@ class CoApi extends Api {
      * @param type $corptoken
      * @return type
      */
-    public function quitCorpByCorpToken($corptoken) {
+    public function quitCorpByCorpToken($corptoken)
+    {
         $param = array(
             'corptoken' => $corptoken,
         );
@@ -306,7 +325,8 @@ class CoApi extends Api {
      * @param array $post 参照上面参数
      * @return type
      */
-    public function createCorpByToken($accesstoken, $post) {
+    public function createCorpByToken($accesstoken, $post)
+    {
         $postData = json_encode($post);
         $res = $this->fetchResult(self::API_CORP_CREATE . '?accesstoken=' . $accesstoken, $postData, 'post');
         return $this->returnJsonDecode($res);
@@ -317,7 +337,8 @@ class CoApi extends Api {
      * @param type $mobile
      * @return type
      */
-    public function checkMobile($mobile) {
+    public function checkMobile($mobile)
+    {
         $get = array(
             'mobile' => $mobile,
         );
@@ -350,7 +371,8 @@ class CoApi extends Api {
      * @param string $openId
      * @return type
      */
-    public function registerUser($post, $openId = '') {
+    public function registerUser($post, $openId = '')
+    {
         if (!empty($openId)) {
             $post['openid'] = $openId;
         }
@@ -367,7 +389,8 @@ class CoApi extends Api {
      * @param array $post 这里只有一个mobile参数
      * @return type
      */
-    public function getVerifyCode($post) {
+    public function getVerifyCode($post)
+    {
         $postData = json_encode($post);
         $param = $this->returnSignParam();
         $url = $this->buildUrl(self::API_VERIFYCODE_GET, $param);
@@ -380,7 +403,8 @@ class CoApi extends Api {
      * @param array $post 需要带上mobiel和code参数
      * @return array
      */
-    public function checkVerifyCode($post) {
+    public function checkVerifyCode($post)
+    {
         $postData = json_encode($post);
         $param = $this->returnSignParam();
         $url = $this->buildUrl(self::API_CODE_VERIFY, $param);
@@ -391,10 +415,11 @@ class CoApi extends Api {
     /**
      * 同步用户密码
      * @param  string $accesstoken 用户令牌
-     * @param  array $post        需要 post 的参数，[需要同步的密码的密文，盐]
+     * @param  array $post 需要 post 的参数，[需要同步的密码的密文，盐]
      * @return array
      */
-    public function syncPassword($accesstoken, $post) {
+    public function syncPassword($accesstoken, $post)
+    {
         $postData = json_encode($post);
         $url = self::API_SYNC_PASSWORD . '?accesstoken=' . $accesstoken;
         $result = $this->fetchResult($url, $postData, 'post');
@@ -409,7 +434,8 @@ class CoApi extends Api {
      * @param integer $size 每页显示条数
      * @return array
      */
-    public function searchCorp($key, $unique = false, $page = 0, $size = 20) {
+    public function searchCorp($key, $unique = false, $page = 0, $size = 20)
+    {
         $postData = json_encode(array(
             'key' => $key,
             'page' => $page,
@@ -425,7 +451,7 @@ class CoApi extends Api {
     /**
      * 发送用户邀请
      * @param  string $accesstoken 用户令牌
-     * @param  array $post        需要 POST 的数据
+     * @param  array $post 需要 POST 的数据
      * @return array
      */
     // public function sendInvite($accesstoken, $post) {
@@ -440,7 +466,8 @@ class CoApi extends Api {
      * @param type|array $arr
      * @return array
      */
-    public function returnSignParam($arr = array()) {
+    public function returnSignParam($arr = array())
+    {
         $param = array(
             'method' => 'md5',
             'timestamp' => time(),
@@ -457,7 +484,8 @@ class CoApi extends Api {
      * @param type|string $key
      * @return type
      */
-    public function getSignature($param, $method = 'md5', $key = self::IBOS_KEY) {
+    public function getSignature($param, $method = 'md5', $key = self::IBOS_KEY)
+    {
         //除去待签名参数数组中的空值和签名参数
         $paraFilter = $this->paraFilter($param);
         //对待签名参数数组排序
@@ -472,7 +500,8 @@ class CoApi extends Api {
      * @param string $res 返回的json格式字符串
      * @return type
      */
-    public function returnJsonDecode($res) {
+    public function returnJsonDecode($res)
+    {
         if (!is_array($res)) {
             return CJSON::decode($res, true);
         } else {
@@ -488,7 +517,8 @@ class CoApi extends Api {
      * @param  [type] $post
      * @return type
      */
-    public function getDiffUsers($post) {
+    public function getDiffUsers($post)
+    {
         $postJson = json_encode($post);
         $param = $this->returnSignParam();
         $url = $this->buildUrl(self::CO_URL . '/api/syncapi/diff', $param);
@@ -501,7 +531,8 @@ class CoApi extends Api {
      * @param  array $post 需要 POST 的数据
      * @return array
      */
-    public function createRelationByList($post) {
+    public function createRelationByList($post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::CO_URL . '/api/syncapi/addbind', $postJson, 'post');
         return $this->returnJsonDecode($result);
@@ -512,7 +543,8 @@ class CoApi extends Api {
      * @param  array $post 需要 POST 的数据
      * @return array
      */
-    public function removeRelationByList($post) {
+    public function removeRelationByList($post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::CO_URL . '/api/syncapi/deletebind', $postJson, 'post');
         return $this->returnJsonDecode($result);
@@ -523,7 +555,8 @@ class CoApi extends Api {
      * @param  array $post 需要 POST 的数据
      * @return array
      */
-    public function createCoUserByList($post) {
+    public function createCoUserByList($post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::CO_URL . '/api/syncapi/adduser', $postJson, 'post');
         return $this->returnJsonDecode($result);
@@ -534,13 +567,15 @@ class CoApi extends Api {
      * @param  array $post 需要 POST 的数据
      * @return array
      */
-    public function removeCoUserByList($post) {
+    public function removeCoUserByList($post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::CO_URL . '/api/syncapi/deleteuser', $postJson, 'post');
         return $this->returnJsonDecode($result);
     }
 
-    public function bindingCo($corptoken, $post) {
+    public function bindingCo($corptoken, $post)
+    {
         $postJson = json_encode($post);
         $result = $this->fetchResult(self::API_BIND_CO . '?corptoken=' . $corptoken, $postJson, 'post');
         return $this->returnJsonDecode($result);
@@ -552,7 +587,8 @@ class CoApi extends Api {
      * @return array
      * @internal param array $post 需要 POST 的数据
      */
-    public function unbindingCo($corptoken) {
+    public function unbindingCo($corptoken)
+    {
         $postJson = json_encode(array());
         $params = array(
             'corptoken' => $corptoken,
@@ -569,7 +605,8 @@ class CoApi extends Api {
      * @param $para 签名参数组
      * @return 去掉空值与签名参数后的新签名参数组
      */
-    protected function paraFilter($para) {
+    protected function paraFilter($para)
+    {
         $paraFilter = array();
         while (list ($key, $val) = each($para)) {
             if ($key == 'sign' || $key == 'method' || $val == "") {
@@ -586,7 +623,8 @@ class CoApi extends Api {
      * @param $param 排序前的数组
      * @return 排序后的数组
      */
-    protected function argSort($param) {
+    protected function argSort($param)
+    {
         ksort($param);
         reset($param);
         return $param;
@@ -597,10 +635,11 @@ class CoApi extends Api {
      * @param $param 需要拼接的数组
      * @return string 拼接完成以后的字符串
      */
-    protected function createLinkstring($param) {
+    protected function createLinkstring($param)
+    {
         $arg = "";
         while (list ($key, $val) = each($param)) {
-            $arg.=$key . "=" . $val . "&";
+            $arg .= $key . "=" . $val . "&";
         }
         //去掉最后一个&字符
         $arg = substr($arg, 0, count($arg) - 2);
@@ -616,7 +655,8 @@ class CoApi extends Api {
      * @param $post
      * @return type
      */
-    public function getCoUsers($post) {
+    public function getCoUsers($post)
+    {
         $postJson = json_encode($post);
         $url = $this->buildUrl(self::CO_URL . '/api/syncapi/getsync');
         $result = $this->fetchResult($url, $postJson, 'post');
@@ -624,11 +664,12 @@ class CoApi extends Api {
     }
 
     /**
-    * 根据提供的用户数据列表，在酷办公创建对应的部门
-    * @param  array $post 需要 POST 的数据
-    * @return array
-    */
-    public function createCoDept($post) {
+     * 根据提供的用户数据列表，在酷办公创建对应的部门
+     * @param  array $post 需要 POST 的数据
+     * @return array
+     */
+    public function createCoDept($post)
+    {
         $postJson = json_encode($post);
         $url = $this->buildUrl(self::CO_URL . '/api/syncapi/binddept');
         $result = $this->fetchResult($url, $postJson, 'post');
@@ -640,7 +681,8 @@ class CoApi extends Api {
      * @param $post
      * @return type
      */
-    public function getCoDept($post) {
+    public function getCoDept($post)
+    {
         $postJson = json_encode($post);
         $url = $this->buildUrl(self::CO_URL . '/api/syncapi/trans');
         $result = $this->fetchResult($url, $postJson, 'post');

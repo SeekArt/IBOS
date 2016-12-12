@@ -11,7 +11,8 @@ namespace Aliyun\OSS\Models;
  * OSS的错误码
  * @package Aliyun\OSS\Models
  */
-class OSSErrorCode {
+class OSSErrorCode
+{
     /**
      * 拒绝访问。
      */

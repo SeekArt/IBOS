@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -50,34 +50,26 @@ class ezcMailVirtualFile extends ezcMailFilePart
      * @param string $contentType
      * @param string $mimeType
      */
-    public function __construct( $fileName, $contents, $contentType = null, $mimeType = null )
+    public function __construct($fileName, $contents, $contentType = null, $mimeType = null)
     {
-        parent::__construct( $fileName );
+        parent::__construct($fileName);
         $this->contents = $contents;
 
-        if ( $contentType != null && $mimeType != null )
-        {
+        if ($contentType != null && $mimeType != null) {
             $this->contentType = $contentType;
             $this->mimeType = $mimeType;
-        }
-        elseif ( ezcBaseFeatures::hasExtensionSupport( 'fileinfo' ) )
-        {
+        } elseif (ezcBaseFeatures::hasExtensionSupport('fileinfo')) {
             // get mime and content type
-            $fileInfo = new finfo( FILEINFO_MIME );
-            $mimeParts = $fileInfo->buffer( $contents );
-            if ( $mimeParts !== false && strpos( $mimeParts, '/' ) !== false )
-            {
-                list( $this->contentType, $this->mimeType ) = explode( '/', $mimeParts );
-            }
-            else
-            {
+            $fileInfo = new finfo(FILEINFO_MIME);
+            $mimeParts = $fileInfo->buffer($contents);
+            if ($mimeParts !== false && strpos($mimeParts, '/') !== false) {
+                list($this->contentType, $this->mimeType) = explode('/', $mimeParts);
+            } else {
                 // default to mimetype application/octet-stream
                 $this->contentType = self::CONTENT_TYPE_APPLICATION;
                 $this->mimeType = "octet-stream";
             }
-        }
-        else
-        {
+        } else {
             // default to mimetype application/octet-stream
             $this->contentType = self::CONTENT_TYPE_APPLICATION;
             $this->mimeType = "octet-stream";
@@ -93,15 +85,14 @@ class ezcMailVirtualFile extends ezcMailFilePart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contents':
                 $this->properties[$name] = $value;
                 break;
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -115,15 +106,14 @@ class ezcMailVirtualFile extends ezcMailFilePart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contents':
                 return $this->properties[$name];
                 break;
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
                 break;
         }
     }
@@ -135,15 +125,14 @@ class ezcMailVirtualFile extends ezcMailFilePart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'contents':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -154,7 +143,8 @@ class ezcMailVirtualFile extends ezcMailFilePart
      */
     public function generateBody()
     {
-        return chunk_split( base64_encode( $this->contents ), 76, ezcMailTools::lineBreak() );
+        return chunk_split(base64_encode($this->contents), 76, ezcMailTools::lineBreak());
     }
 }
+
 ?>

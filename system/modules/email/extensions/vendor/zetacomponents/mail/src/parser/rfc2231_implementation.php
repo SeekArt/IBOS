@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -47,12 +47,11 @@ class ezcMailRfc2231Implementation
      * @return array( 'argument', array( 'paramName' => array( value => string, charset => string,
      * language => string ) ) );
      */
-    public static function parseHeader( $header )
+    public static function parseHeader($header)
     {
         $result = array();
         // argument
-        if ( preg_match( '/^\s*([^;]*);?/i', $header, $matches ) )
-        {
+        if (preg_match('/^\s*([^;]*);?/i', $header, $matches)) {
             $result[0] = $matches[1];
         }
 
@@ -62,28 +61,22 @@ class ezcMailRfc2231Implementation
         $parameterBuffer = array();
 
         // parameters
-        if ( preg_match_all( '/\s*(\S*?)="?([^;"]*);?/i', $header, $matches, PREG_SET_ORDER ) )
-        {
-            foreach ( $matches as $parameter )
-            {
+        if (preg_match_all('/\s*(\S*?)="?([^;"]*);?/i', $header, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $parameter) {
                 // if normal parameter, simply add it
-                if ( !preg_match( '/([^\*]+)\*(\d+)?(\*)?/', $parameter[1], $metaData ) )
-                {
-                    $result[1][$parameter[1]] = array( 'value' => $parameter[2] );
-                }
-                else // coded and/or folded
+                if (!preg_match('/([^\*]+)\*(\d+)?(\*)?/', $parameter[1], $metaData)) {
+                    $result[1][$parameter[1]] = array('value' => $parameter[2]);
+                } else // coded and/or folded
                 {
                     // metaData [1] holds the param name
                     // metaData [2] holds the count or is not set in case of charset only
                     // metaData [3] holds '*' if there is charset in addition to folding
-                    if ( isset( $metaData[2] ) ) // we have folding
+                    if (isset($metaData[2])) // we have folding
                     {
                         $parameterBuffer[$metaData[1]][$metaData[2]]['value'] = $parameter[2];
                         $parameterBuffer[$metaData[1]][$metaData[2]]['encoding'] =
-                            isset( $metaData[3] ) ? true : false;;
-                    }
-                    else
-                    {
+                            isset($metaData[3]) ? true : false;;
+                    } else {
                         $parameterBuffer[$metaData[1]][0]['value'] = $parameter[2];
                         $parameterBuffer[$metaData[1]][0]['encoding'] = true;
                     }
@@ -92,37 +85,31 @@ class ezcMailRfc2231Implementation
 
             // whohooo... we have all the parameters nicely sorted.
             // Now we must go through them all and convert them into the end result
-            foreach ( $parameterBuffer as $paramName => $parts )
-            {
+            foreach ($parameterBuffer as $paramName => $parts) {
                 // fetch language and encoding if we have it
                 // syntax: '[charset]'[language]'encoded_string
                 $language = null;
                 $charset = null;
-                if ( $parts[0]['encoding'] == true )
-                {
-                    preg_match( "/(\S*)'(\S*)'(.*)/", $parts[0]['value'], $matches );
+                if ($parts[0]['encoding'] == true) {
+                    preg_match("/(\S*)'(\S*)'(.*)/", $parts[0]['value'], $matches);
                     $charset = $matches[1];
                     $language = $matches[2];
-                    $parts[0]['value'] = urldecode( $matches[3] ); // rewrite value: todo: decoding
-                    $result[1][$paramName] = array( 'value' => $parts[0]['value'] );
+                    $parts[0]['value'] = urldecode($matches[3]); // rewrite value: todo: decoding
+                    $result[1][$paramName] = array('value' => $parts[0]['value']);
                 }
 
-                $result[1][$paramName] = array( 'value' => $parts[0]['value'] );
-                if ( strlen( $charset ) > 0 )
-                {
+                $result[1][$paramName] = array('value' => $parts[0]['value']);
+                if (strlen($charset) > 0) {
                     $result[1][$paramName]['charset'] = $charset;
                 }
-                if ( strlen( $language ) > 0 )
-                {
+                if (strlen($language) > 0) {
                     $result[1][$paramName]['language'] = $language;
                 }
 
-                if ( count( $parts > 1 ) )
-                {
-                    for ( $i = 1; $i < count( $parts ); $i++ )
-                    {
+                if (count($parts > 1)) {
+                    for ($i = 1; $i < count($parts); $i++) {
                         $result[1][$paramName]['value'] .= $parts[$i]['encoding'] ?
-                            urldecode( $parts[$i]['value'] ) : $parts[$i]['value'];
+                            urldecode($parts[$i]['value']) : $parts[$i]['value'];
                     }
                 }
             }
@@ -140,39 +127,32 @@ class ezcMailRfc2231Implementation
      * @param ezcMailContentDispositionHeader $cd
      * @return ezcMailContentDispositionHeader
      */
-    public static function parseContentDisposition( $header, ezcMailContentDispositionHeader $cd = null )
+    public static function parseContentDisposition($header, ezcMailContentDispositionHeader $cd = null)
     {
-        if ( $cd === null )
-        {
+        if ($cd === null) {
             $cd = new ezcMailContentDispositionHeader();
         }
 
-        $parsedHeader = self::parseHeader( $header );
+        $parsedHeader = self::parseHeader($header);
         $cd->disposition = $parsedHeader[0];
-        if ( isset( $parsedHeader[1] ) )
-        {
-            foreach ( $parsedHeader[1] as $paramName => $data )
-            {
-                switch ( $paramName )
-                {
+        if (isset($parsedHeader[1])) {
+            foreach ($parsedHeader[1] as $paramName => $data) {
+                switch ($paramName) {
                     case 'filename':
                         $cd->fileName = $data['value'];
-                        $cd->displayFileName = trim( $data['value'], '"' );
-                        if ( isset( $data['charset'] ) )
-                        {
+                        $cd->displayFileName = trim($data['value'], '"');
+                        if (isset($data['charset'])) {
                             $cd->fileNameCharSet = $data['charset'];
-                            $cd->displayFileName = ezcMailCharsetConverter::convertToUTF8Iconv( $cd->displayFileName, $cd->fileNameCharSet );
+                            $cd->displayFileName = ezcMailCharsetConverter::convertToUTF8Iconv($cd->displayFileName, $cd->fileNameCharSet);
                         }
                         // Work around for bogus email clients that think
                         // it's allowed to use mime-encoding for filenames.
                         // It isn't, see RFC 2184, and issue #13038.
-                        else if ( preg_match( '@^=\?[^?]+\?[QqBb]\?@', $cd->displayFileName ) )
-                        {
-                            $cd->displayFileName = ezcMailTools::mimeDecode( $cd->displayFileName );
+                        else if (preg_match('@^=\?[^?]+\?[QqBb]\?@', $cd->displayFileName)) {
+                            $cd->displayFileName = ezcMailTools::mimeDecode($cd->displayFileName);
                         }
- 
-                        if ( isset( $data['language'] ) )
-                        {
+
+                        if (isset($data['language'])) {
                             $cd->fileNameLanguage = $data['language'];
                         }
                         break;
@@ -190,12 +170,10 @@ class ezcMailRfc2231Implementation
                         break;
                     default:
                         $cd->additionalParameters[$paramName] = $data['value'];
-                        if ( isset( $data['charset'] ) )
-                        {
+                        if (isset($data['charset'])) {
                             $cd->additionalParametersMetaData[$paramName]['charSet'] = $data['charset'];
                         }
-                        if ( isset( $data['language'] ) )
-                        {
+                        if (isset($data['language'])) {
                             $cd->additionalParametersMetaData[$paramName]['language'] = $data['language'];
                         }
                         break;
@@ -205,4 +183,5 @@ class ezcMailRfc2231Implementation
         return $cd;
     }
 }
+
 ?>

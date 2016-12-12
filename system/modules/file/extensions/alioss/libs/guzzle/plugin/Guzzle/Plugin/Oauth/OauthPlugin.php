@@ -41,7 +41,7 @@ class OauthPlugin implements EventSubscriberInterface
             'consumer_key' => 'anonymous',
             'consumer_secret' => 'anonymous',
             'signature_method' => 'HMAC-SHA1',
-            'signature_callback' => function($stringToSign, $key) {
+            'signature_callback' => function ($stringToSign, $key) {
                 return hash_hmac('sha1', $stringToSign, $key, true);
             }
         ), array(
@@ -70,15 +70,15 @@ class OauthPlugin implements EventSubscriberInterface
         $nonce = $this->generateNonce($request);
 
         $authorizationParams = array(
-            'oauth_callback'         => $this->config['callback'],
-            'oauth_consumer_key'     => $this->config['consumer_key'],
-            'oauth_nonce'            => $nonce,
-            'oauth_signature'        => $this->getSignature($request, $timestamp, $nonce),
+            'oauth_callback' => $this->config['callback'],
+            'oauth_consumer_key' => $this->config['consumer_key'],
+            'oauth_nonce' => $nonce,
+            'oauth_signature' => $this->getSignature($request, $timestamp, $nonce),
             'oauth_signature_method' => $this->config['signature_method'],
-            'oauth_timestamp'        => $timestamp,
-            'oauth_token'            => $this->config['token'],
-            'oauth_verifier'         => $this->config['verifier'],
-            'oauth_version'          => $this->config['version'],
+            'oauth_timestamp' => $timestamp,
+            'oauth_token' => $this->config['token'],
+            'oauth_verifier' => $this->config['verifier'],
+            'oauth_version' => $this->config['version'],
         );
 
         $request->setHeader(
@@ -111,9 +111,9 @@ class OauthPlugin implements EventSubscriberInterface
     /**
      * Calculate signature for request
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param integer          $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param integer $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return string
      */
@@ -128,9 +128,9 @@ class OauthPlugin implements EventSubscriberInterface
     /**
      * Calculate string to sign
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param int              $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param int $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return string
      */
@@ -147,34 +147,34 @@ class OauthPlugin implements EventSubscriberInterface
         $url = Url::factory($request->getUrl())->setQuery('')->setFragment(null);
 
         return strtoupper($request->getMethod()) . '&'
-             . rawurlencode($url) . '&'
-             . rawurlencode((string) $parameterString);
+        . rawurlencode($url) . '&'
+        . rawurlencode((string)$parameterString);
     }
 
     /**
      * Parameters sorted and filtered in order to properly sign a request
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param integer          $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param integer $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return array
      */
     public function getParamsToSign(RequestInterface $request, $timestamp, $nonce)
     {
         $params = new Collection(array(
-            'oauth_consumer_key'     => $this->config['consumer_key'],
-            'oauth_nonce'            => $nonce,
+            'oauth_consumer_key' => $this->config['consumer_key'],
+            'oauth_nonce' => $nonce,
             'oauth_signature_method' => $this->config['signature_method'],
-            'oauth_timestamp'        => $timestamp,
-            'oauth_token'            => $this->config['token'],
-            'oauth_version'          => $this->config['version']
+            'oauth_timestamp' => $timestamp,
+            'oauth_token' => $this->config['token'],
+            'oauth_version' => $this->config['version']
         ));
-        
+
         if (array_key_exists('callback', $this->config) == true) {
             $params['oauth_callback'] = $this->config['callback'];
         }
-        
+
         if (array_key_exists('verifier', $this->config) == true) {
             $params['oauth_verifier'] = $this->config['verifier'];
         }
@@ -183,8 +183,7 @@ class OauthPlugin implements EventSubscriberInterface
         $params->merge($request->getQuery());
 
         // Add POST fields to signing string if required
-        if ($this->shouldPostFieldsBeSigned($request))
-        {
+        if ($this->shouldPostFieldsBeSigned($request)) {
             $params->merge($request->getPostFields());
         }
 
@@ -208,8 +207,8 @@ class OauthPlugin implements EventSubscriberInterface
     {
         if (!$this->config->get('disable_post_params') &&
             $request instanceof EntityEnclosingRequestInterface &&
-            false !== strpos($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded'))
-        {
+            false !== strpos($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded')
+        ) {
             return true;
         }
 
@@ -238,7 +237,7 @@ class OauthPlugin implements EventSubscriberInterface
      */
     public function getTimestamp(Event $event)
     {
-       return $event['timestamp'] ?: time();
+        return $event['timestamp'] ?: time();
     }
 
     /**

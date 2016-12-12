@@ -20,13 +20,15 @@ use application\modules\recruit\core\ResumeDetail as ICResumeDetail;
 use application\modules\recruit\model\Resume;
 use application\modules\recruit\model\ResumeDetail;
 
-class AgeCounter extends TimeCounter {
+class AgeCounter extends TimeCounter
+{
 
     /**
      * 返回当前统计器标识
      * @return string
      */
-    public function getID() {
+    public function getID()
+    {
         return 'age';
     }
 
@@ -35,24 +37,25 @@ class AgeCounter extends TimeCounter {
      * @staticvar array $return 静态统计结果缓存
      * @return array
      */
-    public function getCount() {
+    public function getCount()
+    {
         static $return = array();
-        if ( empty( $return ) ) {
+        if (empty($return)) {
             $time = $this->getTimeScope();
-            $resumeids = Resume::model()->fetchAllByTime( $time['start'], $time['end'] );
-            $birthdays = ResumeDetail::model()->fetchFieldByRerumeids( $resumeids, 'birthday' );
+            $resumeids = Resume::model()->fetchAllByTime($time['start'], $time['end']);
+            $birthdays = ResumeDetail::model()->fetchFieldByRerumeids($resumeids, 'birthday');
             $age23 = $age24 = $age27 = $age31 = $age41 = 0;
-            foreach ( $birthdays as $birthday ) {
-                $age = ICResumeDetail::handleAge( $birthday );
-                if ( $age <= 23 ) {
+            foreach ($birthdays as $birthday) {
+                $age = ICResumeDetail::handleAge($birthday);
+                if ($age <= 23) {
                     $age23++;
-                } elseif ( $age >= 24 && $age <= 26 ) {
+                } elseif ($age >= 24 && $age <= 26) {
                     $age24++;
-                } elseif ( $age >= 27 && $age <= 30 ) {
+                } elseif ($age >= 27 && $age <= 30) {
                     $age27++;
-                } elseif ( $age >= 31 && $age <= 40 ) {
+                } elseif ($age >= 31 && $age <= 40) {
                     $age31++;
-                } elseif ( $age >= 41 ) {
+                } elseif ($age >= 41) {
                     $age41++;
                 }
             }

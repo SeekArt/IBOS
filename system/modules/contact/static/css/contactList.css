@@ -7,9 +7,6 @@
 .w120{
 	width:120px;
 }
-.fsst{
-	font-size: 16px;
-}
 .mr{
 	margin-right: 20px;
 }
@@ -24,9 +21,19 @@
 .o-pc-phone,
 .o-pc-email,
 .o-pc-qq,
+.o-pc-print,
+.o-pc-name,
 .o-pc-birthday,
 .o-pc-fax,
+.o-pc-url,
+.o-pc-jobnumber,
+.o-pc-auxiliarydept,
+.o-pc-auxiliaryposition,
+.o-pc-managername,
+.o-pc-func,
+.o-pc-address,
 .cl-window-ctrl,
+.o-pc-export,
 .o-si-nomark,
 .o-si-mark,
 .o-common-users{
@@ -46,23 +53,40 @@
 .o-si-mark{
 	background-position: -30px -60px;
 }
+.o-pc-address,
+.o-pc-jobnumber,
+.o-pc-auxiliarydept,
+.o-pc-auxiliaryposition,
+.o-pc-managername,
+.o-pc-func,
 .o-home-phone,
 .o-pc-phone,
 .o-pc-email,
 .o-pc-qq,
+.o-pc-name,
+.o-pc-print,
+.o-pc-url,
 .o-pc-birthday,
-.o-pc-fax{
+.o-pc-fax,
+.o-pc-export,
+.o-pc-address{
 	width: 20px;
 	height: 20px;
 }
 .o-home-phone{
-	background-position: -96px -90px;
+	background-position: -80px -90px;
+}
+.o-pc-name{
+	background-position: -180px -90px;
+}
+.o-pc-address{
+	background-position: -121px -90px;
 }
 .o-pc-phone{
-	background-position: -118px -90px;
+	background-position: -100px -90px;
 }
 .o-pc-email{
-	background-position: -46px -90px;
+	background-position: -40px -90px;
 }
 .o-pc-qq{
 	background-position: 0 -90px;
@@ -71,7 +95,31 @@
 	background-position: -20px -90px;
 }
 .o-pc-fax{
-	background-position: -70px -90px;
+	background-position: -160px -90px;
+}
+.o-pc-jobnumber{
+	background-position: -20px -110px;
+}
+.o-pc-auxiliarydept{
+	background-position: -60px -110px;
+}
+.o-pc-auxiliaryposition{
+	background-position: -80px -110px;
+}
+.o-pc-managername{
+	background-position: -139px -90px;
+}
+.o-pc-func{
+	background-position: 0 -110px;
+}
+.o-pc-print{
+	background-position: -60px -90px;
+}
+.o-pc-url{
+	background-position: -40px -110px;
+}
+.o-pc-export{
+	background-position: -100px -110px;
 }
 .cl-window-ctrl{
 	width: 31px;
@@ -87,10 +135,10 @@
 	height: 24px;
 }
 .o-company-cl{
-	background-position: -41px -139px;
+	background-position: -120px -110px;
 }
 .active .o-company-cl{
-	background-position: -62px -139px;
+	background-position: -140px -110px;
 }
 .o-common-user{
 	background-position: 0 -142px;
@@ -152,7 +200,7 @@
 }
 .cl-info-table tr.active td,
 .common-uer-table tr.active td{
-	background-color: #FDF0DE;
+	background-color: transparent;
 }
 .cl-info-table tr.active .pc-name,
 .common-uer-table tr.active .pc-name{
@@ -160,7 +208,10 @@
 }
 .cl-info-table td,
 .common-uer-table td{
-	padding: 5px 5px;
+	padding: 5px 0;
+}
+.cl-info-table tr.active{
+	background-color: #fcf3e8;
 }
 .cl-info-table .avatar-circle,
 .common-uer-table .avatar-circle,
@@ -169,6 +220,12 @@
 	width: 40px;
 	height: 40px;
 }
+.cl-info-table .badge{
+	background-color: #fff;
+	border: 1px solid #dadfe6;
+	color: #82939e;
+}
+
 .last-name-wrap{
 	display: inline-block;
 	width: 40px;
@@ -193,10 +250,22 @@
 	background-color: #b0c780;
 }
 .cl-letter-title{
-	padding:5px 10px 5px 20px;
-	background-color: #f9fbff;
-	border-bottom: 1px #ebeff6 solid;
-	font-family: 'Georgia';
+	 padding: 0px 10px 0px 20px;
+	 background-color: #fdfdfd;
+	 border-bottom: 1px #ebeff6 solid;
+	 color: #82939e;
+	 font-size: 12px;
+	 font-weight: 700;
+	 line-height: 30px;
+	 cursor: pointer;
+}
+.cl-letter-title i{
+	font-size: 12px;
+	font-weight: 200;
+	font-style: normal;
+}
+.cl-letter-title:hover{
+	background-color: #f2f4f7;
 }
 .cl-type-title{
 	padding:5px 10px 5px 20px;
@@ -263,6 +332,9 @@
 	width: 760px;
 	min-height: 40px;
 	background-color: #fff;
+}
+.cl-funbar button{
+	padding: 9px 12px;
 }
 .personal-info{
 	position: absolute;
@@ -336,6 +408,12 @@
 .pc-info-list{
 	padding: 48px 40px;
 }
+.pc-info-title{
+	margin-left: 10px;
+    font-weight: 700;
+    display: inline-block;
+    width: 60px;
+}
 .o-si-nomark,
 .o-si-mark{
 	position: absolute;
@@ -382,9 +460,9 @@
 .cl-rolling-sidebar{
 	width: 0px;
 	position: fixed;
-	top: 0;
 	margin-left: 780px;
 	overflow: hidden;
+	top: 130px;
 	z-index: 1000;
 	-webkit-box-shadow: -2px 0 4px rgba(130, 147, 158, .2);
 	-moz-box-shadow: -2px 0 4px rgba(130, 147, 158, .2);
@@ -442,18 +520,20 @@
 	background-color: #fefaf5;
 	color: #ee8c0c;
 }
+.cl-letter-title .arrow{
+	width: 13px;
+	height: 29px;
+	margin: 0 10px;
+	display: inline-block;
+	background-image: url(../image/contactList.png);
+	background-repeat: no-repeat;
+	background-position: -80px 0;
+	vertical-align: middle;
+}
 .footer{
 	display: none;
 }
-.card-qq{
-	margin-left: 27px;
-}
-.card-birthday{
-	margin-left: 21px;
-}
-.card-fax{
-	margin-left: 22px;
-}
+
 .mcr.cl-mcr{
 	min-height: 900px;
 	_height:900px;

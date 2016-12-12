@@ -15,17 +15,17 @@ class Header implements HeaderInterface
     protected $glue;
 
     /**
-     * @param string       $header Name of the header
+     * @param string $header Name of the header
      * @param array|string $values Values of the header as an array or a scalar
-     * @param string       $glue   Glue used to combine multiple values into a string
+     * @param string $glue Glue used to combine multiple values into a string
      */
     public function __construct($header, $values = array(), $glue = ',')
     {
         $this->header = trim($header);
         $this->glue = $glue;
 
-        foreach ((array) $values as $value) {
-            foreach ((array) $value as $v) {
+        foreach ((array)$values as $value) {
+            foreach ((array)$value as $v) {
                 $this->values[] = $v;
             }
         }

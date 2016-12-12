@@ -19,14 +19,17 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 
-class FileCloudSet extends Model {
+class FileCloudSet extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{file_cloud_set}}';
-	}
+    public function tableName()
+    {
+        return '{{file_cloud_set}}';
+    }
 
 }

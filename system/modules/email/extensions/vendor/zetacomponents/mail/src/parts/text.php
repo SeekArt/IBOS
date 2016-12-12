@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -70,7 +70,7 @@ class ezcMailText extends ezcMailPart
      * @param string $encoding
      * @param string $originalCharset
      */
-    public function __construct( $text, $charset = "us-ascii", $encoding = ezcMail::EIGHT_BIT, $originalCharset = 'us-ascii' )
+    public function __construct($text, $charset = "us-ascii", $encoding = ezcMail::EIGHT_BIT, $originalCharset = 'us-ascii')
     {
         parent::__construct();
 
@@ -93,10 +93,9 @@ class ezcMailText extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'charset':
             case 'subType':
             case 'encoding':
@@ -104,10 +103,10 @@ class ezcMailText extends ezcMailPart
                 $this->properties[$name] = $value;
                 break;
             case 'originalCharset':
-                throw new ezcBasePropertyPermissionException( $name, ezcBasePropertyPermissionException::READ );
+                throw new ezcBasePropertyPermissionException($name, ezcBasePropertyPermissionException::READ);
                 break;
             default:
-                return parent::__set( $name, $value );
+                return parent::__set($name, $value);
                 break;
         }
     }
@@ -121,10 +120,9 @@ class ezcMailText extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'charset':
             case 'originalCharset':
             case 'subType':
@@ -132,30 +130,29 @@ class ezcMailText extends ezcMailPart
             case 'text':
                 return $this->properties[$name];
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
         }
     }
 
     /**
      * Returns true if the property $name is set, otherwise false.
      *
-     * @param string $name     
+     * @param string $name
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'charset':
             case 'originalCharset':
             case 'subType':
             case 'encoding':
             case 'text':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -170,8 +167,8 @@ class ezcMailText extends ezcMailPart
      */
     public function generateHeaders()
     {
-        $this->setHeader( "Content-Type", "text/" . $this->subType . "; charset=" . $this->charset );
-        $this->setHeader( "Content-Transfer-Encoding", $this->encoding );
+        $this->setHeader("Content-Type", "text/" . $this->subType . "; charset=" . $this->charset);
+        $this->setHeader("Content-Transfer-Encoding", $this->encoding);
         return parent::generateHeaders();
     }
 
@@ -182,25 +179,24 @@ class ezcMailText extends ezcMailPart
      */
     public function generateBody()
     {
-        switch ( $this->encoding )
-        {
+        switch ($this->encoding) {
             case ezcMail::BASE64:
                 // leaves a \r\n to much at the end, but since it is base64 it will decode
                 // properly so we just leave it
-                return chunk_split( base64_encode( $this->text ), 76, ezcMailTools::lineBreak() );
+                return chunk_split(base64_encode($this->text), 76, ezcMailTools::lineBreak());
                 break;
             case ezcMail::QUOTED_PRINTABLE:
-                 $text = preg_replace_callback( '/[^\x21-\x3C\x3E-\x7E\x09\x20]/', function( $matches )
-                 {
-                     return sprintf("=%02X", ord($matches[0]));
-                 }, $this->text );
-                 preg_match_all( '/.{1,73}([^=]{0,2})?/', $text, $match );
-                 $text = implode( '=' . ezcMailTools::lineBreak(), $match[0] );
+                $text = preg_replace_callback('/[^\x21-\x3C\x3E-\x7E\x09\x20]/', function ($matches) {
+                    return sprintf("=%02X", ord($matches[0]));
+                }, $this->text);
+                preg_match_all('/.{1,73}([^=]{0,2})?/', $text, $match);
+                $text = implode('=' . ezcMailTools::lineBreak(), $match[0]);
                 return $text;
                 break;
             default:
-                return preg_replace( "/\r\n|\r|\n/", ezcMailTools::lineBreak(), $this->text );
+                return preg_replace("/\r\n|\r|\n/", ezcMailTools::lineBreak(), $this->text);
         }
     }
 }
+
 ?>

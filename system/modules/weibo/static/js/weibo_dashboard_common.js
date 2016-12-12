@@ -36,8 +36,10 @@ var WbDash = {
 				$.post(u, p, function(res) {
 					if (res.isSuccess) {
 						that.removeItemsById(param.ids);
-						Ui.tip(Ibos.l("DELETE_SUCCESS"));
+						Ui.tip(Ibos.l("OPERATION_SUCCESS"));
 						c && c(res);
+					}else{
+						Ui.tip(Ibos.l("OPERATION_FAILED"));
 					}
 				}, 'json');
 			};

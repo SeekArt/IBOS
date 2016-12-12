@@ -32,8 +32,8 @@ class RedirectPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'request.sent'        => array('onRequestSent', 100),
-            'request.clone'       => 'cleanupRequest',
+            'request.sent' => array('onRequestSent', 100),
+            'request.clone' => 'cleanupRequest',
             'request.before_send' => 'cleanupRequest'
         );
     }
@@ -106,10 +106,10 @@ class RedirectPlugin implements EventSubscriberInterface
      * Takes into account strict RFC compliant redirection (e.g. redirect POST with POST) vs doing what most clients do
      * (e.g. redirect POST with GET).
      *
-     * @param RequestInterface $request    Request being redirected
-     * @param RequestInterface $original   Original request
-     * @param int              $statusCode Status code of the redirect
-     * @param string           $location   Location header of the redirect
+     * @param RequestInterface $request Request being redirected
+     * @param RequestInterface $original Original request
+     * @param int $statusCode Status code of the redirect
+     * @param string $location Location header of the redirect
      *
      * @return RequestInterface Returns a new redirect request
      * @throws CouldNotRewindStreamException If the body needs to be rewound but cannot
@@ -119,7 +119,8 @@ class RedirectPlugin implements EventSubscriberInterface
         $statusCode,
         $location,
         RequestInterface $original
-    ) {
+    )
+    {
         $redirectRequest = null;
         $strict = $original->getParams()->get(self::STRICT_REDIRECTS);
 
@@ -141,7 +142,7 @@ class RedirectPlugin implements EventSubscriberInterface
             $originalUrl = $redirectRequest->getUrl(true);
             // Remove query string parameters and just take what is present on the redirect Location header
             $originalUrl->getQuery()->clear();
-            $location = $originalUrl->combine((string) $location);
+            $location = $originalUrl->combine((string)$location);
         }
 
         $redirectRequest->setUrl($location);
@@ -174,9 +175,9 @@ class RedirectPlugin implements EventSubscriberInterface
     /**
      * Prepare the request for redirection and enforce the maximum number of allowed redirects per client
      *
-     * @param RequestInterface $original  Origina request
-     * @param RequestInterface $request   Request to prepare and validate
-     * @param Response         $response  The current response
+     * @param RequestInterface $original Origina request
+     * @param RequestInterface $request Request to prepare and validate
+     * @param Response $response The current response
      *
      * @return RequestInterface
      */
@@ -208,8 +209,8 @@ class RedirectPlugin implements EventSubscriberInterface
      * Send a redirect request and handle any errors
      *
      * @param RequestInterface $original The originating request
-     * @param RequestInterface $request  The current request being redirected
-     * @param Response         $response The response of the current request
+     * @param RequestInterface $request The current request being redirected
+     * @param Response $response The response of the current request
      *
      * @throws BadResponseException|\Exception
      */
@@ -232,7 +233,7 @@ class RedirectPlugin implements EventSubscriberInterface
      * Throw a too many redirects exception for a request
      *
      * @param RequestInterface $original Request
-     * @param int              $max      Max allowed redirects
+     * @param int $max Max allowed redirects
      *
      * @throws TooManyRedirectsException when too many redirects have been issued
      */

@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -64,11 +64,10 @@ class ezcMailParserShutdownHandler
      *
      * @param string $dir
      */
-    public static function registerForRemoval( $dir )
+    public static function registerForRemoval($dir)
     {
-        if ( self::$isRegistered === false )
-        {
-            register_shutdown_function( array( "ezcMailParserShutdownHandler", "shutdownCallback" ) );
+        if (self::$isRegistered === false) {
+            register_shutdown_function(array("ezcMailParserShutdownHandler", "shutdownCallback"));
             self::$isRegistered = true;
         }
         self::$directories[] = $dir;
@@ -84,9 +83,8 @@ class ezcMailParserShutdownHandler
      */
     public static function shutdownCallback()
     {
-        foreach ( self::$directories as $directory )
-        {
-            self::remove( $directory );
+        foreach (self::$directories as $directory) {
+            self::remove($directory);
         }
     }
 
@@ -98,34 +96,30 @@ class ezcMailParserShutdownHandler
      * @param string $itemName
      * @return bool
      */
-    public static function remove( $itemName )
+    public static function remove($itemName)
     {
         $returnVar = true;
-        if ( !is_dir( $itemName ) && file_exists( $itemName ) )
-        {
-            unlink( $itemName );
+        if (!is_dir($itemName) && file_exists($itemName)) {
+            unlink($itemName);
             return true;
         }
 
-        if ( !file_exists( $itemName ) )
-        {
+        if (!file_exists($itemName)) {
             return true;
         }
 
-        $dir = dir( $itemName );
+        $dir = dir($itemName);
         $item = $dir->read();
-        while ( $item !== false )
-        {
-            if ( $item != '.' && $item != '..' )
-            {
-                self::remove( $dir->path . DIRECTORY_SEPARATOR . $item );
+        while ($item !== false) {
+            if ($item != '.' && $item != '..') {
+                self::remove($dir->path . DIRECTORY_SEPARATOR . $item);
                 $returnVar = false;
             }
             $item = $dir->read();
         }
 
         $dir->close();
-        $returnVar = rmdir( $itemName ) && $returnVar ? true : false; // if rmdir succeeds and everything else succeeded
+        $returnVar = rmdir($itemName) && $returnVar ? true : false; // if rmdir succeeds and everything else succeeded
         return $returnVar;
     }
 }

@@ -12,13 +12,16 @@ use application\modules\assignment\model\AssignmentRemind;
 use application\modules\assignment\model\Assignment;
 use application\modules\user\model\User;
 
-class UserData extends Model {
+class UserData extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{user_data}}';
     }
 
@@ -28,14 +31,15 @@ class UserData extends Model {
      * @param type $key
      * @return type
      */
-    public function fetchKeyValueByUid( $uid, $key ) {
+    public function fetchKeyValueByUid($uid, $key)
+    {
         $criteria = array(
             'select' => 'value',
             'condition' => "`key` = :key AND uid=:uid",
-            'params' => array( ':key' => $key, ':uid' => $uid )
+            'params' => array(':key' => $key, ':uid' => $uid)
         );
-        $res = $this->fetch( $criteria );
-        return !empty( $res['value'] ) ? StringUtil::utf8Unserialize( $res['value'] ) : array();
+        $res = $this->fetch($criteria);
+        return !empty($res['value']) ? StringUtil::utf8Unserialize($res['value']) : array();
     }
 
     /**
@@ -43,30 +47,32 @@ class UserData extends Model {
      * @param integer $uid
      * @return array
      */
-    public function fetchRecentAt( $uid ) {
+    public function fetchRecentAt($uid)
+    {
         $criteria = array(
             'select' => 'value',
             'condition' => "`key` = 'user_recentat' AND uid=:uid",
-            'params' => array( ':uid' => $uid )
+            'params' => array(':uid' => $uid)
         );
-        $res = $this->fetch( $criteria );
-        return !empty( $res['value'] ) ? StringUtil::utf8Unserialize( $res['value'] ) : array();
+        $res = $this->fetch($criteria);
+        return !empty($res['value']) ? StringUtil::utf8Unserialize($res['value']) : array();
     }
 
     /**
      * 获取活跃成员 (暂时是以微博数最高为排序)
      * @param integer $name 要获取的数量
      */
-    public function fetchActiveUsers( $nums = 10 ) {
+    public function fetchActiveUsers($nums = 10)
+    {
         $criteria = array(
             'select' => 'uid,value',
             'condition' => "`key` = 'feed_count'",
             'order' => 'value*1 DESC', // 表字段类型为字符串类型，但这个feedcount存的是int类型，因此要让它自然排序
             'limit' => $nums
         );
-        $res = $this->fetchAll( $criteria );
-        foreach ( $res as &$v ) {
-            $v['user'] = User::model()->fetchByUid( $v['uid'] );
+        $res = $this->fetchAll($criteria);
+        foreach ($res as &$v) {
+            $v['user'] = User::model()->fetchByUid($v['uid']);
         }
         return $res;
     }
@@ -78,8 +84,9 @@ class UserData extends Model {
      * @param integer $rate 数目变动的值
      * @return void
      */
-    public function updateUserCount( $uid, $key, $rate ) {
-        $this->updateKey( $key, $rate, true, $uid );
+    public function updateUserCount($uid, $key, $rate)
+    {
+        $this->updateKey($key, $rate, true, $uid);
     }
 
     /**
@@ -96,33 +103,34 @@ class UserData extends Model {
      * @param integer $uid 用户UID
      * @return array 返回更新后的数据
      */
-    public function updateKey( $key, $nums, $add = true, $uid = '' ) {
+    public function updateKey($key, $nums, $add = true, $uid = '')
+    {
         // 不需要修改
-        if ( $nums == 0 ) {
-            $this->addError( 'updateKey', Ibos::lang( 'Dont need to modify', 'message.default' ) );
+        if ($nums == 0) {
+            $this->addError('updateKey', Ibos::lang('Dont need to modify', 'message.default'));
             return false;
         }
         // 若更新数目小于0，则默认为减少数目
         $nums < 0 && $add = false;
-        $key = StringUtil::filterCleanHtml( $key );
+        $key = StringUtil::filterCleanHtml($key);
         // 获取当前设置用户的统计数目
-        $data = $this->getUserData( $uid );
-        if ( empty( $data ) || !$data ) {
+        $data = $this->getUserData($uid);
+        if (empty($data) || !$data) {
             $data = array();
             $data[$key] = $nums;
         } else {
-            $data[$key] = $add ? ((int) @$data[$key] + abs( $nums )) : ((int) @$data[$key] - abs( $nums ));
+            $data[$key] = $add ? ((int)@$data[$key] + abs($nums)) : ((int)@$data[$key] - abs($nums));
         }
 
         $data[$key] < 0 && $data[$key] = 0;
 
-        $map['uid'] = empty( $uid ) ? Ibos::app()->user->uid : $uid;
+        $map['uid'] = empty($uid) ? Ibos::app()->user->uid : $uid;
         $map['key'] = $key;
-        $this->deleteAll( '`key` = :key AND uid = :uid', array( ':key' => $key, ':uid' => $map['uid'] ) );
+        $this->deleteAll('`key` = :key AND uid = :uid', array(':key' => $key, ':uid' => $map['uid']));
         $map['value'] = $data[$key];
-        $map['mtime'] = date( 'Y-m-d H:i:s' );
-        $this->add( $map );
-        Cache::rm( 'userData_' . $map['uid'] );
+        $map['mtime'] = date('Y-m-d H:i:s');
+        $this->add($map);
+        Cache::rm('userData_' . $map['uid']);
         return $data;
     }
 
@@ -131,20 +139,21 @@ class UserData extends Model {
      * @param integer $uid 用户UID
      * @return array 指定用户的统计数据
      */
-    public function getUserData( $uid = '' ) {
+    public function getUserData($uid = '')
+    {
         // 默认为设置的用户
-        if ( empty( $uid ) ) {
+        if (empty($uid)) {
             $uid = Ibos::app()->user->uid;
         }
-        if ( ($data = Cache::get( 'userData_' . $uid )) === false || count( $data ) == 1 ) {
+        if (($data = Cache::get('userData_' . $uid)) === false || count($data) == 1) {
             $data = array();
-            $list = $this->fetchAll( '`uid` = :uid', array( ':uid' => $uid ) );
-            if ( !empty( $list ) ) {
-                foreach ( $list as $v ) {
-                    $data[$v['key']] = (int) $v['value'];
+            $list = $this->fetchAll('`uid` = :uid', array(':uid' => $uid));
+            if (!empty($list)) {
+                foreach ($list as $v) {
+                    $data[$v['key']] = (int)$v['value'];
                 }
             }
-            Cache::set( 'userData_' . $uid, $data, 60 ); // 1分钟缓存
+            Cache::set('userData_' . $uid, $data, 60); // 1分钟缓存
         }
         return $data;
     }
@@ -154,23 +163,24 @@ class UserData extends Model {
      * @param integer $uid 用户UID
      * @return array 指定用户的通知统计数目
      */
-    public function getUnreadCount( $uid ) {
+    public function getUnreadCount($uid)
+    {
         $this->getAssignRemind($uid);
-        $userData = $this->getUserData( $uid );
+        $userData = $this->getUserData($uid);
         // 指定用户的提醒通知统计数目
-        $count = NotifyMessage::model()->count( " uid = {$uid} and isread = 0 " );
+        $count = NotifyMessage::model()->count(" uid = {$uid} and isread = 0 ");
         // 未读提醒通知数目
-        $return = $this->getNotifyCount( $uid );
+        $return = $this->getNotifyCount($uid);
         // 未读总通知数目
-        $return['unread_notify'] = intval( NotifyMessage::model()->countUnreadByUid( $uid ) );
+        $return['unread_notify'] = intval(NotifyMessage::model()->countUnreadByUid($uid));
         // 未读@Me数目
-        $return['unread_atme'] = isset( $userData['unread_atme'] ) ? intval( $userData['unread_atme'] ) : 0;
+        $return['unread_atme'] = isset($userData['unread_atme']) ? intval($userData['unread_atme']) : 0;
         // 未读评论数目
-        $return['unread_comment'] = isset( $userData['unread_comment'] ) ? intval( $userData['unread_comment'] ) : 0;
+        $return['unread_comment'] = isset($userData['unread_comment']) ? intval($userData['unread_comment']) : 0;
         // 未读短信息数目
-        $return['unread_message'] = MessageContent::model()->countUnreadMessage( $uid, array( MessageContent::ONE_ON_ONE_CHAT, MessageContent::MULTIPLAYER_CHAT ) );
+        $return['unread_message'] = MessageContent::model()->countUnreadMessage($uid, array(MessageContent::ONE_ON_ONE_CHAT, MessageContent::MULTIPLAYER_CHAT));
         // 新的关注数目
-        $return['new_folower_count'] = isset( $userData['new_folower_count'] ) ? intval( $userData['new_folower_count'] ) : 0;
+        $return['new_folower_count'] = isset($userData['new_folower_count']) ? intval($userData['new_folower_count']) : 0;
         // 未读标题总通知数目
         $return['unread_total'] = $count + $return['unread_atme'] + $return['unread_comment'] + $return['unread_message'] + $return['new_folower_count'];
         return $return;
@@ -179,13 +189,14 @@ class UserData extends Model {
     /*
      * 将任务提醒时间到时，将其添加到消息提醒表中去
      */
-    private function getAssignRemind($uid){
+    private function getAssignRemind($uid)
+    {
         $remind = AssignmentRemind::model()->fetchNeedRemindReminder($uid);
         $remindLength = count($remind);
-        for ($i=0;$i<$remindLength;$i++){
-            $assignment = Assignment::model()->fetchByPk( $remind[$i]->assignmentid );
-            $this->sendNotify($assignment['designeeuid'],$remind[$i]->assignmentid,$assignment['subject'],$remind[$i]->uid,'assignment_timing_message');
-            AssignmentRemind::model()->updateNeedRemindReminder($uid,$remind[$i]->assignmentid);
+        for ($i = 0; $i < $remindLength; $i++) {
+            $assignment = Assignment::model()->fetchByPk($remind[$i]->assignmentid);
+            $this->sendNotify($assignment['designeeuid'], $remind[$i]->assignmentid, $assignment['subject'], $remind[$i]->uid, 'assignment_timing_message');
+            AssignmentRemind::model()->updateNeedRemindReminder($uid, $remind[$i]->assignmentid);
         }
     }
 
@@ -197,7 +208,8 @@ class UserData extends Model {
      * @param string $node 消息节点
      * @param string $result 是否是申请结果的提醒(是的话传递“同意“或”拒绝“文字)
      */
-    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null) {
+    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null)
+    {
         $config = array(
             '{sender}' => User::model()->fetchRealnameByUid($uid),
             '{subject}' => $subject,
@@ -212,21 +224,23 @@ class UserData extends Model {
             Notify::model()->sendNotify($toUid, $node, $config, $uid);
         }
     }
+
     /**
      * 获取指定用户的提醒通知统计
      * @param integer $uid 用户ID
      * @return array 指定用户的提醒通知统计
      */
-    public function getNotifyCount( $uid ) {
-        $notifyMessageList = NotifyMessage::model()->fetchAll( " uid = {$uid} and isread = 0 " );
+    public function getNotifyCount($uid)
+    {
+        $notifyMessageList = NotifyMessage::model()->fetchAll(" uid = {$uid} and isread = 0 ");
         $return = array();
-        foreach ( $notifyMessageList as $notifyMessage ) {
-            if ( in_array( $notifyMessage['module'], $notifyMessage ) ) {
-                $return[$notifyMessage['module']][] = count( $notifyMessage['module'] );
+        foreach ($notifyMessageList as $notifyMessage) {
+            if (in_array($notifyMessage['module'], $notifyMessage)) {
+                $return[$notifyMessage['module']][] = count($notifyMessage['module']);
             }
         }
-        foreach ( $return as $key => $value ) {
-            $return[$key] = count( $value );
+        foreach ($return as $key => $value) {
+            $return[$key] = count($value);
         }
         return $return;
     }
@@ -238,15 +252,16 @@ class UserData extends Model {
      * @param integer $value 设置的统计数值
      * @return void
      */
-    public function setKeyValue( $uid, $key, $value ) {
+    public function setKeyValue($uid, $key, $value)
+    {
         $map['uid'] = $uid;
         $map['key'] = $key;
-        $this->deleteAllByAttributes( $map );
+        $this->deleteAllByAttributes($map);
         $map['value'] = $value;
-        $map['mtime'] = date( 'Y-m-d H:i:s' );
-        $this->add( $map );
+        $map['mtime'] = date('Y-m-d H:i:s');
+        $this->add($map);
         // 清掉该用户的缓存
-        Cache::rm( 'userData_' . $uid );
+        Cache::rm('userData_' . $uid);
     }
 
     /**
@@ -254,14 +269,15 @@ class UserData extends Model {
      * @param integer $uid 用户ID
      * @return integer 条数
      */
-    public function countUnreadAtMeByUid( $uid ) {
+    public function countUnreadAtMeByUid($uid)
+    {
         $criteria = array(
             'select' => 'value',
             'condition' => '`uid` = :uid AND `key` = :key',
-            'params' => array( ':uid' => $uid, 'key' => 'unread_atme' )
+            'params' => array(':uid' => $uid, 'key' => 'unread_atme')
         );
-        $res = $this->fetch( $criteria );
-        return !empty( $res ) ? intval( $res['value'] ) : 0;
+        $res = $this->fetch($criteria);
+        return !empty($res) ? intval($res['value']) : 0;
     }
 
     /**
@@ -271,8 +287,9 @@ class UserData extends Model {
      * @param integer $value 统计数目变化的值，默认为0
      * @return void
      */
-    public function resetUserCount( $uid, $key, $value = 0 ) {
-        $this->setKeyValue( $uid, $key, $value );
+    public function resetUserCount($uid, $key, $value = 0)
+    {
+        $this->setKeyValue($uid, $key, $value);
     }
 
 }

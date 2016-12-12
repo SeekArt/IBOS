@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -256,7 +256,7 @@ class ezcMailImapTransport
      *
      * @var array(string)
      */
-    protected static $basicFlags = array( 'ANSWERED', 'DELETED', 'DRAFT', 'FLAGGED', 'SEEN' );
+    protected static $basicFlags = array('ANSWERED', 'DELETED', 'DRAFT', 'FLAGGED', 'SEEN');
 
     /**
      * Extended flags are used by {@link searchByFlag()}
@@ -283,7 +283,7 @@ class ezcMailImapTransport
      *
      * @var array(string)
      */
-    protected static $extendedFlags = array( 'ALL', 'ANSWERED', 'DELETED', 'DRAFT', 'FLAGGED', 'NEW', 'OLD', 'RECENT', 'SEEN', 'UNANSWERED', 'UNDELETED', 'UNDRAFT', 'UNFLAGGED', 'UNRECENT', 'UNSEEN' );
+    protected static $extendedFlags = array('ALL', 'ANSWERED', 'DELETED', 'DRAFT', 'FLAGGED', 'NEW', 'OLD', 'RECENT', 'SEEN', 'UNANSWERED', 'UNDELETED', 'UNDRAFT', 'UNFLAGGED', 'UNRECENT', 'UNSEEN');
 
     /**
      * Used to generate a tag for sending commands to the IMAP server.
@@ -371,34 +371,26 @@ class ezcMailImapTransport
      * @param int $port
      * @param ezcMailImapTransportOptions|array(string=>mixed) $options
      */
-    public function __construct( $server, $port = null, $options = array() )
+    public function __construct($server, $port = null, $options = array())
     {
-        if ( $options instanceof ezcMailImapTransportOptions )
-        {
+        if ($options instanceof ezcMailImapTransportOptions) {
             $this->options = $options;
-        }
-        else if ( is_array( $options ) )
-        {
-            $this->options = new ezcMailImapTransportOptions( $options );
-        }
-        else
-        {
-            throw new ezcBaseValueException( "options", $options, "ezcMailImapTransportOptions|array" );
+        } else if (is_array($options)) {
+            $this->options = new ezcMailImapTransportOptions($options);
+        } else {
+            throw new ezcBaseValueException("options", $options, "ezcMailImapTransportOptions|array");
         }
 
-        if ( $port === null )
-        {
-            $port = ( $this->options->ssl === true ) ? 993 : 143;
+        if ($port === null) {
+            $port = ($this->options->ssl === true) ? 993 : 143;
         }
-        $this->connection = new ezcMailTransportConnection( $server, $port, $this->options );
+        $this->connection = new ezcMailTransportConnection($server, $port, $this->options);
         // get the server greeting
         $response = $this->connection->getLine();
-        if ( strpos( $response, "* OK" ) === false && strpos( $response, "+OK" ) === false )
-        {
-            throw new ezcMailTransportException( "The connection to the IMAP server is ok, but a negative response from server was received. Try again later." );
+        if (strpos($response, "* OK") === false && strpos($response, "+OK") === false) {
+            throw new ezcMailTransportException("The connection to the IMAP server is ok, but a negative response from server was received. Try again later.");
         }
-        if ( strpos( $response, self::SERVER_GIMAP ) !== false )
-        {
+        if (strpos($response, self::SERVER_GIMAP) !== false) {
             $this->serverType = self::SERVER_GIMAP; // otherwise it is null
         }
         $this->state = self::STATE_NOT_AUTHENTICATED;
@@ -411,12 +403,9 @@ class ezcMailImapTransport
      */
     public function __destruct()
     {
-        try 
-        {
+        try {
             $this->disconnect();
-        }
-        catch ( ezcMailTransportException $e )
-        {
+        } catch (ezcMailTransportException $e) {
             // Ignore occuring transport exceptions.
         }
     }
@@ -432,20 +421,18 @@ class ezcMailImapTransport
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
-                if ( !( $value instanceof ezcMailImapTransportOptions ) )
-                {
-                    throw new ezcBaseValueException( 'options', $value, 'instanceof ezcMailImapTransportOptions' );
+                if (!($value instanceof ezcMailImapTransportOptions)) {
+                    throw new ezcBaseValueException('options', $value, 'instanceof ezcMailImapTransportOptions');
                 }
                 $this->options = $value;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -457,15 +444,14 @@ class ezcMailImapTransport
      * @param string $name
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return $this->options;
-            
+
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -476,10 +462,9 @@ class ezcMailImapTransport
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return true;
 
@@ -493,13 +478,13 @@ class ezcMailImapTransport
      */
     public function disconnect()
     {
-        if ( $this->state !== self::STATE_NOT_CONNECTED
-             && $this->connection->isConnected() === true )
-        {
+        if ($this->state !== self::STATE_NOT_CONNECTED
+            && $this->connection->isConnected() === true
+        ) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} LOGOUT" );
+            $this->connection->sendData("{$tag} LOGOUT");
             // discard the "bye bye" message ("{$tag} OK Logout completed.")
-            $this->getResponse( $tag );
+            $this->getResponse($tag);
             $this->state = self::STATE_LOGOUT;
             $this->selectedMailbox = null;
 
@@ -535,23 +520,20 @@ class ezcMailImapTransport
      * @param string $password
      * @return bool
      */
-    public function authenticate( $user, $password )
+    public function authenticate($user, $password)
     {
-        if ( $this->state != self::STATE_NOT_AUTHENTICATED )
-        {
-            throw new ezcMailTransportException( "Tried to authenticate when there was no connection or when already authenticated." );
+        if ($this->state != self::STATE_NOT_AUTHENTICATED) {
+            throw new ezcMailTransportException("Tried to authenticate when there was no connection or when already authenticated.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} LOGIN {$user} {$password}" );
-        $response = trim( $this->connection->getLine() );
+        $this->connection->sendData("{$tag} LOGIN {$user} {$password}");
+        $response = trim($this->connection->getLine());
         // hack for gmail, to fix issue #15837: imap.google.com (google gmail) changed IMAP response
-        if ( $this->serverType === self::SERVER_GIMAP && strpos( $response, "* CAPABILITY" ) === 0 )
-        {
-            $response = trim( $this->connection->getLine() );
+        if ($this->serverType === self::SERVER_GIMAP && strpos($response, "* CAPABILITY") === 0) {
+            $response = trim($this->connection->getLine());
         }
-        if ( strpos( $response, '* OK' ) !== false )
-        {
+        if (strpos($response, '* OK') !== false) {
             // the server is busy waiting for authentication process to
             // respond, so it is a good idea to just close the connection,
             // otherwise the application will be halted until the server
@@ -561,12 +543,9 @@ class ezcMailImapTransport
             $this->state = self::STATE_NOT_CONNECTED;
             return false;
         }
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server did not accept the username and/or password: {$response}." );
-        }
-        else
-        {
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server did not accept the username and/or password: {$response}.");
+        } else {
             $this->state = self::STATE_AUTHENTICATED;
             $this->selectedMailbox = null;
         }
@@ -606,37 +585,34 @@ class ezcMailImapTransport
      * @param string $mailbox
      * @return array(string)
      */
-    public function listMailboxes( $reference = '', $mailbox = '*' )
+    public function listMailboxes($reference = '', $mailbox = '*')
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call listMailboxes() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call listMailboxes() when not successfully logged in.");
         }
 
         $result = array();
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} LIST \"{$reference}\" \"{$mailbox}\"" );
-        $response = trim( $this->connection->getLine() );
-        while ( strpos( $response, '* LIST (' ) !== false )
-        {
+        $this->connection->sendData("{$tag} LIST \"{$reference}\" \"{$mailbox}\"");
+        $response = trim($this->connection->getLine());
+        while (strpos($response, '* LIST (') !== false) {
             // only consider the selectable mailboxes
-            if ( strpos( $response, "\\Noselect" ) === false )
-            {
-                $response = substr( $response, strpos( $response, "\" " ) + 2 );
-                $response = trim( $response );
-                $response = trim( $response, "\"" );
+            if (strpos($response, "\\Noselect") === false) {
+                $response = substr($response, strpos($response, "\" ") + 2);
+                $response = trim($response);
+                $response = trim($response, "\"");
                 $result[] = $response;
 
             }
             $response = $this->connection->getLine();
         }
 
-        $response = $this->getResponse( $tag, $response );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "Could not list mailboxes with the parameters '\"{$reference}\"' and '\"{$mailbox}\"': {$response}." );
+        $response = $this->getResponse($tag, $response);
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("Could not list mailboxes with the parameters '\"{$reference}\"' and '\"{$mailbox}\"': {$response}.");
         }
         return $result;
     }
@@ -669,33 +645,29 @@ class ezcMailImapTransport
      */
     public function getHierarchyDelimiter()
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call getDelimiter() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call getDelimiter() when not successfully logged in.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} LIST \"\" \"\"" );
+        $this->connection->sendData("{$tag} LIST \"\" \"\"");
 
         // there should be only one * LIST response line from IMAP
-        $response = trim( $this->getResponse( '* LIST' ) );
-        $parts = explode( '"', $response );
+        $response = trim($this->getResponse('* LIST'));
+        $parts = explode('"', $response);
 
-        if ( count( $parts ) >= 2 )
-        {
+        if (count($parts) >= 2) {
             $result = $parts[1];
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Could not retrieve the hierarchy delimiter: {$response}." );
+        } else {
+            throw new ezcMailTransportException("Could not retrieve the hierarchy delimiter: {$response}.");
         }
 
-        $response = $this->getResponse( $tag, $response );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "Could not retrieve the hierarchy delimiter: {$response}." );
+        $response = $this->getResponse($tag, $response);
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("Could not retrieve the hierarchy delimiter: {$response}.");
         }
         return $result;
     }
@@ -726,43 +698,37 @@ class ezcMailImapTransport
      * @param string $mailbox
      * @param bool $readOnly
      */
-    public function selectMailbox( $mailbox, $readOnly = false )
+    public function selectMailbox($mailbox, $readOnly = false)
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call selectMailbox() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call selectMailbox() when not successfully logged in.");
         }
 
         $tag = $this->getNextTag();
 
         // if the mailbox selection will be successful, $state will be STATE_SELECTED
         // or STATE_SELECTED_READONLY, depending on the $readOnly parameter
-        if ( $readOnly !== true ) 
-        {
-            $this->connection->sendData( "{$tag} SELECT \"{$mailbox}\"" );
+        if ($readOnly !== true) {
+            $this->connection->sendData("{$tag} SELECT \"{$mailbox}\"");
             $state = self::STATE_SELECTED;
-        }
-        else
-        {
-            $this->connection->sendData( "{$tag} EXAMINE \"{$mailbox}\"" );
+        } else {
+            $this->connection->sendData("{$tag} EXAMINE \"{$mailbox}\"");
             $state = self::STATE_SELECTED_READONLY;
         }
 
         // if the selecting of the mailbox fails (with "NO" or "BAD" response
         // from the server), $state reverts to STATE_AUTHENTICATED
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) == self::RESPONSE_OK )
-        {
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) == self::RESPONSE_OK) {
             $this->state = $state;
             $this->selectedMailbox = $mailbox;
-        }
-        else
-        {
+        } else {
             $this->state = self::STATE_AUTHENTICATED;
             $this->selectedMailbox = null;
-            throw new ezcMailTransportException( "Could not select mailbox '{$mailbox}': {$response}." );
+            throw new ezcMailTransportException("Could not select mailbox '{$mailbox}': {$response}.");
         }
     }
 
@@ -780,21 +746,20 @@ class ezcMailImapTransport
      * @param string $mailbox
      * @return bool
      */
-    public function createMailbox( $mailbox )
+    public function createMailbox($mailbox)
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call createMailbox() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call createMailbox() when not successfully logged in.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} CREATE \"{$mailbox}\"" );
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not create mailbox '{$mailbox}': {$response}." );
+        $this->connection->sendData("{$tag} CREATE \"{$mailbox}\"");
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not create mailbox '{$mailbox}': {$response}.");
         }
         return true;
     }
@@ -815,26 +780,24 @@ class ezcMailImapTransport
      * @param string $newName
      * @return bool
      */
-    public function renameMailbox( $mailbox, $newName )
+    public function renameMailbox($mailbox, $newName)
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call renameMailbox() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call renameMailbox() when not successfully logged in.");
         }
 
-        if ( strtolower( $this->selectedMailbox ) == strtolower( $mailbox ) )
-        {
-            throw new ezcMailTransportException( "Can't rename the currently selected mailbox." );
+        if (strtolower($this->selectedMailbox) == strtolower($mailbox)) {
+            throw new ezcMailTransportException("Can't rename the currently selected mailbox.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} RENAME \"{$mailbox}\" \"{$newName}\"" );
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not rename the mailbox '{$mailbox}' to '{$newName}': {$response}." );
+        $this->connection->sendData("{$tag} RENAME \"{$mailbox}\" \"{$newName}\"");
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not rename the mailbox '{$mailbox}' to '{$newName}': {$response}.");
         }
         return true;
     }
@@ -854,31 +817,29 @@ class ezcMailImapTransport
      * @param string $mailbox
      * @return bool
      */
-    public function deleteMailbox( $mailbox )
+    public function deleteMailbox($mailbox)
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call deleteMailbox() when not successfully logged in." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call deleteMailbox() when not successfully logged in.");
         }
 
-        if ( strtolower( $this->selectedMailbox ) == strtolower( $mailbox ) )
-        {
-            throw new ezcMailTransportException( "Can't delete the currently selected mailbox." );
+        if (strtolower($this->selectedMailbox) == strtolower($mailbox)) {
+            throw new ezcMailTransportException("Can't delete the currently selected mailbox.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} DELETE \"{$mailbox}\"" );
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not delete the mailbox '{$mailbox}': {$response}." );
+        $this->connection->sendData("{$tag} DELETE \"{$mailbox}\"");
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not delete the mailbox '{$mailbox}': {$response}.");
         }
         return true;
     }
 
-    /** 
+    /**
      * Copies message(s) from the currently selected mailbox to mailbox
      * $destination.
      *
@@ -919,23 +880,22 @@ class ezcMailImapTransport
      * @param string $destination
      * @return bool
      */
-    public function copyMessages( $messages, $destination )
+    public function copyMessages($messages, $destination)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call copyMessages() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call copyMessages() on the IMAP transport when a mailbox is not selected.");
         }
-    
+
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}COPY {$messages} \"{$destination}\"" );
-        
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not copy '{$messages}' to '{$destination}': {$response}." );
+        $this->connection->sendData("{$tag} {$uid}COPY {$messages} \"{$destination}\"");
+
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not copy '{$messages}' to '{$destination}': {$response}.");
         }
         return true;
     }
@@ -971,64 +931,57 @@ class ezcMailImapTransport
      * @param string $contentType
      * @return array(int)
      */
-    public function listMessages( $contentType = null )
+    public function listMessages($contentType = null)
     {
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call listMessages() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call listMessages() on the IMAP transport when a mailbox is not selected.");
         }
 
         $messageList = array();
         $messages = array();
- 
+
         // get the numbers of the existing messages
         $tag = $this->getNextTag();
         $command = "{$tag} SEARCH UNDELETED";
-        if ( !is_null( $contentType ) )
-        {
+        if (!is_null($contentType)) {
             $command .= " HEADER \"Content-Type\" \"{$contentType}\"";
         }
-        $this->connection->sendData( $command );
-        $response = trim( $this->getResponse( '* SEARCH' ) );
-        if ( strpos( $response, '* SEARCH' ) !== false )
-        {
-            $ids = trim( substr( $response, 9 ) );
-            if ( $ids !== "" )
-            {
-                $messageList = explode( ' ', $ids );
+        $this->connection->sendData($command);
+        $response = trim($this->getResponse('* SEARCH'));
+        if (strpos($response, '* SEARCH') !== false) {
+            $ids = trim(substr($response, 9));
+            if ($ids !== "") {
+                $messageList = explode(' ', $ids);
             }
         }
         // skip the OK response ("{$tag} OK Search completed.")
-        $response = trim( $this->getResponse( $tag, $response ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not list messages: {$response}." );
+        $response = trim($this->getResponse($tag, $response));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not list messages: {$response}.");
         }
 
-        if ( !empty( $messageList ) )
-        {
+        if (!empty($messageList)) {
             // get the sizes of the messages
             $tag = $this->getNextTag();
-            $query = trim( implode( ',', $messageList ) );
-            $this->connection->sendData( "{$tag} FETCH {$query} RFC822.SIZE" );
-            $response = $this->getResponse( 'FETCH (' );
-            $currentMessage = trim( reset( $messageList ) );
-            while ( strpos( $response, 'FETCH (' ) !== false )
-            {
+            $query = trim(implode(',', $messageList));
+            $this->connection->sendData("{$tag} FETCH {$query} RFC822.SIZE");
+            $response = $this->getResponse('FETCH (');
+            $currentMessage = trim(reset($messageList));
+            while (strpos($response, 'FETCH (') !== false) {
                 $line = $response;
-                $line = explode( ' ', $line );
-                $line = trim( $line[count( $line ) - 1] );
-                $line = substr( $line, 0, strlen( $line ) - 1 );
-                $messages[$currentMessage] = intval( $line );
-                $currentMessage = next( $messageList );
+                $line = explode(' ', $line);
+                $line = trim($line[count($line) - 1]);
+                $line = substr($line, 0, strlen($line) - 1);
+                $messages[$currentMessage] = intval($line);
+                $currentMessage = next($messageList);
                 $response = $this->connection->getLine();
             }
             // skip the OK response ("{$tag} OK Fetch completed.")
-            $response = trim( $this->getResponse( $tag, $response ) );
-            if ( $this->responseType( $response ) != self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not list messages: {$response}." );
+            $response = trim($this->getResponse($tag, $response));
+            if ($this->responseType($response) != self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not list messages: {$response}.");
             }
         }
         return $messages;
@@ -1078,45 +1031,39 @@ class ezcMailImapTransport
      * @param array $messages
      * @return array(int)
      */
-    public function fetchSizes( $messages )
+    public function fetchSizes($messages)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call fetchSizes() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call fetchSizes() on the IMAP transport when a mailbox is not selected.");
         }
 
         $sizes = array();
-        $ids = implode( $messages, ',' );
+        $ids = implode($messages, ',');
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}FETCH {$ids} (RFC822.SIZE)" );
+        $this->connection->sendData("{$tag} {$uid}FETCH {$ids} (RFC822.SIZE)");
 
-        $response = trim( $this->connection->getLine() );
-        while ( strpos( $response, $tag ) === false )
-        {
-            if ( strpos( $response, ' FETCH (' ) !== false )
-            {
-                if ( $this->options->uidReferencing )
-                {
-                    preg_match( '/\*\s.*\sFETCH\s\(RFC822\.SIZE\s(.*)\sUID\s(.*)\)/U', $response, $matches );
-                    $sizes[intval( $matches[2] )] = (int) $matches[1];
-                }
-                else
-                {
-                    preg_match( '/\*\s(.*)\sFETCH\s\(RFC822\.SIZE\s(.*)\)/U', $response, $matches );
-                    $sizes[intval( $matches[1] )] = (int) $matches[2];
+        $response = trim($this->connection->getLine());
+        while (strpos($response, $tag) === false) {
+            if (strpos($response, ' FETCH (') !== false) {
+                if ($this->options->uidReferencing) {
+                    preg_match('/\*\s.*\sFETCH\s\(RFC822\.SIZE\s(.*)\sUID\s(.*)\)/U', $response, $matches);
+                    $sizes[intval($matches[2])] = (int)$matches[1];
+                } else {
+                    preg_match('/\*\s(.*)\sFETCH\s\(RFC822\.SIZE\s(.*)\)/U', $response, $matches);
+                    $sizes[intval($matches[1])] = (int)$matches[2];
                 }
 
             }
-            $response = trim( $this->connection->getLine() );
+            $response = trim($this->connection->getLine());
         }
 
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not fetch flags for the messages '{$messages}': {$response}." );
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not fetch flags for the messages '{$messages}': {$response}.");
         }
         return $sizes;
     }
@@ -1155,21 +1102,21 @@ class ezcMailImapTransport
      * @param int &$unseen
      * @return bool
      */
-    public function status( &$numMessages, &$sizeMessages, &$recent = 0, &$unseen = 0 )
+    public function status(&$numMessages, &$sizeMessages, &$recent = 0, &$unseen = 0)
     {
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call status() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call status() on the IMAP transport when a mailbox is not selected.");
         }
         $messages = $this->listMessages();
-        $numMessages = count( $messages );
-        $sizeMessages = array_sum( $messages );
-        $messages = array_keys( $messages );
-        $recentMessages = array_intersect( $this->searchByFlag( "RECENT" ), $messages );
-        $unseenMessages = array_intersect( $this->searchByFlag( "UNSEEN" ), $messages );
-        $recent = count( $recentMessages );
-        $unseen = count( $unseenMessages );
+        $numMessages = count($messages);
+        $sizeMessages = array_sum($messages);
+        $messages = array_keys($messages);
+        $recentMessages = array_intersect($this->searchByFlag("RECENT"), $messages);
+        $unseenMessages = array_intersect($this->searchByFlag("UNSEEN"), $messages);
+        $recent = count($recentMessages);
+        $unseen = count($unseenMessages);
         return true;
     }
 
@@ -1197,22 +1144,20 @@ class ezcMailImapTransport
      * @param int $msgNum
      * @return bool
      */
-    public function delete( $msgNum )
+    public function delete($msgNum)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED )
-        {
-            throw new ezcMailTransportException( "Can't call delete() when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED) {
+            throw new ezcMailTransportException("Can't call delete() when a mailbox is not selected.");
         }
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}STORE {$msgNum} +FLAGS (\\Deleted)" );
+        $this->connection->sendData("{$tag} {$uid}STORE {$msgNum} +FLAGS (\\Deleted)");
 
         // get the response (should be "{$tag} OK Store completed.")
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not delete the message '{$msgNum}': {$response}." );
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not delete the message '{$msgNum}': {$response}.");
         }
         return true;
     }
@@ -1265,63 +1210,51 @@ class ezcMailImapTransport
      * @param int $chars
      * @return string
      */
-    public function top( $msgNum, $chars = 0 )
+    public function top($msgNum, $chars = 0)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call top() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call top() on the IMAP transport when a mailbox is not selected.");
         }
 
         $tag = $this->getNextTag();
 
-        if ( $chars === 0 )
-        {
+        if ($chars === 0) {
             $command = "{$tag} {$uid}FETCH {$msgNum} (BODY.PEEK[HEADER] BODY.PEEK[TEXT])";
-        }
-        else
-        {
+        } else {
             $command = "{$tag} {$uid}FETCH {$msgNum} (BODY.PEEK[HEADER] BODY.PEEK[TEXT]<0.{$chars}>)";
         }
-        $this->connection->sendData( $command );
-        if ( $this->options->uidReferencing )
-        {
+        $this->connection->sendData($command);
+        if ($this->options->uidReferencing) {
             // special case (BUG?) where "UID FETCH {$msgNum}" returns nothing
-            $response = trim( $this->connection->getLine() );
-            if ( $this->responseType( $response ) === self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not fetch the message '{$msgNum}': {$response}." );
+            $response = trim($this->connection->getLine());
+            if ($this->responseType($response) === self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not fetch the message '{$msgNum}': {$response}.");
             }
-        }
-        else
-        {
-            $response = $this->getResponse( 'FETCH (' );
+        } else {
+            $response = $this->getResponse('FETCH (');
         }
         $message = "";
-        if ( strpos( $response, 'FETCH (' ) !== false )
-        {
+        if (strpos($response, 'FETCH (') !== false) {
             // Added hack for issue #14360: problems with $imap->top() command in gmail.
-            if ( $this->serverType === self::SERVER_GIMAP )
-            {
+            if ($this->serverType === self::SERVER_GIMAP) {
                 // Google IMAP servers return the body first, then the headers (!)
-                $bytesToRead = $this->getMessageSectionSize( $response );
+                $bytesToRead = $this->getMessageSectionSize($response);
                 $response = "";
-                while ( $bytesToRead >= 0 )
-                {
+                while ($bytesToRead >= 0) {
                     $data = $this->connection->getLine();
                     $lastResponse = $data;
-                    $bytesToRead -= strlen( $data );
+                    $bytesToRead -= strlen($data);
 
                     // in case reading too much and the string "BODY[HEADER] {size}"
                     // is at the end of the last line
-                    if ( $bytesToRead <= 0 )
-                    {
-                        if ( $bytesToRead < 0 )
-                        {
-                            $lastResponse = substr( $data, $bytesToRead );
-                            $data = substr( $data, 0, strlen( $data ) + $bytesToRead );
+                    if ($bytesToRead <= 0) {
+                        if ($bytesToRead < 0) {
+                            $lastResponse = substr($data, $bytesToRead);
+                            $data = substr($data, 0, strlen($data) + $bytesToRead);
                         }
                     }
                     $message .= $data;
@@ -1330,42 +1263,36 @@ class ezcMailImapTransport
                 // Read the headers
                 $headers = '';
                 $response = $this->connection->getLine();
-                $bytesToRead = $this->getMessageSectionSize( $lastResponse );
+                $bytesToRead = $this->getMessageSectionSize($lastResponse);
 
                 $response = $this->connection->getLine();
-                while ( strpos( $response, $tag ) === false )
-                {
+                while (strpos($response, $tag) === false) {
                     $headers .= $response;
                     $response = $this->connection->getLine();
                 }
-                $headers = trim( $headers, ")\r\n" );
+                $headers = trim($headers, ")\r\n");
 
                 // Append the body AFTER the headers as it should be
                 $message = $headers . "\r\n\r\n" . $message;
-            }
-            else
-            {
+            } else {
                 // Other IMAP servers return the headers first, then the body
                 $response = "";
-                while ( strpos( $response, 'BODY[TEXT]' ) === false )
-                {
+                while (strpos($response, 'BODY[TEXT]') === false) {
                     $message .= $response;
                     $response = $this->connection->getLine();
                 }
 
                 $response = $this->connection->getLine();
-                while ( strpos( $response, $tag ) === false )
-                {
+                while (strpos($response, $tag) === false) {
                     $message .= $response;
                     $response = $this->connection->getLine();
                 }
             }
         }
         // skip the OK response ("{$tag} OK Fetch completed.")
-        $response = trim( $this->getResponse( $tag, $response ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not fetch the message '{$msgNum}': {$response}." );
+        $response = trim($this->getResponse($tag, $response));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not fetch the message '{$msgNum}': {$response}.");
         }
         return $message;
     }
@@ -1402,50 +1329,42 @@ class ezcMailImapTransport
      * @param int $msgNum
      * @return array(string)
      */
-    public function listUniqueIdentifiers( $msgNum = null )
+    public function listUniqueIdentifiers($msgNum = null)
     {
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call listUniqueIdentifiers() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call listUniqueIdentifiers() on the IMAP transport when a mailbox is not selected.");
         }
 
         $result = array();
-        if ( $msgNum !== null )
-        {
+        if ($msgNum !== null) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} UID SEARCH {$msgNum}" );
-            $response = $this->getResponse( '* SEARCH' );
-            if ( strpos( $response, '* SEARCH' ) !== false )
-            {
-                $result[(int)$msgNum] = trim( substr( $response, 9 ) );
+            $this->connection->sendData("{$tag} UID SEARCH {$msgNum}");
+            $response = $this->getResponse('* SEARCH');
+            if (strpos($response, '* SEARCH') !== false) {
+                $result[(int)$msgNum] = trim(substr($response, 9));
             }
-            $response = trim( $this->getResponse( $tag, $response ) );
-        }
-        else
-        {
+            $response = trim($this->getResponse($tag, $response));
+        } else {
             $uids = array();
-            $messages = array_keys( $this->listMessages() );
+            $messages = array_keys($this->listMessages());
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} UID SEARCH UNDELETED" );
-            $response = $this->getResponse( '* SEARCH' );
-            if ( strpos( $response, '* SEARCH' ) !== false )
-            {
-                $response = trim( substr( $response, 9 ) );
-                if ( $response !== "" )
-                {
-                    $uids = explode( ' ', $response );
+            $this->connection->sendData("{$tag} UID SEARCH UNDELETED");
+            $response = $this->getResponse('* SEARCH');
+            if (strpos($response, '* SEARCH') !== false) {
+                $response = trim(substr($response, 9));
+                if ($response !== "") {
+                    $uids = explode(' ', $response);
                 }
-                for ( $i = 0; $i < count( $messages ); $i++ )
-                {
-                    $result[trim( $messages[$i] )] = $uids[$i];
+                for ($i = 0; $i < count($messages); $i++) {
+                    $result[trim($messages[$i])] = $uids[$i];
                 }
             }
-            $response = trim( $this->getResponse( $tag ) );
+            $response = trim($this->getResponse($tag));
         }
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not fetch the unique identifiers: {$response}." );
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not fetch the unique identifiers: {$response}.");
         }
         return $result;
     }
@@ -1489,18 +1408,15 @@ class ezcMailImapTransport
      * @param bool $deleteFromServer
      * @return ezcMailParserSet
      */
-    public function fetchAll( $deleteFromServer = false )
+    public function fetchAll($deleteFromServer = false)
     {
-        if ( $this->options->uidReferencing )
-        {
-            $messages = array_values( $this->listUniqueIdentifiers() );
-        }
-        else
-        {
-            $messages = array_keys( $this->listMessages() );
+        if ($this->options->uidReferencing) {
+            $messages = array_values($this->listUniqueIdentifiers());
+        } else {
+            $messages = array_keys($this->listMessages());
         }
 
-        return new ezcMailImapSet( $this->connection, $messages, $deleteFromServer, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        return new ezcMailImapSet($this->connection, $messages, $deleteFromServer, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1541,23 +1457,19 @@ class ezcMailImapTransport
      * @param bool $deleteFromServer
      * @return ezcMailImapSet
      */
-    public function fetchByMessageNr( $number, $deleteFromServer = false )
+    public function fetchByMessageNr($number, $deleteFromServer = false)
     {
-        if ( $this->options->uidReferencing )
-        {
-            $messages = array_flip( $this->listUniqueIdentifiers() );
-        }
-        else
-        {
+        if ($this->options->uidReferencing) {
+            $messages = array_flip($this->listUniqueIdentifiers());
+        } else {
             $messages = $this->listMessages();
         }
 
-        if ( !isset( $messages[$number] ) )
-        {
-            throw new ezcMailNoSuchMessageException( $number );
+        if (!isset($messages[$number])) {
+            throw new ezcMailNoSuchMessageException($number);
         }
 
-        return new ezcMailImapSet( $this->connection, array( 0 => $number ), $deleteFromServer, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        return new ezcMailImapSet($this->connection, array(0 => $number), $deleteFromServer, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1599,52 +1511,43 @@ class ezcMailImapTransport
      * @param bool $deleteFromServer
      * @return ezcMailImapSet
      */
-    public function fetchFromOffset( $offset, $count = 0, $deleteFromServer = false )
+    public function fetchFromOffset($offset, $count = 0, $deleteFromServer = false)
     {
-        if ( $count < 0 )
-        {
-            throw new ezcMailInvalidLimitException( $offset, $count );
+        if ($count < 0) {
+            throw new ezcMailInvalidLimitException($offset, $count);
         }
 
-        if ( $this->options->uidReferencing )
-        {
-            $messages = array_values( $this->listUniqueIdentifiers() );
-            $ids = array_flip( $messages );
+        if ($this->options->uidReferencing) {
+            $messages = array_values($this->listUniqueIdentifiers());
+            $ids = array_flip($messages);
 
-            if ( $count === 0 )
-            {
-                $count = count( $messages );
+            if ($count === 0) {
+                $count = count($messages);
             }
 
-            if ( !isset( $ids[$offset] ) )
-            {
-                throw new ezcMailOffsetOutOfRangeException( $offset, $count );
+            if (!isset($ids[$offset])) {
+                throw new ezcMailOffsetOutOfRangeException($offset, $count);
             }
 
             $range = array();
-            for ( $i = $ids[$offset]; $i < min( $count, count( $messages ) ); $i++ )
-            {
+            for ($i = $ids[$offset]; $i < min($count, count($messages)); $i++) {
                 $range[] = $messages[$i];
             }
-        }
-        else
-        {
-            $messages = array_keys( $this->listMessages() );
+        } else {
+            $messages = array_keys($this->listMessages());
 
-            if ( $count === 0 )
-            {
-                $count = count( $messages );
+            if ($count === 0) {
+                $count = count($messages);
             }
 
-            $range = array_slice( $messages, $offset - 1, $count, true );
+            $range = array_slice($messages, $offset - 1, $count, true);
 
-            if ( !isset( $range[$offset - 1] ) )
-            {
-                throw new ezcMailOffsetOutOfRangeException( $offset, $count );
+            if (!isset($range[$offset - 1])) {
+                throw new ezcMailOffsetOutOfRangeException($offset, $count);
             }
         }
 
-        return new ezcMailImapSet( $this->connection, $range, $deleteFromServer, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        return new ezcMailImapSet($this->connection, $range, $deleteFromServer, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1693,43 +1596,39 @@ class ezcMailImapTransport
      * @param string $criteria
      * @return ezcMailImapSet
      */
-    public function searchMailbox( $criteria = null )
+    public function searchMailbox($criteria = null)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call searchMailbox() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call searchMailbox() on the IMAP transport when a mailbox is not selected.");
         }
 
-        $criteria = trim( $criteria );
-        if ( empty( $criteria ) )
-        {
+        $criteria = trim($criteria);
+        if (empty($criteria)) {
             $criteria = 'ALL';
         }
 
         $matchingMessages = array();
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}SEARCH {$criteria}" );
+        $this->connection->sendData("{$tag} {$uid}SEARCH {$criteria}");
 
-        $response = $this->getResponse( '* SEARCH' );
-        if ( strpos( $response, '* SEARCH' ) !== false )
-        {
-            $ids = substr( trim( $response ), 9 );
-            if ( trim( $ids ) !== "" )
-            {
-                $matchingMessages = explode( ' ', $ids );
+        $response = $this->getResponse('* SEARCH');
+        if (strpos($response, '* SEARCH') !== false) {
+            $ids = substr(trim($response), 9);
+            if (trim($ids) !== "") {
+                $matchingMessages = explode(' ', $ids);
             }
         }
 
-        $response = trim( $this->getResponse( $tag, $response ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not search the messages by the specified criteria: {$response}." );
+        $response = trim($this->getResponse($tag, $response));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not search the messages by the specified criteria: {$response}.");
         }
 
-        return new ezcMailImapSet( $this->connection, array_values( $matchingMessages ), false, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        return new ezcMailImapSet($this->connection, array_values($matchingMessages), false, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1777,59 +1676,50 @@ class ezcMailImapTransport
      * @param bool $reverse
      * @return ezcMailImapSet
      */
-    public function sortFromOffset( $offset, $count = 0, $sortCriteria, $reverse = false )
+    public function sortFromOffset($offset, $count = 0, $sortCriteria, $reverse = false)
     {
-        if ( $count < 0 )
-        {
-            throw new ezcMailInvalidLimitException( $offset, $count );
+        if ($count < 0) {
+            throw new ezcMailInvalidLimitException($offset, $count);
         }
 
         $range = array();
-        if ( $this->options->uidReferencing )
-        {
-            $uids = array_values( $this->listUniqueIdentifiers() );
+        if ($this->options->uidReferencing) {
+            $uids = array_values($this->listUniqueIdentifiers());
 
-            $flip = array_flip( $uids );
-            if ( !isset( $flip[$offset] ) )
-            {
-                throw new ezcMailOffsetOutOfRangeException( $offset, $count );
+            $flip = array_flip($uids);
+            if (!isset($flip[$offset])) {
+                throw new ezcMailOffsetOutOfRangeException($offset, $count);
             }
 
             $start = $flip[$offset];
 
-            $messages = $this->sort( $uids, $sortCriteria, $reverse );
+            $messages = $this->sort($uids, $sortCriteria, $reverse);
 
-            if ( $count === 0 )
-            {
-                $count = count( $messages );
+            if ($count === 0) {
+                $count = count($messages);
             }
 
-            $ids = array_keys( $messages );
+            $ids = array_keys($messages);
 
-            for ( $i = $start; $i < $count; $i++ )
-            {
+            for ($i = $start; $i < $count; $i++) {
                 $range[] = $ids[$i];
             }
-        }
-        else
-        {
-            $messageCount = $this->countByFlag( 'ALL' );
-            $messages = array_keys( $this->sort( range( 1, $messageCount ), $sortCriteria, $reverse ) );
+        } else {
+            $messageCount = $this->countByFlag('ALL');
+            $messages = array_keys($this->sort(range(1, $messageCount), $sortCriteria, $reverse));
 
-            if ( $count === 0 )
-            {
-                $count = count( $messages );
+            if ($count === 0) {
+                $count = count($messages);
             }
 
-            $range = array_slice( $messages, $offset - 1, $count, true );
+            $range = array_slice($messages, $offset - 1, $count, true);
 
-            if ( !isset( $range[$offset - 1] ) )
-            {
-                throw new ezcMailOffsetOutOfRangeException( $offset, $count );
+            if (!isset($range[$offset - 1])) {
+                throw new ezcMailOffsetOutOfRangeException($offset, $count);
             }
         }
 
-        return new ezcMailImapSet( $this->connection, $range, false, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        return new ezcMailImapSet($this->connection, $range, false, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1872,10 +1762,10 @@ class ezcMailImapTransport
      * @param bool $reverse
      * @return ezcMailImapSet
      */
-    public function sortMessages( $messages, $sortCriteria, $reverse = false )
+    public function sortMessages($messages, $sortCriteria, $reverse = false)
     {
-        $messages = $this->sort( $messages, $sortCriteria, $reverse );
-        return new ezcMailImapSet( $this->connection, array_keys ( $messages ), false, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        $messages = $this->sort($messages, $sortCriteria, $reverse);
+        return new ezcMailImapSet($this->connection, array_keys($messages), false, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1931,10 +1821,10 @@ class ezcMailImapTransport
      * @param string $flag
      * @return ezcMailImapSet
      */
-    public function fetchByFlag( $flag )
+    public function fetchByFlag($flag)
     {
-        $messages = $this->searchByFlag( $flag );
-        return new ezcMailImapSet( $this->connection, $messages, false, array( 'uidReferencing' => $this->options->uidReferencing ) );
+        $messages = $this->searchByFlag($flag);
+        return new ezcMailImapSet($this->connection, $messages, false, array('uidReferencing' => $this->options->uidReferencing));
     }
 
     /**
@@ -1973,11 +1863,11 @@ class ezcMailImapTransport
      * @param string $flag
      * @return int
      */
-    public function countByFlag( $flag )
+    public function countByFlag($flag)
     {
-        $flag = $this->normalizeFlag( $flag );
-        $messages = $this->searchByFlag( $flag );
-        return count( $messages );
+        $flag = $this->normalizeFlag($flag);
+        $messages = $this->searchByFlag($flag);
+        return count($messages);
     }
 
     /**
@@ -2024,46 +1914,40 @@ class ezcMailImapTransport
      * @param array $messages
      * @return array(mixed)
      */
-    public function fetchFlags( $messages )
+    public function fetchFlags($messages)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call fetchFlags() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call fetchFlags() on the IMAP transport when a mailbox is not selected.");
         }
 
         $flags = array();
-        $ids = implode( $messages, ',' );
+        $ids = implode($messages, ',');
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}FETCH {$ids} (FLAGS)" );
+        $this->connection->sendData("{$tag} {$uid}FETCH {$ids} (FLAGS)");
 
-        $response = trim( $this->connection->getLine() );
-        while ( strpos( $response, $tag ) === false )
-        {
-            if ( strpos( $response, ' FETCH (' ) !== false )
-            {
-                if ( $this->options->uidReferencing )
-                {
-                    preg_match( '/\*\s.*\sFETCH\s\(FLAGS \((.*)\)\sUID\s(.*)\)/U', $response, $matches );
-                    $parts = explode( ' ', $matches[1] );
-                    $flags[intval( $matches[2] )] = $parts;
-                }
-                else
-                {
-                    preg_match( '/\*\s(.*)\sFETCH\s\(FLAGS \((.*)\)/U', $response, $matches );
-                    $parts = explode( ' ', $matches[2] );
-                    $flags[intval( $matches[1] )] = $parts;
+        $response = trim($this->connection->getLine());
+        while (strpos($response, $tag) === false) {
+            if (strpos($response, ' FETCH (') !== false) {
+                if ($this->options->uidReferencing) {
+                    preg_match('/\*\s.*\sFETCH\s\(FLAGS \((.*)\)\sUID\s(.*)\)/U', $response, $matches);
+                    $parts = explode(' ', $matches[1]);
+                    $flags[intval($matches[2])] = $parts;
+                } else {
+                    preg_match('/\*\s(.*)\sFETCH\s\(FLAGS \((.*)\)/U', $response, $matches);
+                    $parts = explode(' ', $matches[2]);
+                    $flags[intval($matches[1])] = $parts;
                 }
             }
-            $response = trim( $this->connection->getLine() );
+            $response = trim($this->connection->getLine());
         }
 
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not fetch flags for the messages '{$messages}': {$response}." );
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not fetch flags for the messages '{$messages}': {$response}.");
         }
         return $flags;
     }
@@ -2111,29 +1995,24 @@ class ezcMailImapTransport
      * @param string $flag
      * @return bool
      */
-    public function setFlag( $messages, $flag )
+    public function setFlag($messages, $flag)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED )
-        {
-            throw new ezcMailTransportException( "Can't call setFlag() when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED) {
+            throw new ezcMailTransportException("Can't call setFlag() when a mailbox is not selected.");
         }
 
-        $flag = $this->normalizeFlag( $flag );
-        if ( in_array( $flag, self::$basicFlags ) )
-        {
+        $flag = $this->normalizeFlag($flag);
+        if (in_array($flag, self::$basicFlags)) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} {$uid}STORE {$messages} +FLAGS (\\{$flag})" );
-            $response = trim( $this->getResponse( $tag ) );
-            if ( $this->responseType( $response ) != self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not set flag '{$flag}' on the messages '{$messages}': {$response}." );
+            $this->connection->sendData("{$tag} {$uid}STORE {$messages} +FLAGS (\\{$flag})");
+            $response = trim($this->getResponse($tag));
+            if ($this->responseType($response) != self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not set flag '{$flag}' on the messages '{$messages}': {$response}.");
             }
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Flag '{$flag}' is not allowed for setting." );
+        } else {
+            throw new ezcMailTransportException("Flag '{$flag}' is not allowed for setting.");
         }
         return true;
     }
@@ -2181,29 +2060,24 @@ class ezcMailImapTransport
      * @param string $flag
      * @return bool
      */
-    public function clearFlag( $messages, $flag )
+    public function clearFlag($messages, $flag)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED )
-        {
-            throw new ezcMailTransportException( "Can't call clearFlag() when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED) {
+            throw new ezcMailTransportException("Can't call clearFlag() when a mailbox is not selected.");
         }
 
-        $flag = $this->normalizeFlag( $flag );
-        if ( in_array( $flag, self::$basicFlags ) )
-        {
+        $flag = $this->normalizeFlag($flag);
+        if (in_array($flag, self::$basicFlags)) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} {$uid}STORE {$messages} -FLAGS (\\{$flag})" );
-            $response = trim( $this->getResponse( $tag ) );
-            if ( $this->responseType( $response ) != self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not clear flag '{$flag}' on the messages '{$messages}': {$response}." );
+            $this->connection->sendData("{$tag} {$uid}STORE {$messages} -FLAGS (\\{$flag})");
+            $response = trim($this->getResponse($tag));
+            if ($this->responseType($response) != self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not clear flag '{$flag}' on the messages '{$messages}': {$response}.");
             }
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Flag '{$flag}' is not allowed for clearing." );
+        } else {
+            throw new ezcMailTransportException("Flag '{$flag}' is not allowed for clearing.");
         }
         return true;
     }
@@ -2254,41 +2128,35 @@ class ezcMailImapTransport
      * @param string $flag
      * @return array(int)
      */
-    protected function searchByFlag( $flag )
+    protected function searchByFlag($flag)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call searchByFlag() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call searchByFlag() on the IMAP transport when a mailbox is not selected.");
         }
 
         $matchingMessages = array();
-        $flag = $this->normalizeFlag( $flag );
-        if ( in_array( $flag, self::$extendedFlags ) )
-        {
+        $flag = $this->normalizeFlag($flag);
+        if (in_array($flag, self::$extendedFlags)) {
             $tag = $this->getNextTag();
-            $this->connection->sendData( "{$tag} {$uid}SEARCH ({$flag})" );
-            $response = $this->getResponse( '* SEARCH' );
+            $this->connection->sendData("{$tag} {$uid}SEARCH ({$flag})");
+            $response = $this->getResponse('* SEARCH');
 
-            if ( strpos( $response, '* SEARCH' ) !== false )
-            {
-                $ids = substr( trim( $response ), 9 );
-                if ( trim( $ids ) !== "" )
-                {
-                    $matchingMessages = explode( ' ', $ids );
+            if (strpos($response, '* SEARCH') !== false) {
+                $ids = substr(trim($response), 9);
+                if (trim($ids) !== "") {
+                    $matchingMessages = explode(' ', $ids);
                 }
             }
-            $response = trim( $this->getResponse( $tag, $response ) );
-            if ( $this->responseType( $response ) != self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not search the messages by flags: {$response}." );
+            $response = trim($this->getResponse($tag, $response));
+            if ($this->responseType($response) != self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not search the messages by flags: {$response}.");
             }
-        }
-        else
-        {
-            throw new ezcMailTransportException( "Flag '{$flag}' is not allowed for searching." );
+        } else {
+            throw new ezcMailTransportException("Flag '{$flag}' is not allowed for searching.");
         }
         return $matchingMessages;
     }
@@ -2305,20 +2173,19 @@ class ezcMailImapTransport
      */
     public function noop()
     {
-        if ( $this->state != self::STATE_NOT_AUTHENTICATED &&
-             $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can not issue NOOP command if not connected." );
+        if ($this->state != self::STATE_NOT_AUTHENTICATED &&
+            $this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can not issue NOOP command if not connected.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} NOOP" );
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "NOOP failed: {$response}." );
+        $this->connection->sendData("{$tag} NOOP");
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("NOOP failed: {$response}.");
         }
     }
 
@@ -2343,32 +2210,30 @@ class ezcMailImapTransport
      */
     public function capability()
     {
-        if ( $this->state != self::STATE_NOT_AUTHENTICATED &&
-             $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Trying to request capability when not connected to server." );
+        if ($this->state != self::STATE_NOT_AUTHENTICATED &&
+            $this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Trying to request capability when not connected to server.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} CAPABILITY" );
+        $this->connection->sendData("{$tag} CAPABILITY");
 
         $response = $this->connection->getLine();
-        while ( $this->responseType( $response ) != self::RESPONSE_UNTAGGED &&
-                strpos( $response, '* CAPABILITY ' ) === false )
-        {
+        while ($this->responseType($response) != self::RESPONSE_UNTAGGED &&
+            strpos($response, '* CAPABILITY ') === false) {
             $response = $this->connection->getLine();
         }
-        $result = trim( $response );
+        $result = trim($response);
 
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server responded negative to the CAPABILITY command: {$response}." );
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server responded negative to the CAPABILITY command: {$response}.");
         }
 
-        return explode( ' ', str_replace( '* CAPABILITY ', '', $result ) );
+        return explode(' ', str_replace('* CAPABILITY ', '', $result));
     }
 
     /**
@@ -2387,17 +2252,15 @@ class ezcMailImapTransport
      */
     public function expunge()
     {
-        if ( $this->state != self::STATE_SELECTED )
-        {
-            throw new ezcMailTransportException( "Can not issue EXPUNGE command if a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED) {
+            throw new ezcMailTransportException("Can not issue EXPUNGE command if a mailbox is not selected.");
         }
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} EXPUNGE" );
-        $response = trim( $this->getResponse( $tag ) );
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "EXPUNGE failed: {$response}." );
+        $this->connection->sendData("{$tag} EXPUNGE");
+        $response = trim($this->getResponse($tag));
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("EXPUNGE failed: {$response}.");
         }
     }
 
@@ -2430,51 +2293,42 @@ class ezcMailImapTransport
      * @param string $mail
      * @param array(string) $flags
      */
-    public function append( $mailbox, $mail, $flags = null )
+    public function append($mailbox, $mail, $flags = null)
     {
-        if ( $this->state != self::STATE_AUTHENTICATED &&
-             $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call append() if not authenticated." );
+        if ($this->state != self::STATE_AUTHENTICATED &&
+            $this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call append() if not authenticated.");
         }
 
         $tag = $this->getNextTag();
-        $mailSize = strlen( $mail );
-        if ( !is_null( $flags ) )
-        {
-            for ( $i = 0; $i < count( $flags ); $i++ )
-            {
-                $flags[$i] = '\\' . $this->normalizeFlag( $flags[$i] );
+        $mailSize = strlen($mail);
+        if (!is_null($flags)) {
+            for ($i = 0; $i < count($flags); $i++) {
+                $flags[$i] = '\\' . $this->normalizeFlag($flags[$i]);
             }
-            $flagList = implode( ' ', $flags );
+            $flagList = implode(' ', $flags);
             $command = "{$tag} APPEND \"{$mailbox}\" ({$flagList}) {{$mailSize}}";
-        }
-        else
-        {
+        } else {
             $command = "{$tag} APPEND \"{$mailbox}\" {{$mailSize}}";
         }
 
-        $this->connection->sendData( $command );
-        $response = trim( $this->connection->getLine() );
+        $this->connection->sendData($command);
+        $response = trim($this->connection->getLine());
 
-        if ( strpos( $response, 'TRYCREATE' ) !== false )
-        {
-            throw new ezcMailTransportException( "Mailbox does not exist: {$response}." );
+        if (strpos($response, 'TRYCREATE') !== false) {
+            throw new ezcMailTransportException("Mailbox does not exist: {$response}.");
         }
 
-        if ( $this->responseType( $response ) == self::RESPONSE_FEEDBACK )
-        {
-            $this->connection->sendData( $mail );
-            $response = trim( $this->getResponse( $tag ) );
-            if ( $this->responseType( $response ) != self::RESPONSE_OK )
-            {
-                throw new ezcMailTransportException( "The IMAP server could not append message to mailbox '{$mailbox}': {$response}." );
+        if ($this->responseType($response) == self::RESPONSE_FEEDBACK) {
+            $this->connection->sendData($mail);
+            $response = trim($this->getResponse($tag));
+            if ($this->responseType($response) != self::RESPONSE_OK) {
+                throw new ezcMailTransportException("The IMAP server could not append message to mailbox '{$mailbox}': {$response}.");
             }
-        }
-        elseif ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not append message to mailbox '{$mailbox}': {$response}." );
+        } elseif ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not append message to mailbox '{$mailbox}': {$response}.");
         }
     }
 
@@ -2483,12 +2337,12 @@ class ezcMailImapTransport
      *
      * @param string $flag
      * @return string
-     */ 
-    protected function normalizeFlag( $flag )
+     */
+    protected function normalizeFlag($flag)
     {
-        $flag = strtoupper( $flag );
-        $flag = str_replace( '\\', '', $flag );
-        return trim( $flag );
+        $flag = strtoupper($flag);
+        $flag = str_replace('\\', '', $flag);
+        return trim($flag);
     }
 
     /**
@@ -2520,52 +2374,45 @@ class ezcMailImapTransport
      * @param bool $reverse
      * @return array(string)
      */
-    protected function sort( $messages, $sortCriteria, $reverse = false )
+    protected function sort($messages, $sortCriteria, $reverse = false)
     {
-        $uid = ( $this->options->uidReferencing ) ? self::UID : self::NO_UID;
+        $uid = ($this->options->uidReferencing) ? self::UID : self::NO_UID;
 
-        if ( $this->state != self::STATE_SELECTED &&
-             $this->state != self::STATE_SELECTED_READONLY )
-        {
-            throw new ezcMailTransportException( "Can't call sort() on the IMAP transport when a mailbox is not selected." );
+        if ($this->state != self::STATE_SELECTED &&
+            $this->state != self::STATE_SELECTED_READONLY
+        ) {
+            throw new ezcMailTransportException("Can't call sort() on the IMAP transport when a mailbox is not selected.");
         }
 
         $result = array();
-        $query = ucfirst( strtolower( $sortCriteria ) );
-        $messageNumbers = implode( ',', $messages );
+        $query = ucfirst(strtolower($sortCriteria));
+        $messageNumbers = implode(',', $messages);
 
         $tag = $this->getNextTag();
-        $this->connection->sendData( "{$tag} {$uid}FETCH {$messageNumbers} (BODY.PEEK[HEADER.FIELDS ({$query})])" );
+        $this->connection->sendData("{$tag} {$uid}FETCH {$messageNumbers} (BODY.PEEK[HEADER.FIELDS ({$query})])");
 
-        $response = trim( $this->connection->getLine() );
-        while ( strpos( $response, $tag ) === false )
-        {
-            if ( strpos( $response, ' FETCH (' ) !== false )
-            {
-                if ( $this->options->uidReferencing )
-                {
-                    preg_match('/^\* [0-9]+ FETCH \(UID ([0-9]+)/', $response, $matches );
-                }
-                else
-                {
-                    preg_match('/^\* ([0-9]+) FETCH/', $response, $matches );
+        $response = trim($this->connection->getLine());
+        while (strpos($response, $tag) === false) {
+            if (strpos($response, ' FETCH (') !== false) {
+                if ($this->options->uidReferencing) {
+                    preg_match('/^\* [0-9]+ FETCH \(UID ([0-9]+)/', $response, $matches);
+                } else {
+                    preg_match('/^\* ([0-9]+) FETCH/', $response, $matches);
                 }
                 $messageNumber = $matches[1];
             }
 
-            if ( strpos( $response, $query ) !== false )
-            {
-                $strippedResponse = trim( trim( str_replace( "{$query}: ", '', $response ) ), '"' );
-                switch ( $query )
-                {
+            if (strpos($response, $query) !== false) {
+                $strippedResponse = trim(trim(str_replace("{$query}: ", '', $response)), '"');
+                switch ($query) {
                     case 'Date':
-                        $strippedResponse = strtotime( $strippedResponse );
+                        $strippedResponse = strtotime($strippedResponse);
                         break;
                     case 'Subject':
                     case 'From':
                     case 'Sender':
                     case 'To':
-                        $strippedResponse = ezcMailTools::mimeDecode( $strippedResponse );
+                        $strippedResponse = ezcMailTools::mimeDecode($strippedResponse);
                         break;
                     default:
                         break;
@@ -2574,27 +2421,22 @@ class ezcMailImapTransport
             }
 
             // in case the mail doesn't have the $sortCriteria header (like junk mail missing Subject header)
-            if ( strpos( $response, ')' ) !== false && !isset( $result[$messageNumber] ) )
-            {
+            if (strpos($response, ')') !== false && !isset($result[$messageNumber])) {
                 $result[$messageNumber] = '';
             }
 
-            $response = trim( $this->connection->getLine() );
+            $response = trim($this->connection->getLine());
         }
 
-        if ( $this->responseType( $response ) != self::RESPONSE_OK )
-        {
-            throw new ezcMailTransportException( "The IMAP server could not sort the messages: {$response}." );
+        if ($this->responseType($response) != self::RESPONSE_OK) {
+            throw new ezcMailTransportException("The IMAP server could not sort the messages: {$response}.");
         }
 
-        if ( $reverse === true )
-        {
-            natcasesort( $result );
-            $result = array_reverse( $result, true );
-        }
-        else
-        {
-            natcasesort( $result );
+        if ($reverse === true) {
+            natcasesort($result);
+            $result = array_reverse($result, true);
+        } else {
+            natcasesort($result);
         }
         return $result;
     }
@@ -2614,29 +2456,24 @@ class ezcMailImapTransport
      * @param string $line
      * @return int
      */
-    protected function responseType( $line )
+    protected function responseType($line)
     {
-        if ( strpos( $line, 'OK ' ) !== false && strpos( $line, 'OK ' ) == 6 )
-        {
+        if (strpos($line, 'OK ') !== false && strpos($line, 'OK ') == 6) {
             return self::RESPONSE_OK;
         }
-        if ( strpos( $line, 'NO ' ) !== false && strpos( $line, 'NO ' ) == 6 )
-        {
+        if (strpos($line, 'NO ') !== false && strpos($line, 'NO ') == 6) {
             return self::RESPONSE_NO;
         }
-        if ( strpos( $line, 'BAD ' ) !== false && strpos( $line, 'BAD ' ) == 6 )
-        {
+        if (strpos($line, 'BAD ') !== false && strpos($line, 'BAD ') == 6) {
             return self::RESPONSE_BAD;
         }
-        if ( strpos( $line, '* ' ) !== false && strpos( $line, '* ' ) == 0 )
-        {
+        if (strpos($line, '* ') !== false && strpos($line, '* ') == 0) {
             return self::RESPONSE_UNTAGGED;
         }
-        if ( strpos( $line, '+ ' ) !== false && strpos( $line, '+ ' ) == 0 )
-        {
+        if (strpos($line, '+ ') !== false && strpos($line, '+ ') == 0) {
             return self::RESPONSE_FEEDBACK;
         }
-        throw new ezcMailTransportException( "Unrecognized IMAP response in line: {$line}" );
+        throw new ezcMailTransportException("Unrecognized IMAP response in line: {$line}");
     }
 
     /**
@@ -2664,17 +2501,15 @@ class ezcMailImapTransport
      * @param string $response
      * @return string
      */
-    protected function getResponse( $tag, $response = null )
+    protected function getResponse($tag, $response = null)
     {
-        if ( is_null( $response ) )
-        {
+        if (is_null($response)) {
             $response = $this->connection->getLine();
         }
-        while ( strpos( $response, $tag ) === false )
-        {
-            if ( strpos( $response, ' BAD ' ) !== false ||
-                 strpos( $response, ' NO ' ) !== false )
-            {
+        while (strpos($response, $tag) === false) {
+            if (strpos($response, ' BAD ') !== false ||
+                strpos($response, ' NO ') !== false
+            ) {
                 break;
             }
             $response = $this->connection->getLine();
@@ -2703,20 +2538,18 @@ class ezcMailImapTransport
      */
     protected function getNextTag()
     {
-        $tagLetter = substr( $this->currentTag, 0, 1 );
-        $tagNumber = intval( substr( $this->currentTag, 1 ) );
+        $tagLetter = substr($this->currentTag, 0, 1);
+        $tagNumber = intval(substr($this->currentTag, 1));
         $tagNumber++;
-        if ( $tagLetter == 'Z' && $tagNumber == 10000 )
-        {
+        if ($tagLetter == 'Z' && $tagNumber == 10000) {
             $tagLetter = 'A';
             $tagNumber = 1;
         }
-        if ( $tagNumber == 10000 )
-        {
+        if ($tagNumber == 10000) {
             $tagLetter++;
             $tagNumber = 0;
         }
-        $this->currentTag = $tagLetter . sprintf( "%04s", $tagNumber );
+        $this->currentTag = $tagLetter . sprintf("%04s", $tagNumber);
         return $this->currentTag;
     }
 
@@ -2730,15 +2563,15 @@ class ezcMailImapTransport
      *
      * @return int
      */
-    protected function getMessageSectionSize( $response )
+    protected function getMessageSectionSize($response)
     {
         $size = 0;
-        preg_match( '/\{(.*)\}/', $response, $matches );
-        if ( count( $matches ) > 0 )
-        {
-            $size = (int) $matches[1];
+        preg_match('/\{(.*)\}/', $response, $matches);
+        if (count($matches) > 0) {
+            $size = (int)$matches[1];
         }
         return $size;
     }
 }
+
 ?>

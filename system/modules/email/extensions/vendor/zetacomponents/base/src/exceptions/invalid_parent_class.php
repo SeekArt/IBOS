@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -23,6 +23,7 @@
  * @version //autogen//
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
+
 /**
  * Exception that is thrown if an invalid class is passed as custom class.
  *
@@ -37,9 +38,10 @@ class ezcBaseInvalidParentClassException extends ezcBaseException
      * @param string $expectedParentClass
      * @param string $customClass
      */
-    function __construct( $expectedParentClass, $customClass )
+    function __construct($expectedParentClass, $customClass)
     {
-        parent::__construct( "Class '{$customClass}' does not exist, or does not inherit from the '{$expectedParentClass}' class." );
+        parent::__construct("Class '{$customClass}' does not exist, or does not inherit from the '{$expectedParentClass}' class.");
     }
 }
+
 ?>

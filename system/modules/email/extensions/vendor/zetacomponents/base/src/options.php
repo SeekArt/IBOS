@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -51,11 +51,10 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      *         If the value for a property is out of range.
      * @param array(string=>mixed) $options The initial options to set.
      */
-    public function __construct( array $options = array() )
+    public function __construct(array $options = array())
     {
-        foreach ( $options as $option => $value )
-        {
-            $this->__set( $option, $value );
+        foreach ($options as $option => $value) {
+            $this->__set($option, $value);
         }
     }
 
@@ -69,11 +68,10 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      *         If the value for a property is out of range.
      * @param array(string=>mixed) $newOptions The new options.
      */
-    public function merge( array $newOptions )
+    public function merge(array $newOptions)
     {
-        foreach ( $newOptions as $key => $value )
-        {
-            $this->__set( $key, $value );
+        foreach ($newOptions as $key => $value) {
+            $this->__set($key, $value);
         }
     }
 
@@ -92,20 +90,19 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @throws ezcBasePropertyPermissionException
      *         if the property to be set is a write-only property.
      */
-    public function __get( $propertyName )
+    public function __get($propertyName)
     {
-        if ( $this->__isset( $propertyName ) === true )
-        {
+        if ($this->__isset($propertyName) === true) {
             return $this->properties[$propertyName];
         }
-        throw new ezcBasePropertyNotFoundException( $propertyName );
+        throw new ezcBasePropertyNotFoundException($propertyName);
     }
 
     /**
      * Sets an option.
      * This method is called when an option is set.
      *
-     * @param string $propertyName  The name of the option to set.
+     * @param string $propertyName The name of the option to set.
      * @param mixed $propertyValue The option value.
      * @ignore
      *
@@ -116,7 +113,7 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @throws ezcBasePropertyPermissionException
      *         if the property to be set is a read-only property.
      */
-    abstract public function __set( $propertyName, $propertyValue );
+    abstract public function __set($propertyName, $propertyValue);
 
     /**
      * Returns if a option exists.
@@ -125,9 +122,9 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @return bool Whether the option exists.
      * @ignore
      */
-    public function __isset( $propertyName )
+    public function __isset($propertyName)
     {
-        return array_key_exists( $propertyName, $this->properties );
+        return array_key_exists($propertyName, $this->properties);
     }
 
     /**
@@ -137,9 +134,9 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @param string $propertyName The name of the option to get.
      * @return bool Whether the option exists.
      */
-    public function offsetExists( $propertyName )
+    public function offsetExists($propertyName)
     {
-        return $this->__isset( $propertyName );
+        return $this->__isset($propertyName);
     }
 
     /**
@@ -151,9 +148,9 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @param string $propertyName The name of the option to get.
      * @return mixed The option value.
      */
-    public function offsetGet( $propertyName )
+    public function offsetGet($propertyName)
     {
-        return $this->__get( $propertyName );
+        return $this->__get($propertyName);
     }
 
     /**
@@ -167,9 +164,9 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      * @param string $propertyName The name of the option to set.
      * @param mixed $propertyValue The value for the option.
      */
-    public function offsetSet( $propertyName, $propertyValue )
+    public function offsetSet($propertyName, $propertyValue)
     {
-        $this->__set( $propertyName, $propertyValue );
+        $this->__set($propertyName, $propertyValue);
     }
 
     /**
@@ -182,9 +179,9 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      *         If a the value for a property is out of range.
      * @param string $propertyName The name of the option to unset.
      */
-    public function offsetUnset( $propertyName )
+    public function offsetUnset($propertyName)
     {
-        $this->__set( $propertyName, null );
+        $this->__set($propertyName, null);
     }
 
     /**
@@ -194,7 +191,7 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      */
     public function current()
     {
-        return current( $this->properties );
+        return current($this->properties);
     }
 
     /**
@@ -204,7 +201,7 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      */
     public function key()
     {
-        return key( $this->properties );
+        return key($this->properties);
     }
 
     /**
@@ -214,7 +211,7 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      */
     public function next()
     {
-        return next( $this->properties );
+        return next($this->properties);
     }
 
     /**
@@ -224,7 +221,7 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      */
     public function rewind()
     {
-        reset( $this->properties );
+        reset($this->properties);
     }
 
     /**
@@ -235,14 +232,14 @@ abstract class ezcBaseOptions implements ArrayAccess, Iterator
      */
     public function valid()
     {
-        $key = key( $this->properties );
+        $key = key($this->properties);
 
-        if( $key !== null && $key !== false)
-        {
+        if ($key !== null && $key !== false) {
             return true;
         }
 
         return false;
     }
 }
+
 ?>

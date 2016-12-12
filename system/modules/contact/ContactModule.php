@@ -18,6 +18,12 @@ namespace application\modules\contact;
 
 use application\core\modules\Module;
 
-class ContactModule extends Module {
-    
+/**
+ * Class ContactModule
+ *
+ * @package application\modules\contact
+ */
+class ContactModule extends Module
+{
+
 }

@@ -29,9 +29,11 @@ use application\modules\user\model\User;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 
-Class AssignmentOpApi extends System {
+Class AssignmentOpApi extends System
+{
 
-    public static function getInstance($className = __CLASS__) {
+    public static function getInstance($className = __CLASS__)
+    {
         return parent::getInstance($className);
     }
 
@@ -40,7 +42,8 @@ Class AssignmentOpApi extends System {
      * @param type $post
      * @return type
      */
-    public function addAssignment($post) {
+    public function addAssignment($post)
+    {
         $uid = $post['uid'];
         $assignment = AssignmentUtil::handlePostData($post);
         $assignment['designeeuid'] = $uid;
@@ -82,7 +85,8 @@ Class AssignmentOpApi extends System {
      * @param integer $assignmentId 任务的id
      * @param string $content 评论的内容
      */
-    public function addStepComment($uid, $assignmentId, $content) {
+    public function addStepComment($uid, $assignmentId, $content)
+    {
         $assignment = Assignment::model()->fetchByPk($assignmentId);
         // 获取接收数据
         $data = array(
@@ -107,7 +111,8 @@ Class AssignmentOpApi extends System {
      * @param string $node 消息节点
      * @param string $result 是否是申请结果的提醒(是的话传递“同意“或”拒绝“文字)
      */
-    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null) {
+    public function sendNotify($uid, $assignmentId, $subject, $toUid, $node, $result = null)
+    {
         $config = array(
             '{sender}' => User::model()->fetchRealnameByUid($uid),
             '{subject}' => $subject,
@@ -128,7 +133,8 @@ Class AssignmentOpApi extends System {
      * @param mix $uids 用户uids
      * @return array
      */
-    private function removeSelf($uids, $curUid) {
+    private function removeSelf($uids, $curUid)
+    {
         $uids = is_array($uids) ? $uids : explode(',', $uids);
         foreach ($uids as $k => $uid) {
             if ($uid == $curUid) {

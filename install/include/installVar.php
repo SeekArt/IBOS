@@ -1,65 +1,65 @@
 <?php
 
-define( 'IBOS_STATIC', '../static/' ); //static路径
-define( 'DBCHARSET', 'utf8' ); // 数据库编码
-define( 'MODULE_PATH', PATH_ROOT . '/system/modules/' ); // 模块文件夹目录
-define( 'CONFIG_PATH', PATH_ROOT . '/system/config/' ); // 配置文件目录
-define( 'IBOS_VERSION_FULL', 'IBOS ' . VERSION . ' ' . VERSION_DATE ); // 版本号
+define('IBOS_STATIC', '../static/'); //static路径
+define('DBCHARSET', 'utf8'); // 数据库编码
+define('MODULE_PATH', PATH_ROOT . '/system/modules/'); // 模块文件夹目录
+define('CONFIG_PATH', PATH_ROOT . '/system/config/'); // 配置文件目录
+define('IBOS_VERSION_FULL', 'IBOS ' . VERSION . ' ' . VERSION_DATE); // 版本号
 $lockfile = PATH_ROOT . '/data/install.lock';
 // 核心模块,安装顺序有限制
-$coreModules = array( 'main', 'dashboard', 'message', 'user', 'department', 'position', 'role' );
+$coreModules = array('main', 'dashboard', 'message', 'user', 'department', 'position', 'role');
 // 核心依赖模块
-$sysDependModule = array( 'weibo' );
+$sysDependModule = array('weibo');
 // 系统模块，把核心模块和核心依赖模块组合
-$sysModules = array( 'main', 'dashboard', 'message', 'user', 'department', 'position', 'weibo', 'role' );
+$sysModules = array('main', 'dashboard', 'message', 'user', 'department', 'position', 'weibo', 'role');
 // 要检测的函数
 $funcItems = array(
 //	'mysql_connect' => array( 'status' => 1 ),
-	'gethostbyname' => array( 'status' => 1 ),
-	'file_get_contents' => array( 'status' => 1 ),
-	'scandir' => array( 'status' => 1 ),
-	'xml_parser_create' => array( 'status' => 1 ),
-	'bcmul' => array( 'status' => 1 ),
+    'gethostbyname' => array('status' => 1),
+    'file_get_contents' => array('status' => 1),
+    'scandir' => array('status' => 1),
+    'xml_parser_create' => array('status' => 1),
+    'bcmul' => array('status' => 1),
 );
 
 $filesockItems = array(
-	'fsockopen' => array( 'status' => 1 ),
-	'pfsockopen' => array( 'status' => 1 ),
-	'stream_socket_client' => array( 'status' => 1 ),
-	'curl_init' => array( 'status' => 1 )
+    'fsockopen' => array('status' => 1),
+    'pfsockopen' => array('status' => 1),
+    'stream_socket_client' => array('status' => 1),
+    'curl_init' => array('status' => 1)
 );
 // 要检测的扩展
 $extLoadedItems = array(
 //	'mysql' => array( 'status' => 1 ),
-	'pdo_mysql' => array( 'status' => 1 ),
-	'mbstring' => array( 'status' => 1 ),
+    'pdo_mysql' => array('status' => 1),
+    'mbstring' => array('status' => 1),
 );
 // 要检测的环境（r为所需，b为推荐）
 $envItems = array(
-	'os' => array( 'c' => 'PHP_OS', 'r' => 'notset', 'b' => 'unix' ),
-	'php' => array( 'c' => 'PHP_VERSION', 'r' => '5.3.0', 'b' => '5.3.0' ),
-	'attachmentupload' => array( 'r' => '2M', 'b' => '20M' ),
-	'gdversion' => array( 'r' => '1.0', 'b' => '2.0' ),
-	'diskspace' => array( 'r' => '100M', 'b' => 'notset' ),
-	'Zend Guard Loader' => array( 'r' => 'install', 'b' => 'install' ),
+    'os' => array('c' => 'PHP_OS', 'r' => 'notset', 'b' => 'unix'),
+    'php' => array('c' => 'PHP_VERSION', 'r' => '5.3.0', 'b' => '5.3.0'),
+    'attachmentupload' => array('r' => '2M', 'b' => '20M'),
+    'gdversion' => array('r' => '1.0', 'b' => '2.0'),
+    'diskspace' => array('r' => '100M', 'b' => 'notset'),
+    'Zend Guard Loader' => array('r' => 'install', 'b' => 'install'),
 );
 // 要检测的文件、文件夹权限
 $dirfileItems = array(
-	'config' => array( 'type' => 'file', 'path' => '/system/config/configDefault.php' ),
-	'org' => array( 'type' => 'file', 'path' => '/data/org' ),
-	'config_dir' => array( 'type' => 'dir', 'path' => '/system/config' ),
-	'data' => array( 'type' => 'dir', 'path' => '/data' ),
-	'attachment' => array( 'type' => 'dir', 'path' => '/data/attachment' ),
-	'avatar' => array( 'type' => 'dir', 'path' => '/data/avatar' ),
-	'backup' => array( 'type' => 'dir', 'path' => '/data/backup' ),
-	'font' => array( 'type' => 'dir', 'path' => '/data/font' ),
-	'home' => array( 'type' => 'dir', 'path' => '/data/home' ),
-	'ipdata' => array( 'type' => 'dir', 'path' => '/data/ipdata' ),
-	'login' => array( 'type' => 'dir', 'path' => '/data/login' ),
-	'runtime' => array( 'type' => 'dir', 'path' => '/data/runtime' ),
-	'stamp' => array( 'type' => 'dir', 'path' => '/data/stamp' ),
-	'temp' => array( 'type' => 'dir', 'path' => '/data/temp' ),
-	'static' => array( 'type' => 'dir', 'path' => '/static' )
+    'config' => array('type' => 'file', 'path' => '/system/config/configDefault.php'),
+    'org' => array('type' => 'file', 'path' => '/data/org'),
+    'config_dir' => array('type' => 'dir', 'path' => '/system/config'),
+    'data' => array('type' => 'dir', 'path' => '/data'),
+    'attachment' => array('type' => 'dir', 'path' => '/data/attachment'),
+    'avatar' => array('type' => 'dir', 'path' => '/data/avatar'),
+    'backup' => array('type' => 'dir', 'path' => '/data/backup'),
+    'font' => array('type' => 'dir', 'path' => '/data/font'),
+    'home' => array('type' => 'dir', 'path' => '/data/home'),
+    'ipdata' => array('type' => 'dir', 'path' => '/data/ipdata'),
+    'login' => array('type' => 'dir', 'path' => '/data/login'),
+    'runtime' => array('type' => 'dir', 'path' => '/data/runtime'),
+    'stamp' => array('type' => 'dir', 'path' => '/data/stamp'),
+    'temp' => array('type' => 'dir', 'path' => '/data/temp'),
+    'static' => array('type' => 'dir', 'path' => '/static')
 );
 
 $moduleSql = "CREATE TABLE IF NOT EXISTS `{dbpre}module` (

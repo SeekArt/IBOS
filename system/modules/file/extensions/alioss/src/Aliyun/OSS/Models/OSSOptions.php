@@ -13,7 +13,8 @@ use Aliyun\Common\Models\ServiceOptions;
  * OSS 请求所包含的键
  * @package Aliyun\OSS\Models
  */
-class OSSOptions extends ServiceOptions {
+class OSSOptions extends ServiceOptions
+{
     const CONTENT = 'Content';
     const BUCKET = 'Bucket';
     const KEY = 'Key';
@@ -43,11 +44,11 @@ class OSSOptions extends ServiceOptions {
     const META_ONLY = 'MetaOnly';
     const SAVE_AS = 'SaveAs';
 
-    const RESPONSE_CACHE_CONTROL  = 'ResponseCacheControl';
-    const RESPONSE_CONTENT_DISPOSITION  = 'ResponseContentDisposition';
-    const RESPONSE_CONTENT_ENDCODING  = 'ResponseContentEncoding';
-    const RESPONSE_CONTENT_LANGUAGE  = 'ResponseContentLanguage';
-    const RESPONSE_CONTENT_TYPE  = 'ResponseContentType';
+    const RESPONSE_CACHE_CONTROL = 'ResponseCacheControl';
+    const RESPONSE_CONTENT_DISPOSITION = 'ResponseContentDisposition';
+    const RESPONSE_CONTENT_ENDCODING = 'ResponseContentEncoding';
+    const RESPONSE_CONTENT_LANGUAGE = 'ResponseContentLanguage';
+    const RESPONSE_CONTENT_TYPE = 'ResponseContentType';
     const RESPONSE_EXPIRES = 'ResponseExpires';
 
     const SOURCE_BUCKET = 'SourceBucket';

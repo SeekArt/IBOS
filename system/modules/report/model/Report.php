@@ -22,13 +22,16 @@ use application\core\utils\Ibos;
 use CDbCriteria;
 use CPagination;
 
-class Report extends Model {
+class Report extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{report}}';
     }
 
@@ -38,19 +41,20 @@ class Report extends Model {
      * @param integer $pageSize 分页大小
      * @return type
      */
-    public function fetchAllByPage( $condition, $pageSize = 0 ) {
-        $conditionArray = array( 'condition' => $condition, 'order' => 'addtime DESC' );
+    public function fetchAllByPage($condition, $pageSize = 0)
+    {
+        $conditionArray = array('condition' => $condition, 'order' => 'addtime DESC');
         $criteria = new CDbCriteria();
-        foreach ( $conditionArray as $key => $value ) {
+        foreach ($conditionArray as $key => $value) {
             $criteria->$key = $value;
         }
-        $count = $this->count( $criteria );
-        $pagination = new CPagination( $count );
-        $everyPage = empty( $pageSize ) ? Ibos::app()->params['basePerPage'] : $pageSize;
-        $pagination->setPageSize( intval( $everyPage ) );
-        $pagination->applyLimit( $criteria );
-        $reportList = $this->fetchAll( $criteria );
-        return array( 'pagination' => $pagination, 'data' => $reportList );
+        $count = $this->count($criteria);
+        $pagination = new CPagination($count);
+        $everyPage = empty($pageSize) ? Ibos::app()->params['basePerPage'] : $pageSize;
+        $pagination->setPageSize(intval($everyPage));
+        $pagination->applyLimit($criteria);
+        $reportList = $this->fetchAll($criteria);
+        return array('pagination' => $pagination, 'data' => $reportList);
     }
 
     /**
@@ -58,17 +62,18 @@ class Report extends Model {
      * @param mixed $typeids 汇报类型ids
      * @return array 返回一维数组，repid和aid都是逗号隔开的字符串
      */
-    public function fetchRepidAndAidByTypeids( $typeids ) {
-        $typeids = is_array( $typeids ) ? implode( ',', $typeids ) : trim( $typeids, ',' );
-        $reports = $this->fetchAll( array(
+    public function fetchRepidAndAidByTypeids($typeids)
+    {
+        $typeids = is_array($typeids) ? implode(',', $typeids) : trim($typeids, ',');
+        $reports = $this->fetchAll(array(
             'select' => 'repid, attachmentid',
             'condition' => "typeid IN($typeids)"
-                ) );
+        ));
         $return = array();
-        if ( !empty( $reports ) ) {
-            $return['repids'] = implode( ',', Convert::getSubByKey( $reports, 'repid' ) );
-            $attachmentidArr = Convert::getSubByKey( $reports, 'attachmentid' );
-            $return['aids'] = implode( ',', array_filter( $attachmentidArr ) );
+        if (!empty($reports)) {
+            $return['repids'] = implode(',', Convert::getSubByKey($reports, 'repid'));
+            $attachmentidArr = Convert::getSubByKey($reports, 'attachmentid');
+            $return['aids'] = implode(',', array_filter($attachmentidArr));
         }
         return $return;
     }
@@ -78,16 +83,17 @@ class Report extends Model {
      * @param mixed $repids 总结id
      * @return string 附件ids 逗号分割的字符串
      */
-    public function fetchAllAidByRepids( $repids ) {
-        $ids = is_array( $repids ) ? implode( ',', $repids ) : trim( $repids, ',' );
-        $records = $this->fetchAll( array( 'select' => array( 'attachmentid' ), 'condition' => "repid IN($ids)" ) );
+    public function fetchAllAidByRepids($repids)
+    {
+        $ids = is_array($repids) ? implode(',', $repids) : trim($repids, ',');
+        $records = $this->fetchAll(array('select' => array('attachmentid'), 'condition' => "repid IN($ids)"));
         $result = array();
-        foreach ( $records as $record ) {
-            if ( !empty( $record['attachmentid'] ) ) {
-                $result[] = trim( $record['attachmentid'], ',' );
+        foreach ($records as $record) {
+            if (!empty($record['attachmentid'])) {
+                $result[] = trim($record['attachmentid'], ',');
             }
         }
-        return implode( ',', $result );
+        return implode(',', $result);
     }
 
     /**
@@ -97,13 +103,14 @@ class Report extends Model {
      * @param integer $time 找哪个时间前的总结
      * @return array 返回上一次总结的一维数组
      */
-    public function fetchLastRepByUidAndTypeid( $uid, $typeid, $time = TIMESTAMP ) {
-        $lastRep = $this->fetch( array(
+    public function fetchLastRepByUidAndTypeid($uid, $typeid, $time = TIMESTAMP)
+    {
+        $lastRep = $this->fetch(array(
             'select' => 'repid',
             'condition' => 'uid = :uid AND typeid = :typeid AND addtime < :time',
-            'params' => array( ':uid' => $uid, ':typeid' => $typeid, ':time' => $time ),
+            'params' => array(':uid' => $uid, ':typeid' => $typeid, ':time' => $time),
             'order' => 'addtime DESC'
-                ) );
+        ));
         return $lastRep;
     }
 
@@ -114,24 +121,26 @@ class Report extends Model {
      * @param integer $typeid 汇报类型
      * @return array 返回上一次总结的一维数组
      */
-    public function fetchLastRepByRepid( $repid, $uid, $typeid ) {
-        $lastRep = $this->fetch( array(
+    public function fetchLastRepByRepid($repid, $uid, $typeid)
+    {
+        $lastRep = $this->fetch(array(
             'select' => 'repid',
             'condition' => 'repid < :repid AND uid = :uid AND typeid = :typeid',
-            'params' => array( ':repid' => $repid, ':uid' => $uid, ':typeid' => $typeid ),
+            'params' => array(':repid' => $repid, ':uid' => $uid, ':typeid' => $typeid),
             'order' => 'repid DESC',
             'limit' => 1
-                ) );
+        ));
         return $lastRep;
     }
 
     /**
      * 取得当前用户的总结计划点评总数
      */
-    public function countCommentByUid( $uid ) {
+    public function countCommentByUid($uid)
+    {
         $sql = "SELECT count(repid) as sum FROM {{report}} WHERE uid=$uid AND isreview=1";
-        $record = $this->getDbConnection()->createCommand( $sql )->queryAll();
-        $sum = empty( $record[0]['sum'] ) ? 0 : $record[0]['sum'];
+        $record = $this->getDbConnection()->createCommand($sql)->queryAll();
+        $sum = empty($record[0]['sum']) ? 0 : $record[0]['sum'];
         return $sum;
     }
 
@@ -141,17 +150,18 @@ class Report extends Model {
      * @param integer $uid
      * @return boolean
      */
-    public function addReaderuid( $report, $uid ) {
+    public function addReaderuid($report, $uid)
+    {
         $readeruid = $report['readeruid'];
-        if ( $uid == $report['uid'] ) {
+        if ($uid == $report['uid']) {
             return false;
         }
-        $readerArr = explode( ',', trim( $readeruid, ',' ) );
-        if ( in_array( $uid, $readerArr ) ) {
+        $readerArr = explode(',', trim($readeruid, ','));
+        if (in_array($uid, $readerArr)) {
             return false;
         } else {
-            $readeruid = empty( $readeruid ) ? $uid : $readeruid . ',' . $uid;
-            return $this->modify( $report['repid'], array( 'readeruid' => $readeruid ) );
+            $readeruid = empty($readeruid) ? $uid : $readeruid . ',' . $uid;
+            return $this->modify($report['repid'], array('readeruid' => $readeruid));
         }
     }
 
@@ -176,18 +186,19 @@ class Report extends Model {
      * @param integer $uid
      * @return boolean
      */
-    public function addReaderuidByPk( $report, $uid ) {
+    public function addReaderuidByPk($report, $uid)
+    {
         //assert( '$uid>0' );
         $readeruid = $report['readeruid'];
-        if ( $uid == $report['uid'] ) {
+        if ($uid == $report['uid']) {
             return false;
         }
-        $readerArr = explode( ',', trim( $readeruid, ',' ) );
-        if ( in_array( $uid, $readerArr ) ) {
+        $readerArr = explode(',', trim($readeruid, ','));
+        if (in_array($uid, $readerArr)) {
             return false;
         } else {
-            $readeruid = empty( $readeruid ) ? $uid : $readeruid . ',' . $uid;
-            return $this->modify( $report['repid'], array( 'readeruid' => $readeruid ) );
+            $readeruid = empty($readeruid) ? $uid : $readeruid . ',' . $uid;
+            return $this->modify($report['repid'], array('readeruid' => $readeruid));
         }
     }
 
@@ -196,24 +207,25 @@ class Report extends Model {
      * @param array $report 参照总结计划
      * @return array 返回上一条和下一条总结的数组
      */
-    public function fetchPreAndNextRep( $report ) {
-        $preRep = $this->fetch( array(
+    public function fetchPreAndNextRep($report)
+    {
+        $preRep = $this->fetch(array(
             'select' => 'repid, subject',
             'condition' => 'repid < :repid AND uid = :uid',
-            'params' => array( ':repid' => $report['repid'], ':uid' => $report['uid'] ),
+            'params' => array(':repid' => $report['repid'], ':uid' => $report['uid']),
             'order' => 'repid DESC'
-                ) );
-        $nextRep = $this->fetch( array(
+        ));
+        $nextRep = $this->fetch(array(
             'select' => 'repid, subject',
             'condition' => 'repid > :repid AND uid = :uid',
-            'params' => array( ':repid' => $report['repid'], ':uid' => $report['uid'] ),
+            'params' => array(':repid' => $report['repid'], ':uid' => $report['uid']),
             'order' => 'repid ASC'
-                ) );
-        $preAndNextRep = array( 'preRep' => '', 'nextRep' => '' );
-        if ( !empty( $preRep ) ) {
+        ));
+        $preAndNextRep = array('preRep' => '', 'nextRep' => '');
+        if (!empty($preRep)) {
             $preAndNextRep['preRep'] = $preRep;
         }
-        if ( !empty( $nextRep ) ) {
+        if (!empty($nextRep)) {
             $preAndNextRep['nextRep'] = $nextRep;
         }
         return $preAndNextRep;
@@ -225,14 +237,15 @@ class Report extends Model {
      * @param integer $limit 获取多少条
      * @return array
      */
-    public function fetchAllRepByUids( $uids, $limit = 4 ) {
-        $ids = is_array( $uids ) ? implode( ',', $uids ) : trim( $uids, ',' );
-        $reports = $this->fetchAll( array(
+    public function fetchAllRepByUids($uids, $limit = 4)
+    {
+        $ids = is_array($uids) ? implode(',', $uids) : trim($uids, ',');
+        $reports = $this->fetchAll(array(
             'select' => 'repid, uid, subject, stamp',
             'condition' => "FIND_IN_SET(`uid`, '{$ids}')",
             'order' => 'addtime DESC',
             'limit' => $limit
-                ) );
+        ));
         return $reports;
     }
 
@@ -241,12 +254,13 @@ class Report extends Model {
      * @param string $joinCondition 外加条件
      * @return array 返回符合条件的未评阅的总结的二维数组，没有返回空数组
      */
-    public function fetchUnreviewReps( $joinCondition = '' ) {
+    public function fetchUnreviewReps($joinCondition = '')
+    {
         $condition = "isreview = 0";
-        if ( !empty( $joinCondition ) ) {
+        if (!empty($joinCondition)) {
             $condition .= ' AND ' . $joinCondition;
         }
-        $unreviewReps = $this->fetchAll( $condition );
+        $unreviewReps = $this->fetchAll($condition);
         return $unreviewReps;
     }
 
@@ -255,9 +269,10 @@ class Report extends Model {
      * @param integer $repId 总结id
      * @return integer
      */
-    public function fetchUidByRepId( $repId ) {
-        $report = $this->fetchByPk( $repId );
-        if ( !empty( $report ) ) {
+    public function fetchUidByRepId($repId)
+    {
+        $report = $this->fetchByPk($repId);
+        if (!empty($report)) {
             return $report['uid'];
         }
     }
@@ -270,13 +285,16 @@ class Report extends Model {
      * @param integer $typeid 总结类型id
      * @return integer
      */
-    public function countReportTotalByUid( $uid, $start, $end, $typeid ) {
-        $uid = is_array( $uid ) ? implode( ',', $uid ) : $uid;
+    public function countReportTotalByUid($uid, $start, $end, $typeid)
+    {
+        $start = $start - 86400;
+        $end = $end - 86400;
+        $uid = is_array($uid) ? implode(',', $uid) : $uid;
         return $this->getDbConnection()->createCommand()
-                        ->select( 'count(repid)' )
-                        ->from( $this->tableName() )
-                        ->where( sprintf( "uid IN ('%s') AND begindate < %d AND enddate > %d AND typeid = %d", $uid, $end, $start, $typeid ) )
-                        ->queryScalar();
+            ->select('count(repid)')
+            ->from($this->tableName())
+            ->where("`uid` IN ({$uid}) AND `begindate` <= {$end} AND `enddate` >= {$start} AND `typeid` = {$typeid}")
+            ->queryScalar();
     }
 
     /**
@@ -284,12 +302,14 @@ class Report extends Model {
      * @param integer $uid
      * @return integer
      */
-    public function countReviewTotalByUid( $uid, $start, $end, $typeid ) {
+    public function countReviewTotalByUid($uid, $start, $end, $typeid)
+    {
         return $this->getDbConnection()->createCommand()
-                        ->select( 'count(repid)' )
-                        ->from( $this->tableName() )
-                        ->where( sprintf( "isreview = 1 AND uid = %d AND begindate < %d AND enddate > %d AND typeid = %d", $uid, $end, $start, $typeid ) )
-                        ->queryScalar();
+            ->select('count(repid)')
+            ->from($this->tableName())
+            //->where( sprintf( "isreview = 1 AND uid = %d AND begindate < %d AND enddate > %d AND typeid = %d", $uid, $end, $start, $typeid ) )
+            ->where("`isreview` = 1 AND `uid` = {$uid} AND `begindate` <= {$end} AND `enddate` >= {$start} AND `typeid` = {$typeid}")
+            ->queryScalar();
     }
 
     /**
@@ -299,13 +319,15 @@ class Report extends Model {
      * @param integer $end 结束时间戳
      * @return integer
      */
-    public function countUnReviewByUids( $uid, $start, $end, $typeid ) {
-        is_array( $uid ) && $uid = implode( ',', $uid );
+    public function countUnReviewByUids($uid, $start, $end, $typeid)
+    {
+        is_array($uid) && $uid = implode(',', $uid);
         return $this->getDbConnection()->createCommand()
-                        ->select( 'count(repid)' )
-                        ->from( $this->tableName() )
-                        ->where( sprintf( "isreview = 0 AND uid IN ('%s') AND begindate < %d AND enddate > %d AND typeid = %d", $uid, $end, $start, $typeid ) )
-                        ->queryScalar();
+            ->select('count(repid)')
+            ->from($this->tableName())
+            //->where( sprintf( "isreview = 0 AND uid IN ('%s') AND begindate < %d AND enddate > %d AND typeid = %d", $uid, $end, $start, $typeid ) )
+            ->where("`isreview` = 0 AND `uid` IN ('{$uid}') AND `begindate` <= {$end} AND `enddate` >= {$start} AND `typeid` = {$typeid}")
+            ->queryScalar();
     }
 
     /**
@@ -313,27 +335,29 @@ class Report extends Model {
      * @param mixed $repIds 总结ID
      * @return array
      */
-    public function fetchAddTimeByRepId( $repIds ) {
-        is_array( $repIds ) && $repIds = implode( ',', $repIds );
+    public function fetchAddTimeByRepId($repIds)
+    {
+        is_array($repIds) && $repIds = implode(',', $repIds);
         $criteria = array(
             'select' => 'repid,addtime',
-            'condition' => sprintf( "FIND_IN_SET(repid,'%s')", $repIds )
+            'condition' => sprintf("FIND_IN_SET(repid,'%s')", $repIds)
         );
-        return $this->fetchAllSortByPk( 'repid', $criteria );
+        return $this->fetchAllSortByPk('repid', $criteria);
     }
 
     /**
      * 获取总结的开始结束时间
      * @param  mixed $repIds 总结 ID
-     * @return array         
+     * @return array
      */
-    public function fetchBETimeById( $repIds ) {
-        is_array( $repIds ) && $repIds = implode( ',', $repIds );
+    public function fetchBETimeById($repIds)
+    {
+        is_array($repIds) && $repIds = implode(',', $repIds);
         $criteria = array(
             'select' => 'repid,begindate,enddate',
-            'condition' => sprintf( "FIND_IN_SET(repid,'%s')", $repIds )
+            'condition' => sprintf("FIND_IN_SET(repid,'%s')", $repIds)
         );
-        return $this->fetchAllSortByPk( 'repid', $criteria );
+        return $this->fetchAllSortByPk('repid', $criteria);
     }
 
 }

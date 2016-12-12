@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -60,11 +60,11 @@ class ezcMailComposerOptions extends ezcMailOptions
      *         if $options contains a property with a value not allowed
      * @param array(string=>mixed) $options
      */
-    public function __construct( array $options = array() )
+    public function __construct(array $options = array())
     {
         $this->automaticImageInclude = true; // default is to include the contents of "file://" from image tags
 
-        parent::__construct( $options );
+        parent::__construct($options);
     }
 
     /**
@@ -78,22 +78,21 @@ class ezcMailComposerOptions extends ezcMailOptions
      * @param mixed $propertyValue
      * @ignore
      */
-    public function __set( $propertyName, $propertyValue )
+    public function __set($propertyName, $propertyValue)
     {
-        switch ( $propertyName )
-        {
+        switch ($propertyName) {
             case 'automaticImageInclude':
-                if ( !is_bool( $propertyValue ) )
-                {
-                    throw new ezcBaseValueException( $propertyName, $propertyValue, 'bool' );
+                if (!is_bool($propertyValue)) {
+                    throw new ezcBaseValueException($propertyName, $propertyValue, 'bool');
                 }
 
                 $this->properties[$propertyName] = $propertyValue;
                 break;
 
             default:
-                parent::__set( $propertyName, $propertyValue );
+                parent::__set($propertyName, $propertyValue);
         }
     }
 }
+
 ?>

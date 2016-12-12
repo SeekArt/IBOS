@@ -73,7 +73,7 @@ class Url
                 if (isset($parts['pass'])) {
                     $url .= ':' . $parts['pass'];
                 }
-                $url .=  '@';
+                $url .= '@';
             }
 
             $url .= $parts['host'];
@@ -89,7 +89,7 @@ class Url
         // Add the path component if present
         if (isset($parts['path']) && 0 !== strlen($parts['path'])) {
             // Always ensure that the path begins with '/' if set and something is before the path
-            if ($url && $parts['path'][0] != '/' && substr($url, -1)  != '/') {
+            if ($url && $parts['path'][0] != '/' && substr($url, -1) != '/') {
                 $url .= '/';
             }
             $url .= $parts['path'];
@@ -111,14 +111,14 @@ class Url
     /**
      * Create a new URL from URL parts
      *
-     * @param string                   $scheme   Scheme of the URL
-     * @param string                   $host     Host of the URL
-     * @param string                   $username Username of the URL
-     * @param string                   $password Password of the URL
-     * @param int                      $port     Port of the URL
-     * @param string                   $path     Path of the URL
-     * @param QueryString|array|string $query    Query string of the URL
-     * @param string                   $fragment Fragment of the URL
+     * @param string $scheme Scheme of the URL
+     * @param string $host Host of the URL
+     * @param string $username Username of the URL
+     * @param string $password Password of the URL
+     * @param int $port Port of the URL
+     * @param string $path Path of the URL
+     * @param QueryString|array|string $query Query string of the URL
+     * @param string $fragment Fragment of the URL
      */
     public function __construct($scheme, $host, $username = null, $password = null, $port = null, $path = null, QueryString $query = null, $fragment = null)
     {
@@ -168,7 +168,7 @@ class Url
             'host' => $this->host,
             'port' => $this->port,
             'path' => $this->getPath(),
-            'query' => (string) $this->query ?: null,
+            'query' => (string)$this->query ?: null,
             'fragment' => $this->fragment,
         );
     }
@@ -271,7 +271,7 @@ class Url
         if (is_array($path)) {
             $this->path = '/' . implode('/', $path);
         } else {
-            $this->path = (string) $path;
+            $this->path = (string)$path;
         }
 
         return $this;

@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -45,9 +45,9 @@ class ezcMailMultipartDigestParser extends ezcMailMultipartParser
      *
      * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct(ezcMailHeadersHolder $headers)
     {
-        parent::__construct( $headers );
+        parent::__construct($headers);
         $this->part = new ezcMailMultipartDigest();
     }
 
@@ -59,9 +59,9 @@ class ezcMailMultipartDigestParser extends ezcMailMultipartParser
      *
      * @param ezcMailPart $part
      */
-    public function partDone( ezcMailPart $part )
+    public function partDone(ezcMailPart $part)
     {
-        $this->part->appendPart( $part );
+        $this->part->appendPart($part);
     }
 
     /**
@@ -72,8 +72,7 @@ class ezcMailMultipartDigestParser extends ezcMailMultipartParser
     public function finishMultipart()
     {
         $size = 0;
-        foreach ( $this->part->getParts() as $part )
-        {
+        foreach ($this->part->getParts() as $part) {
             $size += $part->size;
         }
         $this->part->size = $size;

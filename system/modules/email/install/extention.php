@@ -2,8 +2,8 @@
 
 use application\modules\dashboard\model\CreditRule;
 
-$creditExists = CreditRule::model()->countByAttributes( array( 'action' => 'postmail' ) );
-if ( !$creditExists ) {
+$creditExists = CreditRule::model()->countByAttributes(array('action' => 'postmail'));
+if (!$creditExists) {
     $data = array(
         'rulename' => '写邮件',
         'action' => 'postmail',
@@ -13,5 +13,5 @@ if ( !$creditExists ) {
         'extcredits2' => '2',
         'extcredits3' => '1',
     );
-    CreditRule::model()->add( $data );
+    CreditRule::model()->add($data);
 }

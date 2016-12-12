@@ -24,6 +24,7 @@
 			if (!$display || !$display.length) {
 				$display = $("<span class='" + opts.style + "'></span>").insertAfter($me);
 			}
+			$me.data("opts", opts);
 			// 在IE下还是有会部分无法兼容的情况
 			// $me.on("input propertychange mouseup", function(){
 

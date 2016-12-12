@@ -19,9 +19,11 @@ use Aliyun\OSS\Models\OSSOptions;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class SXUploadPartParser implements ResponseParserInterface {
+class SXUploadPartParser implements ResponseParserInterface
+{
 
-    public function parse(HttpResponse $response, $options) {
+    public function parse(HttpResponse $response, $options)
+    {
         $result = new UploadPartResult();
         $result->setETag(OSSUtils::trimQuotes($response->getHeader(OSSHeaders::ETAG)));
         $result->setPartNumber($options[OSSOptions::PART_NUMBER]);

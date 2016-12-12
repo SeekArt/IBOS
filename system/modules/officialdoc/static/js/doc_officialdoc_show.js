@@ -18,7 +18,7 @@ var OfficialShow = {
             return $.post(url, param, $.noop);
         },
         /**
-         * 回退公文
+         * 回退通知
          * @method sendNoSign
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -31,7 +31,7 @@ var OfficialShow = {
             return $.post(url, param, $.noop, 'json');
         },
         /**
-         * 审核公文
+         * 审核通知
          * @method approvalDoc
          * @param  {Object} param 传入JSON格式数据
          * @return {Object}       返回deffered对象
@@ -94,7 +94,7 @@ var OfficialShow = {
         }
     },
     /**
-     * 签收公文
+     * 签收通知
      * @method signdoc
      * @param  {String} id    传入id
      * @param  {Object} $elem 传入Jquery节点对象
@@ -153,7 +153,7 @@ $(function() {
 
     $(".o-art-description, .o-allow-circle, .o-noallow-circle").tooltip();
 
-    //点击关闭当前公文时，提示签收公文
+    //点击关闭当前通知时，提示签收通知
     $("#art_close").on("click.artClose", function() {
         Ui.confirm(Ibos.l("DOC.HAS_NOT_SIGN_DOC"), function() {
             var id = Ibos.app.g("docId"),
@@ -310,7 +310,7 @@ $(function() {
                 }
             });
         },
-        // 签收公文
+        // 签收通知
         "signDoc": function(param, elem) {
             Official.op.sign(Ibos.app.g("docId")).done(function(res) {
                 if (res.isSuccess) {

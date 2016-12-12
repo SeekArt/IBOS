@@ -18,6 +18,7 @@ namespace application\modules\report;
 
 use application\core\modules\Module;
 
-class ReportModule extends Module {
-    
+class ReportModule extends Module
+{
+
 }

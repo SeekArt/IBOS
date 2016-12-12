@@ -16,9 +16,11 @@
 
 namespace application\modules\report\core;
 
-class ReportRecord {
+class ReportRecord
+{
 
-    public static function handleRecordShowData( $records ) {
+    public static function handleRecordShowData($records)
+    {
 //		foreach ( $records as $k => $record ) {
 //			 while ($row = DB::fetch($Querystr)) {
 //                $rid = $row['recordid'];

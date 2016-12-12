@@ -12,7 +12,8 @@ namespace Aliyun\OSS\Models;
  *
  * @package Aliyun\OSS\Models
  */
-class MultipartUploadsListing {
+class MultipartUploadsListing
+{
 
     /**
      * @var string Bucket的名字
@@ -73,7 +74,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $uploadIdMarker
      */
-    public function setUploadIdMarker($uploadIdMarker) {
+    public function setUploadIdMarker($uploadIdMarker)
+    {
         $this->uploadIdMarker = $uploadIdMarker;
     }
 
@@ -82,7 +84,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getUploadIdMarker() {
+    public function getUploadIdMarker()
+    {
         return $this->uploadIdMarker;
     }
 
@@ -91,7 +94,8 @@ class MultipartUploadsListing {
      *
      * @param string $bucketName
      */
-    public function setBucketName($bucketName) {
+    public function setBucketName($bucketName)
+    {
         $this->bucketName = $bucketName;
     }
 
@@ -99,7 +103,8 @@ class MultipartUploadsListing {
      * @internal
      * @return string
      */
-    public function getBucketName() {
+    public function getBucketName()
+    {
         return $this->bucketName;
     }
 
@@ -108,7 +113,8 @@ class MultipartUploadsListing {
      *
      * @param array $commonPrefixes
      */
-    public function setCommonPrefixes($commonPrefixes) {
+    public function setCommonPrefixes($commonPrefixes)
+    {
         $this->commonPrefixes = $commonPrefixes;
     }
 
@@ -117,7 +123,8 @@ class MultipartUploadsListing {
      *
      * @return array
      */
-    public function getCommonPrefixes() {
+    public function getCommonPrefixes()
+    {
         return $this->commonPrefixes;
     }
 
@@ -125,7 +132,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $delimiter
      */
-    public function setDelimiter($delimiter) {
+    public function setDelimiter($delimiter)
+    {
         $this->delimiter = $delimiter;
     }
 
@@ -134,7 +142,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getDelimiter() {
+    public function getDelimiter()
+    {
         return $this->delimiter;
     }
 
@@ -142,7 +151,8 @@ class MultipartUploadsListing {
      * @internal
      * @param boolean $isTruncated
      */
-    public function setIsTruncated($isTruncated) {
+    public function setIsTruncated($isTruncated)
+    {
         $this->isTruncated = $isTruncated;
     }
 
@@ -151,7 +161,8 @@ class MultipartUploadsListing {
      *
      * @return boolean
      */
-    public function getIsTruncated() {
+    public function getIsTruncated()
+    {
         return $this->isTruncated;
     }
 
@@ -159,7 +170,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $keyMarker
      */
-    public function setKeyMarker($keyMarker) {
+    public function setKeyMarker($keyMarker)
+    {
         $this->keyMarker = $keyMarker;
     }
 
@@ -168,7 +180,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getKeyMarker() {
+    public function getKeyMarker()
+    {
         return $this->keyMarker;
     }
 
@@ -176,7 +189,8 @@ class MultipartUploadsListing {
      * @internal
      * @param int $maxUploads
      */
-    public function setMaxUploads($maxUploads) {
+    public function setMaxUploads($maxUploads)
+    {
         $this->maxUploads = $maxUploads;
     }
 
@@ -185,7 +199,8 @@ class MultipartUploadsListing {
      *
      * @return int
      */
-    public function getMaxUploads() {
+    public function getMaxUploads()
+    {
         return $this->maxUploads;
     }
 
@@ -193,7 +208,8 @@ class MultipartUploadsListing {
      * @internal
      * @param array $multipartUploads
      */
-    public function setMultipartUploads($multipartUploads) {
+    public function setMultipartUploads($multipartUploads)
+    {
         $this->multipartUploads = $multipartUploads;
     }
 
@@ -202,7 +218,8 @@ class MultipartUploadsListing {
      *
      * @return array
      */
-    public function getMultipartUploads() {
+    public function getMultipartUploads()
+    {
         return $this->multipartUploads;
     }
 
@@ -210,7 +227,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $nextKeyMarker
      */
-    public function setNextKeyMarker($nextKeyMarker) {
+    public function setNextKeyMarker($nextKeyMarker)
+    {
         $this->nextKeyMarker = $nextKeyMarker;
     }
 
@@ -219,7 +237,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getNextKeyMarker() {
+    public function getNextKeyMarker()
+    {
         return $this->nextKeyMarker;
     }
 
@@ -227,7 +246,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $nextUploadIdMarker
      */
-    public function setNextUploadIdMarker($nextUploadIdMarker) {
+    public function setNextUploadIdMarker($nextUploadIdMarker)
+    {
         $this->nextUploadIdMarker = $nextUploadIdMarker;
     }
 
@@ -236,7 +256,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getNextUploadIdMarker() {
+    public function getNextUploadIdMarker()
+    {
         return $this->nextUploadIdMarker;
     }
 
@@ -244,7 +265,8 @@ class MultipartUploadsListing {
      * @internal
      * @param string $prefix
      */
-    public function setPrefix($prefix)  {
+    public function setPrefix($prefix)
+    {
         $this->prefix = $prefix;
     }
 
@@ -253,7 +275,8 @@ class MultipartUploadsListing {
      *
      * @return string
      */
-    public function getPrefix() {
+    public function getPrefix()
+    {
         return $this->prefix;
     }
 }

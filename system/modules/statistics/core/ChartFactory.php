@@ -24,42 +24,45 @@ use CApplicationComponent;
 use CException;
 use CMap;
 
-class ChartFactory extends CApplicationComponent {
+class ChartFactory extends CApplicationComponent
+{
 
-	/**
-	 *
-	 * @var array 
-	 */
-	public $charts = array();
+    /**
+     *
+     * @var array
+     */
+    public $charts = array();
 
-	/**
-	 * 
-	 * @param Counter $counter 图表所属的统计器
-	 * @param string $className 图表的类名。这个参数也可以用path alias代替。(e.g. system.web.widgets.COutputCache)
-	 * @param array $properties 初始化图表所需参数
-	 * @return Chart
-	 */
-	public function createChart( $counter, $className, $properties = array() ) {
-		$chart = new $className( $counter );
-		$this->chkInstance( $chart );
-		if ( isset( $this->charts[$className] ) ) {
-			$properties = $properties === array() ? $this->charts[$className] : CMap::mergeArray( $this->charts[$className], $properties );
-		}
-		foreach ( $properties as $name => $value ) {
-			$chart->$name = $value;
-		}
-		return $chart;
-	}
+    /**
+     *
+     * @param Counter $counter 图表所属的统计器
+     * @param string $className 图表的类名。这个参数也可以用path alias代替。(e.g. system.web.widgets.COutputCache)
+     * @param array $properties 初始化图表所需参数
+     * @return Chart
+     */
+    public function createChart($counter, $className, $properties = array())
+    {
+        $chart = new $className($counter);
+        $this->chkInstance($chart);
+        if (isset($this->charts[$className])) {
+            $properties = $properties === array() ? $this->charts[$className] : CMap::mergeArray($this->charts[$className], $properties);
+        }
+        foreach ($properties as $name => $value) {
+            $chart->$name = $value;
+        }
+        return $chart;
+    }
 
-	/**
-	 * 检查图表来源是否正确
-	 * @param Chart $chart
-	 * @throws CException
-	 */
-	private function chkInstance( $chart ) {
-		if ( !$chart instanceof Chart ) {
-			throw new CException( Ibos::t( 'error', 'Class "{class}" is illegal.', array( '{class}' => get_class( $chart ) ) ) );
-		}
-	}
+    /**
+     * 检查图表来源是否正确
+     * @param Chart $chart
+     * @throws CException
+     */
+    private function chkInstance($chart)
+    {
+        if (!$chart instanceof Chart) {
+            throw new CException(Ibos::t('error', 'Class "{class}" is illegal.', array('{class}' => get_class($chart))));
+        }
+    }
 
 }

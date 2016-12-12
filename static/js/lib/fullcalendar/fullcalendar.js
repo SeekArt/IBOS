@@ -3458,8 +3458,10 @@ function AgendaDayView(element, calendar) { // TODO: make a DayView mixin
 
 	function render(date) {
 
-		t.start = t.intervalStart = date.clone().stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('days', 1);
+		t.intervalStart = date.clone().stripTime();
+		t.intervalEnd = t.intervalStart.clone().add('days', 1);
+		t.start = t.skipHiddenDays(t.intervalStart);
+		t.end = t.skipHiddenDays(t.intervalEnd, -1, true);
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 

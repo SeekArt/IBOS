@@ -26,9 +26,11 @@ use application\modules\file\utils\FileCheck;
 use application\modules\file\utils\FileData;
 use application\modules\file\utils\FileOffice;
 
-class MyShareController extends BaseController {
+class MyShareController extends BaseController
+{
 
-    public function init() {
+    public function init()
+    {
         parent::init();
         $this->belongType = File::BELONG_PERSONAL;
     }
@@ -36,44 +38,47 @@ class MyShareController extends BaseController {
     /**
      * 渲染模板
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $params = array(
             'pid' => 0,
             'idpath' => File::TOP_IDPATH
         );
-        $this->setPageTitle( Ibos::lang( 'My share folder' ) );
-        $this->render( 'index', $params );
+        $this->setPageTitle(Ibos::lang('My share folder'));
+        $this->render('index', $params);
     }
 
     /**
      * 获取数据
      */
-    public function actionGetCate() {
+    public function actionGetCate()
+    {
         $this->search();
-        $pid = intval( Env::getRequest( 'pid' ) );
+        $pid = intval(Env::getRequest('pid'));
         $order = $this->getOrder();
-        if ( $pid == 0 ) {
+        if ($pid == 0) {
             $condition = $this->getCondition();
         } else {
-            $condition = $this->getConditionWithPid( $pid );
+            $condition = $this->getConditionWithPid($pid);
         }
-        $list = File::model()->fetchList( $condition, $order );
+        $list = File::model()->fetchList($condition, $order);
         $params = array(
             'pid' => $pid,
-            'data' => $this->handleList( $list['datas'] ),
+            'data' => $this->handleList($list['datas']),
             'page' => $list['pages'],
-            'breadCrumbs' => $this->getBreadCrumbs( $pid ),
-            'pDir' => array_merge( FileData::getDirInfo( $pid ), array( 'access' => FileCheck::WRITEABLED ) )
+            'breadCrumbs' => $this->getBreadCrumbs($pid),
+            'pDir' => array_merge(FileData::getDirInfo($pid), array('access' => FileCheck::WRITEABLED))
         );
-        $this->ajaxReturn( $params );
+        $this->ajaxReturn($params);
     }
 
     /**
      * 共享、取消共享
      */
-    public function actionShare() {
-        $op = Env::getRequest( 'op' );
-        if ( in_array( $op, array( 'share', 'cancelShare', 'getShareData' ) ) ) {
+    public function actionShare()
+    {
+        $op = Env::getRequest('op');
+        if (in_array($op, array('share', 'cancelShare', 'getShareData'))) {
             $this->$op();
         }
     }
@@ -81,14 +86,15 @@ class MyShareController extends BaseController {
     /**
      * 共享
      */
-    protected function share() {
-        $fids = StringUtil::filterStr( Env::getRequest( 'fids' ) );
-        $shares = StringUtil::handleSelectBoxData( Env::getRequest( 'shares' ) );
-        $shareFids = FileShare::model()->fetchFidsByCondition( "FIND_IN_SET(fs.`fid`, '{$fids}')" ); // 已共享的fid
-        $fidArr = explode( ',', $fids );
-        foreach ( $fidArr as $fid ) {
-            $file = File::model()->fetchByFid( $fid );
-            if ( $file['uid'] == $this->uid ) {
+    protected function share()
+    {
+        $fids = StringUtil::filterStr(Env::getRequest('fids'));
+        $shares = StringUtil::handleSelectBoxData(Env::getRequest('shares'));
+        $shareFids = FileShare::model()->fetchFidsByCondition("FIND_IN_SET(fs.`fid`, '{$fids}')"); // 已共享的fid
+        $fidArr = explode(',', $fids);
+        foreach ($fidArr as $fid) {
+            $file = File::model()->fetchByFid($fid);
+            if ($file['uid'] == $this->uid) {
                 $data = array(
                     'fid' => $fid,
                     'fromuid' => $this->uid,
@@ -98,65 +104,68 @@ class MyShareController extends BaseController {
                     'toroleids' => $shares['roleid'],
                     'uptime' => TIMESTAMP
                 );
-                if ( empty( $data['touids'] ) && empty( $data['todeptids'] ) && empty( $data['toposids'] ) && empty( $data['toroleids'] ) ) {
-                    FileShare::model()->deleteAll( "`fid` = {$fid}" );
-                } elseif ( in_array( $fid, $shareFids ) ) {
-                    FileShare::model()->updateAll( $data, "`fid` = {$fid}" );
+                if (empty($data['touids']) && empty($data['todeptids']) && empty($data['toposids']) && empty($data['toroleids'])) {
+                    FileShare::model()->deleteAll("`fid` = {$fid}");
+                } elseif (in_array($fid, $shareFids)) {
+                    FileShare::model()->updateAll($data, "`fid` = {$fid}");
                 } else {
-                    FileShare::model()->add( $data );
+                    FileShare::model()->add($data);
                 }
-                $content = Ibos::lang( 'Feed content', '', array(
-                            '{filename}' => $file['name'],
-                            '{shortname}' => StringUtil::cutStr( $file['name'], 20 ),
-                            '{placeUrl}' => Ibos::app()->urlManager->createUrl( 'file/fromshare/index#from/' . $this->uid ),
-                            '{downloadUrl}' => Ibos::app()->urlManager->createUrl( 'file/personal/ajaxEnt', array( 'op' => 'download', 'fids' => $fid ) ),
-                        ) );
-                FileDynamic::model()->record( $fid, $this->uid, $content, $shares['uid'], $shares['deptid'], $shares['positionid'] );
+                $content = Ibos::lang('Feed content', '', array(
+                    '{filename}' => $file['name'],
+                    '{shortname}' => StringUtil::cutStr($file['name'], 20),
+                    '{placeUrl}' => Ibos::app()->urlManager->createUrl('file/fromshare/index#from/' . $this->uid),
+                    '{downloadUrl}' => Ibos::app()->urlManager->createUrl('file/personal/ajaxEnt', array('op' => 'download', 'fids' => $fid)),
+                ));
+                FileDynamic::model()->record($fid, $this->uid, $content, $shares['uid'], $shares['deptid'], $shares['positionid']);
             }
         }
 
-        $this->ajaxReturn( array( 'isSuccess' => true, 'msg' => Ibos::lang( 'Operation succeed', 'message' ) ) );
+        $this->ajaxReturn(array('isSuccess' => true, 'msg' => Ibos::lang('Operation succeed', 'message')));
     }
 
     /**
      * 获取共享设置弹框视图
      */
-    protected function getShareData() {
-        $fids = Env::getRequest( 'fids' );
+    protected function getShareData()
+    {
+        $fids = Env::getRequest('fids');
         $alias = "application.modules.file.views.myshare.setup";
         $shares = '';
-        if ( !empty( $fids ) && count( explode( ',', $fids ) ) == 1 ) {
-            $record = FileShare::model()->fetchByAttributes( array( 'fid' => $fids ) );
-            if ( !empty( $record ) ) {
-                $shares = StringUtil::joinSelectBoxValue( $record['todeptids'], $record['toposids'], $record['touids'], $record['toroleids'] );
+        if (!empty($fids) && count(explode(',', $fids)) == 1) {
+            $record = FileShare::model()->fetchByAttributes(array('fid' => $fids));
+            if (!empty($record)) {
+                $shares = StringUtil::joinSelectBoxValue($record['todeptids'], $record['toposids'], $record['touids'], $record['toroleids']);
             }
         }
-        $html = $this->renderPartial( $alias, array( 'shares' => $shares ), true );
-        $this->ajaxReturn( array( 'isSuccess' => true, 'html' => $html ) );
+        $html = $this->renderPartial($alias, array('shares' => $shares), true);
+        $this->ajaxReturn(array('isSuccess' => true, 'html' => $html));
     }
 
     /**
      * 取消共享
      */
-    protected function cancelShare() {
-        $fids = Env::getRequest( 'fids' );
+    protected function cancelShare()
+    {
+        $fids = Env::getRequest('fids');
         $deletes = array();
-        foreach ( $fids as $fid ) {
-            if ( FileCheck::getInstance()->isOwn( $fid, $this->uid ) ) {
+        foreach ($fids as $fid) {
+            if (FileCheck::getInstance()->isOwn($fid, $this->uid)) {
                 $deletes[] = $fid;
             }
         }
-        $delFids = implode( ',', $deletes );
-        $res = FileShare::model()->deleteAll( "FIND_IN_SET(`fid`, '{$delFids}')" );
-        $msg = $res ? Ibos::lang( 'Operation succeed', 'message' ) : Ibos::lang( 'Operation failure', 'message' );
-        $this->ajaxReturn( array( 'isSuccess' => !!$res, 'msg' => $msg ) );
+        $delFids = implode(',', $deletes);
+        $res = FileShare::model()->deleteAll("FIND_IN_SET(`fid`, '{$delFids}')");
+        $msg = $res ? Ibos::lang('Operation succeed', 'message') : Ibos::lang('Operation failure', 'message');
+        $this->ajaxReturn(array('isSuccess' => !!$res, 'msg' => $msg));
     }
 
     /**
      * 获取查询条件
      * @return string
      */
-    protected function getCondition() {
+    protected function getCondition()
+    {
         $con = array(
             'uidCon' => "f.`uid` = {$this->uid}",
             'personalCon' => "f.`belong` = {$this->belongType}",
@@ -165,9 +174,9 @@ class MyShareController extends BaseController {
             'shareCon' => "fs.`fromuid` = {$this->uid}",
             'typeCon' => $this->getTypeCondition()
         );
-        $fids = FileShare::model()->fetchFidsByCondition( implode( ' AND ', $con ) );
-        $condition = sprintf( "FIND_IN_SET(f.`fid`, '%s')", implode( ',', $fids ) );
-        return FileData::joinCondition( $this->condition, $condition );
+        $fids = FileShare::model()->fetchFidsByCondition(implode(' AND ', $con));
+        $condition = sprintf("FIND_IN_SET(f.`fid`, '%s')", implode(',', $fids));
+        return FileData::joinCondition($this->condition, $condition);
     }
 
     /**
@@ -175,7 +184,8 @@ class MyShareController extends BaseController {
      * @param integer $pid 所在文件夹id
      * @return string
      */
-    protected function getConditionWithPid( $pid ) {
+    protected function getConditionWithPid($pid)
+    {
         $con = array(
             'pidCon' => "f.`pid` = {$pid}",
             'uidCon' => "f.`uid` = {$this->uid}",
@@ -184,7 +194,7 @@ class MyShareController extends BaseController {
             'delCon' => "f.`isdel` = 0",
             'typeCon' => $this->getTypeCondition()
         );
-        $condition = implode( ' AND ', $con );
+        $condition = implode(' AND ', $con);
         return $condition;
     }
 
@@ -194,11 +204,12 @@ class MyShareController extends BaseController {
      * @param integer $fromuid 共享人uid
      * @return array 面包屑数组
      */
-    private function getBreadCrumbs( $pid ) {
-        $breadCrumbs = FileOffice::getBreadCrumb( $pid );
-        foreach ( $breadCrumbs as $k => $bread ) {
-            if ( !FileCheck::getInstance()->isShare( $bread['fid'] ) ) {
-                unset( $breadCrumbs[$k] );
+    private function getBreadCrumbs($pid)
+    {
+        $breadCrumbs = FileOffice::getBreadCrumb($pid);
+        foreach ($breadCrumbs as $k => $bread) {
+            if (!FileCheck::getInstance()->isShare($bread['fid'])) {
+                unset($breadCrumbs[$k]);
             } else {
                 break;
             }

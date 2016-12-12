@@ -2,26 +2,32 @@
 
 use application\core\utils\Env;
 use application\core\utils\Org;
+
 ?>
 <div>
     <ul class="mng-list" id="mng_list">
-        <?php if ( !empty( $deptArr ) ): ?>
-            <?php foreach ( $deptArr as $dept ): ?>
+        <?php if (!empty($deptArr)): ?>
+            <?php foreach ($deptArr as $dept): ?>
                 <li>
                     <div class="mng-item mng-department active">
                         <span class="o-caret dept"><i class="caret"></i></span>
-                        <a href="<?php echo $this->getController()->createUrl( 'stats/review', array( 'typeid' => $typeid, 'uid' => $dept['subUids'] ) ); ?>">
+                        <a href="<?php echo $this->getController()->createUrl('stats/review', array('typeid' => $typeid, 'uid' => $dept['subUids'])); ?>">
                             <i class="o-org"></i>
                             <?php echo $dept['deptname']; ?>
                         </a>
                     </div>
                     <ul class="mng-scd-list">
-                        <?php foreach ( $dept['user'] as $user ): ?>
+                        <?php foreach ($dept['user'] as $user): ?>
                             <li>
                                 <div class="mng-item">
-                                    <span class="o-caret g-sub" <?php if ( $user['hasSub'] ): ?> data-action="toggleSubUnderlingsList" <?php endif; ?> data-uid="<?php echo $user['uid']; ?>"><?php if ( $user['hasSub'] ): ?><i class="caret"></i><?php endif; ?></span>
-                                    <a href="<?php echo $this->getController()->createUrl( 'stats/review', array( 'typeid' => $typeid, 'uid' => $user['uid'] ) ); ?>" <?php if ( Env::getRequest( 'uid' ) == $user['uid'] ): ?>style="color:#3497DB;"<?php endif; ?>>
-                                        <img src="<?php echo Org::getDataStatic( $user['uid'], 'avatar', 'middle' ) ?>" alt="">
+                                    <span
+                                        class="o-caret g-sub" <?php if ($user['hasSub']): ?> data-action="toggleSubUnderlingsList" <?php endif; ?>
+                                        data-uid="<?php echo $user['uid']; ?>"><?php if ($user['hasSub']): ?><i
+                                            class="caret"></i><?php endif; ?></span>
+                                    <a href="<?php echo $this->getController()->createUrl('stats/review', array('typeid' => $typeid, 'uid' => $user['uid'])); ?>"
+                                       <?php if (Env::getRequest('uid') == $user['uid']): ?>style="color:#3497DB;"<?php endif; ?>>
+                                        <img src="<?php echo Org::getDataStatic($user['uid'], 'avatar', 'middle') ?>"
+                                             alt="">
                                         <?php echo $user['realname']; ?>
                                     </a>
                                 </div>
@@ -36,7 +42,7 @@ use application\core\utils\Org;
 </div>
 <script>
     Ibos.app.setPageParam({
-        'currentSubUid': "<?php echo (Env::getRequest( 'uid' ) ? Env::getRequest( 'uid' ) : 0); ?>"
+        'currentSubUid': "<?php echo(Env::getRequest('uid') ? Env::getRequest('uid') : 0); ?>"
     });
 </script>
 <script>
@@ -45,8 +51,8 @@ use application\core\utils\Org;
         var $mngList = $("#mng_list");
         $mngList.on("click", ".g-sub", function () {
             var $el = $(this),
-                    $item = $el.parents(".mng-item").eq(0),
-                    $next = $item.next();
+                $item = $el.parents(".mng-item").eq(0),
+                $next = $item.next();
 
             if (!$el.attr('data-init')) {
                 $.get(Ibos.app.url("report/review/index", {op: "getsubordinates", act: "stats"}), {
@@ -68,8 +74,8 @@ use application\core\utils\Org;
         //展开部门
         $mngList.on("click", ".dept", function () {
             var $el = $(this),
-                    $item = $el.parents(".mng-item").eq(0),
-                    $next = $item.next();
+                $item = $el.parents(".mng-item").eq(0),
+                $next = $item.next();
             Report.toggleTree($next, function (isShowed) {
                 $item.toggleClass("active", !isShowed);
             });

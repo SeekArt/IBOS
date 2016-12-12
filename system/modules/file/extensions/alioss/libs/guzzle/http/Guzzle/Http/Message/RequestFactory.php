@@ -76,9 +76,10 @@ class RequestFactory implements RequestFactoryInterface
         $body = null,
         $protocol = 'HTTP',
         $protocolVersion = '1.1'
-    ) {
+    )
+    {
         return $this->create($method, Url::buildUrl($urlParts), $headers, $body)
-                    ->setProtocolVersion($protocolVersion);
+            ->setProtocolVersion($protocolVersion);
     }
 
     public function create($method, $url, $headers = null, $body = null, array $options = array())
@@ -112,8 +113,8 @@ class RequestFactory implements RequestFactoryInterface
                     $request->addPostFields($body);
                 } else {
                     // Add a raw entity body body to the request
-                    $request->setBody($body, (string) $request->getHeader('Content-Type'));
-                    if ((string) $request->getHeader('Transfer-Encoding') == 'chunked') {
+                    $request->setBody($body, (string)$request->getHeader('Content-Type'));
+                    if ((string)$request->getHeader('Transfer-Encoding') == 'chunked') {
                         $request->removeHeader('Content-Length');
                     }
                 }
@@ -132,7 +133,7 @@ class RequestFactory implements RequestFactoryInterface
      * {@see Guzzle\Http\Message\Request::clone}, but can change the HTTP method.
      *
      * @param RequestInterface $request Request to clone
-     * @param string           $method  Method to set
+     * @param string $method Method to set
      *
      * @return RequestInterface
      */

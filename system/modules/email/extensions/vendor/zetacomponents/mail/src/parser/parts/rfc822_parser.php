@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -84,11 +84,10 @@ class ezcMailRfc822Parser extends ezcMailPartParser
      *         if a neccessary temporary file could not be openened.
      * @param string $origLine
      */
-    public function parseBody( $origLine )
+    public function parseBody($origLine)
     {
-        $line = rtrim( $origLine, "\r\n" );
-        if ( $this->parserState == self::PARSE_STATE_HEADERS && $line == '' )
-        {
+        $line = rtrim($origLine, "\r\n");
+        if ($this->parserState == self::PARSE_STATE_HEADERS && $line == '') {
             $this->parserState = self::PARSE_STATE_BODY;
 
             // clean up headers for the part
@@ -96,26 +95,21 @@ class ezcMailRfc822Parser extends ezcMailPartParser
 
             $headers = new ezcMailHeadersHolder();
             $headers['Content-Type'] = $this->headers['Content-Type'];
-            if ( isset( $this->headers['Content-Transfer-Encoding'] ) )
-            {
+            if (isset($this->headers['Content-Transfer-Encoding'])) {
                 $headers['Content-Transfer-Encoding'] = $this->headers['Content-Transfer-Encoding'];
             }
 
-            if ( isset( $this->headers['Content-Disposition'] ) )
-            {
+            if (isset($this->headers['Content-Disposition'])) {
                 $headers['Content-Disposition'] = $this->headers['Content-Disposition'];
             }
 
             // get the correct body type
-            $this->bodyParser = self::createPartParserForHeaders( $headers );
-        }
-        else if ( $this->parserState == self::PARSE_STATE_HEADERS )
+            $this->bodyParser = self::createPartParserForHeaders($headers);
+        } else if ($this->parserState == self::PARSE_STATE_HEADERS) {
+            $this->parseHeader($line, $this->headers);
+        } else // we are parsing headers
         {
-            $this->parseHeader( $line, $this->headers );
-        }
-        else // we are parsing headers
-        {
-            $this->bodyParser->parseBody( $origLine );
+            $this->bodyParser->parseBody($origLine);
         }
     }
 
@@ -127,55 +121,48 @@ class ezcMailRfc822Parser extends ezcMailPartParser
      * @param string $class Class to instanciate instead of ezcMail.
      * @return ezcMail
      */
-    public function finish( $class = "ezcMail" )
+    public function finish($class = "ezcMail")
     {
         $mail = new $class();
-        $mail->setHeaders( $this->headers->getCaseSensitiveArray() );
-        ezcMailPartParser::parsePartHeaders( $this->headers, $mail );
+        $mail->setHeaders($this->headers->getCaseSensitiveArray());
+        ezcMailPartParser::parsePartHeaders($this->headers, $mail);
 
         // from
-        if ( isset( $this->headers['From'] ) )
-        {
-            $mail->from = ezcMailTools::parseEmailAddress( $this->headers['From'] );
+        if (isset($this->headers['From'])) {
+            $mail->from = ezcMailTools::parseEmailAddress($this->headers['From']);
         }
         // to
-        if ( isset( $this->headers['To'] ) )
-        {
-            $mail->to = ezcMailTools::parseEmailAddresses( $this->headers['To'] );
+        if (isset($this->headers['To'])) {
+            $mail->to = ezcMailTools::parseEmailAddresses($this->headers['To']);
         }
         // cc
-        if ( isset( $this->headers['Cc'] ) )
-        {
-            $mail->cc = ezcMailTools::parseEmailAddresses( $this->headers['Cc'] );
+        if (isset($this->headers['Cc'])) {
+            $mail->cc = ezcMailTools::parseEmailAddresses($this->headers['Cc']);
         }
         // bcc
-        if ( isset( $this->headers['Bcc'] ) )
-        {
-            $mail->bcc = ezcMailTools::parseEmailAddresses( $this->headers['Bcc'] );
+        if (isset($this->headers['Bcc'])) {
+            $mail->bcc = ezcMailTools::parseEmailAddresses($this->headers['Bcc']);
         }
         // subject
-        if ( isset( $this->headers['Subject'] ) )
-        {
-            $mail->subject = ezcMailTools::mimeDecode( $this->headers['Subject'] );
+        if (isset($this->headers['Subject'])) {
+            $mail->subject = ezcMailTools::mimeDecode($this->headers['Subject']);
             $mail->subjectCharset = 'utf-8';
         }
         // message ID
-        if ( isset( $this->headers['Message-Id'] ) )
-        {
+        if (isset($this->headers['Message-Id'])) {
             $mail->messageID = $this->headers['Message-Id'];
         }
 
         // Return-Path
-        if ( isset( $this->headers['Return-Path'] ) )
-        {
-            $mail->returnPath = ezcMailTools::parseEmailAddress( $this->headers['Return-Path'] );
+        if (isset($this->headers['Return-Path'])) {
+            $mail->returnPath = ezcMailTools::parseEmailAddress($this->headers['Return-Path']);
         }
 
-        if ( $this->bodyParser !== null )
-        {
+        if ($this->bodyParser !== null) {
             $mail->body = $this->bodyParser->finish();
         }
         return $mail;
     }
 }
+
 ?>

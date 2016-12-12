@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -42,7 +42,7 @@ class ezcMailMtaTransport implements ezcMailTransport
     /**
      * Constructs a new ezcMailMtaTransport.
      */
-    public function __construct(  )
+    public function __construct()
     {
     }
 
@@ -56,26 +56,24 @@ class ezcMailMtaTransport implements ezcMailTransport
      *         if the mail was not accepted for delivery by the MTA.
      * @param ezcMail $mail
      */
-    public function send( ezcMail $mail )
+    public function send(ezcMail $mail)
     {
-        $mail->appendExcludeHeaders( array( 'to', 'subject' ) );
-        $headers = rtrim( $mail->generateHeaders() ); // rtrim removes the linebreak at the end, mail doesn't want it.
+        $mail->appendExcludeHeaders(array('to', 'subject'));
+        $headers = rtrim($mail->generateHeaders()); // rtrim removes the linebreak at the end, mail doesn't want it.
 
-        if ( ( count( $mail->to ) + count( $mail->cc ) + count( $mail->bcc ) ) < 1 )
-        {
-            throw new ezcMailTransportException( 'No recipient addresses found in message header.' );
+        if ((count($mail->to) + count($mail->cc) + count($mail->bcc)) < 1) {
+            throw new ezcMailTransportException('No recipient addresses found in message header.');
         }
         $additionalParameters = "";
-        if ( isset( $mail->returnPath ) )
-        {
+        if (isset($mail->returnPath)) {
             $additionalParameters = "-f{$mail->returnPath->email}";
         }
-        $success = mail( ezcMailTools::composeEmailAddresses( $mail->to ),
-                         $mail->getHeader( 'Subject' ), $mail->generateBody(), $headers, $additionalParameters );
-        if ( $success === false )
-        {
-            throw new ezcMailTransportException( 'The email could not be sent by sendmail' );
+        $success = mail(ezcMailTools::composeEmailAddresses($mail->to),
+            $mail->getHeader('Subject'), $mail->generateBody(), $headers, $additionalParameters);
+        if ($success === false) {
+            throw new ezcMailTransportException('The email could not be sent by sendmail');
         }
     }
 }
+
 ?>

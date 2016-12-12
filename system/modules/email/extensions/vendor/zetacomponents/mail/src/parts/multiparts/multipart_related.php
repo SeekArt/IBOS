@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -66,7 +66,7 @@ class ezcMailMultipartRelated extends ezcMailMultipart
     public function __construct()
     {
         $args = func_get_args();
-        parent::__construct( $args );
+        parent::__construct($args);
     }
 
     /**
@@ -74,7 +74,7 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      *
      * @param ezcMailPart $part
      */
-    public function setMainPart( ezcMailPart $part )
+    public function setMainPart(ezcMailPart $part)
     {
         $this->parts[0] = $part;
     }
@@ -85,35 +85,27 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      * @param ezcMailPart $part
      * @return string
      */
-    public function addRelatedPart( ezcMailPart $part  )
+    public function addRelatedPart(ezcMailPart $part)
     {
         // it doesn't have a Content-ID, we must set one.
         $contentId = '';
-        if ( $part->getHeader( 'Content-ID' ) == '' )
-        {
-            if ( $part instanceof ezcMailFile )
-            {
-                $part->contentId = ezcMailTools::generateContentId( basename( $part->fileName ) );
-            }
-            else
-            {
-                $part->setHeader( 'Content-ID', ezcMailTools::generateContentId( 'part' ) );
+        if ($part->getHeader('Content-ID') == '') {
+            if ($part instanceof ezcMailFile) {
+                $part->contentId = ezcMailTools::generateContentId(basename($part->fileName));
+            } else {
+                $part->setHeader('Content-ID', ezcMailTools::generateContentId('part'));
             }
         }
-        $contentId = trim( $part->getHeader( 'Content-ID' ), '<>' );
+        $contentId = trim($part->getHeader('Content-ID'), '<>');
 
         // Set the content ID property of the ezcMailFile if one was found
-        if ( $part instanceof ezcMailFile )
-        {
+        if ($part instanceof ezcMailFile) {
             $part->contentId = $contentId;
         }
 
-        if ( count( $this->parts ) > 0 )
-        {
+        if (count($this->parts) > 0) {
             $this->parts[] = $part;
-        }
-        else
-        {
+        } else {
             $this->parts[1] = $part;
         }
         return $contentId;
@@ -126,8 +118,7 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      */
     public function getMainPart()
     {
-        if ( isset( $this->parts[0] ) )
-        {
+        if (isset($this->parts[0])) {
             return $this->parts[0];
         }
         return null;
@@ -140,11 +131,10 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      */
     public function getRelatedParts()
     {
-        if ( is_null( $this->getMainPart() ) )
-        {
-            return array_slice( $this->parts, 0 );
+        if (is_null($this->getMainPart())) {
+            return array_slice($this->parts, 0);
         }
-        return array_slice( $this->parts, 1 );
+        return array_slice($this->parts, 1);
     }
 
     /**
@@ -153,14 +143,13 @@ class ezcMailMultipartRelated extends ezcMailMultipart
      * @param string $cid
      * @return ezcMailPart
      */
-    public function getRelatedPartByID( $cid )
+    public function getRelatedPartByID($cid)
     {
         $parts = $this->getRelatedParts();
-        foreach ( $parts as $part )
-        {
-            if ( ( $part->getHeader( 'Content-ID' ) !== '' ) &&
-                ( $part->getHeader( 'Content-ID' ) == "<$cid>" ) )
-            {
+        foreach ($parts as $part) {
+            if (($part->getHeader('Content-ID') !== '') &&
+                ($part->getHeader('Content-ID') == "<$cid>")
+            ) {
                 return $part;
             }
         }
@@ -195,4 +184,5 @@ class ezcMailMultipartRelated extends ezcMailMultipart
         // 3. Substitute in this message.
     }
 }
+
 ?>

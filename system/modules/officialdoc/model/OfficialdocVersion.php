@@ -1,14 +1,14 @@
 <?php
 
 /**
- * 公文模块------ doc_version表的数据层操作文件
+ * 通知模块------ doc_version表的数据层操作文件
  *
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
  * @author Ring <Ring@ibos.com.cn>
  */
 /**
- * 公文模块------  doc_version表的数据层操作类，继承ICModel
+ * 通知模块------  doc_version表的数据层操作类，继承ICModel
  * @package application.modules.officialDoc.model
  * @version $Id: OfficialdocVersion.php 117 2013-06-07 09:29:09Z gzwwb $
  * @author gzwwb <gzwwb@ibos.com.cn>
@@ -21,13 +21,16 @@ use application\core\utils\Convert;
 use application\core\utils\Ibos;
 use application\modules\officialdoc\utils\Officialdoc as OfficialdocUtil;
 
-class OfficialdocVersion extends Model {
+class OfficialdocVersion extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{doc_version}}';
     }
 
@@ -36,19 +39,20 @@ class OfficialdocVersion extends Model {
      * @param integer $docid
      * @return array
      */
-    public function fetchAllByDocid( $docid ) {
-        $versionData = $this->fetchAll( 'docid=:docid ORDER BY version DESC', array( ':docid' => $docid ) );
+    public function fetchAllByDocid($docid)
+    {
+        $versionData = $this->fetchAll('docid=:docid ORDER BY version DESC', array(':docid' => $docid));
 
-        if ( !empty( $versionData ) ) {
+        if (!empty($versionData)) {
             $uidArray = array();
-            foreach ( $versionData as $data ) {
+            foreach ($versionData as $data) {
                 $uidArray[] = $data['editor'];
             }
-            $realnameArray = User::model()->findRealnameIndexByUid( $uidArray );
-            foreach ( $versionData as $key => $version ) {
-                $versionData[$key]['uptime'] = Convert::formatDate( $version['uptime'], 'u' );
-                $versionData[$key]['editor'] = !empty( $realnameArray[$version['editor']] ) ? $realnameArray[$version['editor']] : '--';
-                $versionData[$key]['showVersion'] = OfficialdocUtil::changeVersion( $version['version'] );
+            $realnameArray = User::model()->findRealnameIndexByUid($uidArray);
+            foreach ($versionData as $key => $version) {
+                $versionData[$key]['uptime'] = Convert::formatDate($version['uptime'], 'u');
+                $versionData[$key]['editor'] = !empty($realnameArray[$version['editor']]) ? $realnameArray[$version['editor']] : '--';
+                $versionData[$key]['showVersion'] = OfficialdocUtil::changeVersion($version['version']);
             }
         }
         return $versionData;
@@ -56,19 +60,20 @@ class OfficialdocVersion extends Model {
 
     /**
      * 根据docid插入一个历史版本
-     * @param integer $docid 公文id
+     * @param integer $docid 通知id
      * @param integer $uid 用户Id
      * @param string $nextVersion 下一个版本号
      * @return boolean 成功/失败
      */
-    public function insertVersion( $docid, $uid, $nextVersion ) {
+    public function insertVersion($docid, $uid, $nextVersion)
+    {
         $version = array(
             'docid' => $docid,
             'author' => $uid,
             'addtime' => TIMESTAMP,
             'version' => $nextVersion
         );
-        return $this->add( $version );
+        return $this->add($version);
     }
 
     /**
@@ -76,8 +81,9 @@ class OfficialdocVersion extends Model {
      * @param string $ids
      * @return integer
      */
-    public function deleteAllByDocids( $ids ) {
-        return $this->deleteAll( "docid IN ($ids)" );
+    public function deleteAllByDocids($ids)
+    {
+        return $this->deleteAll("docid IN ($ids)");
     }
 
 }

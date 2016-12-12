@@ -5,7 +5,7 @@
  * @package application.modules.main.components
  * @see application.modules.main.behaviors.onInitModuleBehavior
  * @author banyanCheung <banyan@ibos.com.cn>
- * @version $Id: Cron.php 7234 2016-05-25 07:41:12Z tanghang $
+ * @version $Id$
  */
 
 namespace application\modules\main\components;
@@ -15,46 +15,48 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\main\model\Cron as CronModel;
 use CApplicationComponent;
 
-class Cron extends CApplicationComponent {
+class Cron extends CApplicationComponent
+{
 
     /**
      * 开始计划任务处理
      * @param interger $cronId 计划任务id
      * @return boolean 执行成功与否
      */
-    public function run( $cronId = 0 ) {
-        if ( $cronId ) {
-            $cron = CronModel::model()->findByPk( $cronId );
+    public function run($cronId = 0)
+    {
+        if ($cronId) {
+            $cron = CronModel::model()->findByPk($cronId);
         } else {
             // 如果没有指定进程id,则查询下一次应该执行的进程
-            $cron = CronModel::model()->fetchByNextRun( TIMESTAMP );
+            $cron = CronModel::model()->fetchByNextRun(TIMESTAMP);
         }
         // 进程名字
-        $processName = 'MAIN_CRON_' . (empty( $cron ) ? 'CHECKER' : $cron['cronid']);
+        $processName = 'MAIN_CRON_' . (empty($cron) ? 'CHECKER' : $cron['cronid']);
         // 如果指定了进程id,先却解锁系统进程
-        if ( $cronId && !empty( $cron ) ) {
-            Ibos::app()->process->unLock( $processName );
+        if ($cronId && !empty($cron)) {
+            Ibos::app()->process->unLock($processName);
         }
         // 检查当前进程是否存在,存在即退出处理
-        if ( Ibos::app()->process->isLocked( $processName, 600 ) ) {
+        if (Ibos::app()->process->isLocked($processName, 600)) {
             return false;
         }
         // 处理当前任务
-        if ( $cron ) {
-            $cron['filename'] = str_replace( array( '..', '/', '\\' ), '', $cron['filename'] );
-            $cron['minute'] = explode( "\t", $cron['minute'] );
-            $this->setNextTime( $cron );
-            @set_time_limit( 1000 );
-            @ignore_user_abort( true );
-            $cronFile = $this->getRealCronFile( $cron['type'], $cron['filename'], $cron['module'] );
-            if ( !@include $cronFile ) {
+        if ($cron) {
+            $cron['filename'] = str_replace(array('..', '/', '\\'), '', $cron['filename']);
+            $cron['minute'] = explode("\t", $cron['minute']);
+            $this->setNextTime($cron);
+            @set_time_limit(1000);
+            @ignore_user_abort(true);
+            $cronFile = $this->getRealCronFile($cron['type'], $cron['filename'], $cron['module']);
+            if (!@include $cronFile) {
                 return false;
             }
         }
         // 插入下一次任务记录
         $this->nextCron();
         // 解锁当前进程
-        Ibos::app()->process->unLock( $processName );
+        Ibos::app()->process->unLock($processName);
         return true;
     }
 
@@ -62,14 +64,15 @@ class Cron extends CApplicationComponent {
      * 插入下一次任务记录
      * @return boolean
      */
-    private function nextCron() {
+    private function nextCron()
+    {
         $cron = CronModel::model()->fetchByNextCron();
-        if ( $cron && isset( $cron['nextrun'] ) ) {
+        if ($cron && isset($cron['nextrun'])) {
             $data = $cron['nextrun'];
         } else {
             $data = TIMESTAMP + 86400 * 365;
         }
-        Syscache::model()->modifyCache( 'cronnextrun', $data );
+        Syscache::model()->modifyCache('cronnextrun', $data);
         return true;
     }
 
@@ -78,35 +81,36 @@ class Cron extends CApplicationComponent {
      * @param array $cron
      * @return boolean
      */
-    private function setNextTime( $cron ) {
-        if ( empty( $cron ) ) {
+    private function setNextTime($cron)
+    {
+        if (empty($cron)) {
             return false;
         }
-        $timeoffSet = Ibos::app()->setting->get( 'setting/timeoffset' );
-        list($yearNow, $monthNow, $dayNow, $weekdayNow, $hourNow, $minuteNow) = explode( '-', gmdate( 'Y-m-d-w-H-i', TIMESTAMP + $timeoffSet * 3600 ) );
+        $timeoffSet = Ibos::app()->setting->get('setting/timeoffset');
+        list($yearNow, $monthNow, $dayNow, $weekdayNow, $hourNow, $minuteNow) = explode('-', gmdate('Y-m-d-w-H-i', TIMESTAMP + $timeoffSet * 3600));
 
-        if ( $cron['weekday'] == -1 ) {
-            if ( $cron['day'] == -1 ) {
+        if ($cron['weekday'] == -1) {
+            if ($cron['day'] == -1) {
                 $firstDay = $dayNow;
                 $secondDay = $dayNow + 1;
             } else {
                 $firstDay = $cron['day'];
-                $secondDay = $cron['day'] + gmdate( 't', TIMESTAMP + $timeoffSet * 3600 );
+                $secondDay = $cron['day'] + gmdate('t', TIMESTAMP + $timeoffSet * 3600);
             }
         } else {
             $firstDay = $dayNow + ($cron['weekday'] - $weekdayNow);
             $secondDay = $firstDay + 7;
         }
 
-        if ( $firstDay < $dayNow ) {
+        if ($firstDay < $dayNow) {
             $firstDay = $secondDay;
         }
 
-        if ( $firstDay == $dayNow ) {
-            $todayTime = $this->todayNextRun( $cron );
-            if ( $todayTime['hour'] == -1 && $todayTime['minute'] == -1 ) {
+        if ($firstDay == $dayNow) {
+            $todayTime = $this->todayNextRun($cron);
+            if ($todayTime['hour'] == -1 && $todayTime['minute'] == -1) {
                 $cron['day'] = $secondDay;
-                $nextTime = $this->todayNextRun( $cron, 0, -1 );
+                $nextTime = $this->todayNextRun($cron, 0, -1);
                 $cron['hour'] = $nextTime['hour'];
                 $cron['minute'] = $nextTime['minute'];
             } else {
@@ -116,17 +120,17 @@ class Cron extends CApplicationComponent {
             }
         } else {
             $cron['day'] = $firstDay;
-            $nextTime = $this->todayNextRun( $cron, 0, -1 );
+            $nextTime = $this->todayNextRun($cron, 0, -1);
             $cron['hour'] = $nextTime['hour'];
             $cron['minute'] = $nextTime['minute'];
         }
 
-        $nextRun = @gmmktime( $cron['hour'], $cron['minute'] > 0 ? $cron['minute'] : 0, 0, $monthNow, $cron['day'], $yearNow ) - $timeoffSet * 3600;
-        $data = array( 'lastrun' => TIMESTAMP, 'nextrun' => $nextRun );
-        if ( !($nextRun > TIMESTAMP) ) {
+        $nextRun = @gmmktime($cron['hour'], $cron['minute'] > 0 ? $cron['minute'] : 0, 0, $monthNow, $cron['day'], $yearNow) - $timeoffSet * 3600;
+        $data = array('lastrun' => TIMESTAMP, 'nextrun' => $nextRun);
+        if (!($nextRun > TIMESTAMP)) {
             $data['available'] = '0';
         }
-        CronModel::model()->modify( $cron['cronid'], $data );
+        CronModel::model()->modify($cron['cronid'], $data);
         return true;
     }
 
@@ -137,39 +141,40 @@ class Cron extends CApplicationComponent {
      * @param type $minute
      * @return type
      */
-    private function todayNextRun( $cron, $hour = -2, $minute = -2 ) {
-        $timeoffSet = Ibos::app()->setting->get( 'setting/timeoffset' );
-        $hour = $hour == -2 ? gmdate( 'H', TIMESTAMP + $timeoffSet * 3600 ) : $hour;
-        $minute = $minute == -2 ? gmdate( 'i', TIMESTAMP + $timeoffSet * 3600 ) : $minute;
-        
+    private function todayNextRun($cron, $hour = -2, $minute = -2)
+    {
+        $timeoffSet = Ibos::app()->setting->get('setting/timeoffset');
+        $hour = $hour == -2 ? gmdate('H', TIMESTAMP + $timeoffSet * 3600) : $hour;
+        $minute = $minute == -2 ? gmdate('i', TIMESTAMP + $timeoffSet * 3600) : $minute;
+
         $nextTime = array();
-        if ( $cron['hour'] == -1 && !$cron['minute'] ) {
+        if ($cron['hour'] == -1 && !$cron['minute']) {
             $nextTime['hour'] = $hour;
             $nextTime['minute'] = $minute + 1;
-        } elseif ( $cron['hour'] == -1 && strpos( $cron['minute'][0], '*/' ) !== FALSE ) {
-            $nextMinute = $minute + intval( str_replace( '*/', '', $cron['minute'][0] ) );
+        } elseif ($cron['hour'] == -1 && strpos($cron['minute'][0], '*/') !== false) {
+            $nextMinute = $minute + intval(str_replace('*/', '', $cron['minute'][0]));
             $nextTime['minute'] = $nextMinute % 60;
-            $nextTime['hour'] = ( $nextMinute >= 60 ? ++$hour : $hour ) % 24;
-        } elseif ( $cron['hour'] == -1 && $cron['minute'] != '' ) {
+            $nextTime['hour'] = ($nextMinute >= 60 ? ++$hour : $hour) % 24;
+        } elseif ($cron['hour'] == -1 && $cron['minute'] != '') {
             $nextTime['hour'] = $hour;
-            if ( ($nextMinute = $this->nextMinute( $cron['minute'], $minute )) === false ) {
+            if (($nextMinute = $this->nextMinute($cron['minute'], $minute)) === false) {
                 ++$nextTime['hour'];
                 $nextMinute = $cron['minute'][0];
             }
             $nextTime['minute'] = $nextMinute;
-        } elseif ( $cron['hour'] != -1 && $cron['minute'] == '' ) {
-            if ( $cron['hour'] < $hour ) {
+        } elseif ($cron['hour'] != -1 && $cron['minute'] == '') {
+            if ($cron['hour'] < $hour) {
                 $nextTime['hour'] = $nextTime['minute'] = -1;
-            } elseif ( $cron['hour'] == $hour ) {
+            } elseif ($cron['hour'] == $hour) {
                 $nextTime['hour'] = $cron['hour'];
                 $nextTime['minute'] = $minute + 1;
             } else {
                 $nextTime['hour'] = $cron['hour'];
                 $nextTime['minute'] = 0;
             }
-        } elseif ( $cron['hour'] != -1 && $cron['minute'] != '' ) {
-            $nextMinute = $this->nextMinute( $cron['minute'], $minute );
-            if ( $cron['hour'] < $hour || ($cron['hour'] == $hour && $nextMinute === false) ) {
+        } elseif ($cron['hour'] != -1 && $cron['minute'] != '') {
+            $nextMinute = $this->nextMinute($cron['minute'], $minute);
+            if ($cron['hour'] < $hour || ($cron['hour'] == $hour && $nextMinute === false)) {
                 $nextTime['hour'] = -1;
                 $nextTime['minute'] = -1;
             } else {
@@ -187,9 +192,10 @@ class Cron extends CApplicationComponent {
      * @param integer $minuteNow
      * @return boolean
      */
-    private function nextMinute( $nextMinutes, $minuteNow ) {
-        foreach ( $nextMinutes as $nextMinute ) {
-            if ( $nextMinute > $minuteNow ) {
+    private function nextMinute($nextMinutes, $minuteNow)
+    {
+        foreach ($nextMinutes as $nextMinute) {
+            if ($nextMinute > $minuteNow) {
                 return $nextMinute;
             }
         }
@@ -203,11 +209,12 @@ class Cron extends CApplicationComponent {
      * @param string $module 该定时任务所属模块
      * @return string
      */
-    private function getRealCronFile( $type, $fileName, $module = '' ) {
-        if ( $type == 'user' ) {
+    private function getRealCronFile($type, $fileName, $module = '')
+    {
+        if ($type == 'user') {
             $cronFile = './system/extensions/cron/' . $fileName;
         } else {
-            $cronFile = sprintf( './system/modules/%s/cron/%s', $module, $fileName );
+            $cronFile = sprintf('./system/modules/%s/cron/%s', $module, $fileName);
         }
         return $cronFile;
     }

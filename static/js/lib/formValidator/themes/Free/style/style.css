@@ -1,0 +1,145 @@
+/*.onLoad
+{
+    background:#E9FFEB url(../images/onLoad.gif) no-repeat 3px 3px;
+    padding-left:25px;
+	font-size: 12px;
+	line-height:22px; 
+	vertical-align:middle;
+} 
+
+.onCorrect{ 
+	display:inline-block; 
+	height:22px; 
+	background:url(../images/reg-menu.gif) no-repeat 0px -22px; 
+	padding-left:15px; 
+	margin-left:10px; 
+	vertical-align:middle; 
+	padding-right:5px;
+	margin-top:5px;
+}
+
+
+.onError .onFocus p
+{
+	list-style-type:none;
+	list-style-image:none;
+	line-height : 2;
+}
+.onError .onFocus span
+{
+	color : #000;
+	font-size : 12px;
+}
+
+
+.onFocus{ 
+	left:0;
+	top:0;
+	padding:0;
+	margin: 0;
+	width:287px; 
+	height:20px; 
+}
+
+.onError, .onError i
+{
+background:url(../images/hint.png);
+}
+.onError
+{ 
+    position:absolute;
+    padding: 5px 10px 10px 0;
+    right:0;
+    line-height: 20px;
+    background-position: right 0;
+    color: #FFF;
+    font-size: 12px;
+}
+
+.onError i 
+{
+    background-position: left 0;
+    position: absolute;
+    top:0;
+    left:-10px;
+    height:35px;
+    width: 10px;
+}
+.pop_icon{
+    background: url(../images/icon.gif);
+    padding:10px;
+    position: absolute;
+    bottom: -27px;
+    right:9px;
+}
+
+
+.input_public
+{
+}
+
+.input_error {
+	background-color:#FBE2E2; color:#A63B3B; border: 1px solid #FCC1C1;
+}
+
+.input_focus {
+    background-color:#FFC;border-color:#C6C69E; border: 1px solid #CCC;
+}
+.input_correct {}*/
+
+.onLoad,
+.onFocus,
+.onError,
+.onCorrect{ text-align: right; z-index: 19999;}
+
+.onLoad-tip,
+.onFocus-tip,
+.onError-tip,
+.onCorrect-tip{
+	border-radius: 4px;
+	display: inline-block;
+	position: relative;
+	padding: 5px 10px;
+	background-color: #4B4F54;
+	color: #FFF;
+	font-size: 12px;
+}
+.onLoad-tip:after,
+.onFocus-tip:after,
+.onError-tip:after,
+.onCorrect-tip:after{
+	content: "";
+	position: absolute;
+	bottom: -8px;
+	right: 16px;
+	width: 0;
+	height: 0;
+	border-left: 8px solid transparent; 
+	border-right: 8px solid transparent; 
+	border-top: 8px solid #4B4F54;
+}
+
+.onLoad-tip i,
+.onError-tip i,
+.onCorrect-tip i{
+	display: inline-block;
+	margin-right: 5px;
+	width: 16px;
+	height: 16px;
+	background: url(../images/hintico.png) no-repeat;
+	vertical-align: middle;
+}
+.onLoad-tip i{ background-image: url(../images/loading_mini.gif); }
+
+.onError-tip i{ bottom: -40px; background-position: -20px 0; }
+.onCorrect i{ bottom: -30px; background-position: -40px 0; }
+
+textarea.input-error,
+input.input-error{
+	border-color: #E26F50;
+}
+
+textarea.input-correct,
+input.input-correct{
+	border-color: #7CB81C;
+}

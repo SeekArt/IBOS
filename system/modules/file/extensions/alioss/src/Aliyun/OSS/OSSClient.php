@@ -23,7 +23,8 @@ use Aliyun\OSS\Models\OSSOptions;
  *
  * @package Aliyun\OSS
  */
-class OSSClient {
+class OSSClient
+{
 
     /**
      * @var string
@@ -50,7 +51,8 @@ class OSSClient {
      *
      * @return OSSClient
      */
-    public static function factory(array $config) {
+    public static function factory(array $config)
+    {
         return new static($config);
     }
 
@@ -59,7 +61,8 @@ class OSSClient {
      *
      * @return string
      */
-    public function getEndpoint() {
+    public function getEndpoint()
+    {
         return $this->endpoint;
     }
 
@@ -68,7 +71,8 @@ class OSSClient {
      *
      * @return array 返回的数组中包含AccessKeyId和AccessKeySecret
      */
-    public function getCredentials() {
+    public function getCredentials()
+    {
         return $this->credentials;
     }
 
@@ -79,7 +83,8 @@ class OSSClient {
      *
      * @return array 返回数组包含用户所有的Bucket
      */
-    public function listBuckets(array $options = array()) {
+    public function listBuckets(array $options = array())
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -91,7 +96,8 @@ class OSSClient {
      *
      * @return Models\Bucket
      */
-    public function createBucket(array $options) {
+    public function createBucket(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -103,7 +109,8 @@ class OSSClient {
      *
      * @return void
      */
-    public function deleteBucket(array $options) {
+    public function deleteBucket(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -115,7 +122,8 @@ class OSSClient {
      *
      * @return Models\AccessControlPolicy
      */
-    public function getBucketAcl(array $options) {
+    public function getBucketAcl(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -128,7 +136,8 @@ class OSSClient {
      *
      * @return void
      */
-    public function setBucketAcl(array $options) {
+    public function setBucketAcl(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -149,7 +158,8 @@ class OSSClient {
      *
      * @return Models\PutObjectResult
      */
-    public function putObject(array $options) {
+    public function putObject(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -165,7 +175,8 @@ class OSSClient {
      *
      * @return Models\ObjectListing
      */
-    public function listObjects(array $options) {
+    public function listObjects(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -191,7 +202,8 @@ class OSSClient {
      *
      * @return Models\OSSObject
      */
-    public function getObject(array $options) {
+    public function getObject(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -208,7 +220,8 @@ class OSSClient {
      *
      * @return Models\OSSObject
      */
-    public function getObjectMetadata(array $options) {
+    public function getObjectMetadata(array $options)
+    {
         $options[OSSOptions::META_ONLY] = true;
         return $this->getObject($options);
     }
@@ -222,7 +235,8 @@ class OSSClient {
      *
      * @return void
      */
-    public function deleteObject(array $options) {
+    public function deleteObject(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -246,7 +260,8 @@ class OSSClient {
      *
      * @return Models\CopyObjectResult
      */
-    public function copyObject(array $options) {
+    public function copyObject(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -272,7 +287,8 @@ class OSSClient {
      *
      * @return Models\InitiateMultipartUploadResult
      */
-    public function initiateMultipartUpload(array $options) {
+    public function initiateMultipartUpload(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -293,7 +309,8 @@ class OSSClient {
      *
      * @return Models\MultipartUploadsListing
      */
-    public function listMultipartUploads(array $options) {
+    public function listMultipartUploads(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -310,7 +327,8 @@ class OSSClient {
      *
      * @return Models\UploadPartResult
      */
-    public function uploadPart(array $options) {
+    public function uploadPart(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -326,7 +344,8 @@ class OSSClient {
      *
      * @return Models\PartListing
      */
-    public function listParts(array $options) {
+    public function listParts(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -340,7 +359,8 @@ class OSSClient {
      *
      * @return void
      */
-    public function abortMultipartUpload(array $options) {
+    public function abortMultipartUpload(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -357,7 +377,8 @@ class OSSClient {
      *
      * @return Models\CompleteMultipartUploadResult
      */
-    public function completeMultipartUpload(array $options) {
+    public function completeMultipartUpload(array $options)
+    {
         return $this->execute(__FUNCTION__, $options);
     }
 
@@ -379,37 +400,40 @@ class OSSClient {
      *
      * @return mixed
      */
-    public function generatePresignedUrl(array $options) {
+    public function generatePresignedUrl(array $options)
+    {
         $command = new GeneratePresignedUrlCommand(__FUNCTION__);
         return $command->execute($this->getClientOptions(), $options);
     }
 
-    protected function __construct(array $config) {
+    protected function __construct(array $config)
+    {
         // Merge config with default config
         $config = array_merge(
-                ResourceManager::getInstance()->getDefaultOptions(__DIR__),
-                $config
+            ResourceManager::getInstance()->getDefaultOptions(__DIR__),
+            $config
         );
 
         // To ensure contains import args
         AssertUtils::assertSet(array(
-                OSSOptions::ENDPOINT,
-                OSSOptions::ACCESS_KEY_ID,
-                OSSOptions::ACCESS_KEY_SECRET,
+            OSSOptions::ENDPOINT,
+            OSSOptions::ACCESS_KEY_ID,
+            OSSOptions::ACCESS_KEY_SECRET,
         ), $config);
 
         // Config client
-        $this->endpoint =  $config[OSSOptions::ENDPOINT];
+        $this->endpoint = $config[OSSOptions::ENDPOINT];
         $this->credentials = array(
-                OSSOptions::ACCESS_KEY_ID => $config[OSSOptions::ACCESS_KEY_ID],
-                OSSOptions::ACCESS_KEY_SECRET => $config[OSSOptions::ACCESS_KEY_SECRET],
+            OSSOptions::ACCESS_KEY_ID => $config[OSSOptions::ACCESS_KEY_ID],
+            OSSOptions::ACCESS_KEY_SECRET => $config[OSSOptions::ACCESS_KEY_SECRET],
         );
 
         // Creat service client
         $this->serviceClient = ServiceClientFactory::factory()->createService($config);
     }
 
-    protected function getClientOptions() {
+    protected function getClientOptions()
+    {
         return array(
             OSSOptions::ENDPOINT => $this->endpoint,
             OSSOptions::ACCESS_KEY_ID => $this->credentials[OSSOptions::ACCESS_KEY_ID],
@@ -417,9 +441,10 @@ class OSSClient {
         );
     }
 
-    protected function execute($method, $options) {
-        $className = ucfirst($method).'Command';
-        $class = 'Aliyun\\OSS\\Commands\\'.$className;
+    protected function execute($method, $options)
+    {
+        $className = ucfirst($method) . 'Command';
+        $class = 'Aliyun\\OSS\\Commands\\' . $className;
 
         $clientOptions = $this->getClientOptions();
 

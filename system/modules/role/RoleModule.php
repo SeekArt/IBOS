@@ -10,6 +10,7 @@ namespace application\modules\role;
 
 use application\core\modules\Module;
 
-class RoleModule extends Module {
-    
+class RoleModule extends Module
+{
+
 }

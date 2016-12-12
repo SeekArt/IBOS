@@ -12,7 +12,7 @@
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.email.model
- * @version $Id: Email.php 8536 2016-09-28 01:30:57Z tanghang $
+ * @version $Id$
  */
 
 namespace application\modules\email\model;
@@ -30,13 +30,16 @@ use application\modules\thread\utils\Thread as ThreadUtil;
 use application\modules\user\model\User;
 use CHtml;
 
-class Email extends Model {
+class Email extends Model
+{
 
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{email}}';
     }
 
@@ -48,7 +51,8 @@ class Email extends Model {
      * @param integer $archiveId 存档表ID
      * @return array
      */
-    public function fetchPrev($id, $uid, $fid, $archiveId = 0) {
+    public function fetchPrev($id, $uid, $fid, $archiveId = 0)
+    {
         $condition = sprintf('e.fid = %d AND toid = %d AND eb.issend = 1 AND e.isdel = 0 AND e.emailid > %d', $fid, $uid, $id);
         $order = 'emailid ASC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
@@ -62,44 +66,55 @@ class Email extends Model {
      * @param integer $archiveId 存档表ID
      * @return array
      */
-    public function fetchNext($id, $uid, $fid, $archiveId = 0) {
+    public function fetchNext($id, $uid, $fid, $archiveId = 0)
+    {
         $condition = sprintf('e.fid = %d AND toid = %d AND eb.issend = 1 AND e.isdel = 0 AND e.emailid < %d', $fid, $uid, $id);
         $order = 'emailid DESC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
+
     /*
      * 如果是已删除的状态的上一封和下一封
      */
-    public function fetchNextDel($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
-        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d',  $uid,$issend,$isdel,$id);
+    public function fetchNextDel($id, $uid, $archiveId = 0, $isdel = 0, $issend = 1)
+    {
+        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d', $uid, $issend, $isdel, $id);
         $order = 'emailid DESC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
-    public function fetchPrevDel($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
-        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid,$issend,$isdel ,$id);
+
+    public function fetchPrevDel($id, $uid, $archiveId = 0, $isdel = 0, $issend = 1)
+    {
+        $condition = sprintf('toid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid, $issend, $isdel, $id);
         $order = 'emailid ASC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
+
     /*
      * 如果是已发送的状态的上一封和下一封
      */
-    public function fetchNextSend($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
-        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d',  $uid,$issend,$isdel,$id);
+    public function fetchNextSend($id, $uid, $archiveId = 0, $isdel = 0, $issend = 1)
+    {
+        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid < %d', $uid, $issend, $isdel, $id);
         $order = 'emailid DESC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
-    public function fetchPrevSend($id, $uid,$archiveId = 0,$isdel = 0,$issend = 1) {
-        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid,$issend,$isdel ,$id);
+
+    public function fetchPrevSend($id, $uid, $archiveId = 0, $isdel = 0, $issend = 1)
+    {
+        $condition = sprintf('fromid = %d AND eb.issend = %d AND e.isdel = %d AND e.emailid > %d', $uid, $issend, $isdel, $id);
         $order = 'emailid ASC';
         return $this->getSiblingsByCondition($condition, $order, $archiveId);
     }
+
     /**
      * 查找一条完整的email数据
      * @param integer $id 邮件索引ID
      * @param integer $archiveId 存档表ID
      * @return array
      */
-    public function fetchById($id, $archiveId = 0) {
+    public function fetchById($id, $archiveId = 0)
+    {
         $mainTable = $this->getTableName($archiveId);
         $bodyTable = EmailBody::model()->getTableName($archiveId);
         $email = Ibos::app()->db->createCommand()
@@ -111,7 +126,8 @@ class Email extends Model {
         return is_array($email) ? $email : array();
     }
 
-    public function fetchAllBodyIdByKeywordFromAttach($keyword, $whereAdd = '1', $queryArchiveId = 0) {
+    public function fetchAllBodyIdByKeywordFromAttach($keyword, $whereAdd = '1', $queryArchiveId = 0)
+    {
         $kwBodyIds = array();
         //查询附件名，返回相关附件信息
         $queryParam = "uid = " . Ibos::app()->user->uid;
@@ -138,7 +154,8 @@ class Email extends Model {
      * @param integer $uid 用户ID
      * @return integer 更新的行数
      */
-    public function setAllRead($uid) {
+    public function setAllRead($uid)
+    {
         return $this->setField('isread', 1, 'toid = ' . intval($uid));
     }
 
@@ -147,7 +164,8 @@ class Email extends Model {
      * @param integer $id
      * @return integer 更新的行数
      */
-    public function setRead($id) {
+    public function setRead($id)
+    {
         return $this->setField('isread', 1, 'emailid = ' . intval($id));
     }
 
@@ -158,7 +176,8 @@ class Email extends Model {
      * @param string $conditions 更新条件
      * @return integer 更新的行数
      */
-    public function setField($field, $value, $conditions = '') {
+    public function setField($field, $value, $conditions = '')
+    {
         return $this->updateAll(array($field => $value), $conditions);
     }
 
@@ -168,7 +187,8 @@ class Email extends Model {
      * @param array $bodyData 邮件主体
      * @param integer $inboxId 收件箱ID
      */
-    public function send($bodyId, $bodyData, $inboxId = BaseController::INBOX_ID, $threadId = 0) {
+    public function send($bodyId, $bodyData, $inboxId = BaseController::INBOX_ID, $threadId = 0)
+    {
         // 所有用户ID集合
         $toids = $bodyData['toids'] . ',' . $bodyData['copytoids'] . ',' . $bodyData['secrettoids'];
         $toid = StringUtil::filterStr($toids);
@@ -209,7 +229,8 @@ class Email extends Model {
         }
     }
 
-    public function recall($emailIds, $uid) {
+    public function recall($emailIds, $uid)
+    {
         $emails = $this->fetchAll(sprintf("FIND_IN_SET( `bodyid`, '%s' )", $emailIds));
         $ids = array();
         foreach ($emails as $email) {
@@ -228,7 +249,8 @@ class Email extends Model {
      * @param array $emailIds
      * @return integer 删除条数
      */
-    public function completelyDelete($emailIds, $uid, $archiveId = 0) {
+    public function completelyDelete($emailIds, $uid, $archiveId = 0)
+    {
         $isSuccess = 0;
         $emailIds = is_array($emailIds) ? $emailIds : array($emailIds);
         $mainTable = sprintf('{{%s}}', $this->getTableName($archiveId));
@@ -315,7 +337,8 @@ class Email extends Model {
      * @return void
      * @author isakura@yumisakura.cn
      */
-    public function verifyIsDeleteData($bodyId, $archiveId = 0) {
+    public function verifyIsDeleteData($bodyId, $archiveId = 0)
+    {
         $mainTable = sprintf('{{%s}}', $this->getTableName($archiveId));
         $bodyTable = sprintf('{{%s}}', EmailBody::model()->getTableName($archiveId));
         $bodyRow = EmailBody::model()->find(
@@ -350,7 +373,8 @@ class Email extends Model {
      * @param integer $uid 用户ID
      * @return array 邮件ID数组
      */
-    public function fetchAllEmailIdsByFolderId($fid, $uid) {
+    public function fetchAllEmailIdsByFolderId($fid, $uid)
+    {
         $record = $this->fetchAllByAttributes(array('fid' => $fid, 'toid' => $uid), array('select' => 'emailid'));
         $emailIds = Convert::getSubByKey($record, 'emailid');
         return $emailIds;
@@ -362,7 +386,8 @@ class Email extends Model {
      * @param mixed $tids 表ID [int][array]
      * @author denglh
      */
-    public function fetchAllByArchiveIds($field = '*', $conditions = '', $archiveId = 0, $tableAlias = array('e', 'eb'), $offset = null, $length = null, $order = SORT_DESC, $sort = 'sendtime') {
+    public function fetchAllByArchiveIds($field = '*', $conditions = '', $archiveId = 0, $tableAlias = array('e', 'eb'), $offset = null, $length = null, $order = SORT_DESC, $sort = 'sendtime')
+    {
         $aidList = is_array($archiveId) ? $archiveId : array($archiveId);
         $emailData = array();
         //声明一个数组记录已查询的tid
@@ -411,7 +436,8 @@ class Email extends Model {
      * @param integer $offset 当前页
      * @return array
      */
-    public function fetchAllByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $limit = 10, $offset = 0, $subOp = '') {
+    public function fetchAllByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $limit = 10, $offset = 0, $subOp = '')
+    {
         $param = $this->getListParam($operation, $uid, $fid, $archiveId, false, $subOp);
         if (empty($param['field'])) {
             $param['field'] = 'e.emailid, e.isread, eb.fromid, eb.subject, eb.sendtime, eb.fromwebmail,' .
@@ -445,7 +471,8 @@ class Email extends Model {
      * @param integer $archiveId 判断表
      * @author isakura@yumisakura.cn
      */
-    private function addSenderDeledEmail($sql, $field, $archiveId = 0) {
+    private function addSenderDeledEmail($sql, $field, $archiveId = 0)
+    {
         $mainTable = $this->getTableName($archiveId);
         $bodyTable = EmailBody::model()->getTableName($archiveId);
         return sprintf($sql, $field);
@@ -459,7 +486,8 @@ class Email extends Model {
      * @param integer $archiveId 存档表ID
      * @return integer 统计数
      */
-    public function countUnreadByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $subOp = '') {
+    public function countUnreadByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $subOp = '')
+    {
         $param = $this->getListParam($operation, $uid, $fid, $archiveId, true, $subOp);
         return $this->countListParam($param);
     }
@@ -472,7 +500,8 @@ class Email extends Model {
      * @param integer $archiveId 存档表ID
      * @return integer 统计数
      */
-    public function countByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $subOp = '') {
+    public function countByListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $subOp = '')
+    {
         $param = $this->getListParam($operation, $uid, $fid, $archiveId, false, $subOp);
         return $this->countListParam($param);
     }
@@ -482,7 +511,8 @@ class Email extends Model {
      * @param array $param 列表查询参数
      * @return integer
      */
-    private function countListParam($param) {
+    private function countListParam($param)
+    {
         if (empty($param['field'])) {
             $param['field'] = 'emailid';
         }
@@ -511,7 +541,8 @@ class Email extends Model {
      * @param integer $archiveId 存档表ID
      * @return array 列表查询参数数组
      */
-    public function getListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $getUnread = false, $subOp = '') {
+    public function getListParam($operation, $uid = 0, $fid = 0, $archiveId = 0, $getUnread = false, $subOp = '')
+    {
         if (!$uid) {
             $uid = Ibos::app()->user->uid;
         }
@@ -579,7 +610,8 @@ class Email extends Model {
      * @param integer $target
      * @return boolean|integer
      */
-    public function moveByBodyId($emailids, $source, $target) {
+    public function moveByBodyId($emailids, $source, $target)
+    {
         $source = intval($source);
         $target = intval($target);
         if ($source != $target) {
@@ -596,7 +628,8 @@ class Email extends Model {
      * 获取所有存档表的id
      * @return array
      */
-    public function fetchTableIds() {
+    public function fetchTableIds()
+    {
         $tableIds = array('0' => 0);
         $name = $this->getTableSchema()->name;
         $tables = Ibos::app()->db->createCommand()
@@ -620,7 +653,8 @@ class Email extends Model {
      * @param type $conditions
      * @return type
      */
-    public function getSplitSearchContdition($conditions) {
+    public function getSplitSearchContdition($conditions)
+    {
         $whereArr = array();
         if (!empty($conditions['emailidmin'])) {
             $whereArr[] = 'e.emailid >= ' . $conditions['emailidmin'];
@@ -643,7 +677,8 @@ class Email extends Model {
      * @param string $conditions 附加条件
      * @return integer 统计数目
      */
-    public function countBySplitCondition($tableId, $conditions = '') {
+    public function countBySplitCondition($tableId, $conditions = '')
+    {
         $condition = $this->mergeSplitCondition($conditions);
         $db = Ibos::app()->db->createCommand();
         $count = $db->select('COUNT(*)')
@@ -662,7 +697,8 @@ class Email extends Model {
      * @param integer $limit 每页多少条
      * @return array 列表数据
      */
-    public function fetchAllBySplitCondition($tableId, $conditions = '', $offset = null, $limit = null) {
+    public function fetchAllBySplitCondition($tableId, $conditions = '', $offset = null, $limit = null)
+    {
         $condition = $this->mergeSplitCondition($conditions);
         $db = Ibos::app()->db->createCommand();
         $list = $db->select('e.emailid,b.fromid,b.subject,b.sendtime,b.bodyid')
@@ -681,7 +717,8 @@ class Email extends Model {
      * @param integer $tableId 存档表id
      * @return string
      */
-    public function getTableName($tableId = 0) {
+    public function getTableName($tableId = 0)
+    {
         $tableId = intval($tableId);
         return $tableId > 0 ? "email_{$tableId}" : 'email';
     }
@@ -691,7 +728,8 @@ class Email extends Model {
      * @param integer $tableId 存档表id
      * @return array
      */
-    public function getTableStatus($tableId = 0) {
+    public function getTableStatus($tableId = 0)
+    {
         return Database::getTableStatus($this->getTableName($tableId));
     }
 
@@ -701,7 +739,8 @@ class Email extends Model {
      * @param boolean $force 强制删除
      * @return boolean 删除成功与否
      */
-    public function dropTable($tableId, $force = false) {
+    public function dropTable($tableId, $force = false)
+    {
         $tableId = intval($tableId);
         if ($tableId) {
             $rel = Database::dropTable($this->getTableName($tableId), $force);
@@ -717,7 +756,8 @@ class Email extends Model {
      * @param integer $maxTableId
      * @return boolean
      */
-    public function createTable($maxTableId) {
+    public function createTable($maxTableId)
+    {
         if ($maxTableId) {
             return Database::cloneTable($this->getTableName(), $this->getTableName($maxTableId));
         } else {
@@ -730,7 +770,8 @@ class Email extends Model {
      * @param string $conditions
      * @return string
      */
-    private function mergeSplitCondition($conditions = '') {
+    private function mergeSplitCondition($conditions = '')
+    {
         $conditions .= strpos($conditions, 'WHERE') ? ' AND' : '';
         //附加公共条件，待办邮件和未读邮件不能移动
         $conditions .= ' e.`ismark`=0 AND e.`isread`=1 AND b.`bodyid` IS NOT NULL';
@@ -750,7 +791,8 @@ class Email extends Model {
      * @param integer $archiveId
      * @return array
      */
-    private function getSiblingsByCondition($condition, $order, $archiveId = 0) {
+    private function getSiblingsByCondition($condition, $order, $archiveId = 0)
+    {
         $siblings = Ibos::app()->db->createCommand()
             ->select('e.emailid,eb.subject')
             ->from(sprintf('{{%s}} e', $this->getTableName($archiveId)))
@@ -773,7 +815,8 @@ class Email extends Model {
      * @param string $mainTable
      * @param array $emailIds
      */
-    private function setDeleteBodyId($mainTable, $emailIds) {
+    private function setDeleteBodyId($mainTable, $emailIds)
+    {
         $this->bodyIds = Ibos::app()->db->createCommand()
             ->select('bodyid')
             ->from($mainTable)
@@ -788,7 +831,8 @@ class Email extends Model {
      * @param type $bodyTable
      * @param type $emailIds
      */
-    private function deleteWebEmail($bodyTable) {
+    private function deleteWebEmail($bodyTable)
+    {
         if (!empty($this->bodyIds)) {
             Ibos::app()->db->createCommand()
                 ->delete($bodyTable, array('in', 'bodyid', $this->bodyIds));
@@ -800,7 +844,8 @@ class Email extends Model {
      * @param  array $emailIdList 邮件 ID 数组
      * @return array              邮件体 ID 数组
      */
-    public function fetchBodyIdListByEmailIdList($emailIdList) {
+    public function fetchBodyIdListByEmailIdList($emailIdList)
+    {
         $bodyIdList = array();
         if (is_array($emailIdList)) {
             $emailIdList = implode(',', $emailIdList);
@@ -823,8 +868,9 @@ class Email extends Model {
      * @param int $aid 存储表id（archiveId）
      * @return CDbCommand 返回 CDbCommand 对象
      */
-    public function commonSearch($uid, $op, $aid = 0) {
-		if($op == 'folder'){
+    public function commonSearch($uid, $op, $aid = 0)
+    {
+        if ($op == 'folder') {
             $fid = Ibos::app()->session['fid'];
         }
         // 参数处理
@@ -872,7 +918,7 @@ class Email extends Model {
                 //外部邮件
                 $condition .= "{$emailAlias}.`isweb` = 1";
                 break;
-			 case "folder":
+            case "folder":
                 $condition .= "{$emailAlias}.`fid` = {$fid}";
                 break;
             default:
@@ -883,7 +929,8 @@ class Email extends Model {
     }
 
     // 获取高级搜索需要的条件
-    public function getAdvancedSearchCondition($search) {
+    public function getAdvancedSearchCondition($search)
+    {
         $condition = "";
 
         // 关键字
@@ -916,7 +963,7 @@ class Email extends Model {
         $posWhereJoin = $allPos ? ' OR ' : ' AND ';
         $posWhere = '';
         if ($pos == 'content' || !empty($pos)) {
-            if (($pos == 'subject' || $allPos) && $keyword ) {  //标题
+            if (($pos == 'subject' || $allPos) && $keyword) {  //标题
                 $posWhere .= $posWhereJoin . "eb.subject LIKE '%{$keyword}%'";
             }
             if ($pos == 'content' || $allPos) {  //邮件正文
@@ -990,9 +1037,10 @@ class Email extends Model {
      * @param int $aid 存储表id（archiveId）
      * @return CDbCommand 返回 CDbCommand 对象
      */
-    public function normalSearch($uid, $op, $keyword, $aid = 0,$fid = 0) {
-        $command = $this->commonSearch($uid, $op, $aid,$fid)
-                        ->andWhere("`eb`.`subject` LIKE :keyword", array(":keyword" => '%' . $keyword . '%'));
+    public function normalSearch($uid, $op, $keyword, $aid = 0, $fid = 0)
+    {
+        $command = $this->commonSearch($uid, $op, $aid, $fid)
+            ->andWhere("`eb`.`subject` LIKE :keyword", array(":keyword" => '%' . $keyword . '%'));
         return $command;
     }
 
@@ -1005,7 +1053,8 @@ class Email extends Model {
      * @param int $aid $aid 存储表id（archiveId）
      * @return CDbCommand 返回 CDbCommand 对象
      */
-    public function advancedSearch($uid, $op, $search, $aid = 0) {
+    public function advancedSearch($uid, $op, $search, $aid = 0)
+    {
         $condition = $this->getAdvancedSearchCondition($search);
         $command = $this->commonSearch($uid, $op, $aid);
         $command->setWhere($command->getWhere() . $condition);
@@ -1018,7 +1067,8 @@ class Email extends Model {
      * @param $emailData array 待处理邮件数据
      * @return array 处理成功后的邮件数据
      */
-    public function handleSearchData($emailData) {
+    public function handleSearchData($emailData)
+    {
         if (is_array($emailData)) {
             foreach ($emailData as $k => $email) {
                 $emailData[$k]["ismark"] = isset($email["ismark"]) ? $email["ismark"] : 0;

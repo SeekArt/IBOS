@@ -33,10 +33,10 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
 
     /** @var array cURL multi error values and codes */
     protected $multiErrors = array(
-        CURLM_BAD_HANDLE      => array('CURLM_BAD_HANDLE', 'The passed-in handle is not a valid CURLM handle.'),
+        CURLM_BAD_HANDLE => array('CURLM_BAD_HANDLE', 'The passed-in handle is not a valid CURLM handle.'),
         CURLM_BAD_EASY_HANDLE => array('CURLM_BAD_EASY_HANDLE', "An easy handle was not good/valid. It could mean that it isn't an easy handle at all, or possibly that the handle already is in used by this or another multi handle."),
-        CURLM_OUT_OF_MEMORY   => array('CURLM_OUT_OF_MEMORY', 'You are doomed.'),
-        CURLM_INTERNAL_ERROR  => array('CURLM_INTERNAL_ERROR', 'This can only be returned if libcurl bugs. Please report it to us!')
+        CURLM_OUT_OF_MEMORY => array('CURLM_OUT_OF_MEMORY', 'You are doomed.'),
+        CURLM_INTERNAL_ERROR => array('CURLM_INTERNAL_ERROR', 'This can only be returned if libcurl bugs. Please report it to us!')
     );
 
     public function __construct()
@@ -181,7 +181,7 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
     {
         $wrapper = CurlHandle::factory($request);
         $this->handles[$request] = $wrapper;
-        $this->resourceHash[(int) $wrapper->getHandle()] = $request;
+        $this->resourceHash[(int)$wrapper->getHandle()] = $request;
 
         return $wrapper;
     }
@@ -235,7 +235,7 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
         // Get messages from curl handles
         while ($done = curl_multi_info_read($this->multiHandle)) {
             try {
-                $request = $this->resourceHash[(int) $done['handle']];
+                $request = $this->resourceHash[(int)$done['handle']];
                 $this->processResponse($request, $this->handles[$request], $done);
                 $this->successful[] = $request;
             } catch (MultiTransferException $e) {
@@ -250,8 +250,8 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
     /**
      * Execute and select curl handles until there is activity
      *
-     * @param int $active  Active value to update
-     * @param int $mrc     Multi result value to update
+     * @param int $active Active value to update
+     * @param int $mrc Multi result value to update
      * @param int $timeout Select timeout in seconds
      */
     private function executeHandles(&$active, &$mrc, $timeout = 1)
@@ -276,8 +276,8 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
      * Remove a request that encountered an exception
      *
      * @param RequestInterface $request Request to remove
-     * @param \Exception       $e       Exception encountered
-     * @param bool             $buffer  Set to false to not buffer the exception
+     * @param \Exception $e Exception encountered
+     * @param bool $buffer Set to false to not buffer the exception
      */
     protected function removeErroredRequest(RequestInterface $request, \Exception $e = null, $buffer = true)
     {
@@ -293,8 +293,8 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
      * Check for errors and fix headers of a request based on a curl response
      *
      * @param RequestInterface $request Request to process
-     * @param CurlHandle       $handle  Curl handle object
-     * @param array            $curl    Array returned from curl_multi_info_read
+     * @param CurlHandle $handle Curl handle object
+     * @param array $curl Array returned from curl_multi_info_read
      *
      * @throws CurlException on Curl error
      */
@@ -340,7 +340,7 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
         if (isset($this->handles[$request])) {
             $handle = $this->handles[$request];
             unset($this->handles[$request]);
-            unset($this->resourceHash[(int) $handle->getHandle()]);
+            unset($this->resourceHash[(int)$handle->getHandle()]);
             curl_multi_remove_handle($this->multiHandle, $handle->getHandle());
             $handle->close();
         }
@@ -350,8 +350,8 @@ class CurlMulti extends AbstractHasDispatcher implements CurlMultiInterface
      * Check if a cURL transfer resulted in what should be an exception
      *
      * @param RequestInterface $request Request to check
-     * @param CurlHandle       $handle  Curl handle object
-     * @param array            $curl    Array returned from curl_multi_info_read
+     * @param CurlHandle $handle Curl handle object
+     * @param array $curl Array returned from curl_multi_info_read
      *
      * @return CurlException|bool
      */

@@ -2,9 +2,9 @@
 
 /**
  * 信息中心默认语言包 zh_cn
- * 
+ *
  * @package application.modules.diary.language.zh_cn
- * @version $Id: default.php 4245 2014-09-26 06:27:20Z gzpjh $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 return array(
@@ -36,7 +36,7 @@ return array(
     'Sure Operating' => '删除确认',
     'Sure delete' => '您确定要删除吗？此操作不可恢复',
     'New diary title' => '您的下属 {sub} 提交了{date}的工作日志！',
-	'Edit diary title' => '您的下属 {sub} 修改了{date}的工作日志！',
+    'Edit diary title' => '您的下属 {sub} 修改了{date}的工作日志！',
     'New message title' => '{title}',
     'New message content' => '{content}',
     'You do not have permission to view the log' => '抱歉,您没有权限查看该日志',
@@ -72,7 +72,7 @@ return array(
     'Locks log' => '锁定日志',
     'Previous log can not be modified' => '以前的日志不能修改',
     'Sharing of personnel' => '共享人员',
-	'Review log lock' => '评阅日志后锁定',
+    'Review log lock' => '评阅日志后锁定',
     'Sharing log server' => '共享日志功能',
     'To share logs to give comments' => '允许点评共享日志',
     'Focus on logging' => '关注日志功能',
@@ -145,7 +145,7 @@ return array(
     'Please fill out at least one work record and work plan' => '请至少填写一条工作记录及工作计划',
     'Log' => '的日志',
     'Submitted' => '提交时间：',
-	'Comment my diray' => '评论{realname}的日志<a href=\"{url}\">&nbsp;“{title}”</a>',
+    'Comment my diray' => '评论{realname}的日志<a href=\"{url}\">&nbsp;“{title}”</a>',
     //----------------view/review-------------------
     'View all subordinate' => '查看所有下属',
     'They have no record today' => 'TA们这天没有记录',

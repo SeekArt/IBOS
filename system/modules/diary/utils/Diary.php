@@ -10,7 +10,7 @@
 /**
  * 工作日志模块------  工具类
  * @package application.modules.diary.utils
- * @version $Id: Diary.php 7023 2016-05-10 08:01:05Z Aeolus $
+ * @version $Id$
  * @author gzwwb <gzwwb@ibos.com.cn>
  */
 
@@ -23,14 +23,16 @@ use application\modules\diary\model\DiaryAttention;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
-class Diary {
+class Diary
+{
 
     /**
      * 取得日期和星期几的数组
-     * @param string $dateStr 
+     * @param string $dateStr
      * @return array
      */
-    public static function getDateAndWeekDay($dateStr) {
+    public static function getDateAndWeekDay($dateStr)
+    {
         list($year, $month, $day) = explode('-', $dateStr);
         $weekArray = array(
             Ibos::lang('Day', 'date'),
@@ -54,22 +56,23 @@ class Diary {
      * @param array $search 查询数组
      * @return string
      */
-    public static function joinSearchCondition($search) {
+    public static function joinSearchCondition($search)
+    {
         $searchCondition = '';
         //对keyword添加转义
         $keyword = \CHtml::encode($search['keyword']);
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
         if (!empty($keyword)) {
-            $searchCondition.=" content LIKE '%$keyword%' AND ";
+            $searchCondition .= " content LIKE '%$keyword%' AND ";
         }
         if (!empty($starttime)) {
             $starttime = strtotime($starttime);
-            $searchCondition.=" diarytime>=$starttime AND ";
+            $searchCondition .= " diarytime>=$starttime AND ";
         }
         if (!empty($endtime)) {
             $endtime = strtotime($endtime);
-            $searchCondition.=" diarytime<=$endtime AND ";
+            $searchCondition .= " diarytime<=$endtime AND ";
         }
         $condition = !empty($searchCondition) ? substr($searchCondition, 0, -4) : '';
         return $condition;
@@ -81,7 +84,8 @@ class Diary {
      * @param string $condition2 条件2
      * @return string
      */
-    public static function joinCondition($condition1, $condition2) {
+    public static function joinCondition($condition1, $condition2)
+    {
         if (empty($condition1)) {
             return $condition2;
         } else {
@@ -95,7 +99,8 @@ class Diary {
      * @param array $diaryList 日志信息
      * @return string
      */
-    public static function getCalendar($ym, $diaryList, $currentDay) {
+    public static function getCalendar($ym, $diaryList, $currentDay)
+    {
         if ($ym) {
             $year = substr($ym, 0, 4);
             $month = substr($ym, 4, (strlen($ym) - 4));
@@ -129,9 +134,9 @@ class Diary {
             if ($i == $currentDay) {
                 $css .= "current";
             } else if ($diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == false) {
-                $css.='log';
+                $css .= 'log';
             } else if ($diaryList[$i]['isLog'] == true && $diaryList[$i]['isComment'] == true) {
-                $css.='log comment';
+                $css .= 'log comment';
             }
             $result[] = array('day' => $i, 'className' => $css, 'diaryid' => $diaryList[$i]['diaryid']);
             $count++;
@@ -149,7 +154,8 @@ class Diary {
      * @param integer $author 该日志的作者
      * @return boolean $flag 通过或不通过
      */
-    public static function checkShowPurview($uid, $author) {
+    public static function checkShowPurview($uid, $author)
+    {
         $flag = false;
         if ($uid == $author) {
             return true;
@@ -163,20 +169,22 @@ class Diary {
 
     /**
      * 去除数组中为空的值
-     * @param array $arr  要处理的数组
+     * @param array $arr 要处理的数组
      * @return array  处理过后的数组
      */
-    public static function removeNullVal($arr) {
+    public static function removeNullVal($arr)
+    {
         $ret = array_filter($arr, create_function('$v', 'return !empty($v);'));
         return $ret;
     }
 
     // refactor 重构开始部分： by banyan
     /**
-     * 
+     *
      * @return type
      */
-    public static function getSetting() {
+    public static function getSetting()
+    {
         return Ibos::app()->setting->get('setting/diaryconfig');
     }
 
@@ -185,7 +193,8 @@ class Diary {
      * @param integer $attentionUid 被关注的uid
      * @return boolean
      */
-    public static function getIsAttention($attentionUid) {
+    public static function getIsAttention($attentionUid)
+    {
         $aUids = DiaryAttention::model()->fetchAuidByUid(Ibos::app()->user->uid);
         return in_array($attentionUid, $aUids);
     }
@@ -195,7 +204,8 @@ class Diary {
      * @param integer $stamp 图章id
      * @return int 返回分数
      */
-    public static function getScoreByStamp($stamp) {
+    public static function getScoreByStamp($stamp)
+    {
         $stamps = self::getEnableStamp();
         if (isset($stamps[$stamp])) {
             return $stamps[$stamp];
@@ -208,7 +218,8 @@ class Diary {
      * 取得后台设置的所有图章
      * @return array
      */
-    public static function getEnableStamp() {
+    public static function getEnableStamp()
+    {
         $config = self::getSetting();
         //取得所有图章
         $stampDetails = $config['stampdetails'];
@@ -231,7 +242,8 @@ class Diary {
      * 判断是否有下属
      * @return boolean
      */
-    public static function checkIsHasSub() {
+    public static function checkIsHasSub()
+    {
         static $hasSub = null;
         if ($hasSub === null) {
             $subUidArr = User::model()->fetchSubUidByUid(Ibos::app()->user->uid);
@@ -248,7 +260,8 @@ class Diary {
      * 获取下班时间（统计用）
      * @return string 格式：（18.00）
      */
-    public static function getOffTime() {
+    public static function getOffTime()
+    {
         if (Module::getIsEnabled("calendar")) {
             $workTime = explode(',', Ibos::app()->setting->get("setting/calendarworkingtime"));
             $offTime = $workTime[1];
@@ -264,7 +277,8 @@ class Diary {
      * @param string $stamp 日程设置的下班时间
      * @return string
      */
-    public static function handleOffTime($offTime) {
+    public static function handleOffTime($offTime)
+    {
         $times = array(
             '0' => '00.00',
             '0.5' => '00.30',

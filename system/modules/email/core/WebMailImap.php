@@ -2,7 +2,8 @@
 
 namespace application\modules\email\core;
 
-class WebMailImap extends WebMailBase {
+class WebMailImap extends WebMailBase
+{
 
     /**
      * 链接服务器，返回链接对象
@@ -11,7 +12,8 @@ class WebMailImap extends WebMailBase {
      * @param type $password
      * @param type $authMethod
      */
-    public function connect($host, $user, $password, $ssl = false, $port = '', $authMethod = 'plain') {
+    public function connect($host, $user, $password, $ssl = false, $port = '', $authMethod = 'plain')
+    {
         $this->clearError();
         //strip slashes
         $user = stripslashes($user);
@@ -68,17 +70,17 @@ class WebMailImap extends WebMailBase {
             }
 
             if (strcasecmp($authMethod, "auth") == 0) {
-                $conn->message.="Trying CRAM-MD5\n";
+                $conn->message .= "Trying CRAM-MD5\n";
                 //do CRAM-MD5 authentication
                 fputs($conn->fp, "a000 AUTHENTICATE CRAM-MD5\r\n");
                 $line = trim(chop($this->readLine($conn->fp, 1024)));
                 if ($line[0] == "+") {
-                    $conn->message.='Got challenge: ' . htmlspecialchars($line) . "\n";
+                    $conn->message .= 'Got challenge: ' . htmlspecialchars($line) . "\n";
                     //got a challenge string, try CRAM-5
                     $result = $this->authenticate($conn, $user, $password, substr($line, 2));
-                    $conn->message.= "Tried CRAM-MD5: $result \n";
+                    $conn->message .= "Tried CRAM-MD5: $result \n";
                 } else {
-                    $conn->message.='No challenge (' . htmlspecialchars($line) . "), try plain\n";
+                    $conn->message .= 'No challenge (' . htmlspecialchars($line) . "), try plain\n";
                     $auth = "plain";
                 }
             }
@@ -86,7 +88,7 @@ class WebMailImap extends WebMailBase {
             if ((!$result) || (strcasecmp($auth, "plain") == 0)) {
                 //do plain text auth
                 $result = $this->login($conn, $user, $password);
-                $conn->message.="Tried PLAIN: $result \n";
+                $conn->message .= "Tried PLAIN: $result \n";
             }
             if (!$result) {
                 $this->setError($conn->error);
@@ -103,7 +105,8 @@ class WebMailImap extends WebMailBase {
         }
     }
 
-    public function login(&$conn, $user, $password) {
+    public function login(&$conn, $user, $password)
+    {
         fputs($conn->fp, "a001 LOGIN {$user} \"{$password}\"\r\n");
         do {
             $line = $this->readReply($conn->fp);
@@ -111,7 +114,7 @@ class WebMailImap extends WebMailBase {
         $a = explode(" ", $line);
         if (strcmp($a[1], "OK") == 0) {
             $result = $conn->fp;
-            $conn->error.="";
+            $conn->error .= "";
             $conn->errorNum = 0;
         } else {
             $result = false;
@@ -122,7 +125,8 @@ class WebMailImap extends WebMailBase {
         return $result;
     }
 
-    public function fetchHeaderIndex(&$conn, $mailbox, $messageSet, $indexField) {
+    public function fetchHeaderIndex(&$conn, $mailbox, $messageSet, $indexField)
+    {
         $c = 0;
         $result = array();
         $fp = $conn->fp;
@@ -156,8 +160,9 @@ class WebMailImap extends WebMailBase {
         if ($mode == 1) {
             $key = "fhi" . ($c++);
             $request = $key . " FETCH {$messageSet} (BODY.PEEK[HEADER.FIELDS ($indexField)])\r\n";
-            if (!fputs($fp, $request))
+            if (!fputs($fp, $request)) {
                 return false;
+            }
             do {
                 $line = chop($this->readLine($fp, 200));
                 $a = explode(" ", $line);
@@ -168,7 +173,7 @@ class WebMailImap extends WebMailBase {
                         $line = chop($this->readLine($fp, 300));
                         if ($line[0] != ")") {
                             if (ord($line[0]) <= 32) {   //continuation from previous header line
-                                $str.=" " . trim($line);
+                                $str .= " " . trim($line);
                             }
                             if ((ord($line[0]) > 32) || (strlen($line[0]) == 0)) {
                                 list($field, $string) = $this->splitHeaderLine($str);
@@ -186,8 +191,9 @@ class WebMailImap extends WebMailBase {
         } else if ($mode == 6) {
             $key = "fhi" . ($c++);
             $request = $key . " FETCH {$messageSet} (INTERNALDATE)\r\n";
-            if (!fputs($fp, $request))
+            if (!fputs($fp, $request)) {
                 return false;
+            }
             do {
                 $line = chop($this->readLine($fp, 200));
                 if ($line[0] == "*") {
@@ -218,8 +224,9 @@ class WebMailImap extends WebMailBase {
             /* 			FETCH uid, size, flags		 */
             $key = "fhi" . ($c++);
             $request = $key . " FETCH $messageSet ($field_name)\r\n";
-            if (!fputs($fp, $request))
+            if (!fputs($fp, $request)) {
                 return false;
+            }
             do {
                 $line = chop($this->readLine($fp, 200));
                 $a = explode(" ", $line);
@@ -241,7 +248,8 @@ class WebMailImap extends WebMailBase {
         return $result;
     }
 
-    public function fetchHeader(&$conn, $mailbox, $id) {
+    public function fetchHeader(&$conn, $mailbox, $id)
+    {
         $a = $this->fetchHeaders($conn, $mailbox, $id);
         if (is_array($a)) {
             return $a[$id];
@@ -250,7 +258,8 @@ class WebMailImap extends WebMailBase {
         }
     }
 
-    public function fetchHeaders(&$conn, $mailbox, $messageSet) {
+    public function fetchHeaders(&$conn, $mailbox, $messageSet)
+    {
         $c = 0;
         $result = array();
         $fp = $conn->fp;
@@ -264,8 +273,9 @@ class WebMailImap extends WebMailBase {
         $key = "fh" . ($c++);
         $request = $key . " FETCH {$messageSet} (BODY.PEEK[HEADER.FIELDS (DATE FROM TO SUBJECT REPLY-TO CC CONTENT-TRANSFER-ENCODING CONTENT-TYPE MESSAGE-ID)])\r\n";
 
-        if (!fputs($fp, $request))
+        if (!fputs($fp, $request)) {
             return false;
+        }
         do {
             $line = chop($this->readLine($fp, 200));
             $a = explode(" ", $line);
@@ -285,7 +295,7 @@ class WebMailImap extends WebMailBase {
                 do {
                     $line = chop($this->readLine($fp, 300));
                     if (!empty($line) && ord($line[0]) <= 32) {
-                        $lines[$i].=(empty($lines[$i]) ? "" : "\n") . trim(chop($line));
+                        $lines[$i] .= (empty($lines[$i]) ? "" : "\n") . trim(chop($line));
                     } else {
                         $i++;
                         $lines[$i] = trim(chop($line));
@@ -330,8 +340,9 @@ class WebMailImap extends WebMailBase {
          */
         $command_key = "fh" . ($c++);
         $request = $command_key . " FETCH {$messageSet} (UID RFC822.SIZE FLAGS INTERNALDATE)\r\n";
-        if (!fputs($fp, $request))
+        if (!fputs($fp, $request)) {
             return false;
+        }
         do {
             $line = chop($this->readLine($fp, 200));
             if ($line[0] == "*") {
@@ -396,7 +407,7 @@ class WebMailImap extends WebMailBase {
                             $time_str = substr($time_str, 0, -1);
                             $time_zone_str = substr($time_str, -5); //extract timezone
                             $time_str = substr($time_str, 1, -6); //remove quotes
-                            $time_zone = (int) substr($time_zone_str, 1, 2); //get first two digits
+                            $time_zone = (int)substr($time_zone_str, 1, 2); //get first two digits
                             if ($time_zone_str[0] == "-") {
                                 $time_zone = $time_zone * -1; //minus?
                             }
@@ -415,19 +426,21 @@ class WebMailImap extends WebMailBase {
         return $result;
     }
 
-    public function fetchPartHeader(&$conn, $mailbox, $id, $part) {
+    public function fetchPartHeader(&$conn, $mailbox, $id, $part)
+    {
         $fp = $conn->fp;
         $result = false;
         if (($part == 0) || (empty($part))) {
             $part = "HEADER";
         } else {
-            $part.=".MIME";
+            $part .= ".MIME";
         }
         if ($this->select($conn, $mailbox)) {
             $key = "fh";
             $request = $key . " FETCH {$id} (BODY.PEEK[{$part}])\r\n";
-            if (!fputs($fp, $request))
+            if (!fputs($fp, $request)) {
                 return false;
+            }
             do {
                 $line = chop($this->readLine($fp, 200));
                 if (!empty($line)) {
@@ -435,7 +448,7 @@ class WebMailImap extends WebMailBase {
                     if (($line[0] == "*") && ($a[2] == "FETCH") && ($line[strlen($line) - 1] != ")")) {
                         $line = $this->readLine($fp, 300);
                         while (chop($line) != ")") {
-                            $result.=$line;
+                            $result .= $line;
                             $line = $this->readLine($fp, 300);
                         }
                     }
@@ -446,19 +459,23 @@ class WebMailImap extends WebMailBase {
         return $result;
     }
 
-    public function fetchPartBody(&$conn, $mailbox, $id, $part) {
+    public function fetchPartBody(&$conn, $mailbox, $id, $part)
+    {
         return $this->handlePartBody($conn, $mailbox, $id, $part, 1);
     }
 
-    public function printPartBody(&$conn, $mailbox, $id, $part) {
+    public function printPartBody(&$conn, $mailbox, $id, $part)
+    {
         return $this->handlePartBody($conn, $mailbox, $id, $part, 2);
     }
 
-    public function printBase64Body(&$conn, $mailbox, $id, $part) {
+    public function printBase64Body(&$conn, $mailbox, $id, $part)
+    {
         return $this->handlePartBody($conn, $mailbox, $id, $part, 3);
     }
 
-    public function fetchStructureString(&$conn, $folder, $id) {
+    public function fetchStructureString(&$conn, $folder, $id)
+    {
         $fp = $conn->fp;
         $result = false;
         if ($this->select($conn, $folder)) {
@@ -492,7 +509,8 @@ class WebMailImap extends WebMailBase {
         return $result;
     }
 
-    public function select(&$conn, $mailbox) {
+    public function select(&$conn, $mailbox)
+    {
         $fp = $conn->fp;
         if (empty($mailbox)) {
             return false;
@@ -517,7 +535,8 @@ class WebMailImap extends WebMailBase {
         }
     }
 
-    public function countMessages(&$conn, $mailbox) {
+    public function countMessages(&$conn, $mailbox)
+    {
         $num = -1;
         $fp = $conn->fp;
         if (fputs($fp, "cm1 SELECT \"{$mailbox}\"\r\n")) {
@@ -525,18 +544,19 @@ class WebMailImap extends WebMailBase {
                 $line = chop($this->readLine($fp, 300));
                 $a = explode(" ", $line);
                 if ((count($a) == 3) && (strcasecmp($a[2], "EXISTS") == 0)) {
-                    $num = (int) $a[1];
+                    $num = (int)$a[1];
                 }
             } while (!$this->startsWith($a[0], "cm1"));
         }
         return $num;
     }
 
-    public function authenticate(&$conn, $user, $pass, $encChallenge) {
+    public function authenticate(&$conn, $user, $pass, $encChallenge)
+    {
         // initialize ipad, opad
         for ($i = 0; $i < 64; $i++) {
-            $ipad.=chr(0x36);
-            $opad.=chr(0x5C);
+            $ipad .= chr(0x36);
+            $opad .= chr(0x5C);
         }
         // pad $pass so it's 64 bytes
         $padLen = 64 - strlen($pass);
@@ -564,11 +584,12 @@ class WebMailImap extends WebMailBase {
     }
 
     /**
-     * 
+     *
      * @param type $string
      * @return int
      */
-    public function parseResult($string) {
+    public function parseResult($string)
+    {
         $a = explode(" ", $string);
         if (count($a) > 2) {
             if (strcasecmp($a[1], "OK") == 0) {
@@ -584,7 +605,8 @@ class WebMailImap extends WebMailBase {
     }
 
     // check if $string starts with $match
-    public function startsWith($string, $match) {
+    public function startsWith($string, $match)
+    {
         if ($string[0] == $match[0]) {
             $pos = strpos($string, $match);
             if ($pos === false) {
@@ -599,7 +621,8 @@ class WebMailImap extends WebMailBase {
         }
     }
 
-    protected function handlePartBody(&$conn, $mailbox, $id, $part, $mode) {
+    protected function handlePartBody(&$conn, $mailbox, $id, $part, $mode)
+    {
         /* modes:
           1: return string
           2: print
@@ -644,7 +667,7 @@ class WebMailImap extends WebMailBase {
                 $to = strrpos($line, "}");
                 $len = $to - $from;
                 $sizeStr = substr($line, $from, $len);
-                $bytes = (int) $sizeStr;
+                $bytes = (int)$sizeStr;
                 $received = 0;
                 while ($received < $bytes) {
                     $remaining = $bytes - $received;
@@ -673,9 +696,10 @@ class WebMailImap extends WebMailBase {
             // flag as "seen"
             if ($result) {
                 return substr($result, 0, strlen($result) - 1);
-            } else
+            } else {
                 return false;
-        }else {
+            }
+        } else {
             echo "Select failed.";
         }
 
@@ -686,7 +710,8 @@ class WebMailImap extends WebMailBase {
         }
     }
 
-    public function close(&$conn) {
+    public function close(&$conn)
+    {
         if (fputs($conn->fp, "I LOGOUT\r\n")) {
             fgets($conn->fp, 1024);
             fclose($conn->fp);

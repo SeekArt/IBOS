@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -284,25 +284,19 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param int $port
      * @param ezcMailSmtpTransportOptions|array(string=>mixed) $options
      */
-    public function __construct( $host, $user = '', $password = '', $port = null, $options = array() )
+    public function __construct($host, $user = '', $password = '', $port = null, $options = array())
     {
-        if ( $options instanceof ezcMailSmtpTransportOptions )
-        {
+        if ($options instanceof ezcMailSmtpTransportOptions) {
             $this->options = $options;
-        }
-        else if ( is_array( $options ) )
-        {
-            $this->options = new ezcMailSmtpTransportOptions( $options );
-        }
-        else
-        {
-            throw new ezcBaseValueException( "options", $options, "ezcMailSmtpTransportOptions|array" );
+        } else if (is_array($options)) {
+            $this->options = new ezcMailSmtpTransportOptions($options);
+        } else {
+            throw new ezcBaseValueException("options", $options, "ezcMailSmtpTransportOptions|array");
         }
 
         $this->serverHost = $host;
-        if ( $port === null )
-        {
-            $port = ( $this->options->connectionType === self::CONNECTION_PLAIN ) ? 25 : 465;
+        if ($port === null) {
+            $port = ($this->options->connectionType === self::CONNECTION_PLAIN) ? 25 : 465;
         }
         $this->serverPort = $port;
         $this->user = $user;
@@ -320,10 +314,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     public function __destruct()
     {
-        if ( $this->status != self::STATUS_NOT_CONNECTED )
-        {
-            $this->sendData( 'QUIT' );
-            fclose( $this->connection );
+        if ($this->status != self::STATUS_NOT_CONNECTED) {
+            $this->sendData('QUIT');
+            fclose($this->connection);
         }
     }
 
@@ -338,10 +331,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'user':
             case 'password':
             case 'senderHost':
@@ -357,15 +349,14 @@ class ezcMailSmtpTransport implements ezcMailTransport
                 break;
 
             case 'options':
-                if ( !( $value instanceof ezcMailSmtpTransportOptions ) )
-                {
-                    throw new ezcBaseValueException( 'options', $value, 'instanceof ezcMailSmtpTransportOptions' );
+                if (!($value instanceof ezcMailSmtpTransportOptions)) {
+                    throw new ezcBaseValueException('options', $value, 'instanceof ezcMailSmtpTransportOptions');
                 }
                 $this->options = $value;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -378,10 +369,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'user':
             case 'password':
             case 'senderHost':
@@ -396,7 +386,7 @@ class ezcMailSmtpTransport implements ezcMailTransport
                 return $this->options;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -407,16 +397,15 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'user':
             case 'password':
             case 'senderHost':
             case 'serverHost':
             case 'serverPort':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             case 'timeout':
             case 'options':
@@ -456,46 +445,37 @@ class ezcMailSmtpTransport implements ezcMailTransport
      *         if trying to use SSL and the openssl extension is not installed
      * @param ezcMail $mail
      */
-    public function send( ezcMail $mail )
+    public function send(ezcMail $mail)
     {
         // sanity check the e-mail
         // need at least one recepient
-        if ( ( count( $mail->to ) + count( $mail->cc ) + count( $mail->bcc ) ) < 1 )
-        {
-            throw new ezcMailTransportException( "Can not send e-mail with no 'to' recipients." );
+        if ((count($mail->to) + count($mail->cc) + count($mail->bcc)) < 1) {
+            throw new ezcMailTransportException("Can not send e-mail with no 'to' recipients.");
         }
 
-        try
-        {
+        try {
             // open connection unless we are connected already.
-            if ( $this->status != self::STATUS_AUTHENTICATED )
-            {
+            if ($this->status != self::STATUS_AUTHENTICATED) {
                 $this->connect();
             }
 
-            if ( isset( $mail->returnPath ) )
-            {
-                $this->cmdMail( $mail->returnPath->email );
-            }
-            else
-            {
-                $this->cmdMail( $mail->from->email );
+            if (isset($mail->returnPath)) {
+                $this->cmdMail($mail->returnPath->email);
+            } else {
+                $this->cmdMail($mail->from->email);
             }
 
             // each recepient must be listed here.
             // this controls where the mail is actually sent as SMTP does not
             // read the headers itself
-            foreach ( $mail->to as $address )
-            {
-                $this->cmdRcpt( $address->email );
+            foreach ($mail->to as $address) {
+                $this->cmdRcpt($address->email);
             }
-            foreach ( $mail->cc as $address )
-            {
-                $this->cmdRcpt( $address->email );
+            foreach ($mail->cc as $address) {
+                $this->cmdRcpt($address->email);
             }
-            foreach ( $mail->bcc as $address )
-            {
-                $this->cmdRcpt( $address->email );
+            foreach ($mail->bcc as $address) {
+                $this->cmdRcpt($address->email);
             }
             // done with the from and recipients, lets send the mail itself
             $this->cmdData();
@@ -504,35 +484,27 @@ class ezcMailSmtpTransport implements ezcMailTransport
             // the data we want to send.  also called transparancy in the RFC,
             // section 4.5.2
             $data = $mail->generate();
-            $data = str_replace( self::CRLF . '.', self::CRLF . '..', $data );
-            if ( $data[0] == '.' )
-            {
+            $data = str_replace(self::CRLF . '.', self::CRLF . '..', $data);
+            if ($data[0] == '.') {
                 $data = '.' . $data;
             }
 
-            $this->sendData( $data );
-            $this->sendData( '.' );
+            $this->sendData($data);
+            $this->sendData('.');
 
-            if ( $this->getReplyCode( $error ) !== '250' )
-            {
-                throw new ezcMailTransportSmtpException( "Error: {$error}" );
+            if ($this->getReplyCode($error) !== '250') {
+                throw new ezcMailTransportSmtpException("Error: {$error}");
             }
-        }
-        catch ( ezcMailTransportSmtpException $e )
-        {
-            throw new ezcMailTransportException( $e->getMessage() );
+        } catch (ezcMailTransportSmtpException $e) {
+            throw new ezcMailTransportException($e->getMessage());
             // TODO: reset connection here.pin
         }
 
         // close connection unless we should keep it
-        if ( $this->keepConnection === false )
-        {
-            try
-            {
+        if ($this->keepConnection === false) {
+            try {
                 $this->disconnect();
-            }
-            catch ( Exception $e )
-            {
+            } catch (Exception $e) {
                 // Eat! We don't care anyway since we are aborting the connection
             }
         }
@@ -554,37 +526,31 @@ class ezcMailSmtpTransport implements ezcMailTransport
     {
         $errno = null;
         $errstr = null;
-        if ( $this->options->connectionType !== self::CONNECTION_PLAIN &&
-             !ezcBaseFeatures::hasExtensionSupport( 'openssl' ) )
-        {
-            throw new ezcBaseExtensionNotFoundException( 'openssl', null, "PHP not configured --with-openssl." );
+        if ($this->options->connectionType !== self::CONNECTION_PLAIN &&
+            !ezcBaseFeatures::hasExtensionSupport('openssl')
+        ) {
+            throw new ezcBaseExtensionNotFoundException('openssl', null, "PHP not configured --with-openssl.");
         }
 
         // start TLS connections unencrypted
         $connectionType = $this->options->connectionType == 'tls' ? 'tcp' : $this->options->connectionType;
 
-        if ( count( $this->options->connectionOptions ) > 0 )
-        {
-            $context = stream_context_create( $this->options->connectionOptions );
-            $this->connection = @stream_socket_client( "{$connectionType}://{$this->serverHost}:{$this->serverPort}",
-                                                       $errno, $errstr, $this->options->timeout, STREAM_CLIENT_CONNECT, $context );
-        }
-        else
-        {
-            $this->connection = @stream_socket_client( "{$connectionType}://{$this->serverHost}:{$this->serverPort}",
-                                                       $errno, $errstr, $this->options->timeout );
+        if (count($this->options->connectionOptions) > 0) {
+            $context = stream_context_create($this->options->connectionOptions);
+            $this->connection = @stream_socket_client("{$connectionType}://{$this->serverHost}:{$this->serverPort}",
+                $errno, $errstr, $this->options->timeout, STREAM_CLIENT_CONNECT, $context);
+        } else {
+            $this->connection = @stream_socket_client("{$connectionType}://{$this->serverHost}:{$this->serverPort}",
+                $errno, $errstr, $this->options->timeout);
         }
 
-        if ( is_resource( $this->connection ) )
-        {
-            stream_set_timeout( $this->connection, $this->options->timeout );
+        if (is_resource($this->connection)) {
+            stream_set_timeout($this->connection, $this->options->timeout);
             $this->status = self::STATUS_CONNECTED;
             $greeting = $this->getData();
             $this->login();
-        }
-        else
-        {
-            throw new ezcMailTransportSmtpException( "Failed to connect to the smtp server: {$this->serverHost}:{$this->serverPort}." );
+        } else {
+            throw new ezcMailTransportSmtpException("Failed to connect to the smtp server: {$this->serverHost}:{$this->serverPort}.");
         }
     }
 
@@ -598,71 +564,55 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function login()
     {
-        if ( $this->doAuthenticate )
-        {
-            $this->sendData( 'EHLO ' . $this->senderHost );
-        }
-        else
-        {
-            $this->sendData( 'HELO ' . $this->senderHost );
+        if ($this->doAuthenticate) {
+            $this->sendData('EHLO ' . $this->senderHost);
+        } else {
+            $this->sendData('HELO ' . $this->senderHost);
         }
 
-        if ( $this->getReplyCode( $response ) !== '250' )
-        {
-            throw new ezcMailTransportSmtpException( "HELO/EHLO failed with error: {$response}." );
+        if ($this->getReplyCode($response) !== '250') {
+            throw new ezcMailTransportSmtpException("HELO/EHLO failed with error: {$response}.");
         }
 
         // setup TLS connection before continuing with AUTH
-        if ( $this->options->connectionType == 'tls' )
-        {
-            if ( !preg_match( "/250-STARTTLS/", $response) )
-            {
-                throw new ezcMailTransportSmtpException( 'SMTP server does not accept the STARTTLS command.' );
+        if ($this->options->connectionType == 'tls') {
+            if (!preg_match("/250-STARTTLS/", $response)) {
+                throw new ezcMailTransportSmtpException('SMTP server does not accept the STARTTLS command.');
             }
 
             $this->startTls();
 
             // need to redo HELO after TLS negotiation
-            $this->sendData( 'EHLO ' . $this->senderHost );
-            if ( $this->getReplyCode( $response ) !== '250' )
-            {
-                throw new ezcMailTransportSmtpException( "HELO/EHLO failed with error: {$response}." );
+            $this->sendData('EHLO ' . $this->senderHost);
+            if ($this->getReplyCode($response) !== '250') {
+                throw new ezcMailTransportSmtpException("HELO/EHLO failed with error: {$response}.");
             }
         }
 
         // do authentication
-        if ( $this->doAuthenticate )
-        {
-            if ( $this->options->preferredAuthMethod !== self::AUTH_AUTO )
-            {
-                $this->auth( $this->options->preferredAuthMethod );
-            }
-            else
-            {
-                preg_match( "/250-AUTH[= ](.*)/", $response, $matches );
-                if ( count( $matches ) > 0 )
-                {
-                    $methods = explode( ' ', trim( $matches[1] ) );
+        if ($this->doAuthenticate) {
+            if ($this->options->preferredAuthMethod !== self::AUTH_AUTO) {
+                $this->auth($this->options->preferredAuthMethod);
+            } else {
+                preg_match("/250-AUTH[= ](.*)/", $response, $matches);
+                if (count($matches) > 0) {
+                    $methods = explode(' ', trim($matches[1]));
                 }
-                if ( count( $matches ) === 0 || count( $methods ) === 0 )
-                {
-                    throw new ezcMailTransportSmtpException( 'SMTP server does not accept the AUTH command.' );
+                if (count($matches) === 0 || count($methods) === 0) {
+                    throw new ezcMailTransportSmtpException('SMTP server does not accept the AUTH command.');
                 }
 
                 $authenticated = false;
-                $methods = $this->sortAuthMethods( $methods );
-                foreach ( $methods as $method )
-                {
-                    if ( $this->auth( $method ) === true )
-                    {
+                $methods = $this->sortAuthMethods($methods);
+                foreach ($methods as $method) {
+                    if ($this->auth($method) === true) {
                         $authenticated = true;
                         break;
                     }
                 }
 
-                if ( $authenticated === false )
-                {
-                    throw new ezcMailTransportSmtpException( 'SMTP server did not respond correctly to any of the authentication methods ' . implode( ', ', $methods ) . '.' );
+                if ($authenticated === false) {
+                    throw new ezcMailTransportSmtpException('SMTP server did not respond correctly to any of the authentication methods ' . implode(', ', $methods) . '.');
                 }
             }
         }
@@ -686,29 +636,27 @@ class ezcMailSmtpTransport implements ezcMailTransport
             ezcMailSmtpTransport::AUTH_NTLM,
             ezcMailSmtpTransport::AUTH_LOGIN,
             ezcMailSmtpTransport::AUTH_PLAIN,
-            );
+        );
     }
 
-     /**
-      * Enables TLS on an unencrypted SMTP connection
-      *
-      * @throws ezcMailTransportSmtpException
-      *         if the STARTTLS command or crypto exchange fails
-      * @return void
-      */
+    /**
+     * Enables TLS on an unencrypted SMTP connection
+     *
+     * @throws ezcMailTransportSmtpException
+     *         if the STARTTLS command or crypto exchange fails
+     * @return void
+     */
     protected function startTls()
     {
         // start TLS authentication process
         $this->sendData('STARTTLS');
-        if ( $this->getReplyCode( $response ) !== '220' )
-        {
-            throw new ezcMailTransportSmtpException( "STARTTLS failed with error: {$response}." );
+        if ($this->getReplyCode($response) !== '220') {
+            throw new ezcMailTransportSmtpException("STARTTLS failed with error: {$response}.");
         }
 
         // setup the current connection for TLS
-        if ( !stream_socket_enable_crypto($this->connection, true, STREAM_CRYPTO_METHOD_TLS_CLIENT) )
-        {
-            throw new ezcMailTransportSmtpException( "Error enabling TLS on existing SMTP connection." );
+        if (!stream_socket_enable_crypto($this->connection, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+            throw new ezcMailTransportSmtpException("Error enabling TLS on existing SMTP connection.");
         }
     }
 
@@ -729,15 +677,13 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param array(string) $methods
      * @return array(string)
      */
-    protected function sortAuthMethods( array $methods )
+    protected function sortAuthMethods(array $methods)
     {
         $result = array();
         $unsupported = array();
         $supportedAuthMethods = self::getSupportedAuthMethods();
-        foreach ( $supportedAuthMethods as $method )
-        {
-            if ( in_array( $method, $methods ) )
-            {
+        foreach ($supportedAuthMethods as $method) {
+            if (in_array($method, $methods)) {
                 $result[] = $method;
             }
         }
@@ -751,10 +697,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      *         if $method is not supported by the transport class
      * @return bool
      */
-    protected function auth( $method )
+    protected function auth($method)
     {
-        switch ( $method )
-        {
+        switch ($method) {
             case self::AUTH_DIGEST_MD5:
                 $authenticated = $this->authDigestMd5();
                 break;
@@ -776,7 +721,7 @@ class ezcMailSmtpTransport implements ezcMailTransport
                 break;
 
             default:
-                throw new ezcMailTransportSmtpException( "Unsupported AUTH method '{$method}'." );
+                throw new ezcMailTransportSmtpException("Unsupported AUTH method '{$method}'.");
         }
 
         return $authenticated;
@@ -795,41 +740,39 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function authDigestMd5()
     {
-        $this->sendData( 'AUTH DIGEST-MD5' );
-        if ( $this->getReplyCode( $serverResponse ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server does not accept AUTH DIGEST-MD5.' );
+        $this->sendData('AUTH DIGEST-MD5');
+        if ($this->getReplyCode($serverResponse) !== '334') {
+            throw new ezcMailTransportSmtpException('SMTP server does not accept AUTH DIGEST-MD5.');
         }
 
-        $serverDigest = base64_decode( trim( substr( $serverResponse, 4 ) ) );
-        $parts = explode( ',', $serverDigest );
-        foreach ( $parts as $part )
-        {
-            $args = explode( '=', $part, 2 );
-            $params[trim( $args[0] )] = trim( $args[1] );
+        $serverDigest = base64_decode(trim(substr($serverResponse, 4)));
+        $parts = explode(',', $serverDigest);
+        foreach ($parts as $part) {
+            $args = explode('=', $part, 2);
+            $params[trim($args[0])] = trim($args[1]);
         }
 
-        if ( !isset( $params['nonce'] ) ||
-             !isset( $params['algorithm'] ) )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not send a correct DIGEST-MD5 challenge.' );
+        if (!isset($params['nonce']) ||
+            !isset($params['algorithm'])
+        ) {
+            throw new ezcMailTransportSmtpException('SMTP server did not send a correct DIGEST-MD5 challenge.');
         }
 
-        $nonce = trim( $params['nonce'], '"' );
-        $algorithm = trim( $params['algorithm'], '"' );
+        $nonce = trim($params['nonce'], '"');
+        $algorithm = trim($params['algorithm'], '"');
 
         $qop = 'auth';
-        $realm = isset( $params['realm'] ) ? trim( $params['realm'], '"' ) : $this->serverHost;
-        $cnonce = $this->generateNonce( 32 );
+        $realm = isset($params['realm']) ? trim($params['realm'], '"') : $this->serverHost;
+        $cnonce = $this->generateNonce(32);
         $digestUri = "smtp/{$this->serverHost}";
         $nc = '00000001';
-        $charset = isset( $params['charset'] ) ? trim( $params['charset'], '"' ) : 'utf-8';
-        $maxbuf = isset( $params['maxbuf'] ) ? trim( $params['maxbuf'], '"' ) : 65536;
+        $charset = isset($params['charset']) ? trim($params['charset'], '"') : 'utf-8';
+        $maxbuf = isset($params['maxbuf']) ? trim($params['maxbuf'], '"') : 65536;
 
         $response = '';
         $A2 = "AUTHENTICATE:{$digestUri}";
-        $A1 = pack( 'H32', md5( "{$this->user}:{$realm}:{$this->password}" ) ) . ":{$nonce}:{$cnonce}";
-        $response = md5( md5( $A1 ) . ":{$nonce}:{$nc}:{$cnonce}:{$qop}:" . md5( $A2 ) );
+        $A1 = pack('H32', md5("{$this->user}:{$realm}:{$this->password}")) . ":{$nonce}:{$cnonce}";
+        $response = md5(md5($A1) . ":{$nonce}:{$nc}:{$cnonce}:{$qop}:" . md5($A2));
 
         $loginParams = array(
             'username' => "\"{$this->user}\"",
@@ -842,37 +785,33 @@ class ezcMailSmtpTransport implements ezcMailTransport
             'realm' => "\"{$realm}\"",
             'response' => $response,
             'maxbuf' => $maxbuf
-            );
+        );
 
         $parts = array();
-        foreach ( $loginParams as $key => $value )
-        {
+        foreach ($loginParams as $key => $value) {
             $parts[] = "{$key}={$value}";
         }
-        $login = base64_encode( implode( ',', $parts ) );
+        $login = base64_encode(implode(',', $parts));
 
-        $this->sendData( $login );
-        if ( $this->getReplyCode( $serverResponse ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not accept the provided username and password.' );
+        $this->sendData($login);
+        if ($this->getReplyCode($serverResponse) !== '334') {
+            throw new ezcMailTransportSmtpException('SMTP server did not accept the provided username and password.');
         }
 
-        $serverResponse = base64_decode( trim( substr( $serverResponse, 4 ) ) );
-        $parts = explode( '=', $serverResponse );
-        $rspauthServer = trim( $parts[1] );
+        $serverResponse = base64_decode(trim(substr($serverResponse, 4)));
+        $parts = explode('=', $serverResponse);
+        $rspauthServer = trim($parts[1]);
 
         $A2 = ":{$digestUri}";
-        $rspauthClient = md5( md5( $A1 ) . ":{$nonce}:{$nc}:{$cnonce}:{$qop}:" . md5( $A2 ) );
+        $rspauthClient = md5(md5($A1) . ":{$nonce}:{$nc}:{$cnonce}:{$qop}:" . md5($A2));
 
-        if ( $rspauthServer !== $rspauthClient )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not responded correctly to the DIGEST-MD5 authentication.' );
+        if ($rspauthServer !== $rspauthClient) {
+            throw new ezcMailTransportSmtpException('SMTP server did not responded correctly to the DIGEST-MD5 authentication.');
         }
 
-        $this->sendData( '' );
-        if ( $this->getReplyCode( $serverResponse ) !== '235' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not allow DIGEST-MD5 authentication.' );
+        $this->sendData('');
+        if ($this->getReplyCode($serverResponse) !== '235') {
+            throw new ezcMailTransportSmtpException('SMTP server did not allow DIGEST-MD5 authentication.');
         }
 
         return true;
@@ -888,20 +827,18 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function authCramMd5()
     {
-        $this->sendData( 'AUTH CRAM-MD5' );
-        if ( $this->getReplyCode( $response ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server does not accept AUTH CRAM-MD5.' );
+        $this->sendData('AUTH CRAM-MD5');
+        if ($this->getReplyCode($response) !== '334') {
+            throw new ezcMailTransportSmtpException('SMTP server does not accept AUTH CRAM-MD5.');
         }
 
-        $serverDigest = trim( substr( $response, 4 ) );
-        $clientDigest = hash_hmac( 'md5', base64_decode( $serverDigest ), $this->password );
-        $login = base64_encode( "{$this->user} {$clientDigest}" );
+        $serverDigest = trim(substr($response, 4));
+        $clientDigest = hash_hmac('md5', base64_decode($serverDigest), $this->password);
+        $login = base64_encode("{$this->user} {$clientDigest}");
 
-        $this->sendData( $login );
-        if ( $this->getReplyCode( $error ) !== '235' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not accept the provided username and password.' );
+        $this->sendData($login);
+        if ($this->getReplyCode($error) !== '235') {
+            throw new ezcMailTransportSmtpException('SMTP server did not accept the provided username and password.');
         }
 
         return true;
@@ -917,42 +854,39 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function authNtlm()
     {
-        if ( !ezcBaseFeatures::hasExtensionSupport( 'mcrypt' ) )
-        {
-            throw new ezcBaseExtensionNotFoundException( 'mcrypt', null, "PHP not compiled with --with-mcrypt." );
+        if (!ezcBaseFeatures::hasExtensionSupport('mcrypt')) {
+            throw new ezcBaseExtensionNotFoundException('mcrypt', null, "PHP not compiled with --with-mcrypt.");
         }
 
         // Send NTLM type 1 message
-        $msg1 = base64_encode( $this->authNtlmMessageType1( $this->senderHost, $this->serverHost ) );
+        $msg1 = base64_encode($this->authNtlmMessageType1($this->senderHost, $this->serverHost));
 
-        $this->sendData( "AUTH NTLM {$msg1}" );
-        if ( $this->getReplyCode( $serverResponse ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server does not accept AUTH NTLM.' );
+        $this->sendData("AUTH NTLM {$msg1}");
+        if ($this->getReplyCode($serverResponse) !== '334') {
+            throw new ezcMailTransportSmtpException('SMTP server does not accept AUTH NTLM.');
         }
 
         // Parse NTLM type 2 message
-        $msg2 = base64_decode( trim( substr( $serverResponse, 4 ) ) );
+        $msg2 = base64_decode(trim(substr($serverResponse, 4)));
         $parts = array(
-                        substr( $msg2, 0, 8 ),  // Signature ("NTLMSSP\0")
-                        substr( $msg2, 8, 4 ),  // Message type
-                        substr( $msg2, 12, 8 ), // Target name (security buffer)
-                        substr( $msg2, 20, 4 ), // Flags
-                        substr( $msg2, 24, 8 ), // Challenge
-                        substr( $msg2, 32 )     // The rest of information
-                      );
+            substr($msg2, 0, 8),  // Signature ("NTLMSSP\0")
+            substr($msg2, 8, 4),  // Message type
+            substr($msg2, 12, 8), // Target name (security buffer)
+            substr($msg2, 20, 4), // Flags
+            substr($msg2, 24, 8), // Challenge
+            substr($msg2, 32)     // The rest of information
+        );
 
         $challenge = $parts[4];
 
         // Send NTLM type 3 message
-        $msg3 = base64_encode( $this->authNtlmMessageType3( $challenge, $this->user, $this->password, $this->senderHost, $this->serverHost ) );
+        $msg3 = base64_encode($this->authNtlmMessageType3($challenge, $this->user, $this->password, $this->senderHost, $this->serverHost));
 
-        $this->sendData( $msg3 );
-        if ( $this->getReplyCode( $serverResponse ) !== '235' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not allow NTLM authentication.' );
+        $this->sendData($msg3);
+        if ($this->getReplyCode($serverResponse) !== '235') {
+            throw new ezcMailTransportSmtpException('SMTP server did not allow NTLM authentication.');
         }
-        
+
         return true;
     }
 
@@ -966,22 +900,19 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function authLogin()
     {
-        $this->sendData( 'AUTH LOGIN' );
-        if ( $this->getReplyCode( $error ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server does not accept AUTH LOGIN.' );
+        $this->sendData('AUTH LOGIN');
+        if ($this->getReplyCode($error) !== '334') {
+            throw new ezcMailTransportSmtpException('SMTP server does not accept AUTH LOGIN.');
         }
 
-        $this->sendData( base64_encode( $this->user ) );
-        if ( $this->getReplyCode( $error ) !== '334' )
-        {
-            throw new ezcMailTransportSmtpException( "SMTP server did not accept login: {$this->user}." );
+        $this->sendData(base64_encode($this->user));
+        if ($this->getReplyCode($error) !== '334') {
+            throw new ezcMailTransportSmtpException("SMTP server did not accept login: {$this->user}.");
         }
 
-        $this->sendData( base64_encode( $this->password ) );
-        if ( $this->getReplyCode( $error ) !== '235' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not accept the provided username and password.' );
+        $this->sendData(base64_encode($this->password));
+        if ($this->getReplyCode($error) !== '235') {
+            throw new ezcMailTransportSmtpException('SMTP server did not accept the provided username and password.');
         }
 
         return true;
@@ -997,11 +928,10 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function authPlain()
     {
-        $digest = base64_encode( "\0{$this->user}\0{$this->password}" );
-        $this->sendData( "AUTH PLAIN {$digest}" );
-        if ( $this->getReplyCode( $error ) !== '235' )
-        {
-            throw new ezcMailTransportSmtpException( 'SMTP server did not accept the provided username and password.' );
+        $digest = base64_encode("\0{$this->user}\0{$this->password}");
+        $this->sendData("AUTH PLAIN {$digest}");
+        if ($this->getReplyCode($error) !== '235') {
+            throw new ezcMailTransportSmtpException('SMTP server did not accept the provided username and password.');
         }
 
         return true;
@@ -1015,15 +945,13 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     public function disconnect()
     {
-        if ( $this->status != self::STATUS_NOT_CONNECTED )
-        {
-            $this->sendData( 'QUIT' );
-            $replyCode = $this->getReplyCode( $error ) !== '221';
-            fclose( $this->connection );
+        if ($this->status != self::STATUS_NOT_CONNECTED) {
+            $this->sendData('QUIT');
+            $replyCode = $this->getReplyCode($error) !== '221';
+            fclose($this->connection);
             $this->status = self::STATUS_NOT_CONNECTED;
-            if ( $replyCode )
-            {
-                throw new ezcMailTransportSmtpException( "QUIT failed with error: $error." );
+            if ($replyCode) {
+                throw new ezcMailTransportSmtpException("QUIT failed with error: $error.");
             }
         }
     }
@@ -1036,10 +964,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param string $email
      * $return string
      */
-    protected function composeSmtpMailAddress( $email )
+    protected function composeSmtpMailAddress($email)
     {
-        if ( !preg_match( "/<.+>/", $email ) )
-        {
+        if (!preg_match("/<.+>/", $email)) {
             $email = "<{$email}>";
         }
         return $email;
@@ -1057,14 +984,12 @@ class ezcMailSmtpTransport implements ezcMailTransport
      *         or if the MAIL FROM command failed
      * @param string $from
      */
-    protected function cmdMail( $from )
+    protected function cmdMail($from)
     {
-        if ( $this->status === self::STATUS_AUTHENTICATED )
-        {
-            $this->sendData( 'MAIL FROM:' . $this->composeSmtpMailAddress( $from ) . '' );
-            if ( $this->getReplyCode( $error ) !== '250' )
-            {
-                throw new ezcMailTransportSmtpException( "MAIL FROM failed with error: $error." );
+        if ($this->status === self::STATUS_AUTHENTICATED) {
+            $this->sendData('MAIL FROM:' . $this->composeSmtpMailAddress($from) . '');
+            if ($this->getReplyCode($error) !== '250') {
+                throw new ezcMailTransportSmtpException("MAIL FROM failed with error: $error.");
             }
         }
     }
@@ -1084,14 +1009,12 @@ class ezcMailSmtpTransport implements ezcMailTransport
      *         or if the RCPT TO command failed
      * @param string $email
      */
-    protected function cmdRcpt( $email )
+    protected function cmdRcpt($email)
     {
-        if ( $this->status === self::STATUS_AUTHENTICATED )
-        {
-            $this->sendData( 'RCPT TO:' . $this->composeSmtpMailAddress( $email ) );
-            if ( $this->getReplyCode( $error ) !== '250' )
-            {
-                throw new ezcMailTransportSmtpException( "RCPT TO failed with error: $error." );
+        if ($this->status === self::STATUS_AUTHENTICATED) {
+            $this->sendData('RCPT TO:' . $this->composeSmtpMailAddress($email));
+            if ($this->getReplyCode($error) !== '250') {
+                throw new ezcMailTransportSmtpException("RCPT TO failed with error: $error.");
             }
         }
     }
@@ -1105,12 +1028,10 @@ class ezcMailSmtpTransport implements ezcMailTransport
      */
     protected function cmdData()
     {
-        if ( $this->status === self::STATUS_AUTHENTICATED )
-        {
-            $this->sendData( 'DATA' );
-            if ( $this->getReplyCode( $error ) !== '354' )
-            {
-                throw new ezcMailTransportSmtpException( "DATA failed with error: $error." );
+        if ($this->status === self::STATUS_AUTHENTICATED) {
+            $this->sendData('DATA');
+            if ($this->getReplyCode($error) !== '354') {
+                throw new ezcMailTransportSmtpException("DATA failed with error: $error.");
             }
         }
     }
@@ -1124,14 +1045,13 @@ class ezcMailSmtpTransport implements ezcMailTransport
      *         if there is no valid connection
      * @param string $data
      */
-    protected function sendData( $data )
+    protected function sendData($data)
     {
-        if ( is_resource( $this->connection ) )
-        {
-            if ( fwrite( $this->connection, $data . self::CRLF,
-                        strlen( $data ) + strlen( self::CRLF  ) ) === false )
-            {
-                throw new ezcMailTransportSmtpException( 'Could not write to SMTP stream. It was probably terminated by the host.' );
+        if (is_resource($this->connection)) {
+            if (fwrite($this->connection, $data . self::CRLF,
+                    strlen($data) + strlen(self::CRLF)) === false
+            ) {
+                throw new ezcMailTransportSmtpException('Could not write to SMTP stream. It was probably terminated by the host.');
             }
         }
     }
@@ -1146,20 +1066,18 @@ class ezcMailSmtpTransport implements ezcMailTransport
     protected function getData()
     {
         $data = '';
-        $line   = '';
-        $loops  = 0;
+        $line = '';
+        $loops = 0;
 
-        if ( is_resource( $this->connection ) )
-        {
-            while ( ( strpos( $data, self::CRLF ) === false || (string) substr( $line, 3, 1 ) !== ' ' ) && $loops < 100 )
-            {
-                $line = @fgets( $this->connection, 512 );
+        if (is_resource($this->connection)) {
+            while ((strpos($data, self::CRLF) === false || (string)substr($line, 3, 1) !== ' ') && $loops < 100) {
+                $line = @fgets($this->connection, 512);
                 $data .= $line;
                 $loops++;
             }
             return $data;
         }
-        throw new ezcMailTransportSmtpException( 'Could not read from SMTP stream. It was probably terminated by the host.' );
+        throw new ezcMailTransportSmtpException('Could not read from SMTP stream. It was probably terminated by the host.');
     }
 
     /**
@@ -1173,9 +1091,9 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param string &$line
      * @return string
      */
-    protected function getReplyCode( &$line )
+    protected function getReplyCode(&$line)
     {
-        return substr( trim( $line = $this->getData() ), 0, 3 );
+        return substr(trim($line = $this->getData()), 0, 3);
     }
 
     /**
@@ -1186,13 +1104,12 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param int $length
      * @return string
      */
-    protected function generateNonce( $length = 32 )
+    protected function generateNonce($length = 32)
     {
         $chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $result = '';
-        for ( $i = 0; $i < $length; $i++ )
-        {
-            $result .= $chars[mt_rand( 0, strlen( $chars ) - 1 )];
+        for ($i = 0; $i < $length; $i++) {
+            $result .= $chars[mt_rand(0, strlen($chars) - 1)];
         }
 
         return $result;
@@ -1205,19 +1122,19 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param string $domain
      * @return string
      */
-    protected function authNtlmMessageType1( $workstation, $domain )
+    protected function authNtlmMessageType1($workstation, $domain)
     {
         $parts = array(
-                        "NTLMSSP\x00",
-                        "\x01\x00\x00\x00",
-                        "\x07\x32\x00\x00",
-                        $this->authNtlmSecurityBuffer( $domain, 32 + strlen( $workstation ) ),
-                        $this->authNtlmSecurityBuffer( $workstation, 32 ),
-                        $workstation,
-                        $domain
-                      );
+            "NTLMSSP\x00",
+            "\x01\x00\x00\x00",
+            "\x07\x32\x00\x00",
+            $this->authNtlmSecurityBuffer($domain, 32 + strlen($workstation)),
+            $this->authNtlmSecurityBuffer($workstation, 32),
+            $workstation,
+            $domain
+        );
 
-        return implode( "", $parts );
+        return implode("", $parts);
     }
 
     /**
@@ -1231,40 +1148,40 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param string $domain
      * @return string
      */
-    protected function authNtlmMessageType3( $challenge, $user, $password, $workstation, $domain )
+    protected function authNtlmMessageType3($challenge, $user, $password, $workstation, $domain)
     {
-        $domain = chunk_split( $domain, 1, "\x00" );
-        $user = chunk_split( $user, 1, "\x00" );
-        $workstation = chunk_split( $workstation, 1, "\x00" );
+        $domain = chunk_split($domain, 1, "\x00");
+        $user = chunk_split($user, 1, "\x00");
+        $workstation = chunk_split($workstation, 1, "\x00");
         $lm = '';
-        $ntlm = $this->authNtlmResponse( $challenge, $password );
+        $ntlm = $this->authNtlmResponse($challenge, $password);
         $session = '';
 
         $domainOffset = 64;
-        $userOffset = $domainOffset + strlen( $domain );
-        $workstationOffset = $userOffset + strlen( $user );
-        $lmOffset = $workstationOffset + strlen( $workstation );
-        $ntlmOffset = $lmOffset + strlen( $lm );
-        $sessionOffset = $ntlmOffset + strlen( $ntlm );
+        $userOffset = $domainOffset + strlen($domain);
+        $workstationOffset = $userOffset + strlen($user);
+        $lmOffset = $workstationOffset + strlen($workstation);
+        $ntlmOffset = $lmOffset + strlen($lm);
+        $sessionOffset = $ntlmOffset + strlen($ntlm);
 
         $parts = array(
-                        "NTLMSSP\x00",
-                        "\x03\x00\x00\x00",
-                        $this->authNtlmSecurityBuffer( $lm, $lmOffset ),
-                        $this->authNtlmSecurityBuffer( $ntlm, $ntlmOffset ),
-                        $this->authNtlmSecurityBuffer( $domain, $domainOffset ),
-                        $this->authNtlmSecurityBuffer( $user, $userOffset ),
-                        $this->authNtlmSecurityBuffer( $workstation, $workstationOffset ),
-                        $this->authNtlmSecurityBuffer( $session, $sessionOffset ),
-                        "\x01\x02\x00\x00",
-                        $domain,
-                        $user,
-                        $workstation,
-                        $lm,
-                        $ntlm
-                      );
+            "NTLMSSP\x00",
+            "\x03\x00\x00\x00",
+            $this->authNtlmSecurityBuffer($lm, $lmOffset),
+            $this->authNtlmSecurityBuffer($ntlm, $ntlmOffset),
+            $this->authNtlmSecurityBuffer($domain, $domainOffset),
+            $this->authNtlmSecurityBuffer($user, $userOffset),
+            $this->authNtlmSecurityBuffer($workstation, $workstationOffset),
+            $this->authNtlmSecurityBuffer($session, $sessionOffset),
+            "\x01\x02\x00\x00",
+            $domain,
+            $user,
+            $workstation,
+            $lm,
+            $ntlm
+        );
 
-        return implode( '', $parts );
+        return implode('', $parts);
     }
 
     /**
@@ -1275,37 +1192,34 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param string $password
      * @return string
      */
-    protected function authNtlmResponse( $challenge, $password )
+    protected function authNtlmResponse($challenge, $password)
     {
-        $password = chunk_split( $password, 1, "\x00" );
-        $password = hash( 'md4', $password, true );
-        $password .= str_repeat( "\x00", 21 - strlen( $password ) );
+        $password = chunk_split($password, 1, "\x00");
+        $password = hash('md4', $password, true);
+        $password .= str_repeat("\x00", 21 - strlen($password));
 
-        $td = mcrypt_module_open( 'des', '', 'ecb', '' );
-        $iv = mcrypt_create_iv( mcrypt_enc_get_iv_size( $td ), MCRYPT_RAND );
+        $td = mcrypt_module_open('des', '', 'ecb', '');
+        $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_RAND);
 
-        $response = '';        
-        for ( $i = 0; $i < 21; $i += 7 )
-        {
+        $response = '';
+        for ($i = 0; $i < 21; $i += 7) {
             $packed = '';
-            for ( $p = $i; $p < $i + 7; $p++ )
-            {
-                $packed .= str_pad( decbin( ord( substr( $password, $p, 1 ) ) ), 8, '0', STR_PAD_LEFT );
+            for ($p = $i; $p < $i + 7; $p++) {
+                $packed .= str_pad(decbin(ord(substr($password, $p, 1))), 8, '0', STR_PAD_LEFT);
             }
 
             $key = '';
-            for ( $p = 0; $p < strlen( $packed ); $p += 7 )
-            {
-                $s = substr( $packed, $p, 7 );
-                $b = $s . ( ( substr_count( $s, '1' ) % 2 ) ? '0' : '1' );
-                $key .= chr( bindec( $b ) );
+            for ($p = 0; $p < strlen($packed); $p += 7) {
+                $s = substr($packed, $p, 7);
+                $b = $s . ((substr_count($s, '1') % 2) ? '0' : '1');
+                $key .= chr(bindec($b));
             }
 
-            mcrypt_generic_init( $td, $key, $iv );
-            $response .= mcrypt_generic( $td, $challenge );
-            mcrypt_generic_deinit( $td );
+            mcrypt_generic_init($td, $key, $iv);
+            $response .= mcrypt_generic($td, $challenge);
+            mcrypt_generic_deinit($td);
         }
-        mcrypt_module_close( $td );
+        mcrypt_module_close($td);
 
         return $response;
     }
@@ -1332,11 +1246,12 @@ class ezcMailSmtpTransport implements ezcMailTransport
      * @param int $offset
      * @return string
      */
-    protected function authNtlmSecurityBuffer( $text, $offset )
+    protected function authNtlmSecurityBuffer($text, $offset)
     {
-        return pack( 'v', strlen( $text ) ) .
-               pack( 'v', strlen( $text ) ) .
-               pack( 'V', $offset );
+        return pack('v', strlen($text)) .
+        pack('v', strlen($text)) .
+        pack('V', $offset);
     }
 }
+
 ?>

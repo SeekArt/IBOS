@@ -17,21 +17,24 @@
 
 namespace application\modules\diary\components;
 
-class LineChart extends Chart {
+class LineChart extends Chart
+{
 
-	/**
-	 * 获取图表数据序列
-	 * @return type
-	 */
-	public function getSeries() {
-		return $this->getCounter()->getCount();
-	}
+    /**
+     * 获取图表数据序列
+     * @return type
+     */
+    public function getSeries()
+    {
+        return $this->getCounter()->getCount();
+    }
 
-	/**
-	 * 获取图表X轴数据
-	 */
-	public function getXaxis() {
-		return $this->getCounter()->getDateScope();
-	}
+    /**
+     * 获取图表X轴数据
+     */
+    public function getXaxis()
+    {
+        return $this->getCounter()->getDateScope();
+    }
 
 }

@@ -20,66 +20,71 @@ namespace application\modules\file\model;
 use application\core\model\Model;
 use application\modules\user\model\User;
 
-class FileDynamic extends Model {
-	
-	const LIMIT = 50;
+class FileDynamic extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    const LIMIT = 50;
 
-	public function tableName() {
-		return '{{file_dynamic}}';
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	/**
-	 * 记录动态
-	 * @param integer $fid 文件id
-	 * @param string $content 动态内容
-	 * @param string $uid 产生动态的uid
-	 * @param string $touids uid串
-	 * @param string $todeptids 部门id串
-	 * @param string $toposids 岗位id串
-	 * @return boolean
-	 */
-	public function record( $fid, $uid, $content, $touids = '', $todeptids = '', $toposids = '' ) {
-		$file = File::model()->fetchByFid( $fid );
-		if ( !empty( $file ) ) {
-			$data = array(
-				'fid' => intval( $fid ),
-				'uid' => $uid,
-				'content' => $content,
-				'touids' => $touids,
-				'todeptids' => $todeptids,
-				'toposids' => $toposids,
-				'time' => TIMESTAMP
-			);
-			return $this->add( $data );
-		}
-	}
+    public function tableName()
+    {
+        return '{{file_dynamic}}';
+    }
 
-	/**
-	 * 查找50条动态
-	 * @param integer $uid 登陆者uid
-	 * @param integer $offset 从第几条开始
-	 * @return array
-	 */
-	public function fetchDynamic( $uid, $offset = 0, $limit = 0, $extraCon = 1 ) {
-		$user = User::model()->fetchByUid( $uid );
-		$deptIds = explode( ',', $user['alldeptid'] . ',alldept' );
-		$deptCon = '';
-		foreach ( $deptIds as $deptid ) {
-			$deptCon .= " OR FIND_IN_SET('{$deptid}',`todeptids`) ";
-		}
-		$con = "( FIND_IN_SET({$uid}, `touids`) OR FIND_IN_SET({$user['positionid']}, `toposids`) {$deptCon} )";
-		$limit = !$limit ? $this->count( $con ) : $limit;
-		$record = $this->fetchAll( array(
-			'condition' => $con,
-			'offset' => $offset,
-			'limit' => $limit,
-			'order' => 'time DESC'
-				) );
-		return $record;
-	}
+    /**
+     * 记录动态
+     * @param integer $fid 文件id
+     * @param string $content 动态内容
+     * @param string $uid 产生动态的uid
+     * @param string $touids uid串
+     * @param string $todeptids 部门id串
+     * @param string $toposids 岗位id串
+     * @return boolean
+     */
+    public function record($fid, $uid, $content, $touids = '', $todeptids = '', $toposids = '')
+    {
+        $file = File::model()->fetchByFid($fid);
+        if (!empty($file)) {
+            $data = array(
+                'fid' => intval($fid),
+                'uid' => $uid,
+                'content' => $content,
+                'touids' => $touids,
+                'todeptids' => $todeptids,
+                'toposids' => $toposids,
+                'time' => TIMESTAMP
+            );
+            return $this->add($data);
+        }
+    }
+
+    /**
+     * 查找50条动态
+     * @param integer $uid 登陆者uid
+     * @param integer $offset 从第几条开始
+     * @return array
+     */
+    public function fetchDynamic($uid, $offset = 0, $limit = 0, $extraCon = 1)
+    {
+        $user = User::model()->fetchByUid($uid);
+        $deptIds = explode(',', $user['alldeptid'] . ',alldept');
+        $deptCon = '';
+        foreach ($deptIds as $deptid) {
+            $deptCon .= " OR FIND_IN_SET('{$deptid}',`todeptids`) ";
+        }
+        $con = "( FIND_IN_SET({$uid}, `touids`) OR FIND_IN_SET({$user['positionid']}, `toposids`) {$deptCon} )";
+        $limit = !$limit ? $this->count($con) : $limit;
+        $record = $this->fetchAll(array(
+            'condition' => $con,
+            'offset' => $offset,
+            'limit' => $limit,
+            'order' => 'time DESC'
+        ));
+        return $record;
+    }
 
 }

@@ -22,11 +22,11 @@ class ClassMapGenerator
      * Generate a class map file
      *
      * @param array|string $dirs Directories or a single path to search in
-     * @param string       $file The name of the class map file
+     * @param string $file The name of the class map file
      */
     public static function dump($dirs, $file)
     {
-        $dirs = (array) $dirs;
+        $dirs = (array)$dirs;
         $maps = array();
 
         foreach ($dirs as $dir) {
@@ -83,8 +83,8 @@ class ClassMapGenerator
     private static function findClasses($path)
     {
         $contents = file_get_contents($path);
-        $tokens   = token_get_all($contents);
-        $T_TRAIT  = version_compare(PHP_VERSION, '5.4', '<') ? -1 : T_TRAIT;
+        $tokens = token_get_all($contents);
+        $T_TRAIT = version_compare(PHP_VERSION, '5.4', '<') ? -1 : T_TRAIT;
 
         $classes = array();
 
@@ -121,7 +121,7 @@ class ClassMapGenerator
                         }
                     }
 
-                    $classes[] = ltrim($namespace.$class, '\\');
+                    $classes[] = ltrim($namespace . $class, '\\');
                     break;
                 default:
                     break;

@@ -85,11 +85,17 @@ var AssignmentList = {
 				clearable: false
 			});
 			// 相互同步负责人
-			$("#am_charge").on("uschange", function(evt, data){
-				$("#am_bar_charge").userSelect("setValue", data.val, true);
+			$("#am_charge").on("uschange.userSelect", function(evt, data){
+				var added = data.added,
+					removed = data.removed;
+				removed && $("#am_bar_charge").userSelect("setValue", removed, false);
+				added && $("#am_bar_charge").userSelect("setValue", added, true);
 			});
-			$("#am_bar_charge").on("uschange", function(evt, data){
-				$("#am_charge").userSelect("setValue", data.val, true);
+			$("#am_bar_charge").on("uschange.userSelect", function(evt, data){
+				var added = data.added,
+					removed = data.removed;
+				removed && $("#am_charge").userSelect("setValue", removed, false);
+				added && $("#am_charge").userSelect("setValue", added, true);
 			});
 
 			// 同步负责人至简洁视图

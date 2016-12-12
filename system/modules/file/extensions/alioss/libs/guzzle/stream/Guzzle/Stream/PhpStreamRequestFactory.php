@@ -47,8 +47,8 @@ class PhpStreamRequestFactory implements StreamRequestFactoryInterface
 
         // Dispatch the before send event
         $request->dispatch('request.before_send', array(
-            'request'         => $request,
-            'context'         => $this->context,
+            'request' => $request,
+            'context' => $this->context,
             'context_options' => $this->contextOptions
         ));
 
@@ -67,10 +67,10 @@ class PhpStreamRequestFactory implements StreamRequestFactoryInterface
     /**
      * Set an option on the context and the internal options array
      *
-     * @param string $wrapper   Stream wrapper name of http
-     * @param string $name      Context name
-     * @param mixed  $value     Context value
-     * @param bool   $overwrite Set to true to overwrite an existing value
+     * @param string $wrapper Stream wrapper name of http
+     * @param string $name Context name
+     * @param mixed $value Context value
+     * @param bool $overwrite Set to true to overwrite an existing value
      */
     protected function setContextValue($wrapper, $name, $value, $overwrite = false)
     {
@@ -170,9 +170,9 @@ class PhpStreamRequestFactory implements StreamRequestFactoryInterface
         }
 
         if (count($request->getPostFields())) {
-            $this->setContextValue('http', 'content', (string) $request->getPostFields(), true);
+            $this->setContextValue('http', 'content', (string)$request->getPostFields(), true);
         } elseif ($request->getBody()) {
-            $this->setContextValue('http', 'content', (string) $request->getBody(), true);
+            $this->setContextValue('http', 'content', (string)$request->getBody(), true);
         }
 
         // Always ensure a content-length header is sent
@@ -208,7 +208,7 @@ class PhpStreamRequestFactory implements StreamRequestFactoryInterface
         $url = $this->url;
         $context = $this->context;
         $fp = $this->createResource(function () use ($context, $url, &$http_response_header) {
-            return fopen((string) $url, 'r', false, $context);
+            return fopen((string)$url, 'r', false, $context);
         });
 
         // Determine the class to instantiate

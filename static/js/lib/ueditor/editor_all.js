@@ -8035,7 +8035,7 @@ UE.Editor.defaultOptions = function(editor){
         autoClearEmptyNode: true,
         fullscreen: false,
         readonly: false,
-        zIndex: 999,
+        zIndex: 3000,
         imagePopup: true,
         enterTag: 'p',
         customDomain: false,
@@ -9949,7 +9949,7 @@ UE.plugins['defaultfilter'] = function () {
     var me = this;
     me.setOpt({
         'allowDivTransToP':false,
-        'disabledTableInTable':true
+        'disabledTableInTable':false
     });
     //默认的过滤处理
     //进入编辑器的内容处理

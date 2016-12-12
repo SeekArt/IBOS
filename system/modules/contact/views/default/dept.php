@@ -1,9 +1,7 @@
 <?php
 
 use application\core\utils\Cloud;
-use application\core\utils\Convert;
 use application\core\utils\Env;
-use application\modules\department\model\Department;
 ?>
 <!-- private css -->
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/contactList.css?<?php echo VERHASH; ?>">
@@ -107,7 +105,7 @@ use application\modules\department\model\Department;
     <span class="xcm pc-name"><%= user['text'] %></span>
     </td>
     <td width="133">
-    <span class="fss"><%= user['position'] %></span>
+    <span class="fss"><%= Ibos.data.getText(user['posid']) %></span>
     </td>
     <td width="130">
     <span class="fss"><%= user['telephone'] ? user['telephone'] : '' %></span>
@@ -151,7 +149,7 @@ use application\modules\department\model\Department;
     <span class="xcm pc-name"><%= user['text'] %></span>
     </td>
     <td width="123">
-    <span class="fss"><%= user['position'] %></span>
+    <span class="fss"><%= Ibos.data.getText(user['posid']) %></span>
     </td>
     <td width="120">
     <span class="fss"><%= user['telephone'] ? user['telephone'] : '' %></span>

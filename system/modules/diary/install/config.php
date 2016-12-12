@@ -1,6 +1,6 @@
 <?php
 
-defined( 'IN_MODULE_ACTION' ) or die( 'Access Denied' );
+defined('IN_MODULE_ACTION') or die('Access Denied');
 return array(
     'param' => array(
         'name' => '日志',
@@ -11,8 +11,8 @@ return array(
         'pushMovement' => 1,
         'indexShow' => array(
             'widget' => array(
-				'diary/diary'
-			),
+                'diary/diary'
+            ),
             'link' => 'diary/default/index'
         )
     ),
@@ -36,10 +36,10 @@ return array(
             'name' => '日志管理',
             'group' => '工作日志',
             'controllerMap' => array(
-                'default' => array( 'index', 'add', 'edit', 'del', 'show' ),
-                'share' => array( 'index', 'show' ),
-                'attention' => array( 'index', 'edit', 'show' ),
-                'comment' => array( 'getcommentlist', 'addcomment', 'delcomment' )
+                'default' => array('index', 'add', 'edit', 'del', 'show'),
+                'share' => array('index', 'show'),
+                'attention' => array('index', 'edit', 'show'),
+                'comment' => array('getcommentlist', 'addcomment', 'delcomment')
             )
         ),
         'review' => array(
@@ -47,7 +47,7 @@ return array(
             'name' => '评阅下属',
             'group' => '工作日志',
             'controllerMap' => array(
-                'review' => array( 'index', 'personal', 'add', 'edit', 'del', 'show' )
+                'review' => array('index', 'personal', 'add', 'edit', 'del', 'show')
             )
         ),
         'statistics' => array(
@@ -55,7 +55,7 @@ return array(
             'name' => '查看统计',
             'group' => '工作日志',
             'controllerMap' => array(
-                'stats' => array( 'personal', 'review' )
+                'stats' => array('personal', 'review')
             )
         )
     ),

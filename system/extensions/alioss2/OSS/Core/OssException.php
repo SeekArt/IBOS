@@ -18,7 +18,7 @@ class OssException extends \Exception
     {
         if (is_array($details)) {
             $message = $details['code'] . ': ' . $details['message']
-                     . ' RequestId: ' . $details['request-id'];
+                . ' RequestId: ' . $details['request-id'];
             parent::__construct($message);
             $this->details = $details;
         } else {

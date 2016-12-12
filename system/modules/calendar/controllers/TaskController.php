@@ -27,7 +27,8 @@ use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use CHtml;
 
-Class TaskController extends BaseController {
+Class TaskController extends BaseController
+{
 
     /**
      * 查询条件
@@ -40,7 +41,8 @@ Class TaskController extends BaseController {
     /**
      * 个人任务列表
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         // 权限判断
         if (!$this->checkIsMe()) {
             $this->error(Ibos::lang('No permission to view task'), $this->createUrl('task/index'));
@@ -67,7 +69,8 @@ Class TaskController extends BaseController {
     /**
      * 下属任务列表
      */
-    public function actionSubTask() {
+    public function actionSubTask()
+    {
         // 权限判断
         if (!UserUtil::checkIsSub(Ibos::app()->user->uid, $this->uid)) {
             $this->error(Ibos::lang('No permission to view task'), $this->createUrl('task/index'));
@@ -96,7 +99,8 @@ Class TaskController extends BaseController {
     /**
      * 添加任务
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
@@ -132,7 +136,8 @@ Class TaskController extends BaseController {
     /**
      * 处理任务
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
@@ -191,7 +196,8 @@ Class TaskController extends BaseController {
     /**
      * 删除任务
      */
-    public function actionDel() {
+    public function actionDel()
+    {
         if (Env::submitCheck('formhash')) {
             // 权限判断
             if (!$this->checkTaskPermission()) {
@@ -206,9 +212,10 @@ Class TaskController extends BaseController {
 
     /**
      * 如果删除带有完成时间的任务，则把相应的日程也删除
-     * @param string $taskid  任务ID
+     * @param string $taskid 任务ID
      */
-    private function delCalendarByTaskid($taskid) {
+    private function delCalendarByTaskid($taskid)
+    {
         $schedule = Calendars::model()->fetchByAttributes(array('taskid' => $taskid));
         if (!empty($schedule)) {
             Calendars::model()->remove($schedule['calendarid']);
@@ -217,11 +224,12 @@ Class TaskController extends BaseController {
 
     /**
      * 任务拖拽排序
-     * @param string $currentId  拖拽的任务ID
-     * @param string $targetId  参照任务ID
+     * @param string $currentId 拖拽的任务ID
+     * @param string $targetId 参照任务ID
      * @param string $type down为拖到参照任务的下面，up为拖到参照任务的上面
      */
-    private function sortTask($currentId, $targetId, $type) {
+    private function sortTask($currentId, $targetId, $type)
+    {
         $current = Tasks::model()->fetchByPk($currentId);  //拖拽要改变顺序的任务
         $target = Tasks::model()->fetchByPk($targetId);  //参照的任务
         $cSort = $current['sort'];
@@ -230,7 +238,7 @@ Class TaskController extends BaseController {
             //要重新排序的任务
             Tasks::model()->updateCounters(array('sort' => -1), "sort BETWEEN ($cSort+1) AND $tSort");
             Tasks::model()->modify($currentId, array('sort' => $tSort));
-        } elseif ($type == 'down' && ( $tSort - $cSort) != 1) {
+        } elseif ($type == 'down' && ($tSort - $cSort) != 1) {
             Tasks::model()->updateCounters(array('sort' => +1), "sort BETWEEN $tSort AND ($cSort-1)");
             Tasks::model()->modify($currentId, array('sort' => $tSort));
         } else {
@@ -242,7 +250,8 @@ Class TaskController extends BaseController {
      * 搜索
      * @return void
      */
-    private function search() {
+    private function search()
+    {
         $uid = $this->uid;
         $complete = $this->complete;
         $type = Env::getRequest('type');

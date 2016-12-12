@@ -10,7 +10,7 @@
 /**
  * 岗位模块-分类组件 继承自ICCategory
  * @package application.modules.position.components
- * @version $Id: PositionCategory.php 4606 2014-11-25 10:04:42Z gzhzh $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -22,23 +22,25 @@ use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\modules\position\utils\Position as PositionUtil;
 
-class PositionCategory extends Category {
+class PositionCategory extends Category
+{
 
     /**
      * 岗位分类 - 获取zTree ajax树数据
      * @param array $data
      * @return array
      */
-    public function getAjaxCategory( $data = array() ) {
-        foreach ( $data as &$row ) {
+    public function getAjaxCategory($data = array())
+    {
+        foreach ($data as &$row) {
             $row['id'] = $row['catid'];
             $row['pId'] = $row['pid'];
             $row['name'] = $row['name'];
             $row['target'] = '_self';
-            $row['url'] = Ibos::app()->urlManager->createUrl( "dashboard/position/index" ) . '&catid=' . $row['catid'];
+            $row['url'] = Ibos::app()->urlManager->createUrl("dashboard/position/index") . '&catid=' . $row['catid'];
             $row['open'] = true;
         }
-        return array_merge( (array) $data, array() );
+        return array_merge((array)$data, array());
     }
 
     /**
@@ -46,31 +48,35 @@ class PositionCategory extends Category {
      * @param string $condition 兼容
      * @return array
      */
-    public function getData( $condition = '' ) {
+    public function getData($condition = '')
+    {
         return PositionUtil::loadPositionCategory();
     }
 
     /**
      * 更新组织架构缓存
      */
-    public function afterAdd() {
-		CacheUtil::update( 'PositionCategory' );
+    public function afterAdd()
+    {
+        CacheUtil::update('PositionCategory');
         Org::update();
     }
 
     /**
      * 更新组织架构缓存
      */
-    public function afterEdit() {
-		CacheUtil::update( 'PositionCategory' );
+    public function afterEdit()
+    {
+        CacheUtil::update('PositionCategory');
         Org::update();
     }
 
     /**
      * 更新组织架构缓存
      */
-    public function afterDelete() {
-		CacheUtil::update( 'PositionCategory' );
+    public function afterDelete()
+    {
+        CacheUtil::update('PositionCategory');
         Org::update();
     }
 

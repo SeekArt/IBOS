@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -124,19 +124,14 @@ class ezcMailParser
      *         if $options contains a property with a value not allowed
      * @param ezcMailParserOptions|array(string=>mixed) $options
      */
-    public function __construct( $options = array() )
+    public function __construct($options = array())
     {
-        if ( $options instanceof ezcMailParserOptions )
-        {
+        if ($options instanceof ezcMailParserOptions) {
             $this->options = $options;
-        }
-        else if ( is_array( $options ) )
-        {
-            $this->options = new ezcMailParserOptions( $options );
-        }
-        else
-        {
-            throw new ezcBaseValueException( "options", $options, "ezcMailParserOptions|array" );
+        } else if (is_array($options)) {
+            $this->options = new ezcMailParserOptions($options);
+        } else {
+            throw new ezcBaseValueException("options", $options, "ezcMailParserOptions|array");
         }
     }
 
@@ -151,20 +146,18 @@ class ezcMailParser
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
-                if ( !( $value instanceof ezcMailParserOptions ) )
-                {
-                    throw new ezcBaseValueException( 'options', $value, 'instanceof ezcMailParserOptions' );
+                if (!($value instanceof ezcMailParserOptions)) {
+                    throw new ezcBaseValueException('options', $value, 'instanceof ezcMailParserOptions');
                 }
                 $this->options = $value;
                 break;
 
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -176,15 +169,14 @@ class ezcMailParser
      * @param string $name
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return $this->options;
-            
+
             default:
-                throw new ezcBasePropertyNotFoundException( $name );
+                throw new ezcBasePropertyNotFoundException($name);
         }
     }
 
@@ -195,10 +187,9 @@ class ezcMailParser
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'options':
                 return true;
 
@@ -231,31 +222,27 @@ class ezcMailParser
      * @param string $class Deprecated. Use $mailClass in ezcMailParserOptions class instead.
      * @return array(ezcMail)
      */
-    public function parseMail( ezcMailParserSet $set, $class = null )
+    public function parseMail(ezcMailParserSet $set, $class = null)
     {
         $mail = array();
-        if ( !$set->hasData() )
-        {
+        if (!$set->hasData()) {
             return $mail;
         }
-        if ( $class === null )
-        {
+        if ($class === null) {
             $class = $this->options->mailClass;
         }
-        do
-        {
+        do {
             $this->partParser = new ezcMailRfc822Parser();
             $data = "";
             $size = 0;
-            while ( ( $data = $set->getNextLine() ) !== null )
-            {
-                $this->partParser->parseBody( $data );
-                $size += strlen( $data );
+            while (($data = $set->getNextLine()) !== null) {
+                $this->partParser->parseBody($data);
+                $size += strlen($data);
             }
-            $part = $this->partParser->finish( $class );
+            $part = $this->partParser->finish($class);
             $part->size = $size;
             $mail[] = $part;
-        } while ( $set->nextMail() );
+        } while ($set->nextMail());
         return $mail;
     }
 
@@ -268,7 +255,7 @@ class ezcMailParser
      * @todo throw if the directory is not writeable.
      * @param string $dir
      */
-    public static function setTmpDir( $dir )
+    public static function setTmpDir($dir)
     {
         self::$tmpDir = $dir;
     }
@@ -285,15 +272,14 @@ class ezcMailParser
      */
     public static function getTmpDir()
     {
-        if ( self::$tmpDir === null )
-        {
+        if (self::$tmpDir === null) {
             self::$tmpDir = sys_get_temp_dir();
-            if ( substr( self::$tmpDir, strlen( self::$tmpDir ) - 1 ) !== DIRECTORY_SEPARATOR )
-            {
+            if (substr(self::$tmpDir, strlen(self::$tmpDir) - 1) !== DIRECTORY_SEPARATOR) {
                 self::$tmpDir = self::$tmpDir . DIRECTORY_SEPARATOR;
             }
         }
         return self::$tmpDir;
     }
 }
+
 ?>

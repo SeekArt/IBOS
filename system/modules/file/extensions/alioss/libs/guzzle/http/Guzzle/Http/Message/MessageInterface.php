@@ -18,7 +18,7 @@ interface MessageInterface
      * Add a header to an existing collection of headers.
      *
      * @param string $header Header name to add
-     * @param string $value  Value of the header
+     * @param string $value Value of the header
      *
      * @return self
      */
@@ -71,7 +71,7 @@ interface MessageInterface
      * Set an HTTP header and overwrite any existing value for the header
      *
      * @param string $header Name of the header to set.
-     * @param mixed  $value  Value to set.
+     * @param mixed $value Value to set.
      *
      * @return self
      */

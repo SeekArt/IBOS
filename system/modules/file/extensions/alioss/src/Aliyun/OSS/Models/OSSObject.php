@@ -29,7 +29,8 @@ use Aliyun\OSS\Utilities\OSSHeaders;
  *
  * @package Aliyun\OSS\Models
  */
-class OSSObject {
+class OSSObject
+{
     /**
      * @var string Object的key
      */
@@ -59,7 +60,8 @@ class OSSObject {
      * @internal
      * @param string $bucketName
      */
-    public function setBucketName($bucketName) {
+    public function setBucketName($bucketName)
+    {
         $this->bucketName = $bucketName;
     }
 
@@ -68,7 +70,8 @@ class OSSObject {
      *
      * @return string
      */
-    public function getBucketName() {
+    public function getBucketName()
+    {
         return $this->bucketName;
     }
 
@@ -76,7 +79,8 @@ class OSSObject {
      * @internal
      * @param string $key
      */
-    public function setKey($key) {
+    public function setKey($key)
+    {
         $this->key = $key;
     }
 
@@ -85,7 +89,8 @@ class OSSObject {
      *
      * @return string
      */
-    public function getKey() {
+    public function getKey()
+    {
         return $this->key;
     }
 
@@ -94,7 +99,8 @@ class OSSObject {
      *
      * @return array
      */
-    public function getMetadata() {
+    public function getMetadata()
+    {
         return $this->metadata;
     }
 
@@ -103,7 +109,8 @@ class OSSObject {
      * @param $key string
      * @param $value string
      */
-    public function addMetadata($key, $value) {
+    public function addMetadata($key, $value)
+    {
         $this->metadata[$key] = $value;
     }
 
@@ -111,7 +118,8 @@ class OSSObject {
      * @internal
      * @param resource $objectContent
      */
-    public function setObjectContent($objectContent) {
+    public function setObjectContent($objectContent)
+    {
         $this->objectContent = $objectContent;
     }
 
@@ -120,7 +128,8 @@ class OSSObject {
      *
      * @return resource
      */
-    public function getObjectContent() {
+    public function getObjectContent()
+    {
         return $this->objectContent;
     }
 
@@ -129,7 +138,8 @@ class OSSObject {
      *
      * @return array
      */
-    public function getUserMetadata() {
+    public function getUserMetadata()
+    {
         return $this->userMetadata;
     }
 
@@ -138,7 +148,8 @@ class OSSObject {
      * @param $key string
      * @param $value string
      */
-    public function addUserMetadata($key, $value) {
+    public function addUserMetadata($key, $value)
+    {
         $this->userMetadata[$key] = $value;
     }
 
@@ -146,7 +157,8 @@ class OSSObject {
      * 获取最后修改的日期
      * @return \DateTime
      */
-    public function getLastModified() {
+    public function getLastModified()
+    {
         if (!isset($this->metadata[OSSHeaders::LAST_MODIFIED])) {
             return null;
         }
@@ -157,26 +169,28 @@ class OSSObject {
      * 获取返回内容的长度
      * @return int
      */
-    public function getContentLength() {
+    public function getContentLength()
+    {
         $contentLengthKey = OSSHeaders::CONTENT_LENGTH;
         if (isset($this->metadata[$contentLengthKey])) {
-            return (int) $this->metadata[$contentLengthKey];
+            return (int)$this->metadata[$contentLengthKey];
         }
 
         // mitmproxy's bug, return 'content-length' when head a request.
         $contentLengthKey = strtolower($contentLengthKey);
         if (isset($this->metadata[$contentLengthKey])) {
-            return (int) $this->metadata[$contentLengthKey];
+            return (int)$this->metadata[$contentLengthKey];
         }
 
-        return (int) 0;
+        return (int)0;
     }
 
     /**
      * 获取返回的Content-Type
      * @return string
      */
-    public function getContentType() {
+    public function getContentType()
+    {
         if (!isset($this->metadata[OSSHeaders::CONTENT_TYPE])) {
             return null;
         }
@@ -187,7 +201,8 @@ class OSSObject {
      * 获取返回的Content-Encoding
      * @return string
      */
-    public function getContentEncoding() {
+    public function getContentEncoding()
+    {
         if (!isset($this->metadata[OSSHeaders::CONTENT_ENCODING])) {
             return null;
         }
@@ -198,7 +213,8 @@ class OSSObject {
      * 获取返回的Content-Language
      * @return string
      */
-    public function  getContentLanguage() {
+    public function getContentLanguage()
+    {
         if (!isset($this->metadata[OSSHeaders::CONTENT_LANGUAGE])) {
             return null;
         }
@@ -209,7 +225,8 @@ class OSSObject {
      * 获取Expires
      * @return \DateTime|null
      */
-    public function getExpires() {
+    public function getExpires()
+    {
         if (!isset($this->metadata[OSSHeaders::EXPIRES])) {
             return null;
         }
@@ -220,7 +237,8 @@ class OSSObject {
      * 获取返回的Cache-Control
      * @return string
      */
-    public function getCacheControl() {
+    public function getCacheControl()
+    {
         if (!isset($this->metadata[OSSHeaders::CACHE_CONTROL])) {
             return null;
         }
@@ -231,7 +249,8 @@ class OSSObject {
      * 获取返回的Content-Disposition
      * @return string
      */
-    public function getContentDisposition() {
+    public function getContentDisposition()
+    {
         if (!isset($this->metadata[OSSHeaders::CONTENT_DISPOSITION])) {
             return null;
         }
@@ -242,7 +261,8 @@ class OSSObject {
      * 获取ETag
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         if (!isset($this->metadata[OSSHeaders::ETAG])) {
             return null;
         }
@@ -253,14 +273,16 @@ class OSSObject {
      * 以string输出Object的内容
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return stream_get_contents($this->objectContent, -1, 0);
     }
 
     /**
      * 对象析构时会自动关闭流
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         if (is_resource($this->objectContent)) {
             fclose($this->objectContent);
         }

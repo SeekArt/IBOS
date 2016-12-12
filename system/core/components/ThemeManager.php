@@ -11,6 +11,7 @@ namespace application\core\components;
 
 use CThemeManager;
 
-class ThemeManager extends CThemeManager {
-    
+class ThemeManager extends CThemeManager
+{
+
 }

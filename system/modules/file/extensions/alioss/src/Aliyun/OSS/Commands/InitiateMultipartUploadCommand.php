@@ -19,9 +19,11 @@ use Aliyun\OSS\Utilities\OSSRequestBuilder;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class InitiateMultipartUploadCommand extends OSSCommand {
+class InitiateMultipartUploadCommand extends OSSCommand
+{
 
-    protected function checkOptions($options) {
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -34,13 +36,15 @@ class InitiateMultipartUploadCommand extends OSSCommand {
         return $options;
     }
 
-    protected function commandOptions() {
+    protected function commandOptions()
+    {
         return array(
             OSSOptions::CONTENT_TYPE => OSSUtils::DEFAULT_CONTENT_TYPE,
         );
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
 
         return OSSRequestBuilder::factory()
             ->addObjectMetadataHeaders($options)

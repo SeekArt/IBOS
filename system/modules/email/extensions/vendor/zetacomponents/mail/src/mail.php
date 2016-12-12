@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -67,28 +67,28 @@
  * - Errors-To - If the mail can not be delivered the error message will be
  *               sent to this address.
  *
- * @property ezcMailAddress        $from Contains the from address as an
+ * @property ezcMailAddress $from Contains the from address as an
  *                                       ezcMailAddress object.
  * @property array(ezcMailAddress) $to   Contains an array of ezcMailAddress objects.
  * @property array(ezcMailAddress) $cc   Contains an array of ezcMailAddress objects.
  * @property array(ezcMailAddress) $bcc  Contains an array of ezcMailAddress objects.
- * @property string                $subject
+ * @property string $subject
  *                                       Contains the subject of the e-mail.
  *                                       Use setSubject if you require a
  *                                       special encoding.
- * @property string                $subjectCharset
+ * @property string $subjectCharset
  *                                       The encoding of the subject.
- * @property ezcMailPart           $body The body part of the message.
+ * @property ezcMailPart $body The body part of the message.
  *
- * @property-read string           $messageId
+ * @property-read string $messageId
  *                                       The message ID of the message. Treat
  *                                       as read-only unless you're 100% sure
  *                                       what you're doing. Also accessible through
  *                                       the deprecated property messageID.
- * @property-read integer          $timestamp
+ * @property-read integer $timestamp
  *                                       The date/time of when the message was
  *                                       sent as Unix Timestamp.
- * @property ezcMailAddress        $returnPath Contains the Return-Path address as an
+ * @property ezcMailAddress $returnPath Contains the Return-Path address as an
  *                                             ezcMailAddress object.
  * @property ezcMailOptions $options
  *           Options for generating mail. See {@link ezcMailOptions}.
@@ -136,7 +136,7 @@ class ezcMail extends ezcMailPart
     /**
      * Constructs an empty ezcMail object.
      */
-    public function __construct( ezcMailOptions $options = null )
+    public function __construct(ezcMailOptions $options = null)
     {
         parent::__construct();
 
@@ -150,8 +150,7 @@ class ezcMail extends ezcMailPart
         $this->properties['messageId'] = null;
         $this->properties['returnPath'] = null;
 
-        if ( $options === null )
-        {
+        if ($options === null) {
             $options = new ezcMailOptions();
         }
 
@@ -169,15 +168,13 @@ class ezcMail extends ezcMailPart
      * @param mixed $value
      * @ignore
      */
-    public function __set( $name, $value )
+    public function __set($name, $value)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'from':
             case 'returnPath':
-                if ( $value !== null && !$value instanceof ezcMailAddress )
-                {
-                    throw new ezcBaseValueException( $name, $value, 'ezcMailAddress or null' );
+                if ($value !== null && !$value instanceof ezcMailAddress) {
+                    throw new ezcBaseValueException($name, $value, 'ezcMailAddress or null');
                 }
                 $this->properties[$name] = $value;
                 break;
@@ -185,22 +182,19 @@ class ezcMail extends ezcMailPart
             case 'to':
             case 'cc':
             case 'bcc':
-                if ( !is_array( $value ) )
-                {
-                    throw new ezcBaseValueException( $name, $value, 'array( ezcMailAddress )' );
+                if (!is_array($value)) {
+                    throw new ezcBaseValueException($name, $value, 'array( ezcMailAddress )');
                 }
-                foreach ( $value as $key => $obj )
-                {
-                    if ( !$obj instanceof ezcMailAddress )
-                    {
-                        throw new ezcBaseValueException( "{$name}[{$key}]", $obj, 'ezcMailAddress' );
+                foreach ($value as $key => $obj) {
+                    if (!$obj instanceof ezcMailAddress) {
+                        throw new ezcBaseValueException("{$name}[{$key}]", $obj, 'ezcMailAddress');
                     }
                 }
                 $this->properties[$name] = $value;
                 break;
 
             case 'subject':
-                $this->properties['subject'] = trim( $value );
+                $this->properties['subject'] = trim($value);
                 break;
 
             case 'subjectCharset':
@@ -208,9 +202,8 @@ class ezcMail extends ezcMailPart
                 break;
 
             case 'body':
-                if ( !$value instanceof ezcMailPart )
-                {
-                    throw new ezcBaseValueException( $name, $value, 'ezcMailPart' );
+                if (!$value instanceof ezcMailPart) {
+                    throw new ezcBaseValueException($name, $value, 'ezcMailPart');
                 }
                 $this->properties['body'] = $value;
                 break;
@@ -221,11 +214,11 @@ class ezcMail extends ezcMailPart
                 break;
 
             case 'timestamp':
-                throw new ezcBasePropertyPermissionException( $name, ezcBasePropertyPermissionException::READ );
+                throw new ezcBasePropertyPermissionException($name, ezcBasePropertyPermissionException::READ);
                 break;
 
             default:
-                parent::__set( $name, $value );
+                parent::__set($name, $value);
                 break;
         }
     }
@@ -239,14 +232,13 @@ class ezcMail extends ezcMailPart
      * @return mixed
      * @ignore
      */
-    public function __get( $name )
+    public function __get($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'to':
             case 'cc':
             case 'bcc':
-                return (array) $this->properties[$name];
+                return (array)$this->properties[$name];
 
             case 'from':
             case 'subject':
@@ -260,10 +252,10 @@ class ezcMail extends ezcMailPart
                 return $this->properties['messageId'];
 
             case 'timestamp':
-                return strtotime( $this->getHeader( "Date" ) );
+                return strtotime($this->getHeader("Date"));
 
             default:
-                return parent::__get( $name );
+                return parent::__get($name);
         }
     }
 
@@ -274,10 +266,9 @@ class ezcMail extends ezcMailPart
      * @return bool
      * @ignore
      */
-    public function __isset( $name )
+    public function __isset($name)
     {
-        switch ( $name )
-        {
+        switch ($name) {
             case 'to':
             case 'cc':
             case 'bcc':
@@ -287,16 +278,16 @@ class ezcMail extends ezcMailPart
             case 'body':
             case 'messageId':
             case 'returnPath':
-                return isset( $this->properties[$name] );
+                return isset($this->properties[$name]);
 
             case 'messageID': // deprecated version
-                return isset( $this->properties['messageId'] );
+                return isset($this->properties['messageId']);
 
             case 'timestamp':
-                return $this->getHeader( "Date" ) != null;
+                return $this->getHeader("Date") != null;
 
             default:
-                return parent::__isset( $name );
+                return parent::__isset($name);
         }
     }
 
@@ -305,7 +296,7 @@ class ezcMail extends ezcMailPart
      *
      * @param ezcMailAddress $address
      */
-    public function addTo( ezcMailAddress $address )
+    public function addTo(ezcMailAddress $address)
     {
         $this->properties['to'][] = $address;
     }
@@ -315,7 +306,7 @@ class ezcMail extends ezcMailPart
      *
      * @param ezcMailAddress $address
      */
-    public function addCc( ezcMailAddress $address )
+    public function addCc(ezcMailAddress $address)
     {
         $this->properties['cc'][] = $address;
     }
@@ -325,7 +316,7 @@ class ezcMail extends ezcMailPart
      *
      * @param ezcMailAddress $address
      */
-    public function addBcc( ezcMailAddress $address )
+    public function addBcc(ezcMailAddress $address)
     {
         $this->properties['bcc'][] = $address;
     }
@@ -339,8 +330,7 @@ class ezcMail extends ezcMailPart
      */
     public function generateBody()
     {
-        if ( is_subclass_of( $this->body, 'ezcMailPart' ) )
-        {
+        if (is_subclass_of($this->body, 'ezcMailPart')) {
             return $this->body->generateBody();
         }
         return '';
@@ -358,42 +348,34 @@ class ezcMail extends ezcMailPart
     public function generateHeaders()
     {
         // set our headers first.
-        if ( $this->from !== null )
-        {
-            $this->setHeader( "From", ezcMailTools::composeEmailAddress( $this->from ) );
+        if ($this->from !== null) {
+            $this->setHeader("From", ezcMailTools::composeEmailAddress($this->from));
         }
 
-        if ( $this->to !== null )
-        {
-            $this->setHeader( "To", ezcMailTools::composeEmailAddresses( $this->to ) );
+        if ($this->to !== null) {
+            $this->setHeader("To", ezcMailTools::composeEmailAddresses($this->to));
         }
-        if ( count( $this->cc ) )
-        {
-            $this->setHeader( "Cc", ezcMailTools::composeEmailAddresses( $this->cc ) );
+        if (count($this->cc)) {
+            $this->setHeader("Cc", ezcMailTools::composeEmailAddresses($this->cc));
         }
-        if ( count( $this->bcc ) && $this->options->stripBccHeader === false )
-        {
-            $this->setHeader( "Bcc", ezcMailTools::composeEmailAddresses( $this->bcc ) );
+        if (count($this->bcc) && $this->options->stripBccHeader === false) {
+            $this->setHeader("Bcc", ezcMailTools::composeEmailAddresses($this->bcc));
         }
 
-        $this->setHeader( 'Subject', $this->subject, $this->subjectCharset );
+        $this->setHeader('Subject', $this->subject, $this->subjectCharset);
 
-        $this->setHeader( 'MIME-Version', '1.0' );
-        $this->setHeader( 'User-Agent', 'Apache Zeta Components' );
-        $this->setHeader( 'Date', date( 'r' ) );
+        $this->setHeader('MIME-Version', '1.0');
+        $this->setHeader('User-Agent', 'Apache Zeta Components');
+        $this->setHeader('Date', date('r'));
         $idhost = $this->from != null && $this->from->email != '' ? $this->from->email : 'localhost';
-        if ( is_null( $this->messageId ) )
-        {
-            $this->setHeader( 'Message-Id', '<' . ezcMailTools::generateMessageId( $idhost ) . '>' );
-        }
-        else
-        {
-            $this->setHeader( 'Message-Id', $this->messageID );
+        if (is_null($this->messageId)) {
+            $this->setHeader('Message-Id', '<' . ezcMailTools::generateMessageId($idhost) . '>');
+        } else {
+            $this->setHeader('Message-Id', $this->messageID);
         }
 
         // if we have a body part, include the headers of the body
-        if ( is_subclass_of( $this->body, "ezcMailPart" ) )
-        {
+        if (is_subclass_of($this->body, "ezcMailPart")) {
             return parent::generateHeaders() . $this->body->generateHeaders();
         }
         return parent::generateHeaders();
@@ -433,13 +415,13 @@ class ezcMail extends ezcMailPart
      * @param bool $includeDigests
      * @return array(ezcMailPart)
      */
-    public function fetchParts( $filter = null, $includeDigests = false )
+    public function fetchParts($filter = null, $includeDigests = false)
     {
-        $context = new ezcMailPartWalkContext( array( __CLASS__, 'collectPart' ) );
+        $context = new ezcMailPartWalkContext(array(__CLASS__, 'collectPart'));
         $context->includeDigests = $includeDigests;
         $context->filter = $filter;
         $context->level = 0;
-        $this->walkParts( $context, $this );
+        $this->walkParts($context, $this);
         return $context->getParts();
     }
 
@@ -473,17 +455,15 @@ class ezcMail extends ezcMailPart
      * @param ezcMailPartWalkContext $context
      * @param ezcMailPart $mail
      */
-    public function walkParts( ezcMailPartWalkContext $context, ezcMailPart $mail )
+    public function walkParts(ezcMailPartWalkContext $context, ezcMailPart $mail)
     {
-        $className = get_class( $mail );
+        $className = get_class($mail);
         $context->level++;
-        switch ( $className )
-        {
+        switch ($className) {
             case 'ezcMail':
             case 'ezcMailComposer':
-                if ( $mail->body !== null )
-                {
-                    $this->walkParts( $context, $mail->body );
+                if ($mail->body !== null) {
+                    $this->walkParts($context, $mail->body);
                 }
                 break;
 
@@ -491,56 +471,46 @@ class ezcMail extends ezcMailPart
             case 'ezcMailMultipartAlternative':
             case 'ezcMailMultipartDigest':
             case 'ezcMailMultipartReport':
-                foreach ( $mail->getParts() as $part )
-                {
-                    $this->walkParts( $context, $part );
+                foreach ($mail->getParts() as $part) {
+                    $this->walkParts($context, $part);
                 }
                 break;
 
             case 'ezcMailMultipartRelated':
-                $this->walkParts( $context, $mail->getMainPart() );
-                foreach ( $mail->getRelatedParts() as $part )
-                {
-                    $this->walkParts( $context, $part );
+                $this->walkParts($context, $mail->getMainPart());
+                foreach ($mail->getRelatedParts() as $part) {
+                    $this->walkParts($context, $part);
                 }
                 break;
 
             case 'ezcMailRfc822Digest':
-                if ( $context->includeDigests )
-                {
-                    $this->walkParts( $context, $mail->mail );
-                }
-                elseif ( empty( $context->filter ) || in_array( $className, $context->filter ) )
-                {
-                    call_user_func( $context->callbackFunction, $context, $mail );
+                if ($context->includeDigests) {
+                    $this->walkParts($context, $mail->mail);
+                } elseif (empty($context->filter) || in_array($className, $context->filter)) {
+                    call_user_func($context->callbackFunction, $context, $mail);
                 }
                 break;
 
             case 'ezcMailText':
             case 'ezcMailFile':
             case 'ezcMailDeliveryStatus':
-                if ( empty( $context->filter ) || in_array( $className, $context->filter ) )
-                {
-                    call_user_func( $context->callbackFunction, $context, $mail );
+                if (empty($context->filter) || in_array($className, $context->filter)) {
+                    call_user_func($context->callbackFunction, $context, $mail);
                 }
                 break;
 
             default:
                 // for cases where a custom mail class has been specified with $parser->options->mailClass
-                if ( in_array( 'ezcMail', class_parents( $className ) ) )
-                {
-                    if ( $mail->body !== null )
-                    {
-                        $this->walkParts( $context, $mail->body );
+                if (in_array('ezcMail', class_parents($className))) {
+                    if ($mail->body !== null) {
+                        $this->walkParts($context, $mail->body);
                     }
                 }
 
                 // for cases where a custom file class has been specified with $parser->options->fileClass
-                if ( in_array( 'ezcMailFile', class_parents( $className ) ) )
-                {
-                    if ( empty( $context->filter ) || in_array( $className, $context->filter ) )
-                    {
-                        call_user_func( $context->callbackFunction, $context, $mail );
+                if (in_array('ezcMailFile', class_parents($className))) {
+                    if (empty($context->filter) || in_array($className, $context->filter)) {
+                        call_user_func($context->callbackFunction, $context, $mail);
                     }
                 }
         }
@@ -555,9 +525,10 @@ class ezcMail extends ezcMailPart
      * @param ezcMailPartWalkContext $context
      * @param ezcMailPart $mail
      */
-    protected static function collectPart( ezcMailPartWalkContext $context, ezcMailPart $mail )
+    protected static function collectPart(ezcMailPartWalkContext $context, ezcMailPart $mail)
     {
-        $context->appendPart( $mail );
+        $context->appendPart($mail);
     }
 }
+
 ?>

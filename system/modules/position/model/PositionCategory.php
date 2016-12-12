@@ -9,9 +9,9 @@
  */
 /**
  * 岗位分类表的数据层操作
- * 
+ *
  * @package application.modules.position.model
- * @version $Id: PositionCategory.php 4064 2014-09-03 09:13:16Z zhangrong $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,30 +20,36 @@ namespace application\modules\position\model;
 use application\core\model\Model;
 use application\core\utils\Cache as CacheUtil;
 
-class PositionCategory extends Model {
+class PositionCategory extends Model
+{
 
-    public function init() {
+    public function init()
+    {
         $this->cacheLife = 0;
         parent::init();
     }
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{position_category}}';
     }
 
-    public function afterDelete() {
-        CacheUtil::update( 'PositionCategory' );
-        CacheUtil::load( 'PositionCategory' );
+    public function afterDelete()
+    {
+        CacheUtil::update('PositionCategory');
+        CacheUtil::load('PositionCategory');
         parent::afterDelete();
     }
 
-    public function afterSave() {
-        CacheUtil::update( 'PositionCategory' );
-        CacheUtil::load( 'PositionCategory' );
+    public function afterSave()
+    {
+        CacheUtil::update('PositionCategory');
+        CacheUtil::load('PositionCategory');
         parent::afterSave();
     }
 

@@ -114,10 +114,10 @@ class Response extends AbstractMessage implements \Serializable
 
         $response = new static($data['code'], $data['headers'], $data['body']);
         $response->setProtocol($data['protocol'], $data['version'])
-                 ->setStatus($data['code'], $data['reason_phrase']);
+            ->setStatus($data['code'], $data['reason_phrase']);
 
         // Set the appropriate Content-Length if the one set is inaccurate (e.g. setting to X)
-        $contentLength = (string) $response->getHeader('Content-Length');
+        $contentLength = (string)$response->getHeader('Content-Length');
         $actualLength = strlen($data['body']);
         if (strlen($data['body']) > 0 && $contentLength != $actualLength) {
             $response->setHeader('Content-Length', $actualLength);
@@ -129,9 +129,9 @@ class Response extends AbstractMessage implements \Serializable
     /**
      * Construct the response
      *
-     * @param string                              $statusCode The response status code (e.g. 200, 404, etc)
-     * @param ToArrayInterface|array              $headers    The response headers
-     * @param string|resource|EntityBodyInterface $body       The body of the response
+     * @param string $statusCode The response status code (e.g. 200, 404, etc)
+     * @param ToArrayInterface|array $headers The response headers
+     * @param string|resource|EntityBodyInterface $body The body of the response
      *
      * @throws BadResponseException if an invalid response code is given
      */
@@ -163,8 +163,8 @@ class Response extends AbstractMessage implements \Serializable
     public function serialize()
     {
         return json_encode(array(
-            'status'  => $this->statusCode,
-            'body'    => (string) $this->body,
+            'status' => $this->statusCode,
+            'body' => (string)$this->body,
             'headers' => $this->headers->toArray()
         ));
     }
@@ -184,7 +184,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getBody($asString = false)
     {
-        return $asString ? (string) $this->body : $this->body;
+        return $asString ? (string)$this->body : $this->body;
     }
 
     /**
@@ -205,7 +205,7 @@ class Response extends AbstractMessage implements \Serializable
      * Set the protocol and protocol version of the response
      *
      * @param string $protocol Response protocol
-     * @param string $version  Protocol version
+     * @param string $version Protocol version
      *
      * @return self
      */
@@ -274,7 +274,7 @@ class Response extends AbstractMessage implements \Serializable
     /**
      * Set the response status
      *
-     * @param int    $statusCode   Response status code to set
+     * @param int $statusCode Response status code to set
      * @param string $reasonPhrase Response reason phrase
      *
      * @return self
@@ -282,7 +282,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function setStatus($statusCode, $reasonPhrase = '')
     {
-        $this->statusCode = (int) $statusCode;
+        $this->statusCode = (int)$statusCode;
 
         if (!$reasonPhrase && isset(self::$statusTexts[$this->statusCode])) {
             $this->reasonPhrase = self::$statusTexts[$this->statusCode];
@@ -315,7 +315,7 @@ class Response extends AbstractMessage implements \Serializable
         // Only include the body in the message if the size is < 2MB
         $size = $this->body->getSize();
         if ($size < 2097152) {
-            $message .= (string) $this->body;
+            $message .= (string)$this->body;
         }
 
         return $message;
@@ -355,7 +355,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getAcceptRanges()
     {
-        return (string) $this->getHeader('Accept-Ranges');
+        return (string)$this->getHeader('Accept-Ranges');
     }
 
     /**
@@ -371,7 +371,7 @@ class Response extends AbstractMessage implements \Serializable
             $age = time() - strtotime($this->getDate());
         }
 
-        return $age === null ? null : (int) (string) $age;
+        return $age === null ? null : (int)(string)$age;
     }
 
     /**
@@ -381,7 +381,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getAge()
     {
-        return (string) $this->getHeader('Age');
+        return (string)$this->getHeader('Age');
     }
 
     /**
@@ -391,7 +391,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getAllow()
     {
-        return (string) $this->getHeader('Allow');
+        return (string)$this->getHeader('Allow');
     }
 
     /**
@@ -422,7 +422,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getCacheControl()
     {
-        return (string) $this->getHeader('Cache-Control');
+        return (string)$this->getHeader('Cache-Control');
     }
 
     /**
@@ -432,7 +432,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getConnection()
     {
-        return (string) $this->getHeader('Connection');
+        return (string)$this->getHeader('Connection');
     }
 
     /**
@@ -442,7 +442,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentEncoding()
     {
-        return (string) $this->getHeader('Content-Encoding');
+        return (string)$this->getHeader('Content-Encoding');
     }
 
     /**
@@ -452,7 +452,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentLanguage()
     {
-        return (string) $this->getHeader('Content-Language');
+        return (string)$this->getHeader('Content-Language');
     }
 
     /**
@@ -462,7 +462,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentLength()
     {
-        return (int) (string) $this->getHeader('Content-Length');
+        return (int)(string)$this->getHeader('Content-Length');
     }
 
     /**
@@ -472,7 +472,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentLocation()
     {
-        return (string) $this->getHeader('Content-Location');
+        return (string)$this->getHeader('Content-Location');
     }
 
     /**
@@ -482,7 +482,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentDisposition()
     {
-        return (string) $this->getHeader('Content-Disposition');
+        return (string)$this->getHeader('Content-Disposition');
     }
 
     /**
@@ -492,7 +492,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentMd5()
     {
-        return (string) $this->getHeader('Content-MD5');
+        return (string)$this->getHeader('Content-MD5');
     }
 
     /**
@@ -502,7 +502,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentRange()
     {
-        return (string) $this->getHeader('Content-Range');
+        return (string)$this->getHeader('Content-Range');
     }
 
     /**
@@ -512,7 +512,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getContentType()
     {
-        return (string) $this->getHeader('Content-Type');
+        return (string)$this->getHeader('Content-Type');
     }
 
     /**
@@ -536,7 +536,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getDate()
     {
-        return (string) $this->getHeader('Date');
+        return (string)$this->getHeader('Date');
     }
 
     /**
@@ -546,7 +546,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getEtag()
     {
-        return (string) $this->getHeader('ETag');
+        return (string)$this->getHeader('ETag');
     }
 
     /**
@@ -556,7 +556,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getExpires()
     {
-        return (string) $this->getHeader('Expires');
+        return (string)$this->getHeader('Expires');
     }
 
     /**
@@ -567,7 +567,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getLastModified()
     {
-        return (string) $this->getHeader('Last-Modified');
+        return (string)$this->getHeader('Last-Modified');
     }
 
     /**
@@ -577,7 +577,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getLocation()
     {
-        return (string) $this->getHeader('Location');
+        return (string)$this->getHeader('Location');
     }
 
     /**
@@ -588,7 +588,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getPragma()
     {
-        return (string) $this->getHeader('Pragma');
+        return (string)$this->getHeader('Pragma');
     }
 
     /**
@@ -598,7 +598,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getProxyAuthenticate()
     {
-        return (string) $this->getHeader('Proxy-Authenticate');
+        return (string)$this->getHeader('Proxy-Authenticate');
     }
 
     /**
@@ -609,7 +609,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getRetryAfter()
     {
-        return (string) $this->getHeader('Retry-After');
+        return (string)$this->getHeader('Retry-After');
     }
 
     /**
@@ -619,7 +619,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getServer()
     {
-        return (string)  $this->getHeader('Server');
+        return (string)$this->getHeader('Server');
     }
 
     /**
@@ -629,7 +629,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getSetCookie()
     {
-        return (string) $this->getHeader('Set-Cookie');
+        return (string)$this->getHeader('Set-Cookie');
     }
 
     /**
@@ -640,7 +640,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getTrailer()
     {
-        return (string) $this->getHeader('Trailer');
+        return (string)$this->getHeader('Trailer');
     }
 
     /**
@@ -650,7 +650,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getTransferEncoding()
     {
-        return (string) $this->getHeader('Transfer-Encoding');
+        return (string)$this->getHeader('Transfer-Encoding');
     }
 
     /**
@@ -661,7 +661,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getVary()
     {
-        return (string) $this->getHeader('Vary');
+        return (string)$this->getHeader('Vary');
     }
 
     /**
@@ -671,7 +671,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getVia()
     {
-        return (string) $this->getHeader('Via');
+        return (string)$this->getHeader('Via');
     }
 
     /**
@@ -681,7 +681,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getWarning()
     {
-        return (string) $this->getHeader('Warning');
+        return (string)$this->getHeader('Warning');
     }
 
     /**
@@ -691,7 +691,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getWwwAuthenticate()
     {
-        return (string) $this->getHeader('WWW-Authenticate');
+        return (string)$this->getHeader('WWW-Authenticate');
     }
 
     /**
@@ -762,13 +762,14 @@ class Response extends AbstractMessage implements \Serializable
     public function canCache()
     {
         // Check if the response is cacheable based on the code
-        if (!in_array((int) $this->getStatusCode(), self::$cacheResponseCodes)) {
+        if (!in_array((int)$this->getStatusCode(), self::$cacheResponseCodes)) {
             return false;
         }
 
         // Make sure a valid body was returned and can be cached
         if ((!$this->getBody()->isReadable() || !$this->getBody()->isSeekable())
-            && ($this->getContentLength() > 0 || $this->getTransferEncoding() == 'chunked')) {
+            && ($this->getContentLength() > 0 || $this->getTransferEncoding() == 'chunked')
+        ) {
             return false;
         }
 
@@ -856,7 +857,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function json()
     {
-        $data = json_decode((string) $this->body, true);
+        $data = json_decode((string)$this->body, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new RuntimeException('Unable to parse response body into JSON: ' . json_last_error());
         }
@@ -874,7 +875,7 @@ class Response extends AbstractMessage implements \Serializable
     {
         try {
             // Allow XML to be retrieved even if there is no response body
-            $xml = new \SimpleXMLElement((string) $this->body ?: '<root />');
+            $xml = new \SimpleXMLElement((string)$this->body ?: '<root />');
         } catch (\Exception $e) {
             throw new RuntimeException('Unable to parse response body into XML: ' . $e->getMessage());
         }
@@ -889,7 +890,7 @@ class Response extends AbstractMessage implements \Serializable
      */
     public function getRedirectCount()
     {
-        return (int) $this->params->get(RedirectPlugin::REDIRECT_COUNT);
+        return (int)$this->params->get(RedirectPlugin::REDIRECT_COUNT);
     }
 
     /**

@@ -10,7 +10,7 @@
 /**
  *
  * @package application.core.components
- * @version $Id: AttachCore.php 7509 2016-07-08 08:35:42Z tanghang $
+ * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
  */
 
@@ -20,30 +20,32 @@ use application\core\utils\File;
 use application\core\utils\Ibos;
 use CException;
 
-abstract class AttachCore {
+abstract class AttachCore
+{
 
-	/**
-	 * 上传对象
-	 * @var object
-	 */
-	protected $upload;
-	protected $isUpload = true;
+    /**
+     * 上传对象
+     * @var object
+     */
+    protected $upload;
+    protected $isUpload = true;
 
-	/**
-	 * 初始化上传域
-	 * @param string $fileArea
-	 */
-	public function __construct( $fileArea = 'Filedata', $module = 'temp' ) {
-		$file = $_FILES[$fileArea];
-		if ( $file['error'] ) {
-			throw new CException( Ibos::lang( 'File is too big', 'error' ) );
-		} else {
-			$upload = File::getUpload( $file, $module );
-			$this->upload = $upload;
-		}
-	}
+    /**
+     * 初始化上传域
+     * @param string $fileArea
+     */
+    public function __construct($fileArea = 'Filedata', $module = 'temp')
+    {
+        $file = $_FILES[$fileArea];
+        if ($file['error']) {
+            throw new CException(Ibos::lang('File is too big', 'error'));
+        } else {
+            $upload = File::getUpload($file, $module);
+            $this->upload = $upload;
+        }
+    }
 
-	abstract public function upload();
+    abstract public function upload();
 
-	abstract public function updateAttach( $attachids, $related = 0 );
+    abstract public function updateAttach($attachids, $related = 0);
 }

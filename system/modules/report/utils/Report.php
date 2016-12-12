@@ -18,13 +18,15 @@ namespace application\modules\report\utils;
 
 use application\core\utils\Ibos;
 
-class Report {
+class Report
+{
 
     /**
      * 获取各个季节开始和结束日期
      * @return array
      */
-    public static function getSeason() {
+    public static function getSeason()
+    {
         $season = array(//季度时间
             'season1' => '-01-01',
             'season2' => '-03-31',
@@ -44,7 +46,8 @@ class Report {
      * @param integer $intervals 自定义的间隔天数
      * @return array 返回一维数组
      */
-    public static function getDateByIntervalType($intervalType, $intervals) {
+    public static function getDateByIntervalType($intervalType, $intervals)
+    {
         $season = self::getSeason();
         $year = date("Y");
         $month = date("m");
@@ -167,7 +170,8 @@ class Report {
      * @param string $condition2 条件2
      * @return string
      */
-    public static function joinCondition($condition1, $condition2) {
+    public static function joinCondition($condition1, $condition2)
+    {
         if (empty($condition1)) {
             return $condition2;
         } else {
@@ -180,32 +184,34 @@ class Report {
      * @param array $search 查询数组
      * @return string
      */
-    public static function joinSearchCondition($search) {
+    public static function joinSearchCondition($search)
+    {
         $searchCondition = '';
         //添加对keyword的转义，防止SQL错误
         $keyword = \CHtml::encode($search['keyword']);
         $starttime = $search['starttime'];
         $endtime = $search['endtime'];
         if (!empty($keyword)) {
-            $searchCondition.=" ( subject LIKE '%$keyword%' OR content LIKE '%$keyword%' ) AND ";
+            $searchCondition .= " ( subject LIKE '%$keyword%' OR content LIKE '%$keyword%' ) AND ";
         }
         if (!empty($starttime)) {
             $starttime = strtotime($starttime);
-            $searchCondition.=" begindate>=$starttime AND ";
+            $searchCondition .= " begindate>=$starttime AND ";
         }
         if (!empty($endtime)) {
             $endtime = strtotime($endtime);
-            $searchCondition.=" enddate<=$endtime AND ";
+            $searchCondition .= " enddate<=$endtime AND ";
         }
         $condition = !empty($searchCondition) ? substr($searchCondition, 0, -4) : '';
         return $condition;
     }
 
     /**
-     * 
+     *
      * @return type
      */
-    public static function getSetting() {
+    public static function getSetting()
+    {
         return Ibos::app()->setting->get('setting/reportconfig');
     }
 
@@ -214,7 +220,8 @@ class Report {
      * @param integer $stamp 图章id
      * @return int 返回分数
      */
-    public static function getScoreByStamp($stamp) {
+    public static function getScoreByStamp($stamp)
+    {
         $stamps = self::getEnableStamp();
         if (isset($stamps[$stamp])) {
             return $stamps[$stamp];
@@ -227,7 +234,8 @@ class Report {
      * 取得后台设置的所有图章
      * @return array
      */
-    public static function getEnableStamp() {
+    public static function getEnableStamp()
+    {
         $config = self::getSetting();
         //取得所有图章
         $stampDetails = $config['stampdetails'];

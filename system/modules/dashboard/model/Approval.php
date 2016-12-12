@@ -27,30 +27,35 @@ use application\modules\car\model\Car;
 use application\modules\assets\model\AssetsAudit;
 
 
-class Approval extends Model {
+class Approval extends Model
+{
 
-    public static function model($className = __CLASS__) {
+    public static function model($className = __CLASS__)
+    {
         return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{approval}}';
     }
 
     /**
      * 审批流程步骤审核人关联关系
      */
-    public function relations() {
+    public function relations()
+    {
         return array(
-            'step'  => array( self::HAS_MANY, 'application\modules\dashboard\model\ApprovalStep', '', 'on' => 't.id = step.aid' ),
+            'step' => array(self::HAS_MANY, 'application\modules\dashboard\model\ApprovalStep', '', 'on' => 't.id = step.aid'),
         );
     }
 
     /**
      * 获得所有审批流程，按添加倒序
      */
-    public function fetchAllApproval() {
-        return $this->with( 'step' )->findAll( array( 'order' => 'addtime DESC' ) );
+    public function fetchAllApproval()
+    {
+        return $this->with('step')->findAll(array('order' => 'addtime DESC'));
     }
 
     /**
@@ -59,20 +64,20 @@ class Approval extends Model {
      * @param integer $step 步骤（1,2,3,4,5）
      * @return array
      */
-    public function fetchNextApprovalUids($id, $step) {
+    public function fetchNextApprovalUids($id, $step)
+    {
         $result = array('step' => '', 'uids' => array());
         if (empty($id)) {
             return $result;
         }
-        $approval = $this->with( 'step' )->findByPk( $id );
+        $approval = $this->with('step')->findByPk($id);
         $nextStep = $step + 1;
-        if ( $nextStep > $approval['level'] ) {
+        if ($nextStep > $approval['level']) {
             $result['step'] = 'publish';
-        }
-        else {
-            foreach ( $approval->getRelated( 'step' ) as $step ) {
-                if ( $step->step == $nextStep ) {
-                    $result = array( 'step' => $nextStep, 'uids' => explode( ',', $step->uids ) );
+        } else {
+            foreach ($approval->getRelated('step') as $step) {
+                if ($step->step == $nextStep) {
+                    $result = array('step' => $nextStep, 'uids' => explode(',', $step->uids));
                 }
             }
         }
@@ -104,20 +109,21 @@ class Approval extends Model {
      * @param mix $ids 审批流程id数组或逗号隔开的字符串
      * @return array
      */
-    public function fetchApprovalUidsByIds($ids) {
-        $ids = is_array( $ids ) ? implode( ',', $ids ) : $ids;
+    public function fetchApprovalUidsByIds($ids)
+    {
+        $ids = is_array($ids) ? implode(',', $ids) : $ids;
         $uidStr = '';
-        $approvals = $this->with( 'step' )->findAll( sprintf( "FIND_IN_SET(`t`.`id`, '%s')", $ids ) );
-        foreach ( $approvals as $approval ) {
-            foreach ( $approval->getRelated( 'step' ) as $step ) {
-                if ( !empty( $step ) ) {
+        $approvals = $this->with('step')->findAll(sprintf("FIND_IN_SET(`t`.`id`, '%s')", $ids));
+        foreach ($approvals as $approval) {
+            foreach ($approval->getRelated('step') as $step) {
+                if (!empty($step)) {
                     $uidStr .= $step->uids . ',';
                 }
             }
         }
-        $uidArrTemp = explode( ',', $uidStr );
-        $uidArr = array_unique( $uidArrTemp );
-        return array_values( array_filter( $uidArr ) );
+        $uidArrTemp = explode(',', $uidStr);
+        $uidArr = array_unique($uidArrTemp);
+        return array_values(array_filter($uidArr));
     }
 
     /**
@@ -125,35 +131,34 @@ class Approval extends Model {
      * @param integer $id 审批流程id
      * @return boolean
      */
-    public function deleteApproval($id) {
-        if ( empty( $id ) ) {
+    public function deleteApproval($id)
+    {
+        if (empty($id)) {
             return FALSE;
-        }
-        else {
+        } else {
             // 启用事务进行数据更新，删除对应审批流程同时更新 新闻、公文、车辆、会议、资产 五个模块相关表的 aid 字段
             $flag = TRUE;
             $transaction = $this->dbConnection->beginTransaction();
             try {
-                $this->deleteByPk( $id );
+                $this->deleteByPk($id);
                 $connection = $this->dbConnection;
-                if ( Module::getIsEnabled( 'article' ) ) {
-                    $connection->createCommand()->update( ArticleCategory::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                if (Module::getIsEnabled('article')) {
+                    $connection->createCommand()->update(ArticleCategory::model()->tableName(), array('aid' => 0), "aid = " . $id);
                 }
-                if ( Module::getIsEnabled( 'officialdoc' ) ) {
-                    $connection->createCommand()->update( OfficialdocCategory::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                if (Module::getIsEnabled('officialdoc')) {
+                    $connection->createCommand()->update(OfficialdocCategory::model()->tableName(), array('aid' => 0), "aid = " . $id);
                 }
-                if ( Module::getIsEnabled( 'car' ) ) {
-                    $connection->createCommand()->update( Car::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                if (Module::getIsEnabled('car')) {
+                    $connection->createCommand()->update(Car::model()->tableName(), array('aid' => 0), "aid = " . $id);
                 }
-                if ( Module::getIsEnabled( 'meeting' ) ) {
-                    $connection->createCommand()->update( MeetingRoom::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                if (Module::getIsEnabled('meeting')) {
+                    $connection->createCommand()->update(MeetingRoom::model()->tableName(), array('aid' => 0), "aid = " . $id);
                 }
-                if ( Module::getIsEnabled( 'assets' ) ) {
-                    $connection->createCommand()->update( AssetsAudit::model()->tableName(), array( 'aid' => 0 ), "aid = " . $id );
+                if (Module::getIsEnabled('assets')) {
+                    $connection->createCommand()->update(AssetsAudit::model()->tableName(), array('aid' => 0), "aid = " . $id);
                 }
                 $transaction->commit();
-            }
-            catch ( Exception $e ) {
+            } catch (Exception $e) {
                 $transaction->rollBack();
                 $flag = FALSE;
             }
@@ -166,18 +171,18 @@ class Approval extends Model {
      * @param mixed $ids 审核流程ids
      * @return array
      */
-    public function fetchAllUidsByIds($ids) {
+    public function fetchAllUidsByIds($ids)
+    {
         $result = array();
-        $ids = is_array( $ids ) ? implode( ',', $ids ) : $ids;
-        $approvals = $this->with( 'step' )->findAll( sprintf( "FIND_IN_SET(`t`.`id`, '%s')", $ids ) );
-        foreach ( $approvals as $approval ) {
-            foreach ( $approval->getRelated( 'step' ) as $step ) {
-                if ( !empty( $step ) ) {
-                    if ( !isset( $result[$approval['id']] ) ) {
-                        $result[$approval['id']] = explode( ',', $step->uids );
-                    }
-                    else {
-                        $result[$approval['id']] = array_unique( array_merge( $result[$approval['id']], explode( ',', $step->uids ) ) );
+        $ids = is_array($ids) ? implode(',', $ids) : $ids;
+        $approvals = $this->with('step')->findAll(sprintf("FIND_IN_SET(`t`.`id`, '%s')", $ids));
+        foreach ($approvals as $approval) {
+            foreach ($approval->getRelated('step') as $step) {
+                if (!empty($step)) {
+                    if (!isset($result[$approval['id']])) {
+                        $result[$approval['id']] = explode(',', $step->uids);
+                    } else {
+                        $result[$approval['id']] = array_unique(array_merge($result[$approval['id']], explode(',', $step->uids)));
                     }
                 }
             }
@@ -215,12 +220,13 @@ class Approval extends Model {
      * @param string $id
      * @return string
      */
-    public function getFreeUidById($id) {
+    public function getFreeUidById($id)
+    {
         $uidString = Ibos::app()->db->createCommand()
-                ->select('free')
-                ->from($this->tableName())
-                ->where(" `id` = '{$id}' ")
-                ->queryScalar();
+            ->select('free')
+            ->from($this->tableName())
+            ->where(" `id` = '{$id}' ")
+            ->queryScalar();
         return $uidString;
     }
 

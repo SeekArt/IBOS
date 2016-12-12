@@ -11,7 +11,8 @@ namespace Aliyun\OSS\Models;
  * 表示拥有者
  * @package Aliyun\OSS\Models
  */
-class Owner {
+class Owner
+{
 
     /**
      * @var string
@@ -27,7 +28,8 @@ class Owner {
      * @internal
      * @param $displayName
      */
-    public function setDisplayName($displayName) {
+    public function setDisplayName($displayName)
+    {
         $this->displayName = $displayName;
     }
 
@@ -36,7 +38,8 @@ class Owner {
      *
      * @return string
      */
-    public function getDisplayName() {
+    public function getDisplayName()
+    {
         return $this->displayName;
     }
 
@@ -44,7 +47,8 @@ class Owner {
      * @internal
      * @param $id
      */
-    public function setId($id) {
+    public function setId($id)
+    {
         $this->id = $id;
     }
 
@@ -53,7 +57,8 @@ class Owner {
      *
      * @return string
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 }

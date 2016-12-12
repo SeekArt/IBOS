@@ -39,5 +39,5 @@ CREATE TABLE `{{position_related}}` (
 
 INSERT INTO `{{position_category}}` (`catid`, `pid`, `name`, `sort`) VALUES ('1', '0', '默认分类', '1');
 INSERT INTO `{{position}}` (`catid`, `posname`, `sort`, `goal`, `minrequirement`, `number`) VALUES ('1', '总经理', '1', '', '', '0');
-INSERT INTO `{{position}}` (`catid`, `posname`, `sort`, `goal`, `minrequirement`, `number`) VALUES ('1', '部门经理', '2', '', '', '1');
-INSERT INTO `{{position}}` (`catid`, `posname`, `sort`, `goal`, `minrequirement`, `number`) VALUES ('1', '职员', '3', '', '', '2');
+INSERT INTO `{{position}}` (`catid`, `posname`, `sort`, `goal`, `minrequirement`, `number`) VALUES ('1', '部门经理', '2', '', '', '0');
+INSERT INTO `{{position}}` (`catid`, `posname`, `sort`, `goal`, `minrequirement`, `number`) VALUES ('1', '职员', '3', '', '', '0');

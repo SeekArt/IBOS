@@ -2,32 +2,33 @@
 
 use application\core\utils\Ibos;
 use application\core\utils\Module;
+
 ?>
 <!-- private css -->
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/wbpublic.css?<?php echo VERHASH; ?>" />
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/wbstyle.css?<?php echo VERHASH; ?>" />
-<link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>" />
-<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/atwho/jquery.atwho.css?<?php echo VERHASH; ?>" />
-<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/lightbox/css/lightbox.css?<?php echo VERHASH; ?>" />
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/wbpublic.css?<?php echo VERHASH; ?>"/>
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/wbstyle.css?<?php echo VERHASH; ?>"/>
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>"/>
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/atwho/jquery.atwho.css?<?php echo VERHASH; ?>"/>
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/lightbox/css/lightbox.css?<?php echo VERHASH; ?>"/>
 
 <div class="mtw">
     <div class="mtw-portal-nav-wrap">
         <ul class="portal-nav clearfix">
             <li>
-                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'main/default/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl('main/default/index'); ?>">
                     <i class="o-portal-office"></i>
                     办公门户
                 </a>
             </li>
             <li class="active">
-                <a href="<?php echo Ibos::app()->urlManager->createUrl( 'weibo/home/index' ); ?>">
+                <a href="<?php echo Ibos::app()->urlManager->createUrl('weibo/home/index'); ?>">
                     <i class="o-portal-personal"></i>
                     个人门户
                 </a>
             </li>
-            <?php if ( Module::getIsEnabled( 'app' ) ): ?>
-                <li >
-                    <a href="<?php echo Ibos::app()->urlManager->createUrl( 'app/default/index' ); ?>">
+            <?php if (Module::getIsEnabled('app')): ?>
+                <li>
+                    <a href="<?php echo Ibos::app()->urlManager->createUrl('app/default/index'); ?>">
                         <i class="o-portal-app"></i>
                         常用工具
                     </a>
@@ -35,7 +36,7 @@ use application\core\utils\Module;
             <?php endif; ?>
         </ul>
     </div>
-    <span class="pull-right"><?php echo Ibos::app()->setting->get( 'lunar' ); ?></span>
+    <span class="pull-right"><?php echo Ibos::app()->setting->get('lunar'); ?></span>
 </div>
 
 <div class="wrap">
@@ -48,14 +49,17 @@ use application\core\utils\Module;
                     <div class="wb-pub-tit"></div>
                     <!--tab切换内容盒子-->
                     <div class="wb-pub-box">
-                        <textarea rows="4" class="wb-pub-textarea" data-node-type="textarea" id="wb_pub_textarea"></textarea>
+                        <textarea rows="4" class="wb-pub-textarea" data-node-type="textarea"
+                                  id="wb_pub_textarea"></textarea>
                     </div>
                 </div>
                 <!--发布按钮和功能按钮-->
                 <div class="wb-pub-other clearfix">
                     <div class="wb-pub-menu">
                         <a href="javascript:;" class="o-wb-face" data-action="face" id="wb_face"></a>
-                        <a href="javascript:;" class="o-wb-pic" data-action="pic"></a>
+                        <?php if ($enableImage): ?>
+                            <a href="javascript:;" class="o-wb-pic" data-action="pic"></a>
+                        <?php endif; ?>
                         <!-- <a href="javascript:;" class="o-wb-topic" data-action="topic"></a> -->
                         <!-- <a href="javascript:;" class="o-wb-medal" data-action="medal"></a> -->
                     </div>
@@ -66,13 +70,22 @@ use application\core\utils\Module;
                                 <i class="wbi-arr-b"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="active"><a href="javascript:;" data-action="publishTo" data-param='{"type": 0, "text": "<?php echo $lang['Feed view scope company']; ?>"}'><?php echo $lang['Feed view scope company']; ?></a></li>
-                                <li><a href="javascript:;" data-action="publishTo" data-param='{"type": 1, "text": "<?php echo $lang['Feed view scope self'] ?>"}'><?php echo $lang['Feed view scope self'] ?></a></li>
-                                <li><a href="javascript:;" data-action="publishTo" data-param='{"type": 2, "text": "<?php echo $lang['Feed view scope dept'] ?>"}'><?php echo $lang['Feed view scope dept'] ?></a></li>
-                                <li><a href="javascript:;" data-action="publishTo" data-param='{"type": 3, "text": "<?php echo $lang['Feed view scope specifiy']; ?>"}'><?php echo $lang['Feed view scope specifiy']; ?></a></li>
+                                <li class="active"><a href="javascript:;" data-action="publishTo"
+                                                      data-param='{"type": 0, "text": "<?php echo $lang['Feed view scope company']; ?>"}'><?php echo $lang['Feed view scope company']; ?></a>
+                                </li>
+                                <li><a href="javascript:;" data-action="publishTo"
+                                       data-param='{"type": 1, "text": "<?php echo $lang['Feed view scope self'] ?>"}'><?php echo $lang['Feed view scope self'] ?></a>
+                                </li>
+                                <li><a href="javascript:;" data-action="publishTo"
+                                       data-param='{"type": 2, "text": "<?php echo $lang['Feed view scope dept'] ?>"}'><?php echo $lang['Feed view scope dept'] ?></a>
+                                </li>
+                                <li><a href="javascript:;" data-action="publishTo"
+                                       data-param='{"type": 3, "text": "<?php echo $lang['Feed view scope specifiy']; ?>"}'><?php echo $lang['Feed view scope specifiy']; ?></a>
+                                </li>
                             </ul>
                         </span>
-                        <button class="btn mls" disabled="true" data-action="publish" data-node-type="publishBtn" data-loading-text="<?php echo $lang['Publish ing']; ?>"><?php echo $lang['Publish']; ?></button>
+                        <button class="btn mls" disabled="true" data-action="publish" data-node-type="publishBtn"
+                                data-loading-text="<?php echo $lang['Publish ing']; ?>"><?php echo $lang['Publish']; ?></button>
                     </div>
                 </div>
                 <!--上传图片-->
@@ -105,15 +118,16 @@ use application\core\utils\Module;
                 <!--顶部tab S-->
                 <div class="wb-per-hd clearfix mpanel">
                     <div class="search pull-right">
-                        <input type="text" name="feedkey" placeholder="搜索" nofocus id="mn_search" value="<?php echo $feedkey; ?>" />
+                        <input type="text" name="feedkey" placeholder="搜索" nofocus id="mn_search"
+                               value="<?php echo $feedkey; ?>"/>
                         <a href="javascript:;"></a>
                     </div>
                     <ul class="nav nav-skid">
-                        <li<?php if ( $type == 'all' ): ?> class="active"<?php endif; ?>>
-                            <a href="<?php echo $this->createUrl( 'home/index', array( 'type' => 'all' ) ) ?>"><?php echo $lang['All']; ?></a>
+                        <li<?php if ($type == 'all'): ?> class="active"<?php endif; ?>>
+                            <a href="<?php echo $this->createUrl('home/index', array('type' => 'all')) ?>"><?php echo $lang['All']; ?></a>
                         </li>
-                        <li<?php if ( $type == 'following' ): ?> class="active"<?php endif; ?>>
-                            <a href="<?php echo $this->createUrl( 'home/index', array( 'type' => 'following' ) ) ?>"><?php echo $lang['Follow']; ?></a>
+                        <li<?php if ($type == 'following'): ?> class="active"<?php endif; ?>>
+                            <a href="<?php echo $this->createUrl('home/index', array('type' => 'following')) ?>"><?php echo $lang['Follow']; ?></a>
                         </li>
                         <!--<li>
                             <a href="javascript:;" data-action="feedList" data-param='{ "type": "praise" }' data-node-type="navpraise">表扬</a>
@@ -121,20 +135,20 @@ use application\core\utils\Module;
                         <li>
                             <a href="javascript:;" data-action="feedList" data-param='{ "type": "fresh" }' data-node-type="navfresh">迎新汇</a>
                         </li>-->
-                        <?php if ( !empty( $movements ) ): ?>
-                            <li class="posr<?php if ( $type == 'movement' ): ?> active<?php endif; ?>">
+                        <?php if (!empty($movements)): ?>
+                            <li class="posr<?php if ($type == 'movement'): ?> active<?php endif; ?>">
                                 <a href="javascript:;" data-toggle="dropdown" data-toggle-role="select">
                                     <?php echo $lang['Module movements']; ?>
                                     <span class="wbi-arr-b"></span>
                                 </a>
                                 <ul class="dropdown-menu" data-node-type="feedExtraList">
-                                    <li <?php if ( $type == 'movement' && $feedtype == 'all' ): ?>class="active"<?php endif; ?>>
-                                        <a href="<?php echo $this->createUrl( 'home/index', array( 'type' => 'movement', 'feedtype' => 'all' ) ) ?>"><?php echo $lang['All movements']; ?></a>
+                                    <li <?php if ($type == 'movement' && $feedtype == 'all'): ?>class="active"<?php endif; ?>>
+                                        <a href="<?php echo $this->createUrl('home/index', array('type' => 'movement', 'feedtype' => 'all')) ?>"><?php echo $lang['All movements']; ?></a>
                                     </li>
-                                    <?php foreach ( $enableMovementModule as $key => $module ): ?>
-                                        <?php if ( isset( $movements[$module['module']] ) && $movements[$module['module']] == 1 ): ?>
-                                            <li <?php if ( $feedtype == $module['module'] ): ?>class="active"<?php endif; ?>>
-                                                <a href="<?php echo $this->createUrl( 'home/index', array( 'type' => 'movement', 'feedtype' => $module['module'] ) ) ?>"><?php echo $module['name']; ?></a>
+                                    <?php foreach ($enableMovementModule as $key => $module): ?>
+                                        <?php if (isset($movements[$module['module']]) && $movements[$module['module']] == 1): ?>
+                                            <li <?php if ($feedtype == $module['module']): ?>class="active"<?php endif; ?>>
+                                                <a href="<?php echo $this->createUrl('home/index', array('type' => 'movement', 'feedtype' => $module['module'])) ?>"><?php echo $module['name']; ?></a>
                                             </li>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
@@ -145,7 +159,7 @@ use application\core\utils\Module;
                 </div>
                 <!--顶部tab E-->
                 <div class="wb-info-box wbindex" id="wb_main" data-node-type="feedList">
-                    <?php if ( !empty( $html ) ): ?>
+                    <?php if (!empty($html)): ?>
                         <?php echo $html; ?>
                         <!-- 加载更多 -->
                         <div class="wb-ifsort-more" data-node-type="loadMoreFeed">
@@ -153,14 +167,16 @@ use application\core\utils\Module;
                             <div data-node-type="loadMoreFeedTip" style="display: none;">
                                 <!--分类标志-->
                                 <!-- 如果没有更多时，不显示这个节点 -->
-                                <a href="javascript:;" class="wb-see-new disabled" >
+                                <a href="javascript:;" class="wb-see-new disabled">
                                     <i class="loading-mini"></i>
                                     &nbsp;<?php echo $lang['Loading ing']; ?>
                                 </a>
                             </div>
                             <div data-node-type="page"><?php
-                                if ( isset( $_GET['page'] ) ):echo $pageData;
+
+                                if (isset($_GET['page'])):echo $pageData;
                                 endif;
+
                                 ?></div>
                         </div>
                     <?php else: ?>
@@ -168,8 +184,10 @@ use application\core\utils\Module;
                         <div class="wb-ifsort-more" data-node-type="loadMoreFeed">
                             <i class="o-wbtype-more"></i>
                             <div data-node-type="page"><?php
-                                if ( isset( $_GET['page'] ) ):echo $pageData;
+
+                                if (isset($_GET['page'])):echo $pageData;
                                 endif
+
                                 ?></div>
                         </div>
                     <?php endif; ?>
@@ -177,21 +195,23 @@ use application\core\utils\Module;
             </div>
         </div>
         <!-- 右侧栏 -->
-        <div class="wbc-right pull-right" >
+        <div class="wbc-right pull-right">
             <div id="wb_sidebar">
                 <!-- 个人信息栏 -->
                 <div class="mpanel">
                     <div class="wb-tpc-user bdbs">
                         <div class="wb-tpcu-banner rdt">
-                            <img src="<?php echo Ibos::app()->user->bg_small; ?>" alt="<?php echo Ibos::app()->user->realname; ?>" />
+                            <img src="<?php echo Ibos::app()->user->bg_small; ?>"
+                                 alt="<?php echo Ibos::app()->user->realname; ?>"/>
                         </div>
                         <div class="wb-tpcu-usi">
                             <div class="wb-tpcu-pic">
                                 <a href="<?php echo Ibos::app()->user->space_url; ?>" class="avatar-circle">
-                                    <img src="<?php echo Ibos::app()->user->avatar_big; ?>" alt="<?php echo Ibos::app()->user->realname; ?>" />
+                                    <img src="<?php echo Ibos::app()->user->avatar_big; ?>"
+                                         alt="<?php echo Ibos::app()->user->realname; ?>"/>
                                 </a>
                             </div>
-                            <div class="wb-tpcu-name"> <strong><?php echo Ibos::app()->user->realname; ?></strong>
+                            <div class="wb-tpcu-name"><strong><?php echo Ibos::app()->user->realname; ?></strong>
                                 &nbsp; <strong>·</strong>
                                 &nbsp;
                                 <small><?php echo Ibos::app()->user->posname; ?></small>
@@ -199,19 +219,22 @@ use application\core\utils\Module;
                             <div class="wb-tpcu-num ">
                                 <ul>
                                     <li>
-                                        <a href="<?php echo $this->createUrl( 'personal/following' ); ?>"> <strong class="xcbu"><?php echo isset( $userData['following_count'] ) ? $userData['following_count'] : 0; ?></strong>
+                                        <a href="<?php echo $this->createUrl('personal/following'); ?>"> <strong
+                                                class="xcbu"><?php echo isset($userData['following_count']) ? $userData['following_count'] : 0; ?></strong>
                                             <p><?php echo $lang['Follow']; ?></p>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo $this->createUrl( 'personal/follower' ); ?>">
-                                            <strong class="xcbu"><?php echo isset( $userData['follower_count'] ) ? $userData['follower_count'] : 0; ?></strong>
+                                        <a href="<?php echo $this->createUrl('personal/follower'); ?>">
+                                            <strong
+                                                class="xcbu"><?php echo isset($userData['follower_count']) ? $userData['follower_count'] : 0; ?></strong>
                                             <p><?php echo $lang['Fans']; ?></p>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="<?php echo $this->createUrl( 'personal/index' ); ?>">
-                                            <strong class="xcbu"><?php echo isset( $userData['feed_count'] ) ? $userData['feed_count'] : 0; ?></strong>
+                                        <a href="<?php echo $this->createUrl('personal/index'); ?>">
+                                            <strong
+                                                class="xcbu"><?php echo isset($userData['feed_count']) ? $userData['feed_count'] : 0; ?></strong>
                                             <p><?php echo $lang['Weibo']; ?></p>
                                         </a>
                                     </li>
@@ -232,7 +255,8 @@ use application\core\utils\Module;
                             </span>
                         </div>
                         <div class="progress mbs" id="exp_info">
-                            <div class="progress-bar " style="width: <?php echo Ibos::app()->user->upgrade_percent; ?>%;"></div>
+                            <div class="progress-bar "
+                                 style="width: <?php echo Ibos::app()->user->upgrade_percent; ?>%;"></div>
                         </div>
                     </div>
                 </div>
@@ -316,7 +340,7 @@ use application\core\utils\Module;
                         </ul>
                     </div>
                 </div>-->
-                <!-- @Todo: 话题, 后期完善 -->		
+                <!-- @Todo: 话题, 后期完善 -->
                 <!--<div class="mpanel wbb-mt20">
                     <div class="wbc-box rdt bdbs">
                         <i class="o-wbr-topic"></i>
@@ -398,7 +422,7 @@ use application\core\utils\Module;
                 </div>-->
 
                 <!-- 活跃成员 -->
-                <?php if ( !empty( $activeUser ) ): ?>
+                <?php if (!empty($activeUser)): ?>
                     <div class="mpanel wbb-mt20">
                         <div class="wbc-box rdt bdbs wbb-mt20">
                             <i class="o-wbr-user"></i>
@@ -407,17 +431,20 @@ use application\core\utils\Module;
                         <div class="wb-tpc-joinbd">
                             <table class="table table-striped table-hover table-condensed ">
                                 <tbody>
-                                    <?php foreach ( $activeUser as $k => $au ): ?>
-                                        <?php if ( $k == 0 ): ?>
+                                    <?php foreach ($activeUser as $k => $au): ?>
+                                        <?php if ($k == 0): ?>
                                             <tr>
                                                 <td>
-                                                    <a data-toggle="usercard" data-param="uid=<?php echo $au['uid']; ?>" href="<?php echo $au['user']['space_url']; ?>" class="wb-pub-opic">
-                                                        <img src="<?php echo $au['user']['avatar_middle']; ?>" alt="<?php echo $au['user']['realname']; ?>">
+                                                    <a data-toggle="usercard" data-param="uid=<?php echo $au['uid']; ?>"
+                                                       href="<?php echo $au['user']['space_url']; ?>" class="wb-pub-opic">
+                                                        <img src="<?php echo $au['user']['avatar_middle']; ?>"
+                                                             alt="<?php echo $au['user']['realname']; ?>">
                                                         <span class="top-flag">1</span>
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a target="_blank" href="<?php echo $au['user']['space_url']; ?>"><strong><?php echo $au['user']['realname']; ?></strong></a>
+                                                    <a target="_blank"
+                                                       href="<?php echo $au['user']['space_url']; ?>"><strong><?php echo $au['user']['realname']; ?></strong></a>
                                                     <p class="tcm"><?php echo $au['user']['posname']; ?></p>
                                                 </td>
                                                 <td class="xco xar xwb"><?php echo $au['value']; ?></td>
@@ -426,12 +453,16 @@ use application\core\utils\Module;
                                             <tr>
                                                 <td>
                                                     <em class="xcr"><?php echo $k + 1; ?></em>
-                                                    <a data-toggle="usercard" data-param="uid=<?php echo $au['uid']; ?>" href="<?php echo $au['user']['space_url']; ?>" class="avatar-circle avatar-circle-small">
-                                                        <img src="<?php echo $au['user']['avatar_small']; ?>" alt="<?php echo $au['user']['realname']; ?>">
+                                                    <a data-toggle="usercard" data-param="uid=<?php echo $au['uid']; ?>"
+                                                       href="<?php echo $au['user']['space_url']; ?>"
+                                                       class="avatar-circle avatar-circle-small">
+                                                        <img src="<?php echo $au['user']['avatar_small']; ?>"
+                                                             alt="<?php echo $au['user']['realname']; ?>">
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a target="_blank" href="<?php echo $au['user']['space_url']; ?>"><?php echo $au['user']['realname']; ?></a>
+                                                    <a target="_blank"
+                                                       href="<?php echo $au['user']['space_url']; ?>"><?php echo $au['user']['realname']; ?></a>
                                                 </td>
                                                 <td class="xar xwb"><?php echo $au['value']; ?></td>
                                             </tr>
@@ -461,17 +492,18 @@ use application\core\utils\Module;
     <div class="wb-upload-preview">
     <img src="<%= attachUrl %>" title="<%= attachName %>" alt="<%= attachName %>">
     <div class="wb-reupload-modal"></div>
-    <div class="wb-upload-pic"><i class="pic-holder active"></i> <p>重新上传</p></div>
-    <div class="wb-reupload-bar"> 
-    <div class="wb-reupload-bar-bg rdb"></div> 
-    <span>"<%= attachName %>"</span> 
-    <a href="javascript:;" data-action="removePic" class="cbtn o-trash"></a> 
+    <div class="wb-upload-pic"><i class="pic-holder active"></i>
+    <p>重新上传</p></div>
+    <div class="wb-reupload-bar">
+    <div class="wb-reupload-bar-bg rdb"></div>
+    <span>"<%= attachName %>"</span>
+    <a href="javascript:;" data-action="removePic" class="cbtn o-trash"></a>
     </div>
     </div>
 </script>
 <script>
     var params = {
-        wbnums: '<?php echo Ibos::app()->setting->get( 'setting/wbnums' ); ?>',
+        wbnums: '<?php echo Ibos::app()->setting->get('setting/wbnums'); ?>',
         firstId: '<?php echo $firstId; ?>',
         loadId: '<?php echo $lastId; ?>',
         maxId: '<?php echo $firstId; ?>',
@@ -481,7 +513,7 @@ use application\core\utils\Module;
         feedtype: '<?php echo $feedtype; ?>',
         feedkey: '<?php echo $feedkey; ?>',
         inHome: 1,
-        submitInterval: <?php echo intval( Ibos::app()->setting->get( 'setting/wbpostfrequency' ) ) * 1000; ?>
+        submitInterval: <?php echo intval(Ibos::app()->setting->get('setting/wbpostfrequency')) * 1000; ?>
     };
     Ibos.app.setPageParam(params);
 </script>

@@ -13,7 +13,8 @@ use Aliyun\OSS\Models\OSSOptions;
  * Upload Part的返回结果
  * @package Aliyun\OSS\Models
  */
-class UploadPartResult {
+class UploadPartResult
+{
 
     /**
      * @var integer
@@ -29,7 +30,8 @@ class UploadPartResult {
      * @internal
      * @param string $eTag
      */
-    public function setETag($eTag) {
+    public function setETag($eTag)
+    {
         $this->eTag = $eTag;
     }
 
@@ -38,7 +40,8 @@ class UploadPartResult {
      *
      * @return string
      */
-    public function getETag() {
+    public function getETag()
+    {
         return $this->eTag;
     }
 
@@ -47,7 +50,8 @@ class UploadPartResult {
      *
      * @param int $partNumber
      */
-    public function setPartNumber($partNumber) {
+    public function setPartNumber($partNumber)
+    {
         $this->partNumber = $partNumber;
     }
 
@@ -56,7 +60,8 @@ class UploadPartResult {
      *
      * @return int
      */
-    public function getPartNumber() {
+    public function getPartNumber()
+    {
         return $this->partNumber;
     }
 
@@ -65,7 +70,8 @@ class UploadPartResult {
      *
      * @return array
      */
-    public function getPartETag() {
+    public function getPartETag()
+    {
         return array(
             OSSOptions::PART_NUMBER => $this->partNumber,
             OSSOptions::ETAG => $this->eTag,

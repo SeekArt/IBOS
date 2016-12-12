@@ -2,11 +2,11 @@
  * organization.js
  * 组织架构模块通用JS
  * IBOS
- * @module		Global
+ * @module      Global
  * @submodule   Organization
- * @author		inaki
- * @version		$Id$
- * @modified	2013-07-02 
+ * @author      inaki
+ * @version     $Id$
+ * @modified    2013-07-02 
  */
 
 // PrivilegeLevel
@@ -254,21 +254,23 @@ Organization.memberList = (function() {
 
 
         memberBox = $box.data("selectBox");
-        $(memberBox).on("slbchange", function(evt, data) {
-            if (data.checked) {
-                member.add(data.id, function(id) {
+        $(memberBox).on("slbchange.selectBox", function(evt, data) {
+            member.add(data.added, function(id) {
+                addMember(id);
+            });
+            // 移除超管
+            member.remove(data.removed, function(id) {
+                removeMember(id);
+            });
+            // 超管移除自己
+            if (~$.inArray(Ibos.app.g('user'), data.removed)) {
+                Ui.tip("超级管理员不能对自己进行删除操作！", "warning");
+                member.add(Ibos.app.g('user'), function(id) {
                     addMember(id);
                 });
-            } else {
-                if (data.id === Ibos.app.g('user')) {
-                    Ui.tip("超级管理员不能对自己进行删除操作！", "warning");
-                    memberBox.values.push(data.id);
-                    return false;
-                }
-                member.remove(data.id, function(id) {
-                    removeMember(id);
-                });
+                memberBox.setValue(Ibos.app.g('user'), true);
             }
+
             switch (memberBox.values.length) {
                 case 0:
                     Ui.tip("至少要有一个超级管理员!", "warning");
@@ -278,7 +280,6 @@ Organization.memberList = (function() {
                     $add_cn.show();
                     break;
                 default:
-                    Ui.tip("超级管理员人数不能超过3个", "warning");
                     $add_cn.hide();
                     $box.hide();
             }
@@ -286,13 +287,7 @@ Organization.memberList = (function() {
         });
 
         $add.click(function() {
-            $box.show().position({
-                at: "left-200",
-                my: "bottom+20",
-                of: "#org_super_add"
-            });
-            // 打开选人框时即时刷新人员列表
-            memberBox.refreshList();
+            $box.show();
         })
 
         // 移除成员
@@ -300,7 +295,7 @@ Organization.memberList = (function() {
             var id = $.attr(this, "data-id");
             member.remove(id, function(id) {
                 removeMember(id);
-                memberBox.removeValue(id);
+                memberBox.setValue(id, false);
             });
             $add_cn.show();
         });

@@ -17,10 +17,12 @@ use application\modules\dashboard\model\Syscache;
 use application\modules\role\model\Role as RoleModel;
 use CBehavior;
 
-class Role extends CBehavior {
+class Role extends CBehavior
+{
 
-    public function attach( $owner ) {
-        $owner->attachEventHandler( 'onUpdateCache', array( $this, 'handleRole' ) );
+    public function attach($owner)
+    {
+        $owner->attachEventHandler('onUpdateCache', array($this, 'handleRole'));
     }
 
     /**
@@ -28,9 +30,10 @@ class Role extends CBehavior {
      * @param object $event
      * @return void
      */
-    public function handleRole( $event ) {
-        $records = RoleModel::model()->fetchAllSortByPk( 'roleid' );
-        Syscache::model()->modifyCache( 'role', $records );
+    public function handleRole($event)
+    {
+        $records = RoleModel::model()->fetchAllSortByPk('roleid');
+        Syscache::model()->modifyCache('role', $records);
     }
 
 }

@@ -39,7 +39,7 @@ interface StreamInterface
      * Set the stream that is wrapped by the object
      *
      * @param resource $stream Stream resource to wrap
-     * @param int      $size   Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
+     * @param int $size Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
      *
      * @return self
      */
@@ -200,8 +200,8 @@ interface StreamInterface
     /**
      * Set custom data on the stream
      *
-     * @param string $key   Key to set
-     * @param mixed  $value Value to set
+     * @param string $key Key to set
+     * @param mixed $value Value to set
      *
      * @return self
      */

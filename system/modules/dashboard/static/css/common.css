@@ -3,7 +3,7 @@
  *  @submodule common
  *  @Ibos v2.0 
  *	@author ink
- *	@version $Id: common.css 8391 2016-09-13 09:14:12Z tanghang $
+ *	@version $Id: common.css 8697 2016-10-22 04:05:09Z gzcsh $
  *	@modified 2013-03-22  
  */
 
@@ -2181,45 +2181,24 @@ a.progressCancel:hover {
 }
 
 /***用户部门岗位设置***/
-.user-form-con{
-	position: relative;
-	width: 351px;
+.nav-skid-inverse {
+	background: #0B73BB;
 }
-.form-horizontal .dialog-form-header{
-	position: relative;
-	margin-top: -10px;
-	width: 100%;
-	height: 40px;
-	background: #0b73bb;
+.nav-skid-inverse > li > a {
+	color: #66BBE9;
 }
-
-.dialog-form-header li{
-	margin-right: 5px;
-	float: left;
-	list-style: none;
-}
-
-.form-head-list{
-	display: block;
-	padding: 0 5px;
-	line-height: 40px;
-	font-size: 16px;
+.nav-skid-inverse > .active > a {
 	color: #fff;
-	height: 36px;
-	border: 2px solid #0b73bb;
 }
-
-.active .form-head-list,
-.form-head-list:hover{
-	color: #fff;
-	font-size: 15px;
-	border-bottom: 2px solid #fff;
-}
-
-.dialog-form-content{
-	position: relative;
+.tab-pane-block {
 	width: 100%;
-	height: 300px;
+	height: 310px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background: #fafbff;
+}
+.dept-ztree, .pos-ztree {
+	width: 300px;
 }
 
 /* 全局信息导入样式 */

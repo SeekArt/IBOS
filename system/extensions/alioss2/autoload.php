@@ -8,4 +8,5 @@ function classLoader($class)
         require_once $file;
     }
 }
+
 spl_autoload_register('classLoader');

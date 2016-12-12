@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -54,17 +54,15 @@ class ezcMailMboxTransport
      *         if the mbox file could be opened for reading.
      * @param string $fileName
      */
-    public function __construct( $fileName )
+    public function __construct($fileName)
     {
-        if ( !file_exists( $fileName ) )
-        {
-            throw new ezcBaseFileNotFoundException( $fileName, 'mbox' );
+        if (!file_exists($fileName)) {
+            throw new ezcBaseFileNotFoundException($fileName, 'mbox');
         }
-        if ( !is_readable( $fileName ) )
-        {
-            throw new ezcBaseFilePermissionException( $fileName, ezcBaseFileException::READ );
+        if (!is_readable($fileName)) {
+            throw new ezcBaseFilePermissionException($fileName, ezcBaseFileException::READ);
         }
-        $this->fh = fopen( $fileName, 'rt' );
+        $this->fh = fopen($fileName, 'rt');
     }
 
     /**
@@ -78,14 +76,11 @@ class ezcMailMboxTransport
      */
     private function findFirstMessage()
     {
-        $data = fgets( $this->fh );
-        fseek( $this->fh, 0 );
-        if ( substr( $data, 0, 18 ) === 'From MAILER-DAEMON' )
-        {
+        $data = fgets($this->fh);
+        fseek($this->fh, 0);
+        if (substr($data, 0, 18) === 'From MAILER-DAEMON') {
             return $this->findNextMessage();
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
@@ -102,16 +97,14 @@ class ezcMailMboxTransport
      */
     private function findNextMessage()
     {
-        do
-        {
-            $data = fgets( $this->fh );
-        } while ( !feof( $this->fh ) && substr( $data, 0, 5 ) !== "From " );
+        do {
+            $data = fgets($this->fh);
+        } while (!feof($this->fh) && substr($data, 0, 5) !== "From ");
 
-        if ( feof( $this->fh ) )
-        {
+        if (feof($this->fh)) {
             return false;
         }
-        return ftell( $this->fh );
+        return ftell($this->fh);
     }
 
     /**
@@ -122,22 +115,19 @@ class ezcMailMboxTransport
     public function listMessages()
     {
         $messages = array();
-        fseek( $this->fh, 0 );
+        fseek($this->fh, 0);
         // Skip the first mail as this is the mbox header
         $position = $this->findFirstMessage();
-        if ( $position === false )
-        {
+        if ($position === false) {
             return $messages;
         }
         // Continue reading through the rest of the mbox
-        do
-        {
+        do {
             $position = $this->findNextMessage();
-            if ( $position !== false )
-            {
+            if ($position !== false) {
                 $messages[] = $position;
             }
-        } while ( $position !== false );
+        } while ($position !== false);
 
         return $messages;
     }
@@ -150,7 +140,7 @@ class ezcMailMboxTransport
     public function fetchAll()
     {
         $messages = $this->listMessages();
-        return new ezcMailMboxSet( $this->fh, $messages );
+        return new ezcMailMboxSet($this->fh, $messages);
     }
 
     /**
@@ -161,14 +151,13 @@ class ezcMailMboxTransport
      * @param int $number
      * @return ezcMailMboxSet
      */
-    public function fetchByMessageNr( $number )
+    public function fetchByMessageNr($number)
     {
         $messages = $this->listMessages();
-        if ( !isset( $messages[$number] ) )
-        {
-            throw new ezcMailNoSuchMessageException( $number );
+        if (!isset($messages[$number])) {
+            throw new ezcMailNoSuchMessageException($number);
         }
-        return new ezcMailMboxSet( $this->fh, array( 0 => $messages[$number] ) );
+        return new ezcMailMboxSet($this->fh, array(0 => $messages[$number]));
     }
 
     /**
@@ -177,7 +166,7 @@ class ezcMailMboxTransport
      * Fetches $count messages starting from the $offset and returns them as a
      * ezcMailMboxSet. If $count is not specified or if it is 0, it fetches
      * all messages starting from the $offset.
-     * 
+     *
      * @throws ezcMailInvalidLimitException
      *         if $count is negative.
      * @throws ezcMailOffsetOutOfRangeException
@@ -186,26 +175,22 @@ class ezcMailMboxTransport
      * @param int $count
      * @return ezcMailMboxSet
      */
-    public function fetchFromOffset( $offset, $count = 0 )
+    public function fetchFromOffset($offset, $count = 0)
     {
-        if ( $count < 0 )
-        {
-            throw new ezcMailInvalidLimitException( $offset, $count );
+        if ($count < 0) {
+            throw new ezcMailInvalidLimitException($offset, $count);
         }
         $messages = $this->listMessages();
-        if ( !isset( $messages[$offset] ) )
-        {
-            throw new ezcMailOffsetOutOfRangeException( $offset, $count );
+        if (!isset($messages[$offset])) {
+            throw new ezcMailOffsetOutOfRangeException($offset, $count);
         }
-        if ( $count == 0 )
-        {
-            $range = array_slice( $messages, $offset );
+        if ($count == 0) {
+            $range = array_slice($messages, $offset);
+        } else {
+            $range = array_slice($messages, $offset, $count);
         }
-        else
-        {
-            $range = array_slice( $messages, $offset, $count );
-        }
-        return new ezcMailMboxSet( $this->fh, $range );
+        return new ezcMailMboxSet($this->fh, $range);
     }
 }
+
 ?>

@@ -22,9 +22,11 @@ use Aliyun\Common\Utilities\AssertUtils;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class ListPartsCommand extends OSSCommand {
+class ListPartsCommand extends OSSCommand
+{
 
-    protected function checkOptions($options) {
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::BUCKET,
@@ -46,17 +48,18 @@ class ListPartsCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         $builder = OSSRequestBuilder::factory();
 
         $builder->addParameter('uploadId', $options[OSSOptions::UPLOAD_ID]);
 
         if (isset($options[OSSOptions::MAX_PARTS])) {
-            $builder->addParameter('max-parts', (string) $options[OSSOptions::MAX_PARTS]);
+            $builder->addParameter('max-parts', (string)$options[OSSOptions::MAX_PARTS]);
         }
 
         if (isset($options[OSSOptions::PART_NUMBER_MARKER])) {
-            $builder->addParameter('part-number-marker', (string) intval($options[OSSOptions::PART_NUMBER_MARKER]));
+            $builder->addParameter('part-number-marker', (string)intval($options[OSSOptions::PART_NUMBER_MARKER]));
         }
 
         return $builder

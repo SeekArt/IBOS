@@ -3,7 +3,7 @@
 /**
  * message模块默认语言包
  * @package application.modules.main.language.zh_cn
- * @version $Id: default.php 4066 2014-09-04 00:47:55Z gzpjh $
+ * @version $Id$
  * @author banyan <banyan@ibos.com.cn>
  */
 return array(
@@ -23,7 +23,7 @@ return array(
     'Send' => '发送',
     'Send pm' => '发私信',
     'Batch delete' => '批量删除',
-	'Remind set' => '提醒设置',
+    'Remind set' => '提醒设置',
     'Message receiver cannot be empty' => '收信人不可为空',
     'Message content cannot be empty' => '内容不可为空',
     'private message send fail' => '私信发送失败',
@@ -64,6 +64,8 @@ return array(
     'Get info fail' => '获取信息失败',
     'Digg message content' => "{content}",
     'Digg message title' => '{user} 赞了你分享的 “{sourceContent}”！',
+    'Digg empty message content' => "{content}",
+    'Digg empty message title' => '{user} 赞了你的分享！',
     'Following myself forbidden' => '不能关注自己',
     'Following people noexist' => '被关注的用户不存在',
     'Follow message title' => '您有一位新粉丝:{user}',
@@ -75,5 +77,5 @@ return array(
     'Notify comment content' => '',
     'All dept' => '全体部门',
     'My self' => '我自己',
-	'Reply comment' => '回复<a class="anchor" data-toggle="usercard" data-param="{param}" href="{space_url}" target="_blank">{realname}</a>的评论<a href="{url}">&nbsp“{detail}”</a>'
+    'Reply comment' => '回复<a class="anchor" data-toggle="usercard" data-param="{param}" href="{space_url}" target="_blank">{realname}</a>的评论<a href="{url}">&nbsp“{detail}”</a>'
 );

@@ -293,6 +293,7 @@
 .bind-info-wrap{
 	width: 720px;
 	padding: 30px;
+	margin-bottom: 20px;
 	box-sizing: border-box;
 }
 .bind-result-wrap{
@@ -626,7 +627,21 @@
 	color: #58585C;
 }
 .wx-app-tip {
-	width: 100%;
+	position: relative;
+    width: 100%;
+    max-height: 40px;
+    overflow: hidden;
+}
+.wx-app-tip:after {
+	content: '...';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: -webkit-linear-gradient(left, transparent, #fff 55%);
+	background: -o-linear-gradient(right, transparent, #fff 55%);
+	background: -moz-linear-gradient(right, transparent, #fff 55%);
+	background: linear-gradient(to right, transparent, #fff 55%);
+    padding-left: 40px;
 }
 .wx-app-list {
 	position: relative;
@@ -639,9 +654,9 @@
 }
 .wx-auth-menu-unit {
 	position: relative;
-	width: 62px;
+	width: 64px;
 	float: left;
-	margin-left: 57px;
+	margin-left: 53px;
 }
 .wx-auth-menu-unit:nth-child(6n+1) {
 	margin-left: 0;
@@ -652,8 +667,8 @@
 	text-align: center;
 }
 .wx-unit-icon {
-	width: 62px;
-	height: 62px;
+	width: 64px;
+	height: 64px;
 	margin-bottom: 5px;
 }
 .wx-auth-menu-unit .wx-unit-icon {

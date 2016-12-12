@@ -19,8 +19,10 @@ use Aliyun\OSS\Utilities\OSSRequestBuilder;
 
 use Aliyun\OSS\Utilities\OSSUtils;
 
-class CopyObjectCommand extends OSSCommand {
-    protected function checkOptions($options) {
+class CopyObjectCommand extends OSSCommand
+{
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::SOURCE_BUCKET,
@@ -37,7 +39,8 @@ class CopyObjectCommand extends OSSCommand {
         return $options;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
 
         $builder = OSSRequestBuilder::factory();
 
@@ -60,7 +63,7 @@ class CopyObjectCommand extends OSSCommand {
         }
 
         $builder->addHeader(OSSHeaders::COPY_OBJECT_SOURCE,
-            "/".$options[OSSOptions::SOURCE_BUCKET]."/".$options[OSSOptions::SOURCE_KEY]);
+            "/" . $options[OSSOptions::SOURCE_BUCKET] . "/" . $options[OSSOptions::SOURCE_KEY]);
 
         if (OSSUtils::containsMetaOptions($options)) {
             $builder->addObjectMetadataHeaders($options);

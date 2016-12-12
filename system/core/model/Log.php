@@ -7,19 +7,21 @@ use application\core\utils\Convert;
 use application\core\utils\Ibos;
 use CJSON;
 
-class Log {
+class Log
+{
 
     /**
      * 写入日志
      * @param array $msg
-     * @param string $level 日志层级  
+     * @param string $level 日志层级
      * @param string $category
      * @return void
      */
-    public static function write( $msg, $level = 'action', $category = 'module' ) {
-        $message = CJSON::encode( $msg );
+    public static function write($msg, $level = 'action', $category = __CLASS__)
+    {
+        $message = CJSON::encode($msg);
         $logger = Ibos::getLogger();
-        return $logger->log( $message, $level, $category );
+        return $logger->log($message, $level, $category);
     }
 
     /**
@@ -31,19 +33,20 @@ class Log {
      * @param string $order
      * @return array
      */
-    public static function fetchAllByList( $tableId, $condition = '', $limit = 20, $offset = 0, $order = 'logtime DESC' ) {
-        $table = self::getTableName( $tableId );
-        $list = array_map( function( $temp ) {
-            $temp['logtime'] = date( 'Y-m-d H:i:s', $temp['logtime'] );
+    public static function fetchAllByList($tableId, $condition = '', $limit = 20, $offset = 0, $order = 'logtime DESC')
+    {
+        $table = self::getTableName($tableId);
+        $list = array_map(function ($temp) {
+            $temp['logtime'] = date('Y-m-d H:i:s', $temp['logtime']);
             return $temp;
         }, Ibos::app()->db->createCommand()
-                ->select( '*' )
-                ->from( $table )
-                ->where( $condition )
-                ->order( $order )
-                ->limit( $limit )
-                ->offset( $offset )
-                ->queryAll() );
+            ->select('*')
+            ->from($table)
+            ->where($condition)
+            ->order($order)
+            ->limit($limit)
+            ->offset($offset)
+            ->queryAll());
         return $list;
     }
 
@@ -53,29 +56,31 @@ class Log {
      * @param type $condition
      * @return type
      */
-    public static function countByTableId( $tableId = 0, $condition = '' ) {
-        $table = self::getTableName( $tableId );
+    public static function countByTableId($tableId = 0, $condition = '')
+    {
+        $table = self::getTableName($tableId);
         $count = Ibos::app()->db->createCommand()
-                ->select( 'count(id)' )
-                ->from( $table )
-                ->where( $condition )
-                ->queryScalar();
-        return intval( $count );
+            ->select('count(id)')
+            ->from($table)
+            ->where($condition)
+            ->queryScalar();
+        return intval($count);
     }
 
     /**
      * 获取日志存档表ID
      * @return integer
      */
-    public static function getLogTableId() {
-        $tableId = Cache::get( 'logtableid' );
-        if ( $tableId === false ) {
+    public static function getLogTableId()
+    {
+        $tableId = Cache::get('logtableid');
+        if ($tableId === false) {
             $tableId = Ibos::app()->db->createCommand()
-                    ->select( 'svalue' )
-                    ->from( '{{setting}}' )
-                    ->where( "skey = 'logtableid'" )
-                    ->queryScalar();
-            Cache::set( 'logtableid', intval( $tableId ) );
+                ->select('svalue')
+                ->from('{{setting}}')
+                ->where("skey = 'logtableid'")
+                ->queryScalar();
+            Cache::set('logtableid', intval($tableId));
         }
         return $tableId;
     }
@@ -85,28 +90,30 @@ class Log {
      * @param integer $tableId 存档表id
      * @return string
      */
-    public static function getTableName( $tableId = 0 ) {
-        $tableId = intval( $tableId );
-        $year = date( 'Y' );
-        return $tableId > 0 ? "{{log_{$tableId}}}" : sprintf( '{{log_%s}}', $year );
+    public static function getTableName($tableId = 0)
+    {
+        $tableId = intval($tableId);
+        $year = date('Y');
+        return $tableId > 0 ? "{{log_{$tableId}}}" : sprintf('{{log_%s}}', $year);
     }
 
     /**
      * 获取所有存档表的年份后缀ID,返回一个一维数组
      * @return array
      */
-    public static function getAllArchiveTableId() {
+    public static function getAllArchiveTableId()
+    {
         $return = array();
         $db = Ibos::app()->db->createCommand();
         $prefix = $db->getConnection()->tablePrefix;
-        $tables = $db->setText( "SHOW TABLES LIKE '" . str_replace( '_', '\_', $prefix . 'log_%' ) . "'" )
-                ->queryAll( false );
-        if ( !empty( $tables ) ) {
-            $tableArr = Convert::getSubByKey( $tables, 0 );
+        $tables = $db->setText("SHOW TABLES LIKE '" . str_replace('_', '\_', $prefix . 'log_%') . "'")
+            ->queryAll(false);
+        if (!empty($tables)) {
+            $tableArr = Convert::getSubByKey($tables, 0);
             $return = array_map(
-                    (function($archiveTable) {
-                return substr( $archiveTable, -4 );
-            } ), $tableArr );
+                (function ($archiveTable) {
+                    return substr($archiveTable, -4);
+                }), $tableArr);
         }
         return $return;
     }

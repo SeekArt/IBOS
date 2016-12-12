@@ -146,20 +146,22 @@ INSERT INTO `{{user_status}}` (`uid`, `regip`, `lastip`, `lastvisit`, `lastactiv
 INSERT INTO `{{user_status}}` (`uid`, `regip`, `lastip`, `lastvisit`, `lastactivity`, `invisible`) VALUES (3, '192.168.1.47', '192.168.1.163', 1392353552, 1392343004, 0);
 INSERT INTO `{{user_status}}` (`uid`, `regip`, `lastip`, `lastvisit`, `lastactivity`, `invisible`) VALUES (4, '192.168.1.47', '192.168.1.47', 1392360128, 1392345815, 0);
 
-INSERT INTO `{{vote}}` (`voteid`, `subject`, `starttime`, `endtime`, `ismulti`, `isvisible`, `status`, `uid`, `deadlinetype`, `maxselectnum`, `relatedmodule`, `relatedid`) VALUES (1, 'IBOS2.0产品热度大调查，火速参与！', 1392344761, 1394899200, 1, 0, 0, 4, 0, 3, 'article', 7);
-INSERT INTO `{{vote}}` (`voteid`, `subject`, `starttime`, `endtime`, `ismulti`, `isvisible`, `status`, `uid`, `deadlinetype`, `maxselectnum`, `relatedmodule`, `relatedid`) VALUES (4, '谁是你心中优秀的同事？', 1402567302, 1402502400, 0, 1, 1, 1, 0, 1, 'article', 14);
 
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (1, 1, '页面美观超养眼', 1, 1, '');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (2, 1, '功能强大价值高', 1, 0, '');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (3, 1, '创新办公新体验', 1, 0, '');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (4, 1, '以上全部', 1, 1, '');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (9, 4, '张飞群', 2, 0, 'data/attachment/vote/201406/12/180134mpmp4pojdtm4odxj.jpg');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (10, 4, '李多云', 2, 0, 'data/attachment/vote/201406/12/180137ru6ru9qg8yrvn5ux.jpg');
-INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `content`, `type`, `number`, `picpath`) VALUES (11, 4, '王泽', 2, 0, 'data/attachment/vote/201406/12/180140dup9pkyjz87ku5ux.jpg');
+INSERT INTO `{{vote}}` (`voteid`, `subject`, `content`, `starttime`, `endtime`, `isvisible`, `uid`, `deadlinetype`, `relatedmodule`, `relatedid`, `deptid`, `positionid`, `roleid`, `scopeuid`, `addtime`, `updatetime`) VALUES ('1', '演示数据', '演示数据', '1477533362', '1477792440', '0', '1', '0', 'vote', '1', 'alldept', '', '', '', '1477533362', '1477533362');
 
-INSERT INTO `{{vote_item_count}}` (`itemid`, `uid`) VALUES (1, 2);
-INSERT INTO `{{vote_item_count}}` (`itemid`, `uid`) VALUES (4, 4);
+INSERT INTO `{{vote_topic}}` (`topicid`, `voteid`, `subject`, `type`, `maxselectnum`, `itemnum`) VALUES ('1', '1', 'IBOS2.0产品热度大调查，火速参与！', '1', '1', '4');
+INSERT INTO `{{vote_topic}}` (`topicid`, `voteid`, `subject`, `type`, `maxselectnum`, `itemnum`) VALUES ('2', '1', '谁是你心中优秀的同事？', '2', '1', '3');
 
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('1', '1', '1', '页面美观超养眼', '0', '');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('2', '1', '1', '功能强大价值高', '0', '');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('3', '1', '1', '创新办公新体验', '0', '');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('4', '1', '1', '以上全部', '1', '');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('5', '1', '2', '张飞群', '0', 'data/attachment/vote/201406/12/180134mpmp4pojdtm4odxj.jpg');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('6', '1', '2', '李多云', '0', 'data/attachment/vote/201406/12/180137ru6ru9qg8yrvn5ux.jpg');
+INSERT INTO `{{vote_item}}` (`itemid`, `voteid`, `topicid`, `content`, `number`, `picpath`) VALUES ('7', '1', '2', '王泽', '1', 'data/attachment/vote/201406/12/180140dup9pkyjz87ku5ux.jpg');
+
+INSERT INTO `{{vote_item_count}}` (`voteid`, `topicid`, `itemid`, `uid`) VALUES ('1', '1', '4', '1');
+INSERT INTO `{{vote_item_count}}` (`voteid`, `topicid`, `itemid`, `uid`) VALUES ('1', '2', '7', '1');
 
 
 INSERT INTO `{{node_related}}` (`roleid`, `module`, `key`, `node`, `val`) VALUES ('1', 'diary', 'diary', '', '0');

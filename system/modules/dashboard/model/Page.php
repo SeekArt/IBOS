@@ -9,7 +9,7 @@
  */
 /**
  *  page单页图文表
- * 
+ *
  * @package application.modules.dashboard.model
  * @version $Id: Page.php 862 2014-06-09 01:56:49Z gzhzh $
  * @author gzhzh <gzhzh@ibos.com.cn>
@@ -19,13 +19,16 @@ namespace application\modules\dashboard\model;
 
 use application\core\model\Model;
 
-class Page extends Model {
+class Page extends Model
+{
 
-    public static function model( $className = __CLASS__ ) {
-        return parent::model( $className );
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
     }
 
-    public function tableName() {
+    public function tableName()
+    {
         return '{{page}}';
     }
 

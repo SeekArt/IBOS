@@ -53,11 +53,11 @@ interface ClientInterface extends HasDispatcherInterface
      * the client. The URI can contain the query string as well. Use an array to provide a URI template and additional
      * variables to use in the URI template expansion.
      *
-     * @param string                                    $method  HTTP method. Defaults to GET
-     * @param string|array                              $uri     Resource URI.
-     * @param array|Collection                          $headers HTTP headers
-     * @param string|resource|array|EntityBodyInterface $body    Entity body of request (POST/PUT) or response (GET)
-     * @param array                                     $options Array of options to apply to the request
+     * @param string $method HTTP method. Defaults to GET
+     * @param string|array $uri Resource URI.
+     * @param array|Collection $headers HTTP headers
+     * @param string|resource|array|EntityBodyInterface $body Entity body of request (POST/PUT) or response (GET)
+     * @param array $options Array of options to apply to the request
      *
      * @return RequestInterface
      * @throws InvalidArgumentException if a URI array is passed that does not contain exactly two elements: the URI
@@ -74,9 +74,9 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a GET request for the client
      *
-     * @param string|array     $uri     Resource URI
+     * @param string|array $uri Resource URI
      * @param array|Collection $headers HTTP headers
-     * @param array            $options Options to apply to the request. For BC compatibility, you can also pass a
+     * @param array $options Options to apply to the request. For BC compatibility, you can also pass a
      *                                  string to tell Guzzle to download the body of the response to a particular
      *                                  location. Use the 'body' option instead for forward compatibility.
      * @return RequestInterface
@@ -87,9 +87,9 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a HEAD request for the client
      *
-     * @param string|array     $uri     Resource URI
+     * @param string|array $uri Resource URI
      * @param array|Collection $headers HTTP headers
-     * @param array            $options Options to apply to the request
+     * @param array $options Options to apply to the request
      *
      * @return RequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -99,10 +99,10 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a DELETE request for the client
      *
-     * @param string|array                        $uri     Resource URI
-     * @param array|Collection                    $headers HTTP headers
-     * @param string|resource|EntityBodyInterface $body    Body to send in the request
-     * @param array                               $options Options to apply to the request
+     * @param string|array $uri Resource URI
+     * @param array|Collection $headers HTTP headers
+     * @param string|resource|EntityBodyInterface $body Body to send in the request
+     * @param array $options Options to apply to the request
      *
      * @return EntityEnclosingRequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -112,10 +112,10 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a PUT request for the client
      *
-     * @param string|array                        $uri     Resource URI
-     * @param array|Collection                    $headers HTTP headers
-     * @param string|resource|EntityBodyInterface $body    Body to send in the request
-     * @param array                               $options Options to apply to the request
+     * @param string|array $uri Resource URI
+     * @param array|Collection $headers HTTP headers
+     * @param string|resource|EntityBodyInterface $body Body to send in the request
+     * @param array $options Options to apply to the request
      *
      * @return EntityEnclosingRequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -125,10 +125,10 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a PATCH request for the client
      *
-     * @param string|array                        $uri     Resource URI
-     * @param array|Collection                    $headers HTTP headers
-     * @param string|resource|EntityBodyInterface $body    Body to send in the request
-     * @param array                               $options Options to apply to the request
+     * @param string|array $uri Resource URI
+     * @param array|Collection $headers HTTP headers
+     * @param string|resource|EntityBodyInterface $body Body to send in the request
+     * @param array $options Options to apply to the request
      *
      * @return EntityEnclosingRequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -138,13 +138,13 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create a POST request for the client
      *
-     * @param string|array                                $uri      Resource URI
-     * @param array|Collection                            $headers  HTTP headers
+     * @param string|array $uri Resource URI
+     * @param array|Collection $headers HTTP headers
      * @param array|Collection|string|EntityBodyInterface $postBody POST body. Can be a string, EntityBody, or
      *                                                    associative array of POST fields to send in the body of the
      *                                                    request. Prefix a value in the array with the @ symbol to
      *                                                    reference a file.
-     * @param array                                       $options Options to apply to the request
+     * @param array $options Options to apply to the request
      *
      * @return EntityEnclosingRequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -154,8 +154,8 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Create an OPTIONS request for the client
      *
-     * @param string|array $uri     Resource URI
-     * @param array        $options Options to apply to the request
+     * @param string|array $uri Resource URI
+     * @param array $options Options to apply to the request
      *
      * @return RequestInterface
      * @see    Guzzle\Http\ClientInterface::createRequest()
@@ -192,8 +192,8 @@ interface ClientInterface extends HasDispatcherInterface
     /**
      * Set the User-Agent header to be used on all requests from the client
      *
-     * @param string $userAgent      User agent string
-     * @param bool   $includeDefault Set to true to prepend the value to Guzzle's default user agent string
+     * @param string $userAgent User agent string
+     * @param bool $includeDefault Set to true to prepend the value to Guzzle's default user agent string
      *
      * @return self
      */
@@ -213,8 +213,8 @@ interface ClientInterface extends HasDispatcherInterface
      * it.
      *
      * @param string|bool $certificateAuthority bool, file path, or directory path
-     * @param bool        $verifyPeer           FALSE to stop from verifying the peer's certificate.
-     * @param int         $verifyHost           Set to 1 to check the existence of a common name in the SSL peer
+     * @param bool $verifyPeer FALSE to stop from verifying the peer's certificate.
+     * @param int $verifyHost Set to 1 to check the existence of a common name in the SSL peer
      *                                          certificate. 2 to check the existence of a common name and also verify
      *                                          that it matches the hostname provided.
      * @return self

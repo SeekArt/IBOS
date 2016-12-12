@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 投票模块------投票moduld类文件
+ * 投票模块------投票module类文件
  *
  * @link http://www.ibos.com.cn/
  * @copyright Copyright &copy; 2008-2013 IBOS Inc
@@ -19,6 +19,10 @@ namespace application\modules\vote;
 
 use application\core\modules\Module;
 
-class VoteModule extends Module {
-    
+class VoteModule extends Module
+{
+    /**
+     * 模块名
+     */
+    const MODULE_NAME = 'vote';
 }

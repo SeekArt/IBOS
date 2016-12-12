@@ -22,14 +22,17 @@ use application\modules\department\model\Department;
 use application\modules\message\utils\Expression;
 use application\modules\user\model\User;
 
-class StringUtil {
+class StringUtil
+{
+    const FORM_TOKEN_NAME = 'formtoken';
 
     /**
      * 检测一个字符串是否email格式
      * @param string $email
      * @return boolean
      */
-    public static function isEmail($email) {
+    public static function isEmail($email)
+    {
         return strlen($email) > 6 && preg_match("/^[\w\-\.]+@[\w\-]+(\.\w+)+$/", $email);
     }
 
@@ -38,7 +41,8 @@ class StringUtil {
      * @param string $str
      * @return boolean
      */
-    public static function isMobile($str) {
+    public static function isMobile($str)
+    {
         // 这不科学，换一个
         // return preg_match( "/^1\\d{10}/", $str );
         return preg_match("/^1\\d{10}$/", $str);
@@ -51,7 +55,8 @@ class StringUtil {
      * @param boolean $returnValue 是否返回找到的值
      * @return boolean
      */
-    public static function istrpos($string, $arr, $returnValue = false) {
+    public static function istrpos($string, $arr, $returnValue = false)
+    {
         if (empty($string)) {
             return false;
         }
@@ -70,7 +75,8 @@ class StringUtil {
      * @param integer $force
      * @return mixed
      */
-    public static function iaddSlashes($string, $force = 1) {
+    public static function iaddSlashes($string, $force = 1)
+    {
         if (is_array($string)) {
             $keys = array_keys($string);
             foreach ($keys as $key) {
@@ -93,7 +99,8 @@ class StringUtil {
      * @return string
      * @author Ring
      */
-    public static function authCode($string, $operation = 'DECODE', $key = '', $expiry = 0) {
+    public static function authCode($string, $operation = 'DECODE', $key = '', $expiry = 0)
+    {
         $ckeyLength = 4;
         $key = md5($key != '' ? $key : Ibos::app()->setting->get('authkey'));
         $keya = md5(substr($key, 0, 16));
@@ -152,7 +159,8 @@ class StringUtil {
      * @param integer $numberic 数字还是字符串
      * @return string $hash 返回字符串
      */
-    public static function random($length, $numeric = 0) {
+    public static function random($length, $numeric = 0)
+    {
         $seed = base_convert(md5(microtime() . $_SERVER['DOCUMENT_ROOT']), 16, $numeric ? 10 : 35);
         $seed = $numeric ? (str_replace('0', '', $seed) . '012340567890') : ($seed . 'zZ' . strtoupper($seed));
         $hash = '';
@@ -170,7 +178,8 @@ class StringUtil {
      * @link http://www.php.net/manual/zh/function.htmlspecialchars.php
      * @return string 返回转义好的字符串
      */
-    public static function ihtmlSpecialChars($string, $flags = null) {
+    public static function ihtmlSpecialChars($string, $flags = null)
+    {
         if (is_array($string)) {
             foreach ($string as $key => $val) {
                 $string[$key] = self::ihtmlSpecialChars($val, $flags);
@@ -209,7 +218,8 @@ class StringUtil {
      * @param mixed $data
      * @param mixed $flags
      */
-    public static function ihtmlSpecialCharsUseReference(&$data, $flags = NULL) {
+    public static function ihtmlSpecialCharsUseReference(&$data, $flags = null)
+    {
         $data = self::ihtmlSpecialChars($data, $flags);
     }
 
@@ -220,7 +230,8 @@ class StringUtil {
      * @param string $doc - 缩略后缀 default=' ...'
      * @return string 返回带省略号被裁减好的字符串
      */
-    public static function cutStr($string, $length, $dot = ' ...') {
+    public static function cutStr($string, $length, $dot = ' ...')
+    {
         $strlen = self::iStrLen($string);
         if ($strlen <= $length) {
             return $string;
@@ -299,7 +310,8 @@ class StringUtil {
      * @return integer 字符串的长度
      * @author Ring
      */
-    public static function iStrLen($str) {
+    public static function iStrLen($str)
+    {
         if (strtolower(CHARSET) != 'utf-8') {
             return strlen($str);
         }
@@ -322,13 +334,22 @@ class StringUtil {
     }
 
     /**
-     * 查找是否包含在内,两边都可以是英文逗号相连的字符串 原名(findin)
-     * @param string $string 目标范围
-     * @param  string $id 所有值
+     * 查找是否包含在内
+     *
+     * @param string|array $string 目标范围
+     * @param  string|array $id 所有值
      * @return boolean
      * @author Ring
      */
-    public static function findIn($string, $id) {
+    public static function findIn($string, $id)
+    {
+        if (is_array($string)) {
+            $string = implode(',', $string);
+        }
+        if (is_array($id)) {
+            $id = implode(',', $id);
+        }
+
         $string = trim($string, ",");
         $newId = trim($id, ",");
         if ($newId == '' || $newId == ',') {
@@ -348,7 +369,8 @@ class StringUtil {
      * @return boolean
      * @author Ring
      */
-    public static function isIp($ip) {
+    public static function isIp($ip)
+    {
         if (!strcmp(long2ip(sprintf("%u", ip2long($ip))), $ip)) {
             return true;
         }
@@ -362,7 +384,8 @@ class StringUtil {
      * @param string 查找 $find
      * @return boolean
      */
-    public static function strExists($string, $find) {
+    public static function strExists($string, $find)
+    {
         return !(strpos($string, $find) === false);
     }
 
@@ -372,7 +395,8 @@ class StringUtil {
      * @return string
      * @author Ring
      */
-    public static function getSubIp($ip = '') {
+    public static function getSubIp($ip = '')
+    {
         if (empty($ip)) {
             $ip = $clientIp = Ibos::app()->setting->get('clientip');
         }
@@ -386,7 +410,8 @@ class StringUtil {
      * @return string
      * @author Ring
      */
-    public static function displayIp($str) {
+    public static function displayIp($str)
+    {
         if (self::isIp($str)) {
             return self::getSubIp($str);
         }
@@ -399,7 +424,8 @@ class StringUtil {
      * @return string
      * @author Ring
      */
-    public static function iImplode($array) {
+    public static function iImplode($array)
+    {
         if (!empty($array)) {
             $array = array_map('addslashes', $array);
             return "'" . implode("','", is_array($array) ? $array : array($array)) . "'";
@@ -417,7 +443,8 @@ class StringUtil {
      * @param string $param
      * @return array
      */
-    public static function splitParam($param) {
+    public static function splitParam($param)
+    {
         $return = array();
         if (!empty($param)) {
             $params = explode('&', trim($param));
@@ -434,7 +461,8 @@ class StringUtil {
      * @param string $sql 原始的sql
      * @return array
      */
-    public static function splitSql($sql) {
+    public static function splitSql($sql)
+    {
         $sql = str_replace("\r", "\n", $sql);
         $ret = array();
         $num = 0;
@@ -465,7 +493,8 @@ class StringUtil {
      * @param string $password
      * @return string
      */
-    public static function passwordMask($password) {
+    public static function passwordMask($password)
+    {
         return !empty($password) ? $password{0} . '********' . substr($password, -2) : '';
     }
 
@@ -474,7 +503,8 @@ class StringUtil {
      * @param mixed $str
      * @return mixed
      */
-    public static function clearLogString($str) {
+    public static function clearLogString($str)
+    {
         if (!empty($str)) {
             if (!is_array($str)) {
                 $str = self::ihtmlSpecialChars(trim($str));
@@ -502,7 +532,8 @@ class StringUtil {
      * @param array $icon 修饰符号，可以换成图片
      * @return string
      */
-    public static function getTree($data, $format = "<option value='\$catid' \$selected>\$spacer\$name</option>", $id = 0, $nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;', $icon = array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;')) {
+    public static function getTree($data, $format = "<option value='\$catid' \$selected>\$spacer\$name</option>", $id = 0, $nbsp = '&nbsp;&nbsp;&nbsp;&nbsp;', $icon = array('&nbsp;&nbsp;', '&nbsp;&nbsp;', '&nbsp;&nbsp;'))
+    {
         $tree = new Tree();
         //-- 生成前台显示样式 --
         $tree->init($data);
@@ -519,7 +550,8 @@ class StringUtil {
      * @param boolean $index 按前缀索引
      * @return array
      */
-    public static function getId($ids, $index = false) {
+    public static function getId($ids, $index = false)
+    {
         $newIds = array();
         $idList = is_array($ids) ? $ids : explode(',', $ids);
         foreach ($idList as $idstr) {
@@ -540,7 +572,8 @@ class StringUtil {
      * @param mixed $ids
      * @return array
      */
-    public static function getUid($ids) {
+    public static function getUid($ids)
+    {
         $uids = array();
         $idList = is_array($ids) ? $ids : array($ids);
         foreach ($idList as $idstr) {
@@ -565,7 +598,8 @@ class StringUtil {
      * @param string $glue 分隔符
      * @return string
      */
-    public static function wrapId($ids, $identifier = 'u', $glue = ',') {
+    public static function wrapId($ids, $identifier = 'u', $glue = ',')
+    {
         if (empty($ids)) {
             return '';
         }
@@ -586,7 +620,8 @@ class StringUtil {
      * @param string $str 完整id字符串
      * @return array 返回uid组成的数组
      */
-    public static function getUidByIdentifier($identifier, $str, $findC = false, $returnDisable = false, $returnRelated = true, $pre = true) {
+    public static function getUidByIdentifier($identifier, $str, $findC = false, $returnDisable = false, $returnRelated = true, $pre = true)
+    {
         $id = true === $pre ? substr($str, 2) : $str;
         if (strcmp($identifier, 'u') == 0) :
             return array($id);
@@ -604,10 +639,11 @@ class StringUtil {
 
     /**
      * 通过'u_1,d_1,p_1,r_1'或者array('u_1','d_1','p_1','r_1')这样的字符串或者数组获取uid
-     * @param type $udpX
+     * @param array|string $udpX
      * @return array
      */
-    public static function getUidAByUDPX($udpX, $findC = false, $returnDisable = false, $returnRelated = true) {
+    public static function getUidAByUDPX($udpX, $findC = false, $returnDisable = false, $returnRelated = true)
+    {
         $udpA = is_array($udpX) ? $udpX : explode(',', $udpX);
         if ($findC) {
             $diff = array_intersect($udpA, array('c_0', 'alldept'));
@@ -655,7 +691,8 @@ class StringUtil {
      * @param boolean $allowArray
      * @return integer
      */
-    public static function iIntval($int, $allowArray = false) {
+    public static function iIntval($int, $allowArray = false)
+    {
         $ret = intval($int);
         if ($int == $ret || !$allowArray && is_array($int))
             return $ret;
@@ -679,7 +716,8 @@ class StringUtil {
      * @param $fileName 文件名
      * @since IBOS1.0
      */
-    public static function getFileExt($fileName) {
+    public static function getFileExt($fileName)
+    {
         return addslashes(strtolower(substr(strrchr($fileName, '.'), 1, 10))) . '';
     }
 
@@ -690,7 +728,8 @@ class StringUtil {
      * @param  $html
      * @author jason
      */
-    public static function pregHtml($html) {
+    public static function pregHtml($html)
+    {
         $p = array("/<[a|A][^>]+(topic=\"true\")+[^>]*+>#([^<]+)#<\/[a|A]>/",
             "/<[a|A][^>]+(data=\")+([^\"]+)\"[^>]*+>[^<]*+<\/[a|A]>/",
             "/<[img|IMG][^>]+(src=\")+([^\"]+)\"[^>]*+>/");
@@ -709,7 +748,8 @@ class StringUtil {
      * @param boolean $filter 是否过滤html标签
      * @return int 字符串的长度
      */
-    public static function getStrLength($str, $filter = false) {
+    public static function getStrLength($str, $filter = false)
+    {
         if ($filter) {
             $str = html_entity_decode($str, ENT_QUOTES);
             $str = strip_tags($str);
@@ -722,12 +762,9 @@ class StringUtil {
      * @param string text 文本内容
      * @return string 处理后内容
      */
-    public static function filterCleanHtml($text) {
-        $text = nl2br($text);
-        $text = self::realStripTags($text);
-        $text = addslashes($text);
-        $text = trim($text);
-        return $text;
+    public static function filterCleanHtml($text)
+    {
+        return \CHtml::encode($text);
     }
 
     /**
@@ -736,7 +773,8 @@ class StringUtil {
      * @param type $allowableTags
      * @return type
      */
-    public static function realStripTags($str, $allowableTags = "") {
+    public static function realStripTags($str, $allowableTags = "")
+    {
         $str = stripslashes(htmlspecialchars_decode($str));
         return strip_tags($str, $allowableTags);
     }
@@ -747,7 +785,8 @@ class StringUtil {
      * @param string $type 保留的标签格式
      * @return string 处理后内容
      */
-    public static function filterDangerTag($text, $type = 'html') {
+    public static function filterDangerTag($text, $type = 'html')
+    {
         // 无标签格式
         $textTags = '';
         //只保留链接
@@ -786,7 +825,8 @@ class StringUtil {
      * @param bool $unique 是否过滤重复值
      * @return string 过滤后的字符串
      */
-    public static function filterStr($string, $delimiter = ',', $unique = true) {
+    public static function filterStr($string, $delimiter = ',', $unique = true)
+    {
         $filterArr = array();
         $strArr = explode($delimiter, $string);
         foreach ($strArr as $str) {
@@ -802,7 +842,8 @@ class StringUtil {
      * @param type $html
      * @return type
      */
-    public static function parseForApi($html) {
+    public static function parseForApi($html)
+    {
         $html = self::filterDangerTag($html);
         $html = str_replace(array('[SITE_URL]', '&nbsp;'), array(Ibos::app()->setting->get('siteurl'), ' '), $html);
         //@提到某人处理
@@ -815,7 +856,8 @@ class StringUtil {
      * @param type $name
      * @return type
      */
-    public static function parseWapAtByUname($name) {
+    public static function parseWapAtByUname($name)
+    {
         /* $info = static_cache( 'user_info_uname_' . $name[1] );
           if ( !$info ) {
           $info = model( 'User' )->getUserInfoByName( $name[1] );
@@ -836,7 +878,8 @@ class StringUtil {
      * @param string $html
      * @return string
      */
-    public static function replaceExpression($html) {
+    public static function replaceExpression($html)
+    {
         return preg_replace_callback("/(\[.+?\])/is", 'self::parseExpression', $html);
     }
 
@@ -845,7 +888,8 @@ class StringUtil {
      * @param type $html
      * @return type
      */
-    public static function parseHtml($html) {
+    public static function parseHtml($html)
+    {
         $html = htmlspecialchars_decode($html);
         //链接替换
         $html = str_replace('[SITE_URL]', Ibos::app()->setting->get('siteurl'), $html);
@@ -864,9 +908,12 @@ class StringUtil {
 
     /**
      * 表情替换 [格式化微博与格式化评论专用]
+     *
      * @param array $data
+     * @return mixed
      */
-    private static function parseExpression($data) {
+    private static function parseExpression($data)
+    {
         if (preg_match("/#.+#/i", $data[0])) {
             return $data[0];
         }
@@ -880,11 +927,25 @@ class StringUtil {
     }
 
     /**
+     * img 标签表情转换为普通表情
+     * Example：StringUtil::imgToExpression('<img class='exp-img' src='/static/image/expression/df_ldln.gif' />') 返回 [df_ldln]
+     *
+     * @param string $imgStr img 标签字符串
+     * @return string 普通表情字符串
+     */
+    public static function imgToExpression($imgStr)
+    {
+        $imgPattern = '@<img .+?src=[\'"]/static/image/expression/(.+?)\.gif[\'"] />@i';
+        return preg_replace($imgPattern, '[\1]', $imgStr);;
+    }
+
+    /**
      * 根据用户昵称获取用户ID [格式化微博与格式化评论专用]
      * @param array $name
      * @return string
      */
-    private static function parseAtByUserName($name) {
+    private static function parseAtByUserName($name)
+    {
         $info = Cache::get('userInfoRealName_' . md5($name[1]));
         if (!$info) {
             $info = User::model()->findByRealname($name[1]);
@@ -902,7 +963,8 @@ class StringUtil {
      * @param array $data
      * @return string
      */
-    private static function parseTheme($data) {
+    private static function parseTheme($data)
+    {
         // 如果话题被锁定，则不带链接
         $lock = Ibos::app()->db->createCommand()
             ->select('lock')
@@ -920,7 +982,8 @@ class StringUtil {
      * 格式化微博,替换链接地址
      * @param string $url
      */
-    public static function parseUrl($url) {
+    public static function parseUrl($url)
+    {
         $str = '<div class="url">';
         if (preg_match("/(youku.com|youtube.com|ku6.com|sohu.com|mofile.com|sina.com.cn|tudou.com|yinyuetai.com)/i", $url[0], $hosts)) {
             // TODO: 语言包
@@ -940,7 +1003,8 @@ class StringUtil {
      * @param string $match 匹配后的字符串
      * @return string 格式化后的字符串
      */
-    public static function formatFeedContentUrlLength($match) {
+    public static function formatFeedContentUrlLength($match)
+    {
         static $i = 97;
         $result = '{iurl==' . chr($i) . '}';
         $i++;
@@ -948,7 +1012,8 @@ class StringUtil {
         return $result;
     }
 
-    public static function replaceUrl($content) {
+    public static function replaceUrl($content)
+    {
         //$content = preg_replace_callback('/((?:https?|ftp):\/\/(?:[a-zA-Z0-9][a-zA-Z0-9\-]*)*(?:\/[^\x{2e80}-\x{9fff}\s<\'\"“”‘’,，。]*)?)/u', '_parse_url', $content);
         $content = str_replace('[SITE_URL]', Ibos::app()->setting->get('siteurl'), $content);
         $content = preg_replace_callback('/((?:https?|mailto|ftp):\/\/([^\x{2e80}-\x{9fff}\s<\'\"“”‘’，。}]*)?)/u', 'self::parseUrl', $content);
@@ -959,7 +1024,8 @@ class StringUtil {
      * 生成GUID(用户唯一ID)
      * @return string
      */
-    public static function createGuid() {
+    public static function createGuid()
+    {
         $charid = strtoupper(md5(uniqid(mt_rand(), true)));
         $hyphen = chr(45); // "-"
         $guid = substr($charid, 0, 8) . $hyphen
@@ -977,7 +1043,8 @@ class StringUtil {
      * @param string $uid 用户id
      * @return type
      */
-    public static function joinSelectBoxValue($deptid, $positionid, $uid, $role = null) {
+    public static function joinSelectBoxValue($deptid, $positionid, $uid, $role = null)
+    {
         $tmp = array();
         if (!empty($deptid)) {
             if ($deptid == 'alldept') {
@@ -1002,7 +1069,8 @@ class StringUtil {
      * @param string $scope 选人框数据
      * @return array
      */
-    public static function handleSelectBoxData($scope, $returnChild = true) {
+    public static function handleSelectBoxData($scope, $returnChild = true)
+    {
         $data = self::getId($scope, true);
         $result = array(
             'deptid' => '',
@@ -1038,7 +1106,8 @@ class StringUtil {
      * @param string $str
      * @return array
      */
-    public static function utf8Unserialize($str) {
+    public static function utf8Unserialize($str)
+    {
         if (is_array($str)) {
             return false;
         }
@@ -1058,7 +1127,8 @@ class StringUtil {
      * @param mixed $sizeMixed 文件大小
      * @return array
      */
-    public static function ConvertBytes($sizeMixed) {
+    public static function ConvertBytes($sizeMixed)
+    {
         $sizeArray = is_array($sizeMixed) ? $sizeMixed : explode(',', $sizeMixed);
         return array_map(function ($temp) {
             return eval("return " .
@@ -1078,7 +1148,8 @@ class StringUtil {
      * @param $text
      * @return string
      */
-    public static function removeEmoji($text) {
+    public static function removeEmoji($text)
+    {
         $clean_text = "";
 
         // Match Emoticons
@@ -1110,9 +1181,225 @@ class StringUtil {
      * @param string $filename
      * @return boolean
      */
-    public static function isImageFile($filename) {
+    public static function isImageFile($filename)
+    {
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         static $imageExt = array('jpg', 'jpeg', 'gif', 'png', 'bmp');
         return in_array($extension, $imageExt) ? true : false;
+    }
+
+    /**
+     * 过滤不安全的 HTML 代码
+     *
+     * @param string $text
+     * @param array $options
+     * @return string
+     */
+    public static function purify($text, $options = array())
+    {
+        $purifier = new \CHtmlPurifier();
+        $purifier->setOptions($options);
+
+        return $purifier->purify($text);
+    }
+
+    /**
+     * 获取系统指定编码的子字符串。首先尝试使用 mbstring，然后是 iconv，最后使用 strlen
+     *
+     * @param string $pValue
+     * @param int $pStart
+     * @param int $pLength
+     * @return mixed
+     */
+    public static function subString($pValue = '', $pStart = 0, $pLength = 0)
+    {
+        $charset = Ibos::app()->charset;
+
+        if (function_exists('mb_substr')) {
+            return mb_substr($pValue, $pStart, $pLength, $charset);
+        }
+
+        if (function_exists('iconv_substr')) {
+            return iconv_substr($pValue, $pStart, $pLength, $charset);
+        }
+
+        // else substr
+        return substr($pValue, $pStart, $pLength);
+    }
+
+    /**
+     * Get character count. First try mbstring, then iconv, finally strlen
+     *
+     * @param string $value
+     * @return int Character count
+     */
+    public static function strLength($value)
+    {
+        $charset = Ibos::app()->charset;
+
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($value, $charset);
+        }
+
+        if (function_exists('iconv_strlen')) {
+            return iconv_strlen($value, $charset);
+        }
+
+        // else strlen
+        return strlen($value);
+    }
+
+    /**
+     * 生成一个唯一 id
+     *
+     * @return string
+     */
+    public static function generateUniqueId()
+    {
+        $token = sha1(uniqid(mt_rand(), true));
+        return $token;
+    }
+
+    /**
+     * 生成 form_token，并将其保存在 session 中
+     *
+     * @return string
+     */
+    public static function generateFormToken()
+    {
+        $token = self::generateUniqueId();
+        Ibos::app()->session->add(self::FORM_TOKEN_NAME, $token);
+        return $token;
+    }
+
+    /**
+     * 将 form_token 保存在 input 标题中，并返回
+     *
+     * @return mixed
+     */
+    public static function returnFormTokenInput()
+    {
+        $token = self::generateFormToken();
+        $tokenInput = sprintf('<input type="hidden" name="formtoken" value="%s" />', $token);
+        return $tokenInput;
+    }
+
+    /**
+     * 验证用户提供的 form_token 是否准确
+     *
+     * @param $formToken
+     * @return bool
+     */
+    public static function checkFormToken($formToken)
+    {
+        $token = Ibos::app()->session->get(self::FORM_TOKEN_NAME);
+        if (!empty($token) && $token == $formToken) {
+            Ibos::app()->session->remove(self::FORM_TOKEN_NAME);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 将字符串转换为 JSON 格式
+     * @todo Yii 内置的 CJSON::encode 兼容性更好，而 PHP 内置的 json_encode 性能更好；
+     *
+     * @see http://www.yiichina.com/question/990
+     * @param string $text 需要 JSON 编码的字符串
+     * @return string 格式化后的 JSON 字符串
+     */
+    public static function jsonEncode($text)
+    {
+        $strType = gettype($text);
+
+        if ($strType == 'object') {
+            return \CJSON::encode($text);
+        }
+
+        return json_encode($text);
+    }
+
+
+    /**
+     * 生成 where in 条件
+     *
+     * @param string $columnName 字段名称，最好使用 `xxx` 这种格式
+     * @param array $valueArr
+     * @return string
+     */
+    public static function generateInCondition($columnName, array $valueArr)
+    {
+        $ids = implode("','", $valueArr);
+        $condition = sprintf("%s IN ('%s')", $columnName, $ids);
+
+        return $condition;
+    }
+
+    /**
+     * 同时返回除法和取余结果，除法结果只保留整数
+     * div 指的是：division（除法），mod 指的是：modulo（模运算）
+     * Example：10 / 3 return array(3, 1)
+     *
+     * @param integer|float $num1
+     * @param integer|float $num2
+     * @return array array('除法结果', '取余结果')
+     */
+    public static function calcDivAndMod($num1, $num2)
+    {
+        return array(
+            (int)$num1 / $num2,
+            $num1 % $num2,
+        );
+    }
+
+    /**
+     * 计算开始时间和结束时间的相差时间，并输出可读性较高的字符串。
+     * Example：
+     * diffTimeForHuman(0, 100, false) return 1 分钟
+     * diffTimeForHuman(0, 100, true) return 1 分钟 40 秒
+     *
+     * @param integer $startTime 开始时间
+     * @param integer $endTime 结束时间
+     * @param bool $detail 是否返回详细数据。
+     * @return string
+     */
+    public static function diffTimeForHuman($startTime, $endTime, $detail = false)
+    {
+        // 非法时间
+        if (($endTime - $startTime) <= 0) {
+            return '';
+        }
+
+        // 常用时间：这里的 S 指的是 Second，秒的意思
+        $minuteS = 60;
+        $hourS = $minuteS * 60;
+        $dayS = $hourS * 24;
+
+        $diffTime = $endTime - $startTime;
+        $modulo = 0;
+
+        if ($diffTime >= $dayS) {
+            // 相差时间大于等于一天
+            list($division, $modulo) = self::calcDivAndMod($diffTime, $dayS);
+            $readableTimeStr = sprintf('%d %s', $division, Ibos::lang('Day', 'date'));
+        } elseif ($diffTime >= $hourS) {
+            // 相差时间大于一个小时
+            list($division, $modulo) = self::calcDivAndMod($diffTime, $hourS);
+            $readableTimeStr = sprintf('%d %s', $division, Ibos::lang('Hour', 'date'));
+        } elseif ($diffTime >= $minuteS) {
+            // 相差时间大于一分钟
+            list($division, $modulo) = self::calcDivAndMod($diffTime, $minuteS);
+            $readableTimeStr = sprintf('%d %s', $division, Ibos::lang('Min', 'date'));
+        } else {
+            // 相差时间大于一秒
+            $readableTimeStr = sprintf('%d %s', $diffTime, Ibos::lang('Sec', 'date'));
+        }
+
+        if ($detail === true && $modulo != 0) {
+            $readableTimeStr .= sprintf(' %s', self::diffTimeForHuman(0, $modulo, true));
+        }
+
+        return $readableTimeStr;
     }
 }

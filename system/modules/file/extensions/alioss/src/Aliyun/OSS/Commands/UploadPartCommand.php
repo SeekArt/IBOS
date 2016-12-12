@@ -20,8 +20,10 @@ use Aliyun\OSS\Utilities\OSSRequestBuilder;
 use Aliyun\OSS\Utilities\OSSUtils;
 
 
-class UploadPartCommand extends OSSCommand {
-    protected function checkOptions($options) {
+class UploadPartCommand extends OSSCommand
+{
+    protected function checkOptions($options)
+    {
         $options = parent::checkOptions($options);
         AssertUtils::assertSet(array(
             OSSOptions::CONTENT,
@@ -42,20 +44,22 @@ class UploadPartCommand extends OSSCommand {
 
     }
 
-    protected function leaveRequestOpen($options) {
+    protected function leaveRequestOpen($options)
+    {
         return true;
     }
 
-    protected function getRequest($options) {
+    protected function getRequest($options)
+    {
         return OSSRequestBuilder::factory()
             ->setEndpoint($options[OSSOptions::ENDPOINT])
             ->setBucket($options[OSSOptions::BUCKET])
             ->setKey($options[OSSOptions::KEY])
             ->setMethod(HttpMethods::PUT)
-            ->addParameter('partNumber', (string) intval($options[OSSOptions::PART_NUMBER]))
+            ->addParameter('partNumber', (string)intval($options[OSSOptions::PART_NUMBER]))
             ->addParameter('uploadId', $options[OSSOptions::UPLOAD_ID])
             ->setContent($options[OSSOptions::CONTENT])
-            ->addHeader(OSSHeaders::CONTENT_LENGTH, (string) intval($options[OSSOptions::PART_SIZE]))
+            ->addHeader(OSSHeaders::CONTENT_LENGTH, (string)intval($options[OSSOptions::PART_SIZE]))
             ->build();
     }
 }

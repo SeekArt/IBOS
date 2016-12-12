@@ -106,7 +106,7 @@
  	text-overflow: ellipsis; 
  	overflow: hidden;
 }
-.role-member-form .page-list-footer{
+.page-list-footer{
 	padding-bottom: 5px;
 	border-bottom: 1px solid #ececec;
 }

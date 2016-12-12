@@ -19,32 +19,36 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 
-class FileReader extends Model {
+class FileReader extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{file_reader}}';
-	}
+    public function tableName()
+    {
+        return '{{file_reader}}';
+    }
 
-	/**
-	 * 记录查看时间
-	 * @param integer $fromuid 共享人
-	 * @param integer $uid 登陆者uid
-	 * @return boolean
-	 */
-	public function record( $fromuid, $uid ) {
-		$fromuid = intval($fromuid);
-		$uid = intval( $uid );
-		$this->deleteAll( "fromuid={$fromuid} AND uid={$uid}" );
-		$data = array(
-			'fromuid' => $fromuid,
-			'uid' => $uid,
-			'viewtime' => TIMESTAMP
-		);
-		return $this->add( $data );
-	}
+    /**
+     * 记录查看时间
+     * @param integer $fromuid 共享人
+     * @param integer $uid 登陆者uid
+     * @return boolean
+     */
+    public function record($fromuid, $uid)
+    {
+        $fromuid = intval($fromuid);
+        $uid = intval($uid);
+        $this->deleteAll("fromuid={$fromuid} AND uid={$uid}");
+        $data = array(
+            'fromuid' => $fromuid,
+            'uid' => $uid,
+            'viewtime' => TIMESTAMP
+        );
+        return $this->add($data);
+    }
 
 }

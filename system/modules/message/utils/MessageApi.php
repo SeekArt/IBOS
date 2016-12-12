@@ -6,18 +6,20 @@ use application\core\utils\Ibos;
 use application\core\utils\StringUtil;
 use application\modules\user\model\User;
 
-class MessageApi {
+class MessageApi
+{
 
-    public function getCommentSourceDesc( $sourceUser, $sourceType, $sourceUrl, $data ) {
-        $user = User::model()->fetchByUid( $data['uid'] );
+    public function getCommentSourceDesc($sourceUser, $sourceType, $sourceUrl, $data)
+    {
+        $user = User::model()->fetchByUid($data['uid']);
         $params = array(
             '{sourceUser}' => $sourceUser,
             '{sourceType}' => $sourceType,
             '{user}' => $user['realname'],
-            '{commentContent}' => StringUtil::cutStr( $data['sourceContent'], 30 ),
+            '{commentContent}' => StringUtil::cutStr($data['sourceContent'], 30),
             '{sourceUrl}' => $sourceUrl
         );
-        return Ibos::lang( 'Comment source desc', 'message.default', $params );
+        return Ibos::lang('Comment source desc', 'message.default', $params);
     }
 
 }

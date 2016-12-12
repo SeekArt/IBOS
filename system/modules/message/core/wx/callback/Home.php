@@ -27,25 +27,27 @@ use application\modules\message\core\wx\Code;
 use application\modules\message\core\wx\WxApi;
 use application\modules\message\model\Feed;
 
-class Home extends Callback {
+class Home extends Callback
+{
 
     /**
      * 回调的处理方法
      * @return string
      */
-    public function handle() {
-        switch ( $this->resType ) {
+    public function handle()
+    {
+        switch ($this->resType) {
             case self::RES_TEXT:
                 $res = $this->handleByText();
                 break;
             case self::RES_IMAGE:
                 $res = $this->handleByImage();
                 break;
-			case self::RES_EVENT:
-				$res = $this->resText();
-				break;
+            case self::RES_EVENT:
+                $res = $this->resText();
+                break;
             default:
-                $res = $this->resText( Code::UNSUPPORTED_RES_TYPE );
+                $res = $this->resText(Code::UNSUPPORTED_RES_TYPE);
                 break;
         }
         return $res;
@@ -55,34 +57,36 @@ class Home extends Callback {
      * 插入文字到企业微博
      * @return string
      */
-    protected function handleByText() {
+    protected function handleByText()
+    {
         $data = array(
             'from' => 6,
             'body' => $this->getMessage()
         );
-        Feed::model()->put( Ibos::app()->user->uid, 'weibo', 'post', $data );
-        return $this->resText( '你已经成功发送该消息到企业微博' );
+        Feed::model()->put(Ibos::app()->user->uid, 'weibo', 'post', $data);
+        return $this->resText('你已经成功发送该消息到企业微博');
     }
 
     /**
      * 插入图片到企业微博
      * @return string
      */
-    protected function handleByImage() {
+    protected function handleByImage()
+    {
         $suffix = '.jpg';
         $uid = Ibos::app()->user->uid;
-        $file = $this->saveToLocal( $suffix );
-        if ( is_file( $file ) ) {
-            $aid = $this->saveAttach( $uid, $file, $suffix );
+        $file = $this->saveToLocal($suffix);
+        if (is_file($file)) {
+            $aid = $this->saveAttach($uid, $file, $suffix);
             $data = array(
                 'from' => 6,
                 'body' => '我分享了一张图片',
-                'attach_id' => array( $aid )
+                'attach_id' => array($aid)
             );
-            Feed::model()->put( $uid, 'weibo', 'postimage', $data );
-            return $this->resText( '你已经成功发送该图片到企业微博' );
+            Feed::model()->put($uid, 'weibo', 'postimage', $data);
+            return $this->resText('你已经成功发送该图片到企业微博');
         } else {
-            return $this->resText( '发送图片失败' );
+            return $this->resText('发送图片失败');
         }
     }
 
@@ -93,20 +97,21 @@ class Home extends Callback {
      * @param string $suffix
      * @return integer
      */
-    private function saveAttach( $uid, $file, $suffix ) {
-        $tableId = Attach::getTableId( $uid );
-        $attach = array( 'uid' => $uid, 'tableid' => $tableId );
-        $aid = Attachment::model()->add( $attach, true );
+    private function saveAttach($uid, $file, $suffix)
+    {
+        $tableId = Attach::getTableId($uid);
+        $attach = array('uid' => $uid, 'tableid' => $tableId);
+        $aid = Attachment::model()->add($attach, true);
         $attachdata = array(
             'aid' => $aid,
             'uid' => $uid,
             'dateline' => TIMESTAMP,
             'filename' => $this->getMediaId() . $suffix,
-            'filesize' => filesize( $file ),
-            'attachment' => 'weibo/' . date( 'Ym' ) . '/' . date( 'd' ) . '/' . $this->getMediaId() . $suffix,
+            'filesize' => filesize($file),
+            'attachment' => 'weibo/' . date('Ym') . '/' . date('d') . '/' . $this->getMediaId() . $suffix,
             'isimage' => 1,
         );
-        AttachmentN::model()->add( $tableId, $attachdata );
+        AttachmentN::model()->add($tableId, $attachdata);
         return $aid;
     }
 
@@ -115,12 +120,13 @@ class Home extends Callback {
      * @param string $suffix
      * @return string
      */
-    private function saveToLocal( $suffix ) {
-        $path = PATH_ROOT . './data/attachment/weibo/' . date( 'Ym' ) . '/' . date( 'd' ) . '/';
-        File::makeDirs( $path );
+    private function saveToLocal($suffix)
+    {
+        $path = PATH_ROOT . './data/attachment/weibo/' . date('Ym') . '/' . date('d') . '/';
+        File::makeDirs($path);
         $file = $path . $this->getMediaId() . $suffix;
-        File::createFile( $file, '' );
-        file_put_contents( $file, WxApi::getInstance()->getMediaContent( $this->getMediaId() ) );
+        File::createFile($file, '');
+        file_put_contents($file, WxApi::getInstance()->getMediaContent($this->getMediaId()));
         return $file;
     }
 

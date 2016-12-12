@@ -19,29 +19,33 @@ namespace application\modules\file\model;
 
 use application\core\model\Model;
 
-class FileDirAccess extends Model {
+class FileDirAccess extends Model
+{
 
-	public static function model( $className = __CLASS__ ) {
-		return parent::model( $className );
-	}
+    public static function model($className = __CLASS__)
+    {
+        return parent::model($className);
+    }
 
-	public function tableName() {
-		return '{{file_dir_access}}';
-	}
-	
-	/**
-	 * 根据fid集查找所有符合条件的权限数据，以fid作键名数组返回
-	 * @param mix $fids fid数组或逗号隔开字符串
-	 * @return array
-	 */
-	public function fetchAllSortByFid( $fids ){
-		$fids = is_array($fids) ? implode(',', $fids) : $fids;
-		$record = $this->fetchAll( "FIND_IN_SET(`fid`, '{$fids}')" );
-		$res = array();
-		foreach( $record as $r ){
-			$res[$r['fid']] = $r;
-		}
-		return $res;
-	}
+    public function tableName()
+    {
+        return '{{file_dir_access}}';
+    }
+
+    /**
+     * 根据fid集查找所有符合条件的权限数据，以fid作键名数组返回
+     * @param mix $fids fid数组或逗号隔开字符串
+     * @return array
+     */
+    public function fetchAllSortByFid($fids)
+    {
+        $fids = is_array($fids) ? implode(',', $fids) : $fids;
+        $record = $this->fetchAll("FIND_IN_SET(`fid`, '{$fids}')");
+        $res = array();
+        foreach ($record as $r) {
+            $res[$r['fid']] = $r;
+        }
+        return $res;
+    }
 
 }

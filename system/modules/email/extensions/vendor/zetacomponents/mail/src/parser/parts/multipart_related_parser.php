@@ -9,9 +9,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -45,9 +45,9 @@ class ezcMailMultipartRelatedParser extends ezcMailMultipartParser
      *
      * @param ezcMailHeadersHolder $headers
      */
-    public function __construct( ezcMailHeadersHolder $headers )
+    public function __construct(ezcMailHeadersHolder $headers)
     {
-        parent::__construct( $headers );
+        parent::__construct($headers);
         $this->part = new ezcMailMultipartRelated();
     }
 
@@ -59,15 +59,14 @@ class ezcMailMultipartRelatedParser extends ezcMailMultipartParser
      *
      * @param ezcMailPart $part
      */
-    public function partDone( ezcMailPart $part )
+    public function partDone(ezcMailPart $part)
     {
         // TODO: support Content-Type: start= as specified by RFC 2387
-        if ( !$this->part->getMainPart() )
-        {
-            $this->part->setMainPart( $part );
+        if (!$this->part->getMainPart()) {
+            $this->part->setMainPart($part);
             return;
         }
-        $this->part->addRelatedPart( $part );
+        $this->part->addRelatedPart($part);
     }
 
     /**
@@ -78,12 +77,10 @@ class ezcMailMultipartRelatedParser extends ezcMailMultipartParser
     public function finishMultipart()
     {
         $size = 0;
-        if ( $this->part->getMainPart() )
-        {
+        if ($this->part->getMainPart()) {
             $size = $this->part->getMainPart()->size;
         }
-        foreach ( $this->part->getRelatedParts() as $part )
-        {
+        foreach ($this->part->getRelatedParts() as $part) {
             $size += $part->size;
         }
         $this->part->size = $size;

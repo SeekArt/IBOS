@@ -8,7 +8,7 @@
  * @copyright 2008-2014 IBOS Inc
  */
 /**
- * 
+ *
  *
  * @author banyanCheung <banyan@ibos.com.cn>
  * @package application.modules.message.core.wx
@@ -19,23 +19,24 @@ namespace application\modules\message\core\wx\event;
 
 use application\modules\message\core\wx\Event;
 
-abstract class ScanEvent extends Event {
+abstract class ScanEvent extends Event
+{
 
     /**
      * 扫描类型，一般是qrcode
-     * @var string 
+     * @var string
      */
     protected $scanType = '';
 
     /**
      * 扫描结果，即二维码对应的字符串信息
-     * @var string 
+     * @var string
      */
     protected $scanResult = '';
 
     /**
      * 事件KEY值，由开发者在创建菜单时设定
-     * @var string 
+     * @var string
      */
     protected $eventKey = '';
 
@@ -43,7 +44,8 @@ abstract class ScanEvent extends Event {
      * 设置扫描类型
      * @param string $scanType
      */
-    public function setScanType( $scanType ) {
+    public function setScanType($scanType)
+    {
         $this->scanType = $scanType;
     }
 
@@ -51,7 +53,8 @@ abstract class ScanEvent extends Event {
      * 获取扫描类型
      * @return string
      */
-    public function getScanType() {
+    public function getScanType()
+    {
         return $this->scanType;
     }
 
@@ -59,7 +62,8 @@ abstract class ScanEvent extends Event {
      * 设置事件key
      * @param string $key
      */
-    public function setEventKey( $key ) {
+    public function setEventKey($key)
+    {
         $this->eventKey = $key;
     }
 
@@ -67,7 +71,8 @@ abstract class ScanEvent extends Event {
      * 获取事件key
      * @return string
      */
-    public function getEventKey() {
+    public function getEventKey()
+    {
         return $this->eventKey;
     }
 
@@ -75,7 +80,8 @@ abstract class ScanEvent extends Event {
      * 设置扫描结果
      * @param string $scanResult
      */
-    public function setScanResult( $scanResult ) {
+    public function setScanResult($scanResult)
+    {
         $this->scanResult = $scanResult;
     }
 
@@ -83,7 +89,8 @@ abstract class ScanEvent extends Event {
      * 获取扫描结果
      * @return string
      */
-    public function getScanResult() {
+    public function getScanResult()
+    {
         return $this->scanResult;
     }
 

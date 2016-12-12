@@ -9,74 +9,53 @@
 
 namespace application\core\utils;
 
-class PHPExcel {
+class PHPExcel
+{
 
-	/**
-	 * 导出excel文件
-	 * @param type $filename 需要导出文件名（带有后缀xls、xlsx）
-	 * @param type $header  导出头信息
-	 * @param type $body 导出数据
-	 */
-	public static function exportToExcel( $filename, $header, $body ) {
-		set_time_limit( 0 );
-		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
-		$objPHPExcel = new \PHPExcel();
-		$column = 1;
-		if ( !empty( $header ) ) {
-			//设置表头
-			$key = ord( "A" );
-			foreach ( $header as $v ) {
-				$colum = chr( $key );
-				$objPHPExcel->setActiveSheetIndex( 0 )->setCellValue( $colum . '1', $v );
-				$key +=1;
-			}
-			$column = 2;
-		}
-		$objActSheet = $objPHPExcel->setActiveSheetIndex( 0 );
-		foreach ( $body as $key => $rows ) { //行写入
-			$span = ord( "A" );
-			$keynew = ord( "@" );
-			foreach ( $rows as $keyName => $value ) {// 列写入
-				if ( $span > ord( "Z" ) ) {
-					$keynew += 1;
-					$span = ord( "A" );
-					$row = chr( $keynew ) . chr( $span ); //超过26个字母时才会启用  
-				} else {
-					$row = chr( $span );
-				}
-				$objActSheet->setCellValue( $row . $column, $value );
-				$span++;
-			}
-			$column++;
-		}
-		$fileName = iconv( 'utf-8', 'gbk', $filename );
-		header( 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
-		header( "Content-Disposition: attachment; filename=\"$fileName\"" );
-		header( 'Cache-Control: max-age=0' );
-		$objWriter = \PHPExcel_IOFactory::createWriter( $objPHPExcel, 'Excel2007' );
-		$objWriter->save( 'php://output' ); //文件通过浏览器下载
-		exit;
-	}
+    /**
+     * 导出 excel 文件
+     *
+     * @param string $filename 需要导出文件名（带有后缀xls、xlsx）
+     * @param array $header 导出头信息
+     * @param array $body 导出数据
+     * @see http://www.zedwood.com/article/php-excel-writer-performance-comparison
+     * @return bool
+     */
+    public static function exportToExcel($filename, $header, $body)
+    {
+        set_time_limit(0);
 
-	/**
-	 * 读取excel数据转换成数组
-	 * @param type $filePath 文件路径
-	 * @param type $header  是否带有头信息（默认带有头信息）
-	 * @return array
-	 */
-    public static function excelToArray($filePath, $except = array(0)) {
-		require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
-		$fileType = \PHPExcel_IOFactory::identify( $filePath ); //文件名自动判断文件类型
-		$objReader = \PHPExcel_IOFactory::createReader( $fileType );
-		$objPHPExcel = $objReader->load( $filePath );
-		$sheet = $objPHPExcel->getActiveSheet(); //活动工作簿
-		$data = $sheet->ToArray(); //直接转换成数组，带有头信息
+        // 需要填充的 excel 数据
+        $excelData = array_merge(array($header), $body);
+
+        require_once PATH_ROOT . '/system/extensions/PHP_XLSXWriter/xlsxwriter.class.php';
+        $xlsWriter = new \XLSXWriter();
+        $xlsWriter->writeSheet($excelData);
+        Ibos::app()->request->sendFile($filename, $xlsWriter->writeToString());
+
+        return true;
+    }
+
+    /**
+     * 读取excel数据转换成数组
+     * @param string $filePath 文件路径
+     * @param mixed $header 去掉excel开头的行数,0表示第一行，依次类推，false表示不去掉
+     * @return array
+     */
+    public static function excelToArray($filePath, $except = array(0))
+    {
+        require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
+        $fileType = \PHPExcel_IOFactory::identify($filePath); //文件名自动判断文件类型
+        $objReader = \PHPExcel_IOFactory::createReader($fileType);
+        $objPHPExcel = $objReader->load($filePath);
+        $sheet = $objPHPExcel->getActiveSheet(); //活动工作簿
+        $data = $sheet->ToArray(); //直接转换成数组，带有头信息
         if (false !== $except) {
             foreach ($except as $line) {
                 unset($data[$line]);
             }
         }
-		return $data;
-	}
+        return $data;
+    }
 
 }

@@ -10,11 +10,13 @@ use application\modules\email\model\Email;
 use application\modules\email\model\EmailFolder;
 use application\modules\email\utils\Email as EmailUtil;
 
-class FolderController extends BaseController {
+class FolderController extends BaseController
+{
 
     public $layout = false;
 
-    public function init() {
+    public function init()
+    {
         $this->fid = intval(Env::getRequest('fid'));
         parent::init();
     }
@@ -22,7 +24,8 @@ class FolderController extends BaseController {
     /**
      * 文件夹设置
      */
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $uid = $this->uid;
         $total = 0;
         $folders = $this->folders;
@@ -60,7 +63,8 @@ class FolderController extends BaseController {
     /**
      * 增加操作
      */
-    public function actionAdd() {
+    public function actionAdd()
+    {
         $sort = Env::getRequest('sort');
         $name = Env::getRequest('name');
         if (!empty($name)) {
@@ -87,7 +91,8 @@ class FolderController extends BaseController {
     /**
      * 编辑操作
      */
-    public function actionEdit() {
+    public function actionEdit()
+    {
         $fid = $this->fid;
         $sort = Env::getRequest('sort');
         $name = Env::getRequest('name');
@@ -108,7 +113,8 @@ class FolderController extends BaseController {
     /**
      * 删除操作
      */
-    public function actionDel() {
+    public function actionDel()
+    {
         $fid = $this->fid;
         $cleanAll = Env::getRequest('delemail');
         $emailIds = Email::model()->fetchAllEmailIdsByFolderId($fid, $this->uid);

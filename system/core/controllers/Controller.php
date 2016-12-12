@@ -17,13 +17,16 @@
 namespace application\core\controllers;
 
 use application\core\utils\Ibos;
+use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
+use application\modules\mobile\utils\Mobile;
 use application\modules\role\model\AuthItem;
 use application\modules\role\utils\Auth;
 use CController;
 use CJSON;
 
-class Controller extends CController {
+class Controller extends CController
+{
 
     /**
      * 默认Jsonp回调函数
@@ -66,7 +69,8 @@ class Controller extends CController {
      */
     private $_assetUrl = '';
 
-    public function __construct($id, $module = null) {
+    public function __construct($id, $module = null)
+    {
         Ibos::app()->setting->set('module', $module->getId());
         parent::__construct($id, $module);
     }
@@ -74,7 +78,8 @@ class Controller extends CController {
     /**
      * 检测是否需要更改密码
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
         if (!Ibos::app()->user->isGuest && Ibos::app()->user->isNeedReset && !Ibos::app()->request->isAjaxRequest) {
             Ibos::app()->request->redirect(Ibos::app()->createUrl('user/default/reset'));
@@ -85,7 +90,8 @@ class Controller extends CController {
      * 错误异常处理
      * @return void
      */
-    public function actionError() {
+    public function actionError()
+    {
         $error = Ibos::app()->errorHandler->error;
         if ($error) {
             $isAjaxRequest = Ibos::app()->request->getIsAjaxRequest();
@@ -99,7 +105,8 @@ class Controller extends CController {
      * @param array $data @see CController::render
      * @return @see CController::render
      */
-    public function render($view, $data = null, $return = false, $langSources = array()) {
+    public function render($view, $data = null, $return = false, $langSources = array())
+    {
         if (is_null($data)) {
             $data = array();
         }
@@ -118,7 +125,8 @@ class Controller extends CController {
      * @param String $type AJAX返回数据格式
      * @return void
      */
-    public function ajaxReturn($data, $type = '') {
+    public function ajaxReturn($data, $type = '')
+    {
         if (empty($type)) {
             $type = 'json';
         }
@@ -127,7 +135,7 @@ class Controller extends CController {
             case 'JSON' :
                 // 返回JSON数据格式到客户端 包含状态信息
                 header('Content-Type:application/json; charset=' . CHARSET);
-                exit(CJSON::encode($data));
+                exit(StringUtil::jsonEncode($data));
                 break;
             case 'XML' :
                 // 返回xml格式数据
@@ -152,6 +160,47 @@ class Controller extends CController {
     }
 
     /**
+     * 定义 ajax 返回格式
+     * Example: ['isSuccess' => true, 'data' => array(), 'msg' => 'Call Success']
+     *
+     * @param boolean $isSuccess 请求是否成功
+     * @param array $data
+     * @param string $msg
+     * @param array $extraArgs
+     * @param string $type
+     * @return void|bool
+     */
+    public function ajaxBaseReturn($isSuccess, array $data, $msg = '', array $extraArgs = array(), $type = '')
+    {
+        if (empty($msg)) {
+            if ($isSuccess === true) {
+                $msg = Ibos::lang('Call Success', 'message');
+            } else {
+                $msg = Ibos::lang('Call Failed', 'message');
+            }
+        }
+
+        if (empty($type)) {
+            $type = Mobile::dataType();
+        }
+
+        $retData = array(
+            'isSuccess' => $isSuccess,
+            'msg' => $msg,
+            'data' => $data,
+        );
+
+        if (!empty($extraArgs)) {
+            foreach ($extraArgs as $k => $v) {
+                $retData[$k] = $v;
+            }
+        }
+
+        return $this->ajaxReturn($retData, $type);
+    }
+
+
+    /**
      * 操作错误跳转的快捷方法
      * @param string $message 错误信息
      * @param string $jumpUrl 页面跳转地址
@@ -173,7 +222,8 @@ class Controller extends CController {
      * @param boolean $ajax 是否为Ajax方式
      * @return void
      */
-    public function error($message = '', $jumpUrl = '', $params = array(), $ajax = false) {
+    public function error($message = '', $jumpUrl = '', $params = array(), $ajax = false)
+    {
         $this->showMessage($message, $jumpUrl, $params, 0, $ajax);
     }
 
@@ -199,7 +249,8 @@ class Controller extends CController {
      * @param boolean $ajax 是否为Ajax方式
      * @return void
      */
-    public function success($message = '', $jumpUrl = '', $params = array(), $ajax = false) {
+    public function success($message = '', $jumpUrl = '', $params = array(), $ajax = false)
+    {
         $this->showMessage($message, $jumpUrl, $params, 1, $ajax);
     }
 
@@ -226,7 +277,8 @@ class Controller extends CController {
      * @param boolean $ajax 是否为Ajax方式
      * @return void
      */
-    public function showMessage($message, $jumpUrl = '', $params = array(), $status = 1, $ajax = false) {
+    public function showMessage($message, $jumpUrl = '', $params = array(), $status = 1, $ajax = false)
+    {
 
         // AJAX提交方式的处理
         if ($ajax === true || Ibos::app()->request->getIsAjaxRequest()) {
@@ -299,7 +351,8 @@ class Controller extends CController {
      * @param String $module 模块名
      * @return String 文件夹路径
      */
-    public function getAssetUrl($module = '') {
+    public function getAssetUrl($module = '')
+    {
         if (empty($this->_assetUrl)) {
             if (empty($module)) {
                 $module = Ibos::getCurrentModuleName();
@@ -313,7 +366,8 @@ class Controller extends CController {
      * 设置title
      * @param string $title
      */
-    public function setTitle($title) {
+    public function setTitle($title)
+    {
         Ibos::app()->setting->set('title', $title);
     }
 
@@ -323,7 +377,8 @@ class Controller extends CController {
      * @final 子类不应该重写这个方法
      * @return boolean
      */
-    public final function filterNotAuthModule($module) {
+    public final function filterNotAuthModule($module)
+    {
         return in_array($module, $this->_notAuthModule);
     }
 
@@ -333,7 +388,8 @@ class Controller extends CController {
      * @param string $routes
      * @return boolean
      */
-    public function filterRoutes($routes) {
+    public function filterRoutes($routes)
+    {
         return false;
     }
 
@@ -342,7 +398,8 @@ class Controller extends CController {
      *
      * @return bool
      */
-    public function checkRouteAccess($routes) {
+    public function checkRouteAccess($routes)
+    {
         // 创建对应的控制器
         $ca = Ibos::app()->createController($routes);
         list($controller, $actionId) = $ca;

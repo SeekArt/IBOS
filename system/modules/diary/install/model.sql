@@ -67,6 +67,14 @@ CREATE TABLE IF NOT EXISTS {{diary_statistics}} (
   KEY `SCORE_TIME` (`scoretime`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `{{diary_direct}}`;
+CREATE TABLE IF NOT EXISTS {{diary_direct}} (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '流水id',
+  `uid` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '用户id',
+  `direct` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否设置只看直属下属,1为是,0为否',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+
 REPLACE INTO {{setting}} (`skey` ,`svalue`) VALUES ('diaryconfig', 'a:11:{s:7:"lockday";s:1:"0";s:14:"sharepersonnel";s:1:"1";s:12:"sharecomment";s:1:"1";s:9:"attention";s:1:"1";s:10:"autoreview";s:1:"1";s:15:"autoreviewstamp";s:1:"1";s:13:"remindcontent";s:0:"";s:11:"stampenable";s:1:"1";s:11:"pointsystem";s:1:"5";s:12:"stampdetails";s:40:"0:10,0:9,0:8,0:7,0:6,4:5,5:4,2:3,1:2,8:1";s:10:"reviewlock";i:0;}');
 INSERT INTO `{{nav}}`(`pid`, `name`, `url`, `targetnew`, `system`, `disabled`, `sort`, `module`) VALUES ('3','工作日志','diary/default/index','0','1','0','2','diary');
 INSERT INTO `{{menu}}`(`name`, `pid`, `m`, `c`, `a`, `param`, `sort`, `disabled`) VALUES ('工作日志','0','diary','dashboard','index','','10','0');
