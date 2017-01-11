@@ -258,7 +258,7 @@ function dbCheckOp()
     $enforce = post('enforce', 0);
 
     $aeskeyPath = PATH_ROOT . '/data/aes.key';
-    $aeskey = substr(md5($_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $hostInfo . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 14, 10) . StringUtil::random(33);
+    $aeskey = substr(md5( $hostInfo . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 14, 10) . StringUtil::random(33);
     $aeskeyCreatetime = TIMESTAMP;
     if (file_exists($aeskeyPath)) {
         $aeskeyContent = file_get_contents($aeskeyPath);
@@ -361,7 +361,7 @@ function dbCheckOp()
     $defaultConfigfile = CONFIG_PATH . 'configDefault.php';
     // 获得用户输入的数据库配置数据，替换掉configDefault文件里的配置，用以生成config文件
     $configDefault = file_get_contents($defaultConfigfile);
-    $authkey = substr(md5($_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $host . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 8, 6) . StringUtil::random(10);
+    $authkey = substr(md5( $host . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 8, 6) . StringUtil::random(10);
     $cookiepre = StringUtil::random(4);
     $configReplace = array( //主配置文件要替换的参数
         '{installed}' => 1,
@@ -544,8 +544,8 @@ function handleInstallAllOp()
 
     $_SERVER['HTTP_USER_AGENT'] = isset($_SERVER['HTTP_USER_AGENT']) ?: '';
 
-    $aeskey = substr(md5($_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 14, 10) . StringUtil::random(33);
-    $authkey = substr(md5($_SERVER['SERVER_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 8, 6) . StringUtil::random(10);
+    $aeskey = substr(md5( $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 14, 10) . StringUtil::random(33);
+    $authkey = substr(md5( $dbHost . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 8, 6) . StringUtil::random(10);
     $cookiepre = StringUtil::random(4);
     $config = array(
         // ----------------------------  CONFIG ENV  -----------------------------//
