@@ -6895,7 +6895,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
                 container.style.zIndex = options.zIndex;
 
                 var html = ( ie && browser.version < 9  ? '' : '<!DOCTYPE html>') +
-                    '<html xmlns=\'http://www.w3.org/1999/xhtml\' class=\'view\' ><head>' +
+                    '<html xmlns=\'https://www.w3.org/1999/xhtml\' class=\'view\' ><head>' +
                     '<style type=\'text/css\'>' +
                     //设置四周的留边
                     '.view{padding:0;word-wrap:break-word;cursor:text;height:90%;}\n' +
@@ -14023,16 +14023,24 @@ UE.plugin.register('wordimage',function(){
                 var attrs = img.attrs,
                     flag = parseInt(attrs.width) < 128 || parseInt(attrs.height) < 43,
                     opt = me.options,
-                    src = opt.UEDITOR_HOME_URL + 'themes/default/images/spacer.gif';
+                    src = opt.UEDITOR_HOME_URL + 'themes/default/images/spacer.gif',
+                    styleRule;
                 if (attrs['src'] && /^(?:(file:\/+))/.test(attrs['src'])) {
                     img.setAttr({
-                        width:attrs.width,
-                        height:attrs.height,
+                        width:attrs.width || '',
+                        height:attrs.height || '',
                         alt:attrs.alt,
                         word_img: attrs.src,
                         src:src,
-                        'style':'background:url(' + ( flag ? opt.themePath + opt.theme + '/images/word.gif' : opt.langPath + opt.lang + '/images/localimage.png') + ') no-repeat center center;border:1px solid #ddd'
+                        'style':'background:url(' + ( flag ? opt.themePath + opt.theme + '/images/word.gif' : opt.langPath + opt.lang + '/images/localimage.png') + ') no-repeat center center;border:1px solid #ddd;'
                     })
+                }
+
+                if (opt.imageAuto) {
+                    styleRule = img.attrs.style || '';
+                    !(/max-width/gi.test(styleRule)) && img.setAttr({
+                        'style': styleRule + ';max-width: 100%;'
+                    });
                 }
             })
         }
@@ -14927,7 +14935,7 @@ UE.plugins['list'] = function () {
             // 'dot':''
         },
         listDefaultPaddingLeft : '30',
-        listiconpath : 'http://bs.baidu.com/listicon/',
+        listiconpath : 'https://bs.baidu.com/listicon/',
         maxListLevel : -1,//-1不限制
         disablePInList:false
     } );
@@ -17603,7 +17611,7 @@ UE.plugins['video'] = function (){
                     ' src="' + me.options.UEDITOR_HOME_URL+'themes/default/images/spacer.gif" style="background:url('+me.options.UEDITOR_HOME_URL+'themes/default/images/videologo.gif) no-repeat center center; border:1px solid gray;'+(align ? 'float:' + align + ';': '')+'" />'
                 break;
             case 'embed':
-                str = '<embed type="application/x-shockwave-flash" class="' + classname + '" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
+                str = '<embed type="application/x-shockwave-flash" class="' + classname + '" pluginspage="https://www.macromedia.com/go/getflashplayer"' +
                     ' src="' +  utils.html(url) + '" width="' + width  + '" height="' + height  + '"'  + (align ? ' style="float:' + align + '"': '') +
                     ' wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" >';
                 break;
@@ -23604,7 +23612,7 @@ UE.plugin.register('music', function (){
                     ' width="'+ width +'" height="' + height + '" _url="'+url+'" class="edui-faked-music"' +
                     ' src="'+me.options.langPath+me.options.lang+'/images/music.png" />'
             :
-            '<embed type="application/x-shockwave-flash" class="edui-faked-music" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
+            '<embed type="application/x-shockwave-flash" class="edui-faked-music" pluginspage="https://www.macromedia.com/go/getflashplayer"' +
                 ' src="' + url + '" width="' + width  + '" height="' + height  + '" '+ (align && !cssfloat? 'align="' + align + '"' : '') +
                 (cssfloat ? 'style="float:' + cssfloat + '"' : '') +
                 ' wmode="transparent" play="true" loop="false" menu="false" allowscriptaccess="never" allowfullscreen="true" >';
@@ -28750,13 +28758,13 @@ UE.ui = baidu.editor.ui = {};
                         if (img.className.indexOf("edui-faked-webapp") != -1) {
                             dialogName = "webappDialog"
                         }
-                        if (img.src.indexOf("http://api.map.baidu.com") != -1) {
+                        if (img.src.indexOf("https://api.map.baidu.com") != -1) {
                             dialogName = "mapDialog"
                         }
                         if (img.className.indexOf("edui-faked-music") != -1) {
                             dialogName = "musicDialog"
                         }
-                        if (img.src.indexOf("http://maps.google.com/maps/api/staticmap") != -1) {
+                        if (img.src.indexOf("https://maps.google.com/maps/api/staticmap") != -1) {
                             dialogName = "gmapDialog"
                         }
                         if (img.getAttribute("anchorname")) {

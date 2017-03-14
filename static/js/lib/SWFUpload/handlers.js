@@ -39,6 +39,23 @@ var Ibos = Ibos || {};
 		return obj;
 	})();
 
+	/**
+	 * -100: "已达到文件上限"
+     * -110: "文件超出上传大小限制"
+     * -120: "不能上传零字节文件"
+     * -130: "禁止上传该类型的文件"
+     * -200: "上传出现错误：<%= message %>"
+     * -210: "未设置上传地址"
+     * -220: "服务器写入错误"
+     * -230: "安全性错误"
+     * -240: "已达到上传文件数上限"
+     * -250: "上传失败"
+     * -260: "未找到要上传的文件"
+     * -270: "上传过程中发生错误"
+     * -280: "已取消"
+     * -290: "已暂停"
+     * -300: "调整大小"
+	 */
 	var getErrorInfo = (function(){
 		var infos = {};
 		$.each(SWFUpload.UPLOAD_ERROR, function(prop, value){
@@ -262,7 +279,7 @@ var Ibos = Ibos || {};
 				if(!$img.length) {
 					$img = $('<img/>').appendTo($imgWrap);
 				}
-				$img.attr("src", data.url);
+				$img.attr("src", data.thumburl || data.url);
 				$wrap.addClass("img-upload-success").removeClass("img-upload-start");
 				this.customSettings.success && this.customSettings.success.call(this, file, data);
 			},
@@ -389,41 +406,42 @@ var Ibos = Ibos || {};
 		}, Ibos.app.g("upload"));
 
 		var _settings = {
-			// Backend Settings
-			upload_url:                                 Ibos.app.url('main/attach/upload', { "uid": Ibos.app.g("uid"), "hash": uploadConf.hash}),
-			file_post_name:                             "Filedata",
-			post_params:                                {PHPSESSID: getCookie.PHPSESSID},
+				// Backend Settings
+				upload_url:                                 Ibos.app.url('main/attach/upload', { "uid": Ibos.app.g("uid"), "hash": uploadConf.hash}),
+				file_post_name:                             "Filedata",
+				post_params:                                {PHPSESSID: getCookie.PHPSESSID},
 
-			// File Upload Settings
-			// 默认不限制大小、数目和类型
-			file_size_limit:                            uploadConf.max,
-			file_types:                                 uploadConf.attachexts.ext,
-			file_types_description:                     uploadConf.attachexts.depict,
-			file_upload_limit:                          uploadConf.limit,
+				button_image_url:                           Ibos.app.getStaticUrl("/image/upload_btn_attach.png"),
+				button_placeholder_id:                      "upload_btn",
+				button_width:                               40,
+				button_height:                              40,
 
-			button_image_url:                           Ibos.app.getStaticUrl("/image/upload_btn_attach.png"),
-			button_placeholder_id:                      "upload_btn",
-			button_width:                               40,
-			button_height:                              40,
+				swfupload_loaded_handler:                   _attachLoaded,
+				file_queued_handler:                        _attachFileQueued,
+				file_queue_error_handler:                   _attachFileQueueError,
+				upload_progress_handler:                    _attachUploadProgress,
+				upload_error_handler:                       _attachUploadError,
+				upload_success_handler:                     _attachUploadSuccess,
 
-			swfupload_loaded_handler:                   _attachLoaded,
-			file_queued_handler:                        _attachFileQueued,
-			file_queue_error_handler:                   _attachFileQueueError,
-			upload_progress_handler:                    _attachUploadProgress,
-			upload_error_handler:                       _attachUploadError,
-			upload_success_handler:                     _attachUploadSuccess,
-
-			custom_settings: {
-				containerId: '',
-				inputId: '',
-				template: '<div class="attl-item" data-node-type="attachItem">' +
-				'<a href="javascript:;" title="' + U.lang("UPLOAD.DELETE_ATTACH") + '" class="cbtn o-trash" data-id="<%=aid%>" data-node-type="attachRemoveBtn"></a>' +
-				'<i class="atti"><img width="44" height="44" src="<%=icon%>" alt="<%=name%>" title="<%=name%>" /></i>' +
-				'<div class="attc"><%=name%></div>' +
-				'</div>'
-			}
-		}
-		return Ibos.fileUpload($.extend(true, {}, _settings, options))
+				custom_settings: {
+					containerId: '',
+					inputId: '',
+					template: '<div class="attl-item" data-node-type="attachItem">' +
+					'<a href="javascript:;" title="' + U.lang("UPLOAD.DELETE_ATTACH") + '" class="cbtn o-trash" data-id="<%=aid%>" data-node-type="attachRemoveBtn"></a>' +
+					'<i class="atti"><img width="44" height="44" src="<%=icon%>" alt="<%=name%>" title="<%=name%>" /></i>' +
+					'<div class="attc"><%=name%></div>' +
+					'</div>'
+				}
+			},
+			_force = {
+				// File Upload Settings
+				// 默认不限制大小、数目和类型
+				file_size_limit:                            uploadConf.max,
+				file_types:                                 uploadConf.attachexts.ext,
+				file_types_description:                     uploadConf.attachexts.depict,
+				file_upload_limit:                          uploadConf.limit
+			};
+		return Ibos.fileUpload($.extend(true, {}, _settings, options, _force));
 	}
 
 	// 单图片上传

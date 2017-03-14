@@ -23,8 +23,8 @@
 .m-z{float:left;width:100px;}
 .m-try-t{float: left;width: 60px;;}
 
-.m-try{float:left;width:20px;height:20px;background:url('http://static.tieba.baidu.com/tb/editor/images/try_music.gif') no-repeat ;}
-.m-trying{float:left;width:20px;height:20px;background:url('http://static.tieba.baidu.com/tb/editor/images/stop_music.gif') no-repeat ;}
+.m-try{float:left;width:20px;height:20px;background:url('https://static.tieba.baidu.com/tb/editor/images/try_music.gif') no-repeat ;}
+.m-trying{float:left;width:20px;height:20px;background:url('https://static.tieba.baidu.com/tb/editor/images/stop_music.gif') no-repeat ;}
 
-.loading{width:95px;height:7px;font-size:7px;margin:60px auto;background:url(http://static.tieba.baidu.com/tb/editor/images/loading.gif) no-repeat}
+.loading{width:95px;height:7px;font-size:7px;margin:60px auto;background:url('https://static.tieba.baidu.com/tb/editor/images/loading.gif') no-repeat}
 .empty{width:300px;height:40px;padding:2px;margin:50px auto;line-height:40px; color:#006699;text-align:center;}

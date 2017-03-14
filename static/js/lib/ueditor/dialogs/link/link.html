@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+        "https://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <title></title>
@@ -73,7 +73,7 @@
         var href =$G('href').value.replace(/^\s+|\s+$/g, '');
         if(href){
             if(!hrefStartWith(href,["http","/","ftp://",'#'])) {
-                href  = "http://" + href;
+                href  = "https://" + href;
             }
             var obj = {
                 'href' : href,

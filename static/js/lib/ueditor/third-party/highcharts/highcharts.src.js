@@ -1508,8 +1508,8 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		canvasToolsURL: 'http://code.highcharts.com/3.0.6/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.6/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'https://code.highcharts.com/3.0.6/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'https://code.highcharts.com/3.0.6/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1787,7 +1787,7 @@ defaultOptions = {
 	credits: {
 		enabled: true,
 		text: 'Highcharts.com',
-		href: 'http://www.highcharts.com',
+		href: 'https://www.highcharts.com',
 		position: {
 			align: 'right',
 			x: -10,
