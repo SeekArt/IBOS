@@ -51,3 +51,10 @@ if (!function_exists("array_filter_key")) {
         return array_intersect_key($array, array_flip($matchedKeys));
     }
 }
+
+if (!function_exists('gzdecode')) {
+    function gzdecode($data)
+    {
+        return gzinflate(substr($data,10,-8));
+    }
+}
