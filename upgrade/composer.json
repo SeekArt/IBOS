@@ -1,0 +1,32 @@
+{
+  "name": "ibos-team/ibos-upgrade",
+  "authors": [
+    {
+      "name": "banyan",
+      "email": "i@zhangrong.cc"
+    },
+    {
+      "name": "zqhong",
+      "email": "i@zqhong.com"
+    },
+    {
+      "name": "yiyunShm",
+      "email": "yiyunShm@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "<5.4",
+    "usmanhalalit/pixie": "^1.0"
+  },
+  "autoload": {
+    "files": [
+      "utils/classes.php",
+      "utils/functions.php",
+      "utils/model.php"
+    ],
+    "psr-4": {
+      "ibos\\upgrade\\": ""
+    }
+  }
+}

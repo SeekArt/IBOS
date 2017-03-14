@@ -31,6 +31,6 @@ define( 'CHARSET', 'utf-8' );
 // 调试模式
 defined( 'YII_DEBUG' ) or define( 'YII_DEBUG', DEBUG );
 // 错误等级
-define( 'YII_TRACE_LEVEL', DEBUG ? 3 : 0  );
+defined('YII_TRACE_LEVEL') || define( 'YII_TRACE_LEVEL', DEBUG ? 3 : 0  );
 
 require 'version.php';

@@ -78,6 +78,10 @@ return array(
             //如果是saas版，还需要配置redis服务器设置
             'class' => defined('SAAS_STORAGE') ? '\CRedisCache' : '\CFileCache',
         ),
+        // 返回结果组件
+        'response' => array(
+            'class' => 'application\\core\\components\\Response',
+        ),
     ),
     'params' => array(
         // Yii版本
