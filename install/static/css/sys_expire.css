@@ -1,0 +1,46 @@
+.o-sys-expire,
+.o-sys-contact,
+.o-sys-upgrade {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+.o-sys-expire {
+    width: 248px;
+    height: 223px;
+    background-image: url('../images/sys_expire.png');
+    margin-bottom: 35px;
+}
+.o-sys-contact {
+	width: 160px;
+	height: 50px;
+	background-image: url('../images/sys_contact.png');
+}
+.o-sys-upgrade {
+    width: 350px;
+    height: 218px;
+    background-image: url('../images/sys_upgrade.png');
+    margin-bottom: 35px;
+}
+.fclg {
+    color: #c8cbcc;
+}
+.fcdg {
+    color: #999;
+}
+.main-content {
+	display: block;
+	margin-top: 100px;
+}
+.remind-box {
+	display: inline-block;
+    position: relative;
+    width: 450px;
+    padding: 10px 0;
+    border-top: 1px solid #e2e6e8;
+    border-bottom: 1px solid #e2e6e8;
+    line-height: 25px;
+}
+#topqq {
+    cursor: pointer;
+}

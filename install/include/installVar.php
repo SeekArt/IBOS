@@ -4,7 +4,7 @@ define('IBOS_STATIC', '../static/'); //static路径
 define('DBCHARSET', 'utf8'); // 数据库编码
 define('MODULE_PATH', PATH_ROOT . '/system/modules/'); // 模块文件夹目录
 define('CONFIG_PATH', PATH_ROOT . '/system/config/'); // 配置文件目录
-define('IBOS_VERSION_FULL', 'IBOS ' . VERSION . ' ' . VERSION_DATE); // 版本号
+define('IBOS_VERSION_FULL', 'IBOS ' . VERSION . ' ' . VERSION_TYPE); // 版本号
 $lockfile = PATH_ROOT . '/data/install.lock';
 // 核心模块,安装顺序有限制
 $coreModules = array('main', 'dashboard', 'message', 'user', 'department', 'position', 'role');

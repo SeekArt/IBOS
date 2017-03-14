@@ -32,8 +32,8 @@ if (get('p') == 'phpinfo') {
 
 $option = get('op', '');
 if (!in_array($option, array('envCheck', 'configCheck', 'dbCheck', 'moduleCheck',
-    'handleInstall', 'handleInstallAll', 'handleAfterInstallAll', 'handleUpdateCoinfo',
-    'handleCheckSaas', 'handleUpdateData'))
+        'handleInstall', 'handleInstallAll', 'handleAfterInstallAll', 'handleUpdateCoinfo',
+        'handleCheckSaas', 'handleUpdateData'))
 ) {
     $option = '';
 }
@@ -363,7 +363,7 @@ function dbCheckOp()
     $configDefault = file_get_contents($defaultConfigfile);
     $authkey = substr(md5( $host . $dbName . $dbAccount . $dbPassword . $dbPre . time()), 8, 6) . StringUtil::random(10);
     $cookiepre = StringUtil::random(4);
-    $configReplace = array( //主配置文件要替换的参数
+    $configReplace = array(//主配置文件要替换的参数
         '{installed}' => 1,
         '{host}' => trim($host),
         '{port}' => trim($port),
@@ -380,7 +380,7 @@ function dbCheckOp()
     file_put_contents(CONFIG_PATH . 'config.php', $config);
     // 创建管理员账号信息文件,安装完成后删除此文件
     $salt = StringUtil::random(6);
-    $adminReplace = array( // 管理员账号替换信息
+    $adminReplace = array(// 管理员账号替换信息
         '{username}' => $adminName,
         '{isadministrator}' => 1,
         '{password}' => md5(md5($adminPassword) . $salt),
@@ -409,7 +409,7 @@ function moduleCheckOp()
     global $sysModules;
     $allModules = Module::getModuleDirs();
     $coreModulesParams = Module::initModuleParameters($sysModules);
-    $customModules = array_diff($allModules, $sysModules);
+    $customModules = array_diff($allModules, array_merge($sysModules, array('app')));
     $customModulesParams = Module::initModuleParameters($customModules);
     $ajaxReturn = array(
         'isSuccess' => true,
@@ -461,14 +461,14 @@ function handleInstallOp()
                             'process' => $process,
                             'nextModule' => $nextModule,
                             'nextModuleName' => $nextModuleName
-                        )));
+                    )));
                 } else {
                     return ajaxReturn(array('isSuccess' => true,
                         'msg' => '',
                         'data' => array(
                             'complete' => 1,
                             'process' => '100%',
-                        )));
+                    )));
                 }
             }
         }
@@ -480,6 +480,47 @@ function handleInstallOp()
 }
 
 /**
+ * 获取 SaaS 数据库配置
+ *
+ * @param string $corpCode 企业 Code，4-20 位数字或字母
+ * @return array
+ */
+function getSaasDb($corpCode)
+{
+    global $saasConfig;
+    // 0 是正式数据库的索引地址，1 是测试数据库的索引地址
+    $index = 0;
+    if (strpos($corpCode, 'test') === 0) {
+        $index = 1;
+    }
+    $saasdb = $saasConfig['saasdb'][$index];
+
+    // 根据 corpCode 选择相应的 db（只对正式数据库做处理）
+    if ($index === 0) {
+        $corpFirstChar = !empty($corpCode[0]) ? $corpCode[0] : 0;
+        $newDbName = sprintf('iboscosaas_%s', strtolower($corpFirstChar));
+        createDb($saasdb, $newDbName);
+        $saasdb['dbName'] = $newDbName;
+    }
+
+    return $saasdb;
+}
+
+/**
+ * 创建数据库（如果不存在）
+ *
+ * @param array $dbConfig
+ * @param string $dbName
+ */
+function createDb($dbConfig, $dbName)
+{
+    $conn = new PDO("mysql:host={$dbConfig['dbHost']};port={$dbConfig['dbPort']}", $dbConfig['dbAccount'], $dbConfig['dbPassword']);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
+    $conn->exec($sql);
+}
+
+/**
  * 一次性安装全部（读作：选择了的）模块~~~
  * 接收：
  *        POST    modules 模块英文名逗号字符串
@@ -487,15 +528,11 @@ function handleInstallOp()
  */
 function handleInstallAllOp()
 {
-    global $sysModules, $saasConfig;
+    global $sysModules;
 
     $corpCode = strtolower(post('qycode'));
+    $saasdb = getSaasDb($corpCode);
 
-    $k = 0;
-    if (strpos($corpCode, 'test') === 0) {
-        $k = 1;
-    }
-    $saasdb = $saasConfig['saasdb'][$k];
 
     //不带端口的域名
     $dbHost = post('dbHost', $saasdb['dbHost']);
@@ -519,6 +556,7 @@ function handleInstallAllOp()
     $platformTemp = post('platform');
     $platform = !empty($platformTemp) ? $platformTemp : 'saas';
     $channel = post('channel', '');
+    $sourceId = post('sourceId', '');
 
     //企业代码为表前缀
     $dbPre = $corpCode . '_';
@@ -529,9 +567,9 @@ function handleInstallAllOp()
             $admin = json_decode($corpRow['super'], true);
             $pdo = null;
             return ajaxReturn(array('isSuccess' => false, 'msg' => '已经安装了，无法使用该企业代码安装', 'data' => array(
-                'installed' => 1,
-                'aeskey' => $admin['aeskey']
-            )
+                    'installed' => 1,
+                    'aeskey' => $admin['aeskey']
+                )
             ));
         } else {
             if (!empty($corpRow) && empty($corpRow['installed'])) {
@@ -581,7 +619,7 @@ function handleInstallAllOp()
     );
     // 创建管理员账号信息文件,安装完成后删除此文件
 
-    $admin = array( // 管理员账号替换信息
+    $admin = array(// 管理员账号替换信息
         'username' => $adminName,
         'isadministrator' => 1,
         'password' => $password,
@@ -606,6 +644,19 @@ function handleInstallAllOp()
     $configString = addslashes(json_encode($config));
     $adminString = addslashes(json_encode($admin));
     $installtime = microtime(true);
+    // saas有效时间默认为2周
+    $expireTime = $installtime + 1209600;
+    // 如果是来自阿里云主机的开通的话，时长为一年
+    if ($channel == 'aliyun' && !empty($sourceId)) {
+        $query = $pdo->prepare(" SELECT * FROM `host` WHERE `sourceid` = :sourceid ");
+        $query->bindParam(":sourceid", $sourceId, PDO::PARAM_STR);
+        $query->execute();
+        $hostRow = $query->fetch(PDO::FETCH_ASSOC);
+        // 当前sourceId未开通过才能延长时间
+        if (!empty($hostRow) && $hostRow['step'] !== 'complete') {
+            $expireTime = $installtime + 31536000;
+        }
+    }
     $query = $pdo->exec("INSERT INTO `config` ("
         . "`corpcode`, "
         . "`config`, "
@@ -613,6 +664,7 @@ function handleInstallAllOp()
         . "`installtime`,"
         . "`module`,"
         . "`mobile`,"
+        . "`expiretime`,"
         . "`channel`,"
         . "`platform` ) VALUES ("
         . "'{$corpCode}', "
@@ -621,6 +673,7 @@ function handleInstallAllOp()
         . "'{$installtime}', "
         . "'{$moduleString}', "
         . "'{$adminAccount}', "
+        . "'{$expireTime}', "
         . "'{$channel}', "
         . "'{$platform}' )");
     $pdo = null;
@@ -748,7 +801,7 @@ function handleAfterInstallAllOp()
                     'realname' => $admin['realname'],
                     'mobile' => $admin['mobile'],
                     'email' => '',
-                ));
+            ));
             $newId = Yii::app()->db->createCommand()
                 ->select("last_insert_id()")
                 ->from("{{user}}")
@@ -775,11 +828,11 @@ function handleAfterInstallAllOp()
             $systemurl = 'http://' . $corpCode . '.saas.ibos.cn';
         }
         $unit = StringUtil::utf8Unserialize(
-            Yii::app()->db->createCommand()
-                ->select('svalue')
-                ->from('{{setting}}')
-                ->where("`skey` = 'unit'")
-                ->queryRow()
+                Yii::app()->db->createCommand()
+                    ->select('svalue')
+                    ->from('{{setting}}')
+                    ->where("`skey` = 'unit'")
+                    ->queryRow()
         );
         $unitConfig = array(
             'logourl', 'phone', 'fullname',
@@ -843,7 +896,7 @@ function handleAfterInstallAllOp()
         $pdo = null;
         //发送短信
 
-        $sms = "【酷办公】{$admin['realname']}, 你已成功开通【{$admin['fullname']}】酷办公OA，你的网址为：{$systemurl}，管理员账号密码与酷办公账号密码一致。";
+        $sms = "{$admin['realname']}, 你已成功开通[{$admin['fullname']}]酷办公OA，你的网址为：{$systemurl}，管理员账号密码与酷办公账号密码一致。【酷办公】";
         $message = !empty($smsContent) ? $smsContent : $sms;
         $url = $saasConfig['url'];
         $get = array(
@@ -857,9 +910,9 @@ function handleAfterInstallAllOp()
 
         return ajaxReturn(
             array('isSuccess' => true, 'msg' => '安装成功', 'data' => array(
-                'sms' => $res,
-                'aeskey' => $admin['aeskey']
-            )));
+                    'sms' => $res,
+                    'aeskey' => $admin['aeskey']
+        )));
     } else {
         $pdo = null;
         return ajaxReturn(array('isSuccess' => false, 'msg' => '请确认执行了handleInstallAll请求'));
@@ -903,11 +956,11 @@ function handleUpdateCoinfoOp()
             Yii::app()->db->createCommand()
                 ->update('{{setting}}', array(
                     'svalue' => $string,
-                ), " `skey` = 'coinfo' ");
+                    ), " `skey` = 'coinfo' ");
             Yii::app()->db->createCommand()
                 ->update('{{setting}}', array(
                     'svalue' => 1,
-                ), " `skey` = 'cobinding' ");
+                    ), " `skey` = 'cobinding' ");
         }
         Cache::update();
         return ajaxReturn(array(
@@ -960,11 +1013,11 @@ function handleUpdateDataOp()
     //更新Setting的unit
     $systemurl = substr(Env::getSiteUrl(), 0, -9);
     $unit = StringUtil::utf8Unserialize(
-        Yii::app()->db->createCommand()
-            ->select('svalue')
-            ->from('{{setting}}')
-            ->where("`skey` = 'unit'")
-            ->queryRow()
+            Yii::app()->db->createCommand()
+                ->select('svalue')
+                ->from('{{setting}}')
+                ->where("`skey` = 'unit'")
+                ->queryRow()
     );
     $unitConfig = array(
         'logourl', 'phone', 'fullname',
@@ -1028,6 +1081,7 @@ function handleUpdateDataOp()
     Role::model()->defaultAuth();
     Cache::update();
     file_put_contents(PATH_ROOT . '/data/install.lock', '');
+    @unlink(PATH_ROOT . '/upgrade.php');
     setcookie('install_config', null);
     return ajaxReturn(array('isSuccess' => true, 'msg' => ''));
 }
@@ -1046,7 +1100,7 @@ function InstallCheck()
         'isSuccess' => !$checkInstall,
         'msg' => $checkInstall ? lang('Install locked') . $lockfile : '',
         'data' => array(
-            'version' => VERSION . ' ' . VERSION_DATE
+            'version' => VERSION . ' ' . VERSION_TYPE
         ),));
 }
 

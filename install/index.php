@@ -224,7 +224,7 @@
                             <div class="mlst">
                                 <div class="dib vam">
                                     <p class="mb"><i class="o-install-tip"></i></p>
-                                    <p class="mbs fsm">全新IBOS V3支持绑定微信企业号，提供多项办</p>
+                                    <p class="mbs fsm">全新IBOS V4支持绑定微信企业号，提供多项办</p>
                                     <p class="fsm">公应用，充分满足企业移动办公需求。</p>
                                 </div>
                                 <div class="dib">

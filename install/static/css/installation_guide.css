@@ -293,9 +293,10 @@ body{
 }
 .version-info{
 	position:absolute;
-	top:45px;
+	top:35px;
 	left:270px;
 	color:#FFF;
+	font-size: 12px;
 	padding: 5px;
 	background-color: #0064a5;
 }
