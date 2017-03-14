@@ -62,10 +62,10 @@
                 '<div class="import-item" style="max-height: 220px; overflow-y:auto;">',
                 '<div class="import-table">',
                 '<div class="import-item-field">',
-                '<p class="xwb">导入字段</p>',
+                '<p class="xwb">目标字段</p>',
                 '</div>',
                 '<div class="import-item-field">',
-                '<p class="xwb">目标字段</p>',
+                '<p class="xwb">导入字段</p>',
                 '</div>',
                 '</div>',
                 '<div class="field-block">',
@@ -80,7 +80,7 @@
                 '<div class="import-table">',
                 '<div class="import-item-field">',
                 '<select name="checkDone">',
-                '<option value="new" selected>创建新记录</option>',
+                '<option value="ignore" selected>不作处理</option>',
                 '<option value="cover">覆盖旧记录</option>',
                 // '<option value="nothing">不做任何重复检查</option>',
                 '</select>',
@@ -278,8 +278,6 @@
     importDialog.defaults = {
         lock: false,
         per: 500,
-        top: "50%",
-        left: "50%",
         zIndex: 6000
     }
 
@@ -300,11 +298,6 @@
                 this.$mask.css('zIndex', this.zIndex++);
                 this.$box.append(this.$mask);
             }
-
-            this.$box.css({ // this -> Dialog
-                'top': this.top,
-                'left': this.left
-            });
 
             this._tmpl = [new Tmpl({
                 title: '导入数据',
@@ -375,9 +368,17 @@
                 e.$box.css('zIndex', that.zIndex++).hide();
             });
 
+            var left = this.left || ($(document).width() / 2 - 296) + 'px',
+                top = this.top || ($(document).height() / 2 - 246) + 'px';
+
+            this.$box.find('.aui_import').css({ // this -> Dialog
+                'top': top,
+                'left': left
+            });
+
             this.stateIndex === 0 && this.$main[this.stateIndex].show();
             document.body.appendChild(this.$box[0]);
-
+            return this;
         },
         transition: function(act) {
             // 状态机
@@ -446,13 +447,14 @@
             var that = this;
             that.$upload = $('.import-upload-tips');
 
-            // 限制上传文件大小，默认单位为KB
             Ibos.upload.attach({
                 post_params: {
                     module: 'temp'
                 },
                 file_upload_limit: 1,
                 file_size_limit: "1024",
+                file_types: '*.xls;*.xlsx;*.csv;',
+                file_types_description: 'only support csv/xls(x)',
                 button_placeholder_id: "import_btn",
                 button_width: "100",
                 button_height: "40",
@@ -559,12 +561,12 @@
                         _temp =
                             '<div class="import-table field-data">' +
                             '<div class="import-item-field">' +
+                            '<p>' + tplFieldArray[j] + '<small class="mlm xcr">' + tipLanChange(rule[tplFieldArray[j]]) + '</small></p>' +
+                            '</div>' +
+                            '<div class="import-item-field">' +
                             '<select name="field_' + j + '">' +
                             _options +
                             '</select>' +
-                            '</div>' +
-                            '<div class="import-item-field">' +
-                            '<p>' + tplFieldArray[j] + '<small class="mlm xcr">' + tipLanChange(rule[tplFieldArray[j]]) + '</small></p>' +
                             '</div>' +
                             '</div>';
                         _field += _temp;
@@ -665,4 +667,4 @@
     }
 
     return importDialog;
-}, jQuery, undefined);
+}, jQuery, undefined)

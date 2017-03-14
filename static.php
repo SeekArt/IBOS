@@ -67,7 +67,7 @@ switch ($type) {
                     require_once './api/login.php';
                     Yii::setPathOfAlias('application', PATH_ROOT . DIRECTORY_SEPARATOR . 'system');
                     Yii::createApplication('application\core\components\Application', $mainConfig);
-                    dologin($uid, 'web');
+                    doLogin($uid, 'web');
                     unlink($filename);
                     Login::getInstance()->sendWxLoginNotify($uid);
                     echo json_encode(array('isSuccess' => true));

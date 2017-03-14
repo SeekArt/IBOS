@@ -8,7 +8,7 @@
 		var _this = this;
 		var _template = '<div class="datt-progress"></div>' +
 			'<span class="datt-name"><em><%= name %></em> - <%= size %></span>' +
-			'<span class="datt-status"><%= status %></span>' +
+			'<span class="datt-status ellipsis" title=""><%= status %></span>' +
 			'<a href="javascript:;" class="o-trash"></a>';
 
 		this.fileProgressId = file.id;
@@ -67,7 +67,7 @@
 	}
 
 	DProgress.prototype.setStatus = function(status){
-		this.element.find(".datt-status").html(status);
+		this.element.find(".datt-status").attr('title', status).html(status);
 	}
 
 	var _upload = Ibos.dialogUpload =  function(opts) {
@@ -125,11 +125,16 @@
 
 		        		var progress = new DProgress(file, cs.containerId);
 
-		        		progress.setComplete();
-		        		progress.setStatus(U.lang("UPLOAD.UPLOAD_COMPLETE"));
-		        		progress.element.prepend('<i class="datt-icon"><img src="' + (data.imgUrl || data.icon || "") + '"/ width="44" height="44"></i>');
-
-		        		cs.success && cs.success.call(this, file, data, response);
+		        		if (data.aid && data.url) {
+		        			progress.setComplete();
+		        			progress.setStatus(U.lang("UPLOAD.UPLOAD_COMPLETE"));
+		        			progress.element.prepend('<i class="datt-icon"><img src="' + (data.imgUrl || data.icon || "") + '"/ width="44" height="44"></i>');
+		        			
+		        			cs.success && cs.success.call(this, file, data, response);
+		        		} else if (data.isSuccess === false) {
+		        			progress.setError();
+		        			progress.setStatus(data.msg);
+		        		}
 		        	} catch(e){
 		        		this.debug(e);
 		        	}

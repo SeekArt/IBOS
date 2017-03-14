@@ -103,7 +103,9 @@
             }
 
             if (ids) {
-                if (!$.isArray(ids)) { ids = [ids]; }
+                if (!$.isArray(ids)) {
+                    ids = [ids];
+                }
                 var i = 0,
                     id,
                     len = ids.length;
@@ -201,7 +203,9 @@
                     data, key;
 
                 if (arg.length === 0) {
-                    return false;
+                    return {
+                        user: {}
+                    };
                 }
                 data = dataFetch(arg);
                 for (key in data) {
@@ -225,7 +229,9 @@
                 var data, deptInfo, posInfo,
                     url = Ibos.app.url('main/api/orguser');
 
-                $.post(url, { uids: ids }, function(res) {
+                $.post(url, {
+                    uids: ids
+                }, function(res) {
                     if (res.isSuccess) {
                         data = res.data;
                         callback && callback.call(null, data);

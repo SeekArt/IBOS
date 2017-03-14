@@ -124,39 +124,39 @@
 
 
 	$.fn.pSelect = function(options){
-		var $elem = this;
-		if(!$elem.is("select")) {
-			$.error("pSelect: 初始化元素必须为 select 对象");
-		}
-
-		options = options || {};
-
-		var data = $("option", $elem).map(function(i, o){
-			return {
-				value: o.value,
-				text: o.text,
-				selected: o.selected
+		return this.each(function(){
+			var $elem = $(this);
+			if(!$elem.is("select")) {
+				$.error("pSelect: 初始化元素必须为 select 对象");
 			}
-		}).get();
 
+			options = options || {};
 
+			var data = $("option", $elem).map(function(i, o){
+				return {
+					value: o.value,
+					text: o.text,
+					selected: o.selected
+				}
+			}).get();
 
-		var $ct = $("<div></div>").insertBefore($elem);
-		
-		$elem.hide();
-		if(options.width) {
-			$ct.css("width", options.width);
-		}
+			var $ct = $("<div></div>").insertBefore($elem);
+			
+			$elem.hide();
+			if(options.width) {
+				$ct.css("width", options.width);
+			}
 
-		var sv = new SelectView(new SelectModel(data), { container: $ct });
-		
-		$(sv).on("selectchange", function(evt, evtData){
-			$elem.val(evtData.value).trigger("change");
+			var sv = new SelectView(new SelectModel(data), { container: $ct });
+			
+			$(sv).on("selectchange", function(evt, evtData){
+				$elem.val(evtData.value).trigger("change");
+			});
+
+			$elem.data("pSelect", sv);
+
+			return $elem;
 		});
-
-		$elem.data("pSelect", sv);
-
-		return $elem;
 	}
 
 })();

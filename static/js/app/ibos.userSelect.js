@@ -478,7 +478,7 @@
             }
 
             var treeClick, treeCheck, beforeExpand, beforeCheck;
-            var $tree, treeSetting, treeid,
+            var $tree, treeSetting, treeid, _lastNodeId,
                 self = this;
 
             treeClick = function(evt, treeid, node) {
@@ -490,7 +490,14 @@
             treeCheck = function(evt, treeid, node) {
                 // 排除不可选中的项
                 if (!node.nocheck) {
-                    node.checked ? self.addValue(node.id) : self.removeValue(node.id);
+                    if (node.checked) {
+                        // 记录最后一次勾选id
+                        _lastNodeId = node.id;
+                        self.addValue(node.id);
+                    } else {
+                        self.removeValue(node.id);
+                    }
+
                     self.$num.text(self.values.length);
                 }
             };
@@ -502,8 +509,8 @@
                     if (!node.checked && !~$.inArray(node.id, self.values) &&
                         self.options.maximumSelectionSize &&
                         self.options.maximumSelectionSize < self.values.length + 1) {
-                        Ui.tip('已超过选择限制最大值，若要选择请先取消原有勾选', 'warning');
-                        return false;
+                        // 取消上一次的勾选
+                        self._checkNode(_lastNodeId, false);
                     }
 
                     // 在勾选之前先对子集进行锁定或解锁
@@ -1012,7 +1019,7 @@
                 $box, len, val, vals, self = this;
 
             // 初始化限制过滤
-            if (vals = $.trim(initVal).split(',')) {
+            if (vals = _getUnique($.trim(initVal).split(','), $.trim(this.options.value).split(','))) {
                 for (len = vals.length; len--;) {
                     (val = vals[len]) && this._getText(val) && this.values.length <= max && this.values.push(val);
                 }
@@ -1285,7 +1292,7 @@
          * 负责实例之间的通信
          */
         evtLinked: function(src, data, silent) {
-            var checkid;
+            var checkid, self = this;
 
             switch (src) {
                 case 'selectBox':
@@ -1302,7 +1309,9 @@
                 default:
                     checkid = data.added || data.removed;
                     this.select.val(_fixEmptyArr(this.values));
-                    this.selectBox.setValue(checkid, !!data.added).saveValue();
+                    this.selectBox ? this.selectBox.setValue(checkid, !!data.added).saveValue() : setTimeout(function() {
+                        self.selectBox.setValue(checkid, !!data.added).saveValue();
+                    }, 600);
                     break;
             }
 
@@ -1336,6 +1345,16 @@
             this.btns[0].hide();
             return this;
         },
+
+        /**
+         * TODO:修正enabled,disabled,readonly的方法 
+         * @returns {_L1.UserSelect.prototype}
+         */
+        setReadOnly: function() {
+            this.setDisabled();
+            this.btns[1].hide();
+            return this;
+        }
     };
 
     $.fn.userSelect = function(options) {

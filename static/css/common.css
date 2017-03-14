@@ -523,7 +523,7 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 	float: right;
 	/*position: relative;*/
 	padding-top: 15px;
-	width: 110px;
+	width: 126px;
 }
 .usi a{
 	font-weight: 700;
@@ -1884,9 +1884,6 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 }
 .aui_import{
 	position: fixed;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
 	z-index: 6001;
 }
 .import-upload{
@@ -1981,11 +1978,19 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 }
 /* 百度编辑器保存后所需样式 */
 .editor-content{
+	position: relative;
+	width: auto;
 	color: #333;
+	overflow: auto;
 }
 .editor-content table td{
 	color: #333;
 	border: 1px solid #ddd;
+}
+.editor-content ul,
+.editor-content ol {
+	padding: 0;
+	margin: 0 0 10px 25px;
 }
 .pagebreak {
     display: block;
@@ -2060,4 +2065,7 @@ body > div.jGrowl.center { top: 60px; padding: 0; }
 	width: 170px;
 	height: auto;
 	margin-bottom: 10px;
+}
+.text-overflow {
+	overflow: auto;
 }

@@ -5844,13 +5844,7 @@ div.jGrowl div.jGrowl-notification.primary {
   -moz-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  /* IE6 and 7 */ 
-  filter: progid:DXImageTransform.Microsoft.Matrix(
-    M11=1,
-    M12=0,
-    M21=0,
-    M22=1,
-    SizingMethod='auto expand');
+  transform: translate(0, 0)\9;
   /* IE8+ - must be on one line, unfortunately */ 
   -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod='auto expand')";
   /*

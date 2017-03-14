@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>协同云拆机通知</title>
-        <link href="static/css/base.css" type="text/css" rel="stylesheet">
-        <link href="static/css/common.css" type="text/css" rel="stylesheet">
-        <link href="static/js/lib/artDialog/skins/ibos.css" rel="stylesheet" type="text/css">
-        <link href="install/static/css/installation_guide.css" type="text/css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="main">
-            <div class="main-content">
-                <div class="main-top posr">
-                    <i class="o-top-bg"></i>
-                </div>
-                <div class="specific-content">
-                    <div class="nht" style="align-content: center;">
-                        <table cellpadding="10">
-                            <tbody>
-                                <tr>
-                                    <td rowspan="8" style="width:180px; background:#f8f8f8; line-height: 2em;">
-                                        <h3>抱歉</h3>
-                                        <p>很遗憾的通知您之前使用的协同云已经拆机。已经产生的企业数据会为您保留五天时间。到期之后会删除，如需继续使用请续费。</p>
-                                        <p>感谢您的理解与支持。</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+
+<head>
+    <meta charset="UTF-8">
+    <title>协同云到期通知</title>
+    <link href="static/css/base.css" type="text/css" rel="stylesheet">
+    <link href="static/css/common.css" type="text/css" rel="stylesheet">
+    <link href="install/static/css/sys_expire.css" type="text/css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main">
+        <div class="main-content xac">
+            <i class="o-sys-expire"></i>
+            <p class="fsh fcdg mb">很抱歉，当前使用的IBOS已过期</p>
+            <p class="fclg mb">
+                <span class="xal remind-box">试用期间所产生的企业数据，我们只会为您保留5天，5天后将会删除，如需继续使用，请管理员尽快联系我们续费呦！</span>
+            </p>
+            <p>
+                <i class="o-sys-contact" id="topqq"></i>
+            </p>
         </div>
-    </body>
+    </div>
+    <script type="text/javascript" src="http://wpa.b.qq.com/cgi/wpa.php"></script>
+    <script type="text/javascript">
+    (function() {
+        BizQQWPA.addCustom({
+            aty: '2',
+            a: '3',
+            nameAccount: 4008381185,
+            selector: 'topqq'
+        });
+    })();
+    </script>
+</body>
+
 </html>

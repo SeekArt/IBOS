@@ -270,27 +270,27 @@
 			})
 		})();
 
-		(function () {
-			var $funCtrl = $("#user_fun_ctrl"),
-				$funCard = $("#user_fun_card");
-
-			var menu = new Ui.PopMenu($funCtrl, $funCard, {
-				position: {
-					at: "right bottom",
-					my: "right top+25",
-					of: $funCtrl
-				},
-				showDelay: 0,
-				animate: true
-			});
-
-			$funCard.on("show", function() {
-				$funCtrl.addClass("active");
-			})
-			.on("hide", function(){
-				$funCtrl.removeClass("active")
-			})
-		})();
+		// (function () {
+		// 	var $funCtrl = $("#user_fun_ctrl"),
+		// 		$funCard = $("#user_fun_card");
+        //
+		// 	var menu = new Ui.PopMenu($funCtrl, $funCard, {
+		// 		position: {
+		// 			at: "right bottom",
+		// 			my: "right top+25",
+		// 			of: $funCtrl
+		// 		},
+		// 		showDelay: 0,
+		// 		animate: true
+		// 	});
+        //
+		// 	$funCard.on("show", function() {
+		// 		$funCtrl.addClass("active");
+		// 	})
+		// 	.on("hide", function(){
+		// 		$funCtrl.removeClass("active")
+		// 	})
+		// })();
 
 
 		/**

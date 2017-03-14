@@ -250,7 +250,7 @@ use application\modules\user\utils\User as UserUtil;
 
                             ?></a>
                     </div>
-                    Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
+                    Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_TYPE; ?></strong>
                     <?php if (YII_DEBUG): ?>
                         Processed in <code><?php echo Ibos::app()->performance->endClockAndGet(); ?></code> second(s).
                         <code><?php echo Ibos::app()->performance->getDbstats(); ?></code> queries.

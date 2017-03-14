@@ -266,7 +266,7 @@ var L = {
         MANAGE: "附件管理",
         WAITING: "等待上传", //"上传中...",
         QUEUE_LIMIT_EXCEEDED: "已达到文件上限",
-        FILE_EXCEEDS_SIZE_LIMIT: "文件太大",
+        FILE_EXCEEDS_SIZE_LIMIT: "文件超出上传大小限制",
         ZERO_BYTE_FILE: "不能上传零字节文件",
         INVALID_FILETYPE: "禁止上传该类型的文件",
         UNKNOWN_ERROR: "未知错误",

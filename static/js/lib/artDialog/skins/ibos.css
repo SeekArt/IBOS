@@ -21,7 +21,7 @@ table.d-border, table.d-border {-webkit-border-radius: 4px; -moz-border-radius: 
 .d-state-noTitle .d-title { display:none; }
 .d-inner{ border: 1px solid #DDD; border: 0 solid rgba(0, 0, 0, 0); border: 1px solid #DDD\9; }
 
-.d-main { text-align:center; min-width:9em; min-width:0\9/*IE8 BUG*/; }
+.d-main { position: relative; display: block; text-align:center; min-width:9em; min-width:0\9/*IE8 BUG*/; }
 .d-content { text-align:left; border:none 0; vertical-align: middle; max-height: 560px; overflow-y: auto; overflow-x: hidden; /*height: 101%;*/ padding: 0; }
 .d-content::-webkit-scrollbar { width: 10px; height: 10px;}
 .d-content::-webkit-scrollbar-track { border-radius: 5px; background-color: #b2c0d1; }
