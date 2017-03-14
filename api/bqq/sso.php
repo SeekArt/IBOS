@@ -58,7 +58,7 @@ if ($uid) {
      */
     $status = CJSON::decode($res, true);
     if ($status['ret'] == '0') {
-        dologin($uid, 'bqqsso');
+        doLogin($uid, 'bqqsso');
         if ($returnurl == 'index') {
             header('Location: ../../index.php', true);
         } else {

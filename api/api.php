@@ -7,6 +7,7 @@ use application\core\utils\Ibos;
 use application\core\utils\Module as ModuleUtil;
 use application\modules\main\model\Setting;
 use application\modules\user\model\UserBinding;
+use application\modules\role\utils\Role;
 
 // 程序根目录路径
 define('PATH_ROOT', dirname(__FILE__) . '/../');
@@ -34,7 +35,7 @@ if (!empty($result)) {
             $return = 'success';
             break;
         case 'version':
-            $return = strtolower(implode(',', array(ENGINE, VERSION, VERSION_DATE)));
+            $return = strtolower(implode(',', array(ENGINE, VERSION, VERSION_TYPE)));
             break;
         case 'module':
             $returnArray = Ibos::app()->db->createCommand()
@@ -91,6 +92,16 @@ if (!empty($result)) {
             } else {
                 $res = UserBinding::model()->modify($checkbinding['id'], $data);
             }
+            $return = CJSON::encode(
+                array(
+                    'isSuccess' => true,
+                    'msg' => ''
+                )
+            );
+            break;
+        case 'updateAuthority':
+            ModuleUtil::updateConfig();
+            Role::updateAuthItemByRoleid();
             $return = CJSON::encode(
                 array(
                     'isSuccess' => true,

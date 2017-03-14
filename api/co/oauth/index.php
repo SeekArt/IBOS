@@ -91,7 +91,7 @@ function checkBind($userId, $redirect)
     if (!empty($userId)) {
         $uid = UserBinding::model()->fetchUidByValue($userId, 'co');
         if (!empty($uid)) {
-            $resArr = dologin($uid);
+            $resArr = doLogin($uid);
             if ($resArr['code'] >= 0) {
                 $isSuccess = true;
             }

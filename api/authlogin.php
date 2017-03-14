@@ -26,6 +26,6 @@ if (strcmp($signature, sha1($aeskey . $timestamp)) != 0) {
 
 $uid = Env::getRequest('uid');
 if (!empty($uid)) {
-    $result = dologin($uid);
+    $result = doLogin($uid);
     echo CJSON::encode($result);
 }

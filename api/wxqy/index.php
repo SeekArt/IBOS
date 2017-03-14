@@ -38,7 +38,7 @@ if (!empty($result)) {
     if (!empty($msg)) {
         $uid = UserBinding::model()->fetchUidByValue($msg['properties']['userId'], 'wxqy');
         if ($uid) {
-            dologin($uid);
+            doLogin($uid);
             $factory = new Factory();
             $res = $factory->createHandle($msg['class'], $msg['properties'])->handle();
         } else {

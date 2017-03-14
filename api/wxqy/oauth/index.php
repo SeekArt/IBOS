@@ -47,12 +47,14 @@ if ($isPost) {
         if (!empty($user)) {
             $password = md5(md5($password) . $user['salt']);
             if (strcmp($user['password'], $password) == 0) {
-                $hasBind = UserBinding::model()->fetch('uid = :uid AND bindvalue = :bindvalue AND  app = :app', array(':uid' => $user['uid'], ':app' => 'wxqy',':bindvalue' => $userId));
-                if(empty($hasBind)){
-                    $userBind = UserBinding::model()->fetch('(uid = :uid OR bindvalue = :bindvalue ) AND  app = :app', array(':uid' => $user['uid'], ':app' => 'wxqy',':bindvalue' => $userId));
-                    if (!empty($userBind)) {
-                        UserBinding::model()->deleteAll('(uid = :uid OR bindvalue = :bindvalue ) AND app = :app', array(':uid' => $user['uid'], ':app' => 'wxqy',':bindvalue' => $userId));
-                    }
+                $list = UserBinding::model()->fetchAll('(uid = :uid OR bindvalue = :bindvalue ) AND app = :app', array(':uid' => $user['uid'], ':app' => 'wxqy', ':bindvalue' => $userId));
+                $count = count($list);
+                //如果根据uid或者绑定值找到记录并且超过一条记录，就全部删除
+                if ($count >= 2) {
+                    UserBinding::model()->deleteAll('(uid = :uid OR bindvalue = :bindvalue ) AND app = :app', array(':uid' => $user['uid'], ':app' => 'wxqy', ':bindvalue' => $userId));
+                }
+                //如果记录不是一条，就添加（0条或者超过1的）
+                if ($count != 1) {
                     UserBinding::model()->add(array('uid' => $user['uid'], 'bindvalue' => $userId, 'app' => 'wxqy'));
                 }
             } else {
@@ -67,7 +69,7 @@ if (!empty($userId)) {
     Ibos::app()->getRequest()->cookies['userid'] = $cookie;
     $uid = UserBinding::model()->fetchUidByValue($userId, 'wxqy');
     if ($uid) {
-        $resArr = dologin($uid);
+        $resArr = doLogin($uid, 'wxqy');
         if (!Ibos::app()->user->isGuest && $resArr['code'] > '0') {
             $redirect = Env::getRequest('redirect');
             $url = base64_decode($redirect);
