@@ -56,6 +56,19 @@ class Calendars extends Model
                 'order' => 'starttime ASC',
             )
         );
+
+        //查询周期性事务
+        $loops = $this->fetchAll(array(
+            'condition' => "`instancetype`= 1 AND recurringbegin<=" . $endTime . " AND (`recurringend`>=" . $startTime . " OR `recurringend`=0) AND `uid` = :uid",
+            'params' => array(':uid' => $uid)
+        ));
+        $events = $this->parsePeriodicEvents($startTime, $endTime, $loops);
+
+        $allCalendar = $events;
+        foreach($comCalendar as $dayCalendar) {
+            $allCalendar[] = $dayCalendar->attributes;
+        }
+
         // 判断当前用户对日程用户的日程处理权限 0查看 1编辑 false当前用户没有权限操作该用户的日程
         $editAble = UserUtil\User::checkUserCalendarPermission(Ibos::app()->user->uid, $uid);
         if ($editAble === false) {
@@ -66,7 +79,7 @@ class Calendars extends Model
         $result["start"] = "/Date(" . $startTime . "000" . ")/";
         $result["end"] = "/Date(" . $endTime . "000" . ")/";
         $result['events'] = array();
-        foreach ($comCalendar as $calendar) {
+        foreach ($allCalendar as $calendar) {
             $spanday = date('Y-m-d', $calendar['starttime']) < date('Y-m-d', $calendar['endtime']) ? 1 : 0; //是否是跨天日程
             $result['events'][] = array(
                 'id' => $calendar['calendarid'], //周期性事务ID做特别标识，方便实例
@@ -181,87 +194,90 @@ class Calendars extends Model
             'condition' => "`instancetype`=1 AND recurringbegin<=" . $ed . " AND (`recurringend`>=" . $sd . " OR `recurringend`=0) AND $whereuid",
             'params' => array(':uid' => $uid)
         ));
-        if (!empty($loops)) {
-            foreach ($loops as $loop) {
-                //取得周期性事务的实例
-                $examples = $this->fetchAll(array(
-                    'condition' => "`instancetype`=2 AND `masterid`=" . $loop['calendarid'],
-                ));
-                $mastertimearr = array();
-                if (!empty($examples)) {
-                    //取得实例事务所属的周期性事务的某一日时间
-                    foreach ($examples as $example) {
-                        $mastertimearr[] = $example['mastertime'];
-                    }
-                }
-                switch ($loop['recurringtype']) {
-                    case 'week': //如果是周
-                        $weekarr = explode(',', $loop['recurringtime']);
-                        $dayarr = array();
-                        $rstart = strtotime(date('Y-m-d', $sd)); //开始的日期
-                        $rend = strtotime(date('Y-m-d ', $ed)); //结束的日期
-                        $validitydays = (ceil(($rend - $rstart)) / (60 * 60 * 24)); //有效天数
-                        for ($i = 0; $i < $validitydays + 1; $i++) {
-                            $dayarr[] = mktime(0, 0, 0, date('m', $sd), date('d', $sd) + $i, date('Y', $sd)); //用mktime会自动较正日期
-                        }
-                        $cloneid = $loop['calendarid']; //复制$row['Id']，因为下面遍历要生成伪ID，$row['Id']会被改变
-                        foreach ($dayarr as $key => $value) {
-                            $weekday = date('N', $value); //求出当前号是星期几
-                            if (in_array($weekday, $weekarr)) {
-                                $loop['starttime'] = strtotime(date('Y-m-d', $value) . ' ' . date('H:i:s', $loop['starttime']));
-                                $loop['endtime'] = strtotime(date('Y-m-d', $value) . ' ' . date('H:i:s', $loop['endtime']));
-                                $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
-                                if ($loop['endtime'] > $sd && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
-                                    $loop['calendarid'] = '-' . $loop['starttime'] . $cloneid; //生成伪ID
-                                    $ret['events'][] = $loop;
-                                }
-                            }
-                        }
-                        break;
-                    case 'month': //如果是月
-                        $day = date('d', $sd);
-                        if ($loop['recurringtime'] > $day) { //有一种情况，如果页面列表是两个月之间的日期，如1月28号至2月3号，只用$sd提取的月就是1月，但是如果周期是在2号，那么就要用$ed提取的月份进行操作
-                            $date = date('Y-m-', $sd) . $loop['recurringtime'] . ' ';
-                        } else {
-                            $date = date('Y-m-', $ed) . $loop['recurringtime'] . ' ';
-                        }
-                        $stime = date('H:i:s', $loop['starttime']); //日程开始点数
-                        $etime = date('H:i:s', $loop['endtime']); //日程结束点数
-                        $loop['starttime'] = strtotime($date . $stime);
-                        $loop['endtime'] = strtotime($date . $etime);
-                        $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
-                        if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
-                            $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
-                            $ret['events'][] = $loop;
-                        }
-                        break;
-                    case 'year': //如果是年
-                        $recurringtime = $loop['recurringtime'];  //年事务循环的是几月几号
-                        $date = date('Y-', $sd) . $recurringtime . ' ';
-                        $stime = date('H:i:s', $loop['starttime']); //日程开始点数
-                        $etime = date('H:i:s', $loop['endtime']); //日程结束点数
-                        $loop['starttime'] = strtotime($date . $stime);
-                        $loop['endtime'] = strtotime($date . $etime);
-                        $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
-                        if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
-                            $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
-                            $ret['events'][] = $loop;
-                        }
-                        break;
-                }
-            }
-            foreach ($ret['events'] as $key => $row) {
-                $starttimearr[$key] = $row['starttime'];
-            }
-            // 将数据根据开始时间升序排列
-            // 把 $ret['events'] 作为最后一个参数，以通用键排序
-            if (!empty($starttimearr)) {
-                array_multisort($starttimearr, SORT_ASC, $ret['events']);
-            }
-            if (!is_null($num)) {
-                $ret['events'] = array_slice($ret['events'], 0, $num);
-            }
-        }
+//        if (!empty($loops)) {
+//            foreach ($loops as $loop) {
+//                //取得周期性事务的实例
+//                $examples = $this->fetchAll(array(
+//                    'condition' => "`instancetype`=2 AND `masterid`=" . $loop['calendarid'],
+//                ));
+//                $mastertimearr = array();
+//                if (!empty($examples)) {
+//                    //取得实例事务所属的周期性事务的某一日时间
+//                    foreach ($examples as $example) {
+//                        $mastertimearr[] = $example['mastertime'];
+//                    }
+//                }
+//                switch ($loop['recurringtype']) {
+//                    case 'week': //如果是周
+//                        $weekarr = explode(',', $loop['recurringtime']);
+//                        $dayarr = array();
+//                        $rstart = strtotime(date('Y-m-d', $sd)); //开始的日期
+//                        $rend = strtotime(date('Y-m-d ', $ed)); //结束的日期
+//                        $validitydays = (ceil(($rend - $rstart)) / (60 * 60 * 24)); //有效天数
+//                        for ($i = 0; $i < $validitydays + 1; $i++) {
+//                            $dayarr[] = mktime(0, 0, 0, date('m', $sd), date('d', $sd) + $i, date('Y', $sd)); //用mktime会自动较正日期
+//                        }
+//                        $cloneid = $loop['calendarid']; //复制$row['Id']，因为下面遍历要生成伪ID，$row['Id']会被改变
+//                        foreach ($dayarr as $key => $value) {
+//                            $weekday = date('N', $value); //求出当前号是星期几
+//                            if (in_array($weekday, $weekarr)) {
+//                                $loop['starttime'] = strtotime(date('Y-m-d', $value) . ' ' . date('H:i:s', $loop['starttime']));
+//                                $loop['endtime'] = strtotime(date('Y-m-d', $value) . ' ' . date('H:i:s', $loop['endtime']));
+//                                $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+//                                if ($loop['endtime'] > $sd && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+//                                    $loop['calendarid'] = '-' . $loop['starttime'] . $cloneid; //生成伪ID
+//                                    $ret['events'][] = $loop;
+//                                }
+//                            }
+//                        }
+//                        break;
+//                    case 'month': //如果是月
+//                        $day = date('d', $sd);
+//                        if ($loop['recurringtime'] > $day) { //有一种情况，如果页面列表是两个月之间的日期，如1月28号至2月3号，只用$sd提取的月就是1月，但是如果周期是在2号，那么就要用$ed提取的月份进行操作
+//                            $date = date('Y-m-', $sd) . $loop['recurringtime'] . ' ';
+//                        } else {
+//                            $date = date('Y-m-', $ed) . $loop['recurringtime'] . ' ';
+//                        }
+//                        $stime = date('H:i:s', $loop['starttime']); //日程开始点数
+//                        $etime = date('H:i:s', $loop['endtime']); //日程结束点数
+//                        $loop['starttime'] = strtotime($date . $stime);
+//                        $loop['endtime'] = strtotime($date . $etime);
+//                        $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+//                        if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+//                            $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
+//                            $ret['events'][] = $loop;
+//                        }
+//                        break;
+//                    case 'year': //如果是年
+//                        $recurringtime = $loop['recurringtime'];  //年事务循环的是几月几号
+//                        $date = date('Y-', $sd) . $recurringtime . ' ';
+//                        $stime = date('H:i:s', $loop['starttime']); //日程开始点数
+//                        $etime = date('H:i:s', $loop['endtime']); //日程结束点数
+//                        $loop['starttime'] = strtotime($date . $stime);
+//                        $loop['endtime'] = strtotime($date . $etime);
+//                        $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+//                        if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+//                            $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
+//                            $ret['events'][] = $loop;
+//                        }
+//                        break;
+//                }
+//            }
+//            foreach ($ret['events'] as $key => $row) {
+//                $starttimearr[$key] = $row['starttime'];
+//            }
+//            // 将数据根据开始时间升序排列
+//            // 把 $ret['events'] 作为最后一个参数，以通用键排序
+//            if (!empty($starttimearr)) {
+//                array_multisort($starttimearr, SORT_ASC, $ret['events']);
+//            }
+//            if (!is_null($num)) {
+//                $ret['events'] = array_slice($ret['events'], 0, $num);
+//            }
+//        }
+
+        $events = $this->parsePeriodicEvents($sd, $ed, $loops);
+        $ret['events'] = array_merge($ret['events'], $events);
         return $ret;
     }
 
@@ -404,4 +420,97 @@ class Calendars extends Model
         }
     }
 
+    /**
+     * 解析周期性事件记录，返回事件数组
+     * @param int $sd 日期范围开始
+     * @param int $ed 日期范围结束
+     * @param array $loops 周期性时间记录数组，array( 0=> <prefix>_calendars 表的一行记录 )
+     * @return array
+     */
+    public function parsePeriodicEvents($sd, $ed, $loops)
+    {
+        if (empty($loops)) {
+            return array();
+        }
+        $ret['events'] = array();
+        foreach ($loops as $loop) {
+            //取得周期性事务的实例
+            $examples = $this->fetchAll(array(
+                'condition' => "`instancetype`=2 AND `masterid`=" . $loop['calendarid'],
+            ));
+            $mastertimearr = array();
+            if (!empty($examples)) {
+                //取得实例事务所属的周期性事务的某一日时间
+                foreach ($examples as $example) {
+                    $mastertimearr[] = $example['mastertime'];
+                }
+            }
+            switch ($loop['recurringtype']) {
+                case 'week': //如果是周
+                    $weekarr = explode(',', $loop['recurringtime']);
+                    $dayarr = array();
+                    $rstart = strtotime(date('Y-m-d', $sd)); //开始的日期
+                    $rend = strtotime(date('Y-m-d ', $ed)); //结束的日期
+                    $endtimeofeveryday = date('H:i:s', $loop['endtime']);
+                    $starttimeofeveryday = date('H:i:s', $loop['starttime']);
+                    $validitydays = (ceil(($rend - $rstart)) / (60 * 60 * 24)); //有效天数
+                    for ($i = 0; $i < $validitydays + 1; $i++) {
+                        $dayarr[] = mktime(0, 0, 0, date('m', $sd), date('d', $sd) + $i, date('Y', $sd)); //用mktime会自动较正日期
+                    }
+                    $cloneid = $loop['calendarid']; //复制$row['Id']，因为下面遍历要生成伪ID，$row['Id']会被改变
+                    foreach ($dayarr as $key => $value) {
+                        $weekday = date('N', $value); //求出当前号是星期几
+                        if (in_array($weekday, $weekarr)) {
+                            $loop['starttime'] = strtotime(date('Y-m-d', $value) . ' ' . $starttimeofeveryday);
+                            $loop['endtime']   = strtotime(date('Y-m-d', $value) . ' ' . $endtimeofeveryday);
+                            $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+                            if ($loop['endtime'] > $sd && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+                                $loop['calendarid'] = '-' . $loop['starttime'] . $cloneid; //生成伪ID
+                                $ret['events'][] = $loop;
+                            }
+                        }
+                    }
+                    break;
+                case 'month': //如果是月
+                    $day = date('d', $sd);
+                    if ($loop['recurringtime'] > $day) { //有一种情况，如果页面列表是两个月之间的日期，如1月28号至2月3号，只用$sd提取的月就是1月，但是如果周期是在2号，那么就要用$ed提取的月份进行操作
+                        $date = date('Y-m-', $sd) . $loop['recurringtime'] . ' ';
+                    } else {
+                        $date = date('Y-m-', $ed) . $loop['recurringtime'] . ' ';
+                    }
+                    $stime = date('H:i:s', $loop['starttime']); //日程开始点数
+                    $etime = date('H:i:s', $loop['endtime']); //日程结束点数
+                    $loop['starttime'] = strtotime($date . $stime);
+                    $loop['endtime'] = strtotime($date . $etime);
+                    $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+                    if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+                        $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
+                        $ret['events'][] = $loop;
+                    }
+                    break;
+                case 'year': //如果是年
+                    $recurringtime = $loop['recurringtime'];  //年事务循环的是几月几号
+                    $date = date('Y-', $sd) . $recurringtime . ' ';
+                    $stime = date('H:i:s', $loop['starttime']); //日程开始点数
+                    $etime = date('H:i:s', $loop['endtime']); //日程结束点数
+                    $loop['starttime'] = strtotime($date . $stime);
+                    $loop['endtime'] = strtotime($date . $etime);
+                    $issub = in_array(date('Y-m-d', $loop['starttime']), $mastertimearr);
+                    if ($loop['starttime'] >= $sd && $loop['endtime'] <= $ed && $loop['starttime'] >= $loop['recurringbegin'] && ($loop['endtime'] <= ($loop['recurringend'] + 24 * 60 * 60 - 1) || $loop['recurringend'] == 0) && !$issub) {
+                        $loop['calendarid'] = '-' . $loop['starttime'] . $loop['calendarid'];
+                        $ret['events'][] = $loop;
+                    }
+                    break;
+            }
+        }
+        foreach ($ret['events'] as $key => $row) {
+            $starttimearr[$key] = $row['starttime'];
+        }
+        // 将数据根据开始时间升序排列
+        // 把 $ret['events'] 作为最后一个参数，以通用键排序
+        if (!empty($starttimearr)) {
+            array_multisort($starttimearr, SORT_ASC, $ret['events']);
+        }
+        return $ret['events'];
+    }
 }

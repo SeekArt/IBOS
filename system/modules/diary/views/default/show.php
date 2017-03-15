@@ -288,7 +288,7 @@ use application\core\utils\Org;
         //当点击查看时，动态的给需要查看大图的img外层添加<a>标签
         $(".summary-td img").each(function () {
             var $elem = $(this);
-            $elem.wrap("<a data-lightbox='diary' href='" + $elem.attr("src") + "' title='" + $elem.attr("title") + "'></a>");
+            $elem.wrap("<a data-lightbox='diary' href='" + $elem.attr("src") + "' title='" + ($elem.attr("title") || $elem.attr('alt')) + "'></a>");
         });
     })();
 </script>

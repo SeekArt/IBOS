@@ -139,16 +139,18 @@ use application\core\utils\StringUtil;
                         </div>
                     </div>
                 </div>
-                <div class="ctb xcm bdbs editor-content text-break" style="min-height: 400px;">
-                    <?php if ($email['isweb']): ?>
-                        <div id="mainFrameContainer">
-                            <iframe onload="setScale()" style="width:100%;" src="<?php
-                            echo $this->createUrl('content/show', array('id' => $email['emailid'], 'op' => 'showframe'));
-                            ?>" name="mainFrame" id="mainFrame" frameborder="no" scrolling="no" hidefocus></iframe>
-                        </div>
-                    <?php else: ?>
-                        <?php echo $email['content']; ?>
-                    <?php endif; ?>
+                <div class="ctb text-overflow">
+                    <div class="xcm bdbs editor-content text-break" style="min-height: 400px;">
+                        <?php if ($email['isweb']): ?>
+                            <div id="mainFrameContainer">
+                                <iframe onload="setScale()" style="width:100%;" src="<?php
+                                echo $this->createUrl('content/show', array('id' => $email['emailid'], 'op' => 'showframe'));
+                                ?>" name="mainFrame" id="mainFrame" frameborder="no" scrolling="no" hidefocus></iframe>
+                            </div>
+                        <?php else: ?>
+                            <?php echo $email['content']; ?>
+                        <?php endif; ?>
+                    </div>
                 </div>
                 <?php if (isset($attach)): ?>
                     <div class="ctb bglg bdbs noprint">

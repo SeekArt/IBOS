@@ -118,16 +118,18 @@ class BaseController extends Controller
         $sidebarAlias = 'application.modules.diary.views.sidebar';
 
         $month = date('m');
+        $year = date('Y');
         if (array_key_exists('diaryDate', $_GET)) {
-            list(, $m,) = explode('-', $_GET['diaryDate']);
+            list($y, $m,) = explode('-', $_GET['diaryDate']);
             $month = $m;
+            $year = $y;
         }
         $monthName = array("一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二");
         $monthStr = $monthName[$month - 1];
         $params = array(
             'statModule' => Ibos::app()->setting->get('setting/statmodules'),
             'calendar' => $this->getSidebarData(),
-            'currentDateInfo' => array('year' => date('Y'), 'month' => $month, 'monthStr' => $monthStr),
+            'currentDateInfo' => array('year' => $year, 'month' => $month, 'monthStr' => $monthStr),
             'dashboardConfig' => Ibos::app()->setting->get('setting/diaryconfig')
         );
         $sidebarView = $this->renderPartial($sidebarAlias, $params, true);

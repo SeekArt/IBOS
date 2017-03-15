@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="control-group mbm">
-                        <label class="control-label"><?php echo $lang['Receive mail server']; ?>（SMTP）：</label>
+                        <label class="control-label"><?php echo $lang['Send server']; ?>（SMTP）：</label>
                         <div class="controls">
                             <input type="text" id="mal_smtp_server" name="web[smtpserver]"
                                    value="<?php echo $web['smtpserver']; ?>" class="span6"/>

@@ -35,6 +35,10 @@ class WxApi extends Api
     // 授权验证URL
     const OAUTH_URL = 'https://open.weixin.qq.com/connect/oauth2/authorize';
 
+    /**
+     * @param string $className
+     * @return WxApi
+     */
     public static function getInstance($className = __CLASS__)
     {
         return parent::getInstance($className);
@@ -146,6 +150,7 @@ class WxApi extends Api
 EOT;
 
         $return = $this->fetchResult($url, $post, 'post');
+        Log::write(array('action' => 'wxCreateDep', 'postData' => $post, 'url' => $url, 'result' => $return));
         $isSuccess = $this->getSendIsSuccess($return);
         $res = CJSON::decode($return, true);
         if ($res['errcode'] == '60008' || //部门已经存在的话，也继续同步部门操作
@@ -167,20 +172,19 @@ EOT;
             $depstr = 1;
         }
         $telephone = isset($user['telephone']) ? $user['telephone'] : '';
-        $post = <<<EOT
-{
-   "userid": "{$user['userid']}",
-   "name": "{$user['realname']}",
-   "department": {$depstr},
-   "position": "{$user['posname']}",
-   "mobile": "{$user['mobile']}",
-   "gender": {$user['gender']},
-   "tel": "{$telephone}",
-   "email": "{$user['email']}",
-   "weixinid": "{$user['weixin']}"
-}
-EOT;
-        $res = $this->fetchResult($url, $post, 'post');
+        $post = array(
+            'userid' => $user['userid'],
+            'name' => $user['realname'],
+            'department' => array_filter(array_unique(explode(',', $depstr))),
+            'position' => $user['posname'],
+            'mobile' => $user['mobile'],
+            'gender' => $user['gender'],
+            'tel' => $telephone,
+            'email' => $user['email'],
+            'weixinid' => $user['weixin']
+        );
+        $res = $this->fetchResult($url, json_encode($post), 'post');
+        Log::write(array('action' => 'createUser', 'postData' => $post, 'url' => $url, 'result' => $res));
         if (!is_array($res)) {
             $res = CJSON::decode($res, true);
             if ($res['errcode'] == '0') {
@@ -208,13 +212,15 @@ EOT;
             return Code::SYNC_ERROR_MSG;
         }
     }
-
+    
     /**
      * 如果是手机邮箱微信存在，微信返回的errmsg里带有userid
      * 如果，我是说如果，这个规则被微信改了……怪我么？
      * 这么做是为了减少对微信的请求次数，不然你行你上
+     *
      * @param type $uid
      * @param type $errmsg
+     * @return string
      */
     private function setBind($uid, $errmsg, $type)
     {
@@ -236,28 +242,35 @@ EOT;
     /**
      *
      * @param string $url 官网那边接收请求地址
-     * @param array $userid 需要发送邀请的用户id（姓名转成拼音）列表
+     * @param array $userId 需要发送邀请的用户id（姓名转成拼音）列表
      * @return type
      */
-    public function sendInvition($url, $userid)
+    public function sendInvitation($url, $userId)
     {
-        $res = $this->fetchResult($url, json_encode($userid), 'post');
+        $postData = json_encode($userId);
+        $res = $this->fetchResult($url, $postData, 'post');
+        Log::write(array('action' => 'sendWxInvitation', 'postData' => $postData, 'url' => $url, 'result' => $res));
         return $res;
     }
 
     /**
      * 获取已同步的微信员工
+     *
+     * @param $url
      * @param integer $departmentId 部门id
-     * @param integer $status 0获取全部员工，1获取已关注成员列表，2获取禁用成员列表，4获取未关注成员列表。status可叠加
+     * @param int $fetchChild
      * @return array
      */
     public function getDeptUser($url, $departmentId = 1, $fetchChild = 1, $status = 0)
     {
-        $res = $this->fetchResult($url, array(
+        $postData = array(
             'department_id' => $departmentId,
             'fetch_child' => $fetchChild,
             'status' => $status
-        ));
+        );
+        $res = $this->fetchResult($url, $postData);
+        Log::write(array('action' => 'getDeptUser', 'postData' => $postData, 'result' => $res, 'url' => $url));
+
         if (!is_array($res)) {
             $result = CJSON::decode($res, true);
             if (isset($result['userlist'])) {
@@ -269,8 +282,9 @@ EOT;
 
     /**
      * 创建微信用户验证URL
+     *
      * @param string $route
-     * @param integer $appId微信端appId
+     * @param $appId
      * @return string
      */
     public function createOauthUrl($route, $appId)

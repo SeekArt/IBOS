@@ -9,7 +9,7 @@
  */
 return array(
     //----------------golabs-------------------
-    'Information center' => '信息中心',
+    'Information officialdoc' => '通知公告',
     'Officialdoc' => '通知公告',
     'Officialdoc list' => '通知列表',
     'Add officialdoc' => '新建通知',

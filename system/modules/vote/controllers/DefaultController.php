@@ -109,5 +109,24 @@ class DefaultController extends BaseController
         return $this->ajaxBaseReturn(true, array(), Ibos::lang('vote success'));
     }
 
+    /**
+     * ICAPPLICATION组件会调用各控制器的此方法进行验证，子类可重写这个实现各自的验证
+     * 规则
+     *
+     * @param string $route
+     * @return boolean true 不验证该路由
+     */
+    public function filterRoutes($route)
+    {
+        $whiteList = array(
+            'vote/default/showvote',
+            'vote/default/vote',
+        );
 
+        if (in_array($route, $whiteList)) {
+            return true;
+        }
+
+        return false;
+    }
 }

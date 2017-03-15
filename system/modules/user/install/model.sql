@@ -24,7 +24,7 @@ CREATE TABLE `{{user}}` (
   `weixin` varchar(100) NOT NULL DEFAULT '' COMMENT '微信号',
   `mobile` char(11) NOT NULL DEFAULT '' COMMENT '手机号码',
   `email` char(50) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '用户状态',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '用户状态，0正常、1锁定、2禁用',
   `createtime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `credits` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '总积分',
   `newcomer` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否新成员标识',

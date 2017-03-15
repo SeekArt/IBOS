@@ -5,7 +5,7 @@ use application\core\utils\Ibos;
 
 ?>
 
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css?<?= FORMHASH ?>">
 <div class="ct">
     <div class="clearfix">
         <h1 class="mt"><?php echo $lang['Online upgrade']; ?></h1>
@@ -24,16 +24,12 @@ use application\core\utils\Ibos;
                             <i class="o-finish-step"></i>
                             <span class="ml"><?php echo $lang['Upgrade download'] ?></span>
                         </a>
-                        <a class="finish-step" href="javascript:;">
-                            <i class="o-finish-step"></i>
-                            <span class="ml xcg"><?php echo $lang['Upgrade compare'] ?></span>
-                        </a>
                         <a class="active" href="javascript:;">
-                            <span class="circle">4</span>
+                            <span class="circle">3</span>
                             <span class="ml xcg"><?php echo $lang['Upgradeing'] ?></span>
                         </a>
                         <a href="javascript:;">
-                            <span class="circle">5</span>
+                            <span class="circle">4</span>
                             <span class="ml xcg"><?php echo $lang['Upgrade complete'] ?></span>
                         </a>
                     </div>
@@ -60,53 +56,10 @@ use application\core\utils\Ibos;
         <button type="button" data-target="<%=retryUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>"
                 autocomplete="off" data-act="processStep" class="btn btn-large">重试
         </button>
-        <button type="button" data-target="<%=ftpUrl%>" data-loading-text="<?php echo $lang['Action processing']; ?>"
-                autocomplete="off" data-act="processStep" class="btn btn-large mls" id="ftp_setup_btn">设置ftp
-        </button>
     </div>
 </script>
-<!--设置ftp-->
-<script type="text/ibos-template" id="ftp_setup">
-    <form id="sys_ftp_form" method="post" class="form-horizontal">
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Enabled ssl']; ?></label>
-            <div class="controls">
-                <input type="checkbox" name="ftp[ssl]" value="1" data-toggle="switch" class="visi-hidden"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Ftp host']; ?></label>
-            <div class="controls">
-                <input type="text" name="ftp[host]"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Ftp port']; ?></label>
-            <div class="controls">
-                <input type="text" name="ftp[port]" value="25"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Ftp user']; ?></label>
-            <div class="controls">
-                <input type="text" name="ftp[username]"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Ftp pass']; ?></label>
-            <div class="controls">
-                <input type="text" name="ftp[password]"/>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label"><?php echo $lang['Ftp pasv']; ?></label>
-            <div class="controls">
-                <input type="checkbox" name="ftp[pasv]" value="1" data-toggle="switch" class="visi-hidden"/>
-            </div>
-        </div>
-    </form>
-</script>
 <script type="text/javascript">
+    // 升级统计和后台登录统计
     var _ib = _ib || [];
     _ib.push(['authkey', '<?php echo Ibos::app()->setting->get('config/security/authkey'); ?>']);
     _ib.push(['ip', '<?php echo Env::getClientIp(); ?>']);
@@ -124,5 +77,5 @@ use application\core\utils\Ibos;
     })();
     Ibos.app.s({coverUrl: "<?php echo $coverUrl; ?>"})
 </script>
-<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js"></script>
-<script src="<?php echo $assetUrl; ?>/js/db_upgrade_cover.js"></script>
+<script src="<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?= FORMHASH ?>"></script>
+<script src="<?php echo $assetUrl; ?>/js/db_upgrade_cover.js?<?= FORMHASH ?>"></script>

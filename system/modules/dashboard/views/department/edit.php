@@ -18,10 +18,11 @@
                     <div class="control-group">
                         <label class="control-label">上级部门</label>
                         <div class="controls">
-                            <select name="pid" id="dept_pid">
-                                <option value="0"><?php echo $lang['Top department']; ?></option>
-                                <?php echo $tree; ?>
-                            </select>
+                            <input type="text" name="pid" value="<?php echo $deptid;?>" id="dept_pid"/>
+                            <!-- <select name="pid" id="dept_pid">
+                                <option value="0"><?php //echo $lang['Top department']; ?></option>
+                                <?php //echo $tree; ?>
+                            </select> -->
                         </div>
                     </div>
                     <div class="control-group">

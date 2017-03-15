@@ -17,6 +17,13 @@ class HighLight extends Base
     {
         $data = $_POST;
         $articleids = trim($data['articleids'], ',');
+        if (empty($articleids)){
+            Ibos::app()->controller->ajaxReturn(array(
+                'isSuccess' => false,
+                'msg' => Ibos::lang('Select one'),
+                'data' => '',
+            ));
+        }
         $highLight = array();
         $highLight['endTime'] = $data['highlightEndTime'];
         $highLight['bold'] = $data['highlight_bold'];

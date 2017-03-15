@@ -30,6 +30,9 @@ ul li{
 .fsl{
 	font-size:20px;
 }
+.fsp {
+	font-size: 24px;
+}
 .fsg{
 	font-size:30px;
 }
@@ -55,10 +58,8 @@ ul li{
 	text-align: center;
 }
 .main-content{
-	position:absolute;
-	left:50%;
-	width:390px;
-	margin-left:-195px;
+	width: 390px;
+	margin: 30px auto;
 	text-align:center;
 }
 .o-prompt-image,
@@ -66,6 +67,7 @@ ul li{
 .o-chicking-image,
 .o-newest-image,
 .o-success-image,
+.o-error-image,
 .o-finish-upgrade,
 .o-tip,
 .o-finish-step,
@@ -79,7 +81,7 @@ ul li{
 }
 .o-prompt-image{
 	height:162px;
-	width:174px;
+	width:165px;
 	background-position:-274px -334px;
 }
 .o-continue-image{
@@ -91,7 +93,11 @@ ul li{
 	height:154px;
 	width:140px;
 	background-position:2px -344px;
-	
+}
+.o-error-image {
+	width: 166px;
+	height: 166px;
+	background-position: -440px -344px;
 }
 .o-newest-image{
 	width:214px;
@@ -134,14 +140,16 @@ ul li{
 	background-position:-40px -52px;
 }
 .prompt-content{
+	position: relative;
 	padding:20px;
-	margin:30px 0;
+	margin:5px 0;
 	border:1px #dadfe6 solid;
 	background-color:#f9fbfc;
 	text-align:left;
+	box-sizing: border-box;
 }
 .upgrade-content{
-	height:150px;
+	max-height: 200px;
 	overflow:auto;
 }
 .version-title{
@@ -156,7 +164,7 @@ ul li{
 	margin-bottom:10px;
 }
 .btn-upgrade{
-	margin-left:120px;
+	padding: 15px 35px;
 }
 .success-tip-info{
 	margin-left:20px;
@@ -206,4 +214,54 @@ ul li{
 .warm-tip,
 .difference-tip{
 	color:#e26f50;
+}
+
+/** created by csh */
+.o-page-ctrl {
+	position: absolute;
+	top: 23px;
+	right: 20px;
+	display: none;
+	background: url(../image/online_upgrades.png) no-repeat;
+	width: 20px;
+	height: 10px;
+	cursor: pointer;
+	background-position: -80px 0;
+}
+.prompt-content.unactive .o-page-ctrl {
+	background-position: -80px -15px;
+}
+.prompt-content:hover .o-page-ctrl{
+	display: inline-block;
+}
+.prompt-content.unactive p,
+.prompt-content.unactive .upgrade-content {
+	display: none;
+}
+.prompt-content.unactive .version-num {
+	display: block;
+	font-size: 16px;
+	margin-bottom: 0;
+}
+.checkbox:hover .label-tip,
+.checkbox.has-focus .label-tip,
+.checkbox.checked .label-tip {
+	color: #82939e;
+}
+.upgrade-remind-tip {
+	position: absolute;
+	display: none;
+	width: 480px;
+	height: auto;
+}
+.upgrade-remind-tip.active {
+	display: block;
+}
+.btn-upgrade-success {
+	padding: 15px 40px;
+}
+.upgrade-box {
+	width: 880px;
+	margin-left: auto;
+	margin-right: auto;
 }

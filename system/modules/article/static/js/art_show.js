@@ -15,7 +15,9 @@
     initShow = function() {
         // 显示页拉取数据加载
         if (/show/.test(U.getUrlParam().r)) {
-            Article.ajaxApi.getFormShow({ 'articleid': ARTICLEID }).done(function(res) {
+            Article.ajaxApi.getFormShow({
+                'articleid': ARTICLEID
+            }).done(function(res) {
                 if (res.isSuccess) {
                     $(document).trigger('initShow.art', res.data);
                 } else {
@@ -79,7 +81,10 @@
         $comment_tab.on('shown', function() {
             // 避免重复加载
             if (!$comment.attr('data-loaded')) {
-                Article.ajaxApi.getCommentView({ 'articleid': ARTICLEID, 'inajax': 1 }).done(function(res) {
+                Article.ajaxApi.getCommentView({
+                    'articleid': ARTICLEID,
+                    'inajax': 1
+                }).done(function(res) {
                     if (res.isSuccess) {
                         $comment.html(res.data)
                             .attr('data-loaded', '1');
@@ -101,9 +106,13 @@
             var $tmpl;
 
             if (!$isread.attr('data-loaded')) {
-                Article.ajaxApi.getReader({ 'articleid': ARTICLEID }).done(function(res) {
+                Article.ajaxApi.getReader({
+                    'articleid': ARTICLEID
+                }).done(function(res) {
                     if (res.isSuccess) {
-                        $tmpl = $.tmpl("tpl_reader_table", { readerData: res.data });
+                        $tmpl = $.tmpl("tpl_reader_table", {
+                            readerData: res.data
+                        });
                         $isread.html($tmpl)
                             .attr('data-loaded', '1');
                         _more.call(res);
@@ -119,9 +128,13 @@
             var $tmpl;
 
             if (!$verifylog.attr('data-loaded')) {
-                Article.ajaxApi.getFlowLog({ 'articleid': ARTICLEID }).done(function(res) {
+                Article.ajaxApi.getFlowLog({
+                    'articleid': ARTICLEID
+                }).done(function(res) {
                     if (res.isSuccess) {
-                        $tmpl = $.tmpl('tpl_verify_log', { datas: res.data });
+                        $tmpl = $.tmpl('tpl_verify_log', {
+                            datas: res.data
+                        });
                         $verifylog.html($tmpl)
                             .attr('data-loaded', '1');
                     } else {
@@ -144,7 +157,10 @@
     };
 
     loadVote = function() {
-        Article.ajaxApi.getVoteView({ 'articleid': ARTICLEID, 'view': 'view' }).done(function(res) {
+        Article.ajaxApi.getVoteView({
+            'articleid': ARTICLEID,
+            'view': 'view'
+        }).done(function(res) {
             if (res.isSuccess) {
                 $(document).trigger('loadVote.art', res.data);
             } else {
@@ -159,23 +175,24 @@
         $('.ctview-art .art').append($tmpl);
 
         Ibos.app.s({
-            'commentStatus': data.data.commentStatus,
+            'commentStatus': data.data.commentstatus,
             'articleType': data.data.type
         });
 
         initPlugin();
 
         // 允许投票且存在投票时拉取投票数据
-        if (!Ibos.app.g('voteEnable') || data.data.votestatus != SWITCH_OFF) {
+        if (Ibos.app.g('voteEnable') && data.data.votestatus == SWITCH_ON) {
             loadVote();
         }
 
         //加载阅读情况数据
         loadReader();
 
+        $("#verifylog_tab").tab('show');
         // 禁用评论或新闻不允许评论时，直接显示查阅人员
-        if (!Ibos.app.g('commentEnable') || data.data.commentStatus != SWITCH_OFF) {
-            $("#verifylog_tab").tab('show');
+        if (Ibos.app.g('commentEnable') && data.data.commentstatus == SWITCH_ON) {
+            $("#comment_tab").tab('show');
         }
     });
 
@@ -208,7 +225,9 @@
             'editArticle': function(param, elem) {
                 Ui.confirm(U.lang("ART.EDIT_AT_SURE"), function() {
                     var id = $(elem).data('id');
-                    location.href = Ibos.app.url('article/default/edit', { 'articleid': id });
+                    location.href = Ibos.app.url('article/default/edit', {
+                        'articleid': id
+                    });
                 });
             },
             'removeArticle': function(param, elem) {
@@ -216,7 +235,9 @@
                     id = $this.data('id');
 
                 Ui.confirm(Ibos.l('ART.SURE_DEL_ARTICLE'), function() {
-                    Article.ajaxApi.removeArticles({ 'articleids': id }).done(function(res) {
+                    Article.ajaxApi.removeArticles({
+                        'articleids': id
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         // 跳转到被退回列表
                         if (res.isSuccess) {
@@ -231,7 +252,9 @@
                     id = $this.data('id');
 
                 Ui.confirm(Ibos.l('ART.APPROVING_MAKE_SURE_REBACK'), function() {
-                    Article.ajaxApi.pushBack({ 'articleid': id }).done(function(res) {
+                    Article.ajaxApi.pushBack({
+                        'articleid': id
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
 
                         // 跳转到审核中列表
@@ -246,7 +269,9 @@
                 var $this = $(this),
                     id = $this.data('id');
 
-                Article.ajaxApi.remindApprover({ 'articleids': id }).done(function(res) {
+                Article.ajaxApi.remindApprover({
+                    'articleids': id
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
 
                     // 跳转到审核中列表
@@ -264,7 +289,10 @@
                 Article.getBackD(function() {
                     value = $('textarea[name="backreason"]').val();
 
-                    Article.ajaxApi.reback({ 'articleids': id, 'reason': value }).done(function(res) {
+                    Article.ajaxApi.reback({
+                        'articleids': id,
+                        'reason': value
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
 
                         // 跳转到待我列表
@@ -279,7 +307,9 @@
                 var $this = $(this),
                     id = $this.data('id');
 
-                Article.ajaxApi.verifyArticles({ 'articleids': id }).done(function(res) {
+                Article.ajaxApi.verifyArticles({
+                    'articleids': id
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
 
                     // 跳转到待我列表
@@ -293,7 +323,9 @@
                 var id = $(elem).data('id');
 
                 Ui.confirm(U.lang("ART.BACK_AND_VERIFY_AGAIN"), function() {
-                    Article.ajaxApi.getBack({ 'articleids': id }).done(function(res) {
+                    Article.ajaxApi.getBack({
+                        'articleids': id
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
 
                         // 跳转到我已通过列表

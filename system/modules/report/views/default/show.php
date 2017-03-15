@@ -5,6 +5,7 @@ use application\core\utils\Org;
 
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/lightbox/css/lightbox.css?<?php echo VERHASH; ?>"/>
 
 <!-- Mainer -->
 <div class="wrap">
@@ -133,7 +134,7 @@ use application\core\utils\Org;
                             <th class="sep" width="68"><?php echo $lang['Work']; ?><br/><?php echo $lang['Summary']; ?>
                             </th>
                             <td class="sep" width="3"></td>
-                            <td>
+                            <td class="summary-td">
                                 <div class="fill editor-content text-break" style="width: 660px;">
                                     <p class="summary">
                                         <?php echo $report['content']; ?>
@@ -267,6 +268,7 @@ use application\core\utils\Org;
 </div>
 
 <script src='<?php echo $assetUrl; ?>/js/lang/zh-cn.js?<?php echo VERHASH; ?>'></script>
+<script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script src='<?php echo $assetUrl; ?>/js/report.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/report_default_index.js?<?php echo VERHASH; ?>'></script>
 <script>
@@ -278,6 +280,12 @@ use application\core\utils\Org;
                 Enabled: false,
                 CurrentStar: +$elem.next().val()
             });
+        });
+
+        //当点击查看时，动态的给需要查看大图的img外层添加<a>标签
+        $(".summary-td img").each(function () {
+            var $elem = $(this);
+            $elem.wrap("<a data-lightbox='report' href='" + $elem.attr("src") + "' title='" + ($elem.attr("title") || $elem.attr('alt')) + "'></a>");
         });
     })();
 

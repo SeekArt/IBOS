@@ -45,7 +45,8 @@ class FileCloud extends FileCore
 
     /**
      * 获取office文件的阅读地址
-     * @param string $attachUrl 附件地址
+     *
+     * @param $idString
      * @return string
      */
     public function getOfficeReadUrl($idString)

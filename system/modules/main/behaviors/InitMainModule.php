@@ -20,7 +20,6 @@ namespace application\modules\main\behaviors;
 use application\core\utils\Cache;
 use application\core\utils\DateTime;
 use application\core\utils\Env;
-use application\core\utils\File;
 use application\core\utils\Ibos;
 use application\core\utils\Org;
 use application\core\utils\StringUtil;
@@ -50,6 +49,7 @@ class InitMainModule extends CBehavior
         'user/default/wxcode',
         'dashboard/default/login',
         'dashboard/default/logout',
+        'main/default/unauthorized',
         'mobile/api',
         'mobile/default/login',
         'mobile/default/logout',
@@ -87,6 +87,8 @@ class InitMainModule extends CBehavior
         $owner->attachEventHandler('onInitModule', array($this, 'handleInitOrg'));
         // 检查更新升级
         $owner->attachEventHandler('onInitModule', array($this, 'handleCheckUpgrade'));
+        // 检查数据库升级
+        $owner->attachEventHandler('onInitModule', array($this, 'handleCheckDbUpgrade'));
     }
 
     /**
@@ -192,18 +194,17 @@ class InitMainModule extends CBehavior
         // 程序关闭处理
         if ($global['setting']['appclosed']) {
             if (defined('MODULE_NAME') && in_array(MODULE_NAME, array('dashboard', 'user')) ||
-                !Ibos::app()->user->isGuest && Ibos::app()->user->isadministrator ||
-                defined('IN_SWFHASH') && IN_SWFHASH
+                !Ibos::app()->user->isGuest && Ibos::app()->user->isadministrator
             ) {
                 //如果是这些模块，忽略
                 //如果是超级管理员，忽略
-                //如果是swf上传，忽略
             } else {
                 $msg = Ibos::lang('System closed', 'message');
                 if (Ibos::app()->getRequest()->getIsAjaxRequest()) {
                     Env::iExit(CJSON::encode(array('isSuccess' => false, 'msg' => $msg)));
                 } else {
-                    Env::iExit($msg);
+                    require PATH_ROOT . '/system/views/sysClosed.php';
+                    exit;
                 }
             }
         }
@@ -295,10 +296,8 @@ class InitMainModule extends CBehavior
                 'httpOnly' => true,
             );
             $userComponents->setState($userComponents::STATES_VAR, $names);
-            defined('IN_SWFHASH') or define('IN_SWFHASH', true);
         } else {
             //15-7-27 下午2:36 添加defined判断，防止URL请求错误
-            defined('IN_SWFHASH') || define('IN_SWFHASH', false);
             // 未登录即跳转
             if (!$isUrlAllowedToGuests) {
                 // 如果是 Ajax 请求
@@ -420,6 +419,32 @@ class InitMainModule extends CBehavior
                 $checkReturn = Upgrade::checkUpgrade();
                 Ibos::app()->setting->set('newversion', $checkReturn ? 1 : 0);
                 MainUtil::setCookie('checkupgrade', 1, 7200);
+            }
+        }
+    }
+
+    /**
+     * 检查是否有数据库更新
+     *
+     * @param mixed $event
+     */
+    public function handleCheckDbUpgrade($event)
+    {
+        // 只有超级管理员有权限访问
+        if (!Ibos::app()->user->isGuest && Ibos::app()->user->isadministrator) {
+            $url = Ibos::app()->request->getUrl();
+            if (file_exists('upgrade.php') && file_exists('data/install.lock')) {
+                if (strpos($url, 'dashboard/') === false) {
+                    // 非后台页面直接跳转到后台升级页面
+                    header("location: /?r=dashboard/default/index&refer=/?r=dashboard/upgrade/index");
+                    exit;
+                } elseif (preg_match('@dashboard/(default|upgrade)/@', $url) === 0) {
+                    // 后台非 dashboard/default/index 和 dashboard/upgrade/index 的页面，全部跳转到 dashboard/upgrade/index
+                    // 1. dashboard/default/index 不跳转的原因：加载外部 iframe 框架；
+                    // 2. dashboard/upgrade/index 不跳转的原因：避免重复重定向
+                    header("location: /?r=dashboard/upgrade/index");
+                    exit;
+                }
             }
         }
     }

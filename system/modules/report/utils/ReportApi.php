@@ -73,7 +73,11 @@ class ReportApi extends MessageApi
         // 下属或者是某篇总结的汇报对象的总结计划
         $subUidArr = User::model()->fetchSubUidByUid($uid);
         $subUidStr = implode(',', $subUidArr);
-        $subReports = Report::model()->fetchAll("FIND_IN_SET(`uid`, '{$subUidStr}') OR FIND_IN_SET({$uid}, `toid`)");
+        $subReports = Ibos::app()->db->createCommand()->select('*')
+            ->from('{{report}}')
+            ->where("FIND_IN_SET(`uid`, '{$subUidStr}') OR FIND_IN_SET({$uid}, `toid`)")
+            ->order('addtime desc')
+            ->queryAll();
         if (!empty($subReports)) {
             $subReports = $this->handleIconUrl($subReports, true);
         }

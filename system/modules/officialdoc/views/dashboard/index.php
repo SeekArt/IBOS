@@ -5,7 +5,7 @@ use application\core\utils\Ibos;
 ?>
 <div class="ct">
     <div class="clearfix">
-        <h1 class="mt"><?php echo Ibos::lang('Information center'); ?></h1>
+        <h1 class="mt"><?php echo Ibos::lang('Information officialdoc'); ?></h1>
     </div>
     <div>
         <form action="<?php echo $this->createUrl('dashboard/add'); ?>" class="form-horizontal" method="post">

@@ -483,14 +483,11 @@ class Department extends Model
             ->where(array('in', 'deptid', $deptIdArr))
             ->order('deptid ASC')
             ->queryAll();
-
-        // 处理异常部门数据
-        $isInvalidDepartment  = empty($deptIdArr) || empty($deptNameArr) || count($deptIdArr) !== count($deptNameArr);
-        if ($isInvalidDepartment === true) {
+        if (!empty($deptIdArr) && !empty($deptNameArr)){
+            return array_combine($deptIdArr, $deptNameArr);
+        }else{
             return array();
         }
-
-        return array_combine($deptIdArr, $deptNameArr);
     }
 
 }

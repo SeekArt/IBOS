@@ -231,6 +231,16 @@ EOT;
                 ), 'status/index' => array(
                     'lang' => 'System state',
                     'isShow' => false,
+                ),  'announcement/setup' => array(
+                    'lang' => 'System announcement',
+                    'isShow' => true,
+                ),
+                'upgrade/index' => array(
+                    'lang' => 'Online upgrade',
+                    'isShow' => ENGINE === 'SAAS' ? false : true,
+                ), 'update/index' => array(
+                    'lang' => 'Update cache',
+                    'isShow' => true,
                 ),
             ),
             'binding' => array(
@@ -241,7 +251,7 @@ EOT;
                     'lang' => 'Weixin binding',
                     'isShow' => true,
                 ), 'im/index' => array(
-                    'lang' => 'Action im',
+                    'lang' => 'Company QQ',
                     'isShow' => true,
                 ),
             ),
@@ -259,14 +269,14 @@ EOT;
                     'lang' => 'Performance optimization',
                     'isShow' => false,
                 ), 'date/index' => array(
-                    'lang' => 'Date setup',
+                    'lang' => 'Time and date format',
                     'isShow' => true,
                 ), 'upload/index' => array(
                     'lang' => 'Upload setting',
                     'isShow' => true,
                 ), 'sms/manager' => array(
                     'lang' => 'Sms setting',
-                    'isShow' => true,
+                    'isShow' => false,
                 ), 'syscode/index' => array(
                     'lang' => 'System code setting',
                     'isShow' => true,
@@ -286,18 +296,34 @@ EOT;
                     'lang' => 'Notify setup',
                     'isShow' => true,
                 ),
+                'database/backup' => array(
+                    'lang' => 'Database',
+                    'isShow' => ENGINE === 'SAAS' ? false : true,
+                ), 'split/index' => array(
+                    'lang' => 'Table archive',
+                    'isShow' => false,
+                ), 'cron/index' => array(
+                    'lang' => 'Scheduled task',
+                    'isShow' => true,
+                ), 'fileperms/index' => array(
+                    'lang' => 'Check file permissions',
+                    'isShow' => false,
+                ),
             ),
             'organization' => array(
+                'role/index' => array(
+                    'lang' => 'Role management',
+                    'isShow' => true,
+                ),
+                'position/index' => array(
+                    'lang' => 'Position management',
+                    'isShow' => true,
+                ),
                 'user/index' => array(
                     'lang' => 'Department personnel management',
                     'isShow' => true,
-                ), 'role/index' => array(
-                    'lang' => 'Role management',
-                    'isShow' => true,
-                ), 'position/index' => array(
-                    'lang' => 'Position management',
-                    'isShow' => true,
-                ), 'roleadmin/index' => array(
+                ),
+                'roleadmin/index' => array(
                     'lang' => 'Admin managment',
                     'isShow' => true,
                 ),
@@ -330,40 +356,9 @@ EOT;
                     'isShow' => true,
                 ),
             ),
-            'manager' => array(
-                'update/index' => array(
-                    'lang' => 'Update cache',
-                    'isShow' => true,
-                ), 'announcement/setup' => array(
-                    'lang' => 'System announcement',
-                    'isShow' => true,
-                ),
-                'database/backup' => array(
-                    'lang' => 'Database',
-                    'isShow' => ENGINE === 'SAAS' ? false : true,
-                ), 'split/index' => array(
-                    'lang' => 'Table archive',
-                    'isShow' => false,
-                ), 'cron/index' => array(
-                    'lang' => 'Scheduled task',
-                    'isShow' => true,
-                ), 'fileperms/index' => array(
-                    'lang' => 'Check file permissions',
-                    'isShow' => false,
-                ), 'upgrade/index' => array(
-                    'lang' => 'Online upgrade',
-                    'isShow' => ENGINE === 'SAAS' ? false : true,
-                ),
-            ),
+
         );
-        if (ENGINE !== 'SAAS') {
-            $map['service'] = array(
-                'service/index' => array(
-                    'lang' => 'Shop',
-                    'isShow' => true,
-                ),
-            );
-        }
+
         return $map;
     }
 
@@ -389,20 +384,10 @@ EOT;
                 'url' => $this->createUrl('index/index'),
                 'id' => 'index',
             ),
-            'binding' => array(
-                'lang' => 'binding',
-                'url' => $this->createUrl('cobinding/index'),
-                'id' => 'binding',
-            ),
             'global' => array(
                 'lang' => 'Global',
                 'url' => $this->createUrl('unit/index'),
                 'id' => 'global',
-            ),
-            'organization' => array(
-                'lang' => 'User',
-                'url' => $this->createUrl('user/index'),
-                'id' => 'user',
             ),
             'interface' => array(
                 'lang' => 'Interface',
@@ -414,19 +399,18 @@ EOT;
                 'url' => $this->createUrl('module/manager'),
                 'id' => 'module',
             ),
-            'manager' => array(
-                'lang' => 'Manage',
-                'url' => $this->createUrl('update/index'),
-                'id' => 'manage',
+            'binding' => array(
+                'lang' => 'Connect',
+                'url' => $this->createUrl('cobinding/index'),
+                'id' => 'binding',
+            ),
+            'organization' => array(
+                'lang' => 'User',
+                'url' => $this->createUrl('role/index'),
+                'id' => 'user',
             ),
         );
-        if (ENGINE !== 'SAAS') {
-            $cate['service'] = array(
-                'lang' => 'Service',
-                'url' => $this->createUrl('service/index'),
-                'id' => 'services',
-            );
-        }
+
         return $cate;
     }
 

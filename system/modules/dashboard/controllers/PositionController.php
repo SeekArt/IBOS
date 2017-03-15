@@ -32,7 +32,7 @@ use application\modules\position\model\PositionCategory;
 use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 
-class PositionController extends OrganizationBaseController
+class PositionController extends OrganizationbaseController
 {
 
     /**

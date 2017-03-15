@@ -85,7 +85,7 @@ class ListController extends BaseController
         $this->setPageTitle(Ibos::lang('Email center'));
         $this->setPageState('breadCrumbs', array(
             array('name' => Ibos::lang('Personal Office')),
-            array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index')),
+            array('name' => Ibos::lang('Email center'), 'url' => $this->createUrl('list/index', array('op' => $op))),
         ));
         $this->render('index', $data);
     }

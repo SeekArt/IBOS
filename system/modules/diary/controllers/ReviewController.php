@@ -127,7 +127,7 @@ class ReviewController extends BaseController
             $this->setPageTitle(Ibos::lang('Review subordinate diary'));
             $this->setPageState('breadCrumbs', array(
                 array('name' => Ibos::lang('Personal Office')),
-                array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('default/index')),
+                array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('review/index')),
                 array('name' => Ibos::lang('Subordinate diary'))
             ));
             $this->render('index', $params);
@@ -170,7 +170,7 @@ class ReviewController extends BaseController
         $this->setPageTitle(Ibos::lang('Review subordinate diary'));
         $this->setPageState('breadCrumbs', array(
             array('name' => Ibos::lang('Personal Office')),
-            array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('default/index')),
+            array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('review/index')),
             array('name' => Ibos::lang('Subordinate personal diary'))
         ));
         $this->render('personal', $data);
@@ -229,7 +229,7 @@ class ReviewController extends BaseController
         $this->setPageTitle(Ibos::lang('Show subordinate diary'));
         $this->setPageState('breadCrumbs', array(
             array('name' => Ibos::lang('Personal Office')),
-            array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('default/index')),
+            array('name' => Ibos::lang('Work diary'), 'url' => $this->createUrl('review/index')),
             array('name' => Ibos::lang('Show subordinate diary'))
         ));
         NotifyMessage::model()->setReadByUrl($uid, Ibos::app()->getRequest()->getUrl());
@@ -246,7 +246,7 @@ class ReviewController extends BaseController
         $option = empty($op) ? 'default' : $op;
         $routes = array('default', 'remind', 'changeIsreview', 'editStamp');
         if (!in_array($option, $routes)) {
-            $this->error(Ibos::lang('Can not find the path'), $this->createUrl('default/index'));
+            $this->error(Ibos::lang('Can not find the path'), $this->createUrl('review/index'));
         }
         if ($option == 'default') {
 

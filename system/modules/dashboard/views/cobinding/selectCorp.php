@@ -3,13 +3,13 @@
     <div class="ct">
         <?php if (!$isInstall) : ?>
             <div class="clearfix">
-                <h1 class="mt">绑定酷办公，体验真正的移动办公！</h1>
+                <h1 class="mt">连接酷办公，体验真正的移动办公！</h1>
             </div>
         <?php endif; ?>
         <div>
             <div <?php if (!$isInstall) : ?>class="ctb"<?php endif; ?>>
                 <?php if (!$isInstall) : ?>
-                    <h2 class="st">酷办公绑定</h2>
+                    <h2 class="st">酷办公连接</h2>
                 <?php endif; ?>
                 <div class="co-banding-wrap text-center">
                     <h1 class="binding-title">请选择要绑定的酷办公企业</h1>
@@ -70,7 +70,11 @@
     </div>
 </div>
 <script type="text/javascript">
-    Ibos.app.s("isInstall", "<?php echo $isInstall; ?>")
+    Ibos.app.s({
+        "isInstall": "<?php echo $isInstall; ?>",
+        "aeskey": "<?php echo $aeskey; ?>",
+        "systemUrl": "<?php echo $systemurl; ?>"
+    })
 </script>
 <script type="text/javascript" src="<?php echo $this->getAssetUrl(); ?>/js/iboscoselect.js"></script>
 

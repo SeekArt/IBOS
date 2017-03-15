@@ -56,31 +56,35 @@ $(function() {
         },
         syncData: function(url, deptCount, userCount, i) {
             $.get(url, function(res) {
-                var data = res.data,
-                    tpl = data.tpl;
-                if (/sending|error|half|success/.test(tpl)) {
-                    var template = $.template("result_" + tpl + "_tpl", {
-                        data: data
-                    });
-                    $("#sync_opt_wrap").html(template);
-                } else {
-                    if (~data.url.indexOf("user")) {
-                        deptCount = userCount;
+                if (res.isSuccess) {
+                    var data = res.data,
+                        tpl = data.tpl;
+                    if (/sending|error|half|success/.test(tpl)) {
+                        var template = $.template("result_" + tpl + "_tpl", {
+                            data: data
+                        });
+                        $("#sync_opt_wrap").html(template);
+                    } else {
+                        if (~data.url.indexOf("user")) {
+                            deptCount = userCount;
+                        }
+
+                        var percentage = Math.ceil(((deptCount - data.remain) / deptCount) * 100);
+
+                        res = $.extend({}, res, {
+                            percentage: percentage
+                        });
+
+                        var template = $.template("result_syncing_tpl", {
+                            data: res
+                        });
+                        $("#sync_opt_wrap").html(template);
+                        WxSync.syncData(data.url, deptCount, userCount, i);
                     }
-
-                    var percentage = Math.ceil(((deptCount - data.remain) / deptCount) * 100);
-
-                    res = $.extend({}, res, {
-                        percentage: percentage
-                    });
-
-                    var template = $.template("result_syncing_tpl", {
-                        data: res
-                    });
-                    $("#sync_opt_wrap").html(template);
-                    WxSync.syncData(data.url, deptCount, userCount, i);
+                } else {
+                    Ui.tip(res.msg, 'warning');
+                    return false;
                 }
-
             }, "json");
         }
     };
@@ -113,7 +117,9 @@ $(function() {
         "installApply": function(param, elem) {
             var newTab = window.open('about:blank');
 
-            WxSync.op.locationWX({ domain: $('input[name="sysurl"]').val() }).done(function(res) {
+            WxSync.op.locationWX({
+                domain: $('input[name="sysurl"]').val()
+            }).done(function(res) {
                 if (res.isSuccess) {
                     newTab.location.href = res.data.url;
                 } else {
@@ -134,7 +140,7 @@ $(function() {
             WxSync.op.getSyncData(paramData).done(function(res) {
                 var data = res.data,
                     i = 0;
-                    
+
                 if (res.isSuccess) {
                     WxSync.syncData(data.url, data.deptCount, data.userCount, i);
                 } else {
@@ -144,7 +150,9 @@ $(function() {
             });
         },
         "bindWXCheck": function() {
-            WxSync.op.checkAccess({ domain: $('input[name="sysurl"]').val() }).done(function(res) {
+            WxSync.op.checkAccess({
+                domain: $('input[name="sysurl"]').val()
+            }).done(function(res) {
                 if (res.isSuccess) {
                     Ui.tip('验证成功');
                     $('.wx-suite-install').removeClass('disabled').prop('disabled', false);

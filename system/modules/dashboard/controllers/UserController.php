@@ -44,7 +44,7 @@ use application\modules\user\model\UserStatus;
 use application\modules\user\utils\User as UserUtil;
 use CHtml;
 
-class UserController extends OrganizationBaseController
+class UserController extends OrganizationbaseController
 {
 
     const IMPORT_TPL = '/data/tpl/user_import.xls';
@@ -150,9 +150,6 @@ class UserController extends OrganizationBaseController
     {
         if (Env::submitCheck('userSubmit')) {
             $origPass = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
-            if (empty($origPass)){
-               $this->error(Ibos::lang('Not empty password'), $this->createUrl('user/add'));
-            }
             $_POST['realname'] = CHtml::encode($_POST['realname']);
             $_POST['weixin'] = CHtml::encode($_POST['weixin']);
             $_POST['jobnumber'] = CHtml::encode($_POST['jobnumber']);
@@ -616,7 +613,7 @@ class UserController extends OrganizationBaseController
         CacheUtil::update(array('position'));
         CacheUtil::load(array('position'));
 
-        return $this->ajaxReturn(array('isSuccess' => !!$return, 'msg' => Ibos::lang('Stay enable')), 'json');
+        return $this->ajaxReturn(array('isSuccess' => !!$return), 'json');
     }
 
     /**

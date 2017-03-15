@@ -5,7 +5,6 @@ namespace application\modules\dashboard\controllers;
 use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Ibos;
-use application\modules\main\utils\Main;
 use application\modules\main\utils\Update;
 
 class UpdateController extends BaseController

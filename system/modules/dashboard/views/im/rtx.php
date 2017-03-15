@@ -5,7 +5,7 @@
             <li>
                 <span><?php echo $lang['Rtx Setup']; ?></span>
             </li>
-            <li>
+            <li hidden = "hidden">
                 <a href="<?php echo $this->createUrl('im/index', array('type' => 'qq')); ?>"><?php echo $lang['QQ setup']; ?></a>
             </li>
         </ul>

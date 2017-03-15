@@ -152,8 +152,8 @@ class PersonalController extends BaseController
         $attachSize = $attach->getAttachSize();
         //如果是比较数字大小，只要让其中一边是数字即可，另一边是字符串无所谓
         if (($usedSize + $attachSize + 0) > implode('', StringUtil::ConvertBytes($userSize . 'm'))) {
-            header('HTTP/1.1 500');
-            $this->ajaxReturn(array('isSuccess' => false, 'msg' => Ibos::lang('Capacity overflow', '', array('{size}' => $userSize))));
+            echo json_encode(array('isSuccess' => false, 'msg' => Ibos::lang('Capacity overflow', '', array('{size}' => $userSize))));
+            exit(0);
         }
     }
 

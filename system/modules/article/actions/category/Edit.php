@@ -27,8 +27,9 @@ class Edit extends Base
             ), 'json');
         }
         $ret = ArticleCategory::model()->modify($catid, array('pid' => $pid, 'name' => $name, 'aid' => $aid));
+        // 数据库没有改动时返回为0，所以不能用 !!$ret 判定
         Ibos::app()->controller->ajaxReturn(array(
-            'isSuccess' => !!$ret,
+            'isSuccess' => true,
             'msg' => '',
             'data' => $aid,
         ));

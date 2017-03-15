@@ -980,7 +980,7 @@ class Feed extends Model
                 $c['rowid'] = !empty($oldInfo['sourceInfo']) ? $oldInfo['sourceInfo']['source_id'] : $id;
                 $c['from'] = util\Env::getVisitorClient();
                 $notCount = $from == "share" ? ($data['comment'] == 1 ? false : true) : false;
-                Comment::model()->addComment($c, false, $notCount, $lessUids);
+                Comment::model()->addComment($c, false, $notCount, $lessUids, true);
             }
             //添加话题
             FeedTopic::model()->addTopic(html_entity_decode($d['body'], ENT_QUOTES), $res['feedid'], $feedType);

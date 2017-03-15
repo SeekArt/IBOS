@@ -6,6 +6,7 @@ use application\core\utils\Cache;
 use application\core\utils\Env;
 use application\core\utils\Ibos;
 use application\modules\dashboard\utils\Dashboard;
+use application\modules\user\model\User;
 use application\modules\user\model\UserGroup;
 
 class UsergroupController extends BaseController
@@ -90,6 +91,16 @@ class UsergroupController extends BaseController
                         'creditslower' => $creditslowerNew,
                     );
                     UserGroup::model()->add($data);
+                }
+                //更新所有用户的用户组
+                $userAlls = User::model()->fetchAll();
+                foreach ($userAlls as $userAll){
+                    $groupId = UserGroup::model()->fetchByCredits($userAll['credits']);
+                    if (!empty($groupId)){
+                        User::model()->modify($userAll['uid'], array(
+                            'groupid' => $groupId['gid']
+                        ));
+                    }
                 }
             }
             // 删除操作

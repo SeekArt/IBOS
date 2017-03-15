@@ -47,9 +47,6 @@ use application\core\utils\Ibos;
                 <a href="<?php echo $this->createUrl('home/personal', array('op' => 'password', 'uid' => $this->getUid())); ?>"><?php echo $lang['Change password']; ?></a>
             </li>
             <li>
-                <a href="<?php echo $this->createUrl('home/personal', array('op' => 'remind', 'uid' => $this->getUid())); ?>"><?php echo $lang['Remind setup']; ?></a>
-            </li>
-            <li>
             <li>
                 <a href="<?php echo $this->createUrl('home/personal', array('op' => 'history', 'uid' => $this->getUid())); ?>"><?php echo $lang['Login history']; ?></a>
             </li>

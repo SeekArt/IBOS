@@ -228,7 +228,7 @@ use application\core\utils\StringUtil;
                                 'allowComment' => 1,
                                 'showStamp' => $this->issetStamp(),
                                 'url' => $sourceUrl,
-                                'detail' => Ibos::lang('Comment my diray', '', array('{url}' => $sourceUrl, '{title}' => StringUtil::cutStr(StringUtil::filterCleanHtml($diary['content']), 50)))
+                                'detail' => Ibos::lang('Comment my diray', '', array('{url}' => $sourceUrl, '{title}' => StringUtil::cutStr(str_replace(PHP_EOL, '', strip_tags($diary['content'])), 50)))
                             )));
                         ?>
                     </div>
@@ -272,7 +272,7 @@ use application\core\utils\StringUtil;
         Diary.initCommentEmotion($comment);
         //给日志内容图片<img>创建一个父级<a>以创建预览大图
         $(".da-detail-table img").each(function (index, elem) {
-            $(elem).wrap("<a data-lightbox='diary' href='" + elem.src + "' title='" + elem.title + "'></a>");
+            $(elem).wrap("<a data-lightbox='diary' href='" + elem.src + "' title='" + (elem.title || elem.alt) + "'></a>");
         });
 
         // 图章

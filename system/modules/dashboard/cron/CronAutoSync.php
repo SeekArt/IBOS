@@ -1,8 +1,8 @@
 <?php
+
 /**
  * 自动同步计划任务
  */
-
 use application\core\utils\StringUtil;
 use application\modules\dashboard\model\Cache;
 use application\modules\dashboard\utils\CoSync;
@@ -12,14 +12,13 @@ use application\modules\message\core\co\CodeApi;
 use application\modules\user\model\UserBinding;
 use application\modules\user\model\User;
 
-set_time_limit(120);
 $coinfo = StringUtil::utf8Unserialize(Setting::model()->fetchSettingValueByKey('coinfo'));
 $coBindType = 'ibos';
 if (!isset($coinfo['corpid'])) {
     Setting::model()->updateSettingValueByKey('cobinding', 0);
 }
 if (Setting::model()->fetchSettingValueByKey('cobinding') == 0) {
-    return;
+    return true;
 } else {
     // 根据酷办公需要的格式，获取 IBOS 的用户列表
     // $userList = getUserList();
@@ -69,6 +68,7 @@ if (Setting::model()->fetchSettingValueByKey('cobinding') == 0) {
             coCreateRelation($coRelation);
         }
     }
+    return true;
 }
 
 /**

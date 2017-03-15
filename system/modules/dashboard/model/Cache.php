@@ -22,7 +22,11 @@ use application\core\utils\StringUtil;
 
 class Cache extends Model
 {
-
+    
+    /**
+     * @param string $className
+     * @return Cache
+     */
     public static function model($className = __CLASS__)
     {
         return parent::model($className);

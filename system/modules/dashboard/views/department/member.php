@@ -79,8 +79,7 @@ use application\modules\user\model\User;
                                 ?>
                             </div>
                             <!-- 当成员数为零时隐藏 -->
-                            <div class="fill-sn" id="submit_put_wrap"
-                                 <?php if (empty($uids)): ?>style="display:none;"<?php endif; ?>>
+                            <div class="fill-sn" id="submit_put_wrap">
                                 <button type="submit" class="btn btn-large btn-primary">提交</button>
                             </div>
                             <input type="hidden" name="postsubmit" value="1"/>

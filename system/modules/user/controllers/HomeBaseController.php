@@ -10,7 +10,7 @@ use application\modules\user\model\UserCount;
 use application\modules\user\utils\User as UserUtil;
 use application\modules\weibo\model\Follow;
 
-class HomeBaseController extends Controller
+class HomebaseController extends Controller
 {
 
     /**

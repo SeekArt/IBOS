@@ -215,7 +215,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
 											<span class="avatar-circle avatar-circle-small">
 		<!--												<img src="-->
                                                 <?php //echo $designee['charge']['avatar_small'];   ?><!--">-->
-												<img src="<?php echo $designee['designee']['avatar_small']; ?>">
+												<img src="<?php echo $designee['charge']['avatar_small']; ?>">
 											</span>
                                         </td>
                                         <td>
@@ -226,7 +226,7 @@ use application\modules\assignment\utils\Assignment as AssignmentUtil;
                                             <div class="fss">
                                                 <!--												-->
                                                 <?php //echo $lang['Arrange to'];   ?><!-- --><?php //echo $designee['charge']['realname'];   ?>
-                                                <?php echo $lang['Arrange to']; ?> <?php echo $designee['designee']['realname']; ?>
+                                                <?php echo $lang['Arrange to']; ?> <?php echo $designee['charge']['realname']; ?>
                                                 <?php echo $designee['st'] ?> —— <?php echo $designee['et'] ?>
                                                 <?php if (TIMESTAMP > $designee['endtime']): ?>
                                                     <i class="om-am-warning mls"

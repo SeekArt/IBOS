@@ -19,6 +19,7 @@ class Model
 
     /**
      * 表是否存在
+     *
      * @param string $tableName 支持如{{user}}和ibos_user两种形式
      * @return boolean
      */
@@ -33,6 +34,7 @@ class Model
 
     /**
      * 删除表，如果不存在也返回false
+     *
      * @param string $tableName
      * @return boolean
      */
@@ -48,6 +50,7 @@ class Model
 
     /**
      * 创建表。已经存在则返回false
+     *
      * @param string $tableName 表名
      * @param string $sql 创建语句
      * @return boolean
@@ -64,6 +67,7 @@ class Model
 
     /**
      * 获取当前数据库名
+     *
      * @return string 数据库名
      */
     public static function getCurrentDbName()
@@ -75,6 +79,7 @@ class Model
 
     /**
      * 检查列的存在情况
+     *
      * @param string $tableName 表名
      * @param mixed $columnMixed 需要检测的列，数组或者逗号字符串
      * @return array 返回不存在的列
@@ -91,6 +96,85 @@ class Model
             ->createCommand()->setText($sql)->queryColumn();
         $notExistArray = array_diff($columnArray, $existColumnArray);
         return $notExistArray;
+    }
+
+    /**
+     * 在某张表上不存在 $columnName 列，则添加
+     *
+     * @param string $tableName
+     * @param string $columnName
+     * @param string $columnType
+     * @return bool true 添加成功，false 添加失败或列已存在
+     */
+    public static function addColumnIfNotExists($tableName, $columnName, $columnType)
+    {
+        $table = Ibos::app()->db->schema->getTable($tableName);
+        if (isset($table->columns[$columnName])) {
+            return false;
+        }
+
+        return (boolean)Ibos::app()->db->createCommand()
+            ->addColumn($tableName, $columnName, $columnType);
+    }
+
+    /**
+     * 在某张表上添加多列，如果列已存在，则跳过
+     *
+     * @param string $tableName
+     * @param array $columns
+     * @return bool
+     */
+    public static function addColumnsIfNotExists($tableName, array $columns)
+    {
+        $successFlag = true;
+
+        foreach ($columns as $column) {
+            if (isset($column['columnName']) && isset($column['columnType'])) {
+                $successFlag = $successFlag && static::addColumnIfNotExists($tableName, $column['columnName'],
+                        $column['columnType']);
+            }
+        }
+
+        return $successFlag;
+    }
+
+    /**
+     * 设置表引擎类型
+     *
+     * @param string $tableName
+     * @param string $engineName
+     * @return \CDbDataReader
+     */
+    public static function setTableEngine($tableName, $engineName)
+    {
+        return Ibos::app()->db->createCommand(sprintf('ALTER TABLE `%s` ENGINE = `%s`', $tableName, $engineName))
+            ->execute();
+    }
+
+    /**
+     * 当不存在某条表记录的时候，插入这条记录
+     * 
+     * @param string $tableName
+     * @param array $columns
+     * @param string $condition
+     * @param array $params
+     * @return bool
+     */
+    public static function insertRowIfNotExists($tableName, $columns, $condition = '', array $params = array())
+    {
+        if (!empty($condition)) {
+            $row = Ibos::app()->db->createCommand()
+                ->from($tableName)
+                ->where($condition, $params)
+                ->query();
+
+            if (!empty($row)) {
+                return false;
+            }
+        }
+
+        return (boolean)Ibos::app()->db->createCommand()
+            ->insert($tableName, $columns);
     }
 
     public static function executeSqls($sqlString)

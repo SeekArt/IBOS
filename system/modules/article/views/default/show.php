@@ -41,7 +41,7 @@ use application\modules\article\controllers\comment;
 		<% } %>
         <a href="javascript:" title="<?php echo $lang['Close']; ?>" class="art-close" onclick="window.location.href=document.referrer;"></a>
         <h1 class="art-title ellipsis"><%= subject %></h1>
-        <div class="art-ct mb message-content text-break">
+        <div class="art-ct mb message-content editor-content text-break">
         	<% if (type == 0) { %>
         		<%= content %>
         	<% } else if (type == 1) { %>
@@ -153,7 +153,7 @@ use application\modules\article\controllers\comment;
 	            <?php if ($config['articlecommentenable']) { ?>
 	            	<!-- 新闻发布后可评论 -->
 	            	<% if (commentstatus == 1) { %>
-		                <li class="active">
+		                <li>
 		                    <a href="#comment" id="comment_tab" data-toggle="tab">
 		                        <i class="o-art-comment"></i>
 		                        <?php echo $lang['Comment']; ?>

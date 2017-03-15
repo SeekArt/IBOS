@@ -34,7 +34,7 @@ return array(
             'controllerMap' => array(
                 'default' => array('index', 'ajaxapi', 'export', 'printcontact'),
                 'constant' => array('index'),
-                'api' => array('deptlist', 'userlist', 'groupuserlist', 'search', 'corp', 'dept', 'user'),
+                'api' => array('deptlist', 'userlist', 'groupuserlist', 'search', 'corp', 'dept', 'user', 'hiddenuidarr'),
             )
         )
     ),

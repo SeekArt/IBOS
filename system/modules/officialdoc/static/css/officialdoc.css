@@ -274,7 +274,11 @@
 	line-height: 35px;
 	vertical-align: middle; 
 }
-.art-content{ background-color: #F6F8F9; }
+.art-content{ 
+	position: relative;
+	width: 100%;
+	background-color: #F6F8F9;
+}
 .at-once-remind{ color: #3497db; }
 .art-sing-table,
 .art-no-sing-table{ height: auto; overflow: hidden; }

@@ -15,7 +15,7 @@ use application\modules\message\model\NotifyMessage;
 use application\core\utils\Ibos;
 
 if (!isset(Ibos::app()->user->uid)) {
-    return;
+    return true;
 }
 
 $uid = Ibos::app()->user->uid;

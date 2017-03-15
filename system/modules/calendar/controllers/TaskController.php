@@ -60,7 +60,7 @@ Class TaskController extends BaseController
         $this->setPageTitle(Ibos::lang('Personal task'));
         $this->setPageState('breadCrumbs', array(
             array('name' => Ibos::lang('Personal Office')),
-            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('task/index')),
             array('name' => Ibos::lang('Personal task'))
         ));
         $this->render('index', $data);

@@ -277,7 +277,7 @@ class Attach
                 $val['downurl'] = $urlManager->createUrl('main/attach/download', array('id' => $idString));
             }
             //if ( in_array( self::attachType( $val['filetype'], 'id' ), range( 7, 8 ) ) ) {
-            $val['officereadurl'] = File::fileName(File::getAttachUrl() . '/' . $val['attachment']);
+            $val['officereadurl'] = $val['entireattachurl'] = File::fileName(File::getAttachUrl() . '/' . $val['attachment']);
             //}
 
             $readOfficeRange = in_array(self::attachType($val['filetype'], 'id'), range(3, 5));

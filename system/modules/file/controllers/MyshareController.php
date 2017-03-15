@@ -112,7 +112,7 @@ class MyShareController extends BaseController
                     FileShare::model()->add($data);
                 }
                 $content = Ibos::lang('Feed content', '', array(
-                    '{filename}' => $file['name'],
+                    '{filename}' => html_entity_decode($file['name']),
                     '{shortname}' => StringUtil::cutStr($file['name'], 20),
                     '{placeUrl}' => Ibos::app()->urlManager->createUrl('file/fromshare/index#from/' . $this->uid),
                     '{downloadUrl}' => Ibos::app()->urlManager->createUrl('file/personal/ajaxEnt', array('op' => 'download', 'fids' => $fid)),

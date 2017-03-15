@@ -136,7 +136,38 @@
     };
 
     formVerify = function() {
-        var formID = 'article_form';
+        var formID = 'article_form',
+            formSubmit = function(form) {
+                if (!$.formValidator.pageIsValid()) {
+                    return false;
+                }
+
+                var data, type, $this = $(form);
+
+                data = U.serializedToObject($this.serializeArray());
+                data.articleid = Ibos.app.g('articleid') || '';
+                // save or submit
+                data.status = Ibos.app.g('status.form') || data.status;
+
+                data.votestatus = $('input[name="votestatus"]').prop('checked') ? 1 : 0;
+                data.commentstatus = $('input[name="commentstatus"]').prop('checked') ? 1 : 0;
+
+                if (data.votestatus == SWITCH_OFF) {
+                    delete data.vote;
+                }
+
+                Article.ajaxApi.submitForm(data).done(function(res) {
+                    if (res.isSuccess) {
+                        Ui.tip('保存成功');
+                        win.sessionStorage.setItem('view.article',
+                            data.status == DRAFT ? 'draft' : res.data.status == APPROVAL ? 'approval' : 'publish');
+                        win.location.href = Ibos.app.url('article/publish/index');
+                    } else {
+                        Ui.tip(res.msg, 'warning');
+                        return false;
+                    }
+                });
+            };
 
         $.formValidator.initConfig({ formID: formID, errorFocus: true });
         $("#subject").formValidator({ onFocus: U.lang("RULE.SUBJECT_CANNOT_BE_EMPTY") })
@@ -160,37 +191,16 @@
             });
 
         Ibos.checkFormChange("#" + formID);
-        $('#' + formID).on('form.submit', function(evt) {
-            if (!$.formValidator.pageIsValid()) {
-                return false;
-            }
-
-            var data, type, $this = $(this);
-
-            data = U.serializedToObject($this.serializeArray());
-            data.articleid = Ibos.app.g('articleid') || '';
-            // save or submit
-            data.status = Ibos.app.g('status.form') || data.status;
-
-            data.votestatus = $('input[name="votestatus"]').prop('checked') ? 1 : 0;
-            data.commentstatus = $('input[name="commentstatus"]').prop('checked') ? 1 : 0;
-
-            if (data.votestatus == SWITCH_OFF) {
-                delete data.vote;
-            }
-
-            Article.ajaxApi.submitForm(data).done(function(res) {
-                if (res.isSuccess) {
-                    Ui.tip('保存成功');
-                    win.sessionStorage.setItem('view.article',
-                        data.status == DRAFT ? 'draft' : res.data.status == APPROVAL ? 'approval' : 'publish');
-                    win.location.href = Ibos.app.url('article/publish/index');
-                } else {
-                    Ui.tip(res.msg, 'warning');
-                    return false;
-                }
+        if (Ibos.app.g('voteInstall') == 1 && Ibos.app.g('articlevoteenable') == 1) {
+            $('#' + formID).on('form.submit', function(evt) {
+                formSubmit(this);
             });
-        });
+        } else {
+            $('#' + formID).on('submit', function(evt) {
+                formSubmit(this);
+            });
+        }
+        
     };
 
     initView = function() {

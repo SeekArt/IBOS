@@ -180,9 +180,9 @@ class Article
                 $data['subject'] .= $hiddenInput;
                 $highLightStyleArr = explode(',', $highLightStyle);
                 // 字体颜色
-                $color = $highLightStyleArr[1];
+                $color = $highLightStyleArr[0];
                 // 字体加粗
-                $isB = $highLightStyleArr[0];
+                $isB = $highLightStyleArr[1];
                 // 字体倾斜
                 $isI = $highLightStyleArr[2];
                 // 字体下划线

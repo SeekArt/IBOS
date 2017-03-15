@@ -50,12 +50,17 @@ class CoController extends BaseController
      * 当前登录的酷办公用户信息
      */
     private $_coUser = null;
+    /**
+     * 系统url
+     */
+    protected $systemurl;
 
     public function init()
     {
         parent::init();
         $this->_coUser = Ibos::app()->user->getState('coUser');
         $this->aeskey = Setting::model()->fetchSettingValueByKey('aeskey');
+        $this->systemurl = Ibos::app()->request->getHostInfo();
         // 没有酷办公用户登陆，但有绑定，就显示绑定状态下的登陆页面
         $bind = $this->judgeFromApi();
         if (!empty($bind)) {
@@ -120,7 +125,7 @@ class CoController extends BaseController
      */
     private function whetherBinding($corpListRes, $accesstoken)
     {
-        $systemurl = Ibos::app()->request->getHostInfo();
+        $systemurl = $this->systemurl;
         // 先判断当前登录用户的企业里有没有当前ibos
         foreach ($corpListRes['corpList'] as $k => $v) {
             if ($systemurl == $v['systemUrl'] && $this->aeskey == $v['aeskey']) {
@@ -165,7 +170,7 @@ class CoController extends BaseController
      */
     protected function judgeFromApi()
     {
-        $systemurl = Ibos::app()->request->getHostInfo();
+        $systemurl = $this->systemurl;
         // 如果没有，则请求接口查看当前ibos绑定的企业，没有就返回false了
         $post = array(
             'aeskey' => $this->aeskey,

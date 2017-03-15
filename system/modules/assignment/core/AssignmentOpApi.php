@@ -62,10 +62,10 @@ Class AssignmentOpApi extends System
         if (isset($wbconf['wbmovement']['assignment']) && $wbconf['wbmovement']['assignment'] == 1) {
             $data = array(
                 'title' => Ibos::lang('Feed title', '', array(
-                    '{subject}' => $assignment['subject'],
+                    '{subject}' => html_entity_decode($assignment['subject']),
                     '{url}' => Ibos::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId))
                 )),
-                'body' => $assignment['subject'],
+                'body' => html_entity_decode($assignment['subject']),
                 'actdesc' => Ibos::lang('Post assignment', 'assignment.default'),
                 'userid' => implode(',', $uidArr),
                 'deptid' => '',
@@ -97,7 +97,8 @@ Class AssignmentOpApi extends System
             'uid' => $uid,
             'content' => $content,
             'touid' => 0,
-            'ctime' => TIMESTAMP
+            'ctime' => TIMESTAMP,
+            'url' => Ibos::app()->controller->createUrl('default/show', array('assignmentId' => $assignmentId))
         );
         Comment::model()->add($data);
         Assignment::model()->updateCounters(array('commentcount' => 1), "`assignmentid` = {$assignmentId}");
@@ -115,7 +116,7 @@ Class AssignmentOpApi extends System
     {
         $config = array(
             '{sender}' => User::model()->fetchRealnameByUid($uid),
-            '{subject}' => $subject,
+            '{subject}' => html_entity_decode($subject),
             '{url}' => Ibos::app()->urlManager->createUrl('assignment/default/show', array('assignmentId' => $assignmentId)),
             'id' => $assignmentId,
         );

@@ -235,7 +235,7 @@ class DefaultController extends BaseController
                     $data = array(
                         'title' => Ibos::lang('Feed title', '',
                             array(
-                                '{subject}' => $postData['subject'],
+                                '{subject}' => html_entity_decode($postData['subject']),
                                 '{url}' => Ibos::app()->urlManager->createUrl('report/review/show',
                                     array('repid' => $repid))
                             )),

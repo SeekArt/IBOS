@@ -2,6 +2,7 @@
 
 namespace application\modules\mobile\controllers;
 
+use application\core\utils\ArrayUtil;
 use application\core\utils\Attach;
 use application\core\utils\Env;
 use application\core\utils\Ibos;
@@ -737,9 +738,28 @@ class WorkController extends BaseController
             $data['model'] .= '<input type="hidden" name="formhash" value="' . FORMHASH . '">';
             $data['model'] .= '<input type="hidden" name="enablefiled" value="' . implode(",", $data['enablefiled']) . '">';
 
-            $data['enableArr'] = $formdata['enableArr'];
-            $data['valueArr'] = $formdata['valueArr'];
-            $data['emptyArr'] = $formdata['emptyArr'];
+            $data['enableArr'] = ArrayUtil::getValue($formdata, 'enableArr', array());
+            $data['valueArr'] = ArrayUtil::getValue($formdata, 'valueArr', array());
+            $data['emptyArr'] = ArrayUtil::getValue($formdata, 'emptyArr', array());
+
+
+            // 根据 data-id，从小到大排序
+            if (!empty($data['enableArr']) && is_array($data['enableArr'])) {
+                usort($data['enableArr'], function($a, $b) {
+                    // $a 和 $b 需要同时包含 data-id 键，没有的话，就认为二者相等。
+                    if (!(isset($a['data-id']) && isset($b['data-id']))) {
+                        return 0;
+                    }
+                    $aDataId = $a['data-id'];
+                    $bDataId = $b['data-id'];
+
+                    if ($aDataId == $bDataId) {
+                        return 0;
+                    }
+
+                    return ($aDataId < $bDataId) ? -1 : 1;
+                });
+            }
 
             // exit($data['form']);
             // 处理公共附件
@@ -760,7 +780,7 @@ class WorkController extends BaseController
             }
 
             // 是否允许会签及读取会签意见信息
-            if ($flow->isFixed() && !empty($attr) && $process->feedback != 1) {
+            if ($flow->isFixed() && !empty($attr) && $process->signlook == 0) {
                 $data['allowFeedback'] = true;
                 $data['feedback'] = WfHandleUtil::loadFeedback($flow->getID(), $run->getID(), $flow->type, $this->uid);
             } else {
@@ -1355,6 +1375,8 @@ class WorkController extends BaseController
         if ($toId) {
             Notify::model()->sendNotify($toId, 'workflow_turn_notice', $ext);
         }
+        //更新当前步骤为已办结
+        FlowRunProcess::model()->updateToOver($runId, $processId, $flowProcess);
         //-----  结束流程 -----
         if ($prcsChoose == "") {
             $prcsUserOp = isset($prcs_user_op) ? intval($prcs_user_op) : ''; //主办人

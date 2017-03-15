@@ -1,6 +1,7 @@
 <?php
 
 use application\core\utils\Env;
+use application\core\utils\Ibos;
 use application\modules\department\utils\Department as DepartmentUtil;
 use application\modules\position\utils\Position as PositionUtil;
 use application\modules\role\utils\Role as RoleUtil;
@@ -51,7 +52,7 @@ use application\modules\role\utils\Role as RoleUtil;
 									<button type="button" onclick="location.href = '<?php echo $this->createUrl( 'user/add' ) . "&deptid=" . Env::getRequest( 'deptid' ); ?>';" class="btn btn-primary"><?php echo $lang['Add user']; ?></button>
 								</div>
 								<div class="btn-group mlm">
-									<button type="button" data-action="batchImport" class="btn btn-primary">批量导入</button>
+									<button type="button" data-action="batchImport" class="btn btn-primary"><?php echo Ibos::lang('batch import'); ?></button>
 								</div>
 								<div class="btn-group mlm">
 									<button type="button" data-action="checkRelationship" class="btn">查看上下级关系</button>
@@ -107,23 +108,26 @@ use application\modules\role\utils\Role as RoleUtil;
 	</div>
 </div>
 
-<div id="update_userinfo_dialog" style="width:350px; display:none;">
+<div id="update_userinfo_dialog" style="display:none;">
     <div class="user-form-con">
         <form class="form-horizontal" id="update_userinfo_form">
-	        <ul class="nav nav-skid nav-skid-inverse">
-	            <li class="active"><a href="#update_user_dept" data-toggle="tab">按部门</a></li>
-	            <li><a href="#update_user_pos" data-toggle="tab">按岗位</a></li>
-	        </ul>
-	        <div class="tab-content">
-	        	<div id="update_user_dept" class="tab-pane tab-pane-block fill active">
-	        		<ul id="dept_tree" class="ztree dept-ztree"></ul>
-	        	</div>
-	        	<div id="update_user_pos" class="tab-pane tab-pane-block fill">
-	        		<ul id="pos_tree" class="ztree pos-ztree"></ul>
-	        	</div>
-	        </div>
-    		<input type="hidden" name="deptid" value=""/>
-    		<input type="hidden" name="posid" value=""/>
+            <div class="dialog-form-header">
+                <ul>
+                    <li class="active">
+                        <a class="form-head-list" data-type="dept" href="javascript:;">按部门</a>
+                    </li>
+                    <li>
+                        <a class="form-head-list" data-type="pos" href="javascript:;">按岗位</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dialog-form-content">
+                <div id="update_user_dept"></div>
+                <div id="update_user_pos" style="display:none;"></div>
+                <input type="hidden" name="deptid" value=""/>
+                <input type="hidden" name="posid" value=""/>
+                <input type="hidden" name="type" value="dept"/>
+            </div>
         </form>
     </div>
 </div>

@@ -340,7 +340,7 @@ INSERT INTO `{{stamp}}` VALUES ('8', '8', '不理想', 'data/stamp/008.png', 'da
 INSERT INTO `{{stamp}}` VALUES ('9', '9', '不给力', 'data/stamp/009.png', 'data/stamp/009.small.png', '1');
 INSERT INTO `{{stamp}}` VALUES ('10', '10', '没完成', 'data/stamp/010.png', 'data/stamp/010.small.png', '1');
 
-INSERT INTO `{{login_template}}` VALUES ('1', '0', '1', 'data/login/ibos_login1.jpg');
+INSERT INTO `{{login_template}}` VALUES ('1', '1', '1', 'data/login/ibos_login1.jpg');
 INSERT INTO `{{login_template}}` VALUES ('2', '0', '1', 'data/login/ibos_login2.jpg');
 
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('setting', '1', '0', '');
@@ -355,7 +355,7 @@ INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('positi
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('authitem', '1', '0', '');
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('users', '1', '0', '');
 INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('usergroup', '1', '0', '');
-INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('cronnextrun', '1', '1393603200', '');
+INSERT INTO `{{syscache}}` (`name`, `type`, `dateline`, `value`) VALUES ('cronnextrun', '1', '1393603200', '1393603200');
 
 INSERT INTO `{{approval}}` (`id`, `name`, `level`, `free`, `desc`, `addtime`) VALUES (1, '一级审核', '1', '', '', '1402631014');
 INSERT INTO `{{approval}}` (`id`, `name`, `level`, `free`, `desc`, `addtime`) VALUES (2, '二级审核', '2', '', '', '1402631014');
@@ -366,3 +366,4 @@ INSERT INTO `{{approval_step}}` (`aid`, `step`, `uids`) VALUES (2, 2, 1);
 
 INSERT INTO `{{announcement}}` (`id`, `author`, `subject`, `type`, `sort`, `starttime`, `endtime`, `message`) VALUES (1, '管理员', '<span style=\'color: rgb(226, 111, 80);\'>请使用支持HTML5的浏览器登录！</span>', 0, 0, 1401552000, 1433088000, '');
 INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ('1', 'system', 'dashboard', '自动同步 IBOS 绑定酷办公用户列表', 'CronAutoSync.php', '1457661663', '1457748000', '-1', '-1', '10', '0');
+INSERT INTO `{{cron}}` (`available`, `type`,`module`, `name`, `filename`, `lastrun`, `nextrun`, `weekday`, `day`, `hour`, `minute`) VALUES ('1', 'system', 'dashboard', '自动补丁', 'CronAutoPatch.php', '1457661663', '1457748000', '-1', '-1', '10', '0');

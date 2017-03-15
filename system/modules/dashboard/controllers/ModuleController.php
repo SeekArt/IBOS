@@ -118,6 +118,7 @@ class ModuleController extends BaseController
             $changeStatus = Module::model()->modify($module, array('disabled' => $status));
             // 更新导航
             Nav::model()->updateAll(array('disabled' => $status), "module = :module", array(':module' => $module));
+            Menu::model()->updateAll(array('disabled' => $status), "m = :m", array(':m' => $module));
             Cache::update(array('setting', 'nav'));
             // 更新模块配置
             ModuleUtil::updateConfig($module);

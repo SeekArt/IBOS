@@ -26,6 +26,7 @@ class Edit extends Base
         $articleId = $data['articleid'];
         $uid = Ibos::app()->user->uid;
         $data = Article::model()->fetchByPk($articleId);
+        $data['subject'] = html_entity_decode($data['subject']);
         //新闻为发布状态的话，再次去编辑，此时如果新闻有审核记录，应该把审核记录删除，
         //如果为其他的状态，不应删除审核记录，编辑人员可以看到之前的审核信息
         if ($data['status'] == 1) {

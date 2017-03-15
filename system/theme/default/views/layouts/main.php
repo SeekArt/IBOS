@@ -143,9 +143,11 @@ $notSaas = strtolower(ENGINE) != 'saas';
                 <div class="usi">
                     <div class="btn-group">
                         <a href="javascript:;" data-toggle="dropdown" id="user_login_ctrl">
-                            <?php echo StringUtil::cutStr(Ibos::app()->user->realname, 6);
-
-                            ?>
+                            <?php if (strlen(Ibos::app()->user->realname) > 16):?>
+                                <?php echo StringUtil::cutStr(Ibos::app()->user->realname, 6); ?>
+                            <?php else:?>
+                                <?php echo Ibos::app()->user->realname; ?>
+                            <?php endif;?>
                             <i class="caret caret-small"></i>
                         </a>
                     </div>
@@ -376,7 +378,7 @@ $notSaas = strtolower(ENGINE) != 'saas';
                     <?php endif; ?>
                 </div>
                 <?php if ($notSaas): ?>
-                    Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
+                    Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_TYPE; ?></strong>
                     <?php if (YII_DEBUG): ?>
                         Processed in <code><?php echo Ibos::app()->performance->endClockAndGet(); ?></code> second(s).
                         <code><?php echo Ibos::app()->performance->getDbstats(); ?></code> queries.

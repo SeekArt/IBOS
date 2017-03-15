@@ -24,7 +24,7 @@ use application\modules\main\utils\Main;
                 </a>
             </li>
             <?php if (Module::getIsEnabled('app')): ?>
-                <li>
+                <li hidden>
                     <a href="<?php echo Ibos::app()->urlManager->createUrl('app/default/index'); ?>">
                         <i class="o-portal-app"></i>
                         常用工具

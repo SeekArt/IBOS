@@ -22,7 +22,7 @@ use CHttpSession;
 use CJSON;
 use Yii;
 
-class HomeController extends HomeBaseController
+class HomeController extends HomebaseController
 {
 
     /**
@@ -46,7 +46,7 @@ class HomeController extends HomeBaseController
     public function actionPersonal()
     {
         $op = util\Env::getRequest('op');
-        if (!in_array($op, array('profile', 'avatar', 'history', 'password', 'skin', 'remind'))) {
+        if (!in_array($op, array('profile', 'avatar', 'history', 'password', 'skin'))) {
             $op = 'profile';
         }
         // 提交动作
@@ -108,29 +108,13 @@ class HomeController extends HomeBaseController
                     $password = md5(md5($data['newpass']) . $user['salt']);
                     $update = UserModel\User::model()->updateByUid($this->getUid(), array('password' => $password, 'lastchangepass' => TIMESTAMP));
                 }
-            } else if ($op == 'remind') { // 提醒设置
-                // 提醒设置
-                $remindSetting = array();
-                foreach (array('email', 'sms', 'app') as $field) {
-                    if (!empty($data[$field])) {
-                        foreach ($data[$field] as $id => $value) {
-                            $remindSetting[$id][$field] = $value;
-                        }
-                    }
-                }
-                if (!empty($remindSetting)) {
-                    $remindSetting = serialize($remindSetting);
-                } else {
-                    $remindSetting = '';
-                }
-                // 更新数据库及缓存
-                UserModel\UserProfile::model()->updateByPk($this->getUid(), array('remindsetting' => $remindSetting));
             }
             // 更新缓存
             UserUtil::cleanCache($this->getUid());
             $this->success(util\Ibos::lang('Save succeed', 'message'), $this->createUrl('home/personal', array('op' => $op)));
         } else {
-            if (in_array($op, array('avatar', 'history', 'password', 'remind'))) {
+
+            if (in_array($op, array('avatar', 'history', 'password'))) {
                 if (!$this->getIsMe()) {
                     $this->error(util\Ibos::lang('Parameters error', 'error'), $this->createUrl('home/index'));
                 }
@@ -525,32 +509,6 @@ class HomeController extends HomeBaseController
         $pages = util\Page::create($count, 20);
         $logHistory = Log::fetchAllByList($logTableId, $con, 20, $pages->getOffset());
         return array('history' => $logHistory, 'pages' => $pages);
-    }
-
-    /**
-     *
-     * @return array
-     */
-    protected function getRemind()
-    {
-        $user = $this->getUser();
-        $user['remindsetting'] = !empty($user['remindsetting']) ? StringUtil::utf8Unserialize($user['remindsetting']) : array();
-        $nodeList = Notify::model()->getNodeList();
-        $coBinding = Setting::model()->fetchSettingValueByKey('cobinding');
-        foreach ($nodeList as $id => &$node) {
-            $node['moduleName'] = Module::model()->fetchNameByModule($node['module']);
-            $node['appdisabled'] = $coBinding == '1' ? 0 : 1;
-            $node['maildisabled'] = $user['validationemail'] == 0 || !$node['sendemail'] ? 1 : 0;
-            $node['smsdisabled'] = $user['validationmobile'] == 0 || !$node['sendsms'] ? 1 : 0;
-            if (isset($user['remindsetting'][$id])) {
-                $node['appcheck'] = isset($user['remindsetting'][$id]['app']) ? $user['remindsetting'][$id]['app'] : 0;
-                $node['emailcheck'] = isset($user['remindsetting'][$id]['email']) ? $user['remindsetting'][$id]['email'] : 0;
-                $node['smscheck'] = isset($user['remindsetting'][$id]['sms']) ? $user['remindsetting'][$id]['sms'] : 0;
-            } else {
-                $node['emailcheck'] = $node['smscheck'] = $node['appcheck'] = 0;
-            }
-        }
-        return array('nodeList' => $nodeList);
     }
 
     /**

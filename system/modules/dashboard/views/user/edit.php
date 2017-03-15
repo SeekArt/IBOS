@@ -190,7 +190,7 @@ use application\core\utils\StringUtil;
                             <label class="radio radio-inline">
                                 <input type="radio" value="0" <?php if ($user['status'] == 0): ?>checked<?php endif; ?>
                                        name="status">
-                                <?php echo $lang['Enabled']; ?>
+                                <?php echo $lang['Enable']; ?>
                             </label>
                             <label class="radio radio-inline">
                                 <input type="radio" value="1" <?php if ($user['status'] == 1): ?>checked<?php endif; ?>

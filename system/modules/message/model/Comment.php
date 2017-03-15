@@ -24,6 +24,7 @@ class Comment extends Model
 
     /**
      * 获取某条评论下的回复ID
+     *
      * @param integer $cid
      * @return array
      */
@@ -41,12 +42,13 @@ class Comment extends Model
 
     /**
      * 添加评论操作
+     *
      * @param array $data 评论数据
      * @param boolean $notCount 是否统计到未读评论
      * @param array $lessUids 除去@用户ID
      * @return boolean 是否添加评论成功
      */
-    public function addComment($data, $forApi = false, $notCount = false, $lessUids = null)
+    public function addComment($data, $forApi = false, $notCount = false, $lessUids = null, $isShare = false)
     {
         // 检测数据安全性
         $add = $this->escapeData($data);
@@ -80,9 +82,14 @@ class Comment extends Model
             } else {
                 $table = 'application\modules\\' . $add['module'] . '\\model\\' . ucfirst($add['table']);
             }
-            $pk = $table::model()->getTableSchema()->primaryKey;
-            $table::model()->updateCounters(array('commentcount' => 1),
-                "`{$pk}` = {$add['rowid']}");
+            if (!$isShare) {
+                $pk = $table::model()->getTableSchema()->primaryKey;
+                $table::model()->updateCounters(array('commentcount' => 1),
+                    "`{$pk}` = {$add['rowid']}");
+            }
+//            $pk = $table::model()->getTableSchema()->primaryKey;
+//            $table::model()->updateCounters(array('commentcount' => 1),
+//                "`{$pk}` = {$add['rowid']}");
             // 给模块UID添加一个未读的评论数 原作者
             if (util\Ibos::app()->user->uid != $add['moduleuid'] && $add['moduleuid'] != '') {
                 !$notCount && UserData::model()->updateKey('unread_comment', 1,
@@ -108,7 +115,7 @@ class Comment extends Model
                 $author = User::model()->fetchByUid(util\Ibos::app()->user->uid);
                 $config['{name}'] = $author['realname'];
                 $sourceInfo = Source::getCommentSource($add, $forApi);
-                $config['{url}'] = $sourceInfo['source_url'];
+                $config['{url}'] = isset($add['url']) ? $add['url'] : '';
                 $config['{sourceContent}'] = util\StringUtil::parseHtml($sourceInfo['source_content']);
                 if (!empty($add['touid'])) {
                     // 回复
@@ -131,6 +138,7 @@ class Comment extends Model
 
     /**
      * 删除评论
+     *
      * @param array $ids 评论ID数组
      * @param integer $uid 用户UID
      * @param array $module 评论所属应用   积分加减时用到
@@ -201,6 +209,7 @@ class Comment extends Model
 
     /**
      * 获取评论列表，已在后台被使用
+     *
      * @param mixed $map 查询条件
      * @param string $order 排序条件，默认为cid ASC
      * @param integer $limit 结果集数目，默认为10
@@ -209,9 +218,9 @@ class Comment extends Model
      */
     public function getCommentList($map = null, $order = 'cid ASC', $limit = 10, $offset = 0, $isReply = false)
     {
-        if ($this->getCurrentModule() == "message"){
+        if ($this->getCurrentModule() == "message") {
             $confilter = array();
-        }else{
+        } else {
             $confilter = array('in', 'module', array('message', $this->getCurrentModule()));
         }
         $list = $this->getDbConnection()->createCommand()
@@ -228,29 +237,37 @@ class Comment extends Model
         $isAdministrator = util\Ibos::app()->user->isadministrator;
         foreach ($list as $k => &$v) {
             if (!empty($v['tocid']) && $isReply) {
-                $replyInfo = $this->getCommentInfo($v['cid'], false);
-//				$v['replyInfo'] = "<a class='anchor' data-toggle='usercard' data-param='uid={$replyInfo['user_info']['uid']}' href='{$replyInfo['user_info']['space_url']}' target='_blank'>" . $replyInfo['user_info']['realname'] . '</a>' . '：' . $replyInfo['content'];
+                $replyInfo = $this->getCommentInfo($v['tocid'], false);
                 $v['replyInfo'] = util\Ibos::lang('Reply comment',
                     'message.default', array(
                         '{param}' => "uid=" . $replyInfo['user_info']['uid'],
                         '{space_url}' => $replyInfo['user_info']['space_url'],
                         '{realname}' => $replyInfo['user_info']['realname'],
                         '{url}' => $v['url'],
-                        '{detail}' => util\StringUtil::cutStr($replyInfo['content'],
-                            50)
+                        '{detail}' => $replyInfo['content']
+                    ));
+            } elseif ($v['module'] === 'weibo') {
+                $feedData = FeedData::model()->fetchByPk($v['rowid']);
+                $feed = Feed::model()->fetchByPk($v['rowid']);
+                $user = User::model()->fetchByUid($feed['uid']);
+                $v['replyInfo'] = util\Ibos::lang('Reply comment',
+                    'message.default', array(
+                        '{param}' => "uid=" . $feed['uid'],
+                        '{space_url}' => $user['space_url'],
+                        '{realname}' => $user['realname'],
+                        '{url}' => $v['url'],
+                        '{detail}' => $feedData['feedcontent']
                     ));
             } else {
                 $v['replyInfo'] = '';
             }
+
             // 解析评论表情
             $v['content'] = util\StringUtil::parseHtml($v['content']);
             $v['content'] = util\StringUtil::purify($v['content']);
 
             $v['isCommentDel'] = $isAdministrator || $uid === $v['uid'];
             $v['user_info'] = User::model()->fetchByUid($v['uid']);
-//			$v['content'] = StringUtil::parseHtml( $v['content'] . $v['replyInfo'] );
-//			//改成添加的时候转义，输出的时候按需要让前端转义
-            //$v['content'] = util\StringUtil::parseHtml( $v['content'] );
             $v['sourceInfo'] = Source::getCommentSource($v);
             if (!empty($v['attachmentid'])) {
                 $v['attach'] = util\Attach::getAttach($v['attachmentid']);
@@ -262,6 +279,7 @@ class Comment extends Model
 
     /**
      * 获取评论信息
+     *
      * @param integer $id 评论ID
      * @param boolean $source 是否显示资源信息，默认为true
      * @return array 获取评论信息
@@ -280,7 +298,6 @@ class Comment extends Model
         } else {
             $info = $this->fetchByPk($id);
             $info['user_info'] = User::model()->fetchByUid($info['uid']);
-            $info['content'] = $info['content'];
             $source && $info['sourceInfo'] = Source::getCommentSource($info);
             $source && util\Cache::set('comment_info_' . $id,
                 $info); // (回复)没有读全所有评论信息则不缓存 by hzh
@@ -290,6 +307,7 @@ class Comment extends Model
 
     /**
      * 根据条件数组统计评论/回复条数
+     *
      * @param array $map
      * @return integer
      */
@@ -304,6 +322,7 @@ class Comment extends Model
 
     /**
      * 检测数据安全性
+     *
      * @param array $data 待检测的数据
      * @return array 验证后的数据
      */
@@ -328,6 +347,7 @@ class Comment extends Model
 
     /**
      * 评论处理方法，包含彻底删除、假删除与恢复功能
+     *
      * @param integer $id 评论ID
      * @param string $type 操作类型，delComment假删除、deleteComment彻底删除、commentRecover恢复
      * @return array 评论处理后，返回的数组操作信息
@@ -359,6 +379,7 @@ class Comment extends Model
 
     /**
      * 评论恢复操作
+     *
      * @param integer $id 评论ID
      * @return boolean 评论是否恢复成功
      */
@@ -403,6 +424,7 @@ class Comment extends Model
 
     /**
      * 拿出新闻或者日志或者其他id的第一层评论
+     *
      * @param  integer $id 新闻或者日志或者其他id
      * @return array  外层评论cid
      */

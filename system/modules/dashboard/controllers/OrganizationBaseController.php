@@ -17,7 +17,7 @@
 
 namespace application\modules\dashboard\controllers;
 
-class OrganizationBaseController extends BaseController
+class OrganizationbaseController extends BaseController
 {
 
     // 用户管理权限

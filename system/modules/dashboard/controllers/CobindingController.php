@@ -86,6 +86,9 @@ class CobindingController extends CoController
             } // IBOS 与酷办公未绑定,转到企业列表选择视图
             else {
                 $this->corpListRes['isInstall'] = $this->_isInstall;
+                $this->corpListRes['aeskey'] = $this->aeskey;
+                $this->corpListRes['systemurl'] = $this->systemurl;
+                
                 $this->render('selectCorp', $this->corpListRes);
             }
         }
@@ -465,6 +468,7 @@ class CobindingController extends CoController
             $this->updateCorptoken($this->coinfo['corptoken']);
             $unbindingRes = CoApi::getInstance()->unbindingCo($this->coinfo['corptoken']);
             if ($unbindingRes['code'] == CodeApi::SUCCESS) {
+                $this->setBinding(false);
                 $this->ajaxReturn(array(
                     'isSuccess' => true,
                 ));
@@ -480,6 +484,14 @@ class CobindingController extends CoController
                 'msg' => $unbindingRes['message'],
             ));
         }
+    }
+
+    public function actionSetBinding()
+    {
+        $this->setBinding(true);
+        $this->ajaxReturn(array(
+            'isSuccess' => true,
+        ));
     }
 
     /**
@@ -667,12 +679,18 @@ class CobindingController extends CoController
             );
         }
         $aeskey = Setting::model()->fetchSettingValueByKey('aeskey');
-        $systemurl = Ibos::app()->request->getHostInfo();
+        $systemurl = $this->systemurl;
         $post = array(
             'aeskey' => $aeskey,
             'systemurl' => $systemurl,
         );
         return CoApi::getInstance()->bindingCo($corptoken, $post);
+    }
+
+    private function setBinding($flag)
+    {
+        Setting::model()->updateSettingValueByKey('cobinding', $flag ? 1 : 0);
+        return true;
     }
 
 }

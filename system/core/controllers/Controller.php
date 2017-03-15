@@ -9,6 +9,7 @@
  */
 /**
  * 全局控制器必须继承自CController
+ *
  * @package application.core.controllers
  * @version $Id: controller.php -1   $
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -17,24 +18,17 @@
 namespace application\core\controllers;
 
 use application\core\utils\Ibos;
-use application\core\utils\StringUtil;
 use application\modules\main\utils\Main as MainUtil;
-use application\modules\mobile\utils\Mobile;
 use application\modules\role\model\AuthItem;
 use application\modules\role\utils\Auth;
 use CController;
-use CJSON;
 
 class Controller extends CController
 {
 
     /**
-     * 默认Jsonp回调函数
-     */
-    const DEFAULT_JSONP_HANDLER = 'jsonpReturn';
-
-    /**
      * 是否强制过滤路由，用以设置超级管理员的权限
+     *
      * @var type
      */
     public $isFilterRoute = true;
@@ -42,6 +36,7 @@ class Controller extends CController
     /**
      * true：使用模块里的权限配置去验证权限，不在配置里的不做权限判断
      * false：使用过滤列表去验证权限，不在过滤列表里的不做权限判断
+     *
      * @var type
      */
     public $useConfig = false;
@@ -53,18 +48,21 @@ class Controller extends CController
 
     /**
      * 布局类型
+     *
      * @var string
      */
     public $layout = '';
 
     /**
      * 默认不进行权限验证的模块
+     *
      * @var type
      */
     private $_notAuthModule = array('main', 'user', 'message', 'weibo');
 
     /**
      * 当前模块可访问的静态资源文件路径
+     *
      * @var string
      */
     private $_assetUrl = '';
@@ -88,6 +86,7 @@ class Controller extends CController
 
     /**
      * 错误异常处理
+     *
      * @return void
      */
     public function actionError()
@@ -101,6 +100,7 @@ class Controller extends CController
 
     /**
      * 覆盖父类渲染视图方法，在视图变量处增加静态资源路径，合并语言包文件方法
+     *
      * @param string $view @see CController::render
      * @param array $data @see CController::render
      * @return @see CController::render
@@ -119,89 +119,20 @@ class Controller extends CController
         return parent::render($view, $data, $return);
     }
 
-    /**
-     * Ajax方式返回数据到客户端
-     * @param mixed $data 要返回的数据
-     * @param String $type AJAX返回数据格式
-     * @return void
-     */
     public function ajaxReturn($data, $type = '')
     {
-        if (empty($type)) {
-            $type = 'json';
-        }
-
-        switch (strtoupper($type)) {
-            case 'JSON' :
-                // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:application/json; charset=' . CHARSET);
-                exit(StringUtil::jsonEncode($data));
-                break;
-            case 'XML' :
-                // 返回xml格式数据
-                header('Content-Type:text/xml; charset=' . CHARSET);
-                exit(xml_encode($data));
-                break;
-            case 'JSONP':
-                // 返回JSONP数据格式到客户端 包含状态信息
-                header('Content-Type:text/html; charset=' . CHARSET);
-                $handler = isset($_GET['callback']) ? $_GET['callback'] : self::DEFAULT_JSONP_HANDLER;
-                exit($handler . '(' . (!empty($data) ? CJSON::encode($data) : '') . ');');
-                break;
-            case 'EVAL' :
-                // 返回可执行的js脚本
-                header('Content-Type:text/html; charset=' . CHARSET);
-                exit($data);
-                break;
-            default :
-                exit($data);
-                break;
-        }
+        return Ibos::app()->response->ajaxReturn($data, $type);
     }
 
-    /**
-     * 定义 ajax 返回格式
-     * Example: ['isSuccess' => true, 'data' => array(), 'msg' => 'Call Success']
-     *
-     * @param boolean $isSuccess 请求是否成功
-     * @param array $data
-     * @param string $msg
-     * @param array $extraArgs
-     * @param string $type
-     * @return void|bool
-     */
     public function ajaxBaseReturn($isSuccess, array $data, $msg = '', array $extraArgs = array(), $type = '')
     {
-        if (empty($msg)) {
-            if ($isSuccess === true) {
-                $msg = Ibos::lang('Call Success', 'message');
-            } else {
-                $msg = Ibos::lang('Call Failed', 'message');
-            }
-        }
-
-        if (empty($type)) {
-            $type = Mobile::dataType();
-        }
-
-        $retData = array(
-            'isSuccess' => $isSuccess,
-            'msg' => $msg,
-            'data' => $data,
-        );
-
-        if (!empty($extraArgs)) {
-            foreach ($extraArgs as $k => $v) {
-                $retData[$k] = $v;
-            }
-        }
-
-        return $this->ajaxReturn($retData, $type);
+        return Ibos::app()->response->ajaxBaseReturn($isSuccess, $data, $msg, $extraArgs, $type);
     }
 
 
     /**
      * 操作错误跳转的快捷方法
+     *
      * @param string $message 错误信息
      * @param string $jumpUrl 页面跳转地址
      * @param array $params 输出页面配置数组
@@ -229,6 +160,7 @@ class Controller extends CController
 
     /**
      * 操作成功跳转的快捷方法
+     *
      * @param string $message 提示信息
      * @param string $jumpUrl 页面跳转地址
      * @param array $params 输出页面配置数组
@@ -256,6 +188,7 @@ class Controller extends CController
 
     /**
      * 输出信息
+     *
      * @param string $message 要输出的信息
      * @param string $jumpUrl 页面跳转地址
      * @param array $params 输出页面配置数组
@@ -348,6 +281,7 @@ class Controller extends CController
 
     /**
      * 获取控制器所属模块的静态资源发布文件夹
+     *
      * @param String $module 模块名
      * @return String 文件夹路径
      */
@@ -364,6 +298,7 @@ class Controller extends CController
 
     /**
      * 设置title
+     *
      * @param string $title
      */
     public function setTitle($title)
@@ -373,6 +308,7 @@ class Controller extends CController
 
     /**
      * 强制执行 验证模块方法，给出模块在notAuthModule数组里的都不进行后续权限验证
+     *
      * @param string $module
      * @final 子类不应该重写这个方法
      * @return boolean
@@ -385,8 +321,9 @@ class Controller extends CController
     /**
      * ICAPPLICATION组件会调用各控制器的此方法进行验证，子类可重写这个实现各自的验证
      * 规则
+     *
      * @param string $routes
-     * @return boolean
+     * @return boolean true 不验证该路由
      */
     public function filterRoutes($routes)
     {

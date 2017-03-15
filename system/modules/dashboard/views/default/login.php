@@ -58,7 +58,7 @@
         </div>
     </div>
     <div class="footer">
-        Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
+        Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_TYPE; ?></strong>
     </div>
 </div>
 <!-- load js -->

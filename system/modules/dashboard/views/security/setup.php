@@ -92,7 +92,7 @@
                         分钟内无动作自动退出
                     </div>
                 </div>
-                <div class="control-group">
+                <div class="control-group" style="display: none;">
                     <label class="control-label">
                         <?php echo $lang['Allowed use the same account login at the same time']; ?>
                     </label>

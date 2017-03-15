@@ -216,7 +216,9 @@ var IbosCoLogin = {
         }).done(function(res) {
             if (res.isSuccess) {
                 Ui.tip(Ibos.l("CO.CO_REG_SUCCESS"));
-                $(IbosCoLogin).trigger("regsuccess", { res: res });
+                $(IbosCoLogin).trigger("regsuccess", {
+                    res: res
+                });
             } else {
                 Ui.tip(res.msg, "danger");
                 return false;
@@ -236,7 +238,9 @@ var IbosCoLogin = {
         }).done(function(res) {
             if (res.isSuccess) {
                 Ui.tip(Ibos.l("CO.LOGIN_SUCCESS"));
-                $(IbosCoLogin).trigger("loginsuccess", { res: res });
+                $(IbosCoLogin).trigger("loginsuccess", {
+                    res: res
+                });
             } else {
                 Ui.tip(res.msg, "danger");
                 return false;
@@ -314,32 +318,27 @@ $(function() {
                 mobile: elem.inputMobile.val()
             }).done(function(res) {
                 if (res.isSuccess) {
-                    if (res.data.hasMobile) {
-                        Ui.tip('此手机已注册过账号，请登录！', 'warning');
-                        return false;
-                    } else {
-                        IbosCoLogin.op.getMobileVerifyCode({
-                            mobile: elem.inputMobile.val()
-                        }).done(function(res) {
-                            if (res.isSuccess) {
-                                $this.html(loading_text);
-                                var wait = document.getElementById('mobile_counting'),
-                                    time = --wait.innerHTML,
-                                    interval = setInterval(function() {
-                                        var time = --wait.innerHTML;
-                                        if (time === 0) {
-                                            $this.html('发送验证码');
-                                            that.verifyCodeLock = false;
-                                            clearInterval(interval);
-                                        }
-                                    }, 1000);
-                                that.verifyCodeLock = true;
-                            } else {
-                                $this.button('发送验证码');
-                                $('#send_mobile_status').html(res.msg);
-                            }
-                        });
-                    }
+                    IbosCoLogin.op.getMobileVerifyCode({
+                        mobile: elem.inputMobile.val()
+                    }).done(function(res) {
+                        if (res.isSuccess) {
+                            $this.html(loading_text);
+                            var wait = document.getElementById('mobile_counting'),
+                                time = --wait.innerHTML,
+                                interval = setInterval(function() {
+                                    var time = --wait.innerHTML;
+                                    if (time === 0) {
+                                        $this.html('发送验证码');
+                                        that.verifyCodeLock = false;
+                                        clearInterval(interval);
+                                    }
+                                }, 1000);
+                            that.verifyCodeLock = true;
+                        } else {
+                            $this.button('发送验证码');
+                            $('#send_mobile_status').html(res.msg);
+                        }
+                    });
                 } else {
                     Ui.tip(res.msg, 'warning');
                     return false;
@@ -354,7 +353,9 @@ $(function() {
             }).done(function(res) {
                 if (res.isSuccess) {
                     Ui.tip(Ibos.l("CO.LOGIN_SUCCESS"));
-                    $(IbosCoLogin).trigger("loginsuccess", { res: res });
+                    $(IbosCoLogin).trigger("loginsuccess", {
+                        res: res
+                    });
                 } else {
                     Ui.tip(res.msg, "danger");
                     return false;

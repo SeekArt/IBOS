@@ -9,6 +9,8 @@ $.extend(true, L, {
         "TIP": "提示",
         // Index
         "SHUTDOWN_SYSTEM_FAILED": "关闭系统失败",
+        "OPEN_SYSTEM_FAILED": "系统开启失败",
+        "OPEN_SYSTEM_SUCCESSED": "系统开启成功",
         "LOAD_SECURITY_INFO_FAILED": "载入提示失败",
         "LICENSE_KEY": "授权KEY",
         "ENTER_LICENSEKEY": "请输入授权码...",
@@ -172,6 +174,7 @@ $.extend(true, L, {
         DOWN: '下载',
         UPGRADE_FORCE: "强制升级",
         UPGRADE_REGULAR: "正常升级",
-        FTP_SETTING: "ftp设置"
+        FTP_SETTING: "ftp设置",
+        EXCUTE_DATA: "执行数据"
     }
 });

@@ -65,7 +65,7 @@
                             <a href="javascript:;" data-action="addCreditRule" class="cbtn o-plus"
                                title="<?php echo $lang['Add credit']; ?>"></a>
                         </td>
-                        <td>
+                        <td hidden>
                             <a href="javascript:;" data-action="resetCreditRule" class="cbtn o-cancel"
                                title="<?php echo $lang['Restore system Settings']; ?>"></a>
                         </td>

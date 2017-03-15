@@ -109,10 +109,6 @@ class DefaultController extends BaseController
 
         if ($result > 0) {
             $user = Ibos::app()->user;
-            // 是否允许多个账户同时登录
-            if ($account['allowshare'] != 1) {
-                $user->setStateKeyPrefix(Ibos::app()->setting->get('sid'));
-            }
             // 设置会话过期时间
             Main::setCookie('autologin', 1, $cookieTime);
             $user->login($identity, $cookieTime);

@@ -356,9 +356,10 @@ class Model extends CActiveRecord
 
     /**
      * 创建数据对象 但不保存到数据库
+     *
      * @param mixed $data 创建数据
-     * @param string $type 状态
      * @return mixed
+     * @throws CException
      */
     public function create($data = '')
     {

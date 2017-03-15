@@ -11,7 +11,7 @@ return array(
     'template error' => '模版错误',
     'sheet error' => '工作表错误',
     'sheet data error' => '工作表数据错误',
-    'last step has not finished yet' => '不要着急嘛，上一步的数据还没有加载完',
+    'last step has not finished yet' => '上一步的数据还没有加载完或用户数据为空',
     'success' => '成功',
     'not exists file' => '请求的文件不存在',
     'not exists import relation' => '导入关系不存在，导入结束',

@@ -23,7 +23,7 @@ use application\modules\position\components\PositionCategory as ICPositionCatego
 use application\modules\position\model\PositionCategory;
 use application\modules\position\model\Position;
 
-class PositioncategoryController extends OrganizationBaseController
+class PositioncategoryController extends OrganizationbaseController
 {
 
     /**

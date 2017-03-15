@@ -91,16 +91,20 @@ class LocalFile implements FileOperationInterface
 
     /**
      * 本地文件名读取操作
+     *
      * @param string $fileName
+     * @param bool $suffix
      * @return string
      */
     public function fileName($fileName, $suffix = false)
     {
-        $string = '';
+        $suffixStr = '';
         if (true === $suffix) {
-            $string = '?' . VERHASH;
+            $suffixStr = '?' . VERHASH;
         }
-        return $fileName . $string;
+
+        $host = rtrim(Ibos::app()->request->getHostInfo(), '/');
+        return  $fileName . $suffixStr;
     }
 
     public function imageName($fileName)
@@ -120,7 +124,6 @@ class LocalFile implements FileOperationInterface
         }
         return false;
     }
-
     /**
      * 复制一个文件到另一个路径
      * @param string $source 原路径
@@ -135,10 +138,7 @@ class LocalFile implements FileOperationInterface
         if (!file_exists($dir)) {
             File::makeDirs($dir, 0777, true);
         }
-        $isCopy = true;
-        if ($source != $savepath) {
-            $isCopy = @copy($source, $savepath);
-        }
+        $isCopy = copy($source, $savepath);
         if (true === $deleteSrc) {
             $this->deleteFile($source);
         }
@@ -454,4 +454,3 @@ class LocalFile implements FileOperationInterface
         return $url . $suffix;
     }
 }
-

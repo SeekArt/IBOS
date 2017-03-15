@@ -30,9 +30,9 @@ use application\modules\user\utils\User as UserUtil;
 class User extends Model
 {
 
-    const USER_STATUS_ABANDONED = 2;
-    const USER_STATUS_LOCKED = 1;
     const USER_STATUS_NORMAL = 0;
+    const USER_STATUS_LOCKED = 1;
+    const USER_STATUS_ABANDONED = 2;
 
     /**
      * @param string $className
@@ -542,7 +542,10 @@ class User extends Model
 
     /**
      * 根据用户id查找一条用户数据，该函数将获取用户的详细信息
+     *
      * @param integer $uid
+     * @param bool $returnDisabled
+     * @param bool $force
      * @return array
      */
     public function fetchByUid($uid, $returnDisabled = true, $force = false)

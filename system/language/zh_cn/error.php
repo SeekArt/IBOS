@@ -36,5 +36,7 @@ return array(
     'Cache must have a primary key' => '缓存文件必须指定一个键值',
     'Class "{class}" is illegal.' => '类 {class} 不是合法的类',
     'Module "{module}" is illegal.' => '模块 {module} 未安装或已关闭',
-    'Not support' => '不支持'
+    'Not support' => '不支持',
+
+    'Network error' => '网络出错，请检查网络配置。',
 );

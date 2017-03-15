@@ -165,7 +165,7 @@
                         <div class="controls">
                             <label class="radio radio-inline">
                                 <input type="radio" value="0" checked name="status">
-                                <?php echo $lang['Enabled']; ?>
+                                <?php echo $lang['Enable']; ?>
                             </label>
                             <label class="radio radio-inline">
                                 <input type="radio" value="1" name="status">

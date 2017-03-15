@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css?<?= FORMHASH ?>">
 <div class="ct">
     <div class="clearfix">
         <h1 class="mt"><?php echo $lang['Online upgrade']; ?></h1>
@@ -17,8 +17,8 @@
                             <span class="sr-only"></span>
                         </div>
                     </div>
-                    <span><?php echo $lang['Upgrade not jump']; ?></span><a class="click-link"
-                                                                            href="<?php echo $this->createUrl('upgrade/index', array('op' => 'showupgrade')); ?>"><?php echo $lang['Upgrade this']; ?></a>
+                    <span><?php echo $lang['Upgrade not jump']; ?></span>
+                    <a class="click-link" href="<?php echo $this->createUrl('upgrade/index', array('op' => 'showupgrade')); ?>"><?php echo $lang['Upgrade this']; ?></a>
                 </div>
             </div>
         </form>

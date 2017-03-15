@@ -117,7 +117,7 @@ class Source
             return $info;
         }
         $info['source_user_info'] = User::model()->fetchByUid($data['moduleuid']);
-        $info['source_url'] = ''; //$data['module_detail_url'];
+        $info['source_url'] = $data['url']; //$data['module_detail_url'];
         $info['source_content'] = isset($data['content']) ? $data['content'] : ''; //$data['module_detail_summary'];
         return $info;
     }

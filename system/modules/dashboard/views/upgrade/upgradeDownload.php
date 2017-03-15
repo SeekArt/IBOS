@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css?<?= FORMHASH ?>">
 <div class="ct">
     <div class="clearfix">
         <h1 class="mt"><?php echo $lang['Online upgrade']; ?></h1>
@@ -19,14 +19,10 @@
                         </a>
                         <a href="javascript:;">
                             <span class="circle">3</span>
-                            <span class="ml xcg"><?php echo $lang['Upgrade compare'] ?></span>
-                        </a>
-                        <a href="javascript:;">
-                            <span class="circle">4</span>
                             <span class="ml xcg"><?php echo $lang['Upgradeing'] ?></span>
                         </a>
                         <a href="javascript:;">
-                            <span class="circle">5</span>
+                            <span class="circle">4</span>
                             <span class="ml xcg"><?php echo $lang['Upgrade complete'] ?></span>
                         </a>
                     </div>
@@ -45,14 +41,13 @@
                         <div>
                             <i class="o-chicking-image"></i>
                         </div>
-                        <p class="version-title mbl mtl"
-                           id="download_info"><?php echo $lang['Upgrade downloading']; ?></p>
+                        <p class="version-title mbl mtl" id="download_info"><?php echo $lang['Upgrade downloading']; ?></p>
                         <div class="progress progress-striped active">
-                            <div class="progress-bar" role="progressbar" style="width: 100%">
+                            <div class="progress-bar" role="progressbar" style="width: 0%">
                                 <span class="sr-only"></span>
                             </div>
                         </div>
-                        <?php echo $lang['Upgrade jump tip']; ?>
+                        <?php echo $lang['Upgrade download tip']; ?>
                     </div>
                 </div>
             </div>
@@ -64,6 +59,7 @@
         // 下载路径
         var downloadUrl = "<?php echo $downloadUrl; ?>",
             $downloadInfo = $('#download_info'),
+            $progressbar = $('.progress-bar'),
             upgrade = {
                 /**
                  * 第二步：下载文件
@@ -73,8 +69,9 @@
                 processingDownloadFile: function (data) {
                     $.get(data.url, {downloadStart: true}, function (res) {
                         if (res.step == '2') { // 没下载完，继续下载
-                            if (res.data.IsSuccess) {
+                            if (res.data.isSuccess) {
                                 $downloadInfo.text(res.data.msg);
+                                $progressbar.css('width', res.data.data.percent);
                                 return upgrade.processingDownloadFile(res.data);
                             } else {
                                 Ui.confirm(res.data.msg, function () {
@@ -90,13 +87,13 @@
 
 
         // 初始化加载页面就开始开始下载文件
-        $.get(downloadUrl, {downloadStart: true}, function (data) {
-            if (data.data.IsSuccess) {
-                $downloadInfo.text(data.data.msg);
-                upgrade.processingDownloadFile(data.data);
+        $.get(downloadUrl, {downloadStart: true}, function (res) {
+            if (res.data.isSuccess) {
+                $downloadInfo.text(res.data.msg);
+                upgrade.processingDownloadFile(res.data);
             } else {
-                Ui.confirm(data.data.msg, function () {
-                    upgrade.processingDownloadFile(data.data);
+                Ui.confirm(res.data.msg, function () {
+                    upgrade.processingDownloadFile(res.data);
                 });
             }
         });

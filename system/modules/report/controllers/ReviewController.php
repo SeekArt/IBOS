@@ -105,7 +105,7 @@ class ReviewController extends BaseController
             $this->setPageTitle(Ibos::lang('Review subordinate report'));
             $this->setPageState('breadCrumbs', array(
                 array('name' => Ibos::lang('Personal Office')),
-                array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('default/index')),
+                array('name' => Ibos::lang('Work report'), 'url' => $this->createUrl('review/index')),
                 array('name' => Ibos::lang('Subordinate report'))
             ));
             $this->render('index', $params);

@@ -21,7 +21,10 @@ use application\core\model\Model;
 
 class Menu extends Model
 {
-
+    /**
+     * @param string $className
+     * @return Menu
+     */
     public static function model($className = __CLASS__)
     {
         return parent::model($className);

@@ -9,6 +9,7 @@
  */
 /**
  * 提供api curl的连接调用
+ *
  * @package application.core.utils
  * @version $Id$
  * @author banyanCheung <banyan@ibos.com.cn>
@@ -16,11 +17,15 @@
 
 namespace application\core\utils;
 
+use application\core\model\Log;
+use application\core\utils\HttpClient\exception\ConnectFailedException;
+
 class Api extends System
 {
 
     /**
      * 默认的CURL选项
+     *
      * @var array
      */
     protected $curlopt = array(
@@ -44,6 +49,7 @@ class Api extends System
 
     /**
      * 设置curl选项
+     *
      * @param array $opt
      */
     public function setOpt($opt)
@@ -55,6 +61,7 @@ class Api extends System
 
     /**
      * 返回curl默认选项
+     *
      * @return array
      */
     public function getOpt()
@@ -64,6 +71,7 @@ class Api extends System
 
     /**
      * 创建api链接
+     *
      * @param string $url 链接地址
      * @param array $param 附件的参数
      * @return string 构造出来的url
@@ -76,10 +84,12 @@ class Api extends System
 
     /**
      * 获取调用api结果
+     *
      * @param string $url api地址
      * @param array $param 如果类型为post时，要提交的参数
      * @param string $type 发送的类型 get or post
      * @return mixed 成功时返回string、错误时返回array
+     * @throws ConnectFailedException
      */
     public function fetchResult($url, $param = array(), $type = 'get')
     {
@@ -96,11 +106,19 @@ class Api extends System
         curl_setopt_array($ch, $opt);
         $result = curl_exec($ch);
         if ($result === false) {
-            $curl_errno = curl_errno($ch);
+            $curlErrorNo = curl_errno($ch);
             $curl_error = curl_error($ch);
+
+            Log::write(array(
+                'msg' => sprintf('Curl error no: %d, url: %s', $curlErrorNo, $url),
+                'error' => ApiCode::getInstance()->getCurlMsg($curlErrorNo, $curl_error),
+                'errno' => $curlErrorNo,
+                'trace' => debug_backtrace(),
+            ), 'action', 'application.core.utils.Api.fetchResult');
+
             return array(
-                'error' => ApiCode::getInstance()->getCurlMsg($curl_errno, $curl_error),
-                'errno' => $curl_errno,
+                'error' => Ibos::lang('Network error', 'error', array('{code}' => $curlErrorNo)),
+                'errno' => $curlErrorNo,
             );
         }
         curl_close($ch);

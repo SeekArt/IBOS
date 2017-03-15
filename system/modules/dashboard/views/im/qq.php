@@ -14,7 +14,7 @@ $rtxIsOpen = Ibos::app()->setting->get('setting/im/rtx/open');
                     <a href="<?php echo $this->createUrl('im/index', array('type' => 'rtx')); ?>"><?php echo $lang['Rtx Setup']; ?></a>
                 </li>
             <?php endif; ?>
-            <li>
+            <li hidden = "hidden">
                 <span><?php echo $lang['QQ setup']; ?></span>
             </li>
         </ul>
@@ -47,7 +47,7 @@ $rtxIsOpen = Ibos::app()->setting->get('setting/im/rtx/open');
                                     <a target="_blank"
                                        href="http://b.qq.com/eim/home.html"><?php echo $lang['about BQQ']; ?></a><br>
                                     <a target="_blank"
-                                       href="http://doc.ibos.com.cn/article/detail/id/66"><?php echo $lang['Click to view helper doc']; ?></a>
+                                       href="http://doc.ibos.com.cn/article/detail/id/69"><?php echo $lang['Click to view helper doc']; ?></a>
                                 </div>
                             </div>
                         </div>

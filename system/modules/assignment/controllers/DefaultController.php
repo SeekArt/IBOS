@@ -59,7 +59,7 @@ class DefaultController extends BaseController
             $returnData = array(
                 'charge' => User::model()->fetchByUid($assignment['chargeuid']),
                 'id' => $assignmentId,
-                'subject' => $assignment['subject'],
+                'subject' => html_entity_decode($assignment['subject']),
                 'time' => date('m月d日 H:i', $assignment['starttime']) . '--' . date('m月d日 H:i', $assignment['endtime'])
             );
             // 日志记录

@@ -84,7 +84,7 @@ class ImportParent
     /**
      * 模版字段对应导入数据字段的一维数组
      * 注意：这个数组在ImportController里经过了array_filter处理
-     * @param type $fieldRelation
+     * @param array $fieldRelation
      * @return Import
      */
     public function setRelation($fieldRelation)
@@ -130,7 +130,7 @@ class ImportParent
      * 创建新纪录new，格式：new
      * 覆盖旧记录cover，格式：cover
      * nothing,cover,new
-     * @param type $check
+     * @param string $check
      * @return Import
      */
     public function setCheck($check)
@@ -309,7 +309,7 @@ class ImportParent
             }
             $failAllCount = $this->session->get('import_fail_all_count');
             $successAllCount = $this->session->get('import_success_all_count');
-            $this->session->add('import_fail_data', $failData);
+            Ibos::app()->user->setState('import_fail_data', $failData);
             $this->session->add('import_fail_count', $failCount);
             $this->session->add('import_fail_all_count', $failCount + $failAllCount);
             $this->session->add('import_success_count', $successCount);
@@ -419,7 +419,7 @@ class ImportParent
         }
     }
 
-    private function handleData()
+    protected function handleData()
     {
         $tableMap = $this->table();
         $tableFlipMap = array_flip($tableMap);
@@ -437,11 +437,16 @@ class ImportParent
             $this->formatData($data, $insert);
             $this->import->saveData[$i] = $data;
             foreach ($data as $field => $value) {
+                if (empty($field)) {
+                    continue;
+                }
                 list($tablePrefix, $fieldName) = explode('.', $field);
                 $table = $tableMap[$tablePrefix];
                 $formatData[$i][$table][$fieldName] = $value;
             }
         }
+
+
         $connection = Ibos::app()->db;
         $transaction = $connection->beginTransaction();
         try {

@@ -112,6 +112,9 @@ class ImportController extends Controller
                 $filePath = 'data/attachment/' . CORP_CODE . '/temp/' . md5($file) . '.' . $pathinfo['extension'];
                 Ibos::engine()->io()->file()->downloadLocal($file, $filePath);
                 $file = $filePath;
+            } else {
+                $parseUrl = parse_url($file);
+                $file = PATH_ROOT . DIRECTORY_SEPARATOR . ltrim($parseUrl['path'], '/\\');
             }
             $objPHPExcel = $this->createPHPExcel($file);
             if ($sheet >= $objPHPExcel->getSheetCount()) {
@@ -166,27 +169,28 @@ class ImportController extends Controller
         $sheet = $this->session->get('import_sheet');
         $allArray = $this->session->get('import_dataArray_all');
         if (empty($allArray[$sheet])) {
-            return array(
+            $ajaxReturn =  array(
                 'isSuccess' => false,
                 'msg' => Ibos::lang('last step has not finished yet'),
                 'data' => array(),
             );
+        }else{
+            $tplFieldArray = $this->session->get('import_tplFieldArray');
+            $module = $this->session->get('import_module');
+            $tpl = $this->session->get('import_tpl');
+            $obj = $this->createModuleObj($module, $tpl);
+            $rule = $obj->getFieldRule($tplFieldArray);
+            $ajaxReturn = array(
+                'isSuccess' => true,
+                'msg' => Ibos::lang('success'),
+                'data' => array(
+                    'fieldArray' => $this->session->get('import_fieldArray'),
+                    'tplFieldArray' => $tplFieldArray,
+                    'tplConfig' => $this->session->get('import_tplConfig'),
+                    'rule' => $rule,
+                ),
+            );
         }
-        $tplFieldArray = $this->session->get('import_tplFieldArray');
-        $module = $this->session->get('import_module');
-        $tpl = $this->session->get('import_tpl');
-        $obj = $this->createModuleObj($module, $tpl);
-        $rule = $obj->getFieldRule($tplFieldArray);
-        $ajaxReturn = array(
-            'isSuccess' => true,
-            'msg' => Ibos::lang('success'),
-            'data' => array(
-                'fieldArray' => $this->session->get('import_fieldArray'),
-                'tplFieldArray' => $tplFieldArray,
-                'tplConfig' => $this->session->get('import_tplConfig'),
-                'rule' => $rule,
-            ),
-        );
         return $this->ajaxReturn($ajaxReturn);
     }
 
@@ -294,13 +298,13 @@ class ImportController extends Controller
     public function actionExportError()
     {
         $this->session = Ibos::app()->session;
-        $failArray = $this->session->get('import_fail_data');
+        $failArray = Ibos::app()->user->getState('import_fail_data');
         if (empty($failArray)) {
             Env::iExit('没有错误');
         }
         require_once PATH_ROOT . '/system/extensions/PHPExcel/PHPExcel.php';
         $tplConfig = $this->session->get('import_tplConfig');
-        $module = Ibos::app()->getRequest()->getPost('module');
+        $module = Env::getRequest('module');
         $tplPath = $this->getTplPath($module);
         $tplPHPExcel = PHPExcel_IOFactory::load($tplPath . '/' . $tplConfig['filename']);
         $fieldRelation = $this->session->get('import_fieldRelation');
@@ -334,6 +338,12 @@ class ImportController extends Controller
         $module = $request->getParam('module');
         $tpl = $request->getParam('tpl');
         $obj = $this->createModuleObj($module, $tpl);
+
+        // 用户自定义下载模板方法
+        if (method_exists($obj, 'downloadTpl')) {
+            return call_user_func(array($obj, 'downloadTpl'));
+        }
+
         $tplConfig = $obj->config();
         $name = $tplConfig['name'];
         $tplPath = $this->getTplPath($module);

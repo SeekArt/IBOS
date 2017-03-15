@@ -100,7 +100,7 @@ Class ScheduleController extends BaseController
             $this->setPageTitle(Ibos::lang('Subordinate schedule'));
             $this->setPageState('breadCrumbs', array(
                 array('name' => Ibos::lang('Personal Office')),
-                array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+                array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/subschedule')),
                 array('name' => Ibos::lang('Subordinate schedule'))
             ));
             $this->render('subschedule', $data);
@@ -229,7 +229,7 @@ Class ScheduleController extends BaseController
             if ($this->upuid != $this->uid) {
                 $config = array(
                     '{sender}' => User::model()->fetchRealnameByUid($this->upuid),
-                    '{subject}' => $title,
+                    '{subject}' => html_entity_decode($title),
                     '{url}' => Ibos::app()->urlManager->createUrl('calendar/schedule/index')
                 );
                 Notify::model()->sendNotify($this->uid, 'add_calendar_message', $config, $this->upuid);

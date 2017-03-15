@@ -30,6 +30,10 @@ class Nav extends Model
         parent::init();
     }
 
+    /**
+     * @param string $className
+     * @return Nav
+     */
     public static function model($className = __CLASS__)
     {
         return parent::model($className);

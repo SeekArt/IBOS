@@ -257,7 +257,7 @@ class Email
             header("Cache-control: private");
             header("Content-type: message/rfc822");
             header("Accept-Ranges: bytes");
-            header("Content-Disposition: attachment; filename=" . StringUtil::filterCleanHtml($data['subject']) . "(" . date("Y-m-d") . ").eml");
+            header("Content-Disposition: attachment; filename=" . Convert::iIconv(StringUtil::filterCleanHtml($data['subject']), CHARSET, 'GBK') . "(" . date("Y-m-d") . ").eml");
             echo $filecontent;
         }
     }

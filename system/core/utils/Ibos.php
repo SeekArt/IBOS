@@ -10,9 +10,7 @@
 namespace application\core\utils;
 
 use application\core\components\AssetManager;
-use application\modules\main\components\Cron;
-use application\modules\main\components\Process;
-use application\modules\main\components\Session;
+use application\core\components\Response;
 use application\modules\main\components\Setting as SettingComponent;
 use application\modules\user\components\User as UserComponent;
 use Yii;
@@ -49,9 +47,7 @@ use Yii;
  * @property UserComponent $user The user component.
  * @property SettingComponent $setting The setting component.
  * @property AssetManager $assetManager
- * @property Cron $cron
- * @property Session $session
- * @property Process $process
+ * @property Response $response
  */
 class Ibos extends Yii
 {

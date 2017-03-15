@@ -48,7 +48,6 @@ return array(
     'Posting' => '发表中...',
     'Post comment' => '发表评论',
     'Reply' => '回复',
-    'Comment' => '评论',
     'Required comment content' => '评论内容不能为空',
     'Post comment fail' => '评论失败',
     'Comment has been delete' => '内容已被删除，评论失败',

@@ -24,8 +24,14 @@ use application\core\utils\StringUtil;
                 </div>
                 <div class="system-info">
                     <div class="b">
-                        <strong>IBOS <?php echo VERSION; ?></strong>
-                        <span class="system-info-date"><?php echo VERSION_DATE; ?></span>
+                        <strong>IBOS协同管理平台 <?php echo VERSION; ?></strong>
+                        <span class="system-info-date">
+                            <?php if (strtolower(VERSION_TYPE) == 'open'): ?>
+                            <?php echo '开源版'?>
+                            <?php else:?>
+                            <?php echo VERSION_TYPE?>
+                            <?php endif;?>
+                        </span>
                         <?php if ($newVersion): ?>
                             <a href="<?php echo $this->createUrl('upgrade/index'); ?>"><span
                                     class="label label-warning">NEW！</span></a>

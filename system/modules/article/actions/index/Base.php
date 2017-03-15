@@ -109,6 +109,7 @@ class Base extends \CAction
 
     /**
      * 是否有安装投票模块
+     *
      * @return boolean
      */
     protected function getVoteInstalled()
@@ -129,7 +130,7 @@ class Base extends \CAction
         $category = ArticleCategoryModel::model()->fetchByPk($article['catid']);
         if (!empty($category['aid'])) {
             $approval = Approval::model()->fetchByPk($category['aid']);
-            if (!empty($artApproval)){
+            if (!empty($artApproval)) {
                 $nextApproval = Approval::model()->fetchNextApprovalUids($approval['id'], $artApproval['step']);
                 if (in_array($uid, $nextApproval['uids'])) {
                     $res = true;
@@ -141,6 +142,7 @@ class Base extends \CAction
 
     /**
      *  添加、修改新闻前的判断动作
+     *
      * @param array $postData 提交的数据
      */
     protected function beforeSaveData(&$postData)
@@ -168,12 +170,13 @@ class Base extends \CAction
         StringUtil::ihtmlSpecialCharsUseReference($postData['subject']);
     }
 
-    /*
+    /**
      * 添加或者修改新闻信息
-      * @param string $type 类型 add 或 update
-	 * @param array $data $_POST数据
-	 * @param integer $uid
-	 * @return type
+     *
+     * @param string $type 类型 add 或 update
+     * @param array $data $_POST数据
+     * @param integer $uid
+     * @return type
      */
     protected function addOrUpdateArticle($type, $data, $uid)
     {
@@ -215,6 +218,10 @@ class Base extends \CAction
                 }
             }
         }
+
+        $attributes['topendtime'] = (int)$attributes['topendtime'];
+        $attributes['highlightendtime'] = (int)$attributes['highlightendtime'];
+        $attributes['articleid'] = (int)$attributes['articleid'];
         if ($type == "add") {
             $attributes['addtime'] = TIMESTAMP;
             $row = Ibos::app()->db->createCommand()->insert('{{article}}', $attributes);
@@ -272,6 +279,7 @@ class Base extends \CAction
 
     /**
      * 发送待审核新闻处理方法(新增与编辑都可处理)
+     *
      * @param array $article 新闻数据
      * @param integer $uid 发送人id
      */
@@ -290,11 +298,13 @@ class Base extends \CAction
                     '{sender}' => $sender,
                     '{subject}' => $article['subject'],
                     '{category}' => $category['name'],
-                    '{url}' => Ibos::app()->controller->createUrl('default/show', array('articleid' => $article['articleid'])),
-                    '{content}' => Ibos::app()->controller->renderPartial('application.modules.article.views.verify.remindcontent', array(
-                        'article' => $article,
-                        'author' => $sender,
-                    ), true),
+                    '{url}' => Ibos::app()->controller->createUrl('default/show',
+                        array('articleid' => $article['articleid'])),
+                    '{content}' => Ibos::app()->controller->renderPartial('application.modules.article.views.verify.remindcontent',
+                        array(
+                            'article' => $article,
+                            'author' => $sender,
+                        ), true),
                 );
                 Notify::model()->sendNotify($approval['uids'], 'article_verify_message', $config, $uid);
             }
@@ -349,10 +359,11 @@ class Base extends \CAction
             $config = array(
                 '{sender}' => $author['realname'],
                 '{subject}' => $article['subject'],
-                '{content}' => Ibos::app()->controller->renderPartial('application.modules.article.views.verify.remindcontent', array(
-                    'article' => $article,
-                    'author' => $author['realname'],
-                ), true),
+                '{content}' => Ibos::app()->controller->renderPartial('application.modules.article.views.verify.remindcontent',
+                    array(
+                        'article' => $article,
+                        'author' => $author['realname'],
+                    ), true),
                 '{orgContent}' => StringUtil::filterCleanHtml($article['content']),
                 '{category}' => $category['name'],
                 '{url}' => Ibos::app()->urlManager->createUrl('article/default/show',
@@ -384,7 +395,10 @@ class Base extends \CAction
             throw new \Exception("addOrUpdateVote 方法不支持 add 和 update 以外的操作。");
         }
         $fields = array(
-            'articleapprover', 'articlecommentenable', 'articlevoteenable', 'articlemessageenable'
+            'articleapprover',
+            'articlecommentenable',
+            'articlevoteenable',
+            'articlemessageenable'
         );
         $dashboardConfig = Dashboard::getDashboardConfig($fields);
         if (isset($_POST['votestatus']) && Module::getIsEnabled('vote') && $dashboardConfig['articlevoteenable']) {

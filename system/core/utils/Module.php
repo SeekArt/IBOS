@@ -55,7 +55,8 @@ class Module
         'position',
         'message',
         'dashboard',
-        'role'
+        'role',
+        'mobile',
     );
 
     /**
@@ -222,7 +223,7 @@ class Module
     public static function getModuleDirs()
     {
         $modulePath = self::getModulePath();
-        $dirs = (array)glob($modulePath . '*');
+        $dirs = (array) glob($modulePath . '*');
         $moduleDirs = array();
         foreach ($dirs as $dir) {
             if (is_dir($dir)) {
@@ -313,7 +314,7 @@ class Module
                 $config = include_once $file;
             }
             if (isset($config) && is_array($config)) {
-                $param = (array)$config['param'];
+                $param = (array) $config['param'];
                 // 处理模块ICON
                 $icon = self::getModulePath() . $moduleName . '/static/image/icon.png';
                 if (is_file($icon)) {
@@ -440,7 +441,7 @@ class Module
         }
         // 配置文件格式，目前只是粗略匹配
         $configFile = $installPath . 'config.php';
-        $config = (array)include_once $configFile;
+        $config = (array) include_once $configFile;
         $configFormatCorrect = isset($config['param']) && isset($config['config']);
         if (!$configFormatCorrect) {
             $error = Ibos::lang('Module config format error', 'error');

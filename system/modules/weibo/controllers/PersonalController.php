@@ -8,7 +8,7 @@ use application\core\utils\Ibos;
 use application\modules\message\model\Feed;
 use application\modules\message\model\FeedDigg;
 use application\modules\message\model\UserData;
-use application\modules\user\controllers\HomeBaseController;
+use application\modules\user\controllers\HomebaseController;
 use application\modules\user\model\User;
 use application\modules\weibo\core as WbCore;
 use application\modules\weibo\model\Follow;
@@ -16,7 +16,7 @@ use application\modules\message\model\NotifyMessage;
 use application\modules\weibo\utils\Common as WbCommonUtil;
 use application\modules\weibo\utils\Feed as WbfeedUtil;
 
-class PersonalController extends HomeBaseController
+class PersonalController extends HomebaseController
 {
 
     /**

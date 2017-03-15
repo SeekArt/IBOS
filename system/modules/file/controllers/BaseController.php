@@ -94,6 +94,7 @@ class BaseController extends Controller
                 $attach = array_shift($attachs);
                 $li['fileurl'] = FileUtil::fileName($attachDir . $attach['attachment']);
                 $li['iconbig'] = Attach::attachType($li['filetype'], 'bigicon');
+                $li['entireattachurl'] = FileUtil::fileName(FileUtil::getAttachUrl() . '/' . $attach['attachment']);
                 if (in_array(Attach::attachType($li['filetype'], 'id'), range(3, 6))) {
                     $li['officereadurl'] = $core->getOfficeReadUrl(Attach::getAttachStr($li['attachmentid']));
                 }

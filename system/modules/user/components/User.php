@@ -97,8 +97,10 @@ class User extends CWebUser
     /**
      * 重写login方法，设置session里的一些用户属性
      * 但是不写入cookie
-     * @param type $identity
-     * @param type $duration
+     *
+     * @param UserIdentity $identity
+     * @param integer $duration
+     * @return bool
      */
     public function login($identity, $duration = 0)
     {
@@ -106,7 +108,7 @@ class User extends CWebUser
             'httpOnly' => true,
         );
 
-        $isGuest = parent::login($identity, $duration);
+        $isLogged = parent::login($identity, $duration);
         $user = UserModel\User::model()->fetchByUid($identity->uid);
         $names = array();
         if (is_array($user)) {
@@ -117,7 +119,7 @@ class User extends CWebUser
             }
         }
         $this->setState(self::STATES_VAR, $names);
-        return $isGuest;
+        return $isLogged;
     }
 
     /**
@@ -195,18 +197,7 @@ class User extends CWebUser
     {
         if (!util\Ibos::app()->request->getIsAjaxRequest()) {
             // 多人同时登录同一账号的机制实现
-            if ($this->account['allowshare'] != 1 && !$this->getIsGuest()) {
-                // 查找session表是否有相同用户数据
-                $criteria = array(
-                    'condition' => sprintf("`uid` = %d", $this->uid),
-                );
-                $session = MainModel\Session::model()->fetch($criteria);
-                // 如果有但不等于当前的sid,表明已经被重复登录，退出当前用户
-                if ($session && $session['sid'] != util\Ibos::app()->setting->get('sid')) {
-                    util\Ibos::app()->getRequest()->getCookies()->remove($this->getStateKeyPrefix());
-                    util\Ibos::app()->getSession()->destroy();
-                }
-            }
+            // TODO：管理员在后台关闭多人登录同一帐号功能时，会导致用户在前台显示登录成功，但实际上并没有成功。（session 被删除）
             parent::updateAuthStatus();
         }
     }

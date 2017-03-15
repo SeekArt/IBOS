@@ -18,7 +18,7 @@ use application\modules\role\utils\Auth;
 use application\modules\role\utils\Role as RoleUtil;
 use application\modules\user\model\User;
 
-class RoletypeController extends OrganizationBaseController
+class RoletypeController extends OrganizationbaseController
 {
 
     protected $roleType = Role::NORMAL_TYPE;
@@ -168,7 +168,7 @@ class RoletypeController extends OrganizationBaseController
                 $this->success(Ibos::lang('Save succeed', 'message'));
             } else {
                 // 该角色下人员
-                $uids = User::model()->fetchUidByRoleId($id, false, true);
+                $uids = User::model()->fetchUidByRoleId($id, true, true);
                 // 搜索处理
                 if (Env::submitCheck('search')) {
                     $key = $_POST['keyword'];
@@ -198,6 +198,7 @@ class RoletypeController extends OrganizationBaseController
                 $uniqueId = explode('/', $this->getUniqueId());
                 $moduleName = isset($uniqueId[0]) ? $uniqueId[0] : 'main';
                 $controllerName = isset($uniqueId[1]) ? $uniqueId[1] : 'default';
+                $controllerName = $controllerName == 'roletype' ? 'roleadmin' : $controllerName;
                 $viewName = sprintf('application.modules.%s.views.%s.member', $moduleName, $controllerName);
                 $this->render($viewName, $data);
             }

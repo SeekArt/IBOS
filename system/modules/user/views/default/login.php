@@ -53,7 +53,7 @@ use application\core\utils\Ibos;
 <!-- Mainer -->
 <div class="wrap clearfix">
     <div class="login-panel radius pull-right">
-        <?php if ($wxbinding || $cobinding): ?>
+        <?php if ($cobinding): ?>
             <!-- Login Form -->
             <div class="login-type-nav">
                 <ul class="nav nav-skid">
@@ -143,31 +143,18 @@ use application\core\utils\Ibos;
                     </div>
                 </form>
             </div>
-            <?php if ($wxbinding || $cobinding): ?>
+            <?php if ($cobinding): ?>
                 <div class="other-login-content" style="display:none">
                     <ul class="other-type-list">
-                        <?php if ($wxbinding): ?>
-                            <li>
-                                <a href="javascript:;" class="clearfix" data-action="wxLogin">
-                                    <i class="o-type-wx pull-left"></i>
-                                            <span class="type-desc pull-left db">
-                                                <span class="xwb db">微信企业号</span>
-                                                <span class="fss tcm">使用安全小助手扫码登录</span>
-                                            </span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                        <?php if ($cobinding): ?>
-                            <li>
-                                <a href="<?php echo $coUrl ?>" class="clearfix">
-                                    <i class="o-type-ibosco pull-left"></i>
-                                            <span class="type-desc pull-left">
-                                                <span class="xwb db">酷办公</span>
-                                                <span class="fss tcm">使用酷办公账号密码登录</span>
-                                            </span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                        <li>
+                            <a href="<?php echo $coUrl ?>" class="clearfix">
+                                <i class="o-type-ibosco pull-left"></i>
+                                <span class="type-desc pull-left">
+                                    <span class="xwb db">酷办公</span>
+                                    <span class="fss tcm">使用酷办公账号密码登录</span>
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             <?php endif; ?>
@@ -179,7 +166,9 @@ use application\core\utils\Ibos;
                     <div class="media-body">
                         <h5 class="lg-anc-title"><?php echo $announcement['subject']; ?></h5>
                         <div class="lg-anc-content">
-                            <p class="fss" id="lg_anc_ct"><?php echo $announcement['message']; ?></p>
+                            <p class="fss" id="lg_anc_ct">
+                                <?php echo $announcement['type'] == 1 ? '<a href="' . $announcement['message'] . '" target="_blank">' . $announcement['message'] . '</a>' : $announcement['message']; ?>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -236,7 +225,7 @@ use application\core\utils\Ibos;
                 <?php endif; ?>
             </div>
             <?php if ($notSaas): ?>
-                Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_DATE; ?></strong>
+                Powered by <strong>IBOS <?php echo VERSION; ?> <?php echo VERSION_TYPE; ?></strong>
                 <?php if (YII_DEBUG): ?>
                     Processed in <code><?php echo Ibos::app()->performance->endClockAndGet(); ?></code> second(s).
                     <code><?php echo Ibos::app()->performance->getDbstats(); ?></code> queries.

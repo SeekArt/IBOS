@@ -8,7 +8,7 @@ use application\core\utils\StringUtil;
 use application\modules\message\core\IMFactory;
 use application\modules\message\utils\Message;
 
-class OrganizationApiController extends OrganizationBaseController
+class OrganizationapiController extends OrganizationbaseController
 {
 
     public function filterRoutes($routes)

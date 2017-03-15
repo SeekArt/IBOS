@@ -1,6 +1,7 @@
 <?php
 
 use application\core\utils\Ibos;
+use application\core\utils\Module;
 
 ?>
 <!doctype html>
@@ -116,10 +117,12 @@ use application\core\utils\Ibos;
                                     <ul class="sub-sec-nav">
                                         <?php foreach ($moduleMenu as $id => $menu): ?>
                                             <li>
-                                                <a href="<?php echo Ibos::app()->urlManager->createUrl($menu['m'] . '/' . $menu['c'] . '/' . $menu['a']); ?>"
-                                                   target="main" title="<?php echo $menu['name']; ?>">
-                                                    <?php echo $menu['name']; ?>
-                                                </a>
+                                                <?php if (Module::getIsEnabled($menu['m'])):?>
+                                                    <a href="<?php echo Ibos::app()->urlManager->createUrl($menu['m'] . '/' . $menu['c'] . '/' . $menu['a']); ?>"
+                                                       target="main" title="<?php echo $menu['name']; ?>">
+                                                        <?php echo $menu['name']; ?>
+                                                    </a>
+                                                <?php endif;?>
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>

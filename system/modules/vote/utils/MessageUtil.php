@@ -82,7 +82,7 @@ class MessageUtil extends System
         $config = array(
             '{url}' => Ibos::app()->urlManager->createUrl('vote/default/show', array('id' => $voteId)),
             '{sender}' => Ibos::app()->user->realname,
-            '{subject}' => $subject,
+            '{subject}' => html_entity_decode($subject),
         );
         $node = 'vote_update_message';
         $this->publishNotify($node, $publishScope, $config);

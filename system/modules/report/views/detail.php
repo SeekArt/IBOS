@@ -90,7 +90,7 @@ use application\modules\user\model\User;
     <tr>
         <th class="sep" width="68"><?php echo $lang['Work']; ?><br/><?php echo $lang['Summary']; ?></th>
         <td class="sep" width="3"></td>
-        <td>
+        <td class="summary-td">
             <div class="fill editor-content text-break" style="min-height: 180px; width: 620px">
                 <p class="summary">
                     <?php echo $report['content']; ?>

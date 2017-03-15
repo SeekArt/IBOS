@@ -1,4 +1,5 @@
 <?php
 
-define('VERSION', '3.9');
-define('VERSION_DATE', '9001');
+define('VERSION', '4.2.2');
+define('VERSION_TYPE', 'OPEN');
+define('VERSION_DATE', '201703141431');

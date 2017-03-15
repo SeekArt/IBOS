@@ -41,6 +41,7 @@ class Add extends Base
             'url' => 'javascript:;',
             'aid' => $aid,
             'catid' => $ret,
+            'target' => '_self',
         ), 'json');
     }
 }

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css">
+<link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/upgrade.css?<?= FORMHASH ?>">
 <div class="ct">
     <div class="clearfix">
         <h1 class="mt"><?php echo $lang['Online upgrade']; ?></h1>

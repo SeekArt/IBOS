@@ -209,7 +209,7 @@ class Email extends Model
             $content = ob_get_clean();
             $config = array(
                 '{sender}' => Ibos::app()->user->realname,
-                '{subject}' => $bodyData['subject'],
+                '{subject}' => html_entity_decode($bodyData['subject'], ENT_QUOTES, CHARSET),
                 '{url}' => Ibos::app()->urlManager->createUrl('email/content/show', array('id' => $newId)),
                 '{content}' => $content,
                 '{orgContent}' => StringUtil::filterCleanHtml($bodyData['content']),

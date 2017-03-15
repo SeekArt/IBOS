@@ -83,7 +83,7 @@ class Submit extends Base
                 $config = array(
                     '{sender}' => $user['realname'],
                     '{category}' => $categoryName,
-                    '{subject}' => $article['subject'],
+                    '{subject}' => html_entity_decode($article['subject']),
                     '{content}' => Ibos::app()->controller->renderPartial('remindcontent', array(
                         'article' => $article,
                         'author' => $user['realname'],
@@ -106,7 +106,8 @@ class Submit extends Base
                     );
                     $data = array(
                         'title' => Ibos::lang('Feed title', '', array(
-                            '{subject}' => $article['subject'],
+                            //字符串编码转义
+                            '{subject}' => html_entity_decode($article['subject']),
                             '{url}' => Ibos::app()->urlManager->createUrl('article/default/show',
                                 array('articleid' => $articleId))
                         )),

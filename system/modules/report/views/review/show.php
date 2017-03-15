@@ -8,6 +8,7 @@ use application\core\utils\StringUtil;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/lightbox/css/lightbox.css?<?php echo VERHASH; ?>"/>
 
 <!-- Mainer -->
 <div class="wrap">
@@ -277,6 +278,7 @@ use application\core\utils\StringUtil;
         stampPath: '',
     })
 </script>
+<script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script src='<?php echo $assetUrl; ?>/js/report.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/report_review.js?<?php echo VERHASH; ?>'></script>
 <script>
@@ -312,6 +314,11 @@ use application\core\utils\StringUtil;
                 Enabled: false,
                 CurrentStar: +$elem.next().val()
             });
+        });
+
+        //给日志内容图片<img>创建一个父级<a>以创建预览大图
+        $(".rp-detail-table img").each(function (index, elem) {
+            $(elem).wrap("<a data-lightbox='report' href='" + elem.src + "' title='" + (elem.title || elem.alt) + "'></a>");
         });
     });
 

@@ -34,7 +34,7 @@ Class EditorController extends Controller
     public function actionUploadimage()
     {
         $water = Setting::model()->fetchSettingValueByKey('watermarkstatus');
-        $configArray = $this->readJson();
+        $configArray = $this->getUeditorConfig();
         //上传配置
         $config = array(
             "savePath" => 'data/editor/image/' . Ibos::app()->user->uid . '/' . ($water ? 'water/' : ''),
@@ -80,6 +80,7 @@ Class EditorController extends Controller
 
     /**
      * 百度编辑器图片管理
+     *
      * @return string 输出图片
      */
     public function actionListimage()
@@ -88,8 +89,9 @@ Class EditorController extends Controller
         if (!defined('SAE_TMP_PATH')) {
             // 普通环境下
             $files = $this->getfiles($path);
-            if (!$files)
+            if (!$files) {
                 return;
+            }
             rsort($files, SORT_STRING);
             $str = "";
             foreach ($files as $file) {
@@ -107,8 +109,9 @@ Class EditorController extends Controller
             $num = 0;
             while ($ret = $st->getList('data', $path, 100, $num)) {
                 foreach ($ret as $file) {
-                    if (preg_match("/\.(gif|jpeg|jpg|png|bmp)$/i", $file))
+                    if (preg_match("/\.(gif|jpeg|jpg|png|bmp)$/i", $file)) {
                         echo $st->getUrl('data', $file) . "ue_separate_ue";
+                    }
                     $num++;
                 }
             }
@@ -117,14 +120,16 @@ Class EditorController extends Controller
 
     /**
      * 遍历获取目录下的指定类型的文件
+     *
      * @param $path
      * @param array $files
      * @return array
      */
     private function getfiles($path, &$files = array())
     {
-        if (!is_dir($path))
+        if (!is_dir($path)) {
             return null;
+        }
         $handle = opendir($path);
         while (false !== ($file = readdir($handle))) {
             if ($file != '.' && $file != '..') {
@@ -146,7 +151,7 @@ Class EditorController extends Controller
      */
     public function actionUploadfile()
     {
-        $configArray = $this->readJson();
+        $configArray = $this->getUeditorConfig();
         //上传配置
         $config = array(
             "savePath" => 'data/editor/file/' . Ibos::app()->user->uid . '/', //保存路径
@@ -184,13 +189,75 @@ Class EditorController extends Controller
 
     public function actionConfig()
     {
-        $json = $this->readJson();
-        return $this->ajaxReturn($json);
+        $ueditorConfig = $this->getUeditorConfig();
+        return $this->ajaxReturn($ueditorConfig);
     }
 
-    public function readJson()
+
+    /**
+     * 返回百度编辑器配置
+     *
+     * @return array
+     */
+    public function getUeditorConfig()
     {
-        return json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "", file_get_contents("static/js/lib/ueditor/php/config.json")), true);
+        $ueditorConfig = json_decode(preg_replace("/\/\*[\s\S]+?\*\//", "",
+            file_get_contents("static/js/lib/ueditor/php/config.json")), true);
+
+        $ueditorConfig = $this->updateAttachMaxSize($ueditorConfig);
+        $ueditorConfig = $this->updateAttachFileType($ueditorConfig);
+
+        return $ueditorConfig;
+    }
+
+    /**
+     * 更新百度编辑器文件大小限制配置
+     *
+     * @param array $ueditorConfig
+     * @return array
+     */
+    protected function updateAttachMaxSize($ueditorConfig)
+    {
+        // 单位：MB
+        $maxAttachSize = Setting::model()->fetchSettingValueByKey('attachsize');
+        if (empty($maxAttachSize)) {
+            // 默认文件大小限制为：2MB
+            $maxAttachSize = 2;
+        }
+        // 单位：B
+        $maxAttachSize = $maxAttachSize * 1024 * 1024;
+        $replaceArr = array_fill_keys(array(
+            'imageMaxSize',
+            'scrawlMaxSize',
+            'catcherMaxSize',
+            'videoMaxSize',
+            'fileMaxSize',
+        ), $maxAttachSize);
+        $ueditorConfig = array_merge($ueditorConfig, $replaceArr);
+
+        return $ueditorConfig;
+    }
+
+    /**
+     * 更新百度编辑器上传文件类型限制配置
+     *
+     * @param array $ueditorConfig
+     * @return array
+     */
+    protected function updateAttachFileType($ueditorConfig)
+    {
+        $allowUploadFileType = Setting::model()->fetchSettingValueByKey('filetype');
+
+        // csv, chm, pdf, zip, rar
+        // -> array('.csv', '.chm', '.pdf', '.zip', '.rar')
+        $allowUploadFileType = explode(',', $allowUploadFileType);
+        foreach ($allowUploadFileType as &$fileType) {
+            $fileType = sprintf('.%s', trim($fileType));
+        }
+
+        $ueditorConfig['fileAllowFiles'] = $allowUploadFileType;
+
+        return $ueditorConfig;
     }
 
 }

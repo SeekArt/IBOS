@@ -1,7 +1,7 @@
 (function(win, Ibos) {
     'use strict';
 
-    var TableConfig, GFIELD;
+    var TableConfig, GFIELD, ListView;
     var ajaxApi, createTable, initTree, picAction, getFormInfo, setFormInfo, getTopD, getHighLightD, getBackD;
 
     TableConfig = {
@@ -34,6 +34,8 @@
         'checkbox': ['votestatus', 'commentstatus'],
         'editor': ['content']
     };
+
+    ListView = /article\/default\/index/.test(U.getUrlParam().r);
 
     ajaxApi = {
         'toVerify': function(param) {
@@ -155,12 +157,11 @@
             },
             callback: {
                 onClick: function(evt, treeid, node) {
-                    var param = U.getUrlParam(),
-                        catid = node.catid;
+                    var catid = node.catid;
 
-                    Ibos.local.set('catid', catid);
+                    Ibos.local.set('art_catid', catid);
                     // 路由判断是否列表页
-                    if (/article\/default\/index/.test(param.r)) {
+                    if (ListView) {
                         try {
                             ArtTable.catid = catid;
                             ArtTable.search();
@@ -190,7 +191,9 @@
                         Ui.tip(res.msg, 'warning');
                         return false;
                     }
-                }, { aid: aid });
+                }, {
+                    aid: aid
+                });
                 categoryMenu.menu.hide();
             }
         }, {
@@ -279,8 +282,18 @@
                 });
 
                 treeObj = $.fn.zTree.init($tree, treeSettings, data);
-                sideTreeCategory = new SideTreeCategory(treeObj, { tpl: "tpl_category_edit" });
-                cate = new TreeCategoryMenu(treeObj, { menu: treeMenu });
+                sideTreeCategory = new SideTreeCategory(treeObj, {
+                    tpl: "tpl_category_edit"
+                });
+                cate = new TreeCategoryMenu(treeObj, {
+                    menu: treeMenu
+                });
+
+                if (ListView) {
+                    selectedNode = treeObj.getNodeByParam('id', Ibos.local.get('art_catid'));
+                    selectedNode && treeObj.selectNode(selectedNode);
+                    Ibos.local.remove('art_catid');
+                }
             } else {
                 Ui.tip(res.msg, 'warning');
                 return false;
@@ -553,7 +566,9 @@
         Ui.dialog({
             id: "d_art_top",
             title: U.lang("ART.SET_TOP"),
-            content: $.tmpl('dialog_art_top', { date: time }).get(0),
+            content: $.tmpl('dialog_art_top', {
+                date: time
+            }).get(0),
             cancel: true,
             init: function() {
                 $('#date_time_top').datepicker();
@@ -574,7 +589,9 @@
         Ui.dialog({
             id: "d_art_highlight",
             title: U.lang("ART.HIGHLIGHT"),
-            content: $.tmpl('dialog_art_highlight', { date: time }).get(0),
+            content: $.tmpl('dialog_art_highlight', {
+                date: time
+            }).get(0),
             cancel: true,
             init: function() {
                 // highlightForm

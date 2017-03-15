@@ -32,9 +32,6 @@
                         <a href="<?php echo $this->createUrl('home/setup', array('op' => 'password', 'uid' => $this->getUid())); ?>"><?php echo $lang['Change password']; ?></a>
                     </li>
                     <li><span><?php echo $lang['Skin setup']; ?></span></li>
-                    <li>
-                        <a href="<?php echo $this->createUrl('home/setup', array('op' => 'remind', 'uid' => $this->getUid())); ?>"><?php echo $lang['Remind setup']; ?></a>
-                    </li>
                 </ul>
             </div>
             <div class="fill-nn">

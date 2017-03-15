@@ -319,6 +319,7 @@ class Comment extends CWidget
         $map[] = sprintf("`table` = '%s'", $this->getTable());
         $map[] = '`rowid` = ' . intval($rowid); // 必须存在
         $map[] = '`isdel` = 0';
+        $map[] = '`moduleuid` != 0';
 
         return $map;
     }

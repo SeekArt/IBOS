@@ -196,7 +196,7 @@ class Notify extends Model
                         $connection->schema->commandBuilder->createInsertCommand('{{notify_message}}', $send)->execute();
                     }
                     $transaction->commit();
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     $transaction->rollBack();
                 }
             }

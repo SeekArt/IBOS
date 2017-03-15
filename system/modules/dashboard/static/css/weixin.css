@@ -689,3 +689,87 @@
 	filter: grayscale(0%);
 	filter: none;
 }
+
+/* wxqy-auth-view by csh */
+.o-auth-step-1,
+.o-auth-step-2,
+.o-auth-step-guide-1,
+.o-auth-step-guide-2 {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url(../image/auth_tip.png);
+}
+.o-auth-step-1,
+.o-auth-step-2 {
+	width: 32px;
+	height: 32px;
+	margin-right: 15px;
+}
+.o-auth-step-guide-1,
+.o-auth-step-guide-2 {
+	width: 525px;
+	height: 130px;
+}
+.o-auth-step-1 {
+	background-position: -5px -5px;
+}
+.o-auth-step-2 {
+	background-position: -40px -5px;
+}
+.o-auth-step-guide-1 {
+	background-position: -5px -40px;
+}
+.o-auth-step-guide-2 {
+	background-position: -5px -180px;
+}
+.box-warning-shadow {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, .5);
+}
+.wx-warning-wrap {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 600px;
+	height: auto;
+	font-family: "微软雅黑";
+}
+.wx-warning-title {
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 60px;
+	color: #58585c;
+	text-align: center;
+}
+.wx-auth-block {
+	position: relative;
+	padding: 30px 40px;
+	background: #e6eaed;
+}
+.wx-auth-step {
+	display: inline-block;
+	width: auto;
+	margin-bottom: 35px;
+	font-size: 16px;
+	color: #58585c;
+}
+.step-guide {
+	position: relative;
+	width: 525px;
+	margin-top: 20px;
+}
+.wx-auth-footer {
+	position: relative;
+	padding: 20px 0;
+	text-align: center;
+}
+.wx-auth-btn {
+	padding: 15px 55px;
+	font-size: 16px;
+}

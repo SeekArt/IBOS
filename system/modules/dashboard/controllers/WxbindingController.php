@@ -44,20 +44,21 @@ class WxbindingController extends WxController
             $view = 'login';
         } else {
             $view = 'index';
-            $res = WebSite::getInstance()->fetch('Api/Api/checkAccess', array(
-                'domain' => $unit['systemurl'],
-                'aeskey' => $aeskey,
-            ), 'post');
-            if (is_array($res)) {
-                $isSuccess = false;
-                $msg = $res['error'];
-            } else {
-                $result = CJSON::decode($res);
-                $isSuccess = $result['isSuccess'];
-                $msg = $result['msg'];
-            }
-            $params['access'] = $isSuccess;
-            $params['msg'] = $msg;
+            // 改为jsonp请求，避免双向curl阻塞
+            // $res = WebSite::getInstance()->fetch('Api/Api/checkAccess', array(
+            //     'domain' => $unit['systemurl'],
+            //     'aeskey' => $aeskey,
+            // ), 'post');
+            // if (is_array($res)) {
+            //     $isSuccess = false;
+            //     $msg = $res['error'];
+            // } else {
+            //     $result = CJSON::decode($res);
+            //     $isSuccess = $result['isSuccess'];
+            //     $msg = $result['msg'];
+            // }
+            // $params['access'] = $isSuccess;
+            // $params['msg'] = $msg;
         }
         if (true === $this->isBinding) {
             $params['wxlogo'] = $this->wxqyInfo['logo'];
@@ -200,7 +201,7 @@ class WxbindingController extends WxController
                 'domain' => $domain,
                 'uid' => $uid,
                 'aeskey' => $aeskey,
-                'version' => strtolower(implode(',', array(ENGINE, VERSION, VERSION_DATE)))
+                'version' => strtolower(implode(',', array(ENGINE, VERSION, VERSION_TYPE)))
             )))
         ));
         $url .= '&' . rand(0, 999);

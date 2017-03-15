@@ -31,6 +31,7 @@
 
 namespace application\modules\dashboard\controllers;
 
+use application\core\model\Log;
 use application\core\utils\Cache;
 use application\core\utils\Convert;
 use application\core\utils\Env;
@@ -41,12 +42,23 @@ use application\core\utils\WebSite;
 use application\modules\dashboard\utils\Wx;
 use application\modules\message\core\wx\Code;
 use application\modules\message\core\wx\WxApi;
+use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use CJSON;
 use Exception;
 
 class WxsyncController extends WxController
 {
+
+    /**
+     * @var integer 每次从数据库里取的部门数目，默认100
+     */
+    const DEPT_NUM_PER = 100;
+
+    /**
+     * @var integer 每次从数据库里取的用户数目，默认100
+     */
+    const USER_NUM_PER = 100;
 
     /**
      * 获取企业号绑定视图
@@ -87,6 +99,11 @@ class WxsyncController extends WxController
         $this->render('index', $params);
     }
 
+    /**
+     * 获取还未同步到 IBOS 的微信企业号用户人数
+     *
+     * @return bool
+     */
     public function actionGetwxcount()
     {
         $wxUsers = $this->getDeptUser();
@@ -106,12 +123,9 @@ class WxsyncController extends WxController
         ));
     }
 
-    const DEPT_NUM_PER = 100; //每次从数据库里取的部门数目，默认100
-    const USER_NUM_PER = 100; //每次从数据库里取的用户数目，默认100
 
     /**
      * 同步部门人员2.0
-     * @return ajaxReturn
      */
 
     public function actionSync()
@@ -132,26 +146,22 @@ class WxsyncController extends WxController
         return $this->{'handle' . ucfirst($op)}();
     }
 
-    private function deptid_not_in_binding()
-    {
-        return " `deptid` NOT IN ( SELECT `deptid` FROM {{department_binding}} WHERE `app` = 'wxqy' ) ";
-    }
-
-    private function uid_not_in_binding()
-    {
-        return " `uid` NOT IN ( SELECT `uid` FROM {{user_binding}} WHERE `app` = 'wxqy' ) ";
-    }
-
+    /**
+     * 微信企业号同步初始化操作（第一步）：
+     * 1. 获取未同同步到微信的部门和用户的个数；
+     * 2. 获取微信部门数据；
+     * 3. 获取 IBOS 和微信部门的关联关系；
+     */
     private function handleInit()
     {
         // 优先检测微信是否授权部门，如果没有直接提示没有权限
         $return = WxApi::getInstance()->getDeptList();
         $id = 1;
-        $wxdept = array();
+        $wxDept = array();
         if (!empty($return['data'])) {
             if (!empty($return['data']['department'])) {
                 $id = $return['data']['department'][0]['id'];
-                $wxdept = $return['data']['department'];
+                $wxDept = $return['data']['department'];
             } else {
                 return $this->ajaxReturn(array(
                     'isSuccess' => false,
@@ -159,16 +169,18 @@ class WxsyncController extends WxController
                 ));
             }
         }
+        // IBOS 中未绑定微信企业号的部门个数
         $deptCount = Ibos::app()->db->createCommand()
             ->select('count(deptid)')
             ->from('{{department}}')
             ->where($this->deptid_not_in_binding())
             ->queryScalar();
+        // IBOS 中未绑定微信企业号的用户（正常状态，排除被禁用、被锁定的用户）个数
         $userCount = Ibos::app()->db->createCommand()
             ->select('count(uid)')
             ->from('{{user}}')
             ->where($this->uid_not_in_binding())
-            ->andWhere(" `status` = 0 ")
+            ->andWhere(" `status` = :status ", array(':status' => User::USER_STATUS_NORMAL))
             ->queryScalar();
         $sendMail = Env::getRequest('status');
         $dept = Ibos::app()->db->createCommand()
@@ -177,7 +189,7 @@ class WxsyncController extends WxController
             ->where(" `app` = 'wxqy' ")
             ->queryAll();
         $deptRelated = array();
-        // 键 => 值 ：部门id => 微信部门id
+        // 键 => 值 ：IBOS 部门id => 微信部门id
         if (!empty($dept)) {
             foreach ($dept as $d) {
                 $deptRelated[$d['deptid']] = $d['bindvalue'];
@@ -194,7 +206,7 @@ class WxsyncController extends WxController
             'successSending' => 0,
             'usercount' => $userCount,
             'id' => $id,
-            'wxdept' => $wxdept,
+            'wxdept' => $wxDept,
             'wxdeptinit' => 1,
             'wxuserinit' => 1,
         );
@@ -211,38 +223,10 @@ class WxsyncController extends WxController
         return $this->ajaxReturn($ajaxReturn);
     }
 
+
     /**
-     * 根据部门的层级创建查询的条件
-     * @param integer $level
+     * 同步 IBOS 部门到微信企业号中（第二步）
      */
-    private function createConditionByDeptLevel($level = 0)
-    {
-        $sqlString = Ibos::app()->db->createCommand()
-            ->select('deptid')
-            ->from('{{department}}')
-            ->where(" `pid` IN ( <string> )")
-            ->getText();
-        $sql = $sqlString;
-        while ($level--) {
-            $sql = str_replace('<string>', $sqlString, $sql);
-        }
-        return str_replace('<string>', 0, $sql);
-    }
-
-    private function getPerDept($level)
-    {
-        $deptidCondition = $this->createConditionByDeptLevel($level);
-        $return = Ibos::app()->db->createCommand()
-            ->select('deptname,deptid,pid,sort')
-            ->from('{{department}}')
-            ->where(" `deptid` IN( {$deptidCondition} )")
-            ->andWhere($this->deptid_not_in_binding())
-            ->order('deptid ASC')
-            ->limit(self::DEPT_NUM_PER)
-            ->queryAll();
-        return $return;
-    }
-
     private function handleDept()
     {
         $wxqy = Ibos::app()->user->wxqy;
@@ -281,9 +265,7 @@ class WxsyncController extends WxController
             if ($dept['pid'] == 0 || isset($related[$dept['pid']])) {
                 $pid = $dept['pid'] == 0 ? $id : $related[$dept['pid']];
                 $res = WxApi::getInstance()->createDept($dept['deptname'], $pid, $dept['sort'], $url);
-//              $newId = 1;
-//              $res['isSuccess'] = 1;
-//              $res['data']['id'] = $dept['deptid'];
+
                 if ($res['isSuccess'] && isset($res['data']['id'])) {
                     $newId = $res['data']['id'];
                 } else {
@@ -348,47 +330,50 @@ class WxsyncController extends WxController
         ));
     }
 
+    /**
+     * 同步 IBOS 用户到微信企业号中（第三步）
+     */
     private function handleUser()
     {
         $wxqy = Ibos::app()->user->wxqy;
-        $id = $wxqy['id'];
-        $deptidRelated = $wxqy['deptrelated'];
+        // 微信顶级部门 ID
+        $wxTopDeptId = $wxqy['id'];
+        $deptIdRelated = $wxqy['deptrelated'];
         $errorUidString = implode(',', array_keys($wxqy['error']));
         $errorUidCondition = !empty($errorUidString) ? " `uid` NOT IN ( {$errorUidString} )" : 1;
-        $uidArray = Ibos::app()->db->createCommand()
+        $uidArr = Ibos::app()->db->createCommand()
             ->select('uid')
             ->from('{{user}}')
             ->where($this->uid_not_in_binding())
-            ->andWhere(" `status` = 0 ")
+            ->andWhere(" `status` = :status ", array(':status' => User::USER_STATUS_NORMAL))
             ->andWhere($errorUidCondition)
             ->order(" uid ASC ")
             ->limit(self::USER_NUM_PER)
             ->queryColumn();
-        if (!empty($uidArray)) {
+        if (!empty($uidArr)) {
             $bindArray = array();
             //这个是需要绑定的用户UID
-            $userArray = UserUtil::wrapUserInfo($uidArray, false);
+            $userArray = UserUtil::wrapUserInfo($uidArr, false);
             foreach ($userArray as $user) {
                 $wxqy['usercount']--;
-                $wxDeptid = array();
+                $wxDeptIdArr = array();
                 foreach (explode(',', $user['alldeptid']) as $deptid) {
-                    if (isset($deptidRelated[$deptid])) {
-                        $wxDeptid[] = $deptidRelated[$deptid];
+                    if (isset($deptIdRelated[$deptid])) {
+                        $wxDeptIdArr[] = $deptIdRelated[$deptid];
                     }
                 }
                 // 如果并没有找到部门关系，直接放在有权限的顶级部门下
-                $deptidString = implode(',', $wxDeptid);
-                if (empty($deptidString)) {
-                    $deptidString = $id;
+                $deptIdStr = implode(',', $wxDeptIdArr);
+                if (empty($deptIdStr)) {
+                    $deptIdStr = $wxTopDeptId;
                 }
-                $user['deptid'] = $deptidString;
+                $user['deptid'] = $deptIdStr;
                 $user['userid'] = $user['mobile'];
                 $user['gender'] = $user['gender'] == 1 ? 0 : 1;
 
                 //创建链接
                 $url = $this->createUrlByType('syncUser');
                 $res = WxApi::getInstance()->createUser($user, $url);
-                //$res = ''; //测试用
                 if ($res !== '') {
                     //如果用户名已经存在，是不会返回错误的，因为存在的话直接绑定，此时res = ''
                     //返回值不是空，说明有错误信息，空经过了我的处理了呢
@@ -424,6 +409,7 @@ class WxsyncController extends WxController
                     }
                     $transaction->commit();
                 } catch (Exception $e) {
+                    Log::write(array('msg' => $e->getMessage(), 'trace' => $e->getTrace()));
                     //$transaction->rollback();
                 }
             }
@@ -456,6 +442,9 @@ class WxsyncController extends WxController
         }
     }
 
+    /**
+     * 同步微信企业号部门到 IBOS（第四步）
+     */
     private function handleWxdept()
     {
         $wxqy = Ibos::app()->user->wxqy;
@@ -567,17 +556,20 @@ class WxsyncController extends WxController
             ));
     }
 
+    /**
+     * 同步微信企业号用户到 IBOS（第五步）
+     */
     private function handleWxuser()
     {
         $wxqy = Ibos::app()->user->wxqy;
         //此时的部门列表已经被处理过了
         //有权限的最顶级的部门已经被设置为parentid = 0
-        $wxuserinit = $wxqy['wxuserinit'];
-        if ($wxuserinit == 1) {
+        $wxUserInit = $wxqy['wxuserinit'];
+        if ($wxUserInit == 1) {
             $wxqy['wxuserinit'] = 0;
-            $wxdept = $wxqy['wxdept'];
+            $wxDept = $wxqy['wxdept'];
             $topDept = array();
-            foreach ($wxdept as $dept) {
+            foreach ($wxDept as $dept) {
                 if ($dept['parentid'] == 0) {
                     $topDept[$dept['id']] = $dept;
                 }
@@ -588,7 +580,7 @@ class WxsyncController extends WxController
                 'isSuccess' => true,
                 'msg' => '正在同步微信用户到IBOS……',
                 'data' => array(
-                    'wxdept' => $wxdept,
+                    'wxdept' => $wxDept,
                     'top' => $topDept,
                     'url' => $this->createUrl('wxsync/sync', array('op' => 'wxuser')
                     ),
@@ -596,7 +588,7 @@ class WxsyncController extends WxController
             ));
         }
         $topDept = $wxqy['topdept'];
-        $deptidRelated = array_flip($wxqy['deptrelated']);
+        $deptIdRelated = array_flip($wxqy['deptrelated']);
         $userBinding = Ibos::app()->db->createCommand()
             ->select('uid,bindvalue')
             ->from('{{user_binding}}')
@@ -612,10 +604,11 @@ class WxsyncController extends WxController
             $dept = array_shift($topDept);
             $wxqy['topdept'] = $topDept;
             Ibos::app()->user->setState('wxqy', $wxqy);
-            $userArray = $this->getFullDeptUser($dept['id'], 1);
-            if (!empty($userArray)) {
-                foreach ($userArray as $user) {
+            $userArr = $this->getFullDeptUser($dept['id'], 1);
+            if (!empty($userArr)) {
+                foreach ($userArr as $user) {
                     if (!in_array($user['userid'], array_values($userRelated))) {
+                        $findUid = 0;
                         $exist = false;
                         if (isset($user['mobile']) && !empty($user['mobile'])) {
                             $findUid = Ibos::app()->db->createCommand()
@@ -625,8 +618,9 @@ class WxsyncController extends WxController
                                 ->queryScalar();
                             !empty($findUid) && $exist = true;
                         } else {
-                            //如果微信的用户没有手机号，那么就不能同步下来
-                            continue;
+                            // 原先规则：如果微信的用户没有手机号，那么就不能同步下来
+                            // 现在改为：同步所有微信用户到 IBOS，无论有没有用户有没有设置手机号
+                            // continue;
                         }
                         if (isset($user['weixinid'])) {
                             $findUid = Ibos::app()->db->createCommand()
@@ -646,19 +640,19 @@ class WxsyncController extends WxController
                                 ->queryScalar();
                             !empty($findUid) && $exist = true;
                         }
-                        if (true === $exist) {
+                        if (true === $exist && $findUid !== 0) {
                             $uid = $findUid;
                             Ibos::app()->db->createCommand()
                                 ->update('{{user}}', array(
                                     'status' => 0,
-                                ), " `uid` = '{$uid}' ");
+                                ), " `uid` = '{$findUid}' ");
                         } else {
                             $salt = StringUtil::random(6);
-                            $userMainDeptid = array_shift($user['department']);
+                            $userMainDeptId = array_shift($user['department']);
                             Ibos::app()->db->createCommand()
                                 ->insert('{{user}}', array(
                                     'username' => $user['userid'],
-                                    'deptid' => $deptidRelated[$userMainDeptid],
+                                    'deptid' => $deptIdRelated[$userMainDeptId],
                                     'roleid' => 3, //普通成员
                                     'realname' => $user['name'],
                                     'password' => md5(md5($user['userid']) . $salt),
@@ -704,7 +698,7 @@ class WxsyncController extends WxController
                                 Ibos::app()->db->createCommand()
                                     ->insert('{{department_related}}', array(
                                         'uid' => $uid,
-                                        'deptid' => $deptidRelated[$wxRelatedDeptid],
+                                        'deptid' => $deptIdRelated[$wxRelatedDeptid],
                                     ));
                             }
                         }
@@ -735,24 +729,27 @@ class WxsyncController extends WxController
         }
     }
 
+    /**
+     * 发送邀请（第六步）
+     */
     private function handleSending()
     {
         $wxqy = Ibos::app()->user->wxqy;
         $success = count($wxqy['success']);
         $error = count($wxqy['error']);
-        $downloadlink = $this->createUrl('wxsync/downerror');
+        $downloadLink = $this->createUrl('wxsync/downerror');
         $bindCount = Ibos::app()->db->createCommand()
             ->select('count(*)')
             ->from('{{user_binding}}')
             ->where(" `app` = 'wxqy' ")
             ->queryScalar();
         if (!empty($error) && empty($success)) {
-            $ajaxReturn = $this->ajaxReturn(
+            return $this->ajaxReturn(
                 array(
                     'isSuccess' => true,
                     'msg' => '全部失败',
                     'data' => array(
-                        'downUrl' => $downloadlink,
+                        'downUrl' => $downloadLink,
                         'errorCount' => $error,
                         'bindCount' => $bindCount,
                         'successCount' => 0,
@@ -761,14 +758,14 @@ class WxsyncController extends WxController
                 ));
         }
 
-        $userid = array_shift($wxqy['success']);
-        if (!empty($userid)) {
+        $userId = array_shift($wxqy['success']);
+        if (!empty($userId)) {
             $wxqy['successSending'] += 1;
             $url = $this->createUrlByType('sendInvition');
-            $res = WxApi::getInstance()->sendInvition($url, $userid);
+            $res = WxApi::getInstance()->sendInvitation($url, $userId);
             Ibos::app()->user->setState('wxqy', $wxqy);
             //这里不需要管到底发送成功与否，因为……这个邀请一个星期发一次的。。。失败了也没辙
-            $ajaxReturn = $this->ajaxReturn(
+            return $this->ajaxReturn(
                 array(
                     'isSuccess' => true,
                     'msg' => '正在发送邀请，请稍后..',
@@ -778,7 +775,7 @@ class WxsyncController extends WxController
                 ));
         } else {
             if (!empty($error) && !empty($success)) {
-                $ajaxReturn = $this->ajaxReturn(
+                return $this->ajaxReturn(
                     array(
                         'isSuccess' => true,
                         'msg' => '成功一半。。',
@@ -786,7 +783,7 @@ class WxsyncController extends WxController
                             'successCount' => $wxqy['successSending'],
                             'errorCount' => $error,
                             'bindCount' => $bindCount,
-                            'downUrl' => $downloadlink,
+                            'downUrl' => $downloadLink,
                             'tpl' => 'half',
                         )
                     ));
@@ -809,7 +806,42 @@ class WxsyncController extends WxController
     }
 
     /**
+     * 根据部门的层级创建查询的条件
+     *
+     * @param integer $level
+     */
+    private function createConditionByDeptLevel($level = 0)
+    {
+        $sqlString = Ibos::app()->db->createCommand()
+            ->select('deptid')
+            ->from('{{department}}')
+            ->where(" `pid` IN ( <string> )")
+            ->getText();
+        $sql = $sqlString;
+        while ($level--) {
+            $sql = str_replace('<string>', $sqlString, $sql);
+        }
+        return str_replace('<string>', 0, $sql);
+    }
+
+    private function getPerDept($level)
+    {
+        $deptidCondition = $this->createConditionByDeptLevel($level);
+        $return = Ibos::app()->db->createCommand()
+            ->select('deptname,deptid,pid,sort')
+            ->from('{{department}}')
+            ->where(" `deptid` IN( {$deptidCondition} )")
+            ->andWhere($this->deptid_not_in_binding())
+            ->order('deptid ASC')
+            ->limit(self::DEPT_NUM_PER)
+            ->queryAll();
+        return $return;
+    }
+
+
+    /**
      * 通过类型创建访问官网的url，以便官网调用微信接口
+     *
      * @param string $type 对应官网访问微信接口的方法名
      * @return string url
      */
@@ -822,6 +854,7 @@ class WxsyncController extends WxController
 
     /**
      * 获取部门成员列表
+     *
      * @return array 成员列表
      */
     private function getDeptUser($deptid = 1, $fetchChild = 1)
@@ -881,7 +914,7 @@ class WxsyncController extends WxController
                         'version' => strtolower(implode(',', array(
                             ENGINE,
                             VERSION,
-                            VERSION_DATE
+                            VERSION_TYPE
                         )))
                     ))),
                     'id' => $suiteid
@@ -906,4 +939,13 @@ class WxsyncController extends WxController
         return $this->render('applist', $param);
     }
 
+    private function deptid_not_in_binding()
+    {
+        return " `deptid` NOT IN ( SELECT `deptid` FROM {{department_binding}} WHERE `app` = 'wxqy' ) ";
+    }
+
+    private function uid_not_in_binding()
+    {
+        return " `uid` NOT IN ( SELECT `uid` FROM {{user_binding}} WHERE `app` = 'wxqy' ) ";
+    }
 }

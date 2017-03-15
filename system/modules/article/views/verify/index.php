@@ -202,7 +202,7 @@ use application\modules\main\utils\Main;
                     "data": "subject",
                     "orderable": false,
                     "render": function (data, type, row) {
-                        return '<a href="' + Ibos.app.url('article/default/show', {articleid: row.articleid}) + '" class="art-list-title ellipsis" target="_self">' + row.subject + '</a>' +
+                        return '<a href="' + Ibos.app.url('article/default/show', {articleid: row.articleid}) + '" class="art-list-title ellipsis" target="' + (row.type == 2 ? '_blank' : '_self') + '">' + row.subject + '</a>' +
                             (row.istop == 1 ? '<i class="o-art-top"></i>' : '') +
                             (row.votestatus == 1 ? '<i class="o-art-vote"></i>' : '');
                     }

@@ -185,7 +185,7 @@ use application\modules\user\model\User;
                 'allowComment' => $allowComment,
                 'showStamp' => $fromController == 'review' && $this->issetStamp(),
                 'url' => $sourceUrl,
-                'detail' => Ibos::lang('Comment my diray', '', array('{url}' => $sourceUrl, '{title}' => StringUtil::cutStr(StringUtil::filterCleanHtml($diary['content']), 50)))
+                'detail' => Ibos::lang('Comment my diray', '', array('{url}' => $sourceUrl, '{title}' => StringUtil::cutStr(str_replace(PHP_EOL, '', strip_tags($diary['content'])), 50)))
             )));
         ?>
     </div>

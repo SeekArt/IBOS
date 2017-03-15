@@ -17,6 +17,8 @@
 
 namespace application\core\utils;
 
+use application\core\model\Log;
+use application\core\utils\HttpClient\exception\ConnectFailedException;
 use application\extensions\Zip;
 
 class File
@@ -184,21 +186,26 @@ class File
 
     /**
      * 远程文件请求函数
+     *
      * @param string $url 请求的地址
      * @param integer $limit 请求的字符数
      * @param string $post 要提交的参数
      * @param string $cookie 设定HTTP请求中"Cookie: "部分的内容。
+     * @param bool $bysocket
      * @param string $ip
      * @param integer $timeout 连接超时时间
      * @param boolean $block If mode is 0, the given stream will be switched to non-blocking mode,
      * and if 1, it will be switched to blocking mode.
-     * @param type $encodeType
-     * @param type $allowcurl
-     * @param type $position
+     * @param string $encodeType
+     * @param bool $allowCurl
+     * @param int $position
      * @return mixed 请求返回的内容
+     * @throws \Exception
      */
-    public static function fileSockOpen($url, $limit = 0, $post = '', $cookie = '', $bysocket = false, $ip = '', $timeout = 15, $block = true, $encodeType = 'URLENCODE', $allowcurl = true, $position = 0)
+    public static function fileSockOpen($url, $limit = 0, $post = '', $cookie = '', $bysocket = false, $ip = '', $timeout = 15, $block = true, $encodeType = 'URLENCODE', $allowCurl = true, $position = 0)
     {
+        $position = (int)$position;
+        $limit = (int)$limit;
         $return = '';
         $matches = parse_url($url);
         $scheme = $matches['scheme'];
@@ -206,7 +213,7 @@ class File
         $path = $matches['path'] ? $matches['path'] . (isset($matches['query']) ? '?' . $matches['query'] : '') : '/';
         $port = !empty($matches['port']) ? $matches['port'] : 80;
 
-        if (function_exists('curl_init') && function_exists('curl_exec') && $allowcurl) {
+        if (function_exists('curl_init') && function_exists('curl_exec') && $allowCurl) {
             $ch = curl_init();
             $ip && curl_setopt($ch, CURLOPT_HTTPHEADER, array("Host: " . $host));
             curl_setopt($ch, CURLOPT_URL, $scheme . '://' . ($ip ? $ip : $host) . ':' . $port . $path);
@@ -225,15 +232,37 @@ class File
             }
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
+
+            // 是否断点续传
+            if ($position > 0 || $limit > 0) {
+                if ($limit > 0) {
+                    $downloadRange = sprintf('%d-%d', $position, $position+$limit-1);
+                } else {
+                    $downloadRange = sprintf('%d-', $position);
+                }
+                curl_setopt($ch, CURLOPT_RANGE, $downloadRange);
+            }
+
             $data = curl_exec($ch);
             $status = curl_getinfo($ch);
-            $errno = curl_errno($ch);
+            $errNo = curl_errno($ch);
             curl_close($ch);
-            if ($errno || $status['http_code'] != 200) {
-                return;
-            } else {
-                return !$limit ? $data : substr($data, $position, $limit);
+
+            if ($errNo && !in_array($status['http_code'], array(200, 206))) {
+                Log::write(array(
+                    'msg' => sprintf('Curl error no: %d, url: %s', $errNo, $url),
+                    'trace' => debug_backtrace(),
+                ), 'action', 'application.core.utils.File.fileSockOpen');
+                throw new ConnectFailedException(Ibos::lang('Network error', 'error', array('{code}' => $errNo)));
             }
+
+            // 服务器支持断点续传，直接返回数据
+            if ($status['http_code'] == 206) {
+                return $data;
+            }
+
+            // 服务器不支持断点续传，截取需要的数据并返回
+            return !$limit ? $data : substr($data, $position, $limit);
         }
 
         if ($post) {
@@ -261,7 +290,7 @@ class File
         }
 
         $fpflag = 0;
-        if (!$fp = @fsockopen(($ip ? $ip : $host), $port, $errno, $errstr, $timeout)
+        if (!$fp = @fsockopen(($ip ? $ip : $host), $port, $errNo, $errstr, $timeout)
         ) {
             $context = array(
                 'http' => array(

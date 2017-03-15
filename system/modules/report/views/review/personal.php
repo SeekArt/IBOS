@@ -6,6 +6,7 @@ use application\modules\main\utils\Main;
 ?>
 <link rel="stylesheet" href="<?php echo $assetUrl; ?>/css/report.css?<?php echo VERHASH; ?>">
 <link rel="stylesheet" href="<?php echo STATICURL; ?>/css/emotion.css?<?php echo VERHASH; ?>">
+<link rel="stylesheet" href="<?php echo STATICURL; ?>/js/lib/lightbox/css/lightbox.css?<?php echo VERHASH; ?>"/>
 
 <!-- Mainer -->
 <div class="wrap">
@@ -177,6 +178,7 @@ use application\modules\main\utils\Main;
         autoReview: '<?php echo $dashboardConfig["autoreview"] ?>'
     })
 </script>
+<script src="<?php echo STATICURL; ?>/js/lib/lightbox/js/lightbox.js?<?php echo VERHASH; ?>"></script>
 <script src='<?php echo $assetUrl; ?>/js/report.js?<?php echo VERHASH; ?>'></script>
 <script src='<?php echo $assetUrl; ?>/js/report_review.js?<?php echo VERHASH; ?>'></script>
 

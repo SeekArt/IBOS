@@ -31,7 +31,7 @@ use application\modules\user\model\User;
 use application\modules\user\utils\User as UserUtil;
 use CHtml;
 
-class DepartmentController extends OrganizationBaseController
+class DepartmentController extends OrganizationbaseController
 {
 
     /**
@@ -58,9 +58,7 @@ class DepartmentController extends OrganizationBaseController
             $this->success(Ibos::lang('Save succeed', 'message'), $this->createUrl('user/index'));
         } else {
             $dept = DepartmentUtil::loadDepartment();
-            $param = array(
-                'tree' => StringUtil::getTree($dept, $this->selectFormat),
-            );
+            $param = array();
             $this->render('add', $param);
         }
     }
@@ -198,11 +196,15 @@ class DepartmentController extends OrganizationBaseController
             $result['manager'] = StringUtil::wrapId(array($result['manager']));
             $result['leader'] = StringUtil::wrapId(array($result['leader']));
             $result['subleader'] = StringUtil::wrapId(array($result['subleader']));
-            $depts = DepartmentUtil::loadDepartment();
+            if ($result['pid'] == 0){
+                $deptid = 'c_0';
+            }else{
+                $deptid = StringUtil::wrapId($result['pid'], 'd');
+            }
             $param = array(
                 'id' => $id,
                 'department' => $result,
-                'tree' => StringUtil::getTree($depts, $this->selectFormat, $result['pid']),
+                'deptid' => $deptid,
             );
             $this->render('edit', $param);
         }
@@ -261,6 +263,9 @@ class DepartmentController extends OrganizationBaseController
         $_POST['manager'] = implode(',', StringUtil::getUid($_POST['manager']));
         $_POST['leader'] = implode(',', StringUtil::getUid($_POST['leader']));
         $_POST['subleader'] = implode(',', StringUtil::getUid($_POST['subleader']));
+        $pid= str_replace('d_', '', $_POST['pid']);
+        $pid = str_replace('c_', '', $pid);
+        $_POST['pid'] = $pid;
     }
 
     /**

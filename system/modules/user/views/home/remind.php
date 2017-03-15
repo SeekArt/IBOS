@@ -41,9 +41,10 @@ use application\core\utils\Ibos;
             <li>
                 <a href="<?php echo $this->createUrl('home/personal', array('op' => 'password', 'uid' => $this->getUid())); ?>"><?php echo $lang['Change password']; ?></a>
             </li>
-            <li class="active"><a
-                    href="<?php echo $this->createUrl('home/personal', array('op' => 'remind', 'uid' => $this->getUid())); ?>"><?php echo $lang['Remind setup']; ?></a>
-            </li>
+            <!-- 因管理后台-云服务功能暂时屏蔽，所以前台对应功能也屏蔽 ->
+<!--            <li class="active"><a-->
+<!--                    href="--><?php //echo $this->createUrl('home/personal', array('op' => 'remind', 'uid' => $this->getUid())); ?><!--">--><?php //echo $lang['Remind setup']; ?><!--</a>-->
+<!--            </li>-->
             <li>
                 <a href="<?php echo $this->createUrl('home/personal', array('op' => 'history', 'uid' => $this->getUid())); ?>"><?php echo $lang['Login history']; ?></a>
             </li>

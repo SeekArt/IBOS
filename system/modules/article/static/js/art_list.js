@@ -135,11 +135,16 @@
                         Ui.dialog({
                             id: "d_art_move",
                             title: U.lang("ART.MOVETO"),
-                            content: $.tmpl('dialog_art_move', { optionHtml: res.data }).get(0),
+                            content: $.tmpl('dialog_art_move', {
+                                optionHtml: res.data
+                            }).get(0),
                             cancel: true,
                             ok: function() {
                                 var catid = $('select[name="articleCategory"]').val(),
-                                    param = { 'articleids': ids, 'catid': catid };
+                                    param = {
+                                        'articleids': ids,
+                                        'catid': catid
+                                    };
 
                                 Article.ajaxApi.moveArticles(param).done(function(res) {
                                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
@@ -195,7 +200,9 @@
                     id = $this.data('id');
 
                 Ui.confirm(Ibos.l('ART.SURE_DEL_ARTICLE'), function() {
-                    Article.ajaxApi.removeArticles({ 'articleids': id }).done(function(res) {
+                    Article.ajaxApi.removeArticles({
+                        'articleids': id
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         ArtTable.search();
                     });
@@ -210,7 +217,9 @@
                 }
 
                 Ui.confirm(Ibos.l('ART.SURE_DEL_ARTICLE'), function() {
-                    Article.ajaxApi.removeArticles({ 'articleids': ids }).done(function(res) {
+                    Article.ajaxApi.removeArticles({
+                        'articleids': ids
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         ArtTable.search();
                     });
@@ -220,7 +229,9 @@
             'editArticle': function(param, elem) {
                 Ui.confirm(U.lang("ART.EDIT_AT_SURE"), function() {
                     var id = $(elem).data('id');
-                    location.href = Ibos.app.url('article/default/edit', { 'articleid': id });
+                    location.href = Ibos.app.url('article/default/edit', {
+                        'articleid': id
+                    });
                 });
             },
             // 列表分类切换
@@ -245,7 +256,9 @@
             },
             // 全部已读标记
             'allRead': function(param, elem) {
-                Article.ajaxApi.allRead({ 'articleid': 0 }).done(function(res) {
+                Article.ajaxApi.allRead({
+                    'articleid': 0
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                     ArtTable.search();
                 });
@@ -255,7 +268,9 @@
                 var $this = $(this),
                     id = $this.data('id');
 
-                Article.ajaxApi.remindApprover({ 'articleids': id }).done(function(res) {
+                Article.ajaxApi.remindApprover({
+                    'articleids': id
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                     ArtTable.search();
                 });
@@ -268,7 +283,9 @@
                     return false;
                 }
 
-                Article.ajaxApi.remindApprover({ 'articleids': ids }).done(function(res) {
+                Article.ajaxApi.remindApprover({
+                    'articleids': ids
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                     ArtTable.search();
                 });
@@ -278,7 +295,9 @@
                 var $this = $(this),
                     id = $this.data('id');
 
-                Article.ajaxApi.verifyArticles({ 'articleids': id }).done(function(res) {
+                Article.ajaxApi.verifyArticles({
+                    'articleids': id
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                     ArtTable.search();
                 });
@@ -291,7 +310,9 @@
                     return true;
                 }
 
-                Article.ajaxApi.verifyArticles({ 'articleids': ids }).done(function(res) {
+                Article.ajaxApi.verifyArticles({
+                    'articleids': ids
+                }).done(function(res) {
                     Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                     ArtTable.search();
                 });
@@ -305,7 +326,9 @@
                 }
 
                 Ui.confirm(Ibos.l('ART.BACK_AND_VERIFY_AGAIN'), function() {
-                    Article.ajaxApi.getBack({ 'articleids': ids }).done(function(res) {
+                    Article.ajaxApi.getBack({
+                        'articleids': ids
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         ArtTable.search();
                     });
@@ -324,7 +347,10 @@
                         return false;
                     }
 
-                    Article.ajaxApi.reback({ 'articleids': id, 'reason': value }).done(function(res) {
+                    Article.ajaxApi.reback({
+                        'articleids': id,
+                        'reason': value
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         ArtTable.search();
                     });
@@ -336,7 +362,9 @@
                     id = $this.data('id');
 
                 Ui.confirm(Ibos.l('ART.APPROVING_MAKE_SURE_REBACK'), function() {
-                    Article.ajaxApi.pushBack({ 'articleid': id }).done(function(res) {
+                    Article.ajaxApi.pushBack({
+                        'articleid': id
+                    }).done(function(res) {
                         Ui.tip(res.msg, res.isSuccess ? '' : 'warning');
                         ArtTable.search();
                     });

@@ -16,7 +16,7 @@ use application\modules\user\model\BgTemplate;
 use application\modules\user\model\UserProfile;
 use application\modules\user\utils\User;
 
-class SkinController extends HomeBaseController
+class SkinController extends HomebaseController
 {
 
     /**

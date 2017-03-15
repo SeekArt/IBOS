@@ -51,7 +51,7 @@ Class LoopController extends BaseController
         $this->setPageTitle(Ibos::lang('Periodic affairs'));
         $this->setPageState('breadCrumbs', array(
             array('name' => Ibos::lang('Personal Office')),
-            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('schedule/index')),
+            array('name' => Ibos::lang('Calendar arrangement'), 'url' => $this->createUrl('loop/index')),
             array('name' => Ibos::lang('Periodic affairs'))
         ));
         $this->render('index', $params);

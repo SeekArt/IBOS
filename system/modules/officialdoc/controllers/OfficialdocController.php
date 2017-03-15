@@ -375,7 +375,7 @@ class OfficialdocController extends BaseController
             $config = array(
                 '{sender}' => $user['realname'],
                 '{category}' => $categoryName,
-                '{subject}' => $officialdoc['subject'],
+                '{subject}' => html_entity_decode($officialdoc['subject']),
                 '{content}' => $this->renderPartial('remindcontent', array(
                     'doc' => $officialdoc,
                     'author' => $user['realname'],
@@ -398,7 +398,7 @@ class OfficialdocController extends BaseController
                 );
                 $data = array(
                     'title' => Ibos::lang('Feed title', '', array(
-                        '{subject}' => $officialdoc['subject'],
+                        '{subject}' => html_entity_decode($officialdoc['subject']),
                         '{url}' => Ibos::app()->urlManager->createUrl('officialdoc/officialdoc/show', array('docid' => $docId))
                     )),
                     'body' => $officialdoc['subject'],

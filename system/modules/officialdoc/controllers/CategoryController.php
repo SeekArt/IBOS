@@ -80,7 +80,7 @@ class CategoryController extends BaseController
                 'name' => $name,
                 'aid' => $aid
             ), true);
-        $this->ajaxReturn(array('IsSuccess' => !!$ret, 'id' => $ret, 'url' => 'javascript:;', 'aid' => $aid, 'catid' => $ret), 'json');
+        $this->ajaxReturn(array('IsSuccess' => !!$ret, 'id' => $ret, 'url' => 'javascript:;', 'aid' => $aid, 'catid' => $ret, 'target' => '_self'), 'json');
     }
 
     /**
@@ -98,8 +98,8 @@ class CategoryController extends BaseController
             if ($pid == $catid) {
                 $this->error(Ibos::lang('Parent and current can not be the same'));
             }
-            $ret = OfficialdocCategory::model()->modify($catid, array('pid' => $pid, 'name' => $name, 'aid' => $aid));
-            $this->ajaxReturn(array('IsSuccess' => !!$ret, 'aid' => $aid), 'json');
+            OfficialdocCategory::model()->modify($catid, array('pid' => $pid, 'name' => $name, 'aid' => $aid));
+            $this->ajaxReturn(array('IsSuccess' => true, 'aid' => $aid), 'json');
         } else {
             $this->$option();
         }

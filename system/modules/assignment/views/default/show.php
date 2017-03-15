@@ -20,7 +20,7 @@ use application\core\utils\StringUtil;
             <?php endif; ?>
             <div class="am-details-prop clearfix">
                 <?php echo $assignment['st']; ?> <?php echo $lang['To']; ?> <?php echo $assignment['et']; ?>
-                <?php if (TIMESTAMP > $assignment['endtime']): ?><span class="ilsep fss"><i
+                <?php if (TIMESTAMP > $assignment['endtime'] && $assignment['status'] != 2): ?><span class="ilsep fss"><i
                     class="om-am-warning-w"></i> <?php echo $lang['Expired']; ?></span><?php endif; ?>
                 <?php if ($assignment['remindtime'] > 0): ?><span class="ilsep fss"><i
                     class="om-am-clock-w"></i> <?php echo $lang['Has been set to remind']; ?></span><?php endif; ?>
