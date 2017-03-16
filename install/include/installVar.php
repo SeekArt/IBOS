@@ -19,7 +19,7 @@ $funcItems = array(
     'file_get_contents' => array('status' => 1),
     'scandir' => array('status' => 1),
     'xml_parser_create' => array('status' => 1),
-    'bcmul' => array('status' => 1),
+//    'bcmul' => array('status' => 1),
 );
 
 $filesockItems = array(
@@ -41,7 +41,7 @@ $envItems = array(
     'attachmentupload' => array('r' => '2M', 'b' => '20M'),
     'gdversion' => array('r' => '1.0', 'b' => '2.0'),
     'diskspace' => array('r' => '100M', 'b' => 'notset'),
-    'Zend Guard Loader' => array('r' => 'install', 'b' => 'install'),
+//    'Zend Guard Loader' => array('r' => 'install', 'b' => 'install'),
 );
 // 要检测的文件、文件夹权限
 $dirfileItems = array(
