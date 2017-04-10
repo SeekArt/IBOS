@@ -57,10 +57,10 @@ function showHeader()
 			<meta charset="{$charset}">
 			<title>IBOS 数据恢复工具</title>
 			<!-- load css -->
-			<link rel="stylesheet" href="{$staticUrl}/css/bootstrap.css">
+			<link rel="stylesheet" href="/{$staticUrl}/css/base/bootstrap.css">
 			<!-- IE8 fixed -->
 			<!--[if lt IE 9]>
-			<link rel="stylesheet" href="{$staticUrl}/css/iefix.css">
+			<link rel="stylesheet" href="/{$staticUrl}/css/iefix.css">
 			<![endif]-->
 		</head>
 		<body>

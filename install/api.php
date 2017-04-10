@@ -274,9 +274,7 @@ function dbCheckOp()
     );
     file_put_contents(PATH_ROOT . '/data/aes.key', base64_encode(json_encode($aeskeyArray)));
 
-    $postHost = explode(':', $dbHost);
-    $host = isset($postHost[0]) ? $postHost[0] : '127.0.0.1';
-    $port = isset($postHost[1]) ? $postHost[1] : '3306';
+
     // 检查表单各项
     if (empty($dbAccount)) { // 数据库用户名
         $msg = lang('Dbaccount not empty');
@@ -302,8 +300,14 @@ function dbCheckOp()
         $msg = lang('Invalid corp code');
         return ajaxReturn(array('isSuccess' => false, 'msg' => $msg, 'data' => array('type' => 'qycode')));
     }
+
+    $postHost = explode(':', $dbHost);
+    $host = isset($postHost[0]) ? $postHost[0] : '127.0.0.1';
+    $port = isset($postHost[1]) ? $postHost[1] : '3306';
     try {
         $conn = new PDO("mysql:host={$host};port={$port}", $dbAccount, $dbPassword);
+        //检查数据库是否支持InnoDB，防止初始化安装失败
+        mysqlEngineCheck($conn);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $sql = "CREATE DATABASE IF NOT EXISTS {$dbName}";
         $conn->exec($sql);
@@ -328,7 +332,7 @@ function dbCheckOp()
             'data' => array('type' => $type),
         ));
     }
-    $pdo = pdo($dbHost, $port, $dbName, $dbAccount, $dbPassword);
+    $pdo = pdo($host, $port, $dbName, $dbAccount, $dbPassword);
     if (is_string($pdo)) {
         return ajaxReturn(array(
             'isSuccess' => false,

@@ -4,6 +4,7 @@ use application\core\utils\Attach;
 use application\core\utils\Ibos;
 use application\modules\main\utils\Main;
 use application\modules\user\utils\User;
+use application\modules\main\model\Setting;
 
 $gUploadConfig = Attach::getUploadConfig();
 $gAccount = User::getAccountSetting();
@@ -11,6 +12,8 @@ $mods = Main::getModuleParamsForJs();
 $qr = Ibos::app()->setting->get('setting/qrcode');
 $qrcode = isset($qr) ? $qr : '';
 $uid = Ibos::app()->user->isGuest ? 0 : Ibos::app()->user->uid;
+$unitSerialize = Setting::model()->fetchSettingValueByKey('unit');
+$unit = unserialize($unitSerialize);
 $conf = array(
     'VERSION' => VERSION . ',' . VERSION_TYPE,
     'modules' => Ibos::app()->getEnabledModule(),
@@ -19,6 +22,7 @@ $conf = array(
     'SITE_URL' => Ibos::app()->setting->get('siteurl'),
     'STATIC_URL' => STATICURL,
     'uid' => $uid,
+    'shortname' => $unit['shortname'],
     'cookiePre' => Ibos::app()->setting->get('config/cookie/cookiepre'),
     'cookiePath' => Ibos::app()->setting->get('config/cookie/cookiepath'),
     'cookieDomain' => Ibos::app()->setting->get('config/cookie/cookiedomain'),
