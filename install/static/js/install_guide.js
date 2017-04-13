@@ -154,6 +154,9 @@ var dbInit = {
                 $("[name='"+res.data.type +"']").blink();
                 Ui.tip(res.msg, "danger");
                 break;
+            case "engine":
+                Ui.tip(res.msg, "danger");
+                break;
             default:
                 $("[name='"+res.data.type +"']").blink().siblings(".nomatch-tip").text(res.msg).show();
         }

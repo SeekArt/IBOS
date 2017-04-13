@@ -33,6 +33,8 @@ $extLoadedItems = array(
 //	'mysql' => array( 'status' => 1 ),
     'pdo_mysql' => array('status' => 1),
     'mbstring' => array('status' => 1),
+    'gd' => array('status' => 1),
+    'curl' => array('status' => 1),
 );
 // 要检测的环境（r为所需，b为推荐）
 $envItems = array(

@@ -76,6 +76,28 @@ function phpCheck($evnItem)
 }
 
 /**
+ * 数据库引擎检测
+ * @param $object object 数据连接对象
+ */
+function mysqlEngineCheck($object){
+    $sql = 'SHOW ENGINES';
+    $info = $object->query($sql);
+    $bool = true;
+    foreach ($info as $item){
+        if(($item['Engine'] == 'InnoDB' AND $item['Support'] == 'YES') || ($item['Engine'] == 'InnoDB' AND $item['Support'] == 'DEFAULT')){
+            $bool = false;
+        }
+    }
+    if($bool){
+        return ajaxReturn(array(
+            'isSuccess' => false,
+            'msg' => '数据库引擎需要为InnoDB',
+            'data' => array('type' => 'engine'),
+        ));
+    }
+}
+
+/**
  * 上传配置检测
  * @param array $evnItem 上传配置信息，在installVal文件定义
  * @return boolean

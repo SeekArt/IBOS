@@ -30,15 +30,16 @@
 }
 .main-content {
 	display: block;
-	margin-top: 100px;
+	margin-top: 150px;
 }
 .remind-box {
 	display: inline-block;
     position: relative;
-    width: 450px;
+    width: 540px;
     padding: 10px 0;
     border-top: 1px solid #e2e6e8;
     border-bottom: 1px solid #e2e6e8;
+    font-size: 16px;
     line-height: 25px;
 }
 #topqq {
